@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-<img src="assets/data_engineering_with_snowpark_python_and_dbt-1.png" width="600" />
+![assets/data_engineering_with_snowpark_python_and_dbt-1.png](assets/data_engineering_with_snowpark_python_and_dbt-1.png)
 
 ### Background
 Data engineering is a broad discipline which includes data ingestion, data transformation, and data consumption, along with the accompanying SDLC best practices (i.e. DevOps). Data engineers employ different tools and approaches depending on the phase. For this Quickstart we will focus on the data transformation phase in particular.

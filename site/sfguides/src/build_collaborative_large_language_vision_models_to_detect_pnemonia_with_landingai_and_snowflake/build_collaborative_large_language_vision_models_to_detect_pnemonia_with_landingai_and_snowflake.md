@@ -45,7 +45,7 @@ Access to the LandingLens app is available by request. To request the app, follo
 2. Locate and click the **LandingLens - Visual AI Platform** listing.
 3. Click **Request**.
 
-   <img src="assets/LLSF_VisualAI_Request.png" alt="Request LandingLens" width="800">
+   ![assets/LLSF_VisualAI_Request.png](assets/LLSF_VisualAI_Request.png)
 
 5. Fill out and submit the request form.
 6. The LandingAI team will review the request and contact you with more information.
@@ -57,7 +57,7 @@ After you've requested the app and been granted access it, follow the instructio
 2. Locate and click the **LandingLens - Visual AI Platform** listing.
 3. Click **Get**.
 
-   <img src="assets/LL_VisualAIPlatform.png" alt="Get LandingLens" width="800">
+   ![assets/LL_VisualAIPlatform.png](assets/LL_VisualAIPlatform.png)
 
 4. Select the **Warehouse** to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).
 
@@ -65,35 +65,35 @@ After you've requested the app and been granted access it, follow the instructio
 
 6. Click **Get**.
 
-   <img src="assets/LLSF_install_1.png" alt="Get LandingLens" width="800">
+   ![assets/LLSF_install_1.png](assets/LLSF_install_1.png)
 
 7. Go to **Snowsight** > **Data Products** > **Apps**. Double-click the LandingLens app listing. (Although the app is listed in the Installed Apps section, it is not installed yet.)
-   <img src="assets/LLSF_install_2.png" alt="Installed Apps" width="800">
+   ![assets/LLSF_install_2.png](assets/LLSF_install_2.png)
 
 8. A new page opens. It has a series of steps that guide you through the installation process.
 
 9. In **Step 1**, click **Grant**. These permissions allow LandingLens to create compute pools and perform other tasks in your account.
-   <img src="assets/LLSF_install_3.png" alt="Grant account privileges" width="800">
+   ![assets/LLSF_install_3.png](assets/LLSF_install_3.png)
    
 10. In **Step 2**, click **Review**. Review the allowed endpoints on the pop-up and click **Connect**. This allows LandingLens to access the World Wide Web (WWW).
 
 11. Scroll to the top of the page and click **Activate**.
-      <img src="assets/LLSF_install_5.png" alt="Activate" width="800">
+      ![assets/LLSF_install_5.png](assets/LLSF_install_5.png)
    
 12. LandingLens opens in your Apps. Click **Launch App**.
-      <img src="assets/LLSF_install_7.png" alt="Launch the app installer" width="800">
+      ![assets/LLSF_install_7.png](assets/LLSF_install_7.png)
    
 13. The installer opens in the **APP_WIZARD** tab.
 
 14. Click **Install/Upgrade/Resume**. The installer installs all the required services for the LandingLens app. This process takes about 20 to 30 minutes. Do NOT close the tab during the installation process, because it will stop the process.
-      <img src="assets/LLSF_install_8.png" alt="Launch the app installer" width="800">
+      ![assets/LLSF_install_8.png](assets/LLSF_install_8.png)
    
 15. Once the installation process is complete, all services have the status DONE or READY (green checkmark) and the URL to access LandingLens displays. Copy and paste the URL.  
-      <img src="assets/LLSF_install_9.png" alt="Copy the URL for the LandingLens app" width="800">
+      ![assets/LLSF_install_9.png](assets/LLSF_install_9.png)
 
 16. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. you can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
    
-      <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
+      ![assets/lai_landinglens_app.png](assets/lai_landinglens_app.png)
    
     
 <!-- ------------------------ -->
@@ -105,20 +105,20 @@ Now that you've installed the LandingLens app, you are ready to get the sample i
 To get the sample images, follow these instructions:
 
 1. Open the [Sample Dataset for LandingLens: LifeSciences Pneumonia listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia) in the Snowflake Marketplace and click **Get**.
-   <img src="assets/LL_pneumonia_1.png" alt="Sample dataset listing in the Snowflake Marketplace" width="800">
+   ![assets/LL_pneumonia_1.png](assets/LL_pneumonia_1.png)
 
 2. Go to **Snowsight** > **Data Products** > **Apps**. Click the **Sample Dataset for LandingLens: LifeSciences Pneumonia** app listing.
-   <img src="assets/LL_pneumonia_2.png" alt="Open the app" width="800">
+   ![assets/LL_pneumonia_2.png](assets/LL_pneumonia_2.png)
 
 3. Click the **Shield** icon in the top right corner of this app page.
 
 4. Click **Review** and allow the CREATE DATABASE privilege, which grants the app to create a database to load the sample data.
-   <img src="assets/LL_pneumonia_3.png" alt="Grant privileges" width="800">
+   ![assets/LL_pneumonia_3.png](assets/LL_pneumonia_3.png)
 
 5. Open the **LLENS_DATA_APP** tab.
 
 6. Click **Create Sample Dataset** to load the dataset into your Snowflake account.
-   <img src="assets/LL_pneumonia_4.png" alt="Create the database" width="800">
+   ![assets/LL_pneumonia_4.png](assets/LL_pneumonia_4.png)
 
 7. Make a note of the location of the images; you will use these later.
       - **Database**: llens_sample_ds_lifesciences
@@ -136,7 +136,7 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 2. Click **Start First Project** and name your project.
 3. Click **Classification**.
 4. Click **Sync Snowflake Data**.
-   <img src="assets/LL_pneumonia_load_1.png" alt="Sync images from Snowflake" width="800">
+   ![assets/LL_pneumonia_load_1.png](assets/LL_pneumonia_load_1.png)
 5. Enter the location that you saved the sample dataset to earlier. The location should be:
       - **Database**: llens_sample_ds_lifesciences
       - **Schema**: pneumonia
@@ -146,24 +146,24 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 8. Click the directory path (**⌄ /**) in the **Specify the path to an existing folder** field. 
 9. Select the **data** directory.
 10. Click **Sync**.
-   <img src="assets/LL_pneumonia_load_2.png" alt="Select the snowflake stage to load images from" width="800">
+   ![assets/LL_pneumonia_load_2.png](assets/LL_pneumonia_load_2.png)
 11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) The project now has 100 images; 50 images have the class "normal", and 50 have the class "pneumonia".
-    <img src="assets/LL_pneumonia_load_3.png" alt="Select the snowflake stage to load images from" width="800">
+    ![assets/LL_pneumonia_load_3.png](assets/LL_pneumonia_load_3.png)
 
 ### Train a Classification Model
 Now that all of the images are in the LandingLens project and have classes assigned to them, train a computer vision model. When you train a model, you give the labeled images to a deep learning algorithm. This allows the algorithm to "learn" what to look for in images.
 
 To train a model, click **Train**.
 
-<img src="assets/LL_pneumonia_train_1.png" alt="Train the model" width="800">
+![assets/LL_pneumonia_train_1.png](assets/LL_pneumonia_train_1.png)
 
 The right side panel opens and shows the model training progress. This process can take a few minutes.
 
-<img src="assets/LL_pneumonia_train_2.png" alt="Model training progress" width="800">
+![assets/LL_pneumonia_train_2.png](assets/LL_pneumonia_train_2.png)
 
 Once training finishes, you will see the model's predictions and performance information. You can click the model tile in the side panel to see more detailed information. In most real-world use cases, you might need to upload and label more images to improve performance. In this example, the model should be performing well, so we will go to the next step, which is deploying the model.
 
-<img src="assets/LL_pneumonia_train_3.png" alt="Model performance" width="800">
+![assets/LL_pneumonia_train_3.png](assets/LL_pneumonia_train_3.png)
 
 
 
@@ -178,20 +178,20 @@ To deploy the model with Cloud Deployment, follow these instructions:
 1. Open the **Models** tab.
 2. Click **Deploy** in the model's row.
 
-   <img src="assets/LL_pneumonia_deploy_1.png" alt="Deploy the model" width="800">
+   ![assets/LL_pneumonia_deploy_1.png](assets/LL_pneumonia_deploy_1.png)
 3. Name the endpoint and click **Deploy**.
 
-   <img src="assets/LL_pneumonia_deploy_2.png" alt="Name the endpoint" width="400">
+   ![assets/LL_pneumonia_deploy_2.png](assets/LL_pneumonia_deploy_2.png)
    
 4. LandingLens deploys the model to the endpoint and opens the **Deploy** page. You can now use this endpoint to run inference.
-   <img src="assets/LL_pneumonia_deploy_3.png" alt="View the deployment" width="800">
+   ![assets/LL_pneumonia_deploy_3.png](assets/LL_pneumonia_deploy_3.png)
 
 
 ### Run Inference
 
 After deploying a model with Cloud Deployment, a custom Python script displays at the bottom of the Deploy page. Copy this script, replace the placeholers with your information, and use the [LandingLens Python library](https://landing-ai.github.io/landingai-python/inferences/snowflake-native-app/) to integrate the model with your applications with very few lines of code.
 
-<img src="assets/LL_pneumonia_deploy_4.png" alt="Copy the Python script" width="800">
+![assets/LL_pneumonia_deploy_4.png](assets/LL_pneumonia_deploy_4.png)
 
 
 

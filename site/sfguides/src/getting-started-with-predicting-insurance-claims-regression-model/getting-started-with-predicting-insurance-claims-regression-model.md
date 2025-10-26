@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-<img src="assets/insurance_claim_pred_banner.png"/>
+![assets/insurance_claim_pred_banner.png](assets/insurance_claim_pred_banner.png)
 
 This solution provides an end-to-end workflow for predicting insurance claim outcomes using machine learning, focusing on feature engineering, model training, and deployment. It showcases Snowflake's Feature Store and Model Registry, emphasizing streamlined ML operations tailored for the insurance claims domain.
 
@@ -47,7 +47,7 @@ Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-getting-st
 
 This architecture for the Insurance Claims Prediction solution is designed to generate prediction probabilities, providing a streamlined and scalable end-to-end ML workflow that integrates various Snowflake capabilities. Each component contributes to efficient processing, consistency, and scalability.
 
-<img src="assets/Architecture.png"/>
+![assets/Architecture.png](assets/Architecture.png)
 
 **Extracting Features:**
 Data ingestion brings in policy and claims data from multiple sources into Snowflake. Using Snowflake Notebooks, SQL and Python can be seamlessly combined to query, manipulate, and prepare the data. Automated feature extraction ensures data from different sources is consolidated and ready for preprocessing.
@@ -76,21 +76,21 @@ This notebook demonstrates how to create and manage feature views within a featu
 
 - Import the following Snowflake Notebook in Snowsight: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-predicting-insurance-claims-regression-model/blob/main/notebooks/0_start_here.ipynb)
 
-<img src="assets/import.png"/>
+![assets/import.png](assets/import.png)
 
 - Create notebook with the settings in the screenshot.
 
-<img src="assets/create_notebook.png"/>
+![assets/create_notebook.png](assets/create_notebook.png)
 
 - Once created, Add Packages(snowflake-ml-python, plotly, matplotlib & seaborn) to Notebook
 
-<img src="assets/packages.png"/>
+![assets/packages.png](assets/packages.png)
 
 - Once Packages are added, download the exposure calculation image from [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-predicting-insurance-claims-regression-model/blob/main/notebooks/img/exposure.png) and upload the image under img folder within the notebook. This is used in the notebook.
 
-<img src="assets/upload_option.png"/>
+![assets/upload_option.png](assets/upload_option.png)
 
-<img src="assets/img_upload.png"/>
+![assets/img_upload.png](assets/img_upload.png)
 
 - Click each cell or Run all to run the Notebook
 

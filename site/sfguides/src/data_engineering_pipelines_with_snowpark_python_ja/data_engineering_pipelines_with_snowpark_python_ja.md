@@ -19,7 +19,7 @@ Snowpark Pythonの機能を活用してデータエンジニアリングパイ�
 
 このクイックスタートは広範囲をカバーしており、最終的にはSnowpark Pythonストアドプロシージャを使用して堅牢なデータエンジニアリングパイプラインを構築できるようになります。このパイプラインはデータを段階的に処理し、Snowflakeタスクとオーケストレーションされ、CI/CDパイプラインで展開されます。また、Snowflakeの新しい開発者向けCLIツールとVisual Studio Code拡張機能の使用方法も学習します。以下に簡単な概要を図で示します。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 では、準備をはじめましょう。
 
 > aside negative
@@ -98,10 +98,10 @@ GitHubアカウントでこのクイックスタート用レポジトリのフ�
 
 デフォルトでは、GitHubアクションはフォークしたレポジトリで定義されているワークフロー（またはCI/CDパイプライン）を無効にします。このレポジトリには、Snowpark Python UDFとストアドプロシージャを展開するワークフローが含まれています。このワークフローは後で使用します。そのため、現時点では、GitHubでフォークしたレポジトリを開き、ページ中央上部の「`Actions`」タブをクリックして、緑の「`I understand my workflows, go ahead and enable them`」ボタンをクリックすることで、このワークフローを有効にします。
 
-<img src="assets/github-actions-activate.png" width="800" />
+![assets/github-actions-activate.png](assets/github-actions-activate.png)
 次に、新しくフォークしたレポジトリをローカルコンピュータにクローンする必要があります。新しいGitレポジトリの接続の詳細については、レポジトリを開き、ページ上部付近にある緑色の「コード」アイコンをクリックして「HTTPS」リンクをコピーします。
 
-<img src="assets/git_repo_url.png" width="300" />
+![assets/git_repo_url.png](assets/git_repo_url.png)
 そのリンクをVS Codeで使用して、コンピュータにレポジトリをクローンします。詳細については、「[Visual Studio CodeでGitHubレポジトリをクローンして使用する](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository)」の手順に従ってください。必要に応じて、次のコマンドを実行して、コマンドラインからレポジトリをクローンすることもできます。
 
 ```bash
@@ -160,7 +160,7 @@ Snowflakeに対してさまざまな方法（Snowsight UI、SnowSQLなど）でS
 
 このステップでは、未加工のTasty Bytes POSデータとカスタマーロイヤルティデータを、`s3://sfquickstarts/data-engineering-with-snowpark-python/`にある未加工のParquetファイルから、Snowflakeの`RAW_POS`スキーマと`RAW_CUSTOMER`スキーマにロードします。さらに、Snowpark Python APIを使用して、ノートパソコンからPythonでこのプロセスをオーケストレーションします。これは、コンテキストの中では、データフローの概要のステップ**#2**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### スクリプトの実行
 
 未加工データをロードするには、`steps/02_load_raw.py`スクリプトを実行します。これはVS Codeでいくつかの方法で実行できます。ターミナルから実行することも、VS Codeで直接実行することもできます。このデモでは、ターミナルからPythonスクリプトを実行する必要があります。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -> 「新しいターミナル」）、`pysnowpark` conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。
@@ -208,7 +208,7 @@ Snowflakeの[クエリ履歴](https://docs.snowflake.com/ja/user-guide/ui-snowsi
 
 Snowflakeアカウントにログインし、Snowpark APIによって生成されたSQLを簡単に見てみましょう。これにより、APIが行っていることに関する理解が深まり、問題が発生した場合のデバッグに役立ちます。
 
-<img src="assets/query_history_sproc.png" width="800" />
+![assets/query_history_sproc.png](assets/query_history_sproc.png)
 ### スキーマ推論
 
 Snowflakeの非常に便利な機能の1つに、作業したいステージのファイルのスキーマを推論する機能があります。これは、SQLでは[`INFER_SCHEMA()`](https://docs.snowflake.com/ja/sql-reference/functions/infer_schema.html)関数で実行されます。Snowpark Python APIでは、`session.read()`メソッドを呼び出すと自動的に実行されます。コードスニペットは次のとおりです。
@@ -261,7 +261,7 @@ Snowflakeでは、データの処理に使用する言語（SQL、Python、Java�
 
 このステップでは、未加工の気象データをSnowflakeに「ロード」します。しかし、ここでは「ロード」という言葉は実際には正しくありません。Snowflake独自のデータシェアリング機能を使用しているため、実際にはカスタムETLプロセスでデータをSnowflakeアカウントにコピーする必要はありません。代わりに、SnowflakeマーケットプレイスでWeather Sourceが共有する気象データに直接アクセスできます。これは、コンテキストの中では、データフローの概要のステップ**#3**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### Snowflakeマーケットプレイス
 
 Weather Sourceは、世界の気象および気候データを提供するリーディングプロバイダーであり、同社のOnPoint Product Suiteは、企業がさまざまな業界の広範なユースケースに適用できる有意義で実用的なインサイトを迅速に生成するために必要な気象および気候データを提供しています。次の手順に従って、SnowflakeマーケットプレイスのWeather Sourceから`Weather Source LLC: frostbyte`フィードに接続しましょう。
@@ -292,7 +292,7 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 
 このステップでは、6つの異なるテーブルを結合し、必要な列のみを選択することで、未加工のPOSスキーマを簡素化するビューを作成します。しかし、本当に素晴らしいのは、Snowpark DataFrame APIを使用してそのビューを定義することです。次に、そのビューに対するSnowflakeストリームを作成し、POSテーブルの変更を段階的に処理できるようにします。これは、コンテキストの中では、データフローの概要のステップ**#4**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### スクリプトの実行
 
 ビューとストリームを作成するには、`steps/04_create_pos_view.py`スクリプトを実行します。ステップ2と同様に、ターミナルから実行しましょう。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -> 「新しいターミナル」）、`pysnowpark` conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。
@@ -348,7 +348,7 @@ def create_pos_view_stream(session):
 
 このステップでは、最初のSnowpark Pythonオブジェクトであるユーザー定義関数（UDF）を作成し、Snowflakeに展開します。UDFから始めることは非常に基本的ですが、今後のステップではサードパーティのPythonパッケージを含むように更新します。また、このステップでは新しい開発者コマンドラインツールであるSnowCLIを紹介します。SnowCLIを使用することで、開発者はSnowpark Pythonオブジェクトの構築とSnowflakeへの展開を一貫した方法で行うことができます。SnowCLIの詳細については後述します。これは、コンテキストの中では、データフローの概要のステップ**#5**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### ローカルでのUDFの実行
 
 UDFをローカルでテストするには、`steps/05_fahrenheit_to_celsius_udf/app.py`スクリプトを実行します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -> 「新しいターミナル」）、`pysnowpark` conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。
@@ -436,7 +436,7 @@ CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
 
 このステップでは、最初のSnowpark Pythonストアドプロシージャ（sproc）を作成し、Snowflakeに展開します。このストアドプロシージャは、`HARMONIZED.POS_FLATTENED_V_STREAM`ストリームからの変更をターゲットの`HARMONIZED.ORDERS`テーブルにマージします。これは、コンテキストの中では、データフローの概要のステップ**#6**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### ローカルでのストアドプロシージャの実行
 
 プロシージャをローカルでテストするには、`steps/06_orders_update_sp/app.py`スクリプトを実行します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -> 「新しいターミナル」）、`pysnowpark` conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。
@@ -528,7 +528,7 @@ def create_orders_stream(session):
 
 このステップでは、2番目のSnowpark Pythonストアドプロシージャを作成し、Snowflakeに展開します。このストアドプロシージャは、`HARMONIZED.ORDERS`データとWeather Sourceデータを結合して、`ANALYTICS.DAILY_CITY_METRICS`という分析用の最終集計テーブルを作成します。別のSnowflakeストリームを使用して、`HARMONIZED.ORDERS`テーブルからデータを段階的に処理します。また、Snowpark DataFrame `merge()`メソッドを再度使用してデータをマージ/アップサートします。これは、コンテキストの中では、データフローの概要のステップ**#7**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### ローカルでのストアドプロシージャの実行
 
 プロシージャをローカルでテストするには、`steps/07_daily_city_metrics_update_sp/app.py`スクリプトを実行します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -> 「新しいターミナル」）、`pysnowpark` conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。
@@ -604,7 +604,7 @@ def create_daily_city_metrics_table(session):
 
 このステップでは、タスクという名前のSnowflakeのネイティブオーケストレーション機能を使用して、新しいSnowparkパイプラインをオーケストレーションします。それぞれのストアドプロシージャに1つずつ、2つのタスクを作成し、それらを連結します。その後、タスクを実行します。これは、コンテキストの中では、データフローの概要のステップ**#8**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### スクリプトの実行
 
 これはSQLスクリプトなので、ネイティブのVS Code拡張機能を使用して実行します。`steps/08_orchestrate_jobs.sql`スクリプトをVS Codeで開き、エディタウィンドウの右上にある「すべてのステートメントを実行」ボタンを使用して全体を実行します。
@@ -700,10 +700,10 @@ Snowflakeでは、オペレーションプロセスやモニタリングプロ�
 
 タスクグラフは次のように表示されます。
 
-<img src="assets/ui-snowsight-task-graph.png" width="800" />
+![assets/ui-snowsight-task-graph.png](assets/ui-snowsight-task-graph.png)
 次にタスク実行履歴の例を示します。
 
-<img src="assets/ui-snowsight-task-run-history.png" width="800" />
+![assets/ui-snowsight-task-run-history.png](assets/ui-snowsight-task-run-history.png)
 詳細とアカウントレベルのタスク履歴の表示については、「[タスク履歴の表示](https://docs.snowflake.com/ja/user-guide/ui-snowsight-tasks.html)」ドキュメントを参照してください。
 
 <!-- ------------------------ -->
@@ -712,7 +712,7 @@ Snowflakeでは、オペレーションプロセスやモニタリングプロ�
 
 このステップでは、POS注文テーブルに新しいデータを追加し、エンドツーエンドのパイプライン全体を実行して新しいデータを処理します。このパイプライン全体は、Snowflakeの高度なストリーム/CDC機能を活用してデータを段階的に処理します。これは、コンテキストの中では、データフローの概要のステップ**#9**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### スクリプトの実行
 
 これはSQLスクリプトなので、ネイティブのVS Code拡張機能を使用して実行します。`steps/09_process_incrementally.sql`スクリプトをVS Codeで開き、エディタウィンドウの右上にある「すべてのステートメントを実行」ボタンを使用して全体を実行します。
@@ -756,7 +756,7 @@ ORDER BY SCHEDULED_TIME DESC
 
 このステップでは、`FAHRENHEIT_TO_CELSIUS_UDF()` UDFに変更を加えてから、CI/CDパイプラインで展開します。サードパーティのPythonパッケージを使用するように`FAHRENHEIT_TO_CELSIUS_UDF()` UDFを更新し、それをフォークしたGitHubレポジトリにプッシュし、最後にGitHubアクションワークフローでSnowCLIを使用して展開します。これは、コンテキストの中では、データフローの概要のステップ**#10**に当たります。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 ### 華氏から摂氏への変換UDFの更新
 
 ハードコードされた温度変換を`scipy`のパッケージに置き換えます。まず、`steps/05_fahrenheit_to_celsius_udf/app.py`スクリプトにいくつかの変更を加えます。このファイルでは`import`コマンドを追加し、`main()`関数の本文を置き換えます。`steps/05_fahrenheit_to_celsius_udf/app.py`スクリプトをVS Codeで開き、次のセクションを置き換えます。
@@ -840,7 +840,7 @@ GitHubアクションワークフローがSnowflakeアカウントに接続で�
 
 すべてのシークレットの追加が完了すると、ページは次のようになります。
 
-<img src="assets/github-actions-secrets.png" width="800" />
+![assets/github-actions-secrets.png](assets/github-actions-secrets.png)
 > aside positive
 > 
 > **ヒント** - シークレットを管理するためのさらに優れたソリューションとして、[GitHubアクション環境](https://docs.github.com/en/actions/reference/environments)を活用できます。この環境では、シークレットをグループ化し、環境ごとに保護ルールを定義できます。
@@ -851,10 +851,10 @@ GitHubアクションワークフローがSnowflakeアカウントに接続で�
 
 まず、左側のナビゲーションバーにある「ソース管理」拡張機能を開くと、変更のある2つのファイルが表示されます。それぞれのファイル名の右側にある`+`（プラス）記号をクリックして、変更をステージングします。次に、「メッセージ」ボックスにメッセージを入力し、青の「`Commit`」ボタンをクリックして変更をローカルにコミットします。ボタンをクリックする前は、次のように表示されます。
 
-<img src="assets/vs_code_repo_commit.png" width="400" />
+![assets/vs_code_repo_commit.png](assets/vs_code_repo_commit.png)
 この時点では、これらの変更はローカルにコミットされているだけで、GitHubのフォークしたレポジトリにはまだプッシュされていません。これを行うには、青の「`Sync Changes`」ボタンをクリックして、これらのコミットをGitHubにプッシュします。ボタンをクリックする前は、次のように表示されます。
 
-<img src="assets/vs_code_repo_push.png" width="400" />
+![assets/vs_code_repo_push.png](assets/vs_code_repo_push.png)
 ### GitHubアクションワークフローの表示
 
 このレポジトリには、非常にシンプルなGitHubアクションCI/CDパイプラインがすでに設定されています。このワークフローのコードを確認するには、VS Codeで`.github/workflows/build_and_deploy.yaml`ファイルを開きます。
@@ -866,7 +866,7 @@ GitHubのフォークしたレポジトリに変更をプッシュすると、�
 * 最新の特定の実行の名前をクリックします（入力したコメントと一致する必要があります）。
 * 実行概要ページで`deploy`ジョブをクリックし、さまざまなステップの出力を参照します。特に、`Deploy Snowpark apps`ステップの出力を確認するとよいでしょう。
 
-<img src="assets/github-actions-run-summary.png" width="800" />
+![assets/github-actions-run-summary.png](assets/github-actions-run-summary.png)
 `Deploy Snowpark apps`ステップの出力はすでに見覚えがあり、前のステップでSnowCLIを実行したときにVS Codeのターミナルに表示されたものと同じはずです。唯一異なるのは出力の順序ですが、何が起きているかはわかるはずです。
 
 <!-- ------------------------ -->
@@ -881,7 +881,7 @@ GitHubのフォークしたレポジトリに変更をプッシュすると、�
 
 このクイックスタートでは多くのことを学習しました。ここまでで、Snowpark Pythonストアドプロシージャを使用して堅牢なデータエンジニアリングパイプラインを構築しました。このパイプラインはデータを段階的に処理し、Snowflakeタスクとオーケストレーションされ、CI/CDパイプラインで展開されます。また、Snowflakeの新しい開発者CLIツールとVisual Studio Code拡張機能の使用方法も学習しました。以下に簡単な要約を図で示します。
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 しかし、実際にはSnowparkでできることをほんの少しかじっただけです。これで、Snowpark Pythonを使用して独自のデータエンジニアリングパイプラインを構築するために必要な構成要素と例を入手できたと思います。では、これから何を構築しますか？
 
 ### ここまで学んだ内容

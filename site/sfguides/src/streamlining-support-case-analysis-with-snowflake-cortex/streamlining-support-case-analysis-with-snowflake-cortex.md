@@ -15,7 +15,7 @@ Support case analysis is a critical task for any product-driven company. Underst
 
 By completing this QuickStart guide, you will deploy a Streamlit application that leverages Snowflake Cortex AI features like LLM Inference and Cortex Search for summarization, search and analysis, alongside the LangChain framework to chain together interoperable components for large language models (LLMs).By leveraging Snowflake Cortex, this solution not only processes but also meaningfully summarizes support tickets, aiding in more agile issue resolution and strategic planning.
 
-<img src="assets/architecture.png"/>
+![assets/architecture.png](assets/architecture.png)
 
 ### What is Cortex Search
 Cortex Search provides low-latency, high-quality fuzzy search capabilities for Snowflake data, enabling a range of advanced search experiences, including Retrieval-Augmented Generation (RAG) applications that leverage Large Language Models (LLMs).
@@ -114,7 +114,7 @@ Here is the [Streamlit source code](https://github.com/Snowflake-Labs/sfguide-an
 
 In the Support Case Summary page one can view support case summaries using Cortex LLMs. It retrieve the Summary tables created for different categories and lists them in a dropdown. The app displays the most recent record’s summary from the selected table and includes an expandable section to show each step of intermediate analysis.
 
-<img src="assets/Supportcasesummary.png"/>
+![assets/Supportcasesummary.png](assets/Supportcasesummary.png)
 
 ### Support Cases Chatbot
 
@@ -133,7 +133,7 @@ Sidebar Configurations: Allows users to select which Cortex search service, togg
 This enables efficient question-answering on support cases with context-based responses.
 
 
-<img src="assets/SupportcasesChatbot.png"/>
+![assets/SupportcasesChatbot.png](assets/SupportcasesChatbot.png)
 
 ### Process Cases
 
@@ -146,7 +146,7 @@ This Streamlit page processes and summarizes Snowflake support cases to identify
 3. Processing and Cost Estimate: On the click of the button, the processing begins and a new cortex search service is created for the filtered data. A progress bar shows completion status. Afterward, it provides token usage, processing time, and cost estimates.
 
 
-<img src="assets/processcases.png"/>
+![assets/processcases.png](assets/processcases.png)
 
 
 <!-- ------------------------ -->

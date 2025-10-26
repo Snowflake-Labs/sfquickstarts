@@ -214,7 +214,7 @@ cd horizon-intra-org-scripts
 ```
 
 If you prefer not to use git, `Download ZIP` from the Lab Scripts [github site](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
-<img src="assets/code-download.jpg" width="400" height="250">
+![assets/code-download.jpg](assets/code-download.jpg)
 
 Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface) - one script per worksheet
 

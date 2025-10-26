@@ -34,10 +34,10 @@ O Streamlit *(adquirido pela Snowflake em março de 2022)* é uma biblioteca Pyt
 
 ### O que será desenvolvido 
 - **Uma previsão de vendas por local**<br>
-<img src="assets/notebook_preview.gif"/>
+![assets/notebook_preview.gif](assets/notebook_preview.gif)
 
 - **Uma aplicação Streamlit para encontrar os melhores locais com base nas vendas previstas**<br>
-<img src="assets/streamlit_preview.gif"/>
+![assets/streamlit_preview.gif](assets/streamlit_preview.gif)
 
 
 
@@ -65,7 +65,7 @@ A Tasty Bytes opera food trucks em várias cidades pelo mundo, e cada veículo p
   - Renomeie o banco de dados -> FROSTBYTE_SAFEGRAPH (tudo em maiúsculas)
   - Permissão para funções adicionais -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 >aside positive A SafeGraph é uma empresa global que fornece dados geoespaciais de qualquer lugar do mundo. Clientes como Esri, Tripadvisor, Mapbox e Sysco usam dados da SafeGraph para entender melhor seus clientes, criar novos produtos e tomar decisões melhores para seus negócios.
 >
@@ -171,7 +171,7 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 ```
 ### Etapa 2 - Atualizar o arquivo de autorização
 - Atualize o arquivo [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) com suas credenciais do Snowflake. O notebook Python vai usar esse arquivo para acessar suas credenciais e conectar-se ao Snowflake.<br>
-<img src="assets/auth_file.png">
+![assets/auth_file.png](assets/auth_file.png)
 >aside positive    
 > Para o parâmetro `account`, use seu [identificador de conta](https://docs.snowflake.com/pt/user-guide/admin-account-identifier). Observe que o identificador de conta não inclui o sufixo snowflakecomputing.com.
 
@@ -203,7 +203,7 @@ jupyter notebook
 ```
 
 ### Etapa 4 - Executar o notebook Jupyter
-- Abra e execute as células de [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) no notebook Jupyter. <img src = "assets/notebook_preview.png">
+- Abra e execute as células de [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) no notebook Jupyter. ![assets/notebook_preview.png](assets/notebook_preview.png)
 
 ### Solução de problemas
 - Problemas relacionados ao PyArrow: desinstale `pyarrow` antes de instalar o Snowpark.
@@ -248,7 +248,7 @@ Após implementar um modelo que prevê as vendas por turno de cada local para o 
   ```  
   streamlit run streamlit_app.py
   ```
-- Use o menu suspenso para escolher uma cidade e visualizar as recomendações atualizadas. <img src = "assets/streamlit_preview.png">
+- Use o menu suspenso para escolher uma cidade e visualizar as recomendações atualizadas. ![assets/streamlit_preview.png](assets/streamlit_preview.png)
 
 
 <!-- ------------------------ -->

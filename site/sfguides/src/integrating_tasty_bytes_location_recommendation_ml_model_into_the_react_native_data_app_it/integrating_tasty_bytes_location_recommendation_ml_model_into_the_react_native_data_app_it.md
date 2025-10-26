@@ -59,7 +59,7 @@ Tasty Bytes gestisce food truck in molte città di tutto il mondo e ogni food tr
   - Rinomina il database -> FROSTBYTE_SAFEGRAPH (tutte maiuscole)
   - Consenti l’accesso ad altri ruoli -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 >aside positive
 SafeGraph è un’azienda globale di dati geospaziali che offre dati su qualsiasi località nel mondo. Clienti come Esri, Tripadvisor, Mapbox e Sysco utilizzano i dati di SafeGraph per comprendere meglio i propri clienti, creare nuovi prodotti e prendere decisioni migliori per il proprio business.
@@ -430,7 +430,7 @@ Stiamo utilizzando l’autenticazione a coppia di chiavi per eseguire l’autent
 2. L’applicazione viene avviata in un browser web
 3. All’avvio viene visualizzata la schermata degli ordini in coda,
 
-<img src="assets/Locations.png"/>
+![assets/Locations.png](assets/Locations.png)
 
 <!-- ------------------------ -->
 ## Pulizia

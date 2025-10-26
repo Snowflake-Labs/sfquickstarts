@@ -25,7 +25,7 @@ There are 4 steps to setting up the template:
   3.  Transform the Google Analytics events data using the provided SQL script
   4.  Launch the template in Sigma and **Swap Sources** to the table created in step 3
 
-<img src="assets/template_preview.png" width="800"/>
+![assets/template_preview.png](assets/template_preview.png)
 
 ### What You’ll Build
 <ul>
@@ -585,7 +585,7 @@ call usp_materialize_ga_events('GA_RAW_DATA_DEST_DB.GA_RAW_DATA_DEST_SCHEMA.ANAL
 <br>
 Once you've set this value, you can run the entire script and verify that you can see the new `events` table in your Sigma connection browser.
 <br>
-<img src="assets/events_in_connection.png" width=300>
+![assets/events_in_connection.png](assets/events_in_connection.png)
 
 <!-- END OF SECTION-->
 
@@ -597,15 +597,15 @@ From the home page, navigate to the `Templates` section, then to `External`.
 
 Click on the `Google Analytics 4` template:
 
-<img src="assets/template_in_menu.png" width=700>
+![assets/template_in_menu.png](assets/template_in_menu.png)
 
 You will be prompted to swap data sources. Click `Swap Now`:
 
-<img src="assets/swap_source_prompt.png" width=500>
+![assets/swap_source_prompt.png](assets/swap_source_prompt.png)
 
 Verify that Sigma has found the `events` table and click `Swap Now`:
 
-<img src="assets/sources_matched.png" width=800>
+![assets/sources_matched.png](assets/sources_matched.png)
 
 Click `Save As` and give your workbook a title.
 
@@ -615,7 +615,7 @@ You should now see the Google Analytics 4 Template on top of your own data.
 
 For example:
 
-<img src="assets/template_preview.png" width="800"/>
+![assets/template_preview.png](assets/template_preview.png)
 
 <!-- END OF SECTION-->
 
@@ -637,8 +637,8 @@ In this QuickStart we created a table called `events` with analytics-ready GA4 d
 [Sigma Blog](https://www.sigmacomputing.com/blog/)<br>
 <br>
 
-[<img src="./assets/twitter.png" width="75"/>](https://twitter.com/sigmacomputing)&emsp;
-[<img src="./assets/linkedin.png" width="75"/>](https://www.linkedin.com/company/sigmacomputing)&emsp;
-[<img src="./assets/facebook.png" width="75"/>](https://www.facebook.com/sigmacomputing)
+[![./assets/twitter.png](./assets/twitter.png)](https://twitter.com/sigmacomputing)&emsp;
+[![./assets/linkedin.png](./assets/linkedin.png)](https://www.linkedin.com/company/sigmacomputing)&emsp;
+[![./assets/facebook.png](./assets/facebook.png)](https://www.facebook.com/sigmacomputing)
 
 <!-- END OF QUICKSTART -->

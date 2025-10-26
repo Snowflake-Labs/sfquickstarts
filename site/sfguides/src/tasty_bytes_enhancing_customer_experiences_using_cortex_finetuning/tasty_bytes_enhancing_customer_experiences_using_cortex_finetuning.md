@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-<img src="assets/ece_header.png"/>
+![assets/ece_header.png](assets/ece_header.png)
 
 
 ### Overview
@@ -83,7 +83,7 @@ Click the button below which will direct you to our Tasty Bytes SQL file that is
 
 Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard. 
 
-<img src="assets/copysnowsight.png"/>
+![assets/copysnowsight.png](assets/copysnowsight.png)
 
 
 ## Setup and Prepare Data

@@ -141,13 +141,13 @@ Posit Workbench provides several IDEs, including VS Code, RStudio Pro, and Jupyt
 
 Within Posit Workbench, click `New Session` to launch a new session.
 
-<img src="assets/posit_workbench/01-start_new_session.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/01-start_new_session.png](assets/posit_workbench/01-start_new_session.png)
 
 #### Step 2: Select an IDE
 
 When prompted, select VS Code.
 
-<img src="assets/posit_workbench/02-create_new_session_snowflake.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/02-create_new_session_snowflake.png](assets/posit_workbench/02-create_new_session_snowflake.png)
 
 #### Step 3: Log into your Snowflake account
 
@@ -155,12 +155,12 @@ Next, connect to your Snowflake account from within Posit Workbench.
 Under `Session Credentials`, click the button with the Snowflake icon to sign in to Snowflake.
 Follow the sign in prompts.
 
-<img src="assets/posit_workbench/03-snowflake_login.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/03-snowflake_login.png](assets/posit_workbench/03-snowflake_login.png)
 
 When you're successfully signed in to Snowflake, the Snowflake button will turn blue
 and there will be a check mark in the upper-left corner.
 
-<img src="assets/posit_workbench/04-snowflake_login_success.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/04-snowflake_login_success.png](assets/posit_workbench/04-snowflake_login_success.png)
 
 
 #### Step 4: Launch VS Code
@@ -185,7 +185,7 @@ Install these extensions:
 the Extensions icon in the Activity bar to open the Extensions view.
 2. **Search for "Quarto"** to find the Quarto extension.
 
-<img src="assets/vs_code/02-extensions_quarto.png" style="width: 200px; height: auto;" />
+![assets/vs_code/02-extensions_quarto.png](assets/vs_code/02-extensions_quarto.png)
 
 
 3. **Install the Quarto extension.** Click on the Quarto extension, then click `Install`.
@@ -265,7 +265,7 @@ but with the ability to run code chunks.
 You can run any of the code chunks by clicking the `Run Cell` button above the chunk
 in VS Code.
 
-<img src="assets/quarto/run-chunk.png" style="width: 400px; height: auto;" />
+![assets/quarto/run-chunk.png](assets/quarto/run-chunk.png)
 
 When you run a cell, cell output is displayed in the Jupyter interactive console.
 

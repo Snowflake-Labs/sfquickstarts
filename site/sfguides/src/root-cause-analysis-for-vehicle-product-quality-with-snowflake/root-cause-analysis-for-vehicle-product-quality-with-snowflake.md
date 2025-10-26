@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-<img src="assets/manufacturing.png"/>
+![assets/manufacturing.png](assets/manufacturing.png)
 
 In the automotive industry, OEMs often use a hybrid cloud strategy for data storage. For example, Connected Mobility data (vehicle and telematics) might reside in AWS's US-West-2 region, while parts manufacturing data is stored in GCP's US-Central-1. Additionally, Supplier Quality data could be hosted in yet another cloud or region, such as Azure US-West-2. This distribution is merely illustrative, emphasizing a strategy to avoid reliance on any single public cloud provider. However, this multi-cloud approach introduces several challenges, particularly for the customer. One notable challenge is conducting "Vehicle Quality Root Cause Analysis (RCA)."
 
@@ -59,7 +59,7 @@ This section will walk you through creating various objects
 
 #### High-Level Workflow
 
-<img src="assets/connectedmobilityflow.png"/>
+![assets/connectedmobilityflow.png](assets/connectedmobilityflow.png)
 
 
 In a real-world situation with Snowflakes Data Sharing each of the data will be shared from a particular region and cloud provider. In this scenario for sake of simplicity we will assume the data is available in a single cloud provider, AWS S3 bucket. We will be downloading the data and storing in tables in a Snowflake account and use that for further analytics.
@@ -116,11 +116,11 @@ We will carry the same assumption and the data and maps displyed in the apps wil
 
 This page displays a map with the locations of data sources. It uses Pydeck for the visualization.
 
-<img src="assets/homepage.png"/>
+![assets/homepage.png](assets/homepage.png)
 
 ### Connected Mobility Data App
 
-<img src="assets/ConnectedMobilitydata_Analysis.png"/>
+![assets/ConnectedMobilitydata_Analysis.png](assets/ConnectedMobilitydata_Analysis.png)
 
 This page serves to display and analyze connected mobility data. Overall in this page the user can :
 
@@ -134,7 +134,7 @@ This page serves to display and analyze connected mobility data. Overall in this
 
 ### Manufacturing Data App
 
-<img src="assets/Manufacturingdata_analysis.png"/>
+![assets/Manufacturingdata_analysis.png](assets/Manufacturingdata_analysis.png)
 
 This page serves to display and analyze manufacturing data related to vehicle battery parts. This page provides insights into the suppliers, manufacturing facilities, battery types, and components involved in the production process. Let's break down its functionality:
 
@@ -144,7 +144,7 @@ This page serves to display and analyze manufacturing data related to vehicle ba
   
 ### Supplier Quality App
 
-<img src="assets/Supplierquality_analysis.png"/>
+![assets/Supplierquality_analysis.png](assets/Supplierquality_analysis.png)
 
 
 This page provides a detailed analysis of battery part numbers, their performance metrics, and the corresponding supplier information.  Let's break down its functionality:
@@ -159,7 +159,7 @@ This page provides a detailed analysis of battery part numbers, their performanc
 
 ### RCA Bot
 
-<img src="assets/RCABot.png"/>
+![assets/RCABot.png](assets/RCABot.png)
 
 This page provides a chat interface for users to input natural language queries and get corresponding SQL queries, which can then be executed to retrieve and visualize data. Here’s a detailed breakdown of its functionality:
 

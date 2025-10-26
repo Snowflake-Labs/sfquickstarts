@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-<img src="assets/time_series_analytics_banner.png"/>
+![assets/time_series_analytics_banner.png](assets/time_series_analytics_banner.png)
 
 This quickstart explores several time series features using FactSet Tick Data, including TIME_SLICE, ASOF_JOIN, and RANGE BETWEEN for insights into trade data. Aggregating time-series data through downsampling reduces data size and storage needs, using functions like TIME_SLICE and DATE_TRUNC for efficiency. ASOF JOIN simplifies joining time-series tables, matching trades with the closest previous quote, ideal for transaction-cost analysis in financial trading. Windowed aggregate functions, such as moving averages using the RANGE BETWEEN window frame, allow trend analysis over time, accommodating data gaps for flexible rolling calculations.
 
@@ -74,20 +74,20 @@ You can downsample data using the TIME_SLICE function, which groups records into
 
 [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice) calculates the beginning or end of a “slice” of time, where the length of the slice is a multiple of a standard unit of time (minute, hour, day, etc.). This function can be used to calculate the start and end times of fixed-width “buckets” into which data can be categorized.
 
-<img src="assets/time_slice.png"/>
+![assets/time_slice.png](assets/time_slice.png)
 
 ### Joining Time-Series Data
 
 The [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join) construct simplifies joining tables with time-series data. Commonly used in financial trading analysis, ASOF JOIN enables transaction-cost analysis by matching trades with the closest previous quote. This method is beneficial for analyzing historical data, especially when timestamps from different devices are not perfectly aligned. We will determine transaction costs by joining trades with the closest preceding price data using an ASOF JOIN.
 
-<img src="assets/asof.png"/>
+![assets/asof.png](assets/asof.png)
 
-<img src="assets/asof2.png"/>
+![assets/asof2.png](assets/asof2.png)
 
 ### Using Windowed Aggregations
 Windowed aggregate functions allow you to analyze trends over time by computing rolling calculations (such as moving averages) within defined subsets of a dataset. The [RANGE BETWEEN](https://docs.snowflake.com/en/sql-reference/functions-analytic) window frame, ordered by timestamps or numbers, remains unaffected by gaps in the data, providing flexible rolling aggregations. A range-based window frame consists of a logically computed set of rows rather than a physical number of rows as would be expressed in a row-based frame. In this solution you will explore RANGE BETWEEN to create interesting time series metrics on our data.
 
-<img src="assets/averages.png"/>
+![assets/averages.png](assets/averages.png)
 
 ### Architecture
 This solution harnesses the power of Snowflake to extract valuable insights from high-frequency financial data. By utilizing FactSet Tick Data, available on the Snowflake Marketplace, we've constructed a robust data foundation. Synthetic closing prices, derived from the tick history, are stored in the closing_prices table within the raw schema.
@@ -100,14 +100,14 @@ Snowflake Notebooks serve as our interactive workspace for exploring time series
 - Identify trends using RANGE-based sliding window
 - Measure volatility using LEAD & LAG
 
-<img src="assets/Architecture.png"/>
+![assets/Architecture.png](assets/Architecture.png)
 
 ### Snowflake Notebook
 Import the following Snowflake Notebook in Snowsight and run each of the cells: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/blob/main/notebooks/0_start_here.ipynb)
 
-<img src="assets/import.png"/>
+![assets/import.png](assets/import.png)
 
-<img src="assets/create_notebook.png"/>
+![assets/create_notebook.png](assets/create_notebook.png)
 
 <!-- ------------------------ -->
 ## Streamlit App Using Cortex Analyst

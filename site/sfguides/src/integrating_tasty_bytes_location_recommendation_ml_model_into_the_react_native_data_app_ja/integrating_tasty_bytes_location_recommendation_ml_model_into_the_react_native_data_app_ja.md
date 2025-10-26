@@ -69,7 +69,7 @@ Tasty Bytesは世界中の都市でキッチンカーを運行しており、各
   - データベースの名称をFROSTBYTE_WEATHERSOURCE（すべて大文字）に変更
   - 追加ロールへの付与 -> \[PUBLIC（公開）]
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 > SafeGraphは、世界中のあらゆる場所に関するデータを提供するグローバルな地理空間データ会社です。Esri、Tripadvisor、Mapbox、Syscoなどの顧客は、SafeGraphのデータを使用して、自社の顧客をより正確に把握し、新しい製品を生み出し、より的確な経営判断を行っています。
 
 ### ステップ2 - オブジェクトの作成、データのロード、データの結合を行う
@@ -449,7 +449,7 @@ GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLO
 2. この操作により、Webブラウザでアプリが起動します。
 3. 起動すると、「キュー内の注文」画面が表示されます。
 
-<img src="assets/Locations.png"/>
+![assets/Locations.png](assets/Locations.png)
 <!-- ------------------------ -->
 ## クリーンアップ
 

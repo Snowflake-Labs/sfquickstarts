@@ -11,11 +11,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-<img src="assets/tb_unistore_driver_app_header.png"/>
+![assets/tb_unistore_driver_app_header.png](assets/tb_unistore_driver_app_header.png)
 
 Tasty Bytes is a fictional global food truck enterprise that has established its presence in 30 cities spanning across 15 countries, boasting a network of 450 trucks offering 15 diverse menu types under various brands. Catering to the needs of both customers and truck owners/operators, Tasty Bytes has developed a robust Truck Driver App. This specialized app provides truck owners/operators with a comprehensive 360-degree view of the order process, allowing them to efficiently manage their operations. Once orders are placed by customers, they are queued for processing, and drivers have the flexibility to prioritize each order based on various factors. This driver-focused app grants efficient access to both historical and real-time order data, enabling swift updates on ongoing orders. However, the exponential rise in daily order volumes, driven by Tasty Bytes growing success, has strained the application's performance and its ability to support concurrent users effectively.
 
-<img src="assets/BusinessFlow.png"/>
+![assets/BusinessFlow.png](assets/BusinessFlow.png)
 
 To tackle scaling challenges, the implementation of Hybrid Tables within this lightweight transactional application aims to harness several advantages. These tables provide quicker lookups for current and past orders, essential for driver efficiency. Supporting ACID transactions with row locking, they simplify the process of updating order statuses, ensuring data integrity and reliability. Moreover, Hybrid Tables facilitate seamless integration with Snowflake's existing business data, allowing for robust analytics. This blend of features enhances overall performance, scalability, and flexibility, making Hybrid Tables the ideal solution for addressing the evolving needs of Tasty Bytes food truck network.
 
@@ -63,11 +63,11 @@ You will use [Snowsight](https://app.snowflake.com/), the Snowflake web interfac
 ### Creating Objects, Loading Data, and Accessing Data
 - Navigate to Worksheets
 
-<img src="assets/Worksheets.png"/>
+![assets/Worksheets.png](assets/Worksheets.png)
 
 - click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
-<img src="assets/NewWorksheet.png"/>
+![assets/NewWorksheet.png](assets/NewWorksheet.png)
 
 Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema),
 ingest raw orders data from S3.
@@ -296,7 +296,7 @@ In the Persistence layer, Snowflake serves as the foundation, with an API develo
 
 For the User Interface layer, React Native Framework is utilized, and the application is constructed using the Expo Framework.
 
-<img src="assets/Architecture.png"/>
+![assets/Architecture.png](assets/Architecture.png)
 
 The application is versatile, capable of functioning as either a mobile or web application, compatible with iOS, Android, and Web platforms. Although designed for both, for demonstration purposes, it has been deployed as a Web Application.
 
@@ -356,7 +356,7 @@ create or replace HYBRID TABLE FROSTBYTE_TASTY_BYTES_APP_UNISTORE.RAW.ORDER_HEAD
 );
 
 ```
-<img src="assets/Orders.png"/>
+![assets/Orders.png](assets/Orders.png)
 
 Hybrid tables also offer the capability to include secondary indexes. In our setup, we've indexed attributes such as TRUCK_ID, ORDER_TS, LOCATION_ID, and ORDER_STATUS. These indexes are instrumental in facilitating rapid lookups within the application, enhancing its responsiveness and user experience.
 
@@ -387,12 +387,12 @@ You may also explore additional hybrid tables such as TRUCK, MENU, and CUSTOMER_
 
 2. Click on the View Order button to access detailed order information. This action triggers a query on the hybrid table, employing point lookups to swiftly retrieve the specified order details.
 
-<img src="assets/OrderDetails.png"/>
+![assets/OrderDetails.png](assets/OrderDetails.png)
 
 3. Press the ORDER READY button to finalize the order. This initiates an update in the Hybrid Table, swiftly setting the Order Status value to Completed while utilizing rapid updates with row locking mechanisms. Afterward, you will be redirected back to the InQueue Orders Screen.
 4. Now, Click on Order History tab to see the completed orders.
 
-<img src="assets/OrderHistory.png"/>
+![assets/OrderHistory.png](assets/OrderHistory.png)
 
 <!-- ------------------------ -->
 ## Exploring Hybrid Tables

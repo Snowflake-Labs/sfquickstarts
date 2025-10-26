@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization
 <!-- ------------------------ -->
 ## Overview
-<img src="assets/Player_360_banner.png"/>
+![assets/Player_360_banner.png](assets/Player_360_banner.png)
 
 In the gaming industry, Player data is often fragmented across multiple sources, including event streams, purchase histories, and platform-specific behaviors. This disjointed data makes it challenging for gaming companies and key personas such as marketing and product to gain a holistic understanding of individual players and overall game performance. In this demo we will create a "Player 360" dashboard, which integrates and visualizes diverse player data sources into a single, dynamic "Player Card." This card will offer insights into player activity & interactions (behavior, buying habits, etc), and this preliminary use case will potentially show the highest risk for churn players. Similarly, we will create a “Game 360” dashboard which integrates games-level insights across the playerbase, focusing on key KPIs, metrics, and overall user behavior.
 
@@ -42,7 +42,7 @@ By aggregating these data streams in a unified system and leveraging Snowflake f
 
 **Architecture Diagram:**
 
-<img src="assets/Player_360_Reference_Architecture.png"/>
+![assets/Player_360_Reference_Architecture.png](assets/Player_360_Reference_Architecture.png)
 
 
 
@@ -62,17 +62,17 @@ By aggregating these data streams in a unified system and leveraging Snowflake f
 Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. **Make sure your the files match the following**:
 
   - *Notebook 1:* Upload `0_start_here.ipynb` notebook file and `environment.yml` file  to the `@PLAYER_360.ANALYTIC.notebook_static_churn_prediction` stage 
-<img src="assets/upload_static_churn_prediction.png"/>
+![assets/upload_static_churn_prediction.png](assets/upload_static_churn_prediction.png)
 
   - *Notebook 2:* Upload only the `1_Rolling_Churn_Prediction_Model.ipynb` notebook file (excluding environment.yml) to `@PLAYER_360.ANALYTIC.notebook_rolling_churn_prediction` stage
-<img src="assets/upload_rolling_churn_prediction.png"/>
+![assets/upload_rolling_churn_prediction.png](assets/upload_rolling_churn_prediction.png)
 <br><br>
 
 - **Upload required  [streamlit](https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/tree/main/streamlit) files** to the correct stages within the `PLAYER_360.APP` schema
 Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. **Make sure your the files match the following**:
 
   - *Streamlit Files:* Upload the following files (`PLAYER_360.py, GAME_360.py, environment.yml`) in streamlit folder to the `@PLAYER_360.APP.streamlit_player36` stage. Note that the images subfolder does not need to be uploaded
-<img src="assets/upload_streamlit.png"/>
+![assets/upload_streamlit.png](assets/upload_streamlit.png)
 <br></br>
 
 
@@ -91,7 +91,7 @@ QUERY_WAREHOUSE = 'PLAYER_360_DATA_APP_WH';
 
 To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open **PLAYER_360_static_churn_prediction** notebook and run each of the cells.
 
-<img src='assets/0_notebook_img.png'>
+![assets/0_notebook_img.png](assets/0_notebook_img.png)
 
 Within this notebook, you'll visualize player segments and analyze key churn features, perform feature engineering using the Snowflake Preprocessing Pipelines, and using the model registry to manage and log your ML Model. 
 
@@ -168,7 +168,7 @@ ALTER NOTEBOOK PLAYER_360_rolling_churn_prediction set external_access_integrati
 
 To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open **PLAYER_360_rolling_churn_prediction** notebook and run each of the cells.
 
-<img src='assets/1_notebook_img.png'>
+![assets/1_notebook_img.png](assets/1_notebook_img.png)
 
 This notebook creates a ML Model that can handle inference on incoming near-real time streaming data, representing the use case of predicting churn based off a customer's recent behavior as opposed to overall behavior. Within this notebook, you'll explore how to use Snowflake Notebooks using Container Runtime, perform even more data and feature engineering, and utilize the Model Registry.
 
@@ -190,7 +190,7 @@ COMMENT = '{"origin":"sf_sit-is","name":"player_360","version":{"major":1, "mino
 To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Streamlit tab. Open **PLAYER_360_streamlit** app and explore the different features!
 
 **2a)** Explore Player 360 page
-<img src='assets/Player_360_streamlit.png'>
+![assets/Player_360_streamlit.png](assets/Player_360_streamlit.png)
 
 *Recommended Actions:*
 - Navigate to Player Card for Player 1001 to analyze user behavior.
@@ -205,7 +205,7 @@ To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the P
 <br>
 
 **2b)** Explore Game 360 page
-<img src='assets/Game_360_streamlit.png'>
+![assets/Game_360_streamlit.png](assets/Game_360_streamlit.png)
 
 *Recommended Actions:*
 - Review KPIs for the overall game performance dataset.

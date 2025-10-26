@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-<img src='./assets/zts_header.png'>
+![./assets/zts_header.png](./assets/zts_header.png)
 
 ### Overview
 
@@ -21,7 +21,7 @@ We'll apply these concepts using a sample dataset from our fictitious food truck
 
 ### Who is Tasty Bytes?
 
-<img src='./assets/whoistb.png'>
+![./assets/whoistb.png](./assets/whoistb.png)
 
 Our mission is to provide unique, high-quality food options in a convenient and cost-effective manner, emphasizing the use of fresh ingredients from local vendors. Their vision is to become the largest food truck network in the world with a zero carbon footprint.
 
@@ -80,7 +80,7 @@ Now that you have your SQL file, it's time to add the setup SQL and execute it.
 2. **Paste into your SQL File:** Return to your Zero To Snowflake Setup SQL file in Snowflake and paste the entire script into the editor.  
 3. **Run the Script:** To execute all the commands in the SQL file sequentially, click the **"Run All"** button located at the top-left of the editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
 
-<img src='./assets/create_a_worksheet.gif'>
+![./assets/create_a_worksheet.gif](./assets/create_a_worksheet.gif)
 
 ### **Looking Ahead**
 
@@ -96,7 +96,7 @@ For each new vignette, you will:
 <!-- end list -->
 
 ## Get Started with Snowflake
-<img src='./assets/getting_started_header.png'>
+![./assets/getting_started_header.png](./assets/getting_started_header.png)
 
 ### Overview
 
@@ -224,7 +224,7 @@ FROM analytics.orders_v o
 GROUP BY o.truck_brand_name
 ORDER BY total_sales DESC;
 ```
-<img src="assets/vignette-1/query_result_cache.png">
+![assets/vignette-1/query_result_cache.png](assets/vignette-1/query_result_cache.png)
 
 > **Query Result Cache**: Results are retained for any query for 24 hours. Hitting the result cache requires almost no compute resources, making it ideal for frequently run reports or dashboards. The cache resides in the Cloud Services Layer, making it globally accessible to all users and warehouses in the account. For more information, please visit the [documentation on using persisted query results](https://docs.snowflake.com/en/user-guide/querying-persisted-results).
 
@@ -375,7 +375,7 @@ CREATE OR REPLACE RESOURCE MONITOR my_resource_monitor
              ON 100 PERCENT DO SUSPEND_IMMEDIATE;
 ```
 
-<!-- \<img src="assets/create\_rm.png"/\> -->
+<!-- \![assets/create\_rm.png](assets/create\_rm.png) -->
 
 ### Step 2 - Applying the Resource Monitor
 
@@ -409,7 +409,7 @@ Let's take a look at the Budget Page on Snowsight.
 
 Navigate to **Admin** » **Cost Management** » **Budgets**.
 
-<img src="assets/vignette-1/budget_page.png">
+![assets/vignette-1/budget_page.png](assets/vignette-1/budget_page.png)
 
 **Key:**
 1. Warehouse Context
@@ -430,7 +430,7 @@ Configuring a budget is done through the Snowsight UI.
 5.  Enter a verified notification email address.
 6.  Click **+ Tags & Resources** and add the **TB\_101.ANALYTICS** schema and the **TB\_DE\_WH** warehouse to be monitored.
 7.  Click **Save Changes**.
-<img src="assets/vignette-1/edit_budget.png">
+![assets/vignette-1/edit_budget.png](assets/vignette-1/edit_budget.png)
 
 > For a detailed guide on Budgets, please see the [Snowflake Budgets Documentation](https://docs.snowflake.com/en/user-guide/budgets).
 
@@ -449,17 +449,17 @@ Let's try it now.
 2.  Enter `truck` into the search bar.
 3.  Observe the results. You will see categories of objects on your account, such as tables and views, as well as relevant documentation.
 
-<img src="assets/vignette-1/universal_search_truck.png">
+![assets/vignette-1/universal_search_truck.png](assets/vignette-1/universal_search_truck.png)
 
 ### Step 2 - Using Natural Language Search
 
 You can also use natural language. For example, search for: `Which truck franchise has the most loyal customer base?`
 Universal search will return relevant tables and views, even highlighting columns that might help answer your question, providing an excellent starting point for analysis.
 
-<img src="assets/vignette-1/universal_search_natural_language_query.png">
+![assets/vignette-1/universal_search_natural_language_query.png](assets/vignette-1/universal_search_natural_language_query.png)
 
 ## Simple Data Pipeline
-<img src='./assets/data_pipeline_header.png'>
+![./assets/data_pipeline_header.png](./assets/data_pipeline_header.png)
 
 ### Overview
 
@@ -746,7 +746,7 @@ To access the DAG in Snowsight:
 
 You will now see a visualization of your pipeline, showing how the base tables flow into your dynamic tables.
 
-<img src="assets/vignette-2/dag.png">
+![assets/vignette-2/dag.png](assets/vignette-2/dag.png)
 
 ## Snowflake Cortex AI
 
@@ -786,7 +786,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 ## Cortex Playground
 
 
-<img src='./assets/cortex_playground_header.png'>
+![./assets/cortex_playground_header.png](./assets/cortex_playground_header.png)
 
 ### Overview
 
@@ -811,7 +811,7 @@ Let's begin by connecting directly to customer review data within Cortex Playgro
 8.  Click **Done**.
 9.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. There are multiple reviews available for each truck brand. For instance, you can select "**Better Of Bread**" to narrow down the reviews. If "**Better Of Bread**" isn't available, please choose any other truck brand from the dropdown and proceed with one of its reviews.
 
-<img src = "assets/vignette-3/cortex-playground-connect.gif">
+![assets/vignette-3/cortex-playground-connect.gif](assets/vignette-3/cortex-playground-connect.gif)
 
 > **What you've accomplished:** You now have direct access to customer review data within the AI interface. The filter allows you to focus your analysis on specific truck brands, making your experiment more targeted and relevant.
 ### Step 2 - Compare AI Models for Insights
@@ -829,7 +829,7 @@ Now, let's analyze customer reviews to extract specific operational insights and
 
  `Analyze this customer review across multiple dimensions: sentiment score with confidence level, key theme extraction, competitive positioning insights, operational impact assessment, and priority ranking for management action`
 
-<img src = "assets/vignette-3/cortex-playground-compare-two-model.png">
+![assets/vignette-3/cortex-playground-compare-two-model.png](assets/vignette-3/cortex-playground-compare-two-model.png)
 
 > **Key Insight:** Notice the distinct strengths: Claude provides structured, executive-ready analysis with clear confidence. In contrast, Snowflake’s Llama model, optimized specifically for robust business intelligence, delivers comprehensive operational intelligence enriched with strategic context and detailed competitive analysis. This highlights the power of leveraging multiple AI providers, empowering you to choose the ideal approach for your specific business needs.
 
@@ -855,9 +855,9 @@ We want to observe how adjusting parameters, especially "**temperature**," affec
 
 Give that a try and see how the responses differ\! It's pretty cool to see how these small tweaks can change the AI's "personality."
 
-<img src = "assets/vignette-3/cortex-playground-model-setting.gif">
+![assets/vignette-3/cortex-playground-model-setting.gif](assets/vignette-3/cortex-playground-model-setting.gif)
 
-<img src = "assets/vignette-3/cortex-playground-same-model.png">
+![assets/vignette-3/cortex-playground-same-model.png](assets/vignette-3/cortex-playground-same-model.png)
 
 **Observe the Impact:**
 
@@ -878,7 +878,7 @@ In this section, let's explore the core technology that takes your AI insights f
 
 Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action\! You can run it directly in a Workspace SQL file, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
 
-<img src = "assets/vignette-3/cortex-playground-view-code.png">
+![assets/vignette-3/cortex-playground-view-code.png](assets/vignette-3/cortex-playground-view-code.png)
 
 #### The SNOWFLAKE.CORTEX.COMPLETE Function
 
@@ -892,7 +892,7 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 ## AISQL Functions
 
-<img src='./assets/aisql_functions_header.png'>
+![./assets/aisql_functions_header.png](./assets/aisql_functions_header.png)
 
 
 ### Overview
@@ -956,7 +956,7 @@ GROUP BY
 ORDER BY total_reviews DESC;
 ```
 
-<img src = "assets/vignette-3/sentiment.png">
+![assets/vignette-3/sentiment.png](assets/vignette-3/sentiment.png)
 
 
 > **Key Insight**: Notice how we transitioned from analyzing reviews one at a time in Cortex Playground to systematically processing thousands. The `SENTIMENT()` function automatically scored every review and categorized them into Positive, Negative, and Neutral - giving us instant fleet-wide customer satisfaction metrics.
@@ -1006,7 +1006,7 @@ ORDER BY
   number_of_reviews DESC;
 ```
 
-<img src = "assets/vignette-3/classify.png">
+![assets/vignette-3/classify.png](assets/vignette-3/classify.png)
 
 
 > **Key Insight**: Observe how `AI_CLASSIFY()` automatically categorized thousands of reviews into business-relevant themes such as Food Quality, Service Experience, and more. We can instantly see that Food Quality is the most discussed topic across our truck brands, providing the operations team with clear, actionable insight into customer priorities.
@@ -1038,7 +1038,7 @@ ORDER BY truck_brand_name, primary_city ASC
 LIMIT 10000;
 ```
 
-<img src = "assets/vignette-3/extract.png">
+![assets/vignette-3/extract.png](assets/vignette-3/extract.png)
 
 
 > **Key Insight**: Notice how `EXTRACT_ANSWER()` distills specific, actionable insights from long customer reviews. Rather than manual review, this function automatically identifies concrete feedback like "friendly staff was saving grace" and "hot dogs are cooked to perfection." The result is a transformation of dense text into specific, quotable feedback that the operations team can leverage instantly.
@@ -1069,7 +1069,7 @@ GROUP BY
   truck_brand_name;
 ```
 
-<img src = "assets/vignette-3/summarize.png">
+![assets/vignette-3/summarize.png](assets/vignette-3/summarize.png)
 
 > **Key Insight**: The `AI_SUMMARIZE_AGG()` function condenses lengthy reviews into clear, brand-level summaries. These summaries highlight recurring themes and sentiment trends, providing decision-makers with quick overviews of each food truck's performance and enabling faster understanding of customer perception without reading individual reviews.
 
@@ -1083,7 +1083,7 @@ We've successfully demonstrated the transformative power of AI SQL functions, sh
 <!-- Uncomment when Copilot is added back -->
 <!-- ## Snowflake Copilot -->
 
-<!-- <img src='./assets/snowflake_copilot_header.png'>
+<!-- ![./assets/snowflake_copilot_header.png](./assets/snowflake_copilot_header.png)
 
 
 ### Overview
@@ -1113,7 +1113,7 @@ USE DATABASE tb_101;
 USE SCHEMA harmonized;
 ```
 
-<img src = "assets/vignette-3/copilot.gif">
+![assets/vignette-3/copilot.gif](assets/vignette-3/copilot.gif)
 
 
 ### Step 2 - Translate Requirements with Copilot
@@ -1124,7 +1124,7 @@ Type the following question in the Copilot message box and click RUN to see the 
 
 **Prompt 1:** `How do I structure a query that correlates customer review sentiment with customer loyalty metrics and order behavior? I have a review sentiment data and customer loyalty metrics tables with order information. I need to understand the relationship between what customers say and their actual purchasing pattern.`
 
-<img src = "assets/vignette-3/copilot-prompt1.png">
+![assets/vignette-3/copilot-prompt1.png](assets/vignette-3/copilot-prompt1.png)
 
 
 > **Key Insight**: Copilot provides schema-aware business intelligence, directly analyzing your specific Tasty Bytes tables and suggesting strategic analysis using your actual column names. This isn't generic AI; it's purpose-built intelligence that profoundly understands your data structure.
@@ -1137,7 +1137,7 @@ In the same Copilot panel, paste the following business question and click RUN t
 
 **Prompt 2:** `Show me high-value customers who have been leaving negative reviews. I want to understand which customers spend a lot of money with us but seem unhappy based on their feedback`
 
-<img src = "assets/vignette-3/copilot-prompt2.png">
+![assets/vignette-3/copilot-prompt2.png](assets/vignette-3/copilot-prompt2.png)
 
 > **Key Insight**: Notice how Copilot transforms a simple business question into production-ready customer intelligence with complex analytical logic and actionable results—all without requiring SQL expertise. This showcases Copilot's core value: you can ask strategic questions in plain English and instantly receive the enterprise-grade analytics that typically demand data engineering skills.
 
@@ -1147,7 +1147,7 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 
 ## Optional: Cortex Search
 
-<img src='./assets/cortex_search_header.png'>
+![./assets/cortex_search_header.png](./assets/cortex_search_header.png)
 
 ### Overview
 <!-- Uncomment when Copilot is added back -->
@@ -1166,7 +1166,7 @@ While AI-powered tools excel at generating complex analytical queries, a common 
 
 This opens the search service configuration interface, where you’ll define how Snowflake indexes and interprets your text data.
 
-<img src = "assets/vignette-3/cortex-search-access.png">
+![assets/vignette-3/cortex-search-access.png](assets/vignette-3/cortex-search-access.png)
 
 ### Step 2 - Configure the Search Service
 
@@ -1181,7 +1181,7 @@ In the initial configuration screen, enter:
 Click **Next: Select data**.
 
 
-<img src = "assets/vignette-3/cortex-search-new-service.png">
+![assets/vignette-3/cortex-search-new-service.png](assets/vignette-3/cortex-search-new-service.png)
 
 
 ### Step 3 - Connect to Review Data
@@ -1194,7 +1194,7 @@ This wizard will guide you through several configuration screens:
 * **Select columns**: choose other columns to include in the result like `DATE`, `LANGUAGE`, etc.
 * **Configure indexing**: Accept the default
 
-<img src = "assets/vignette-3/cortex-search-walkthrough.gif">
+![assets/vignette-3/cortex-search-walkthrough.gif](assets/vignette-3/cortex-search-walkthrough.gif)
 
 > **Note**: Creating the search service includes building the index, so the initial setup may take a little longer. If the creation process is taking an extended period, you can seamlessly continue the lab by using a pre-configured search service:
 >
@@ -1206,7 +1206,7 @@ This wizard will guide you through several configuration screens:
 
 - **Once any search service is active (either your new one or the pre-configured one), queries will run with low latency and scale seamlessly.**
 
-<img src = "assets/vignette-3/cortex-search-existing-service.png">
+![assets/vignette-3/cortex-search-existing-service.png](assets/vignette-3/cortex-search-existing-service.png)
 
 > Behind this simple UI, Cortex Search is performing a complex task. It analyzes the text in your "REVIEW" column, using an AI model to generate semantic embeddings, which are numerical representations of the text's meaning. These embeddings are then indexed, allowing for high-speed conceptual searches later on. In just a few clicks, you have taught Snowflake to understand the intent behind your reviews.
 
@@ -1216,7 +1216,7 @@ When the service shows as “Active”, click on **Playground** and enter the na
 
 **Prompt - 1:** `Customers getting sick`
 
-<img src = "assets/vignette-3/cortex-search-prompt1.png">
+![assets/vignette-3/cortex-search-prompt1.png](assets/vignette-3/cortex-search-prompt1.png)
 
 > **Key Insight**: Notice Cortex Search isn’t just finding customers - it’s finding CONDITIONS that could MAKE customers sick. That is the difference between reactive keyword search and proactive semantic understanding.
 
@@ -1224,7 +1224,7 @@ Now try another query:
 
 **Prompt - 2:** `Angry customers`
 
-<img src = "assets/vignette-3/cortex-search-prompt2.png">
+![assets/vignette-3/cortex-search-prompt2.png](assets/vignette-3/cortex-search-prompt2.png)
 
 > **Key Insight**: These customers are about to churn, but they never said “I’m angry.” They expressed frustration in their own words. Cortex Search understands the emotion behind the language, helping you identify and save at-risk customers before they leave.
 
@@ -1237,7 +1237,7 @@ Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback.
 ## Optional: Cortex Analyst
 
 
-<img src='./assets/cortex_analyst_header.png'>
+![./assets/cortex_analyst_header.png](./assets/cortex_analyst_header.png)
 
 ### Overview
 
@@ -1251,7 +1251,7 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 
 1. Navigate to **Cortex Analyst** under **AI & ML Studio** in Snowsight.
 
-<img src = "assets/vignette-3/cortex-analyst-nav.png">
+![assets/vignette-3/cortex-analyst-nav.png](assets/vignette-3/cortex-analyst-nav.png)
 
 2. **Set Role and Warehouse:**
 
@@ -1259,7 +1259,7 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
     * Set Warehouse to `TB_CORTEX_WH`.
     * Click **Create new model**.
 
-<img src = "assets/vignette-3/cortex-analyst-setup.png">
+![assets/vignette-3/cortex-analyst-setup.png](assets/vignette-3/cortex-analyst-setup.png)
 
 
 3.  On the **Getting Started** page, configure the following:
@@ -1270,7 +1270,7 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
       * **Description**: `Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying`
       * Click **Next**.
 
-<img src = "assets/vignette-3/cortex-analyst-getting-started.png">
+![assets/vignette-3/cortex-analyst-getting-started.png](assets/vignette-3/cortex-analyst-getting-started.png)
 
 ### Step 2 - Select & Configure Columns
 
@@ -1284,7 +1284,7 @@ In the **Select tables** step, let's choose our pre-built analytics views.
 
     * Click **Next: Select columns** to proceed.
 
-<img src = "assets/vignette-3/cortex-analyst-select-tables.png">
+![assets/vignette-3/cortex-analyst-select-tables.png](assets/vignette-3/cortex-analyst-select-tables.png)
 
 ### Step 2 - Select & Configure Tables and Columns
 
@@ -1336,7 +1336,7 @@ After creating the semantic model, let's establish the relationship between our 
 
 4.  Click **Add relationship**
 
-<img src = "assets/vignette-3/cortex-analyst-table-relationship.png">
+![assets/vignette-3/cortex-analyst-table-relationship.png](assets/vignette-3/cortex-analyst-table-relationship.png)
 
 **Upon completion**, simply use the **Save** option at the top of the UI. This will finalize your semantic view, making your semantic model ready for sophisticated natural language queries. 
 
@@ -1345,7 +1345,7 @@ To access the **Cortex Analyst chat interface** in fullscreen mode, you would:
 1.  Click the **three-dot menu (ellipsis)** next to the "Share" button at the top right.
 2.  From the dropdown menu, select **"Enter fullscreen mode."**
 
-<img src = "assets/vignette-3/cortex-analyst-interface.png">
+![assets/vignette-3/cortex-analyst-interface.png](assets/vignette-3/cortex-analyst-interface.png)
 
 ### Step 5 - Execute Customer Segmentation Intelligence
 
@@ -1358,7 +1358,7 @@ With our semantic model and relationships active, let's demonstrate sophisticate
     ```
     Show customer groups by marital status and gender, with their total spending per customer and average order value. Break this down by city and region, and also include the year of the orders so I can see when the spending occurred. In addition to the yearly breakdown, calculate each group’s total lifetime spending and their average order value across all years. Rank the groups to highlight which demographics spend the most per year and which spend the most overall.
     ```
-<img src = "assets/vignette-3/cortex-analyst-prompt1.png">
+![assets/vignette-3/cortex-analyst-prompt1.png](assets/vignette-3/cortex-analyst-prompt1.png)
 
 > **Key Insight**: Instantly delivers comprehensive intelligence by combining multi-table joins, demographic segmentation, geographic insights, and lifetime value analysis - insights that would require 40+ lines of SQL and hours of analyst effort.
 
@@ -1373,7 +1373,7 @@ Having seen basic segmentation, let's now demonstrate enterprise-grade SQL that 
     ```
     I want to understand our customer base better. Can you group customers by their total spending (high, medium, low spenders), then show me their ordering patterns differ? Also compare how our franchise locations perform versus company-owned stores for each spending group.
     ```
-<img src = "assets/vignette-3/cortex-analyst-prompt2.png">
+![assets/vignette-3/cortex-analyst-prompt2.png](assets/vignette-3/cortex-analyst-prompt2.png)
 
 
 > **Key Insight**: Notice how Cortex Analyst seamlessly bridges the gap between a business user's simple, natural language question and the sophisticated, multi-faceted SQL query required to answer it. It automatically constructs the complex logic, including CTEs, window functions, and detailed aggregations, that would typically demand a skilled data analyst.
@@ -1385,7 +1385,7 @@ Through these rigorous steps, we've forged a robust Cortex Analyst semantic mode
 ## Snowflake Intelligence
 
 
-<img src='./assets/si_header.png'>
+![./assets/si_header.png](./assets/si_header.png)
 
 ### Overview
 
@@ -1606,7 +1606,7 @@ What we've just experienced with Tasty Bytes showcases a fundamental shift in ho
 You saw firsthand the power of this integration: users of all technical levels can now simply ask natural language questions and immediately receive visually rich, actionable answers. This direct and intuitive access to insights fundamentally transforms how organizations can swiftly identify operational risks, precisely quantify financial impact, and pinpoint new growth opportunities. It's clear that Snowflake Intelligence empowers rapid, data-driven decision-making, converting what was once fragmented data into clear, compelling business advantage for everyone.
 
 ## Governance with Horizon
-<img src='./assets/governance_header.png'>
+![./assets/governance_header.png](./assets/governance_header.png)
 
 ### Overview
 
@@ -2040,15 +2040,15 @@ By default, most scanner packages are disabled. Let's enable them to get a compr
 1.  In the Trust Center, click the **Scanner Packages** tab.
 2.  Click on **CIS Benchmarks**.
 
-<img src="assets/vignette-4/trust_center_scanner_packages.png">
+![assets/vignette-4/trust_center_scanner_packages.png](assets/vignette-4/trust_center_scanner_packages.png)
 
 3.  Click the **Enable Package** button.
 
-<img src="assets/vignette-4/trust_center_cis_scanner_package.png">
+![assets/vignette-4/trust_center_cis_scanner_package.png](assets/vignette-4/trust_center_cis_scanner_package.png)
 
 4.  In the modal, set the **Frequency** to `Monthly` and click **Continue**.
 
-<img src="assets/vignette-4/enable_scanner_package.png">
+![assets/vignette-4/enable_scanner_package.png](assets/vignette-4/enable_scanner_package.png)
 
 5.  Repeat this process for the **Threat Intelligence** scanner package.
 
@@ -2061,13 +2061,13 @@ After the scanners have had a moment to run, navigate back to the **Findings** t
   - Clicking on any violation will open a details pane with a summary and recommended remediation steps.
   - You can filter the list by severity, status, or scanner package to focus on the most critical issues.
 
-<img src="assets/vignette-4/trust_center_violation_detail_pane.png">
+![assets/vignette-4/trust_center_violation_detail_pane.png](assets/vignette-4/trust_center_violation_detail_pane.png)
 
 This powerful tool gives you a continuous, actionable overview of your Snowflake account's security health.
 
 ## Apps & Collaboration
 
-<img src='./assets/appscollab_header.png'>
+![./assets/appscollab_header.png](./assets/appscollab_header.png)
 
 ### Overview
 
@@ -2114,10 +2114,10 @@ Follow these steps in the Snowsight UI to get the Weather Source data:
 1.  Make sure you are using the `ACCOUNTADMIN` role.
 2.  Navigate to **Data Products** » **Marketplace** from the left-hand navigation menu.
 3.  In the search bar, enter: `Weather Source frostbyte`.
-<img src="assets/vignette-5/weather_source_search.png">
+![assets/vignette-5/weather_source_search.png](assets/vignette-5/weather_source_search.png)
 
 4.  Click on the **Weather Source LLC: frostbyte** listing.
-<img src="assets/vignette-5/weather_source_listing.png">
+![assets/vignette-5/weather_source_listing.png](assets/vignette-5/weather_source_listing.png)
 
 5.  Click the **Get** button.
 6.  Click to expand the Options, then change the **Database name** to `ZTS_WEATHERSOURCE`.
@@ -2199,7 +2199,7 @@ ORDER BY dw.date_valid_std DESC;
 4.  Set the **X-Axis** to `DATE_VALID_STD`.
 5.  Set the **Y-Axis** to `AVERAGE_TEMP_F`.
 
-<img src="./assets//vignette-5/line_chart.png">
+![./assets//vignette-5/line_chart.png](./assets//vignette-5/line_chart.png)
 
 ### Step 4 - Create a Sales and Weather View
 
@@ -2252,7 +2252,7 @@ Let's also visualize the results again in Snowsight, but as a bar chart this tim
 4.  Set the **X-Axis** to `MENU_ITEM_NAME`.
 5.  Set the **Y-Axis** to `DAILY_SALES`.
 
-<img src='./assets/vignette-5/bar_chart.png'>
+![./assets/vignette-5/bar_chart.png](./assets/vignette-5/bar_chart.png)
 
 ## Explore Point-of-Interest Data
 
@@ -2336,7 +2336,7 @@ ORDER BY o.truck_brand_name;
 
 ## Introduction to Streamlit in Snowflake
 
-<img src='./assets/streamlit-logo.png'>
+![./assets/streamlit-logo.png](./assets/streamlit-logo.png)
 
 Streamlit is an open-source Python library designed for easily creating and sharing web applications for machine learning and data science. It allows for the rapid development and deployment of data-driven apps.
 
@@ -2359,7 +2359,7 @@ When the app first loads, you'll see a sample app on the right pane and the app'
 4. Select all of the code and remove it.
 5. **Next copy + paste this [code](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/streamlit/streamlit_app.py) in the blank editor window, then click 'Run' in the top right.**
 
-<img src='./assets/vignette-5/create_streamlit_app.gif'>
+![./assets/vignette-5/create_streamlit_app.gif](./assets/vignette-5/create_streamlit_app.gif)
 
 ## Conclusion and Resources
 

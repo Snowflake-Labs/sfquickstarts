@@ -48,7 +48,7 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 - How to create Snowflake Tasks and use the Python Tasks API to schedule data pipelines
 - How to use VS Code extension for Snowflake to perform standard snowflake operations from VS Code and Snowsigt UI
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Prerequisites
 
@@ -82,7 +82,7 @@ For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com
 
 To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
 
-<img src="assets/codespace_setup.png" width="800" />
+![assets/codespace_setup.png](assets/codespace_setup.png)
 
 This will open a new tab and begin setting up your codespace. It will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
 

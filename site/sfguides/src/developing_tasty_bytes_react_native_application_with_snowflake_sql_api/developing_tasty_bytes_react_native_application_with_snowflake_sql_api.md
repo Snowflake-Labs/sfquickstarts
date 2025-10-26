@@ -10,7 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - Developing React Native Data Application with SQL API
 <!-- ------------------------ -->
 ## Overview
-<img src="assets/tasty_bytes_header.png"/>
+![assets/tasty_bytes_header.png](assets/tasty_bytes_header.png)
 
 In today's data-driven landscape, the majority of applications have evolved to become highly data intensive. However, developing successful data applications can be challenging, particularly as user numbers grow and the volume and complexity of data increase. Snowflake is the driving force behind numerous data applications, empowering software teams to enhance their engineering velocity and create scalable applications without the burden of operational complexities. With its focus on increasing engineering speed, Snowflake offers exceptional performance and scalability for applications. 
 
@@ -237,16 +237,16 @@ We are using Key Pair Authentication to authenticate with Snowflake using SQL AP
 2. This launches the app in Web Browser
 3. Upon Launch, You can see the InQueue Orders Screen,
 
-<img src="assets/OrdersInQueue.png"/>
+![assets/OrdersInQueue.png](assets/OrdersInQueue.png)
 
 4. Now Click on View Order button to see the Order Details.
 
-<img src="assets/OrderDetails.png"/>
+![assets/OrderDetails.png](assets/OrderDetails.png)
 
 5. Click on ORDER READY button to complete the order. This action updates the Order Status value to Completed for this Order and take you back to the InQueue Orders Screen
 6. Now, Click on Order History tab to see the completed orders.
 
-<img src="assets/OrderHistory.png"/>
+![assets/OrderHistory.png](assets/OrderHistory.png)
 
 <!-- ------------------------ -->
 ## Clean Up

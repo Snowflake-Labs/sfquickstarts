@@ -44,19 +44,19 @@ Cette section vous explique comment vous connecter à Snowflake, comment créer 
 
 ### Étape 2 – Se connecter à Snowflake
 - Connectez-vous à votre compte Snowflake.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+    - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### Étape 3 – Accéder aux feuilles de calcul
 - Cliquez sur l’onglet Worksheets (Feuilles de calcul) dans la barre de navigation de gauche.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+    - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### Étape 4 – Créer une feuille de calcul
 - Sous l’onglet Worksheets (Feuilles de calcul), cliquez sur le bouton « + » dans le coin supérieur droit de Snowsight, puis sélectionnez « SQL Worksheet » (Feuille de calcul SQL).
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+    - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### Étape 5 – Renommer une feuille de calcul
 - Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant "Tasty Bytes – Collaboration ".
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+    - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### Étape 6 – Accéder au fichier SQL de ce guide Quickstart dans GitHub
 - Cliquez sur le bouton ci-dessous pour être redirigé vers notre fichier SQL Tasty Bytes hébergé sur GitHub.
@@ -65,7 +65,7 @@ Cette section vous explique comment vous connecter à Snowflake, comment créer 
 
 ### Étape 7 – Copier le fichier de configuration SQL depuis GitHub
 - Dans GitHub, à droite, cliquez sur « Copy raw contents » (Copier le contenu brut). L’ensemble du fichier SQL requis est copié dans votre presse-papiers.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Étape 8 – Coller le fichier de configuration SQL depuis GitHub dans une feuille de calcul Snowflake
 - Revenez dans Snowsight et dans votre nouvelle feuille de calcul, puis collez (*CMD + V pour Mac ou CTRL + V pour Windows*) ce que vous venez de copier dans GitHub.
@@ -97,7 +97,7 @@ GROUP BY o.date
 ORDER BY o.date ASC; 
 ```
 
-<img src = "assets/3.1.orders_v.png">
+![assets/3.1.orders_v.png](assets/3.1.orders_v.png)
 
 Selon ce que nous observons ci-dessus, nous sommes d’accord avec les analystes pour dire qu’il manque les chiffres des ventes quotidiennes de certains jours du mois de février, ce qui prouve qu’ils ont bien repéré une anomalie. Voyons si nous pouvons en découvrir les raisons dans la section suivante.
 
@@ -123,7 +123,7 @@ Depuis votre compte Snowflake, suivez les étapes et la vidéo ci-dessous pour a
 - Renommez la base de données -> FROSTBYTE_WEATHERSOURCE (en lettres majuscules).
 - Attribuez l’accès PUBLIC aux rôles supplémentaires.
 
-<img src = "assets/4.1.acquire_weather_source.gif">
+![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 
 >aside positive Weather Source est l’un des principaux fournisseurs de données météorologiques et climatiques mondiales. Sa suite de produits OnPoint fournit aux entreprises les données météorologiques et climatiques dont elles ont besoin pour générer rapidement des informations utiles et exploitables pour un large éventail de cas d’usage dans de nombreux secteurs d’activité.
 >
@@ -148,7 +148,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
     AND c.city = hd.city_name;
 ```
 
-<img src = "assets/4.2.daily_weather_v.png">
+![assets/4.2.daily_weather_v.png](assets/4.2.daily_weather_v.png)
 
 Comme nous le voyons dans la définition de la vue ci-dessus, nous associons deux des tables `frostbyte_weathersource` dans le schéma `onpoint_id`, puis nous les harmonisons avec la table `country` de notre base de données `frostbyte_tasty_bytes` et notre schéma `raw_pos`. 
 
@@ -175,11 +175,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.3.results.png">
+![assets/4.3.results.png](assets/4.3.results.png)
 
 Pour étudier plus en détail les tendances, utilisons des graphiques Snowsight pour créer un graphique linéaire de la température moyenne au fil du temps.
 
-<img src = "assets/4.3.chart.png">
+![assets/4.3.chart.png](assets/4.3.chart.png)
 
 Selon ce que nous avons vu avant, il n’existe aucune raison évidente qui explique les jours sans vente de nos camionnettes. Voyons quelle raison nous pouvons trouver pour expliquer cette situation dans la section suivante.
 
@@ -204,11 +204,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.4.result.png">
+![assets/4.4.result.png](assets/4.4.result.png)
 
 De nouveau, il se peut qu’un graphique Snowsight soit plus efficace pour dégager les tendances de ce type de données. Suivez les flèches figurant sur les captures d’écran ci-dessous pour passer de l’onglet Results (Résultats) à l’onglet Charts (Graphiques).
 
-<img src = "assets/4.4.chart.png">
+![assets/4.4.chart.png](assets/4.4.chart.png)
 
 **Ah !** Les jours où nous n’avons enregistré aucune vente, la ville a connu des vents de force ouragan. Cette information peut expliquer pourquoi nos camionnettes n’ont rien vendu ces jours-là. Toutefois, étant donné que nous avons effectué cette analyse dans la vue harmonisée, mettons ces informations à disposition dans la vue d’analyse afin que nos analystes puissent y accéder eux-mêmes.
 
@@ -236,7 +236,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.f_to_c.png">
+![assets/5.1.f_to_c.png](assets/5.1.f_to_c.png)
 
 ```
 CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
@@ -247,7 +247,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.inch_to_mm.png">
+![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
 >aside positive Lorsque vous créez une UDF, vous spécifiez un gestionnaire dont le code est écrit dans l’un des langages pris en charge. Selon le langage du gestionnaire, vous pouvez soit inclure le code source du gestionnaire en ligne avec l’instruction CREATE FUNCTION, soit faire référence à l’emplacement du gestionnaire à partir de CREATE FUNCTION, où le gestionnaire est précompilé ou le code source est sur une zone de préparation.
 >
@@ -281,7 +281,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 ```
 
-<img src = "assets/5.2.SQL.png">
+![assets/5.2.SQL.png](assets/5.2.SQL.png)
 
 
 Les résultats que nous venons de recevoir semblent optimum. Nous pouvons maintenant insérer cette fonction SQL dans une vue lors de la prochaine étape.
@@ -314,7 +314,7 @@ WHERE 1=1
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ```
 
-<img src = "assets/5.3.view.png">
+![assets/5.3.view.png](assets/5.3.view.png)
 
 Incroyable ! Nous avons désormais démocratisé ce type d’informations pour l’organisation Tasty Bytes. Rassemblons toutes ces informations dans la section suivante pour valider notre travail.
 
@@ -349,7 +349,7 @@ WHERE 1=1
 ORDER BY date DESC;
 ```
 
-<img src = "assets/6.1.results.png">
+![assets/6.1.results.png](assets/6.1.results.png)
 
 **Oui !** Si ces données avaient été disponibles lors des recherches initiales des analystes financiers, ces derniers n’auraient pas eu besoin de faire appel aux équipes dédiées aux données puisque les informations auraient été à leur disposition. 
 

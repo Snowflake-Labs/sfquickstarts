@@ -225,7 +225,7 @@ While the tag can often be placed using a simple HTML img tag, the information a
 When using Google's Campaign Manager 360, the tag may look something like the following:
 
 ```html
-<img src="http://<DEPLOYMENT>.execute-api.<REGION>/?adid=%eaid!&placementid=%epid!&creativeid=%ecid!" width="1" height="1">
+![http://<DEPLOYMENT>.execute-api.<REGION>/?adid=%eaid!&placementid=%epid!&creativeid=%ecid!](http://<DEPLOYMENT>.execute-api.<REGION>/?adid=%eaid!&placementid=%epid!&creativeid=%ecid!)
 ```
 
 ### Verify the loaded data

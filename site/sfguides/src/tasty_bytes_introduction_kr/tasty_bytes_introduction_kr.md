@@ -23,7 +23,7 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 
 ### Tasty Bytes란 무엇일까요?
 
-<img src="assets/who_is_tasty_bytes.png"/>
+![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
 
 ### 사전 필요 조건 및 지식
 
@@ -31,7 +31,7 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 - 엔터프라이즈 또는 비즈니스 크리티컬 Snowflake 계정
   - Snowflake 계정이 없다면 [**30일 무료 평가판 계정을 위해 등록하십시오**](https://signup.snowflake.com/?utm_cta=quickstarts_). 등록할 때 **엔터프라이즈** 에디션을 선택하셔야 합니다. 아무 [Snowflake 클라우드 또는 리전](https://docs.snowflake.com/ko/user-guide/intro-regions)을 선택하셔도 됩니다.
   - 등록한 후 활성화 링크와 Snowflake 계정 URL이 포함된 이메일이 전송됩니다.
-  - <img src="assets/choose_edition.png" width="300"/>
+  - ![assets/choose_edition.png](assets/choose_edition.png)
 
 
 ### 알아볼 내용
@@ -62,25 +62,25 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 ### 2단계 - Snowflake에 로그인
 
 - Snowflake 계정에 로그인합니다.
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 
 ### 3단계 - Worksheets로 이동
 
 - 왼쪽 탐색 메뉴에 있는 Worksheets 탭을 클릭합니다.
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 
 ### 4단계 - 워크시트 생성
 
 - Worksheets 내에서 Snowsight 오른쪽 상단 모서리에 있는 ‘+’ 버튼을 클릭하고 ‘SQL Worksheet’를 선택합니다.
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 
 ### 5단계 - 워크시트 이름 바꾸기
 
 - 자동으로 생성된 Timestamp 이름을 클릭하고 ‘Tasty Bytes - Setup’을 입력하여 워크시트의 이름을 바꿉니다.
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 
 ### 6단계 - GitHub에서 호스팅된 설정 SQL에 액세스
@@ -92,7 +92,7 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 ### 7단계 - GitHub에서 설정 SQL 복사
 
 - GitHub 내에서 오른쪽으로 이동하여 ‘Copy raw contents’를 클릭합니다. 이렇게 하면 모든 필수 SQL이 클립보드로 복사됩니다.
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 
 ### 8단계 - 설정 SQL을 GitHub에서 Snowflake 워크시트로 붙여넣기
@@ -102,13 +102,13 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 ### 9단계 - 모든 설정 SQL 동시 실행
 
 - 새롭게 생성한 Tasty Bytes - Setup 워크시트 내부를 클릭하고 모두 선택(Mac 바로 가기 키 *CMD + A, Windows 바로 가기 키 CTRL + A*)한 후 ‘► Run’을 클릭합니다.
-  - <img src ="assets/run_all_queries.gif"/>
+  - ![assets/run_all_queries.gif](assets/run_all_queries.gif)
 
 
 ### 10단계 - 설정 완료
 
 - ‘► Run’을 클릭한 후 쿼리가 실행되기 시작합니다. 이러한 쿼리는 순차적으로 실행되며 전체 워크시트를 실행하는 데 약 5분이 소요됩니다. 완료된 후 `frostbyte_tasty_bytes setup is now complete`라는 메시지가 나타납니다.
-  - <img src="assets/setup_complete.png">
+  - ![assets/setup_complete.png](assets/setup_complete.png)
 
 
 ### 11단계 - 다음 클릭 -->
@@ -130,7 +130,7 @@ Tasty Bytes 설정이 성공적으로 완료되면 이제 생성한 데이터베
 SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
 ```
 
-<img src = "assets/show_tb_db.png"> 
+![assets/show_tb_db.png](assets/show_tb_db.png) 
 ### 2단계 - Tasty Bytes 데이터베이스 내 스키마 탐색
 
 이 쿼리는 [SHOW SCHEMAS](https://docs.snowflake.com/ko/sql-reference/sql/show-schemas)를 통해 생성한 데이터베이스 내 스키마를 반환합니다.
@@ -139,7 +139,7 @@ SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
 SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
 ```
 
-<img src = "assets/show_tb_schemas.png"> 
+![assets/show_tb_schemas.png](assets/show_tb_schemas.png) 
 ### 3단계 - Tasty Bytes 데이터베이스의 RAW_POS 스키마 내 테이블 탐색
 
 이 쿼리는 [SHOW TABLES](https://docs.snowflake.com/ko/sql-reference/sql/show-tables)를 통해 `raw_pos` 스키마 내 테이블을 반환합니다.
@@ -148,7 +148,7 @@ SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
 SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
 ```
 
-<img src = "assets/show_tb_tables.png"> 
+![assets/show_tb_tables.png](assets/show_tb_tables.png) 
 ### 4단계 - Tasty Bytes 역할 탐색
 
 이 쿼리는 [SHOW ROLES](https://docs.snowflake.com/ko/sql-reference/sql/show-roles)를 통해 생성한 역할을 반환합니다.
@@ -157,7 +157,7 @@ SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
 SHOW ROLES LIKE 'tasty%';
 ```
 
-<img src = "assets/show_tb_roles.png"> 
+![assets/show_tb_roles.png](assets/show_tb_roles.png) 
 ### 5단계 - Tasty Bytes 웨어하우스 탐색
 
 이 쿼리는 [SHOW WAREHOUSES](https://docs.snowflake.com/ko/sql-reference/sql/show-warehouses)를 통해 생성한 웨어하우스를 반환합니다.
@@ -166,7 +166,7 @@ SHOW ROLES LIKE 'tasty%';
 SHOW WAREHOUSES LIKE 'tasty%';
 ```
 
-<img src = "assets/show_tb_whs.png"> 
+![assets/show_tb_whs.png](assets/show_tb_whs.png) 
 ### 6단계 - 결합
 
 다음 3개의 쿼리는 다음 작업을 수행합니다.
@@ -188,7 +188,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m
 WHERE m.truck_brand_name = 'Plant Palace';
 ```
 
-<img src = "assets/plant_palace.png"> 
+![assets/plant_palace.png](assets/plant_palace.png) 
 훌륭합니다! 몇 분 만에 이제 Tasty Bytes 데모 환경이 준비되었으며 Snowflake 계정에서 데모, 역할 및 웨어하우스가 설정되었습니다. 이제 활용할 수 있도록 제공되는 다른 모든 Tasty Bytes Quickstart를 살펴보겠습니다.
 
 ### 7단계 - 다음 클릭 -->
@@ -202,7 +202,7 @@ WHERE m.truck_brand_name = 'Plant Palace';
 
 아래 목차는 방금 구축한 기초를 활용하는 사용 가능한 모든 Tasty Bytes Quickstart를 알려줍니다.
 
-<img src ="assets/pbtb_quickstarts.png"/>
+![assets/pbtb_quickstarts.png](assets/pbtb_quickstarts.png)
 
 ### 제로부터 Snowflake까지
 

@@ -40,7 +40,7 @@ Neo4j helps organizations find hidden relationships and patterns across billions
 
 Dataset overview : This dataset is modelled to design and analyze patients and different procedures that they undergo using graph analytics. 
 
-<img src="assets/datamodel.png" alt="image" width="400"/>
+![assets/datamodel.png](assets/datamodel.png)
 
 
 Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/patient_journey/data), We are going to add two new tables:
@@ -131,14 +131,14 @@ Let's take a look at the starting point for our data. We have a table for patien
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES LIMIT 10;
 ```
 
-<img src="assets/procedures.png" alt="image" width="400"/>
+![assets/procedures.png](assets/procedures.png)
 
 
 ```sql
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PATIENTS LIMIT 10;
 ```
 
-<img src="assets/patients.png" alt="image" width="400"/>
+![assets/patients.png](assets/patients.png)
 
 We are then going to clean this up into two tables that just have the `nodeids` for both patient and procedure:
 

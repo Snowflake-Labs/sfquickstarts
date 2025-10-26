@@ -90,7 +90,7 @@ Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pa
 
 Signin and start your Zoom Workplace running locally.
 
-<img src="assets/zoom_workspace.png" alt="build_app4" width="600"/>
+![assets/zoom_workspace.png](assets/zoom_workspace.png)
 
 ### Step 2
 In a terminal window, browse to the cloned repo *sfguide-integrate-snowflake-cortex-agents-with-zoom* folder and run the following commands to create Python environment and install the Python packages and dependencies required for the application.
@@ -134,7 +134,7 @@ In a new terminal window, run `ngrok http 5000`.
 
 * Before proceeding, make sure it's running and the output should something like the following with a forwarding URL like so `https://9b51-2601-646-8f02-2670-ddd6-ee13-476-441f.ngrok-free.app`
 
-<img src="assets/ngork.png" alt="ngork"/>
+![assets/ngork.png](assets/ngork.png)
 
 * Copy the forwarding URL and set it for **ZOOM_REDIRECT_URI** in your `.env` file
 
@@ -150,31 +150,31 @@ On the left nav, click on **Admin** >> **App Marketplace**. This should open **Z
 ### Step 7
 On the top-right, click on **Develop** >> **Build App** and select **General App**
 
-<img src="assets/app1.png" alt="build_app" width="600"/>
+![assets/app1.png](assets/app1.png)
 
 ### Step 8
 On the left nav, click on **Basic Information** 
 
 * Copy **Client ID** and **Client Secret** and set them for **ZOOM_CLIENT_ID** and **ZOOM_CLIENT_SECRET** in your `.env` file and for **OAuth Redirect URL** set it to the same value as **ZOOM_REDIRECT_URI** as in step 3 above.
 
-<img src="assets/app2.png" alt="build_app2" width="600"/>
+![assets/app2.png](assets/app2.png)
 
 ### Step 9
 On the left nav, click on **Features** >> **Surface** 
 
 * Select **Team Chat** under "**Select where to use your app**"
 
-<img src="assets/app3.png" alt="build_app3" width="600"/>
+![assets/app3.png](assets/app3.png)
 
 * Scroll down and select/turn ON **Team Chat Subscription**
 
 * Copy **Bot JID** and set it for **ZOOM_BOT_JID** in your `.env` file
 
-<img src="assets/app4.png" alt="build_app4" width="600"/>
+![assets/app4.png](assets/app4.png)
 
 * Click on the dropdown to expand the **Team Chat Subscription** view and set **Bot Endpoint URL** to the same value as **ZOOM_REDIRECT_URI** as in step 3 above and add `/askcortex` suffix.
 
-<img src="assets/app5.png" alt="build_app5" width="600"/>
+![assets/app5.png](assets/app5.png)
 
 * Click on **Save** button.
 
@@ -213,15 +213,15 @@ In the same cloned repo *sfguide-integrate-snowflake-cortex-agents-with-zoom* fo
 ### Step 2
 In your Zoom account on the web, navigate back to **Admin** >> **App Marketplace** >> **Zoom App Marketplace** and on the left nav, click on **Add your app** >> **Local Test** >> **Add App Now**
 
-<img src="assets/app6.png" alt="build_app6" width="600"/>
+![assets/app6.png](assets/app6.png)
 
 If all goes well, you should see the following popup 
 
-<img src="assets/app7.png" alt="build_app7" width="600"/>
+![assets/app7.png](assets/app7.png)
 
 And, clicking on **Allow** should add it to Zoom Workspace running locally,
 
-<img src="assets/app8.png" alt="build_app8" width="600"/>
+![assets/app8.png](assets/app8.png)
 
 ## Get Insights
 <!-- ------------------------ -->

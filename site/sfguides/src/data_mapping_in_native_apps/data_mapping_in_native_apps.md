@@ -116,7 +116,7 @@ package:
 
 Finally, the tree structure inside your project structure should look like this:
 
-<img src="assets/folder_structure.png" width="288" />
+![assets/folder_structure.png](assets/folder_structure.png)
 
 
 
@@ -496,11 +496,11 @@ Click on the link that appeared in your console output.
 
  The application if you remember needs permissions onto a table in the consumer account (the one we just created).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the shield icon to go to **Security**.
 
-<img src="assets/security_tab.png" width="288" />
+![assets/security_tab.png](assets/security_tab.png)
 
  This will take you through to a page which will allow you to specify the table that you want the application to work with.  This dialog is a result of the **REFERENCE** section in the manifest file.
 
-<img src="assets/assign_perms.png" width="901" />
+![assets/assign_perms.png](assets/assign_perms.png)
 
 Click **Add** and navigate to the table we just created and select it:
 
@@ -508,19 +508,19 @@ Click **Add** and navigate to the table we just created and select it:
 > 
 > **Note** - You may at this point be asked to specify a warehouse, because assigning permissions requires a warehouse.
 
-<img src="assets/table_chosen.png" width="719" />
+![assets/table_chosen.png](assets/table_chosen.png)
 
 Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to the **Dashboard** section and click it. It should open to a screen like the following:
 
-<img src="assets/app_entry.png" width="975" />
+![assets/app_entry.png](assets/app_entry.png)
 
 You should recognise the layout from building the streamlit earlier.  If you drop down either of the two boxes you will see that they are populated with the columns from the table the application has been assigned permissions to.  If we populate the mappings correctly, hit **Update Mappings** then you will see the piece of JSON underneath change to tell us the currently set mappings.  The ones we want for this application are:
 
-<img src="assets/correct_mappings.png" width="703" />
+![assets/correct_mappings.png](assets/correct_mappings.png)
 
 Hit the **Update Mappings** button and then the **UPDATE!** button.  At the top of the screen you will see the SQL that you just executed on your data.
 
-<img src="assets/statement.png" width="336" />
+![assets/statement.png](assets/statement.png)
 
 Now go back to your console to confirm that enhanced data has been written to your database table.
 
@@ -529,7 +529,7 @@ snow sql -q " USE DATABASE TEST_IPLOCATION;
 USE SCHEMA TEST_IPLOCATION;
 SELECT * FROM TEST_DATA;"
 ```
-<img src="assets/complete.png" width="1243" />
+![assets/complete.png](assets/complete.png)
 
 <!-- ------------------------ -->
 ## Teardown

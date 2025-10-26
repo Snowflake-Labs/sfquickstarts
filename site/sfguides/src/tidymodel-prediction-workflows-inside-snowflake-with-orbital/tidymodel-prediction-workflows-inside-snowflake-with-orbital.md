@@ -118,13 +118,13 @@ Posit Workbench provides several IDEs, such as RStudio Pro, JupyterLab, and VS C
 
 Within Posit Workbench, click `New Session` to launch a new session.
 
-<img src="assets/posit_workbench/01-start_new_session.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/01-start_new_session.png](assets/posit_workbench/01-start_new_session.png)
 
 #### Step 2: Select an IDE
 
 When prompted, select RStudio Pro.
 
-<img src="assets/posit_workbench/02-create_new_session_snowflake.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/02-create_new_session_snowflake.png](assets/posit_workbench/02-create_new_session_snowflake.png)
 
 #### Step 3: Log into your Snowflake account
 
@@ -132,12 +132,12 @@ Next, connect to your Snowflake account from within Posit Workbench.
 Under `Session Credentials`, click the button with the Snowflake icon to sign in to Snowflake.
 Follow the sign in prompts.
 
-<img src="assets/posit_workbench/03-snowflake_login.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/03-snowflake_login.png](assets/posit_workbench/03-snowflake_login.png)
 
 When you're successfully signed in to Snowflake, the Snowflake button will turn blue
 and there will be a check mark in the upper-left corner.
 
-<img src="assets/posit_workbench/04-snowflake_login_success.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/04-snowflake_login_success.png](assets/posit_workbench/04-snowflake_login_success.png)
 
 #### Step 4: Launch the RStudio Pro IDE
 
@@ -160,19 +160,19 @@ open the file in your RStudio Pro IDE. There are two ways to do this:
 
     1.  Go to `File` > `New Project` in the RStudio IDE menu bar.
 
-    <img src="assets/rstudio/03-new-project.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/03-new-project.png](assets/rstudio/03-new-project.png)
 
     2.  Select Version Control in the New Project Wizard
 
-    <img src="assets/rstudio/04-project-wizard.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/04-project-wizard.png](assets/rstudio/04-project-wizard.png)
 
     3.  Select Git
 
-    <img src="assets/rstudio/05-git.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/05-git.png](assets/rstudio/05-git.png)
 
     4.  Paste the [URL](https://github.com/posit-dev/snowflake-posit-quickstart-orbital) of the GitHub repo and click Create Project
 
-    <img src="assets/rstudio/06-create-project.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/06-create-project.png](assets/rstudio/06-create-project.png)
 
     RStudio will clone a local copy of the materials on GitHub. You can use the Files pane in the bottom right-hand corner of the IDE to navigate to `quarto.qmd`. Click on the file to open it.
 
@@ -255,7 +255,7 @@ con <- dbConnect(
 
 Once connected, we can view available databases, schemas, and tables in the RStudio IDE Connections pane. Click on the database icon to the right of a database to see its schemas. Click on the schema icon to the right of a schema to see its tables. Click the table icon to preview the table.
 
-<img src="assets/rstudio/02-connections.png" style="width: 400px; height: auto;" />
+![assets/rstudio/02-connections.png](assets/rstudio/02-connections.png)
 
 ### Create and Manipulate a `tbl`
 

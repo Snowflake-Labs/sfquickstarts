@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-<img src="assets/banner.png"/>
+![assets/banner.png](assets/banner.png)
 
 Churn prediction relies on data analysis to be effective. Through data analysis, businesses gather, clean, and model customer data to uncover patterns and trends. This understanding of customer behavior is key for building accurate churn prediction models. By applying data analysis techniques, businesses can identify at-risk customers and take targeted actions to retain them. Essentially, data analysis provides the necessary foundation for effective churn prediction, helping businesses reduce churn and boost customer loyalty.
 
@@ -42,7 +42,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 #### Creating Objects and Loading Data
 1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 
-<img src="assets/run_all.png"/>
+![assets/run_all.png](assets/run_all.png)
 
 2. Copy and paste the following code to create Snowflake objects (warehouse, database, schema, role) and click `Run All` at the top of the Worksheet
 
@@ -127,17 +127,17 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 4. Using the `Import .ipynb file`, import the downloaded Notebooks
 
-<img src="assets/import_notebook.png"/>
+![assets/import_notebook.png](assets/import_notebook.png)
 
 5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`
 
 6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`
 
-<img src="assets/anaconda.png"/>
+![assets/anaconda.png](assets/anaconda.png)
 
 7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
 
-<img src="assets/start.png"/>
+![assets/start.png](assets/start.png)
 
 <!-- ------------------------ -->
 ## Clean Up

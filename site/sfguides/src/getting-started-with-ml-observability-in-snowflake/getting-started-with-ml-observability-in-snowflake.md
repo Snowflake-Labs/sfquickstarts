@@ -15,7 +15,7 @@ Snowflake ML provides organizations with an integrated set of capabilities for e
 For many large enterprises, extracting tangible value from Machine Learning (ML) initiatives remains a significant challenge. Despite substantial investments, the journey from developing models to realizing their benefits often encounters numerous roadblocks. MLOps is a core function of ML engineering and focuses on streamlining the process of taking machine learning models to production, and then maintaining and monitoring them effectively. Unlike traditional software, machine learning models can change their behavior over time due to various factors, including input drift, outdated assumptions from model training, issues in data pipelines, and standard challenges like hardware/software environments and traffic. These factors can lead to a decline in model performance and unexpected behavior which needs to be monitored very closely. 
 
 
-<img src="assets/image.png"/>
+![assets/image.png](assets/image.png)
 
 In this Quickstart guide we will be exploring ML Observability in Snowflake that enables one to detect model behavior changes over time due to input drift, stale training assumptions, and data pipeline issues, as well as the usual factors, including changes to the underlying hardware and software and the fluid nature of traffic. ML Observability allows you to track the quality of production models that has been deployed via the Snowflake Model Registry across multiple dimensions, such as performance, drift, and volume. 
 
@@ -92,7 +92,7 @@ Even a well-trained model may degrade over time due to data drift—shifts in da
 
 To track this, we create a Model Monitor in Snowflake
 
-<img src="assets/workflow.png"/>
+![assets/workflow.png](assets/workflow.png)
 
 - Create a model monitor using the CREATE MODEL MONITOR command wither using the python class or the SQL command. The model monitor must be created in the same schema as the model version that needs to be monitored. 
   
@@ -147,13 +147,13 @@ In the Monitors section of the details page, a list of model monitors can be fou
 
 #### Metrics Monitoring
 
-<img src="assets/actualsvsprediction.png"/>
+![assets/actualsvsprediction.png](assets/actualsvsprediction.png)
 
 Prediction Count - Count of non-null values for prediction column.
 
 Actual Count - Count of non-null values for label column.
 
-<img src="assets/metrics.png"/>
+![assets/metrics.png](assets/metrics.png)
 
 Precision - ratio of true positive predictions to the total predicted positives, indicating the accuracy of positive predictions.
 
@@ -165,7 +165,7 @@ The F1 Score - the harmonic mean of precision and recall, providing a balance be
 
 Difference of mean - compares the average values between two datasets.
 
-<img src="assets/settings.png"/>
+![assets/settings.png](assets/settings.png)
 
 There are other metrics that can be tracked as per the model type. 
 

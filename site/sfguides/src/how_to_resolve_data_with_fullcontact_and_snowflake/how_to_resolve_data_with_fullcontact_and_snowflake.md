@@ -49,17 +49,17 @@ The FullContact for Snowflake Native App is available in the Snowflake Marketpla
 
 5) Expand the Options dropdown, where you are able to name the application anything you would like.  We have named the app `FC_NATIVE_APP`.  This is the app name we use in the SQL queries we provide post installation of the application in a Snowsight worksheet to help you complete the installation.  
 
-<img src="assets/installoptions.png" width="500" />
+![assets/installoptions.png](assets/installoptions.png)
 
 6) Click the *Get* button to install the application. 
 
 7) A modal will display to give you the option to view your apps. The installation typically completes within 1-2 minutes.
 
-<img src="assets/installing.png" width="500" />
+![assets/installing.png](assets/installing.png)
 
 8) Once installation is complete, you will see a confirmation modal with an option to *Configure* the app. This will navigate you to the main landing page of the app where you can begin configuration.  
 
-<img src="assets/installcomplete.png" width="500" />
+![assets/installcomplete.png](assets/installcomplete.png)
 
 <!---------------------------->
 ## Complete configuration of FullContact App

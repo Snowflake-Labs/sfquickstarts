@@ -40,7 +40,7 @@ Enrichment results are returned in four tables.
 - The requied databases, schemas, warehouse, and role to use MediaWallah's Enrichment Application
 
 ### Architecture
-<!-- <img src="assets/solution_architecture.png" alt="solution_architecture" width="800"> -->
+<!-- ![assets/solution_architecture.png](assets/solution_architecture.png) -->
 ![solution_architecture](assets/solution_architecture.png)
 
 ## Installation

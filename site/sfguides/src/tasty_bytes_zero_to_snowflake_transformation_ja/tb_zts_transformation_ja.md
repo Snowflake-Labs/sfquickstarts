@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Snowflakeでの変換
-<img src = "assets/transformation_header.png">
+![assets/transformation_header.png](assets/transformation_header.png)
 
 ### 概要
 Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。今回は変換を中心的に取り上げます。
@@ -47,27 +47,27 @@ Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへよ�
 
 ### ステップ2 - Snowflakeにログインする
 - Snowflakeアカウントにログインします。
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 
 ### ステップ3 - ワークシートに移動する
 - 左側のナビゲーションバーにある「ワークシート」タブをクリックします。
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### ステップ4 - ワークシートを作成する
 - ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### ステップ5 - ワークシートの名前を変更する
 - 自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - 変換」と入力してワークシートの名前を変更します。
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### ステップ6 - GitHubでQuickstart SQLにアクセスする
 - 下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQLファイルに移動します。<button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_transformation.sql)</button>
 
 ### ステップ7 - GitHubからSetup SQLをコピーする
 - GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける
 - Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（*Macの場合はCMD + V、Windowsの場合はCTRL + V*）。
@@ -92,7 +92,7 @@ USE ROLE tasty_dev;
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
     CLONE frostbyte_tasty_bytes.raw_pos.truck;
 ```
-<img src ="assets/3.1.truck_dev_clone.png">
+![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
 > aside positive
 > **ゼロコピークローン**：データベース、スキーマまたはテーブルのコピーを作成します。クローンの作成時にソースオブジェクトに存在するデータのスナップショットが取得され、クローンオブジェクトで利用できるようになります。
@@ -123,7 +123,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.1.truck.png">
+![assets/4.1.truck.png](assets/4.1.truck.png)
 
 ### ステップ2 - クエリを再実行する
 Snowflakeの[結果セットキャッシュ](https://docs.snowflake.com/ja/user-guide/querying-persisted-results)をテストするために実行するクエリは、先ほど実行したものと同じです。しかし、ここではさらに一歩進んで、このクエリが結果セットキャッシュから結果が届くとすぐに結果を返したことを示すクエリプロファイルにアクセスします。
@@ -140,8 +140,8 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.2.1.truck.png">
-<img src = "assets/4.2.2.cache.png">
+![assets/4.2.1.truck.png](assets/4.2.1.truck.png)
+![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
 >aside positive
 > ユーザーが既に実行されたクエリを繰り返し、クエリが最後に実行されてからテーブル内のデータが変更されていない場合、クエリの結果は同じになります。Snowflakeは、クエリを再実行する代わりに、以前に返された結果と同じ結果を返します。
@@ -165,7 +165,7 @@ SET make = 'Ford'
 WHERE make = 'Ford_';
 ```
 
-<img src = "assets/5.1.ford_.png">
+![assets/5.1.ford_.png](assets/5.1.ford_.png)
 
 ### ステップ2 - 使用年数計算を構築する
 
@@ -181,7 +181,7 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
 
-<img src = "assets/5.2.age.png">
+![assets/5.2.age.png](assets/5.2.age.png)
 
 ### ステップ3 - 「Next」をクリックする
 
@@ -207,7 +207,7 @@ ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
     SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
 ```
-<img src = "assets/6.2.update.png">
+![assets/6.2.update.png](assets/6.2.update.png)
 
 ### ステップ 3 - 新しい列をクエリする
 データの更新が成功したら、次にテーブルに対して簡単なクエリを実行し、`truck_age`列がどのように見えるか確認してみましょう。
@@ -218,7 +218,7 @@ SELECT
     t.truck_age
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
-<img src = "assets/6.3.bad_data.png">
+![assets/6.3.bad_data.png](assets/6.3.bad_data.png)
 
 **大変です！** 私たちが優れた開発者であり、やみくもに本番環境でこれをしでかさなかったことに感謝しておきましょう。
 
@@ -250,7 +250,7 @@ WHERE 1=1
     AND query_text LIKE '%frostbyte_tasty_bytes.raw_pos.truck_dev%'
 ORDER BY start_time DESC;
 ```
-<img src = "assets/7.1.query_history.png">
+![assets/7.1.query_history.png](assets/7.1.query_history.png)
 
 ### ステップ2 - SQL変数を設定する
 予想通り、タイプミスの修正と間違った計算の更新、およびそれらに関連する一意のquery_idが表示されます。次のクエリを実行してください。ここでは、`query_id` SQL変数を作成します。次のステップではその変数を使ってタイムトラベルで変更を元に戻します。
@@ -278,7 +278,7 @@ SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev
 BEFORE(STATEMENT => $query_id); 
 
 ```
-<img src = "assets/7.3.time_travel.png">
+![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 利用できるその他のタイムトラベルステートメントのオプションについては、以下のリストを参照してください。
 >aside positive
@@ -308,7 +308,7 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
 SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
 ```
 
-<img src = "assets/8.1.correct_update.png">
+![assets/8.1.correct_update.png](assets/8.1.correct_update.png)
 
 ### ステップ2 - 開発テーブルを本番と入れ替える
 `truck_dev`のすべてが完了したところで、次の2つのクエリを開始してください。ここではまず、より権限のある`sysadmin`ロールを引き受けます。`sysadmin`として、2つ目のクエリは[ALTER TABLE... SWAP WITH](https://docs.snowflake.com/ja/sql-reference/sql/alter-table)を使用して、`truck_dev`テーブルを`truck`に昇格させ、その逆も実行します。
@@ -335,7 +335,7 @@ WHERE t.make = 'Ford';
 
 ```
 
-<img src = "assets/8.3.validate_prod.png">
+![assets/8.3.validate_prod.png](assets/8.3.validate_prod.png)
 
 ### ステップ4 - 「Next」をクリックする
 
@@ -352,7 +352,7 @@ WHERE t.make = 'Ford';
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.1.drop.png">
+![assets/9.1.drop.png](assets/9.1.drop.png)
 
 **大変です！** この結果セットを見ると、`sysadmin`でさえも間違いを犯すということが分かります。誤って、開発の`truck_dev`ではなく本番の`truck`をドロップしてしまいました。ありがたいことに、ここでもSnowflakeのタイムトラベルが活躍します。
 
@@ -363,7 +363,7 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.2.undrop.png">
+![assets/9.2.undrop.png](assets/9.2.undrop.png)
 
 ### ステップ3 - 正しいテーブルをドロップする
 さて、最後に、締めくくりとして`truck_dev`を正しくドロップするクエリを実行しましょう。
@@ -372,7 +372,7 @@ UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ```
 
-<img src = "assets/9.3.correctdrop.png">
+![assets/9.3.correctdrop.png](assets/9.3.correctdrop.png)
 
 ### ステップ4 - 「Next」をクリックする
 

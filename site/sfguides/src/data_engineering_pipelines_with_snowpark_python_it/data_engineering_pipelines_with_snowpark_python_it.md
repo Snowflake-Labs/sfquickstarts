@@ -17,7 +17,7 @@ Ti interessa sfruttare la potenza di Snowpark Python per creare pipeline di data
 
 Questo quickstart tratterà molti argomenti e al termine avrai creato una solida pipeline di data engineering utilizzando le stored procedure di Snowpark Python. La pipeline elaborerà i dati in modo incrementale, sarà orchestrata con task di Snowflake e sarà distribuita tramite una pipeline CI/CD. Inoltre imparerai come utilizzare il nuovo strumento CLI per sviluppatori e l’estensione Visual Studio Code di Snowflake. Ecco una rapida panoramica grafica:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 
 Allaccia le cinture e preparati a partire!
@@ -94,11 +94,11 @@ Dovrai creare un fork del repository per questo quickstart nel tuo account GitHu
 
 Per impostazione predefinita le GitHub Actions disabilitano qualsiasi flusso di lavoro (o pipeline CI/CD) definito nel fork del repository. Questo repository contiene un flusso di lavoro per distribuire le tue UDF e stored procedure di Snowpark Python, che utilizzeremo più avanti. Per il momento, abilita questo flusso di lavoro aprendo il tuo fork del repository in GitHub, facendo clic sulla scheda `Actions` al centro nella parte superiore della pagina e poi facendo clic sul pulsante verde `I understand my workflows, go ahead and enable them`.
 
-<img src="assets/github-actions-activate.png" width="800" />
+![assets/github-actions-activate.png](assets/github-actions-activate.png)
 
 A questo punto devi clonare il nuovo fork del repository sul tuo computer locale. Per i dettagli sulla connessione del nuovo repository Git, apri il repository, fai clic sull’icona verde “Code” nella parte superiore della pagina e copia il link “HTTPS”.
 
-<img src="assets/git_repo_url.png" width="300" />
+![assets/git_repo_url.png](assets/git_repo_url.png)
 
 Utilizza il link in VS Code per clonare il repository sul tuo computer. Per maggiori informazioni, segui le istruzioni in [Clonare e usare un repository GitHub in Visual Studio Code](https://learn.microsoft.com/it-it/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository). Puoi anche clonare il repository dalla riga di comando, se per te è più semplice, eseguendo i seguenti comandi:
 
@@ -154,7 +154,7 @@ Per eseguire tutte le query di questo script, utilizza il pulsante “Execute Al
 
 In questo passaggio caricheremo i dati grezzi sui POS e sulla fidelizzazione dei clienti di Tasty Bytes dai file Parquet non elaborati in `s3://sfquickstarts/data-engineering-with-snowpark-python/` negli schemi `RAW_POS` e `RAW_CUSTOMER` in Snowflake. Orchestrerai questo processo dal tuo computer in Python utilizzando la Snowpark API per Python. Per contestualizzare, siamo al passaggio **2** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Eseguire lo script
 Per caricare i dati grezzi, esegui lo script `steps/02_load_raw.py`. Puoi farlo in diversi modi in VS Code, da un Terminale o direttamente tramite VS Code. Per questa demo devi eseguire gli script Python dal Terminale. Apri un Terminale in VS Code (Terminal -> New Terminal) nella barra dei menu in alto, assicurati che l’ambiente conda `pysnowpark` sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):
@@ -198,7 +198,7 @@ Lo script Python che hai appena eseguito ha svolto alcune operazioni localmente,
 
 Effettua l’accesso al tuo account Snowflake e dai una rapida occhiata al codice SQL generato dalla Snowpark API. Questo ti aiuterà a comprendere meglio le attività svolte dall’API e a eseguire le eventuali operazioni di debug se dovessero verificarsi problemi.
 
-<img src="assets/query_history_sproc.png" width="800" />
+![assets/query_history_sproc.png](assets/query_history_sproc.png)
 
 
 ### Inferenza dello schema
@@ -250,7 +250,7 @@ Utilizzeremo ancora questo schema nel corso di questo quickstart, quindi è impo
 
 In questo passaggio “caricheremo” i dati meteorologici grezzi in Snowflake. Tuttavia, “caricare” non è la parola giusta in questo caso. Poiché utilizziamo l’esclusiva funzionalità di condivisione dei dati di Snowflake, in realtà non abbiamo bisogno di copiare i dati nel nostro account Snowflake con un processo ETL personalizzato. Possiamo invece accedere direttamente ai dati meteorologici condivisi da Weather Source nel Marketplace Snowflake. Per contestualizzare, siamo al passaggio **3** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Marketplace Snowflake
 Weather Source è un fornitore leader di dati meteorologici e climatici globali e la sua suite di prodotti OnPoint fornisce alle aziende i dati meteorologici e climatici necessari per generare rapidamente insight pratici e significativi per un’ampia gamma di casi d’uso in tutti i settori. Connettiamoci al feed `Weather Source LLC: frostbyte` di Weather Source nel Marketplace Snowflake seguendo questi passaggi:
@@ -280,7 +280,7 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 
 In questo passaggio creeremo una vista per semplificare lo schema dei dati grezzi sui POS mettendo in join sei tabelle diverse e scegliendo solo le colonne che ci servono. Ma la cosa veramente interessante è che definiremo questa vista con la Snowpark DataFrame API! Poi creeremo uno stream Snowflake su questa vista per poter elaborare in modo incrementale le modifiche a qualsiasi tabella dei POS. Per contestualizzare, siamo al passaggio **4** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Eseguire lo script
 Per creare la vista e lo stream, esegui lo script `steps/04_create_pos_view.py`. Come nel passaggio 2, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -> New Terminal) nella barra dei menu in alto, assicurati che l’ambiente conda `pysnowpark` sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):
@@ -333,7 +333,7 @@ Per maggiori informazioni, consulta la sezione [Stream sulle viste](https://docs
 
 In questo passaggio creeremo e distribuiremo su Snowflake il nostro primo oggetto Snowpark Python, una User Defined Function (UDF). Inizialmente l’UDF sarà molto semplice, ma in un passaggio successivo la aggiorneremo per includere un pacchetto Python di terze parti. In questo passaggio incontrerai anche il nuovo strumento della riga di comando per sviluppatori SnowCLI. SnowCLI trasforma la creazione e la distribuzione di oggetti Snowpark Python in un’esperienza coerente per lo sviluppatore. Più avanti troverai maggiori informazioni su SnowCLI. Per contestualizzare, siamo al passaggio **5** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Eseguire l’UDF localmente
 Per testare l’UDF localmente, esegui lo script `steps/05_fahrenheit_to_celsius_udf/app.py`. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -> New Terminal) nella barra dei menu in alto, assicurati che l’ambiente conda `pysnowpark` sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):
@@ -418,7 +418,7 @@ CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
 
 In questo passaggio creeremo e distribuiremo su Snowflake la nostra prima stored procedure (o sproc) Snowpark Python. Questa stored procedure farà il merge delle modifiche dallo stream `HARMONIZED.POS_FLATTENED_V_STREAM` con la tabella target `HARMONIZED.ORDERS`. Per contestualizzare, siamo al passaggio **6** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Eseguire la stored procedure localmente
 Per testare la stored procedure localmente, esegui lo script `steps/06_orders_update_sp/app.py`. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -> New Terminal) nella barra dei menu in alto, assicurati che l’ambiente conda `pysnowpark` sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):
@@ -506,7 +506,7 @@ Di nuovo, per maggiori informazioni sulla Snowpark Python DataFrame API, consult
 
 In questo passaggio creeremo e distribuiremo su Snowflake la nostra seconda stored procedure di Snowpark Python. Questa stored procedure esegue il join dei dati di `HARMONIZED.ORDERS` con i dati di Weather Source per creare una tabella aggregata finale per l’analisi, chiamata `ANALYTICS.DAILY_CITY_METRICS`. Elaboreremo i dati della tabella `HARMONIZED.ORDERS` in modo incrementale utilizzando un altro stream Snowflake. Inoltre, utilizzeremo di nuovo il metodo `merge()` dei DataFrame di Snowpark per eseguire un merge/upsert dei dati. Per contestualizzare, siamo al passaggio **7** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Eseguire la stored procedure localmente
 Per testare la stored procedure localmente, esegui lo script `steps/07_daily_city_metrics_update_sp/app.py`. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -> New Terminal) nella barra dei menu in alto, assicurati che l’ambiente conda `pysnowpark` sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):
@@ -569,7 +569,7 @@ La query di aggregazione complessa viene poi unita alla tabella di analisi final
 
 In questo passaggio orchestreremo le nuove pipeline Snowpark con la funzionalità di orchestrazione nativa di Snowflake chiamata Tasks. Creeremo due task, uno per ogni stored procedure, poi li concateneremo e infine li eseguiremo. Per contestualizzare, siamo al passaggio **8** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Eseguire lo script
 Poiché questo è uno script SQL, utilizzeremo l’estensione nativa VS Code per eseguirlo. Quindi, apri semplicemente lo script `steps/08_orchestrate_jobs.sql` in VS Code ed eseguilo tutto utilizzando il pulsante “Execute All Statements” nell’angolo superiore destro della finestra dell’editor.
@@ -649,11 +649,11 @@ Come abbiamo visto, anche se puoi creare i processi operativi o di monitoraggio 
 
 Il grafico del task è simile a questo:
 
-<img src="assets/ui-snowsight-task-graph.png" width="800" />
+![assets/ui-snowsight-task-graph.png](assets/ui-snowsight-task-graph.png)
 
 E questo è un esempio della cronologia di esecuzione del task:
 
-<img src="assets/ui-snowsight-task-run-history.png" width="800" />
+![assets/ui-snowsight-task-run-history.png](assets/ui-snowsight-task-run-history.png)
 
 Per maggiori informazioni e per scoprire come visualizzare la cronologia dei task a livello di account, consulta [Visualizzazione della cronologia dei task](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html) nella nostra documentazione.
 
@@ -663,7 +663,7 @@ Per maggiori informazioni e per scoprire come visualizzare la cronologia dei tas
 
 In questo passaggio aggiungeremo nuovi dati alle tabelle degli ordini dei POS e poi eseguiremo l’intera pipeline end-to-end per elaborare i nuovi dati. Questa pipeline completa elaborerà i dati in modo incrementale grazie all’avanzata funzionalità degli stream/CDC di Snowflake. Per contestualizzare, siamo al passaggio **9** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Eseguire lo script
 Poiché questo è uno script SQL, utilizzeremo l’estensione nativa VS Code per eseguirlo. Quindi, apri semplicemente lo script `steps/09_process_incrementally.sql` in VS Code ed eseguilo tutto utilizzando il pulsante “Execute All Statements” nell’angolo superiore destro della finestra dell’editor.
@@ -705,7 +705,7 @@ Ora dovresti vedere tutte le query eseguite dai task. Dai un’occhiata a ciascu
 
 In questo passaggio modificheremo l’UDF `FAHRENHEIT_TO_CELSIUS_UDF()` e poi la distribuiremo tramite una pipeline CI/CD. Aggiorneremo l’UDF `FAHRENHEIT_TO_CELSIUS_UDF()` per utilizzare un pacchetto Python di terze parti, la invieremo al fork del repository GitHub e infine la distribuiremo utilizzando SnowCLI in un flusso di lavoro GitHub Actions. Per contestualizzare, siamo al passaggio **n. 10** della nostra panoramica del flusso di dati:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Aggiornare l’UDF per la conversione da Fahrenheit a Celsius
 Sostituiremo la conversione della temperatura specificata nel codice con un pacchetto della libreria `scipy`. Per prima cosa apporteremo alcune modifiche allo script `steps/05_fahrenheit_to_celsius_udf/app.py`. In questo file aggiungeremo un comando `import` e sostituiremo il corpo della funzione `main()`. Apri lo script `steps/05_fahrenheit_to_celsius_udf/app.py` in VS Code e sostituisci questa sezione:
@@ -787,7 +787,7 @@ Dal repository, fai clic sulla scheda `Settings` nella parte superiore della pag
 
 Dopo avere aggiunto tutti i segreti, la pagina dovrebbe essere simile alla seguente:
 
-<img src="assets/github-actions-secrets.png" width="800" />
+![assets/github-actions-secrets.png](assets/github-actions-secrets.png)
 
 > aside positive
 > 
@@ -799,11 +799,11 @@ Ora che abbiamo eseguito e testato le modifiche e le nostre credenziali Snowflak
 
 Per iniziare, apri l’estensione “Source Control” nella barra di navigazione a sinistra; dovrebbero comparire due file con modifiche. Fai clic sul segno `+` (più) a destra del nome di ogni file per includere le modifiche nel commit. Quindi inserisci un messaggio nella casella “Message” e fai clic sul pulsante blu `Commit` per eseguire il commit delle modifiche a livello locale. Prima di premere il pulsante, dovresti vedere quanto segue:
 
-<img src="assets/vs_code_repo_commit.png" width="400" />
+![assets/vs_code_repo_commit.png](assets/vs_code_repo_commit.png)
 
 A questo punto le modifiche sono salvate solo a livello locale e non sono state inviate al tuo fork del repository in GitHub. Per inviare i commit a GitHub, fai clic sul pulsante blu `Sync Changes`. Prima di premere il pulsante, dovresti vedere quanto segue:
 
-<img src="assets/vs_code_repo_push.png" width="400" />
+![assets/vs_code_repo_push.png](assets/vs_code_repo_push.png)
 
 ### Visualizzare il flusso di lavoro GitHub Actions
 Questo repository è già configurato con una semplice pipeline CI/CD GitHub Actions. Puoi esaminare il codice del flusso di lavoro aprendo il file `.github/workflows/build_and_deploy.yaml` in VS Code.
@@ -815,7 +815,7 @@ Il flusso di lavoro è stato avviato non appena hai inviato le modifiche al tuo 
 * Fai clic sul nome dell’esecuzione specifica più recente (che dovrebbe corrispondere al commento che avevi immesso)
 * Dalla pagina riassuntiva dell’esecuzione, fai clic sul processo `deploy` e poi sfoglia l’output dei diversi passaggi. In particolare potrà essere utile esaminare l’output del passaggio `Deploy Snowpark apps`.
 
-<img src="assets/github-actions-run-summary.png" width="800" />
+![assets/github-actions-run-summary.png](assets/github-actions-run-summary.png)
 
 L’output del passaggio `Deploy Snowpark apps` dovrebbe ormai esserti familiare e dovrebbe essere uguale a ciò che hai visto nel Terminale in VS Code quando hai eseguito SnowCLI nei passaggi precedenti. L’unica cosa che potrebbe essere diversa è l’ordine dell’output, ma dovresti comunque riuscire a vedere le operazioni svolte.
 
@@ -831,7 +831,7 @@ Una volta completato questo quickstart, puoi eliminare gli oggetti non più nece
 
 Abbiamo davvero fatto molta strada in questo quickstart! A questo punto hai creato una solida pipeline di data engineering utilizzando le stored procedure di Snowpark Python. La pipeline elabora i dati in modo incrementale, è orchestrata con task di Snowflake ed è distribuita tramite una pipeline CI/CD. Inoltre hai imparato come utilizzare il nuovo strumento CLI per sviluppatori e l’estensione Visual Studio Code di Snowflake. Ecco una rapida sintesi grafica:
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 Tuttavia, abbiamo visto solo una minima parte di ciò che è possibile fare con Snowpark. Ora dovresti disporre delle nozioni fondamentali e degli esempi necessari per iniziare a creare una tua pipeline di data engineering con Snowpark Python. Non ti resta che scegliere un progetto da realizzare!
 

@@ -40,9 +40,9 @@ Streamlit *（2022年3月にSnowflakeが買収）* は、カスタムウェブ�
 
 ### 構築するもの
 
-- **ロケーション別の売上予測**<br> <img src="assets/notebook_preview.gif"/>
+- **ロケーション別の売上予測**<br> ![assets/notebook_preview.gif](assets/notebook_preview.gif)
 
-- **売上予測に基づいて上位のロケーションを見つけるStreamlitアプリケーション**<br> <img src="assets/streamlit_preview.gif"/>
+- **売上予測に基づいて上位のロケーションを見つけるStreamlitアプリケーション**<br> ![assets/streamlit_preview.gif](assets/streamlit_preview.gif)
 
 <!-- ------------------------ -->
 ## Snowflakeでのデータの設定
@@ -73,7 +73,7 @@ Tasty Bytesは世界中の都市でキッチンカーを運行しており、各
   - データベースの名称をFROSTBYTE_SAFEGRAPH（すべて大文字）に変更
   - 追加ロールへの付与 -> 「PUBLIC（公開）」
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 > SafeGraphは、世界中のあらゆる場所に関するデータを提供するグローバルな地理空間データ会社です。Esri、Tripadvisor、Mapbox、Syscoなどの顧客は、SafeGraphのデータを使用して、自社の顧客をより正確に把握し、新しい製品を生み出し、より的確な経営判断を行っています。
 
 ### ステップ2 - オブジェクトの作成、データのロード、データの結合を行う
@@ -183,7 +183,7 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 
 ### ステップ2 - 認証ファイルを更新する
 
-- [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json)ファイルをSnowflakeアカウント認証情報で更新します。Pythonノートブックはこのファイルを使って認証情報にアクセスし、Snowflakeに接続します。<br><img src="assets/auth_file.png">
+- [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json)ファイルをSnowflakeアカウント認証情報で更新します。Pythonノートブックはこのファイルを使って認証情報にアクセスし、Snowflakeに接続します。<br>![assets/auth_file.png](assets/auth_file.png)
 
 >   
 `account`パラメータには、[アカウント識別子](https://docs.snowflake.com/en/user-guide/admin-account-identifier)を使用します。アカウント識別子には、接尾辞snowflakecomputing.comが含まれていないことに注意してください。
@@ -226,7 +226,7 @@ jupyter notebook
 
 ### ステップ4 - Jupyter Notebookを実行する
 
-- Jupyter Notebookで[tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb)のセルを開いて実行します。<img src = "assets/notebook_preview.png">
+- Jupyter Notebookで[tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb)のセルを開いて実行します。![assets/notebook_preview.png](assets/notebook_preview.png)
 
 ### トラブルシューティング
 
@@ -283,7 +283,7 @@ jupyter notebook
   ```
   streamlit run streamlit_app.py
   ```
-- ドロップダウンメニューから都市を選択します。更新された推奨が表示されます。<img src = "assets/streamlit_preview.png">
+- ドロップダウンメニューから都市を選択します。更新された推奨が表示されます。![assets/streamlit_preview.png](assets/streamlit_preview.png)
 
 <!-- ------------------------ -->
 ## クリーンアップ

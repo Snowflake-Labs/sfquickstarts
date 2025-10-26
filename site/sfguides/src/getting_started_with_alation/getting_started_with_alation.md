@@ -142,7 +142,7 @@ In today's world of data management, it is common to have policies and procedure
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -171,7 +171,7 @@ In today's world of data management, it is common to have policies and procedure
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>
@@ -205,7 +205,7 @@ Alation creates an experience that allows users to expand their world of knowled
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -240,7 +240,7 @@ Alation creates an experience that allows users to expand their world of knowled
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>
@@ -275,7 +275,7 @@ Queries can be developed by those who know SQL and shared with others in the org
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -307,7 +307,7 @@ Queries and Compose are accessible from several places in the application. The f
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>
@@ -342,7 +342,7 @@ When the stakes are high, especially when providing data for AI models, data qua
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -392,7 +392,7 @@ When the stakes are high, especially when providing data for AI models, data qua
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>

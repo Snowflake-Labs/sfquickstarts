@@ -146,7 +146,7 @@ MODEL = 'claude-3-5-sonnet'
 
 At this point, you should have an updated folder structure similar to the one shown below.
 
-<img src="assets/updated_bot_folder_structure.png" alt="bot_folder_structure" width="400"/>
+![assets/updated_bot_folder_structure.png](assets/updated_bot_folder_structure.png)
 
 ## Test
 <!-- ------------------------ -->

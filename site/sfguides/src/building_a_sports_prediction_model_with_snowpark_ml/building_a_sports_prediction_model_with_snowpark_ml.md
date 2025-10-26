@@ -69,7 +69,7 @@ Next you will need to upload the data files in the repo into the `DATA` stage yo
 2) Click on the `PUBLIC` schema, then `STAGES`, and then click on the `DATA` Stage
 3) In the top right corner, click on the `+FILES` option and add the `fixtures.csv`, `rankings.csv`, and `results.csv` files - make sure to click on the **UPLOAD** button.
 
-<img src="assets/stage_files.png" width="400"/>
+![assets/stage_files.png](assets/stage_files.png)
 
 ### Loading the Notebooks
 Finally we need to load the 5 notebooks from the repo found here:
@@ -92,7 +92,7 @@ To load the notebooks in Snowflake's Notebook environment:
 2) Click on the dropdown option on the `+NOTEBOOK` in the top right, and select **Import from .ipynb**
 3) Check that the Database is set to `EURO2024`, the `PUBLIC` scheme is select, and the warehouse is set as `EURO2024_WH`
 
-<img src="assets/notebook_upload.png" alt="notebook_upload" width="400"/>
+![assets/notebook_upload.png](assets/notebook_upload.png)
 
 ***
 
@@ -178,7 +178,7 @@ In the final notebook, you will be stepping through all rounds of the Euro 2024 
 
 At the end of this stage, we will have a predicted winner of the tournament. Great job!
 
-<img src="assets/beckham-england.gif" alt="england" width="400"/>
+![assets/beckham-england.gif](assets/beckham-england.gif)
 
 ## Conclusion and Resources
 

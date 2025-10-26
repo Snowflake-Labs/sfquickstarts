@@ -63,7 +63,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > aside positive
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-<img src ='assets/b9575209bfee61ca.png' width=500>
+![assets/b9575209bfee61ca.png](assets/b9575209bfee61ca.png)
 
 ### Create a Virtual Warehouse (if needed)
 
@@ -73,7 +73,7 @@ If you don't already have access to a Virtual Warehouse to run queries, you will
 - Click the big blue `+ Warehouse` button in the upper right of the window
 - Create an X-Small Warehouse as shown in the screen below
 
-<img src ='assets/new_warehouse.png' width=500>
+![assets/new_warehouse.png](assets/new_warehouse.png)
 
 Be sure to change the `Suspend After (min)` field to 1 min to avoid wasting compute credits.
 
@@ -84,18 +84,18 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 - Search for `OpenStreetMap New York` in the search bar
 - Find and click the `Sonra OpenStreetMap New York` tile
 
-<img src ='assets/marketplace.png' width=500>
+![assets/marketplace.png](assets/marketplace.png)
 
 - Once in the listing, click the big blue `Get` button
 
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-<img src ='assets/get_data.png' width=500>
+![assets/get_data.png](assets/get_data.png)
 
 - On the `Get Data` screen, change the name of the database from the default to `OSM_NEWYORK`, as this name is shorter and all of the future instructions will assume this name for the database.
 
-<img src ='assets/get_data_renamed.png' width=500>
+![assets/get_data_renamed.png](assets/get_data_renamed.png)
 
 Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace.
 
@@ -104,17 +104,17 @@ Now you can acquire CARTO's Analytics Toolbox from the Snowflake Marketplace. Th
 
 - Similar to how you did with the data in the previous steps, navigate to the Marketplace screen using the menu on the left side of the window
 
-<img src ='assets/search_carto_dataset.png' width=500>
+![assets/search_carto_dataset.png](assets/search_carto_dataset.png)
 
 - Search for `CARTO` in the search bar
 - Find and click the `Analytics Toolbox` tile
 
-<img src ='assets/analytics_toolbox.png' width=500>
+![assets/analytics_toolbox.png](assets/analytics_toolbox.png)
 
 Click on big blue `Get` button
 In the options, name the database `CARTO` and optionally add more roles that can access the database
 
-<img src ='assets/get_data_permissions.png' width=500>
+![assets/get_data_permissions.png](assets/get_data_permissions.png)
 
 - Click on `Get` and then `Done`.
 
@@ -130,7 +130,7 @@ Access the CARTO Workspace: [app.carto.com](http://app.carto.com/)
 ### Connection to Snowflake
 Go to the Connections section in the Workspace, where you can find the list of all your current connections.
 
-<img src ='assets/carto_connection_1.png' width=500>
+![assets/carto_connection_1.png](assets/carto_connection_1.png)
 
 To add a new connection, click on `New connection` and follow these steps:
 
@@ -152,7 +152,7 @@ These are the parameters you need to provide:
 - **Database (optional)**. Default database to run your queries. Leave Blank.
 - **Role (optional)**. Default Role to run your queries. Use ACCOUNTADMIN.
 
-<img src ='assets/carto_connection_2.png' width=500>
+![assets/carto_connection_2.png](assets/carto_connection_2.png)
 
 Once you have entered the parameters, you can click the Connect button. CARTO will try to connect to your Snowflake account. If everything is OK, your new connection will be registered.
 
@@ -166,11 +166,11 @@ Now we will run different queries to understand how the `GEOGRAPHY` data type wo
 - Click the + Worksheet button in the upper right of your browser window. This will open a new window.
 - In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
 
-<img src ='assets/sf_worksheet_1.png' width=500>
+![assets/sf_worksheet_1.png](assets/sf_worksheet_1.png)
 
 - In the object browser on the left, select Databases tab and expand the `OSM_NEWYORK` database, the `NEW_YORK` schema, and the `Views` grouping to see the various views that you have access to in this shared database. The data provider has chosen to share only database views in this listing. You will use some of these views throughout the guide.
 
-<img src ='assets/sf_worksheet_2.png' width=400>
+![assets/sf_worksheet_2.png](assets/sf_worksheet_2.png)
 
 Now you are ready to run some queries.
 
@@ -226,7 +226,7 @@ In the result set, notice the `coordinates` column and how it displays a JSON re
 
 If you click on a cell in the `coordinates` column of the query result, the JSON representation will also show in the cell panel on the right side of the query window, and it includes a button that allows you to copy that JSON text (see screenshot below). You will use this capability in later exercises.
 
-<img src ='assets/sf_worksheet_3.png' width=500>
+![assets/sf_worksheet_3.png](assets/sf_worksheet_3.png)
 
 Now run the next query.
 
@@ -445,15 +445,15 @@ Now let's do the query in CARTO Builder to see where the point is.
 
 - Create a new map. Use a the navigation menu on the left to got to Maps and then click on (+) New Map).
 
-<img src ='assets/step6_1.png' width=500>
+![assets/step6_1.png](assets/step6_1.png)
 
 - Click on the "Add Source From"
 
-<img src ='assets/step6_2.png' width=500>
+![assets/step6_2.png](assets/step6_2.png)
 
 - Then click on `Custom Query` and make sure you have selected Snowflake Connection that you have created in previous steps.
 
-<img src ='assets/step6_3.gif' width=500>
+![assets/step6_3.gif](assets/step6_3.gif)
 
 - Now paste the query and click on the green `Run` button.
 
@@ -466,14 +466,14 @@ select to_geography('POINT(-73.986226 40.755702)') as geom;
 
 - Use the map zoom controls (+/- buttons) and click the zoom in )+) button until you can see the point better. You should see something like the screenshot below, though you may see more depending on your browser window size.
 
-<img src ='assets/step6_4.png' width=500>
+![assets/step6_4.png](assets/step6_4.png)
 
 > aside positive
 >  Feel free to use this as your SQL Editor for the next steps, you can delete and re-run the queries from the workshop here.
 
 The green dot represents the `POINT` object location. Now you know where you are!
 
-<img src ='assets/step6_5.png' width=500>
+![assets/step6_5.png](assets/step6_5.png)
 
 ### Find the Closest Locations
 
@@ -570,7 +570,7 @@ Select st_makeline(st_collect(coordinates),to_geography('POINT(-73.986226 40.755
 
 You should get this:
 
-<img src ='assets/step6_6.png' width=500>
+![assets/step6_6.png](assets/step6_6.png)
 
 Yikes! You can see in the image above that the various shops are in three different directions from your original location. That could be a long walk. Fortunately, you can find out just how long by wrapping a `ST_DISTANCE` function around the `LINESTRING` object, which will calculate the length of the line in meters. Run the query below:
 
@@ -608,7 +608,7 @@ from locations;
 
 You can view non-geospatial parameters by adding a hover pop-up interaction. See GIF below:
 
-<img src ='assets/step6_7.gif' width=500>
+![assets/step6_7.gif](assets/step6_7.gif)
 
 Wow! Almost 2120 meters!
 
@@ -650,7 +650,7 @@ where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 6 limit 1;
 ```
 
-<img src ='assets/joins_1.png' width=500>
+![assets/joins_1.png](assets/joins_1.png)
 
 And then run:
 ```
@@ -668,7 +668,7 @@ order by 6 limit 1;
 
 If you note in the result of each query, the first query found a different liquor store closer to Best Buy, whereas the second query returned the same coffee shop from your original search, so you've optimized as much as you can.
 
-<img src ='assets/joins_2.png' width=500>
+![assets/joins_2.png](assets/joins_2.png)
 
 > aside negative
 >  The id of the selected Best Buy was hard coded into the above queries to keep them easier to read and to keep you focused on the join clause of these queries, rather than introducing sub queries to dynamically calculate the nearest Best Buy. Those sub queries would have created longer queries that were harder to read.
@@ -712,7 +712,7 @@ to_geography('POINT(-73.986226 40.755702)')) as geom from locations;
 
 Copy the result cell from the above query and paste it into the first layer A. You should get this:
 
-<img src ='assets/joins_3.png' width=500>
+![assets/joins_3.png](assets/joins_3.png)
 
 Much better! This looks like a more efficient shopping path. Check the new distance by running this query:
 
@@ -748,7 +748,7 @@ st_length(geom) as distance
 from locations;
 ```
 
-<img src ='assets/joins_4.png' width=500>
+![assets/joins_4.png](assets/joins_4.png)
 
 Nice! 1537 meters, which is a savings of about 583 meters, or a third of a mile. By joining the two shop views together, you were able to find an object in one table that is closest to an object from another table to optimize your route. Now that you have a more optimized route, can you stop at any other shops along the way? Advance to the next section to find out.
 
@@ -800,7 +800,7 @@ from locations
 
 Click on `(+) Add source from` and copy the result cell from the above query. You should get this:
 
-<img src ='assets/step8_1.png' width=500>
+![assets/step8_1.png](assets/step8_1.png)
 
 And just like before where you could calculate the distance of a `LINESTRING` using `ST_DISTANCE`, you can calculate the perimeter of a `POLYGON` using `ST_PERIMETER`, which you wrap around the polygon construction in the same way you wrapped around the line construction. Run this query to calculate the perimeter:
 ```
@@ -834,7 +834,7 @@ to_geography('POINT(-73.986226 40.755702)'))) as geom,
 st_perimeter(geom) as perimeter_meters
 from locations
 ```
-<img src ='assets/step8_2.png' width=500>
+![assets/step8_2.png](assets/step8_2.png)
 
 Nice! That query returned the same 1537 meters you got before as the distance of the `LINESTRING`, which makes sense, because the perimeter of a `POLYGON` is the same distance as a `LINESTRING` that constructs a `POLYGON`.
 
@@ -852,7 +852,7 @@ FROM CARTO.public.starbucks_locations_usa
 WHERE CITY = 'New York'
 ```
 
-<img src ='assets/step9_1.png' width=500>
+![assets/step9_1.png](assets/step9_1.png)
 
 > aside negative
 >  We are using a sample dataset included in the CARTO Analytics Toolbox named `starbucks_locations_usa`. You can find it under `PUBLIC`. So the full qualified name should be something like `CARTO.public.starbucks_locations_usa`.
@@ -876,13 +876,13 @@ FROM
   data
 ```
 
-<img src ='assets/step9_2.png' width=500>
+![assets/step9_2.png](assets/step9_2.png)
 
 You can click on the layer and go into the Fill Color palette to color by `agg_total`.
 
 Finally add widget to filter the area with the most starbucks:
 
-<img src ='assets/step9_3.png' width=500>
+![assets/step9_3.png](assets/step9_3.png)
 
 Congratulations! You have borrowed your search!
 

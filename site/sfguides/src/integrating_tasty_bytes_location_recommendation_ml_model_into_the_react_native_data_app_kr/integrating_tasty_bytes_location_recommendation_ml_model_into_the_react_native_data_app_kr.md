@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 개요
 
-<img src="assets/tasty_bytes_header.png"/>
+![assets/tasty_bytes_header.png](assets/tasty_bytes_header.png)
 
 Snowflake는 ML 모델을 저장 프로시저, 사용자 정의 함수(UDF) 및 사용자 정의 테이블 함수(UDTF)로 배포할 수 있도록 하는 간편한 기능을 통해 데이터 애플리케이션으로 머신러닝 모델을 통합하는 작업을 간소화했습니다. 또한, Snowflake는 RESTful API인 SQL API를 제공하여 배포된 ML 모델을 쿼리할 수 있도록 합니다. 이는 애플리케이션과 ML 모델 간의 원활한 통합을 가능하게 만듭니다.
 
@@ -69,7 +69,7 @@ Tasty Bytes는 전 세계 도시에서 푸드 트럭을 운영합니다. 각 트
   - 데이터베이스 이름 바꾸기 -> FROSTBYTE_SAFEGRAPH(전부 대문자)
   - 추가 역할에 부여 -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 > aside positive SafeGraph는 전 세계 모든 장소에 대한 모든 데이터를 제공하는 전 세계적인 지리 공간 데이터 회사입니다. Esri, Tripadvisor, Mapbox 및 Sysco와 같은 고객은 SafeGraph 데이터를 사용하여 고객을 더 잘 이해하고, 신제품을 만들고, 비즈니스를 위한 더 나은 결정을 내립니다.
 
@@ -450,7 +450,7 @@ SQL API를 사용하여 Snowflake와 인증하기 위해 키 쌍 인증을 사�
 2. 이렇게 하면 웹 브라우저에서 앱이 시작됩니다.
 3. 시작된 후 InQueue Orders 화면을 확인할 수 있습니다.
 
-<img src="assets/Locations.png"/>
+![assets/Locations.png](assets/Locations.png)
 
 <!-- ------------------------ -->
 ## 정리
