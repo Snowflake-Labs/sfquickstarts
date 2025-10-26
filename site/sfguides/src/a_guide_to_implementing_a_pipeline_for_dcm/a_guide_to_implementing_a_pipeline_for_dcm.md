@@ -3,7 +3,7 @@ id: a_guide_to_implementing_a_pipeline_for_database_change_management
 summary: Implementing a Pipeline for Database Change Management
 categories: Getting-Started, Data Engineering
 environments: web
-status: Published
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering
 
