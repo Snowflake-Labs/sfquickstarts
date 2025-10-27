@@ -14,6 +14,8 @@ tags: Getting Started, Cortex, AI, Demo Development, Framework
 
 Demo development traditionally takes weeks of engineering effort, creating bottlenecks that slow sales cycles and delay proof-of-concept delivery. Sales teams need to rapidly showcase AI capabilities with professional, interactive demonstrations to win customers, but building custom demos for each prospect is time-prohibitive. The Cortex AI Demo Framework solves this challenge by providing a 6-application demo development platform built on Snowflake Cortex AI. You'll learn to generate synthetic data, create interactive analytics, and deploy Streamlit applications transforming weeks of development into minutes and enabling your team to build AI-powered demos on-demand for any industry or use case.
 
+![Architecture Diagram](assets/architecture_diagram.png)
+
 ### What You Will Build
 
 **6 Integrated Streamlit Applications:**
