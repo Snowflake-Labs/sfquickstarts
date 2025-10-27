@@ -1064,8 +1064,6 @@ Your demo is complete! You can:
 - **Persona 1** (Solutions Engineer / BI Developer): Create dashboard YAML from structured tables for Snow Viz
 
 
-
-
 ### Step 1: Open the App
 
 Navigate to `Projects` → `Streamlit` → **`YAML_WIZARD`**
@@ -1089,10 +1087,6 @@ Table: TECHCORP_ORDERS_STRUCTURED ▼
 - **BRONZE_LAYER**: Use if working with raw data directly
 
 Select your structured table from the previous steps.
-
-> aside positive
-> 
-> **Success Check**: After selecting your table, you should see a preview showing your columns (CUSTOMER_NAME, ORDER_DATE, etc.) and sample data rows.
 
 
 ### Step 3: Configure Dimensions and Metrics
@@ -1133,12 +1127,6 @@ Auto-generated metrics from your table:
 
 Check 3-7 key metrics you want to calculate. The app automatically creates aggregation functions.
 
-**Tips**:
-- Don't check ALL metrics - pick the most important 5-10
-- Dimensions are for grouping (categories, names)
-- Metrics are for calculations (numbers, aggregations)
-
-
 ### Step 4: Customize Dimensions
 
 **Click the "Dimensions" tab**
@@ -1157,11 +1145,6 @@ Label: Product
 Description: Product purchased
 Priority: 1
 ```
-
-**What to customize**:
-- **Label**: User-friendly display name (e.g., "Product Category" instead of "PRODUCT_NAME")
-- **Description**: Help text for users
-- **Priority**: Display order (0 = first, 1 = second, etc.)
 
 **IMPORTANT**: After editing, click **"Apply All Dimension Changes"** button at the bottom!
 
@@ -1195,19 +1178,6 @@ SQL: AVG(PRICE)
 Format: currency
 Decimals: 2
 ```
-
-**What to customize**:
-- **Label**: User-friendly display name
-- **SQL**: The aggregation function (modify if needed)
-- **Format**: number, percent, currency, integer
-- **Decimals**: Decimal places to display
-
-**IMPORTANT**: After editing, click **"Apply All Metric Changes"** button at the bottom!
-
-> aside positive
-> 
-> **Required Step**: You MUST click "Apply All Metric Changes" or your edits won't be saved!
-
 
 ### Step 6: Generate Dashboard YAML
 
@@ -1262,37 +1232,6 @@ Upload your YAML file to Snowflake:
 **Why Two Saves?**:
 - **Download YAML**: For uploading to stage (Snow Viz needs this)
 - **Save to CONFIGS**: For editing later (preserves your customizations)
-
----
-
-### What to Ignore (Normal Messages)
-
-**These messages are NORMAL for first-time use:**
-
-```
-No Cortex Search services found in this database/schema
-Create a Cortex Search service first to enable semantic search
-```
-**Ignore this** - Search services are advanced/optional
-
-```
-Table exists but no configurations found
-No configs saved yet.
-Configuration table has 0 saved configs
-```
-**Ignore this** - Normal until you save your first config
-
----
-
-### Best Practices
-
-**Start simple**: Pick 2-3 dimensions and 3-5 metrics for first try  
-**Use clear labels**: "Product Category" is better than "PRODUCT_CATEGORY"  
-**Format metrics**: Use currency for money, percent for rates  
-**Save your work**: Both download AND save to database  
-**Test in Snow Viz**: Verify dashboard works as expected
-
----
 
 ### What's Next?
 
