@@ -25,6 +25,8 @@ This Quickstart showcases the complete Cortex AI Demo Framework with:
 - **Production-ready applications** with professional UI/UX
 
 
+![Architecture Diagram](assets/architecture_diagram.png)
+
 ### What You Will Build
 - Complete 6-application integrated demo platform
 - AI-powered synthetic data generation system using Cortex functions
