@@ -1038,22 +1038,6 @@ If your SQL includes `SNOWFLAKE.CORTEX.COMPLETE()` calls, you'll see an interact
 - Edit system and user prompts live
 - Re-run queries with different parameters
 
-> aside positive
-> 
-> **Live Audience Engagement**: Modify AI prompts in real-time during presentations!
-
----
-
-### Best Practices
-
-**Prepare ahead**: Test demo flow before presentations  
-**Use talk tracks**: Add presenter notes in YAML for guidance  
-**Practice transitions**: Know when to switch visualizations  
-**Engage audience**: Ask for prompt suggestions during AI steps  
-**Keep queries fast**: Use LIMIT clause for demo data
-
----
-
 ### What's Next?
 
 **For Persona 2 (Data Engineer)**:
