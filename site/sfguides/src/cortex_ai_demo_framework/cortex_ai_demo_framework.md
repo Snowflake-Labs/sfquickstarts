@@ -11,7 +11,6 @@ tags: Getting Started, Cortex, AI, Demo Development, Framework
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 2
 
 Demo development traditionally takes weeks of engineering effort, creating bottlenecks that slow sales cycles and delay proof-of-concept delivery. Sales teams need to rapidly showcase AI capabilities with professional, interactive demonstrations to win customers, but building custom demos for each prospect is time-prohibitive. The Cortex AI Demo Framework solves this challenge by providing a 6-application demo development platform built on Snowflake Cortex AI. You'll learn to generate synthetic data, create interactive analytics, and deploy Streamlit applications transforming weeks of development into minutes and enabling your team to build AI-powered demos on-demand for any industry or use case.
 
@@ -46,7 +45,6 @@ Demo development traditionally takes weeks of engineering effort, creating bottl
 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment  
-Duration: 5
 
 In this step, you'll create the Snowflake database objects and prepare for framework deployment.
 
@@ -127,7 +125,6 @@ The notebook creates all 6 Streamlit applications using the single stage approac
 
 <!-- ------------------------ -->
 ## Run Framework Demo Notebook
-Duration: 3
 
 ### Execute the Framework Deployment Workflow
 
@@ -145,7 +142,6 @@ The notebook processes sample data and deploys the complete framework applicatio
 
 <!-- ------------------------ -->
 ## Framework Overview
-Duration: 3
 
 ### Access Your Demo Framework
 
@@ -198,7 +194,6 @@ Renders advanced interactive dashboards with multi-tab analytics and AI integrat
 
 <!-- ------------------------ -->
 ## Persona Workflows
-Duration: 2
 
 The framework supports **3 user personas**. Choose your workflow based on your role:
 
@@ -236,7 +231,6 @@ Generate synthetic datasets for machine learning and experimentation.
 
 <!-- ------------------------ -->
 ## Synthetic Data Generator
-Duration: 5
 
 **Purpose**: Create realistic AI-powered datasets for any business scenario using Cortex LLMs  
 **Dependencies**: None (START HERE)  
@@ -448,7 +442,6 @@ Your data is now in raw JSON format. App 2 will clean and structure it into prop
 
 <!-- ------------------------ -->
 ## Structured Tables
-Duration: 5
 
 **Purpose**: Transform raw JSON data into clean, structured database tables  
 **Dependencies**: Requires data from App 1  
@@ -685,7 +678,6 @@ Your data is now in clean, structured format in `SILVER_LAYER` - ready for analy
 
 <!-- ------------------------ -->
 ## SQL to YAML Converter
-Duration: 5
 
 **Purpose**: Convert SQL queries into interactive demo configurations for Snow Demo  
 **Dependencies**: Requires tables from App 1 or 2  
@@ -984,7 +976,6 @@ FROM my_table;
 
 <!-- ------------------------ -->
 ## Snow Demo
-Duration: 5
 
 **Purpose**: Run interactive SQL-driven presentations with live visualizations  
 **Dependencies**: Requires YAML configs from App 3 (uploaded to `FRAMEWORK_YAML_STAGE`)  
@@ -1061,7 +1052,6 @@ Your demo is complete! You can:
 
 <!-- ------------------------ -->
 ## YAML Wizard
-Duration: 7
 
 **Purpose**: Create dashboard configurations through guided interface  
 **Dependencies**: Requires tables from App 1 or 2  
@@ -1256,7 +1246,6 @@ Your data is now ready for visual analytics with 8 interactive dashboard tabs!
 
 <!-- ------------------------ -->
 ## Snow Viz
-Duration: 5
 
 **Purpose**: Render advanced interactive dashboards from YAML configurations  
 **Dependencies**: Requires YAML configs from App 5 (uploaded to `VISUALIZATION_YAML_STAGE`)  
@@ -1559,7 +1548,6 @@ Your complete analytics pipeline is built! You've created:
 
 <!-- ------------------------ -->
 ## Clean Up Resources
-Duration: 3
 
 ### Remove All Created Objects
 
@@ -1574,7 +1562,6 @@ This will clean up all framework components while preserving any other work in y
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You've successfully built the complete Cortex AI Demo Framework using Snowflake Cortex AI!
 
