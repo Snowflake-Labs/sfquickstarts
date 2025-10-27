@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # A Data-Driven Methodology for Choosing a Snowflake Clustering Key
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ### Overview
 This quickstart focuses on the process of choosing a clustering key for a table and workload in Snowflake. You will get out of this quickstart what you put into it. Simply copying and pasting the commands won't lead to as many insights as doing your own experimentation and exploring the concepts here on your own data and workloads.
@@ -36,7 +35,6 @@ The primary goal of clustering is to enable better micro-partition pruning when 
 
 <!-- ------------------------ -->
 ## Clustering Key Selection Concepts
-Duration: 5
 ### Clustering Key Cardinality Targets
 The minimum and maximum values for each eligible column on a micro-partition are used to determine whether each micro-partition might contain values that are needed to satisfy a query. If we can determine that the value we are looking for doesn't exist on a micro-partition at all, then we can skip reading that micro-partition. If we can skip reading a significant fraction of a large table, then our query is likely to run faster.
 > aside positive
@@ -70,7 +68,6 @@ We will follow those steps in the following sections, with an additional step at
 
 <!-- ------------------------ -->
 ## Data and Structure
-Duration: 16
 
 To keep things simple, we'll use data from the [Snowflake sample data](https://docs.snowflake.com/en/user-guide/sample-data-tpcds). The database `SNOWFLAKE_SAMPLE_DATA` is shared with all Snowflake accounts, so should be easily accessible. We'll be making copies of this data so we can play with different clustering options, and querying it in order to test performance. For the purposes of this quickstart, we'll be using data from the tpcds_sf10tcl schema. This schema represents a 10 TB scale of data following the data model for the [TPC Benchmark™ DS (TPC-DS)](https://www.tpc.org/TPC_Documents_Current_Versions/pdf/TPC-DS_v2.5.0.pdf).
 
@@ -123,7 +120,6 @@ The `ORDER BY RANDOM()` ensures we don't get strange effects from data that happ
 
 <!-- ------------------------ -->
 ## Identify Workload
-Duration: 3
 Identifying the workload to optimize for is one of the hardest parts of choosing a clustering key. It is also one of the steps that truly requires human involvement, and mostly shouldn't be automated. On the one hand, the workload could be considered every query that accesses a table. However, we can only cluster a table in one way, and it is unusual for a workload to be so simple that every single query can be helped by a single choice for a clustering key. 
 
 The choice of queries that make up a workload to optimize for is usually based on business factors. Identifying queries that are part of the most critical performance path is common. Also common is identifying queries related to a specific critical application or dashboard. Sometimes the identification of queries is related to a specific high-priority person or group - for example the queries used by a business executive to look regularly at critical business performance metrics. The choice of a critical workload can include data engineering workloads to reduce the latency for a pipeline, or even focus on specific queries where users are complaining about performance.
@@ -206,7 +202,6 @@ SELECT cs_order_number
 ```
 <!-- ------------------------ -->
 ## Establish Baseline Performance
-Duration: 30
 It is critical to establish an accurate baseline for the performance of our workload. This is not load testing where we are testing how things run with concurrency, but is isolation testing where we are isolating the performance of individual queries, and recording the results, with the goal of having something to compare against as we change things. 
 
 ### Run Query Workload
@@ -355,7 +350,6 @@ The pattern here is not an unusual one. These queries were run in three separate
 The queries provided here are against `ACCOUNT_USAGE.QUERY_HISTORY` because they were run more than an hour after the testing queries were run. If you are running them more immediately, you may want to choose to use the table function `TABLE(INFORMATION_SCHEMA.QUERY_HISTORY())` instead. There is some latency in queries showing up in `ACCOUNT_USAGE.QUERY_HISTORY`, but they are immediately available in the table function.
 <!-- ------------------------ -->
 ## Identify Filtering Predicates
-Duration: 10
 
 We're focusing in this example on the `CATALOG_SALES` table. It is the larger table in our workload, and one where we spend a lot of time scanning micro-partitions. 
 ### Predicates
@@ -528,7 +522,6 @@ In the next section, we'll use this information to select potential clustering k
 
 <!-- ------------------------ -->
 ## Select Potential Clustering Keys
-Duration: 20
 
 In the last section, we identified that the following columns in the CATALOG_SALES table are important to filtering in our workload of queries:
 * sold_timestamp
@@ -669,7 +662,6 @@ Based on this exploration, we'd like to try the following cluster keys:
 
 <!-- ------------------------ -->
 ## Test Query Workload
-Duration: 90
 
 Clustering is a physical state of the data, where data is grouped into micro-partitions in such a way that the minimum/maximum ranges of a clustering key are narrow. It can be achieved and maintained long-term through something like [automatic clustering](https://docs.snowflake.com/en/user-guide/tables-auto-reclustering). It can also be achieved naturally - a table with data that is loaded regularly with time-based data often achieves some natural time- or date-based clustering. Data engineering processes can also sort data as a table is built to achieve clustering. While we might want to use auto-clustering long-term, using a simple ORDER BY works well for testing the impact of clustering. We will use `CREATE TABLE ... AS ... ORDER BY ...` statements to create copies of the data in a clustered form and test performance to compare against the baseline.
 ### DATE_TRUNC('hour', sold_timestamp)
@@ -1132,7 +1124,6 @@ The results look something like this:
 The results here are in seconds based on the calculations in the query.
 <!-- ------------------------ -->
 ## Compare Test Results
-Duration: 5
 
 Now that we have the results of performance testing for each of the potential clustering keys, we can look at them and make an informed decision. 
 Average durations:
@@ -1197,7 +1188,7 @@ This methodology works up to a size somewhere between 250,000 and about 500,000 
 
 We can see in the query profile that while there was local spilling, there was no remote spilling for this `INSERT OVERWRITE ...` operation:
 
-<img src="assets/query_profile_insert_overwrite_statistics.png" alt="statistics pane from the query profile for the overwrite operation" width="300"/>
+![assets/query_profile_insert_overwrite_statistics.png](assets/query_profile_insert_overwrite_statistics.png)
 
 We then still want to enable automatic clustering for this table so that clustering will be maintained for new data and as data is changed. That can be done using this syntax:
 ```sql
@@ -1224,7 +1215,6 @@ This output represents the use of 8.1 credits in the initial clustering of this 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 ### Conclusion
 Clustering is one of the easier and earlier steps in performance optimizaiton. Adding clustering on top of a reasonable data model can meet many performance requirements. Using a data-based approach like this is an excellent way to start. There may be additional considerations when choosing a clustering key, like the rate and patterns of arriving data, so don't hesitate to contact your Snowflake Solutions Engineer for more guidance.

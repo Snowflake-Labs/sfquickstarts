@@ -11,7 +11,6 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## Panoramica
 
-Duration: 5
 
 Dopo avere completato questa guida, sarai in grado di trasformare i dati grezzi in un’applicazione interattiva che può aiutare le organizzazioni a ottimizzare l’allocazione del loro budget pubblicitario.
 
@@ -70,7 +69,6 @@ IMPORTANTE: prima di procedere, assicurati di avere un account Snowflake con i p
 <!-- ------------------------ -->
 ## Configurazione dell’ambiente
 
-Duration: 15
 
 ### Creare tabelle, caricare dati e configurare stage
 
@@ -174,7 +172,6 @@ IMPORTANTE: se utilizzi nomi diversi per gli oggetti creati in questa sezione, a
 <!-- ------------------------ -->
 ## Operazioni iniziali
 
-Duration: 8
 
 Questa sezione spiega come clonare il repository GitHub e come configurare il tuo ambiente Snowpark per Python.
 
@@ -268,7 +265,6 @@ IMPORTANTE: per eseguire l’**applicazione Streamlit** dovrai creare un ambient
 <!-- ------------------------ -->
 ## Data Engineering
 
-Duration: 20
 
 Il notebook disponibile al link riportato sotto comprende le seguenti attività di data engineering.
 
@@ -450,7 +446,6 @@ Puoi anche abilitare le notifiche push verso un servizio di messaggistica cloud 
 <!-- ------------------------ -->
 ## Machine Learning
 
-Duration: 20
 
 > aside negative
 PREREQUISITO: completamento dei passaggi di data engineering descritti in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
@@ -512,7 +507,6 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Applicazione Streamlit
 
-Duration: 10
 
 ### Eseguire l’app Streamlit localmente
 
@@ -602,7 +596,6 @@ alter task monthly_revenue_data_pipeline_task suspend;
 <!-- ------------------------ -->
 ## Conclusione e risorse
 
-Duration: 3
 
 Congratulazioni! Hai eseguito attività di data engineering e addestrato un modello di regressione lineare per prevedere il ROI futuro di diversi budget per le spese pubblicitarie su più canali, tra cui ricerca, video, social media ed email, utilizzando Snowpark per Python e scikit-learn. Poi hai creato un’applicazione Streamlit che utilizza tale modello per generare previsioni sulle nuove allocazioni del budget in base all’input dell’utente.
 

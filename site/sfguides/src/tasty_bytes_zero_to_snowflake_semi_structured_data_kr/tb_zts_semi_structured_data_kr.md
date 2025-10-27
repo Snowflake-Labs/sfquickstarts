@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Snowflake에서 반정형 데이터 처리
 
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### 개요
 
@@ -43,7 +42,6 @@ Snowflake의 반정형 데이터에 대한 상세 정보는 [반정형 데이터
 
 ## 워크시트 생성 및 SQL 복사
 
-Duration: 1
 
 ### 개요
 
@@ -58,25 +56,25 @@ Duration: 1
 ### 2단계 - Snowflake에 로그인
 
 - Snowflake 계정에 로그인합니다.
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 
 ### 3단계 - Worksheets로 이동
 
 - 왼쪽 탐색 메뉴에 있는 Worksheets 탭을 클릭합니다.
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 
 ### 4단계 - 워크시트 생성
 
 - Worksheets 내에서 Snowsight 오른쪽 상단 모서리에 있는 ‘+’ 버튼을 클릭하고 ‘SQL Worksheet’를 선택합니다.
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 
 ### 5단계 - 워크시트 이름 바꾸기
 
 - 자동으로 생성된 Timestamp 이름을 클릭하고 ‘Tasty Bytes - Semi-Structured Data’를 입력하여 워크시트의 이름을 바꿉니다.
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 
 ### 6단계 - GitHub에서 Quickstart SQL에 액세스
@@ -86,7 +84,7 @@ Duration: 1
 ### 7단계 - GitHub에서 설정 SQL 복사
 
 - GitHub 내에서 오른쪽으로 이동하여 ‘Copy raw contents’를 클릭합니다. 이렇게 하면 모든 필수 SQL이 클립보드로 복사됩니다.
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 
 ### 8단계 - 설정 SQL을 GitHub에서 Snowflake 워크시트로 붙여넣기
@@ -97,7 +95,6 @@ Duration: 1
 
 ## 반정형 메뉴 데이터 프로파일링
 
-Duration: 1
 
 ### 개요
 
@@ -123,13 +120,13 @@ SELECT TOP 10
 FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ```
 
-<img src = "assets/3.1.menu.png">
+![assets/3.1.menu.png](assets/3.1.menu.png)
 
 출력 내에서 `menu_item_health_metrics_obj`는 다운스트림을 제공해야 하는 지표가 포함되어 있다고 알려진 반정형 데이터여야 합니다.
 
 이 열에서 셀 하나를 클릭하면 Snowsight는 통계 창을 자동으로 확장하여 내부 정보를 더 잘 보여줍니다.
 
-<img src = "assets/3.1.2.stats.png">
+![assets/3.1.2.stats.png](assets/3.1.2.stats.png)
 
 ### 2단계 - 반정형 열 탐색
 
@@ -139,7 +136,7 @@ Snowflake에 정의된 이 열을 심층적으로 알아보기 위해 `menu` 테
 SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 ```
 
-<img src = "assets/3.2.show_columns.png">
+![assets/3.2.show_columns.png](assets/3.2.show_columns.png)
 
 결과 세트에서는 `menu_item_health_metrics_obj`가 [VARIANT](https://docs.snowflake.com/ko/sql-reference/data-types-semistructured) 데이터 유형임을 확인할 수 있습니다.
 
@@ -158,13 +155,13 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ```
 
-<img src = "assets/3.3.dot.png">
+![assets/3.3.dot.png](assets/3.3.dot.png)
 
 점표기법을 사용하면 `menu_item_id`를 완벽하게 성공적으로 추출할 수 있었지만, `menu_item_health_metrics` 열 출력에는 추가적인 반정형 객체가 아직 남아 있습니다.
 
 또다시 자세히 살펴보기 위해 이 열에 있는 셀 하나를 클릭하겠습니다.
 
-<img src = "assets/3.3.2.stats.png">
+![assets/3.3.2.stats.png](assets/3.3.2.stats.png)
 
 **잘 진행하고 있습니다!** 추가적인 Snowflake 함수를 사용하여 다음 섹션에서 `menu_item_health_metrics`를 추가적으로 처리하는 방법을 알아보겠습니다.
 
@@ -172,7 +169,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 
 ## 반정형 데이터 평면화
 
-Duration: 2
 
 ### 개요
 
@@ -196,7 +192,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.1.lat_flat.png">
+![assets/4.1.lat_flat.png](assets/4.1.lat_flat.png)
 
 ### 2단계 - 배열 함수 탐색
 
@@ -211,7 +207,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 WHERE ARRAY_CONTAINS('Lettuce'::VARIANT, obj.value:"ingredients"::VARIANT);
 ```
 
-<img src = "assets/4.2.array_contains.png">
+![assets/4.2.array_contains.png](assets/4.2.array_contains.png)
 
 출력에 따르면 상추가 포함된 메뉴 항목이 꽤 많습니다. 이러한 분석은 서비스를 제공하는 도시와 국가에서 음식을 회수해야 하는 상황에 공급망 조달 관리자에게 매우 유용할 것입니다.
 
@@ -234,7 +230,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.3.lat_flat_2.png">
+![assets/4.3.lat_flat_2.png](assets/4.3.lat_flat_2.png)
 
 **좋습니다!** 출력이 이해관계자가 요청한 요구 사항을 정확히 충족하는 것 같습니다. 다음 섹션에서는 이 출력에 액세스할 수 있는 분석 계층으로 이를 전달하는 방법을 알아보겠습니다.
 
@@ -242,7 +238,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 ## 반정형 데이터에 대한 정형 뷰 생성
 
-Duration: 2
 
 ### 개요
 
@@ -281,7 +276,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/5.1.harmonized_view.png">
+![assets/5.1.harmonized_view.png](assets/5.1.harmonized_view.png)
 
 `harmonized.menu_v` 뷰가 생성되었으니 이제 여기에서 사용한 더 복잡한 SQL을 활용하지 않고도 이를 바로 쿼리할 수 있습니다. 하지만 이해관계자는 분석 계층에서 데이터에 액세스하기에 다음 단계에서 이를 분석 계층에 배치하겠습니다.
 
@@ -297,13 +292,12 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 > 
 > **이름 바꾸기:** 모든 열(SELECT \* 또는 SELECT table_name.\*)을 선택할 때 결과에 사용해야 하는 열 별칭을 지정합니다.
 
-<img src = "assets/5.2.analytics_view.png">
+![assets/5.2.analytics_view.png](assets/5.2.analytics_view.png)
 
 ### 3단계 - 다음 클릭 -->
 
 ## Snowsight에서 처리된 반정형 데이터 분석
 
-Duration: 2
 
 ### 개요
 
@@ -333,7 +327,7 @@ WHERE 1=1
 ORDER BY m1.menu_type;
 ```
 
-<img src = "assets/6.1.arrays.png">
+![assets/6.1.arrays.png](assets/6.1.arrays.png)
 
 또다시 이러한 쿼리를 구축한 동일한 뷰를 사용하면 푸드 트럭 운영자가 매주 필요한 재료를 예측 및 주문하기 위한 조달 작업을 수행함에 따라 실제 비즈니스 가치를 제공할 수 있습니다.
 
@@ -353,7 +347,7 @@ SELECT
 FROM frostbyte_tasty_bytes.analytics.menu_v m;
 ```
 
-<img src = "assets/6.2.metrics.png">
+![assets/6.2.metrics.png](assets/6.2.metrics.png)
 
 방금 수신한 출력을 통해 반정형 데이터가 포함된 가공 전 테이블에서 단일 집계 행으로 성공적으로 변환했습니다. 이 행은 더 많은 데이터를 기반으로 한 결정을 내릴 수 있도록 Tasty Bytes를 지원하기 위해 조직 내 모두가 쉽게 액세스할 수 있습니다.
 
@@ -374,13 +368,13 @@ WHERE m.brand_name IN  ('Plant Palace', 'Peking Truck','Revenge of the Curds')
 GROUP BY m.brand_name;
 ```
 
-<img src = "assets/6.3.results.png">
+![assets/6.3.results.png](assets/6.3.results.png)
 
 기본값으로 Snowsight는 쿼리 결과를 표 기반 형식으로 반환합니다. 하지만 아직 다루지 않은 Snowsight의 강력한 기능인 [그래프 사용](https://docs.snowflake.com/ko/user-guide/ui-snowsight-visualizations#using-charts)이 있습니다.
 
 이제 아래 스크린샷에 있는 화살표를 따라 각기 다른 푸드 트럭 브랜드가 특정 식사 제한을 해결하기 위해 제공하는 메뉴 항목을 비교하는 막대형 그래프를 생성하십시오.
 
-<img src = "assets/6.3.chart.png">
+![assets/6.3.chart.png](assets/6.3.chart.png)
 
 이 Quickstart를 완료하면서 Tasty Bytes 경영진이 스스로 이러한 분석을 수행하는 것이 얼마나 쉬운지 강조하고 싶습니다. 경영진은 구축한 뷰에 캡슐화한 반정형 데이터 처리에 대해 아무것도 알 필요가 없습니다. 이렇게 Tasty Bytes 조직에서 데이터 민주화를 촉진하는 것을 도왔습니다.
 
@@ -388,7 +382,6 @@ GROUP BY m.brand_name;
 
 ## 종료 및 다음 단계
 
-Duration: 1
 
 ### 결론
 

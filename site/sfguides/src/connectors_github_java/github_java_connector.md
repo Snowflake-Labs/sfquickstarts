@@ -10,14 +10,12 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Native Connector - Java (Pull Based)
 
 ## Overview
-Duration: 1
 
 In this tutorial you will learn how to build native Snowflake connectors. This example uses GitHub issues API as the source
 of the data. In the next steps we will cover what constitutes a connector, how to build and deploy it and how to build
 an application UI using Streamlit.
 
 ## Prerequisites
-Duration: 1
 
 - Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Java
@@ -26,14 +24,12 @@ Duration: 1
 - macOS or Linux machine to build a project and run deployment scripts
 
 ## You will learn
-Duration: 1
 
 - How to build a native connector
 - How to achieve external connectivity
 - How to use secrets
 
 ## Prepare your local environment
-Duration: 5
 
 - Install Java 11
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
@@ -42,7 +38,6 @@ Duration: 5
 - Clone the [connectors-native-sdk repository](https://github.com/snowflakedb/connectors-native-sdk) and go to `./examples/example-github-java-connector`
 
 ## Connector overview
-Duration: 2
 
 The native connector is built using only Snowflake primitives. The business logic is written in Java using
 [Snowpark library](https://docs.snowflake.com/en/developer-guide/snowpark/java/index)
@@ -68,7 +63,6 @@ The connector consists of the following elements:
 Only selected objects will be visible to customer who installed the app. See: [docs](https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script#visibility-of-objects-created-in-the-setup-script-to-consumers).
 
 ## Project structure
-Duration: 3
 
 Let's take a look at the structure of this connector.
 ```text
@@ -121,7 +115,6 @@ specified inside the manifest file. For more information check [manifest docs](h
 and [requesting privileges docs](https://docs.snowflake.com/en/developer-guide/native-apps/requesting-about).
 
 ## Connector configuration
-Duration: 3
 
 The connector configuration is split into two domains:
 - connector level configuration
@@ -140,7 +133,6 @@ a single resource is represented as `org_name/repo_name`.
 The table is a key-value table.
 
 ## Connector state
-Duration: 2
 
 Apart from configuration table, the connector uses `STATE.APP_STATE` table to persist a state of any
 ongoing ingestion.
@@ -152,7 +144,6 @@ by retrieving the
 newest row with the given key.
 
 ## External access
-Duration: 2
 
 Data from GitHub is ingested using [external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) capabilities of Snowflake.
 
@@ -161,12 +152,10 @@ Data from GitHub is ingested using [external access](https://docs.snowflake.com/
 [Direct external access](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview) is a public preview feature of Snowflake.
 
 ## Application logs
-Duration: 2
 
 Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to [enable loging](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging) documentation.
 
 ## Ingestion logic
-Duration: 2
 
 When a repository is enabled the following objects are created:
 - a sink table for raw data ingested from GitHub API
@@ -187,7 +176,6 @@ In this approach all the data for a given repository is fetched every time. The 
 the new records are added, while the changed records are updated in the sink table.
 
 ## Build the connector
-Duration: 3
 
 As we have learnt in previous sections the project consists of the three main components:
 - code module
@@ -216,7 +204,6 @@ make build
 Once the `sf_build` folder is created you can follow to the next step where we will deploy the connector.
 
 ## Deploy the connector
-Duration: 3
 
 In this step we will deploy the connector to a Snowflake account.
 
@@ -247,7 +234,6 @@ Now an application package should be created on your account, and you can follow
 you will create a new instance of the connector.
 
 ## Installing the connector
-Duration: 5
 
 In this step you will install the connector. The installation is encapsulated in a convenience script.
 
@@ -308,7 +294,6 @@ make install
 ```
 
 ## Configuring the connector
-Duration: 5
 
 To start the data ingestion you need to configure the connector. To do this go to the Apps tab inside Snowflake and select your connector.
 

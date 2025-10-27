@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with TEMPO and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Model invented by DeepTempo.  These models are similar to their more familiar cousins, LLMs such as Anthropic's Claude and LLama. Like LLMs, LogLMs are Foundation Models that apply their understanding across very different environments and in response to differing inputs. However, Tempo was pre-trained using enormous quantities of logs. Tempo is focused on the pattern of events, including relative and absolute time. Tempo has been shown to be extremely accurate, with a low false positive and false negative rate.
 
@@ -32,7 +31,6 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 
 <!-- ------------------------ -->
 ## Install the TEMPO Native App
-Duration: 2
 
 1. Find The App
 
@@ -69,7 +67,6 @@ Note: If you are running with the demo data simply skip this step and continue.
 
 <!-- ------------------------ -->
 ## Start the app
-Duration: 2
 
 In the new worksheet we now need to setup our procedures. We will start with initializing the container resources. Throughout this guide we will provide you with statements to run.  Please add them to the sheet. You can do these one by one or add them all to a single worksheet.
 
@@ -85,7 +82,6 @@ It is recommended that you run this command prior to running the sheet as a whol
 
 <!-- ------------------------ -->
 ## Run Static Inference
-Duration: 6
 
 ```sql
 CALL static_detection.inference('your_service_name');
@@ -98,7 +94,6 @@ If you want to use the demo feel free to name it something like `demorun` for th
 
 <!-- ------------------------ -->
 ## Deep Dive Analysis in Snowflake
-Duration: 5
 
 ```sql
 CALL inspect.deepdive(sequence_id);
@@ -113,7 +108,6 @@ The results will be collections of related events making up Suspicious and Anoma
 
 <!-- ------------------------ -->
 ## Viewing Results in Splunk
-Duration: 5
 
 This optional section guides you through setting up Splunk Enterprise to analyze the output from the Snowflake TEMPO project.  This step is optional and intended for Splunk users who want a visualization of the output.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case, you will likely use the Snowflake Splunk connector, DBConnect, as explained in the Snowflake documentation [here]: (https://community.snowflake.com/s/article/Integrating-Snowflake-and-Splunk-with-DBConnect)
 
@@ -124,7 +118,6 @@ This optional section guides you through setting up Splunk Enterprise to analyze
 - `anomaly_hub.xml` dashboard file
 
 ### Install Splunk Enterprise
-Duration: 5
 
 1. Clone the installation repository:
    ```bash
@@ -146,7 +139,6 @@ Duration: 5
    ```
 
 ### Configure Splunk and Load Data
-Duration: 3
 
 1. Access Splunk at `http://your_ip:8000` and log in with the credentials you set.
 
@@ -157,7 +149,6 @@ Duration: 3
 4. Follow the prompts to load the CSV, using default options.
 
 ### Create the Dashboard
-Duration: 2
 
 1. After loading the CSV, click "Build Dashboards" > "Create New Dashboard".
 
@@ -196,7 +187,6 @@ Note that as a default, only the incidents are uploaded.  Not also transferring 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Conclusion
 

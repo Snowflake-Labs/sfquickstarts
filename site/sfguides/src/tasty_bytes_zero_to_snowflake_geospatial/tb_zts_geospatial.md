@@ -11,8 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Geospatial Analysis in Snowflake
-Duration: 1
-<img src = "assets/geospatial_header.png">
+![assets/geospatial_header.png](assets/geospatial_header.png)
 
 ###  Overview 
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Geospatial Analysis!
@@ -37,7 +36,6 @@ Within this Quickstart we will conduct in-depth Geospatial analysis leveraging p
 - An Understanding of How to Conduct Geospatial Analysis in Snowflake
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -65,7 +63,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
@@ -74,7 +72,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 
 ## Acquiring SafeGraph POI Data from the Snowflake Marketplace
-Duration: 1
 
 ### Overview
 Tasty Bytes operates Food Trucks in numerous cities and countries across the globe with each truck having the ability to choose two different selling locations per day.
@@ -124,7 +121,7 @@ WHERE 1=1
     AND cpg.country = 'France';
 ```
 
-<img src = "assets/safegraph_data.png">
+![assets/safegraph_data.png](assets/safegraph_data.png)
 
 **Amazing!** These sort of POI metrics will be immensely valuable in conducting Geospatial analysis to assist our Executives in making data driven location decisions. 
 
@@ -133,7 +130,6 @@ Let's get this harmonized with our Sales data in the next section.
 ### Step 3 - Click Next -->
 
 ## Harmonizing and Promoting First and Third Party Data
-Duration: 1
 
 ### Overview
 To make our Geospatial analysis seamless, let's make sure to get SafeGraph POI data included in the `analytics.orders_v` so all of our downstream users can also access it.
@@ -168,7 +164,6 @@ JOIN tb_safegraph.public.frostbyte_tb_safegraph_s cpg
 ### Step 2 - Click Next -->
 
 ## Creating Geograpy Points from Latitude and Longitude
-Duration: 1
 
 ### Overview
 With Point of Interest metrics now readily available from the Snowflake Marketplace without any ETL required, let's start on our Geospatial analysis journey.
@@ -195,7 +190,7 @@ GROUP BY location_id, latitude, longitude
 ORDER BY total_sales_usd DESC;
 ```
 
-<img src = "assets/st_makepoint.png">
+![assets/st_makepoint.png](assets/st_makepoint.png)
 
 The results we see in the geo_point column will be essential for everything else we do moving forward.
 
@@ -204,7 +199,6 @@ One thing to note here is despite typically hearing Latitude then Longitude this
 ### Step 2 - Click Next -->
 
 ## Calculating Straight Line Distance between Points
-Duration: 1
 
 ### Overview
 Starting with our Geographic Point, we can now begin to dive into some of the powerful Geospatial functions Snowflake offers natively. 
@@ -243,14 +237,13 @@ QUALIFY a.location_id <> LAG(b.location_id) OVER (ORDER BY geography_distance_mi
 ORDER BY geography_distance_miles;
 ```
 
-<img src = "assets/st_distance.png">
+![assets/st_distance.png](assets/st_distance.png)
 
 **Wow!** Look at how far we have already came in so little time. Let's keep diving deeper into what Geospatial insights we can derive in our next section.
 
 ### Step 2 - Click Next -->
 
 ## Collecting Coordinates, Creating a Bounding Polygon & Finding its Center Point
-Duration: 3
 
 ### Overview
 Now that we understand how to create points, and calculate distance, we will now pile on a large set additional Snowflake Geospatial functionality to further our analysis.
@@ -290,7 +283,7 @@ SELECT
 FROM _top_10_locations;
 ```
 
-<img src = "assets/collect_draw_area.png">
+![assets/collect_draw_area.png](assets/collect_draw_area.png)
 
 Look at how much we accomplished within a single SQL query, but we can't stop yet, let's keep going to see what else we can accomplish.
 
@@ -319,7 +312,7 @@ SELECT
 FROM _top_10_locations tl;
 ```
 
-<img src = "assets/st_centroid.png">
+![assets/st_centroid.png](assets/st_centroid.png)
 
 
 ### Step 3 - Storing our Center Point in a Variable
@@ -335,7 +328,6 @@ Once pasted in, please execute the query which will yield a `Statement executed 
 ### Step 4 - Click Next -->
 
 ## Finding Locations Furthest Away from our Top Selling Center Point
-Duration: 2
 
 ### Overview
 As mentioned earlier, our Tasty Bytes Executives are interested in seeing what locations we may want to stop having our Food Trucks visit in their weekly schedules. Thankfully, every step we have taken so far has now enabled us to deliver on this exact request.
@@ -361,14 +353,13 @@ FROM _paris_locations
 ORDER BY kilometer_from_top_selling_center DESC;
 ```
 
-<img src = "assets/far_out.png">
+![assets/far_out.png](assets/far_out.png)
 
 Fantastic work! We have now delivered on the exact as from our Executive Team through a simple process by leveraging SafeGraph from the Snowflake Marketplace.
 
 ### Step 2 - Click Next -->
 
 ## Geospatial Analysis with H3 (Hexagonal Hierarchical Geospatial Indexing System)
-Duration: 2
 
 ### Overview
 H3 is a way of dividing the Earth's surface into hexagonal shapes, organizing them into levels of resolution, and assigning unique codes to each hexagon for easy reference. 
@@ -396,7 +387,7 @@ FROM analytics.orders_v
 WHERE location_name = 'Musee du Louvre';
 ```
 
-<img src = "assets/h3_louvre.png">
+![assets/h3_louvre.png](assets/h3_louvre.png)
 
 >aside positive
 > **Resolution 4** = 288 thousand hexagons covering the globe
@@ -419,7 +410,7 @@ FROM analytics.orders_v
 WHERE location_name = 'Musee du Louvre';
 ```
 
-<img src = "assets/h3louvre_parent_child.png">
+![assets/h3louvre_parent_child.png](assets/h3louvre_parent_child.png)
 
 
 ### Step 3 - Locations within Top Selling Hexagons
@@ -463,12 +454,11 @@ To conclude, in the next query we will see if our two Top Selling Resolution 6 H
 SELECT H3_GRID_DISTANCE('871fb4671ffffff', '871fb4670ffffff') AS cell_distance;
 ```
 
-<img src = "assets/h3_grid_distance.png">
+![assets/h3_grid_distance.png](assets/h3_grid_distance.png)
 
 ### Step 5 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 **Fantastic work!** You have successfully completed the Tasty Bytes - Zero to Snowflake - Geospatial Quickstart. 

@@ -11,7 +11,6 @@ authors: Vino Duraisamy, Dash Desai
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Getting started with AI on enterprise data can seem overwhelming. Between getting familiar with LLMs, how to perform custom prompt engineering, fine-tuning an existing foundation model and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex AI.
 
@@ -58,7 +57,6 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 ### Load the Demo Notebook
 
@@ -102,7 +100,6 @@ COPY into SUPPORT_TICKETS
 <!-- ------------------------ -->
 ## Fine-tuning LLMs using Snowflake Cortex AI
 
-Duration: 10
 
 ### Support Ticket Categorization using Cortex AI
 
@@ -236,7 +233,6 @@ Depending on the values in the `contact_preference` column, Cortex AI can genera
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed the Cortex Fine-tuning Quickstart Guide. You can use any of [these](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=TNKw8Mx5&_fsi=TNKw8Mx5#availability) supported LLMs for fine-tuning with Cortex.
 

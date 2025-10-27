@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration_ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
-language: jp
+language: ja
 summary: Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタート
 environments: web
 status: Published
@@ -12,8 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Snowflakeマーケットプレイスを使用したサードパーティデータへの直接アクセス
-Duration: 1
-<img src = "assets/collaboration_header.png">
+![assets/collaboration_header.png](assets/collaboration_header.png)
 
 ### 概要
 Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。今回はコラボレーションを中心的に取り上げます。このクイックスタートでは、Snowflakeマーケットプライスにある気象データで皆さんのファーストパーティデータをエンリッチする方法をご紹介します。Snowflakeマーケットプレイスでは、サードパーティデータおよびアプリを検索し、試し、購入することができます。このとき、ETL、データパイプライン、統合を設定する必要はありません。
@@ -36,7 +35,6 @@ Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。
 - Snowflakeマーケットプレイスで追加のインサイトを引き出す方法の理解
 
 ## ワークシートの作成とSQLのコピー
-Duration: 1
 
 ### 概要
 このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。
@@ -48,19 +46,19 @@ Duration: 1
 
 ### ステップ2 - Snowflakeにログインする
 - Snowflakeアカウントにログインします。
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### ステップ3 - ワークシートに移動する
 - 左側のナビゲーションバーにある「ワークシート」タブをクリックします。
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### ステップ4 - ワークシートを作成する
 - ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### ステップ5 - ワークシートの名前を変更する
 - 自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - コラボレーション」と入力してワークシートの名前を変更します。
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### ステップ6 - GitHubでQuickstart SQLにアクセスする
 - 下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQLファイルに移動します。
@@ -69,7 +67,7 @@ Duration: 1
 
 ### ステップ7 - GitHubからSetup SQLをコピーする
 - GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける
 - Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（*Macの場合はCMD + V、Windowsの場合はCTRL + V*）。
@@ -77,7 +75,6 @@ Duration: 1
 ### ステップ9 - 「Next」をクリックする
 
 ## ファーストパーティデータにおける売上ゼロ日の調査
-Duration: 1
 
 ### 概要
 Tasty Bytesの財務アナリストは、前年比分析を行う中で、さまざまな都市でキッチンカーの売上がゼロとなっている説明のつかない日があることを指摘しました。その一例として挙げられたのが2022年2月のドイツ、ハンブルグのケースです。
@@ -102,14 +99,13 @@ GROUP BY o.date
 ORDER BY o.date ASC;
 ```
 
-<img src = "assets/3.1.orders_v.png">
+![assets/3.1.orders_v.png](assets/3.1.orders_v.png)
 
 上記のデータに基づくと、2月の数日間、日次売上記録がないというアナリストの指摘は、間違いなく正しいものであるということが分かります。なぜこのようなことが起こったのか、次のセクションでさらに掘り下げてみましょう。
 
 ### ステップ2 - 「Next」をクリックする
 
 ## SnowflakeマーケットプレイスのWeather Sourceデータの活用
-Duration: 2
 
 ### 概要
 前のセクションで見た内容から、ハンブルグでは2月16日から2月21日までの売上がないように見えます。  ファーストパーティデータの中には、これを調査するために利用できるものは他にあまりありませんが、何か大きなことがここで起こっていたはずです。
@@ -129,7 +125,7 @@ Snowflakeマーケットプレイスは、革新的なビジネスソリュー�
 - データベースの名称をFROSTBYTE_WEATHERSOURCE（すべて大文字）に変更
 - 追加ロールへの付与 -> 「PUBLIC（公開）」
 
-<img src = "assets/4.1.acquire_weather_source.gif">
+![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 
 >aside positive
 > Weather Sourceは、世界の気象および気候データを提供するリーディングプロバイダーであり、同社のOnPoint Product Suiteは、企業がさまざまな業界の広範なユースケースに適用できる有意義で実用的なインサイトを迅速に生成するために必要な気象および気候データを提供しています。
@@ -155,7 +151,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
     AND c.city = hd.city_name;
 ```
 
-<img src = "assets/4.2.daily_weather_v.png">
+![assets/4.2.daily_weather_v.png](assets/4.2.daily_weather_v.png)
 
 上のビューの定義にもあるように、私たちは`onpoint_id`スキーマ内の2つの`frostbyte_weathersource`テーブルを結合し、`frostbyte_tasty_bytes`データベースと`raw_pos`スキーマの`country`テーブルと整合させようとしています。
 
@@ -182,11 +178,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.3.results.png">
+![assets/4.3.results.png](assets/4.3.results.png)
 
 傾向をさらに詳しく調査するために、Snowsight Chartingを使って平均気温の経時的変化を折れ線グラフにしてみましょう。
 
-<img src = "assets/4.3.chart.png">
+![assets/4.3.chart.png](assets/4.3.chart.png)
 
 これまでの内容から、私たちのキッチンカーで売上ゼロの日がある明らかな理由として際立っているものはまだありません。次のステップでは、他に説明のつきそうなものがまだあるか見てみることにしましょう。
 
@@ -211,18 +207,17 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.4.result.png">
+![assets/4.4.result.png](assets/4.4.result.png)
 
 このようなデータも、簡易的なSnowsightチャートで表示した方が傾向が分かりやすいかもしれません。以下のスクリーンショットの矢印に従って、結果からチャートへ移動してください。
 
-<img src = "assets/4.4.chart.png">
+![assets/4.4.chart.png](assets/4.4.chart.png)
 
 **なんと！** 売上ゼロの日の風はハリケーン並みでした。キッチンカーのその日の売上がゼロだったのは、これがもっともらしい理由のようです。しかし、この分析は整合ビューで実行したものであるため、この先は、アナリスト自身がこれらのインサイトにアクセスできるよう、分析ビューでアクセスできるようにしていくことにしましょう。
 
 ### ステップ5 - 「Next」をクリックする
 
 ## データインサイトの民主化
-Duration: 3
 
 ### 概要
 私たちは、財務アナリストが指摘した売上ゼロの日について、おそらくハリケーン級の強風が原因になっているだろうと判断することができました。
@@ -244,7 +239,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.f_to_c.png">
+![assets/5.1.f_to_c.png](assets/5.1.f_to_c.png)
 
 ```
 CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
@@ -255,7 +250,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.inch_to_mm.png">
+![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
 >aside positive
 > UDFの作成時には、サポートされている言語のいずれかでコードが記述されたハンドラーを指定します。ハンドラーの言語に応じて、ハンドラーのソースコードをCREATE FUNCTION文にインラインで含めるか、ハンドラーがプリコンパイルされている、あるいはステージにソースコードがあるCREATE FUNCTIONからハンドラーのロケーションを参照します。
@@ -290,7 +285,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 ```
 
-<img src = "assets/5.2.SQL.png">
+![assets/5.2.SQL.png](assets/5.2.SQL.png)
 
 
 ここではすばらしい結果が得られました。これで、次のステップでこのSQLをビュー内でまとめることができるようになります。
@@ -323,14 +318,13 @@ WHERE 1=1
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ```
 
-<img src = "assets/5.3.view.png">
+![assets/5.3.view.png](assets/5.3.view.png)
 
 これで、この種のインサイトをTasty Bytesの組織に対して民主化することができました。次のセクションではこれらをすべてまとめ、私たちの作業を検証してみましょう。
 
 ### ステップ4 - 「Next」をクリックする
 
 ## 売上とマーケットプレイスの気象データからのインサイトの抽出
-Duration: 1
 
 ### 概要
 キッチンカーが営業している全都市の売上と気象データを利用できるようになったところで、次は、私たちが財務アナリストのインサイトを得るまでの時間を短縮した方法に目を向けてみましょう。
@@ -359,7 +353,7 @@ WHERE 1=1
 ORDER BY date DESC;
 ```
 
-<img src = "assets/6.1.results.png">
+![assets/6.1.results.png](assets/6.1.results.png)
 
 **できました！** もし、財務アナリストが最初に調査に乗り出したときにこれが利用できていれば、データチームに問い合わせるまでもなく、すぐにインサイトを得ることができたでしょう。
 
@@ -368,7 +362,6 @@ ORDER BY date DESC;
 ### ステップ2 - 「Next」をクリックする
 
 ## まとめと次のステップ
-Duration: 1
 
 ### まとめ
 すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタートが無事完了しました。

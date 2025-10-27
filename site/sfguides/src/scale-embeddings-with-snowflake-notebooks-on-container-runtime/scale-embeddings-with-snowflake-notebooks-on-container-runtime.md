@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 1
 
 [Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) are a powerful IDE option for building ML workloads at scale. Container Runtime is a fully managed container environment that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
 
@@ -42,7 +41,6 @@ You're a Data Scientist looking to experiment with an open source embedding mode
 <!-- ------------------------ -->
 ## Setup Your Account
 
-Duration: 5
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -131,7 +129,6 @@ GRANT CREATE SERVICE ON SCHEMA EMBEDDING_MODEL_HOL_SCHEMA TO ROLE EMBEDDING_MODE
 <!-- ------------------------ -->
 ## Run the Notebook
 
-Duration: 60
 
 - Download the notebook: [0_start_here](https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/blob/main/notebooks/0_start_here.ipynb)
 - Change role to `EMBEDDING_MODEL_HOL_USER`
@@ -151,7 +148,6 @@ Duration: 60
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 In conclusion, running Snowflake Notebooks on Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. 
 

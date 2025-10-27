@@ -10,8 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables
 <!-- ------------------------ -->
 ## Overview
-Duration: 10
-<img src="assets/CDC_connectors_banner.png">
+![assets/CDC_connectors_banner.png](assets/CDC_connectors_banner.png)
 
 In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights on potential ways to increase customer spending with promotions.
 
@@ -32,7 +31,6 @@ In this Quickstart, we will investigate how a financial company builds a BI dash
 
 <!-- ------------------------ -->
 ## Snowflake Environment
-Duration: 5
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
@@ -77,7 +75,6 @@ SELECT 'cdc sql is now complete' AS note;
 
 <!-- ------------------------ -->
 ## PostgreSQL Environment
-Duration: 5
 
 ### Overview
 In this section, we will set up a PostgreSQL database and create tables to simulate a financial company's customer transactional data.
@@ -218,7 +215,6 @@ SELECT * FROM postgres.raw_cdc.transactions;
 <!-- ------------------------ -->
 ## Snowflake Connector
 
-Duration: 5
 ### Overview
 During this step, you will install and configure the Snowflake Connector for PostgreSQL Native App to capture changes made to the PostgreSQL database tables.
 
@@ -233,22 +229,21 @@ Navigate to [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.ht
 2. Open the application
 3. Select **Mark all as done** as we will create our source databases from scratch.
 
-<img src="assets/mark_all_done.png">
+![assets/mark_all_done.png](assets/mark_all_done.png)
 
 4. Click **Start configuration**
 5. If you have Event Tables already activated in your account, the **Event Log Database**, **Event Log Schema**, and **Event Table** will populate automatically with what is active. The names of the **Event Log Database**, **Event Log Schema**, and **Event Table** could be slightly different from what is shown.
 6. On the **Configure Connector** screen, select **Configure**
 
-<img src="assets/configure_connector.png">
+![assets/configure_connector.png](assets/configure_connector.png)
 
 7. On the **Verify Agent Connection** screen select **Generate file** to download the Agent Configuration file. The downloaded file name should resemble **snowflake.json**. Save this file for use during the Agent configuration section.
 
-<img src="assets/generate_file.png">
+![assets/generate_file.png](assets/generate_file.png)
 
 <!-- ------------------------ -->
 ## Agent Configuration
 
-Duration: 10
 ### Overview
 During this section, you will configure the Agent that will operate alongside our Source Databases.
 
@@ -344,11 +339,10 @@ Directory Structure
 #### Verifying Connection with Snowflake
 Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the **Refresh** button in the Agent Connection Section. When successfully configured, you should see the "Successfully configured" message. Click "Define data to sync".
 
-<img src="assets/successfully_configured.png">
+![assets/successfully_configured.png](assets/successfully_configured.png)
 
 <!-- ------------------------ -->
 ## Replication Process
-Duration: 10
 
 ### Overview
 In this step, we will instruct the Connector to begin replicating the selected tables.
@@ -364,7 +358,6 @@ In this step, we will instruct the Connector to begin replicating the selected t
 
 <!-- ------------------------ -->
 ## Streamlit App
-Duration: 10 
 
 ### Overview
 In this section, we will create a Streamlit in Snowflake application to visualize the customer purchase summary data.
@@ -381,7 +374,6 @@ In this section, we will create a Streamlit in Snowflake application to visualiz
 
 <!-- ------------------------ -->
 ## CDC
-Duration: 5
 
 ### Overview
 In this section, we will ingest new transaction data from PostgreSQL into Snowflake.
@@ -474,7 +466,6 @@ Navigate to the Streamlit dashboard and refresh the page by clicking on **Refres
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 2
 
 ### Overview
 When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
@@ -484,7 +475,6 @@ Navigate to the last cell in the Snowflake Notebook to uncomment and run the las
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 ### Congrats! You're reached the end of this Quickstart!
 
 ### What You Learned

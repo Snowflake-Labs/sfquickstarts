@@ -10,7 +10,6 @@ feedback link: https://github.com/matt-hasura
 # Accelerate Your GraphQL Development on Snowflake with Hasura
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 The Hasura GraphQL Engine is a blazingly-fast GraphQL server that allows developers to instantly build and deploy real-time GraphQL and REST APIs on top of any new or existing Snowflake database.
 
@@ -36,7 +35,6 @@ In this tutorial, you will learn how to use [Hasura Cloud](https://cloud.hasura.
 <!-- ------------------------ -->
 
 ## Create a Cloud Account
-Duration: 2
 
 > aside positive
 > If you are an existing Hasura Cloud user, sign in to your account and proceed to **Create a Project**.
@@ -54,7 +52,6 @@ Check your inbox for a verifcation email to confirm your account. If you did not
 <!-- ------------------------ -->
 
 ## Create a Project
-Duration: 2
 
 > aside positive
 > If you are new to Hasura Cloud, a free tier project has automatically been deployed for you in *AWS us-west-1*. If you require a different region or cloud provider, continue with this step, otherwise proceed to **Configure a Project**.
@@ -71,7 +68,6 @@ Select **Free** from the pricing plans, pick an **AWS** region from the drop-dow
 <!-- ------------------------ -->
 
 ## Configure a Project
-Duration: 1
 
 > aside positive
 > Each Hasura Cloud project is automatically assigned a dynamic name and corresponding DNS hostname. If you want to change your project name, continue with this step, otherwise proced to **Create a Sample Database**.
@@ -97,7 +93,6 @@ Additional information worth noting on the configuration page includes:
 <!-- ------------------------ -->
 
 ## Create a Sample Database
-Duration: 2
 
 Sign in to your Snowflake account and create a new **SQL Worksheet**.
 
@@ -115,7 +110,6 @@ After the script has successfully executed, you will see a `MUSIC` database with
 <!-- ------------------------ -->
 
 ## Connect Your Database
-Duration: 3
 
 In the Hasura Cloud dashboard, click on the **Launch Console** for your project.
 
@@ -155,7 +149,6 @@ Example:
 <!-- ------------------------ -->
 
 ## Create a GraphQL API
-Duration: 3
 
 On the left side of the Hasura Cloud console, click on the **music** database and select all of the tables. Click on the **Track Selected** button to enable Hasura to track all of the database tables and instantly create a GraphQL API.
 
@@ -177,7 +170,6 @@ You are now able to query for all related data (i.e. nested query).
 <!-- ------------------------ -->
 
 ## GraphQL Queries
-Duration: 5
 
 > aside negative
 > Hasura support for Snowflake is currently limited to GraphQL read-only queries, relationships, and permissions.
@@ -247,7 +239,6 @@ Execute the query and now the results are filtered for albums belong to the arti
 <!-- ------------------------ -->
 
 ## Summary
-Duration: 1
 
 Congratulations! You've just deployed a GraphQL API for your Snowflake database in less than 20 minutes! And by doing so, you've discovered how easily Hasura can accelerate your application development on Snowflake by providing a fast way to create and deploy real-time GraphQL (and REST) APIs on top of your new or existing Snowflake databases. 
 

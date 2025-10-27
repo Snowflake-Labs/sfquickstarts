@@ -12,7 +12,6 @@ authors: Snowflake
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 ![](assets/asset_abstract_9.jpg)
 
@@ -25,7 +24,6 @@ In this quickstart we will explore an end-to-end example of building a scalable 
 
 <!-- ------------------------ -->
 ## Prerequisites 
-Duration: 1
 
 You need access to an AWS and a Snowflake account. If you do not already have access, follow the links for a [free AWS](https://aws.amazon.com/free/) and a [free Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account.
 
@@ -43,7 +41,6 @@ You also need Snowflake's command line interface (CLI). If Snowsql isn't already
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 2
 
 The dataset we will explore is the [Synthetic Financial Datasets For Fraud Detection](https://www.kaggle.com/ealaxi/paysim1) on [kaggle](https://www.kaggle.com).
 
@@ -53,7 +50,6 @@ The goal of this exercise is to build an ML model that accurately predicts both 
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Building a hands-on environment that will allow you to build and score the Model in your environment is very straightforward. It requires 3 simple, script-driven steps.
 
@@ -126,7 +122,7 @@ To get started, log into your AWS account and search for Secrets Manager in the 
 
 In the Secrets Manager UI, create the three key/value pairs below. Be sure to configure the fully qualified account ID (including region and cloud).
 
-<p align="center"><img src="assets/secrets_conf.png" width="400" height="300" /></p>
+<p align="center">![assets/secrets_conf.png](assets/secrets_conf.png)</p>
 
 Give your **secret** configuration a name and save it.
 
@@ -159,7 +155,7 @@ The next screen allows you to enter the stack details for your environment. Thes
 
 Be sure to pick consistent names because the AWS resources must be unique in your environment.
 
-<p align="center"><img src="assets/cloudformation.png" width="400" height="300" /></p>
+<p align="center">![assets/cloudformation.png](assets/cloudformation.png)</p>
 
 Go with the defaults on the next two screens, so click “Next” twice.
 
@@ -172,7 +168,6 @@ Creating the stack should take about one minute. At this point, the integration 
 
 <!-- ------------------------ -->
 ## Snowflake/Autopilot Integration
-Duration: 20
 
 To follow best practices, we will not use the ACCOUNTADMIN role to run the steps for this demo. Therefore, log in into Snowflake with user autopilot_user. The password should be in your setup scripts.
 
@@ -367,7 +362,7 @@ select 'overall' predicted_label
 from cc_dataset_prediction_result;
 ```
 
-<p align="center"><img src="assets/dev_all.png" width="800" height="300" /></p>
+<p align="center">![assets/dev_all.png](assets/dev_all.png)</p>
 
 Pretty good, right? Next, let’s drill down and review the accuracy for each of the predicted classes: not fraudulent (majority class) and fraudulent (minority class).
 
@@ -380,7 +375,7 @@ from cc_dataset_prediction_result
 group by predicted_label;
 ```
 
-<p align="center"><img src="assets/dev_detail.png" width="800" height="300" /></p>
+<p align="center">![assets/dev_detail.png](assets/dev_detail.png)</p>
 
 And that’s where our model shows some problems. Although the majority class is in the 99.99% range, the minority class has a very high rate of false positives. This means that if our model predicts a fraudulent transaction it will be wrong 4 times out of 5. In a practical application, this model would be useless.
 
@@ -441,7 +436,7 @@ select 'overall' predicted_label
 from cc_dataset_prediction_result_prd;
 ```
 
-<p align="center"><img src="assets/prd_all.png" width="800" height="300" /></p>
+<p align="center">![assets/prd_all.png](assets/prd_all.png)</p>
 
 However, Autopilot shows its real power when we review the per class accuracy. It has improved from 13.3% to a whopping 88.88%.
 
@@ -454,12 +449,11 @@ from cc_dataset_prediction_result_prd
 group by predicted_label;
 ```
 
-<p align="center"><img src="assets/prd_detail.png" width="800" height="300" /></p>
+<p align="center">![assets/prd_detail.png](assets/prd_detail.png)</p>
 
 With these results, there is just one obvious question left to answer. Why wouldn’t we always let the Snowflake integration pick all parameters? The main reason is the time it takes to create the model with default parameters. In this particular example it takes 9 hours to produce an optimal model. So if you just want to test the end-to-end process, you may want to ask Autopilot to evaluate only a handful of candidate models. However, when you want to get a model with the best accuracy, go with the defaults. Autopilot will then evaluate 250 candidates.
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Having managed ML capabilities directly in the Snowflake Data Cloud opens up the world of machine learning for data engineers, data analysts, and data scientists who are primarily working in a more SQL-centric environment. Not only can you take advantage of all the benefits of the Snowflake Data Cloud but now you can add full ML capabilities (model building and scoring) from the same interface. As you have seen in this article, AutoML makes ML via SQL extremely powerful and easy to use.

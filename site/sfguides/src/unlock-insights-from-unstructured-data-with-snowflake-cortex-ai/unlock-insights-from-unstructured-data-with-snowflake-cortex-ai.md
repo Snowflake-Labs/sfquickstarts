@@ -12,7 +12,6 @@ author: Sean Morris, Stephen Dickson
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This guide demonstrates how to create a Streamlit application running inside Snowflake that unlocks insights from unstructured data using **Snowflake Cortex AI**.  
 It shows how to translate, summarize, classify text, generate emails, and even analyze images — all without deploying external infrastructure.
@@ -38,7 +37,6 @@ A fully functioning **Streamlit app** inside Snowflake that:
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 ### Login to Snowsight
 
@@ -97,7 +95,6 @@ USE SCHEMA IDENTIFIER($var_schema_name);
 <!-- ------------------------ -->
 ## Build Streamlit Application
 
-Duration: 5
 
 Let's create a Streamlit application for interactive image analysis:
 
@@ -132,7 +129,6 @@ The application provides:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations! You’ve successfully built an end-to-end image analysis application using Snowflake Cortex AI models. This app showcases how to unlock value from unstructured data — including text and images - all within the Snowflake environment.
 

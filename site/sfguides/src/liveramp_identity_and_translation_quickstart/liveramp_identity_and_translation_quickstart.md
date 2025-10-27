@@ -9,7 +9,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Identity Resolution and Transcoding with LiveRamp and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 In this guide, we walk through how to use LiveRamp to create an Identity Key on top of Snowflake.
 
@@ -43,7 +42,6 @@ LiveRamp has a [video](https://www.youtube.com/watch?v=RN7k4TNyfaQ) describing a
 
 <!-- ------------------------ -->
 ## Setup Identity Resolution Application
-Duration: 2
 
 #### If not yet done, request for the LiveRamp Identity Resolution and Transcoding Native Application
 
@@ -116,7 +114,6 @@ use schema lr_app_schema;
 
 <!-- ------------------------ -->
 ## Executing the Identity Resolution Application
-Duration: 2
 
 #### This process will involve two separate steps for completing the application execution
 
@@ -160,7 +157,6 @@ call check_for_output(
 A table should now be visible in your Snowflake warehouse under the LiveRamp native application
 
 ## Audit the Identity Resolution Process
-Duration: 2
 
 #### Sample Audits
 Since you have executed a PII Resolution job there are two additional columns that LiveRamp includes in the [output table](https://docs.liveramp.com/identity/en/perform-identity-resolution-in-snowflake.html#view-the-pii-resolution-output-table--without-deconfliction--44)
@@ -220,7 +216,6 @@ SELECT COUNT(RAMPID) FROM   identifier($final_output);
 
 
 ## Setup Identity Translation Application
-Duration: 2
 
 #### If not yet done, request for the LiveRamp Identity Resolution and Transcoding Native Application
 
@@ -289,7 +284,6 @@ use schema lr_app_schema;
 
 <!-- ------------------------ -->
 ## Executing the Identity Translation Application
-Duration: 2
 
 #### This process will involve two separate steps for completing the application execution
 
@@ -333,7 +327,6 @@ call check_for_output(
 A table should now be visible in your Snowflake warehouse under the LiveRamp native application
 
 ## Auditing Translation
-Duration: 2
 
 This section will describe some sample audits for the Translation process. Each client is encouraged to reach out to their LiveRamp representative for more examples and guidance on audits. 
 
@@ -387,7 +380,6 @@ You have now completed the audit of the translation table
 
 
 ## Collaborating using the Translation Output
-Duration: 2
 
 You are now ready to create a file for collaboration with your partner. With the ability to generate RampIDs that match your partner's, you now have a shared exchange key. The SQL query below will generate an attribute file by replacing your RampID with the client’s RampID. The resulting output table can be shared, exported, or leveraged for further collaborative efforts with your partner.
 
@@ -415,7 +407,6 @@ select * from NewTable limit 100;
 
 
 ## Conclusion And Resources
-Duration: 2
 
 Congratulations! You have successfully learned how to transform your Data Cloud into an Identity Resolution Engine.
 

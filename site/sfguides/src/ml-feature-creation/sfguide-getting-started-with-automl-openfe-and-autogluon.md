@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with AutoML, OpenFE and AutoGluon
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 This guide demonstrates how to use [OpenFE](https://openfe-document.readthedocs.io/en/latest/), an open-source package, that can automatically generate features and save them into the Snowflake [Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview). These features can then be used to train a model, potentially improving its accuracy. This process can save data scientists valuable time compared to creating features manually.
 
@@ -41,7 +40,6 @@ The workflow for this tutorial is shown in the following diagram.
 
 <!-- ------------------------ -->
 ## Load Data
-Duration: 5 
 
 We will use the Boston Housing dataset, which was created from US Census data in the late 1970s to predict the median home value.  
 
@@ -62,7 +60,6 @@ select * from DEMO_BOSTON_HOUSING;
 ```
 <!-- ------------------------ -->
 ## Download the OpenFE Notebook
-Duration: 5
 
 Now that we have the data, we can use the example [OpenFE Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon/blob/main/notebooks/BOSTON%20OPENFE%20FINAL.ipynb) to create features.
 
@@ -70,7 +67,6 @@ This notebook executes as a [Snowflake Container Notebook](https://docs.snowflak
 <!-- ------------------------ -->
 
 ## Running the Notebook
-Duration: 20
 
 If you are not familiar with Snowflake Container Notebooks, [this](https://quickstarts.snowflake.com/guide/notebook-container-runtime/#0) quickstart provides a great starting point.
 
@@ -86,7 +82,6 @@ Step through each cell and execute until you reach Cell 12 `Create the sql for f
 <!-- ------------------------ -->
 
 ## Examine the Results
-Duration: 10
 
 In the Snowflake Feature Store, a feature view has now been created !
 
@@ -110,7 +105,6 @@ So we are able to quickly see that the feature came from a specific table and ho
 <!-- ------------------------ -->
 
 ## Decision Time
-Duration: 5
 
 Now that the features have been saved into the Feature Store, any machine learning tools can be used, so we have a few options!
 
@@ -125,7 +119,6 @@ For this tutorial, I'm going to use the Snowflake.ML package to train the model.
 <!-- ------------------------ -->
 
 ## Train a Model
-Duration: 20
 
 Using the Git Repo links from the [Decision Time](#decision-time) section above, retrieve the Notebook you have chosen and upload into Snowflake Container Services. In a similar approach to the OpenFE notebook the first few cells have parameters for training that you might want to modify.
 
@@ -137,7 +130,6 @@ Once the model is registered, it can be referenced using the version tag `LAST` 
 <!-- ------------------------ -->
 
 ## Deploy the Model
-Duration: 20
 
 Using the Snowsight UI **AI & ML** -> **Model**, click on the Model that was registered (Boston_Model_Snowflake) the functions to call the model will be shown:
 
@@ -164,7 +156,6 @@ Once the model is deployed as a service, the service endpoint will be shown.
 
 <!-- ------------------------ -->
 ## Invoke the Model 
-Duration: 10
 
 When the model was trained if an Open Source package was downloaded and installed, then you will need to deploy that model as a service (see [Deploy the Model](#deploy-the-model))
 
@@ -179,7 +170,6 @@ The Notebook has two examples, one using the Python requests HTTP library and th
 
 <!-- ------------------------ -->
 ## Clean-up 
-Duration: 5
 
 If the model was deployed as a service, then the compute pool and service will automatically suspend, but you can also issue a SQL call as well:
 ```SQL
@@ -204,7 +194,6 @@ Features that we created in the beginning can also be dropped, clicking on the *
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 You have done it, **congratulations**!
 

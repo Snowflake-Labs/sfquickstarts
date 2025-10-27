@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this quickstart, we will be utilizing population data gathered by the US Census Bureau. This dataset will be used to forecast population growth of various countries. For the forecasting model we will use is the Snowflake ML Forecast function. 
 
@@ -61,7 +60,6 @@ In this quickstart, you will create a few machine learning models using Snowflak
 <!-- ------------------------ -->
 
 ## Getting Started with Hex
-Duration: 5
 
 Now we can move back over to Hex and get started on our project. The first thing you'll need to do is transfer the Hex project into your new Hex org.
 
@@ -95,7 +93,6 @@ Enable the Snowpark and Writeback toggles.
 ![](assets/connection_toggles.png)
 
 ## Hex Project
-Duration: 45
 
 The rest of the lab can entirely be followed step-by-step from the Hex project. Any subsequent steps and explanation will be found in the Hex project itself.
 
@@ -106,7 +103,6 @@ Key sections of the Hex project include:
 - Hex App Creation
 
 ## Sharing our results
-Duration: 3
 
 Now that we've completed going through our project, we can share this project with others! To do this:
 - Head over to the app builder

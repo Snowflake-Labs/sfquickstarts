@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Real-Time Recommendation Engine
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 For real-time recommendations and personalization, modern mobile+web applications and marketing technology platforms often want to retrieve customer profile, product/inventory, or location data through http APIs in real-time. This tutorial will go through how to build, deploy, host, and call a custom API for these point-lookups in real-time, all powered by Snowflake.
 
@@ -46,7 +45,6 @@ The dataset for this guide is the [MovieLens 100K Dataset](https://grouplens.org
 
 <!-- ------------------------ -->
 ## Download the Git Repository
-Duration: 2
 
 **First**: Go to [GitHub](https://github.com/sfc-gh-lambrosetti/lab_recommender_api) to download the data we'll be using for this lab.
 
@@ -58,7 +56,6 @@ Unzip the data this locally on your machine - we'll come back to it later.
 
 <!-- ------------------------ -->
 ## Create the Initial Objects
-Duration: 2
 
 Login to **Snowflake** and create a `New Worksheet`. 
 
@@ -96,7 +93,6 @@ CREATE OR REPLACE TABLE TITLE (
 
 <!-- ------------------------ -->
 ## Load the Data
-Duration: 5
 
 In the database explorer, click on -> `MOVIE_RECOMMENDER_DB` -> `MOVIE_RECOMMENDER_SCHEMA` -> `Stages` -> hover over `File Stage` and click **"Open the Stage details in a new tab"**.
 
@@ -150,7 +146,6 @@ For the next few steps, you won't need this guide - follow the cells in the note
 
 <!-- ------------------------ -->
 ## Set up a Warehouse
-Duration: 1
 
 The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
 
@@ -160,7 +155,6 @@ CREATE WAREHOUSE DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
 ```
 
 ### Create the Application Role in Snowflake
-Duration: 1
 
 The API will run as a new role with minimal priviledges. To create the role, connect to Snowflake and run the following SQL statements to create the role and grant it access to the data needed for the application.
 
@@ -214,7 +208,6 @@ Note the `repository_url` in the response as that will be needed in the next ste
 
 <!-- ------------------------ -->
 ## Set up Dev Environment
-Duration: 3
 
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/sfc-gh-lambrosetti/lab_recommender_api).
 
@@ -269,7 +262,6 @@ While this is only a single endpoint, you can easily add other endpoints as well
 
 <!-- ------------------------ -->
 ## Build and Push Container
-Duration: 5
 
 To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the terminal provided by **Codespaces**:
 ```bash
@@ -292,7 +284,6 @@ docker push {repository_url}/papi
 
 <!-- ------------------------ -->
 ## Create the Compute Pool
-Duration: 1
 
 To create the compute pool to run the application, go back to **Snowflake** and run the following command in the Snowflake console or using SnowSQL:
 
@@ -312,7 +303,6 @@ GRANT MONITOR ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
 
 <!-- ------------------------ -->
 ## Create the Container Service
-Duration: 1
 
 To create the service to host the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL.
 
@@ -375,7 +365,6 @@ Make note of the ingress_url as that will be needed to test the application. Thi
 
 <!-- ------------------------ -->
 ## Test the API
-Duration: 1
 
 To verify the API is online, go to the `https://{INGRESS_URL}` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
 
@@ -394,7 +383,6 @@ When you hit the `Submit` button, the API endpoint is called and the data is ret
 
 <!-- ------------------------ -->
 ## Call the API programmatically
-Duration: 3
 
 ### Create the user and generate the Snowflake Token
 
@@ -481,7 +469,6 @@ When testing individual calls, remember that performance might be slightly highe
 
 <!-- ------------------------ -->
 ## (Optional) Test with JMeter 
-Duration: 8
 
 Disclaimer: This performance testing is supposed to be directional in nature - don't think of it as "true" performance testing.
 
@@ -509,7 +496,6 @@ A quick note - while we load an in-memory cache as part of the app, this test se
 
 <!-- ------------------------ -->
 ## Stop the API
-Duration: 1
 
 To stop the API, you can suspend the service. From the Snowflake console or SnowSQL, run:
 
@@ -520,7 +506,6 @@ ALTER SERVICE API.PUBLIC.API SUSPEND;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
 ```SQL
@@ -537,7 +522,6 @@ DROP DATABASE IF EXISTS MOVIE_RECOMMENDER_DB
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 ### Conclusion
 

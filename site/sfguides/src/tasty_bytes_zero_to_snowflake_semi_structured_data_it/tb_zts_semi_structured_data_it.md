@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Elaborare dati semi-strutturati in Snowflake
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### Panoramica
 Questo quickstart Powered by Tasty Bytes - Da zero a Snowflake è dedicato all’elaborazione dei dati semi-strutturati.
@@ -37,7 +36,6 @@ Per maggiori dettagli sui dati semi-strutturati in Snowflake, consulta la [docum
 - Un grafico a barre utile per i dirigenti
 
 ## Creare un foglio di lavoro e copiare il codice SQL
-Duration: 1
 
 ### Panoramica
 In questo quickstart seguiremo la storia del cliente Tasty Bytes attraverso un foglio di lavoro SQL di Snowsight, utilizzando questa pagina come guida completa di commenti aggiuntivi, immagini e link alla documentazione.
@@ -49,26 +47,26 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
 
 ### Passaggio 2 - Effettuare l’accesso a Snowflake
 - Accedi al tuo account Snowflake.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+    - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### Passaggio 3 - Accedere ai fogli di lavoro
 - Fai clic sulla scheda Worksheets nella barra di navigazione sulla sinistra.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+    - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### Passaggio 4 - Creare un foglio di lavoro
 - Nella scheda Worksheets, fai clic sul pulsante “+” nell’angolo superiore destro di Snowsight e scegli “SQL Worksheet”
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+    - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### Passaggio 5 - Rinominare un foglio di lavoro
 - Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Semi-Structured Data”.
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+    - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### Passaggio 6 - Accedere al codice SQL di questo quickstart in GitHub
 - Fai clic sul pulsante qui sotto, che ti porterà al file SQL di Tasty Bytes archiviato su GitHub. <button>[tb_zts_semi_structured_data.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_semi_structured_data.sql)</button>
 
 ### Passaggio 7 - Copiare la configurazione SQL da GitHub
 - In GitHub, vai sul lato destro e fai clic su “Copy raw contents”. Tutto il codice SQL necessario verrà copiato nei tuoi Appunti.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Passaggio 8 - Incollare la configurazione SQL da GitHub nel tuo foglio di lavoro Snowflake
 - Torna a Snowsight e al foglio di lavoro che hai appena creato e incolla (*CMD + V per Mac o CTRL + V per Windows*) il codice che abbiamo appena copiato da GitHub.
@@ -76,7 +74,6 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
 ### Passaggio 9 - Fai clic su Next -->
 
 ## Profilare i dati semi-strutturati dei menu
-Duration: 1
 
 ### Panoramica
 Nel ruolo di data engineer di Tasty Bytes, siamo stati incaricati di profilare i dati dei nostri menu, che includono una colonna di dati semi-strutturati. Da questa tabella dei menu dobbiamo produrre una vista del layer analitico che metta a disposizione dei nostri utenti finali i dati relativi alle restrizioni dietetiche e agli ingredienti.
@@ -94,13 +91,13 @@ USE WAREHOUSE tasty_de_wh;
 SELECT TOP 10 m.truck_brand_name, m.menu_type, m.menu_item_name, m.menu_item_health_metrics_obj FROM frostbyte_tasty_bytes.raw_pos.menu m; 
 ```
 
-<img src = "assets/3.1.menu.png">
+![assets/3.1.menu.png](assets/3.1.menu.png)
 
 Nell’output ottenuto, vediamo che la colonna `menu_item_health_metrics_obj` riporta i dati semi-strutturati che contengono le metriche che dobbiamo fornire a valle. 
 
 Facendo clic in una delle celle di questa colonna, vedremo che Snowsight espande automaticamente il pannello delle statistiche per fornirci una visuale migliore del contenuto.
 
-<img src = "assets/3.1.2.stats.png">
+![assets/3.1.2.stats.png](assets/3.1.2.stats.png)
 
 ### Passaggio 2 - Esplorare la colonna di dati semi-strutturati
 Per approfondire il modo in cui questa colonna è definita in Snowflake, esegui la prossima query, in cui utilizziamo [SHOW COLUMNS](https://docs.snowflake.com/en/sql-reference/sql/show-columns) per esplorare i tipi di dati contenuti nella tabella `menu`.
@@ -109,7 +106,7 @@ Per approfondire il modo in cui questa colonna è definita in Snowflake, esegui 
 SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 ```
 
-<img src = "assets/3.2.show_columns.png">
+![assets/3.2.show_columns.png](assets/3.2.show_columns.png)
 
 Esaminando il set di risultati, vediamo che i dati in `menu_item_health_metrics_obj` sono di tipo [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured).
 
@@ -129,20 +126,19 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ```
 
-<img src = "assets/3.3.dot.png">
+![assets/3.3.dot.png](assets/3.3.dot.png)
 
 Utilizzando la notazione punto siamo riusciti a estrarre completamente `menu_item_id`, ma a quanto pare rimangono ancora altri oggetti semi-strutturati nell’output della colonna `menu_item_health_metrics`. 
 
 Facciamo nuovamente clic in una delle celle di questa colonna per esaminarla nei dettagli.
 
-<img src = "assets/3.3.2.stats.png">
+![assets/3.3.2.stats.png](assets/3.3.2.stats.png)
 
 **Stiamo facendo progressi!** Nella prossima sezione vedremo come possiamo elaborare ulteriormente `menu_item_health_metrics` utilizzando altre funzioni di Snowflake.
 
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Appiattire i dati semi-strutturati
-Duration: 2
 
 ### Panoramica
 Dopo avere visto come interrogare facilmente i dati semi-strutturati contenuti in una colonna Variant utilizzando la notazione punto, il nostro data engineer di Tasty Bytes è sulla buona strada per fornire ai suoi stakeholder interni i dati che hanno richiesto.
@@ -166,7 +162,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.1.lat_flat.png">
+![assets/4.1.lat_flat.png](assets/4.1.lat_flat.png)
 
 ### Passaggio 2 - Esplorare una funzione per array
 Prima di estrarre i dati sulle restrizioni dietetiche richiesti, esegui la prossima query, in cui viene evidenziata una funzione per array di Snowflake che esplora la colonna `ingredients` alla ricerca di qualsiasi `menu_item_name` che contiene “Lettuce” utilizzando [ARRAY_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/array_contains).
@@ -180,7 +176,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 WHERE ARRAY_CONTAINS('Lettuce'::VARIANT, obj.value:"ingredients"::VARIANT);
 ```
 
-<img src = "assets/4.2.array_contains.png">
+![assets/4.2.array_contains.png](assets/4.2.array_contains.png)
 
 Osservando l’output, vediamo che numerose voci di menu contengono “Lettuce”. Questo tipo di analisi potrebbe essere molto utile ai responsabili degli acquisti in caso di richiami di prodotti alimentari nelle città e nei Paesi che supportiamo.
 
@@ -202,14 +198,13 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.3.lat_flat_2.png">
+![assets/4.3.lat_flat_2.png](assets/4.3.lat_flat_2.png)
 
 **Fantastico!** Questo output soddisfa esattamente i requisiti dei nostri stakeholder. Nella prossima sezione vedremo come promuovere questa query al layer analitico in cui potranno accedervi.
 
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Creare viste strutturate dei dati semi-strutturati
-Duration: 2
 
 ### Panoramica
 Nella sezione precedente abbiamo creato una query che fornisce esattamente l’output richiesto dai nostri utenti finali utilizzando una serie di funzionalità di Snowflake per i dati semi-strutturati. Ora vedremo il processo da seguire per promuovere questa query dal layer dei dati grezzi a quello armonizzato e infine a quello analitico, in cui gli utenti finali dispongono dei privilegi necessari per leggere i risultati.
@@ -248,7 +243,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/5.1.harmonized_view.png">
+![assets/5.1.harmonized_view.png](assets/5.1.harmonized_view.png)
 
 Ora che abbiamo creato la vista `harmonized.menu_v`, possiamo interrogarla direttamente senza ricorrere al codice SQL più complesso che abbiamo utilizzato al suo interno. Tuttavia, poiché i nostri stakeholder accedono ai dati dal layer analitico, eseguiamo il prossimo passaggio per trasferire la vista a tale layer.
 
@@ -265,12 +260,11 @@ Utilizziamo inoltre i parametri [SELECT * EXCLUDE e RENAME](https://docs.snowfla
 > **Rename:** quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.\*), specifica gli alias delle colonne da utilizzare nei risultati.
 >
 
-<img src = "assets/5.2.analytics_view.png">
+![assets/5.2.analytics_view.png](assets/5.2.analytics_view.png)
 
 ### Passaggio 3 - Fai clic su Next -->
 
 ## Analizzare dati semi-strutturati elaborati in Snowsight
-Duration: 2
 
 ### Panoramica
 Con la vista menu disponibile nel layer analitico, eseguiamo alcune query su questa vista che forniremo ai nostri utenti finali e che mostrano come Snowflake consente di ottenere l’esperienza di una query relazionale su dati semi-strutturati senza dover creare copie aggiuntive o eseguire elaborazioni complesse.
@@ -298,7 +292,7 @@ WHERE 1=1
 ORDER BY m1.menu_type;
 ```
 
-<img src = "assets/6.1.arrays.png">
+![assets/6.1.arrays.png](assets/6.1.arrays.png)
 
 Di nuovo, utilizzando esattamente la vista che abbiamo creato, questo tipo di query potrebbe fornire valore ai nostri operatori di food truck in situazioni reali quando lavorano con il reparto acquisti per prevedere e ordinare gli ingredienti necessari ogni settimana.
 
@@ -317,7 +311,7 @@ SELECT
 FROM frostbyte_tasty_bytes.analytics.menu_v m;
 ```
 
-<img src = "assets/6.2.metrics.png">
+![assets/6.2.metrics.png](assets/6.2.metrics.png)
 
 Con l’output che abbiamo appena ricevuto, siamo passati da una tabella grezza contenente dati semi-strutturati a un’unica riga aggregata a cui chiunque nella nostra organizzazione può accedere facilmente, per potenziare Tasty Bytes e renderla più orientata ai dati. 
 
@@ -338,20 +332,19 @@ WHERE m.brand_name IN  ('Plant Palace', 'Peking Truck','Revenge of the Curds')
 GROUP BY m.brand_name;
 ```
 
-<img src = "assets/6.3.results.png">
+![assets/6.3.results.png](assets/6.3.results.png)
 
 Di default, Snowsight restituisce i risultati delle query sotto forma di tabelle. Tuttavia, una potente funzionalità di Snowsight che non abbiamo ancora trattato è l’[utilizzo dei grafici](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations#using-charts).
 
 Ora segui le frecce nella schermata qui sotto per creare un grafico a barre che mette a confronto le voci di menu per determinate restrizioni dietetiche dei diversi marchi di food truck.
 
-<img src = "assets/6.3.chart.png">
+![assets/6.3.chart.png](assets/6.3.chart.png)
 
 Per completare questo quickstart, dobbiamo evidenziare la facilità con cui un dirigente di Tasty Bytes potrebbe svolgere questo tipo di analisi autonomamente, senza bisogno di sapere nulla dell’elaborazione dei dati semi-strutturati che abbiamo incapsulato nelle nostre viste. In questo modo possiamo essere sicuri di avere contribuito alla democratizzazione dei dati all’interno di Tasty Bytes.
 
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Conclusione e fasi successive
-Duration: 1
 
 ### Conclusione
 Ottimo lavoro! Hai completato il quickstart Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati. 

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 15
 
 Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing. This starter solution tackles this challenge by offering an integrated application that unifies data sets from different Connectors and Marketing Data providers.
 
@@ -62,7 +61,6 @@ This demo consists of a native application that provides a framework to easily u
 ## Setup
 
 ### Clone GitHub repository
-Duration: 2
 
 Clone the git repo to your local machine:
 ```console
@@ -116,7 +114,6 @@ Refer to the desired output below:
 
 <!-- ------------------------ -->
 ## Deploy the Native App
-Duration: 2
 
 ### Docker Desktop
 Ensure that Docker Desktop is running and that you're signed in to your Docker account.
@@ -143,7 +140,6 @@ After the execution of this notebook you will see some new assets created in you
 
 <!-- ------------------------ -->
 ## Open the Native App
-Duration: 2
 
 ### Open the Native App
 
@@ -154,7 +150,6 @@ In the ***Data Products/ Apps*** section, you will see the recently created Mark
 
 <!-- ------------------------ -->
 ## Use the Native App
-Duration: 5
 
 After you deploy this native app in your account, navigate to
 the Data Products / Apps section in Snowsight and open the  
@@ -247,7 +242,6 @@ Under the AI Assistant option you will find a Chatbot that allows you to ask que
 
 <!-- ------------------------ -->
 ## Restart the Solution
-Duration: 10
 If you connect both Data providers and want to start the solution again, you can execute this clean-up script in an SQL Worksheet to delete the Unified Data Model tables and clean up the connected sources.
 
 
@@ -281,7 +275,6 @@ DROP ROLE IF EXISTS MARKETING_DATA_FOUNDATION_V3_ROLE;
 Use this cleanup script to remove all objects created in this Quickstart.
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 ### Overview
 

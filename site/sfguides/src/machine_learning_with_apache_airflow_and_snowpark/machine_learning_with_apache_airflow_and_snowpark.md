@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Machine Learning with Snowpark and Apache Airflow
 <!-- ------------------------ -->
 ## Overview  
-Duration: 5
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_0_header_image.png)
 
@@ -82,7 +81,6 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## Environment Setup and Repo Overview
-Duration: 2
 
 First, Clone [this repository](https://github.com/astronomer/airflow-snowparkml-demo/tree/main) and navigate into its directory in terminal, before opening the folder up in the code editor of your choice. 
 

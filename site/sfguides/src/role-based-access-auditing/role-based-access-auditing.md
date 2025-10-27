@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build Role-Based Access Audit Dashboards in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Learn how to create interactive dashboards for auditing user roles and privileges in Snowflake using Streamlit. This guide walks you through building a utility notebook that helps to ensure adherence to security policies through visual analysis of user roles and privilege assignments.
 
@@ -36,7 +35,6 @@ Here are some common features for these two dashboards:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Firstly, to follow along with this quickstart, you can click on [Role_Based_Access_Auditing_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Role_Based_Access_Auditing_with_Streamlit/Role_Based_Access_Auditing_with_Streamlit.ipynb) to download the Notebook from GitHub. 
 
@@ -52,7 +50,6 @@ import streamlit as st
 
 <!-- ------------------------ -->
 ## Implement User Role Analysis
-Duration: 15
 
 ### Query User Data
 In this first use case, let's retrieve user details and role assignments using the following SQL query:
@@ -212,7 +209,6 @@ This code snippet generates the following Streamlit powered dashboard. Note how 
 
 <!-- ------------------------ -->
 ## Implement Role Grant Analysis
-Duration: 15
 
 ### Analyze Role Grants
 
@@ -337,7 +333,6 @@ This should generate the following Streamlit app:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built interactive role-based access audit dashboards using Snowflake and Streamlit. These tools enable you to visually analyze user roles and privileges, helping maintain robust security policies in your Snowflake environment.
 

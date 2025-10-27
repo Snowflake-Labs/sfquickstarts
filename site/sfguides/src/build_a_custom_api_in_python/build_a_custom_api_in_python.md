@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Custom API in Python and Flask
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 Many builders want to share some of the data stored in Snowflake over an http API. Modern mobile and web applications often want to retrieve that data through http APIs. This tutorial will go through how to build, deploy, and host a custom API Powered by Snowflake.
 
@@ -39,7 +38,6 @@ The dataset is the [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-
 
 <!-- ------------------------ -->
 ## Setting Up Your Development Environment
-Duration: 3
 
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask).
 
@@ -116,7 +114,6 @@ review [snowpark.py](https://github.com/Snowflake-Labs/sfguide-build-a-custom-ap
 
 <!-- ------------------------ -->
 ## Setting Up Snowflake CLI
-Duration: 4
 
 All of the commands in this step will be run in the terminal in Codespaces.
 
@@ -155,7 +152,6 @@ snow object create database name=api --if-not-exists
 
 <!-- ------------------------ -->
 ## Creating A Notebook
-Duration: 4
 
 It is useful to use a Notebook to follow the steps for this lab. It allows multiple commands to be put in a single cell and executed, and it allows
 seeing the output of previous steps.
@@ -180,7 +176,6 @@ When the Notebook is created, click the "Start" button on the top.
 
 <!-- ------------------------ -->
 ## Setting Up A Database and Warehouse
-Duration: 1
 
 The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, 
 run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
@@ -192,7 +187,6 @@ CREATE WAREHOUSE IF NOT EXISTS DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
 ```
 
 ### Create the Application Role in Snowflake
-Duration: 1
 
 The application will run as a new role with minimal priviledges. The following commands create the role and grant it access to the data needed for the application.
 Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
@@ -211,7 +205,6 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 
 <!-- ------------------------ -->
 ## Creating The Image Registry
-Duration: 1
 
 To create the image registry, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
@@ -229,7 +222,6 @@ Note the `repository_url` in the response as that will be needed in the next ste
 
 <!-- ------------------------ -->
 ## Building The Application Container
-Duration: 10
 
 The commands in this step are to be run in a terminal in Codespaces.
 
@@ -260,7 +252,6 @@ docker push <repository_url>/dataapi
 
 <!-- ------------------------ -->
 ## Creating The Compute Pool
-Duration: 1
 
 To create the compute pool to run the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
@@ -284,7 +275,6 @@ SHOW COMPUTE POOLS;
 
 <!-- ------------------------ -->
 ## Creating The Application Service
-Duration: 1
 
 To create the service to host the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
@@ -345,7 +335,6 @@ Make note of the `ingress_url` as that will be need to test the application. Thi
 
 <!-- ------------------------ -->
 ## Testing The API
-Duration: 6
 
 To verify the API is online, go to the `https://<INGRESS_URL>` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
 
@@ -395,7 +384,6 @@ When you hit the `Submit` button, the API endpoint is called and the data is ret
 
 <!-- ------------------------ -->
 ## Programmatic Access
-Duration: 5
 
 In many situations we want to access this data API from another process outside of Snowflake programmatically. To do this, we will need a way to programmatically 
 authenticate to Snowflake to allow access to the SPCS endpoint. There are a number of ways to do this today, but we will focus on using 
@@ -444,7 +432,6 @@ and save the file to the `test/` directory (you can leave the default filename).
 
 <!-- ------------------------ -->
 ## Testing Programmatically
-Duration: 5
 
 Next we can test accessing our API programmatically using the PAT token. We cannot use the PAT token directly to access the SPCS endpoint.
 We must exchange the long-lived PAT token for a shorter-lived access token via the `/oauth/token` Snowflake endpoint. We can then use that
@@ -502,7 +489,6 @@ display the result from SPCS.
 
 <!-- ------------------------ -->
 ## Stopping The API
-Duration: 1
 
 To stop the API, you can suspend the service. 
 Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
@@ -514,7 +500,6 @@ ALTER SERVICE API.PUBLIC.API SUSPEND;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. 
 Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
@@ -535,7 +520,6 @@ You can now turn off your Codespaces environment.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 ### Overview
 You've successfully built a custom API in Python Powered by Snowflake. 
 

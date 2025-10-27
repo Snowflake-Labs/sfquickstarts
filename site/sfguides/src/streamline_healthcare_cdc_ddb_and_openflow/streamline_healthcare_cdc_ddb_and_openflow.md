@@ -1,5 +1,5 @@
 id: Streamline_Healthcare_CDC_DDB_And_Openflow
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/openflow
 language: en
 summary: This guide will walk you through how to build CDC pipelines to synchronize the front-end DynamoDB and back-end Snowflake tables for processing real-time insurance claims
 environments: web
@@ -10,7 +10,6 @@ authors: James Sun, Snowflake
 # Streamlining Healthcare Claims Change Data Capture Processing Using Amazon DynamoDB and Snowflake OpenFlow
 <!---------------------------->
 ## Overview
-Duration: 10
 
 ### Overview
 In a healthcare claims processing system, [Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) can serve as an effective front-end database due to its high scalability, low-latency performance, and schema flexibility. It allows real-time ingestion and access to diverse, evolving claim event data such as status changes, user interactions, or system-generated events without the constraints of a rigid relational schema. This is especially valuable in front-end applications where speed and adaptability are critical. On the back end, Snowflake complements DynamoDB by handling complex analytics, aggregations, data sharing and reporting. Claim data can be streamed in near real-time from DynamoDB into Snowflake via [Openflow](https://www.snowflake.com/en/product/features/openflow/) seamlessly, where advanced SQL queries, joins, and business intelligence tools can be applied to support audits, compliance checks, long-term trends and securely shared with teams across the globe. Together, this architecture balances speed and flexibility at the front with powerful analytics and data integrity at the back.
@@ -64,7 +63,6 @@ Before proceeding with the quickstart, ensure you have:
 
 <!---------------------------->
 ## Deploy AWS Resources
-Duration: 10
 
 Click on this [link](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=Openflow-DDB-CDC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Openflow_Dynamo_CDC/ddb-cft.yaml) to start a CloudFormation template. 
 
@@ -162,7 +160,6 @@ see below example screenshot:
 
 <!---------------------------->
 ## Setup Snowflake
-Duration: 10
 
 #### 1. Create role, schema and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -356,7 +353,6 @@ For a list of all of the available Openflow processors, visit this [doc](https:/
 
 <!---------------------------->
 ## Enable [DynamoDB Streams](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html)
-Duration: 3
 
 Navigate to the [DynamoDB Table Console](https://console.aws.amazon.com/dynamodbv2/home?#tables) and click `InsuranceClaims` table.
 
@@ -373,7 +369,6 @@ In a few seconds, the DynamoDB stream is enabled. You will see notification of s
 
 <!---------------------------->
 ## Change Data Capture (CDC) In Action
-Duration: 15
 
 ### Ingest Claims to DynamoDB 
 Let's ingest a few sample insurance claims into the source DynamoDB table. To do this, go back to the EC2 instance console in session manager and issue this command:
@@ -494,7 +489,6 @@ select
 
 <!---------------------------->
 ## Transformed Data Across Pipeline
-Duration: 5
 
 You can view the transformed json contents in various stages by right-clicking tags in the pipeline, and select `List queue`
 ![](assets/openflow-listqueue-1.png)
@@ -506,7 +500,6 @@ Feel free to compare these contents to see how the data is transformed by the [`
 
 <!---------------------------->
 ## The ExecuSQLCommand Processor
-Duration: 5
 
 Let's take a look at the `ExecuteSQLStatement` processor and see what SQL query it uses to merge the CDC events.
 
@@ -586,7 +579,6 @@ END;
 
 <!---------------------------->
 ## Cleanup
-Duration: 5
 
 When you're done with the demo, you can delete all resources to avoid incurring charges:
 
@@ -629,7 +621,6 @@ DROP DATABASE CDC_DB;
 
 <!---------------------------->
 ## Conclusion And Resources 
-Duration: 5
 
 ### Overview
 In this quickstart guide, you've built a complete Change Data Capture (CDC) pipeline that synchronizes healthcare insurance claims data between Amazon DynamoDB and Snowflake. This architecture leverages DynamoDB's strengths as a high-performance, scalable front-end database for real-time claims processing, while utilizing Snowflake's powerful analytics capabilities for complex reporting, data sharing, and long-term trend analysis. The Openflow connector serves as the critical bridge between these systems, ensuring that all changes (inserts, updates, and deletions) are captured and synchronized in near real-time.

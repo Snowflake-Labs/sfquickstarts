@@ -11,7 +11,6 @@ tags: Getting Started, Looker, BI, OAuth, Authentication, Key-Pair
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 This guide will walk you through the process of connecting Looker to Snowflake and building a simple dashboard. We will cover two authentication methods: Key-Pair for service accounts and OAuth for individual user authentication.
 
@@ -36,7 +35,6 @@ This guide will walk you through the process of connecting Looker to Snowflake a
 
 <!-- ------------------------ -->
 ## 1. Loading Data into Snowflake
-Duration: 5
 
 First, we will load public Citibike trip data from an S3 bucket into your Snowflake account.
 
@@ -96,7 +94,6 @@ SELECT COUNT(*) FROM trips;
 
 <!-- ------------------------ -->
 ## 2. Configuring Key-Pair Authentication
-Duration: 10
 
 This method is ideal for service accounts and automated processes. We'll generate a key pair and assign the public key to a dedicated Looker service user in Snowflake.
 
@@ -160,7 +157,6 @@ GRANT ROLE looker_role TO USER looker_service_account;
 
 <!-- ------------------------ -->
 ## 3. Configuring OAuth Authentication
-Duration: 5
 
 OAuth allows each Looker user to authenticate with their own Snowflake credentials.
 
@@ -202,7 +198,6 @@ ALTER ACCOUNT SET NETWORK_POLICY = looker_ip_policy;
 
 <!-- ------------------------ -->
 ## 4. Configuring the Looker Connections
-Duration: 5
 
 With Snowflake configured, we can now create the connections in Looker.
 
@@ -235,7 +230,6 @@ Click **Test These Settings**, and if successful, click **Add Connection**.
 
 <!-- ------------------------ -->
 ## 5. Creating a Looker Project and Dashboard
-Duration: 5
 
 #### Create a project
 Now we will create a Looker project.
@@ -252,7 +246,6 @@ Looker will automatically generate a model and view file from your database sche
 
 <!-- ------------------------ -->
 #### Create a Dashboard
-Duration: 5
 
 1.  From the Looker homepage, click **+ New** > **Dashboard**.
 2.  Name it "Citibike Trip Overview" and click **Create Dashboard**.
@@ -266,7 +259,6 @@ Duration: 5
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 Congratulations! You have successfully connected Looker to Snowflake, created a LookML project, built a dashboard, and set up version control.
 

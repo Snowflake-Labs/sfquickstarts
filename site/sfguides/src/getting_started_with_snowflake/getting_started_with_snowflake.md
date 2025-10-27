@@ -13,7 +13,6 @@ authors: Victoria Warner (Cybersyn)
 
 ## Overview
 
-Duration: 3
 
 Welcome to Snowflake! This entry-level guide, designed for database and data warehouse administrators and architects, will help you navigate the Snowflake interface and introduce you to some of our core capabilities. [Sign up for a free 30-day trial of Snowflake](https://trial.snowflake.com) and follow along with this lab. Once we cover the basics, you'll be ready to start processing your own data and diving into Snowflake's more advanced features!
 
@@ -46,7 +45,6 @@ Check out Snowflake Public Data's [Snowflake Public Data (Free)](https://app.sno
 
 ## Prepare Your Lab Environment
 
-Duration: 1
 
 If you haven't already, register for a [Snowflake free 30-day trial](https://signup.snowflake.com/developers). This lab assumes you are using a new Snowflake account created by registering for a trial.
 
@@ -63,7 +61,6 @@ Open a browser window and enter the URL of your Snowflake 30-day trial environme
 
 ## The Snowflake ​User Interface
 
-Duration: 8
 
 > aside negative
 > 
@@ -188,7 +185,6 @@ In a real-world environment, you would use different roles for the tasks in this
 
 ## Data Lab: Stock Price & SEC Filings Data
 
-Duration: 2
 
 ### The Lab Story
 You work at a grocery retailer. You want to understand the performance of major consumer goods (CPG) companies in the US that supply your store. This lab takes a look at daily stock price data and quarterly and annual Securities Exchange Commission (SEC) company filings to understand the performance of the CPG landscape. Public companies are required to submit a quarterly and annual report to the SEC detailing their financial data.
@@ -202,7 +198,6 @@ We will start by collecting data from three different sources:
 
 ## Loading Structured Data into Snowflake: CSVs
 
-Duration: 8
 
 Let's start by preparing to load structured `.csv` data into Snowflake.
 
@@ -482,7 +477,6 @@ Click the **Create Warehouse** button to create the warehouse.
 
 ## Loading Semi-Structured Data into Snowflake: JSONs
 
-Duration: 16
 
 > aside positive
 > 
@@ -641,7 +635,6 @@ LIMIT 20;
 
 ## Getting Data from Snowflake Marketplace
 
-Duration: 5
 
 ### Snowflake Data Marketplace
 
@@ -691,7 +684,6 @@ That's it! You have now successfully subscribed to the Snowflake Public Data (Fr
 
 ## Querying, the Results Cache, & Cloning
 
-Duration: 8
 
 In the previous exercises, we loaded data into two tables using Snowflake's `COPY` bulk loader command and the `COMPUTE_WH` virtual warehouse. Now we are going to take on the role of the analytics users at our company who need to query data in those tables using the worksheet and the second warehouse `ANALYTICS_WH`.
 
@@ -858,7 +850,6 @@ ORDER BY product, period_end_date;
 
 ## Using Time Travel
 
-Duration: 6
 
 Snowflake's powerful Time Travel feature enables accessing historical data, as well as the objects storing the data, at any point within a period of time. The default window is 24 hours and, if you are using Snowflake Enterprise Edition, can be increased up to 90 days. Most data warehouses cannot offer this functionality, but - you guessed it - Snowflake makes it easy!
 
@@ -958,7 +949,6 @@ FROM company_metadata;
 
 ## Working with Roles, Account Admin, & Account Usage
 
-Duration: 8
 
 In this section, we will explore aspects of Snowflake's access control security model, such as creating a role and granting it specific permissions. We will also explore other usage of the `ACCOUNTADMIN` (Account Administrator) role.
 
@@ -1081,7 +1071,6 @@ For the next section, stay in the `ACCOUNTADMIN` role for the UI session.
 
 ## Sharing Data Securely via Snowflake Marketplace
 
-Duration: 6
 
 Snowflake enables data access between accounts through the secure data sharing features. Shares are created by data providers and imported by data consumers, either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
 
@@ -1136,7 +1125,6 @@ Snowflake provides several ways to securely share data without compromising conf
 
 ## Resetting Your Snowflake Environment
 
-Duration: 2
 
 If you would like to reset your environment by deleting all the objects created as part of this lab, ensure you are using the `ACCOUNTADMIN` role in the worksheet and run the following commands to drop the objects we created in the lab:
 
@@ -1154,7 +1142,6 @@ DROP ROLE IF EXISTS junior_dba;
 
 ## Conclusion & Next Steps
 
-Duration: 2
 
 Congratulations on completing this introductory lab exercise! You've mastered the Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.
 

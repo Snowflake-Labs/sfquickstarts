@@ -10,7 +10,6 @@ authors: Snowflake
 # Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 With the growth of your data and business, so does the complexity involved in traditional approaches and architecture. Snowflake and Fivetran have partnered to bring you the Data Cloud and the most automated data integration solution which helps customers simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance. In this virtual hands-on lab, you will follow a step-by-step guide to perform marketing analytics for Google Ads data by using Fivetran, Snowflake, and dbt. Let’s get started. 
 
@@ -51,7 +50,6 @@ Sample Google Ads data will be provided if you do not have a Google Ads account.
 * A sophisticated marketing data analytics pipeline leveraging Fivetran, dbt, and Snowflake
 
 ## Snowflake Configuration 
-Duration: 10
 
 1. Login to your Snowflake trial account.  
 ![Snowflake Log In Screen](assets/image124.png)  
@@ -61,23 +59,23 @@ Duration: 10
 
 3. Let’s change our role and enable notifications. We need to work in the ACCOUNTADMIN role for this lab and notifications are how Snowflake will alert you when resource monitor thresholds have been crossed. Click on your User Name in the upper right-hand corner.  
 <!--- ![Change role - step 1](assets/image27.png)  -->
-<img src="assets/image27.png" width="400">
+![assets/image27.png](assets/image27.png)
 
 4. You’ll get a popup with 4 items; click on Switch Role.  
 <!--- ![Change role - step 2](assets/image22.png)  -->
-<img src="assets/image22.png" width="400">
+![assets/image22.png](assets/image22.png)
 
 5. Select **ACCOUNTADMIN**.  
 <!--- ![Change role - step 3](assets/image62.png)  -->
-<img src="assets/image62.png" width="500">
+![assets/image62.png](assets/image62.png)
 
 6. The UI will refresh and you should see ACCOUNTADMIN under your username. If you don’t, go back to step 5.  
 <!--- ![Change role - step 4](assets/image30.png)  -->
-<img src="assets/image30.png" width="400">
+![assets/image30.png](assets/image30.png)
 
 7. Click on your username again and you’ll get the same popup with 4 items; click on Preferences.  
 <!---![Preferences - step 1](assets/image59.png)  -->
-<img src="assets/image59.png" width="500">
+![assets/image59.png](assets/image59.png)
 
 8. Click on **Notifications**.  
 ![Preferences - step 2](assets/image137.png)  
@@ -87,7 +85,7 @@ Duration: 10
 
 10. Now let’s create your Fivetran account.  Click on the **Partner Connect** tile at the top of the UI...
 <!--- ![Create Fivetran Account - step 1](assets/image89.png)  -->
-<img src="assets/image89.png" width="500">
+![assets/image89.png](assets/image89.png)
 
 11. ...and then click on the Fivetran tile inside Snowflake Partner Connect. (if you aren’t in the ACCOUNTADMIN role you’ll receive a warning.  Go back and complete steps 6-9.)  
 ![Create Fivetran Account - step 2](assets/image134.png)  
@@ -101,10 +99,9 @@ Duration: 10
 <!-- ------------------------ -->
 
 ## Fivetran - Configure Source  
-Duration: 5
 
 <!-- ![Fivetran](assets/image79.png) --> 
-<img src="assets/image79.png" width="500">
+![assets/image79.png](assets/image79.png)
 
 In the next three sections we will create an automated data pipeline, with an extract-load (ELT) architecture::
 1.	Extract and Load:
@@ -125,7 +122,6 @@ To log into Fivetran in the future, you can navigate to [https://fivetran.com/da
 ![Fivetran - Source](assets/image3.png)  
 
 ## Upload Sample Adwords Data With Google Sheets
-Duration: 20
 
 **Note**: The **Setup Fivetran dbt Transformations** section assumes you have uploaded the sample data as outlined in this section. If you used your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in the next section.
 
@@ -216,7 +212,6 @@ This view shows you all of your Google Sheets connectors. Some of your connector
 In Snowflake (optional): When the sync is complete, you can see your schema and tables in Snowflake’s Worksheet view. You should be able to see the data in the tables by clicking into the **PC_FIVETRAN_DB** database, into the **GOOGLE_ADS_DEMO** schema, then clicking on one of the tables and then clicking **Preview Data**.
 
 ## Fork Sample dbt Project on Github
-Duration: 15
 
 **Note**: The **Setup Fivetran dbt Transformations** section assumes you have uploaded the sample data as outlined in the previous section. If you use your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in this section.  
 
@@ -271,7 +266,6 @@ This is where you can include outside packages to run! See [hub.getdbt.com](http
 This is a Fivetran-specific file that configures what jobs will run when, leveraging a [crontab-style syntax](https://crontab.guru/) for scheduling. Documentation can be found in the file itself. Remember, as described above, you can edit files directly in Github!
 
 ## Set Up Fivetran dbt Transformations
-Duration: 20
 
 In this section we will take the dbt project we created in the previous section, and run it via Fivetran to generate models! We will be showing how Fivetran is used to orchestrate dbt jobs, and the first step is to connect to your dbt project in Github. There are a lot of steps in this section, but for the most part they are not too complicated. Let’s get started!
 
@@ -387,7 +381,6 @@ In the previous sections, we learned the following skills:
 In doing so, we have set up a complete, end-to-end modern data pipeline focusing on the advantages of the Extract-Load-Transform (ELT) architectural approach. Data loading is extremely simple to configure and comes with the benefit of hands-free maintenance, forever. dbt is a powerful transformation tool that comes with many open source Fivetran modeling packages out-of-the-box. Moreover, Fivetran manages the execution of those transformation jobs, and the jobs run natively in the Snowflake warehouse, exposing all of the pßower of Snowflake’s query engine to your transformations.
 
 ## Snowflake - Part Two
-Duration: 15
 
 1. Back in the Snowflake UI, let’s take a quick look at the query history to see all the work that Fivetran/dbt performed.  
 ![Snowflake Part 2 - 1](assets/image53.png)  
@@ -418,7 +411,7 @@ Duration: 15
  
 10. Let’s start our work performing DBA functions.   We need to set the context we want to use within the worksheet.  In each worksheet I can have a different role,  warehouse, database, and schema.  Each worksheet is independent of the others (like Snowflake compute!).  My worksheet role can also be different from the role I have in the upper right-hand corner under my name.  <br><br>
 
-    Let’s execute the SQL in script section **A** to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the <img src="assets/image136.png" width="60"> button.  <br><br>
+    Let’s execute the SQL in script section **A** to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the ![assets/image136.png](assets/image136.png) button.  <br><br>
     
     _**Pro Tip: You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.**_
 
@@ -521,10 +514,10 @@ order by 6 desc;
 21. And then find the **Weather Source** tile.  Once you find it, click on it.  
 ![Snowflake Part 2 - 21](assets/image84.png)  
 
-22. Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click <img src="assets/image40.png" width="60">.
+22. Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click ![assets/image40.png](assets/image40.png).
 ![Snowflake Part 2 - 22](assets/image56.png)  
 
-23. In the pop-up, rename the database to WEATHERSOURCE (**important!**),  check the “I accept…” box and then <img src="assets/image26.png" width="100">.  No need to add additional roles (though you might in real-life).  
+23. In the pop-up, rename the database to WEATHERSOURCE (**important!**),  check the “I accept…” box and then ![assets/image26.png](assets/image26.png).  No need to add additional roles (though you might in real-life).  
 ![Snowflake Part 2 - 24](assets/image28.png)  
 
     What is happening here?  Weather Source has granted access to this data from their Snowflake account to yours.  You’re creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts!  When you query you’ll really be querying the data that lives in the Weather Source account.  If they change the data you’ll automatically see those changes.  No need to define schemas, move data,  or create a data pipeline either. Isn’t that slick?
@@ -622,7 +615,7 @@ undrop table GOOGLE_ADS__URL_AD_ADAPTER;
 32. See anything that looks like this?  These notifications come from the resource monitor we set up earlier in the lab.  You’ll also get emails with the same information.  
 ![Snowflake Part 2 - 33](assets/image101.png)  
 ![Snowflake Part 2 - 33](assets/image101.png)<!-- .element style="width: 25%; border: 0; background: None; box-shadow: None" -->
-<img src="assets/image101.png" width="400">
+![assets/image101.png](assets/image101.png)
 
 33. Now, click on the **Account** tile.  
 ![Snowflake Part 2 - 34](assets/image16.png)  
@@ -641,7 +634,6 @@ undrop table GOOGLE_ADS__URL_AD_ADAPTER;
 <!-- ------------------------ -->
 
 ## Conclusion & Next Steps
-Duration: 2
 
 Congratulations on completing this lab on automating data pipelines to drive marketing analytics! You’ve mastered the Fivetran and Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.
 

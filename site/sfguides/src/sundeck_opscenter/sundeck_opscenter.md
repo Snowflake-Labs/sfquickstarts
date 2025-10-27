@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Sundeck OpsCenter
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 ![OpsCenter Screenshot](assets/warehouse_page_1024.png)
 
@@ -39,7 +38,6 @@ OpsCenter from Sundeck is a free Snowflake Native App which provides a suite of 
 
 <!-- ------------------------ -->
 ## Get the Native App
-Duration: 3
 
 > aside positive
 >
@@ -94,7 +92,6 @@ Once installation is complete, you will see a confirmation dialog, which will of
 Click "Configure" to complete the local setup of OpsCenter.
 
 ## Complete Setup
-Duration: 2
 
 Once the Native App is launched, you will be taken to the OpsCenter Home page.  Initially, a list of "Getting Started" tasks will be displayed.  These will disappear once you have completed the setup steps.
 
@@ -118,7 +115,6 @@ Continue to the next step to start using OpsCenter!
 
 <!-- ------------------------ -->
 ## View Warehouse Utilization 
-Duration: 4
 
 Let's start by exploring one of the built-in reports in OpsCenter.  Click on the "Warehouses" link in the left-hand navigation menu:
 
@@ -155,7 +151,6 @@ The Heatmap view shows warehouse utilization over time, broken out by day of the
 
 
 ## View Query Activity
-Duration: 4
 
 Next, let's look at the query analysis reports.  Click on the "Queries" link in the left-hand navigation menu:
 
@@ -189,7 +184,6 @@ Here we can see the top users by total query cost, as well as the total number o
 
 
 ## Set up Probes
-Duration: 4
 
 ### Probes Overview 
 
@@ -236,7 +230,6 @@ Cick "Create" to create the Probe.  After a few seconds, you'll be taken back to
 From here, you can create further Probes, or modify/delete existing Probes.
 
 ## Create Labels
-Duration: 4
 
 ### Labels Overview
 
@@ -294,7 +287,6 @@ Since Group labels are effectively "binning" all queries into one of the labels 
 
 
 ## Enable Notifications (Optional)
-Duration: 4
 
 To enable OpsCenter Probes to send notifications by email, we'll create a free Sundeck account.  
 
@@ -352,7 +344,6 @@ You've now connected OpsCenter to Sundeck.  Continue to the next step to learn a
 
 
 ## Advanced Features (Optional)
-Duration: 1
 
 If you have chosen to connect OpsCenter to a free Sundeck account, you can now take advantage of a number of advanced features within OpsCenter, such as Notifications and advanced query pattern matching in Labels and Probes.
 
@@ -371,7 +362,6 @@ You can learn more about [QLike concepts](https://docs.sundeck.io/concepts/qlike
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Now that you've installed and configured the Sundeck OpsCenter Native App, you can use the built-in reports to better understand your Snowflake usage and spend, and drill down further into usage by building your own Labels.  You can also set up Probes to regularly check for certain conditions, and alert (or cancel) queries if they exceed certain cost or time limits.
 

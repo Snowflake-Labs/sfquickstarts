@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Azure OpenAI and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Azure OpenAI is a groundbreaking collaboration between two industry leaders, Microsoft Azure and OpenAI, designed to empower businesses with the future of AI technology. This powerful partnership offers seamless access to OpenAI's cutting-edge natural language processing models through the Azure cloud platform, enabling organizations to effortlessly integrate AI-driven insights, automation, and conversational capabilities into their applications, products, and services. With Azure OpenAI, you can unlock new dimensions of productivity, innovation, and customer engagement, giving your business a competitive edge in today's data-driven world. 
 
@@ -42,7 +41,6 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 5
 
 In this use case you will use purchase history data from a big box store, and leverage Azure Open AI to generate 3 suggested next items that can be marketed to the customer. Developing Next Best Offer (NBO) applications can often take months to develop, but with Snowflake and Azure we are able to set up this workload in hours. 
 
@@ -50,7 +48,6 @@ Additionally, the data leverages demographic information (Median Age for the zip
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 5
 
 The first thing you will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet. We are using the accountadmin role here for demo purposes, but in production you will likely use a different role.
 ```sql
@@ -91,7 +88,6 @@ The result of the final select statement should look like this:
 
 <!-- ------------------------ -->
 ## Set Up AzureML Workspace
-Duration: 5
 
 Head over to your AzureML workspace, go to the Compute blade and make sure you have a Compute Instance running (any of the standard instances will work for this quickstart). 
 
@@ -99,7 +95,6 @@ Head over to your AzureML workspace, go to the Compute blade and make sure you h
 
 <!-- ------------------------ -->
 ## Import and Register data from Snowflake in AzureML
-Duration: 10
 
 Next we're going to register and import data from Snowflake in AzureML. In your AzureML Workspace go to the Data blade and click Data Connections tab. Next you will name your connection, select the Snowflake Category and define your target. The target should follow the below syntax:
 
@@ -133,7 +128,6 @@ The Connector is natively connecting to Snowflake and creating and registering a
 
 <!-- ------------------------ -->
 ## Deploy Azure Open AI Model
-Duration: 5
 
 Head to your Azure Portal home screen and create an Azure OpenAI service if you don't already have one. Place OpenAI in a Resource Group (or create a new one), use the East US Region, provide a unique name, select the Standard S0 pricing tier. 
 ![](assets/openaiportal.png)
@@ -146,7 +140,6 @@ You can familiarize yourself with the Azure AI Studio later, but for now click o
 
 <!-- ------------------------ -->
 ## Build Prompt Flow
-Duration: 15
 
 Go back to your AzureML workspace and access the Prompt Flow blade and click Create then click create on the Standard flow.
 
@@ -191,7 +184,6 @@ Save the flow and then click deploy. Accept all of the default options by clicki
 
 <!-- ------------------------ -->
 ## Develop Notebook to Orchestrate Inference
-Duration: 10
 
 Head back to your AzureML Workspace and click on the notebook blade and select open terminal and start/select your compute instance near the top of the screen. In the terminal run the below code to copy the notebook that will use to orchestrate inference.
 
@@ -245,7 +237,6 @@ SELECT * FROM retail_db.public.nbi_promo;
 
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
-Duration: 5
 
 This quickstart is just that, a quick way to get you started with Azure OpenAI with Snowflake. You will want to consider the additional items below for enterprise-grade workloads:
 - Using [Environments in AzureML](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-environments-v2?view=azureml-api-2&tabs=python#create-an-environment) to load additional packages like Snowpark.

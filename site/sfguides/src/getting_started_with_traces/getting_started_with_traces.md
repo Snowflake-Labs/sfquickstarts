@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Traces
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This guide will introduce you to Logs, Traces, and Metrics in Snowflake which can be used to optimize performance and find errors in UDFs and stored procedures.
 
@@ -42,7 +41,6 @@ This guide will use REST APIs from OpenWeather to showcase the fetch weather dat
 
 <!-- ------------------------ -->
 ## Creating the Notebook
-Duration: 2
 
 Login to Snowsight using your credentials in Snowflake.
 
@@ -64,7 +62,6 @@ Go to Projects > Notebooks in the left navigation. Click the + Notebook to creat
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 2
 
 The first notebook cell will be used to setup the notebook. These variables will be used in subsequent cells using the `{{variable_name}}` syntax in SQL cells, and by using the variable names in Python cells.
 
@@ -99,7 +96,6 @@ After generating the key, go back to the Snowsight notebook and paste the key ge
 
 <!-- ------------------------ -->
 ## Confgure External API Access
-Duration: 2
 
 In the second notebook cell you will configure a network rule, secret, and external access integration to allow outbound connectivity to the OpenWeather API. This is necessary because the Python Notebook is secure by default and does not allow network access. A stage is also created to store the permanent UDF and procedure. "Permanent" means that the UDF and stored procedure will be stored in the database so that they can be called from outside the Notebook in the future, such as from a SQL query.
 
@@ -131,7 +127,6 @@ Run this cell and verify it is successful.
 
 <!-- ------------------------ -->
 ## Enabling Logging and Metrics
-Duration: 2
 
 In order to get logs and metrics, levels need to be modified. This can easily be done in SQL.
 
@@ -152,7 +147,6 @@ Run this cell and verify it is successful.
 
 <!-- ------------------------ -->
 ## Create the UDF
-Duration: 5
 
 A UDF will use the External Access and Secret created previously and pull data from the OpenWeather API using Python Requests library. It will pull the current weather for a specific latitude and longitude.
 
@@ -209,7 +203,6 @@ Run this cell and verify it is successful.
 
 <!-- ------------------------ -->
 ## Test the UDF
-Duration: 2
 
 Now that the UDF is stored in the database, it can easily be tested using SQL.
 
@@ -226,7 +219,6 @@ Run this cell and verify it is successful, it will return the current weather in
 
 <!-- ------------------------ -->
 ## Create the Procedure
-Duration: 5
 
 A procedure will be used to pull the weather for all the cities in the city_list.
 
@@ -278,7 +270,6 @@ Run this cell and verify it is successful, it will return the current weather in
 
 <!-- ------------------------ -->
 ## Run the Procedure
-Duration: 2
 
 Create a new Python cell at the bottom of the notebook by clicking on + Python.
 
@@ -295,7 +286,6 @@ Verify it is successful. After running, the notebook will output the dataframe o
 
 <!-- ------------------------ -->
 ## Query the Data Ingested
-Duration: 2
 
 Create a new SQL cell by clicking on + SQL.
 
@@ -317,7 +307,6 @@ This will show the latest weather pulled by the notebook.
 
 <!-- ------------------------ -->
 ## View the Traces
-Duration: 5
 
 Click on the left navigation item "Monitoring" > "Traces & Logs".
 
@@ -329,11 +318,10 @@ If you expand the `get_weather_fn` entry under `get_weather_for_all_cities`, you
 
 This tracing information shows the entire execution timeline wsith information on every call.
 
-<img src="assets/trace_details.png" width="889" height="513">
+![assets/trace_details.png](assets/trace_details.png)
 
 <!-- ------------------------ -->
 ## Query the Metrics, Logs, and Trace Data
-Duration: 3
 
 Memory and CPU metrics are also available because the session set the METRIC_LEVEL to all.
 
@@ -391,7 +379,6 @@ ORDER BY TIMESTAMP DESC;
 
 <!-- ------------------------ -->
 ## Disabling Traces and Metrics
-Duration: 2
 
 Changing the level of tracing, metrics, and logs can be done similarly to how we enabled it, with SQL.
 
@@ -413,7 +400,6 @@ ALTER SESSION SET METRIC_LEVEL = NONE;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 1
 
 Run the following in a Worksheet to clean up all objects created in this quickstart, including the notebook.
 
@@ -426,7 +412,6 @@ DROP WAREHOUSE TRACING_QUICKSTART_WH;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Traces and Metrics are a very powerful tool to develop, optimize, and debug jobs that run in Snowflake.
 

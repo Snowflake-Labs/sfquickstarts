@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This is the code companion to the "Journey to Processing PII in the Data Cloud" session from [Snowflake BUILD 2021](https://www.snowflake.com/build/). That session was itself a companion to [a blog post by the same name](https://www.snowflake.com/blog/the-journey-to-processing-pii-in-the-data-cloud/) which had a business concept focus. As promised in the BUILD session, this code walkthrough is meant to show you how the features Snowflake offers can help you achieve your governance, security, and compliance goals for protecting PII and other sensitive information while leveraging the power of the Data Cloud.
 
@@ -39,7 +38,6 @@ This is the code companion to the "Journey to Processing PII in the Data Cloud" 
 
 <!-- ------------------------ -->
 ## Create your users and roles
-Duration: 5
 
 First we'll create a set of users and roles to use for the rest of the demo. 
 
@@ -88,7 +86,6 @@ Take a few minutes to make sure you can authenticate as these users before movin
 
 <!-- ------------------------ -->
 ## Grants roles and create database
-Duration: 3
 
 Here we finish the set up by granting roles to the users we've created, access to a warehouse to those roles, and creating a database which we then hand over ownership to the admin for this fictional organization.
 
@@ -119,7 +116,6 @@ NOTE: If for some reason you're unable to create the users at all, then in this 
 
 <!-- ------------------------ -->
 ## Create table with fake but realistic PII and grant rights to it
-Duration: 3
 
 Here we grab 200 rows of fake but realistic PII from the sample data in the TPCDS testing set to use for our walkthrough. Also note that the `C_BIRTH_COUNTRY` and `OPTIN` columns will be populated at random with one of three values.
 
@@ -173,7 +169,6 @@ select * from REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS limit 50;
 
 <!-- ------------------------ -->
 ## Put policy framework in place and explore Managed Access Schema
-Duration: 5
 
 Now we start putting controls in place on the data itself. To do this, we need to give the rights to create and apply policies. Since these rights can be granted on their own to encourage separation of duties, we will have the admin who owns the data objects grant policy control to the fictional infosec group. 
 
@@ -209,7 +204,6 @@ grant insert on table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING to role info
 
 <!-- ------------------------ -->
 ## Build and apply row access policy 
-Duration: 5
 
 The first control will apply is a row access policy to ensure only authorized people get any information at all. The most common form this policy takes is a policy that reads from a table where the rules are maintained - a mapping table. 
 
@@ -276,7 +270,6 @@ select * from REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS limit 50;
 
 <!-- ------------------------ -->
 ## Build and apply column level security to achieve dynamic data masking
-Duration: 5
 
 Now we will lock down things at the column level. In this step, we will use conditional masking which is a preview feature at the time of this writing. If this feature is not activated in your Snowflake account, you can use the alternate version of this policy which masks the column values completely. 
 
@@ -327,7 +320,6 @@ select * from REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS limit 50;
 
 <!-- ------------------------ -->
 ## See policy enforcement through a secure data share
-Duration: 7
 
 Now we will create a share from the Snowflake Account you've been using up to this point to a second account and observe how the policies are enforced. When you created the row access policy, part of it made reference to the `REYNHOLM_IND_DATA_SHARE`. You will need that string now. So copy it and be ready to paste it. 
 
@@ -357,7 +349,6 @@ At this point, go back to the first Snowflake Account where we built the table a
 
 <!-- ------------------------ -->
 ## Tag the information
-Duration: 5
 
 Now we will use another preview feature (at the time of this writing), [Object Tagging](https://docs.snowflake.com/en/user-guide/object-tagging.html). This allows you to apply important metadata right at the level where the information is stored. Remember, you should now be working in the first Snowflake Account where you did all the steps prior to the sharing work in the last step.
 
@@ -391,7 +382,6 @@ select system$get_tag('REYNHOLM_IND_DATA.BASEMENT.calendar', 'REYNHOLM_IND_DATA.
 
 <!-- ------------------------ -->
 ## Classify the information
-Duration: 3
 
 Now we will use another preview feature (at the time of this writing), Classification. This will examine the information's contents and attempt to use out of the box intelligence to classify the information into categories. 
 
@@ -422,7 +412,6 @@ where f.key='CD_GENDER';
 
 <!-- ------------------------ -->
 ## Clean up and Conclusion
-Duration: 3
 
 To undo everything we've done, start in the consumer account (the account where you did the "Get Data" to create the share) and drop the shared database. Then in the Snowflake Account where you did all the other steps, run this SQL.
 ```sql

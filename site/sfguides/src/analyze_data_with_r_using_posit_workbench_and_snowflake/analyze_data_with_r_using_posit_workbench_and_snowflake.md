@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 #  Analyze Data with R using Posit Workbench and Snowflake
 
 ## Overview
-Duration: 1
 
 This guide will walk you through using R to analyze data in Snowflake using the Posit
 Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use the available RStudio Pro IDE. You'll also learn how to use the `{dbplyr}` package to translate R code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
@@ -41,7 +40,6 @@ or look at the materials provided in the accompanying repository:
 <https://github.com/posit-dev/snowflake-posit-quickstart-r>.
 
 ## Setup
-Duration: 3
 
 Before we begin there are a few components we need to prepare. We need to:
 
@@ -215,7 +213,6 @@ library(odbc)
 ```
 
 ## Access Snowflake data from R
-Duration: 5
 
 We will run our code in the R environment created by the RStudio Pro IDE, but the code will use data stored in our database on Snowflake.
 
@@ -354,7 +351,6 @@ We don't need to manage the process, it happens automatically behind the scenes.
 Learn more about `{dbplyr}` at [dbplyr.tidyverse.org](https://dbplyr.tidyverse.org/)
 
 ## Write to a Snowflake database
-Duration: 1
 
 You can also use `{DBI}` to create a new table in a database or append to an existing table.
 
@@ -371,7 +367,6 @@ argument should refer to an existing table.
 Now that we understand how R will interact with the database, we can use R to perform our analysis.
 
 ## Prepare data with `{dplyr}`
-Duration: 5
 
 We want to understand which variables in `HEART_FAILURE` are associated with survival
 of patients with heart failure.
@@ -423,7 +418,6 @@ Our table now looks like this.
 ```
 
 ## Visualize Data with `{ggplot2}`
-Duration: 5
 
 The heart failure data provides important insights that can help us:
 
@@ -459,7 +453,6 @@ heart_failure |>
 > **_INTERACTIVITY NOTE:_**  The code above allows for easy visualization of other variables. You can adjust the `aes()` function or filter the data to explore different clinical indicators and patient characteristics.
 
 ## Make publication-ready tables with `{gt}`
-Duration: 5
 
 We can continue exploring the heart failure dataset with visualizations or create a table that concisely displays multiple pieces of information at once. For example, we can use `{dplyr}` verbs to calculate the median values for various clinical metrics across different patient groups.
 
@@ -550,7 +543,6 @@ comparison |>
 Now that we've accumulated some insights, let's think about how we might present the results of our analysis to our colleagues.
 
 ## Build Reports and Dashboards with Quarto
-Duration: 2
 
 We've conveniently written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
 is an open-source publishing system that makes it easy to create
@@ -588,7 +580,6 @@ and is a great tool to communicate your data science analyses.
 
 
 ## Shiny Application
-Duration: 2
 
 One way to share our work and allow others to explore the heart failure dataset is to create an
 interactive [Shiny](https://shiny.posit.co/) app. 
@@ -619,7 +610,6 @@ If you're new to Shiny, you can try it online with
 It too, comes in a [Python](https://shinylive.io/py) version.
 
 ## Conclusion and Resources
-Duration: 2
 
 R is beloved by data scientists for its intuitive, concise syntax. You can now combine this syntax with the power and peace of mind of Snowflake. The Posit Workbench Native Application provides an IDE for R _within Snowflake_. You can then use R's existing database packages---`{DBI}`, `{odbc}`, `{dbplyr}`---to access your Snowflake databases.
 

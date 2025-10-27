@@ -10,7 +10,6 @@ tags: Data Engineering, AI, Cortex, data harmonization, Streamlit, Entity Matchi
 # End-to-End Data Harmonization with Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 ### The Business Problem
 
@@ -76,7 +75,6 @@ The solution processes 1,000+ product records from two different retailers and p
 
 <!-- ------------------------ -->
 ## Set-up
-Duration: 10
 
 In this section, you'll prepare your Snowflake environment by creating the necessary database objects and loading the sample datasets. We'll be working with three CSV files containing product data from ABT and Best Buy, plus a ground truth mapping file for validation.
 
@@ -281,7 +279,6 @@ Your Snowflake environment is now ready! In the next section, we'll use the Data
 
 <!-- ------------------------ -->
 ## Data Harmonization
-Duration: 10
 
 ### Understanding the Challenge
 
@@ -430,7 +427,6 @@ In the next section, we'll use these harmonized tables to perform intelligent en
 
 <!-- ------------------------ -->
 ## Data Harmonization - Hybrid Matching
-Duration: 25
 
 Now that we have harmonized datasets, it's time to tackle the core challenge: **determining which ABT products correspond to which Best Buy products**. This is where the magic of hybrid entity matching comes in.
 
@@ -637,7 +633,6 @@ In the next section, we'll build an interactive Streamlit app to review and corr
 
 <!-- ------------------------ -->
 ## Unmatched Record Reconciliation
-Duration: 10
 
 After running the hybrid matching algorithm, you'll have two sets of records:
 1. **Matched Records**: High-confidence matches ready for use in analysis
@@ -822,7 +817,6 @@ You now have a complete, production-ready data harmonization pipeline with match
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You've successfully built an end-to-end data harmonization solution using Snowflake's native AI capabilities, combining automated matching with human-in-the-loop validation.
 

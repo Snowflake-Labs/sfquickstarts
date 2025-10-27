@@ -10,9 +10,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # DevOps: Database Change Management with schemachange and GitHub
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
-<img src="assets/devops_dcm_schemachange_github-1.png" width="600" />
+![assets/devops_dcm_schemachange_github-1.png](assets/devops_dcm_schemachange_github-1.png)
 
 This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and GitHub Actions.
 
@@ -65,9 +64,8 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## GitHub Overview
-Duration: 2
 
-<img src="assets/devops_dcm_schemachange_github-2.png" width="250" />
+![assets/devops_dcm_schemachange_github-2.png](assets/devops_dcm_schemachange_github-2.png)
 
 ### GitHub
 GitHub provides a complete, end-to-end set of software development tools to manage the SDLC. In particular GitHub provides the following services (from GitHub's [Features](https://github.com/features)):
@@ -80,7 +78,7 @@ GitHub provides a complete, end-to-end set of software development tools to mana
 - Team Administration
 - Community
 
-<img src="assets/devops_dcm_schemachange_github-3.png" width="250" />
+![assets/devops_dcm_schemachange_github-3.png](assets/devops_dcm_schemachange_github-3.png)
 
 ### GitHub Actions
 "GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want" (from GitHub’s [GitHub Actions](https://github.com/features/actions)). GitHub Actions was [first announced in October 2018](https://github.blog/2018-10-16-future-of-software/) and has since become a popular CI/CD tool. To learn more about GitHub Actions, including migrating from other popular CI/CD tools to GitHub Actions check out [Learn GitHub Actions](https://docs.github.com/en/actions/learn-github-actions).
@@ -89,9 +87,8 @@ This guide will be focused on the GitHub Actions service.
 
 <!-- ------------------------ -->
 ## schemachange Overview
-Duration: 2
 
-<img src="assets/devops_dcm_schemachange_github-4.png" width="250" />
+![assets/devops_dcm_schemachange_github-4.png](assets/devops_dcm_schemachange_github-4.png)
 
 Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
@@ -105,7 +102,6 @@ For more information about schemachange please see [the schemachange project pag
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 4
 
 Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
 
@@ -124,7 +120,6 @@ Then commit the new script and push the changes to your GitHub repository. Assum
 
 <!-- ------------------------ -->
 ## Create Action Secrets
-Duration: 5
 
 Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by schemachange.
 
@@ -179,7 +174,6 @@ When you’re finished adding all the secrets, the page should look like this:
 
 <!-- ------------------------ -->
 ## Create an Actions Workflow
-Duration: 5
 
 Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run schemachange and deploy changes to our Snowflake database.
 
@@ -250,7 +244,6 @@ A few things to point out from the YAML pipeline definition:
 
 <!-- ------------------------ -->
 ## Manually Run the Actions Workflow
-Duration: 4
 
 In this step we will manually run the new Actions workflow for the first time. This will deploy the first database migration script we created in step 4.
 
@@ -270,7 +263,6 @@ To view the details of a run, click on the name of specific run (you may have to
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 4
 
 Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.
 
@@ -289,7 +281,6 @@ From your Snowflake account click on the `History` tab at the top of the window.
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
-Duration: 2
 
 In this script you will create your second database migration and have GitHub Actions automatically deploy it to your Snowflake account (no need to manually run the workflow this time)!
 
@@ -304,7 +295,6 @@ Then commit the new script and push the changes to your GitHub repository. Becau
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 

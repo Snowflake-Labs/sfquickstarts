@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 5
 By completing this guide, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
 
 Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the [feedback provider](https://www.trulens.org/reference/trulens/providers/cortex/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens/tracking/logging/where_to_log/log_in_snowflake/). Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens/guardrails/) for filtering retrieved context and reducing hallucination.
@@ -57,7 +56,6 @@ Cortex Search enables low-latency, high-quality search over your Snowflake data.
 
 ## Setup Environment
 
-Duration: 8
 
 In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -136,7 +134,6 @@ snowpark_session = Session.builder.configs(connection_params).create()
 
 ## Cortex Complete
 
-Duration: 3
 
 With the snowpark session set, we have what we need to try out Snowflake Cortex LLM:
 
@@ -148,7 +145,6 @@ print(Complete("mistral-large", "how do snowflakes get their unique patterns?"))
 
 ## Add Data
 
-Duration: 12
 
 Next, we'll turn to the retrieval component of our RAG and set up Cortex Search.
 
@@ -277,7 +273,6 @@ for curr in tqdm(results):
 
 ## Search
 
-Duration: 5
 
 First we need to create a [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) Service in Snowflake. To do so, you can opena SQL Worksheet in your Snowflake instance, and run the following SQL command:
 
@@ -336,7 +331,6 @@ retrieved_context = retriever.retrieve(query="How do I launch a streamlit app?")
 
 ## Create a RAG
 
-Duration: 5
 
 Now that we've set up the components we need from Snowflake Cortex, we can build our RAG.
 
@@ -398,7 +392,6 @@ rag = RAG_from_scratch()
 
 ## Feedback Functions
 
-Duration: 5
 
 After constructing the RAG, we can set up the feedback functions we want to use to evaluate the RAG.
 
@@ -455,7 +448,6 @@ tru_rag = TruCustomApp(
 
 ## Application Testing
 
-Duration: 3
 
 Now that the application is ready, we can run it on a test set of questions about streamlit to measure its performance.
 
@@ -491,7 +483,6 @@ tru_session.get_leaderboard()
 
 ## Guardrails
 
-Duration: 7
 
 In addition to making informed iteration, we can also directly use feedback results as guardrails at inference time. In particular, here we show how to use the context relevance score as a guardrail to filter out irrelevant context before it gets passed to the LLM. This both reduces hallucination and improves efficiency.
 
@@ -524,7 +515,6 @@ filtered_rag = filtered_RAG_from_scratch()
 
 ## Measure Improvement
 
-Duration: 7
 
 We can combine the new version of our app with the feedback functions we already defined.
 

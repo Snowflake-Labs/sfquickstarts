@@ -11,7 +11,6 @@ authors: Matt Marzillo
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 10
 
 In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Azure OpenAI that will generate a recommendation for clothing items given an image of a person.
 
@@ -51,7 +50,6 @@ This use case will leverage sample urls along with sample images that will be pa
 <!-- ------------------------ -->
 ## Azure / Open AI Environment
 
-Duration: 10
 
 For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to login and navigate to api-keys in your openai account and create a new secret key as it looks below. Make note of the model name and keyas you will need this to generate a response. 
 
@@ -66,7 +64,6 @@ Head back to the Azure portal and find the Azure Open AI service then click on "
 <!-- ------------------------ -->
 ## Snowflake Environment
 
-Duration: 10
 
 Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with links to items at a retail website that we will use to pass to OpenAI to provide recommendations. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.
 
@@ -134,7 +131,6 @@ Once you have moved or selected the images click upload to upload the images to 
 <!-- ------------------------ -->
 ## Snowpark External Access to call OpenAI
 
-Duration: 10
 
 Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access OpenAI via a function called CHATGPT_IMAGE() that leverages a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to OpenAI (or any other external service).
 
@@ -242,7 +238,6 @@ $$;
 <!-- ------------------------ -->
 ## Build Streamlit App - With data in Snowflake 
 
-Duration: 10
 
 Now that we have our OpenAI function, let’s build our App.
 
@@ -303,7 +298,6 @@ Once you have the app created you can adjust the prompt in the app and change th
 <!-- ------------------------ -->
 ## Test Prompt Engineering (OPTIONAL)
 
-Duration: 5
 
 Prompt engineering for a language model involves crafting your questions or prompts in a way that maximizes the effectiveness and accuracy of the responses you receive. Here are some simple guidelines to help you with prompt engineering:
 
@@ -336,7 +330,6 @@ Consider the above concepts and also consider this pointed [guide to prompting](
 <!-- ------------------------ -->
 ## Conclusion  And Resources
 
-Duration: 5
 
 Congratulations! You've successfully built your first Streamlit App with OpenAI. After setting up our Azure and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
 

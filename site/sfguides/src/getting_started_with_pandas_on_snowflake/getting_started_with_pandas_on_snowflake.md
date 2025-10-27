@@ -41,7 +41,6 @@ We will be using [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
-Duration: 2
 
 1. Download the Git repo [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
 2. Install the [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data%20) dataset. 
@@ -85,7 +84,6 @@ These can also be found in the **setup.sql** file.
 
 <!-- ------------------------ -->
 ## Create Snowflake Notebook
-Duration: 10
 
 ### Navigate To Snowflake Notebooks
 
@@ -105,7 +103,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Get started with pandas on Snowflake
-Duration: 20
 
 Once you have created a notebook based on the [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb)
 

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this guide, we will use RelationalAI — a Snowflake Native App available in the Snowflake Marketplace — as well as [Snowflake Cortex LLMs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Snowflake Embeddings Models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/vector-embeddings) to perform Graph Retrieval Augmented Generation (GraphRAG) on a corpus of documents.
 
@@ -50,7 +49,6 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 
 <!-- ------------------------ -->
 ## Snowflake Artifact and Corpus
-Duration: 3
 
 We shall proceed with creating the Snowflake artifacts required for this guide.
 
@@ -731,7 +729,6 @@ ON_ERROR = CONTINUE;
 
 <!-- ------------------------ -->
 ## Entities/Relations Extraction
-Duration: 5
 
 With all our Snowflake artifacts in place, we are now ready to extract the entities and relations from the corpus. 
 
@@ -759,7 +756,6 @@ CALL CREATE_NODES_EDGES_STREAMS_SOURCES('llama3-70b');
 
 <!-- ------------------------ -->
 ## Local Environment Setup
-Duration: 10
 
 ### Python
 
@@ -837,7 +833,6 @@ Run `rai init` from your terminal and follow the prompts to enter your credentia
 
 <!-- ------------------------ -->
 ## RelationalAI Engine
-Duration: 10
 
 We shall now setup the RelationalAI engine that we will be using for performing graph analytics.
 
@@ -857,7 +852,6 @@ rai engines:create
 
 <!-- ------------------------ -->
 ## Snowflake/RelationaAI Data Streams
-Duration: 3
 
 Having the source `nodes` and `edges` tables in place, we shall now setup the Snowflake / RelationalAI Data Streams to synchronize data between a Snowflake and a RelationalAI model.
 
@@ -884,7 +878,6 @@ rai imports:stream --source graph_rag.graph_rag.edges --model graph_rag
 
 <!-- ------------------------ -->
 ## Building Graph / Answering Questions
-Duration: 20
 
 We shall now proceed with creating the RelationalAI graph and answer questions using the model. In this step, we shall be doing the following:
 
@@ -1074,7 +1067,6 @@ Please switch to the Jupyter notebook and follow the instructions to reproduce t
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 

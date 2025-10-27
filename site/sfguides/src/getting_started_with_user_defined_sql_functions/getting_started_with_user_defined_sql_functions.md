@@ -11,7 +11,6 @@ authors: Jason West
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 3
 
 User-defined functions (UDFs) let you extend the system to perform operations that are not available through the built-in, system-defined functions provided by Snowflake. 
 
@@ -54,7 +53,6 @@ If you are not familiar with the Snowflake User Interface, then please watch the
 
 <!-- ------------------------ -->
 ## Begin With the Basics
-Duration: 3
 
 #### First, we'll go over how to create your Snowflake account and manage user permissions.
 
@@ -87,7 +85,6 @@ With your new account created and the role configured, you're ready to begin cre
 
 <!-- ------------------------ -->
 ## Create Database Objects
-Duration: 5
 
 With your Snowflake account at your fingertips, it's time to create the database objects.
 
@@ -144,7 +141,6 @@ With the necessary database objects created, it’s time to move onto the main c
 
 <!-- ------------------------ -->
 ## Execute a Scalar User-Defined Function
-Duration: 6
 
 With the database primed with sample sales data, we're _almost_ ready to try creating a scalar UDF. Before diving in, let’s first understand more about UDF naming conventions.
 
@@ -186,7 +182,6 @@ Now that you've practiced the basics of creating a UDF, we'll kick it up a notch
 
 <!-- ------------------------ -->
 ## Query With User-Defined Table Function
-Duration: 6
 
 After creating a successful scalar UDF, move onto making a function that returns a table with a UDTF(user-defined table function).
 
@@ -226,7 +221,6 @@ You've practiced making UDTFs and have become familiar with UDFs. In the last se
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 We've covered a lot of ground! Before we wrap-up, drop the practice database you created in this guide.
 This will remove the database and all of the tables and functions that you created.
@@ -246,7 +240,6 @@ Verify the database is entirely gone by checking the **Results** for `UDF_DB suc
 
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
-Duration: 2
 
 You should now have a good handle on SQL UDFs by practicing both scalar and table functions. With our database objects cleared, it's time to look ahead.
 

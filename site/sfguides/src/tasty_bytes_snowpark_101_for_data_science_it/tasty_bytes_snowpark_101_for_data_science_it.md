@@ -1,6 +1,6 @@
 author: Marie Coolsaet
 id: tasty_bytes_snowpark_101_for_data_science_it
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
 summary: Quickstart Tasty Bytes - Introduzione a Snowpark per la data science
 environments: web
@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - Introduzione a Snowpark per la data science
 <!-- ------------------------ -->
 ## Panoramica 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 In questo quickstart Introduzione a Snowpark per la data science, aiuterai l’azienda di food truck fittizia Tasty Bytes ad aumentare le vendite addestrando un modello per fornire consigli sulle posizioni ai conducenti dei food truck. Utilizzerai **Snowpark per Python** per preparare i dati, addestrare un modello e distribuirlo. Una volta distribuito, creerai un prototipo di applicazione utilizzando **Streamlit** per dimostrare come i conducenti dei food truck potrebbero usare questo modello per trovare la posizione migliore in cui parcheggiare per il prossimo turno.
 
@@ -35,16 +34,15 @@ Streamlit *(acquisito da Snowflake a marzo 2022)* è una libreria Python che con
 
 ### Cosa realizzerai 
 - **Una previsione delle vendite per posizione**<br>
-<img src="assets/notebook_preview.gif"/>
+![assets/notebook_preview.gif](assets/notebook_preview.gif)
 
 - **Un’applicazione Streamlit per trovare le posizioni con le migliori previsioni di vendita**<br>
-<img src="assets/streamlit_preview.gif"/>
+![assets/streamlit_preview.gif](assets/streamlit_preview.gif)
 
 
 
 <!-- ------------------------ -->
 ## Configurare i dati in Snowflake
-Duration: 6
 
 ### Panoramica
 Utilizzerai [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), l’interfaccia web di Snowflake, per:
@@ -67,7 +65,7 @@ Tasty Bytes gestisce food truck in molte città di tutto il mondo e ogni food tr
   - Rinomina il database -> FROSTBYTE_SAFEGRAPH (tutte maiuscole)
   - Consenti l’accesso ad altri ruoli -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 >aside positive
 SafeGraph è un’azienda globale di dati geospaziali che offre dati su qualsiasi località nel mondo. Clienti come Esri, Tripadvisor, Mapbox e Sysco utilizzano i dati di SafeGraph per comprendere meglio i propri clienti, creare nuovi prodotti e prendere decisioni migliori per il proprio business.
@@ -149,7 +147,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 
 <!-- ------------------------ -->
 ## Data Science con Snowpark
-Duration: 22
 
 ### Panoramica
 Tasty Bytes intende ottenere una crescita annuale delle vendite del 25% per cinque anni. Per supportare questo obiettivo e massimizzare i ricavi giornalieri in tutta la flotta di food truck, il team di data science deve creare un modello ML per dirigere i food truck verso le posizioni in cui si prevedono le vendite più elevate per un dato turno.
@@ -176,7 +173,7 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 ```
 ### Passaggio 2 - Aggiornare il file di autorizzazione
 - Aggiorna il file [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) con le credenziali del tuo account Snowflake. Il notebook Python utilizzerà questo file per accedere alle tue credenziali e connettersi a Snowflake.<br>
-<img src="assets/auth_file.png">
+![assets/auth_file.png](assets/auth_file.png)
 >aside positive    
 > Per il parametro `account`, usa il tuo [ID account](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Nota che l’ID account non include il suffisso snowflakecomputing.com.
 
@@ -210,7 +207,7 @@ jupyter notebook
 ```
 
 ### Passaggio 4 - Eseguire il notebook Jupyter
-- Apri ed esegui le celle di [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) nel notebook Jupyter. <img src = "assets/notebook_preview.png">
+- Apri ed esegui le celle di [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) nel notebook Jupyter. ![assets/notebook_preview.png](assets/notebook_preview.png)
 
 ### Risoluzione dei problemi
 - Problemi legati a PyArrow: disinstalla `pyarrow` prima di installare Snowpark.
@@ -231,7 +228,6 @@ jupyter notebook
 
 <!-- ------------------------ -->
 ## Prototipo di applicazione con Streamlit
-Duration: 6
 
 ### Panoramica
 Ora che hai distribuito un modello che prevede le vendite di ogni posizione per il prossimo turno, devi trovare un modo per consentire ai conducenti dei food truck di utilizzare queste previsioni per scegliere le posizioni migliori dove parcheggiare. Devi creare un prototipo di applicazione per mostrare al team di progettazione come un conducente potrebbe interagire con il modello di previsione delle vendite per turno. L’applicazione consentirà a un utente di scegliere una città e un turno (mattina o pomeriggio) e mostrerà le vendite previste per ogni posizione su una mappa.
@@ -256,12 +252,11 @@ Ora che hai distribuito un modello che prevede le vendite di ogni posizione per 
 ```  
   streamlit run streamlit_app.py
   ```
-- Utilizza il menu a discesa per selezionare una città e visualizzare i consigli aggiornati. <img src = "assets/streamlit_preview.png">
+- Utilizza il menu a discesa per selezionare una città e visualizzare i consigli aggiornati. ![assets/streamlit_preview.png](assets/streamlit_preview.png)
 
 
 <!-- ------------------------ -->
 ## Pulizia
-Duration: 5
 
 ### Panoramica degli oggetti creati in questo quickstart
 **Snowflake:**
@@ -315,7 +310,6 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 
 <!-- ------------------------ -->
 ## Conclusione e fasi successive
-Duration: 1
 
 ### Conclusione
 **Ecco fatto!** Hai completato il quickstart Tasty Bytes - Introduzione a Snowpark per la data science.

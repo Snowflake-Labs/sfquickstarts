@@ -10,14 +10,12 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Native Connector - Java (Push Based)
 
 ## Overview
-Duration: 1
 
 In this tutorial you will learn how to build a native Snowflake push based connector.
 In the following steps we will cover what constitutes a connector, how to build and deploy it and how to build
 an application UI using Streamlit.
 
 ## Prerequisites
-Duration: 1
 
 - Basic knowledge of [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - Basic knowledge of Java
@@ -25,7 +23,6 @@ Duration: 1
 - macOS or Linux machine to build a project and run deployment scripts
 
 ## You will learn
-Duration: 1
 
 - Creating Native Applications in Snowflake
 - Ingesting data to Snowflake using snowflake-ingestion-sdk
@@ -34,7 +31,6 @@ Duration: 1
 ![](assets/deferred_merge.pdf)
 
 ## Prepare your local environment
-Duration: 5
 
 - Install Java 11 or later
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
@@ -43,7 +39,6 @@ Duration: 5
 - Clone the [connectors-native-sdk repository](https://github.com/snowflakedb/connectors-native-sdk) and go to `./examples/example-push-based-java-connector`
 
 ## Connector overview
-Duration: 4
 
 This connector consist of Java Agent and Native Application.
 Java Agent acts as an application which is close to the data source, it fetches data from the data source and pushes it to Snowflake.
@@ -81,7 +76,6 @@ Only selected objects will be visible to customer who installed the app. See: [d
 - contains a CLI for enabling new resources
 
 ## Project structure
-Duration: 3
 
 Let's take a look at the structure of this connector.
 ```text
@@ -128,12 +122,10 @@ Simple script to collect all files needed to deploy Snowflake Native App into sf
 Images used in README file.
 
 ## Application logs
-Duration: 2
 
 Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to [enable loging](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging) documentation.
 
 ## Connector configuration
-Duration: 6
 
 ### Snowsql configuration
 This quickstart uses some convenience scripts for running necessary commands. Those scripts use snowsql. Before
@@ -213,7 +205,6 @@ upload.scheduler.pool-size=3
 ```
 
 ## Connector logic
-Duration: 5
 
 When user starts the Java Agent application, it connects to the Native Application and runs the `INIT_DESTINATION_DATABASE` procedure.
 Then the CLI is launched and user can enable and disable resources using appropriate commands.
@@ -232,7 +223,6 @@ In the meantime, on the Native App side, the merge task is invoked. It merges th
 ![detailed.svg](assets/detailed.svg)
 
 ## Build the connector
-Duration: 2
 
 ### Overview
 Build step for the app consist of:
@@ -252,7 +242,6 @@ make build
 ```
 
 ## Deploy the connector
-Duration: 2
 
 In this step we will deploy the connector to the Snowflake account.
 
@@ -270,7 +259,6 @@ make deploy
 ```
 
 ## Installing the connector
-Duration: 2
 
 In this step you will install the connector. The installation is encapsulated in a convenience script `install.sql`.
 
@@ -288,7 +276,6 @@ make install
 ```
 
 ## Grant privileges and create sink database
-Duration: 3
 
 To configure the connector and grant the rest of the necessary privileges log into Snowflake and go to the `Apps` tab.
 
@@ -305,7 +292,6 @@ To create it just enter the database name in the input box and press `Configure`
 ![configure1.png](assets/configure1.png)
 
 ## Using Java Agent to enable a resources
-Duration: 3
 
 To run the Java Agent run the following command:
 ```shell
@@ -318,7 +304,6 @@ This command runs the agent's command line interface. The following commands are
 - `quit` - disables all the active resources and quits the application
 
 ## Using Streamlit app to visualise data
-Duration: 2
 Navigate to the Apps tab in Snowflake, then find and open the application with your application name.
 If a resource was enabled using Java Agent, you will see a bar chart with count of the elements in all the tables.
 
@@ -327,7 +312,6 @@ If a resource was enabled using Java Agent, you will see a bar chart with count 
 You can check the `Refresh automatically` checkbox to enable a periodical refresh of the page - this way you will see rising charts when the data is being ingested.
 
 ## Run integration test
-Duration: 4
 
 Example-push-based-java-connector repository contains a module with an integration test.
 
@@ -350,7 +334,6 @@ make test
 ```
 
 ## Conclusion
-Duration: 0
 
 **Congratulations! You have successfully completed these Labs**
 

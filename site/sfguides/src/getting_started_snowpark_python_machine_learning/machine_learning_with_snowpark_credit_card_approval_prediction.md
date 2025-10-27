@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Machine Learning with Snowpark Python: - Credit Card Approval Prediction
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 ### What is Snowpark?
 
@@ -60,7 +59,6 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Use-Case: Credit Card Approval Prediction
-Duration: 3
 
 You are part of a team of data engineers and data scientists at a banking company that has been tasked to identify high-risk customers using a machine learning based solution. The goal is to give a recommendation to either approve or reject the issueing of a credit card.
 
@@ -71,7 +69,6 @@ The dataset you are using is part of a Kaggle competition that can be found here
 
 <!-- ------------------------ -->
 ## Python Environment Setup 
-Duration: 5
 
 Let's set up the Python environment necessary to run this quickstart:
 
@@ -105,7 +102,6 @@ If you decide to bring your own Python environment, please make sure to install 
 
 <!-- ------------------------ -->
 ## Snowflake Environment Setup
-Duration: 5
 
 **What You'll Do**: 
 - Establish the Snowpark Python session
@@ -124,7 +120,6 @@ After that, open up the [`0_setup_environment`](https://github.com/Snowflake-Lab
 
 <!-- ------------------------ -->
 ## Data Exploration and Transformation
-Duration: 20
 
 ### Demo
 **What You'll Do**: 
@@ -158,7 +153,6 @@ Open up the [`1_3_DEMO_full_data_exploration_transformation`](https://github.com
 
 <!-- ------------------------ -->
 ## Model Building & Deployment
-Duration: 15
 
 ### Demo
 **What You'll Do**:  
@@ -168,7 +162,6 @@ Open up the [`2_1_DEMO_model_building_scoring`](https://github.com/Snowflake-Lab
 
 <!-- ------------------------ -->
 ## Building Additional Models
-Duration: 20
 
 ### Excercise
 **What You'll Do**: 
@@ -190,7 +183,6 @@ You can verify your excercise results by having a look at the solution provided 
 
 <!-- ------------------------ -->
 ## Hyperparameter Tuning with Snowpark ML and GridSearchCV
-Duration: 10
 
 ### Demo
 **What You'll Do**: 
@@ -201,7 +193,6 @@ Open up the [`4_1_DEMO_hyperparameter_tuning_gridsearch`](https://github.com/Sno
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 Through this Quickstart we were able to experience how Snowpark for Python enables you to use familiar syntax and constructs to process data where it lives with Snowflake’s elastic, scalable and secure engine, accelerating the path to production for data pipelines and ML workflows. Here’s what you were able to complete:
 

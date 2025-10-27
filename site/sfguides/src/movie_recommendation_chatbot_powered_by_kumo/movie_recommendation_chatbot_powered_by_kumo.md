@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 In this guide, you will learn how to build a personalized movie recommendation chatbot using [Kumo (as a Snowflake Native App](https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo?search=kumo)), Snowflake’s Cortex Search Service, Cortex AI, and Streamli**t**. This chatbot enhances the streaming experience by providing personalized movie recommendations based on user viewing history and movie relationships.
 
@@ -76,7 +75,6 @@ FROM
 <!-- ------------------------ -->
 ## Run Batch Prediction Workflows in Kumo
 
-Duration: 10
 
 We will generate movie recommendations using two batch prediction workflows:
 
@@ -166,7 +164,6 @@ Just as in the item to user workflow, these results can be exported to two Snowf
 
 ## Store Predictions in Snowflake
 
-Duration: 5
 
 At this stage, you should have four tables stored in Snowflake: item-to-user predictions, item-to-user embeddings, item-to-item predictions, and item-to-item embeddings. You also have the original movies and users tables from the MovieLens dataset that includes information about the movies and users themselves. In this demo, you will mainly be focusing on the movies, users, and the two predictions tables.
 
@@ -391,7 +388,6 @@ ORDER BY MOVIE_ID
 
 ## Build Cortex Search Services
 
-Duration: 10
 
 By now, you have formatted the four tables (user information, movie information, item-to-user predictions and item-to-item predictions) and are now ready to build two Cortex Search Services one for item-to-item queries and the other for item-to-user queries.
 
@@ -467,7 +463,6 @@ The resulting search services enable querying across predictions and movie detai
 
 ## Classify Response
 
-Duration: 5
 
 With the search services registered, the next step is to integrate it with Cortex AI and Streamlit.
 
@@ -605,7 +600,6 @@ This function ensures the prompt is well-structured and provides sufficient info
 
 ## Put it All Together: Streamlit
 
-Duration: 15
 
 With the core logic in place, the final step is implementing the user interface using Streamlit. The UI code integrates the classification, search services, and response generation to provide a seamless chat experience.
 
@@ -867,7 +861,6 @@ The final user interface looks like:
 
 ## Conclusion and Resources
 
-Duration: 5
 
 ### Conclusion
 

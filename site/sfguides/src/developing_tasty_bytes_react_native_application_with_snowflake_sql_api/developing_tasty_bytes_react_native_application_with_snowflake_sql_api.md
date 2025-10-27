@@ -10,8 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - Developing React Native Data Application with SQL API
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
-<img src="assets/tasty_bytes_header.png"/>
+![assets/tasty_bytes_header.png](assets/tasty_bytes_header.png)
 
 In today's data-driven landscape, the majority of applications have evolved to become highly data intensive. However, developing successful data applications can be challenging, particularly as user numbers grow and the volume and complexity of data increase. Snowflake is the driving force behind numerous data applications, empowering software teams to enhance their engineering velocity and create scalable applications without the burden of operational complexities. With its focus on increasing engineering speed, Snowflake offers exceptional performance and scalability for applications. 
 
@@ -41,7 +40,6 @@ In this tutorial, the application you are building helps fictitious food truck c
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 3
 
 We are using Tasty Bytes Orders data for this demo. Using the Orders data, you will be building an application for Truck drivers with following capabilities.
 - Truck Driver can see the Orders in their Queue
@@ -159,7 +157,6 @@ SELECT * FROM frostbyte_tasty_bytes_app.analytics.data_app_orders_v;
 
 <!-- ------------------------ -->
 ## Create User for the Application
-Duration: 5
 
 To ensure robust security measures, it is essential to establish a dedicated user account for the application, separate from your personal account. This new account will be utilized for querying Snowflake. Following best security practices, the account will employ key-pair authentication and be granted restricted access within the Snowflake environment.
 
@@ -217,7 +214,6 @@ GRANT ROLE tasty_bytes_data_app_demo TO USER data_app_demo;
 
 <!-- ------------------------ -->
 ## Data Application with SQL API
-Duration: 10
 
 The application you will be running is written in React Native. 
 
@@ -241,20 +237,19 @@ We are using Key Pair Authentication to authenticate with Snowflake using SQL AP
 2. This launches the app in Web Browser
 3. Upon Launch, You can see the InQueue Orders Screen,
 
-<img src="assets/OrdersInQueue.png"/>
+![assets/OrdersInQueue.png](assets/OrdersInQueue.png)
 
 4. Now Click on View Order button to see the Order Details.
 
-<img src="assets/OrderDetails.png"/>
+![assets/OrderDetails.png](assets/OrderDetails.png)
 
 5. Click on ORDER READY button to complete the order. This action updates the Order Status value to Completed for this Order and take you back to the InQueue Orders Screen
 6. Now, Click on Order History tab to see the completed orders.
 
-<img src="assets/OrderHistory.png"/>
+![assets/OrderHistory.png](assets/OrderHistory.png)
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 1
 
 Navigate to Snowsight Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet". Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.
 
@@ -270,7 +265,6 @@ DROP ROLE tasty_bytes_data_app_demo;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 ### Conclusion
 **You did it!** You have successfully completed the Tasty Bytes - Developing React Native Data Application with SQL API Quickstart.

@@ -11,7 +11,6 @@ author: James Cha-Earley
 
 ## Overview
 
-Duration: 5
 
 In this quickstart, you'll learn how to build an RAG-based (Retrieval Augmented Generation)  application that creates an intelligent assistant for documents and other text-based knowledge. The application uses Anthropic's Claude Large Language Model (LLM),  in [Snowflake's Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/) alongside Cortex Search and Streamlit. The application addresses end-to-end RAG development to show how to do PDF processing, vector embeddings, retrieval and generation all inside Snowflake to enable natural language interactions with your documents through Claude's advanced language understanding capabilities all with unified governance across the application full-stack.
 
@@ -43,7 +42,6 @@ An end-to-end application that enables users to:
 
 ## Setup
 
-Duration: 10
 
 > aside negative 
 > NOTE: If you are new to Snowflake, you may be wondering why you need to think about database and schemas to get started. Because Snowflake was built with data as the foundational asset that powers projects, these two things are used to organize and manage access and governance to data in Snowflake. You can learn more about how you can use and manage these in our [documentation](https://docs.snowflake.com/en/sql-reference/ddl-database). 
@@ -89,7 +87,6 @@ CREATE STAGE IF NOT EXISTS Documents
 
 ## Snowflake Notebook
 
-Duration: 5
 
 1. Click on [Getting Started with Anthropic Notebook](https://github.com/Snowflake-Labs/sfguides-getting-started-with-anthropic-on-snowflake-cortex/blob/main/sfguides-getting-started-with-anthropic-on-snowflake-cortex.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)  
      
@@ -108,7 +105,6 @@ Duration: 5
 
 ## Environment Setup
 
-Duration: 5
 
 - `snowflake-ml-python`: For Snowflake Cortex capabilities
 - `snowflake`: For Snowflake capabilities
@@ -139,7 +135,6 @@ schema = database.schemas[schema_name]
 
 ## Implement Document Processing
 
-Duration: 15
 
 ### Understanding Document Processing Flow
 
@@ -184,7 +179,6 @@ def process(file_name: str):
 
 ## Process Documents
 
-Duration: 10
 
 ### Understanding the Process
 
@@ -277,7 +271,6 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE {{service_name}}
 
 ## Create Streamlit Application
 
-Duration: 20
 
 ### Understanding the Chat System Architecture
 
@@ -603,7 +596,6 @@ The chat system consists of several key functions:
 
 ## Performance Tips
 
-Duration: 5
 
 To optimize your RAG system:
 
@@ -629,7 +621,6 @@ To optimize your RAG system:
 
 ## Conclusion and Resources
 
-Duration: 5
 
 Congratulations\! You've built a sophisticated document Q\&A system using Snowflake's Cortex capabilities and Anthropic's Claude. The system combines PDF processing, vector search, and conversational AI to create an intelligent document assistant.
 

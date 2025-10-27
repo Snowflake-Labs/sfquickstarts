@@ -10,9 +10,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # DevOps: Database Change Management with schemachange and Jenkins
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
-<img src="assets/devops_dcm_schemachange_jenkins-1.png" width="600" />
+![assets/devops_dcm_schemachange_jenkins-1.png](assets/devops_dcm_schemachange_jenkins-1.png)
 
 This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with Jenkins. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and Jenkins.
 
@@ -64,9 +63,8 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## Jenkins Overview
-Duration: 2
 
-<img src="assets/devops_dcm_schemachange_jenkins-2.png" width="250" />
+![assets/devops_dcm_schemachange_jenkins-2.png](assets/devops_dcm_schemachange_jenkins-2.png)
 
 ### Jenkins
 "Jenkins is a self-contained, open source automation server which can be used to automate all sorts of tasks related to building, testing, and delivering or deploying software" (from Jenkins' [Documentation](https://www.jenkins.io/doc/)).
@@ -81,9 +79,8 @@ A Jenkins Pipeline "orchestrates long-running activities that can span multiple 
 
 <!-- ------------------------ -->
 ## schemachange Overview
-Duration: 2
 
-<img src="assets/devops_dcm_schemachange_jenkins-3.png" width="250" />
+![assets/devops_dcm_schemachange_jenkins-3.png](assets/devops_dcm_schemachange_jenkins-3.png)
 
 Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
@@ -98,7 +95,6 @@ For more information about schemachange please see [the schemachange project pag
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 4
 
 Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
 
@@ -113,11 +109,10 @@ CREATE TABLE HELLO_WORLD
 
 Then commit the new script and push the changes to your GitHub repository. Assuming you started from an empty repository, your repository should look like this:
 
-<img src="assets/devops_dcm_schemachange_jenkins-4.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-4.png](assets/devops_dcm_schemachange_jenkins-4.png)
 
 <!-- ------------------------ -->
 ## Deploying Jenkins
-Duration: 12
 
 ### Building and Running a Docker Image
 
@@ -166,33 +161,32 @@ To access the Jenkins UI, open ```localhost:8080``` in a new tab in your web bro
 
 Next you will see the "Customize Jenkins" set up screen. Click on the ```Install suggested plugins``` button as shown below and wait for all the suggested plugins to be installed.
 
-<img src="assets/devops_dcm_schemachange_jenkins-5.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-5.png](assets/devops_dcm_schemachange_jenkins-5.png)
 
 After all the plugins have been installed you will be taken to the "Create First Admin User" page. Enter ```admin``` for the "Username" (and "Full name"), enter a password which will be used the Jenkins admin user, and enter a valid email address. Confirm that your screen looks like the image below (with the exception that you entered an email address) and then click on the ```Save and Continue``` button.
 
-<img src="assets/devops_dcm_schemachange_jenkins-6.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-6.png](assets/devops_dcm_schemachange_jenkins-6.png)
 
 On the final getting started set up screen, leave the "Instance Configuration" Jenkins URL as ```http://localhost:8080```. Then click on the ```Save and Finish``` button and then on the ```Start using Jenkins``` button.
 
 You should now be at the main Jenkins Dashobard page and ready to start using Jenkins. If you find yourself at a login page (like below) then enter the admin user credentials and click ```Sign in```.
 
-<img src="assets/devops_dcm_schemachange_jenkins-8.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-8.png](assets/devops_dcm_schemachange_jenkins-8.png)
 
 That last thing we need to do in order to set up Jenkins for this guide is to install the Docker Pipeline plugin in Jenkins. This plugin allows Jenkins Pipeline Projects to build and test using Docker images.
 
 Click on ```Manage Jenkins``` in the left navigation bar and then on the ```Manage Plugins``` under "System Configuration".
 
-<img src="assets/devops_dcm_schemachange_jenkins-9.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-9.png](assets/devops_dcm_schemachange_jenkins-9.png)
 
 From the Plugin Manager click on the "Available" tab and enter ```docker pipeline``` in the search box. You should see one result called "Docker Pipeline". Check the box under this "Install" column next to this plugin and then click on the ```Install without restart``` button:
 
-<img src="assets/devops_dcm_schemachange_jenkins-10.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-10.png](assets/devops_dcm_schemachange_jenkins-10.png)
 
 On the next results page you should see a bunch of green checkmarks each with a "Success" status. Click on the ```Go back to the top page``` link to return to the main Jenkins Dashboard page. And with that Jenkins is set up and ready to use!
 
 <!-- ------------------------ -->
 ## Creating a Jenkins Pipeline
-Duration: 15
 
 ### Creating the Jenkinsfile
 
@@ -228,17 +222,17 @@ pipeline {
 
 After commiting your Jenkinsfile, your repo should look like this:
 
-<img src="assets/devops_dcm_schemachange_jenkins-12.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-12.png](assets/devops_dcm_schemachange_jenkins-12.png)
 
 Before we move on, copy your (HTTPS) repository url and save it for later. You can find it under the green ```Code``` button as indicated in the image below:
 
-<img src="assets/devops_dcm_schemachange_jenkins-13.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-13.png](assets/devops_dcm_schemachange_jenkins-13.png)
 
 ### Creating the Jenkins Pipeline
 
 Now that we've created the pipeline definition in our Jenkinsfile and have it committed to our repo we're ready to create the actual Pipeline in Jenkins (which will be based off our Jenkinsfile). From the main Jenkins Dashboard page click on ```New Item``` in the left navigation bar. For the item name enter ```snowflake-devops-demo``` and click on the ```Pipeline``` item type to select it. Once you've done that, click on the blue ```OK``` button as shown here:
 
-<img src="assets/devops_dcm_schemachange_jenkins-14.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-14.png](assets/devops_dcm_schemachange_jenkins-14.png)
 
 You now have a new Job created in Jenkins. The first thing we need to do is tell the newly created Job where the Jenkinsfile definition is at. You should still be on the job configuration page. Click on the ```Pipeline``` tab (or scroll down to the "Pipeline" section manually) and change the "Definition" to ```Pipeline script from SCM```.  Under the ```SCM``` section, select ```Git``` and then paste the GitHub repository url that you saved above into the ```Repository URL``` field. Click on the ```Advanced``` button (which will reveal some additional parameters) and then enter these values for the below parameters:
 
@@ -254,7 +248,7 @@ Make sure you don't miss step #5, you have to click on the "Add" button under "A
 
 If all is good, it should look like this screenshot:
 
-<img src="assets/devops_dcm_schemachange_jenkins-17.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-17.png](assets/devops_dcm_schemachange_jenkins-17.png)
 
 Click on the blue ```Save``` button to save these changes.
 
@@ -268,7 +262,7 @@ Pipeline parameters allow Jenkins to securely store values/variables which will 
 
 If you don't still have it open, open up your ```snowflake-devops-demo``` job and click on ```Configure``` in the left navigation bar.  Under the "General" settings click the ```This project is parameterised``` option. For each parameter listed below click on the ```Add Parameter``` button and enter the name given below along with the appropriate value. The parameter entry screen (for each parameter) will look like this:
 
-<img src="assets/devops_dcm_schemachange_jenkins-16.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-16.png](assets/devops_dcm_schemachange_jenkins-16.png)
 
 And here are the values to use for each parameter (please adjust as appropriate):
 
@@ -324,17 +318,16 @@ When you're finished don't forget to click on the blue ```Save``` button to save
 
 <!-- ------------------------ -->
 ## Manually Run the Pipeline
-Duration: 5
 
 In this step we will manually run the new Jenkins Pipeline for the first time. This will deploy the first database migration script we created in step 4.
 
 From the Job overview page, click on the ```Build with Parameters``` option in the left naviagation bar, as seen in the image below:
 
-<img src="assets/devops_dcm_schemachange_jenkins-18.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-18.png](assets/devops_dcm_schemachange_jenkins-18.png)
 
 Verify that all the parameter values look correct and click on the blue ```Build``` button to start the Pipeline. If all goes well, you should see a successful output that indicates the build was successful:
 
-<img src="assets/devops_dcm_schemachange_jenkins-19.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-19.png](assets/devops_dcm_schemachange_jenkins-19.png)
 
 To view the log output from the execution you can either hover over the stage shown in the screenshot above and click on the ```Logs``` icon. Or for more details on the build you can open the specific build number and then click on the ```Console Output``` in the left navigation bar.
 
@@ -344,7 +337,6 @@ To view the log output from the execution you can either hover over the stage sh
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 4
 
 Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.
 
@@ -363,7 +355,6 @@ From your Snowflake account click on the `History` tab at the top of the window.
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
-Duration: 5
 
 In this script you will create your second database migration and have the Jenkins Pipeline deploy it to your Snowflake account!
 
@@ -376,7 +367,7 @@ ALTER TABLE HELLO_WORLD ADD COLUMN AGE NUMBER;
 
 Then commit the new script and push the changes to your GitHub repository. Your migrations folder should look like this as shown below. 
 
-<img src="assets/devops_dcm_schemachange_jenkins-21.png" width="900" />
+![assets/devops_dcm_schemachange_jenkins-21.png](assets/devops_dcm_schemachange_jenkins-21.png)
 
 Because we haven't enabled any continuous integration triggers for our Pipeline we need to manually run the Pipeline for now. In Jenkins go back to the Pipeline overview page and click on the ```Build with Parameters``` option in the left navigation bar. Verify that all the parameter values look correct and click on the blue ```Build``` button to start the Pipeline.
 
@@ -391,7 +382,6 @@ You can also confirm that the changes have been deployed to your Snowflake accou
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 So now that you've got your first Snowflake CI/CD pipeline set up with Jenkins, what's next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 

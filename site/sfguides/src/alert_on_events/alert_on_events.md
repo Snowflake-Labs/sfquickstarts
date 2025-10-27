@@ -10,7 +10,6 @@ authors: Brad Culberson
 # Getting Started with Event Tables and Alerts
 
 ## Overview 
-Duration: 2
 
 This guide will show you a real-world example of using event tables and alerts.
 
@@ -32,7 +31,6 @@ The rest of this Snowflake guide walks you through building that data pipeline, 
 - A task that does data transformation with email alerting on bad data
 
 ## Database Setup
-Duration: 3
 
 For this guide, we will assume some external system is dropping in json into a table we can read. We are expected to then parse that json and write it into a structured table.
 
@@ -73,7 +71,6 @@ ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT varia
 ```
 
 ## Schematization
-Duration: 5
 
 In order to separate the good and bad records, a python user defined table function will be used to parse and return records. This example will use an exception handler for bad json and some date checks to look for invalid records. We will schematize and store the valid data.
 
@@ -163,7 +160,6 @@ SELECT COUNT(*) FROM INGESTED_DATA;
 After this is working as intended, we have verified the happy path of success. Lets automate this to run when needed in the next step.
 
 ## Automating the Task
-Duration: 2
 
 Create the warehouse and task to run the schematization as needed. For this use case, it's desired these tickets are ingested within 10 minutes of creation so we will schedule it as such. Set the warehouse to auto suspend after 30 seconds as this is the only workload on that warehouse.
 
@@ -209,7 +205,6 @@ Now that we have created this task, data from that is being dropped into the ING
 We also want to log the bad records and alert when they occur. We will do that in the following steps.
 
 ## Logging to Event Tables
-Duration: 5
 
 [Event Tables](https://docs.snowflake.com/developer-guide/logging-tracing/logging) are a good way to log these bad records as it's efficient to store these single records and it will allow us to tune the amount of logging and alerting we would like to do.
 
@@ -284,7 +279,6 @@ SELECT * FROM ALERT_ON_EVENTS_GUIDE.PUBLIC.MY_EVENTS;
 The bad data is available in the events table in the VALUE field. Also look at the other data available. We will use the RESOURCE_ATTRIBUTES in the next step.
 
 ## Creating an Alert
-Duration: 5
 
 In order to notify the team responsible for this process, we can add use an alert and notification integration.
 
@@ -365,7 +359,6 @@ DROP INTEGRATION MY_ALERTS;
 ```
 
 ## Conclusion & Next Steps
-Duration: 2
 
 Now you know how to use event tables to add more observability into your workloads. You can also create alerts and notify based on any query you can write in your account.
 

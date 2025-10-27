@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ----------------------------------------- -->
 ## Overview 
 
-Duration: 10
 
 Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOMETRY` data type, help you understand geospatial formats supported by Snowflake and walk you through the use of a variety of functions on sample geospatial data sets. 
 
@@ -47,7 +46,6 @@ A sample use case that involves energy grids and LTE cell towers in the Netherla
 <!-- ----------------------------------------- -->
 ## Setup your Account
 
-Duration: 5
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -62,7 +60,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > aside positive
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-<img src ='assets/geo_analysis_geometry_2.png' width=500>
+![assets/geo_analysis_geometry_2.png](assets/geo_analysis_geometry_2.png)
 
 ### Create a Virtual Warehouse
 
@@ -72,7 +70,7 @@ You will need to create a Virtual Warehouse to run queries.
 - Click the big blue `+ Warehouse` button in the upper right of the window
 - Create a Large Warehouse as shown in the screen below
 
-<img src ='assets/geo_analysis_geometry_3.png' width=500>
+![assets/geo_analysis_geometry_3.png](assets/geo_analysis_geometry_3.png)
 
 Be sure to change the `Suspend After (min)` field to 5 min to avoid wasting compute credits.
 
@@ -91,7 +89,7 @@ Navigate to the query editor by clicking on  `Worksheets`  on the top left navig
 * Click the + Worksheet button in the upper right of your browser window. This will open a new window.
 * In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
 
-<img src ='assets/geo_analysis_geometry_13.png' width=700>
+![assets/geo_analysis_geometry_13.png](assets/geo_analysis_geometry_13.png)
 
 Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
@@ -110,7 +108,7 @@ Access the CARTO Workspace: [app.carto.com](http://app.carto.com/)
 
 Go to the Connections section in the Workspace, where you can find the list of all your current connections.
 
-<img src ='assets/geo_analysis_geometry_25.png' width=700>
+![assets/geo_analysis_geometry_25.png](assets/geo_analysis_geometry_25.png)
 
 To add a new connection, click on `New connection` and follow these steps:
 
@@ -132,37 +130,36 @@ These are the parameters you need to provide:
 - **Database (optional)**. Default database to run your queries. Use GEOLAB.
 - **Role (optional)**. Default Role to run your queries. Use ACCOUNTADMIN.
 
-<img src ='assets/geo_analysis_geometry_26.png' width=700>
+![assets/geo_analysis_geometry_26.png](assets/geo_analysis_geometry_26.png)
 
 Once you have entered the parameters, you can click the Connect button. CARTO will try to connect to your Snowflake account. If everything is OK, your new connection will be registered.
 
 ## Acquire Marketplace Data and Analytics Toolbox
 
-Duration: 5
 
 The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality.  The best place to acquire this data is the Snowflake Marketplace!  
 * Navigate to the `Marketplace` screen using the menu on the left side of the window
 * Search for` OpenCelliD` in the search bar
 * Find and click the` OpenCelliD - Open Database of Cell Towers` tile
 
-<img src ='assets/geo_analysis_geometry_4.png' width=700>
+![assets/geo_analysis_geometry_4.png](assets/geo_analysis_geometry_4.png)
 
 * Once in the listing, click the big blue `Get` button
 
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-<img src ='assets/geo_analysis_geometry_5.png' width=500>
+![assets/geo_analysis_geometry_5.png](assets/geo_analysis_geometry_5.png)
 
 * On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all future instructions will assume this name for the database.
 
-<img src ='assets/geo_analysis_geometry_6.png' width=500>
+![assets/geo_analysis_geometry_6.png](assets/geo_analysis_geometry_6.png)
 
 Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace. 
 
 Similarly to the above dataset, search and get the `Netherlands Open Map Data - Sonra` dataset from the Marketplace and rename it to `osm_nl`.
 
-<img src ='assets/geo_analysis_geometry_23.png' width=500>
+![assets/geo_analysis_geometry_23.png](assets/geo_analysis_geometry_23.png)
 
 > aside negative
 >  After clicking "Get" you may see a message saying "Getting Data Ready. This will take at least 10 minutes.". In this case simply continue this quickstart and come back to this step when you start using this dataset.
@@ -174,16 +171,16 @@ Now you can acquire CARTO’s Analytics Toolbox from the Snowflake Marketplace. 
 * Similar to how you did with the data in the previous steps, navigate to the `Marketplace` screen using the menu on the left side of the window
 * Search for` CARTO` in the search bar
 
-<img src ='assets/geo_analysis_geometry_21.png' width=700>
+![assets/geo_analysis_geometry_21.png](assets/geo_analysis_geometry_21.png)
 
 * Find and click the` Analytics Toolbox`  tile 
 
-<img src ='assets/geo_analysis_geometry_22.png' width=700>
+![assets/geo_analysis_geometry_22.png](assets/geo_analysis_geometry_22.png)
 
 * Click on big blue` Get`  button 
 * In the options, name the database `CARTO` and optionally add more roles that can access the database 
 
-<img src ='assets/geo_analysis_geometry_24.png' width=500>
+![assets/geo_analysis_geometry_24.png](assets/geo_analysis_geometry_24.png)
 
 * Click on `Get` and then `Done`. 
 
@@ -191,7 +188,6 @@ Congratulations! Now you have data and the analytics toolbox!
 
 ## Load Data from External Storage
 
-Duration: 5
 
 Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While you loading data you will learn formats supported by geospatial data types.
 
@@ -257,7 +253,7 @@ In the result set, notice the `geometry` column and how it displays a JSON repre
 Unlike `GEOGRAPHY`, which treats all points as longitude and latitude on a spherical earth, `GEOMETRY` considers the Earth as a flat surface. More information about Snowflake's specification can be found [here](https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html).
 In this example it uses scientific notation and the numbers are much larger than latitude and longitude boundaries [-180; 180].
 
-<img src ='assets/geo_analysis_geometry_14.png' width=700>
+![assets/geo_analysis_geometry_14.png](assets/geo_analysis_geometry_14.png)
 
 Now look at the same query but in a different format. Run the following query:
 
@@ -301,22 +297,21 @@ Notice how WKB is incomprehensible to a human reader. However, this format is ha
 
 ## Load Data from Internal Storage
 
-Duration: 10
 
 Now that you have a basic understanding of how the `GEOMETRY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walk through a scenario that requires you to use constructors to load data.  You will do it while trying one more way of getting data, namely, from the Shapefile file stored in the internal stage. 
 
 First download [this](https://sfquickstarts.s3.us-west-1.amazonaws.com/vhol_spatial_analysis_geometry_geography/nl_areas.zip) Shapefile which contains the boundaries of administrative areas in the Netherlands. 
 Then in the navigation menu, select Data > Databases, choose `GEOLAB.GEOMETRY`, and click Create > Stage > Snowflake Managed.
 
-<img src ='assets/geo_analysis_geometry_9.png'>
+![assets/geo_analysis_geometry_9.png](assets/geo_analysis_geometry_9.png)
 
 In the new Window, use the name stageshp and click `Create`.
 
-<img src ='assets/geo_analysis_geometry_10.png' width=500>
+![assets/geo_analysis_geometry_10.png](assets/geo_analysis_geometry_10.png)
 
 Then select the newly created Stage and click `+ Files` to upload a new file.
 
-<img src ='assets/geo_analysis_geometry_11.png'>
+![assets/geo_analysis_geometry_11.png](assets/geo_analysis_geometry_11.png)
 
 Browse the file you just downloaded and click  `Upload`.
 
@@ -373,7 +368,7 @@ FROM table(py_load_geodata(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl
 ORDER BY is_valid ASC;
 ```
 
-<img src ='assets/geo_analysis_geometry_15_1.png'>
+![assets/geo_analysis_geometry_15_1.png](assets/geo_analysis_geometry_15_1.png)
 
 This query completed without error and now you see that the shape of the province Zeeland is invalid. Let's try to repair it by applying the [ST_BUFFER](https://docs.snowflake.com/en/sql-reference/functions/st_buffer) function with a small value for the buffer distance.
 
@@ -386,7 +381,7 @@ FROM table(py_load_geodata(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl
 ORDER BY is_valid ASC;
 ```
 
-<img src ='assets/geo_analysis_geometry_15.png'>
+![assets/geo_analysis_geometry_15.png](assets/geo_analysis_geometry_15.png)
 
 > aside negative
 >  Using ST_BUFFER with some small positive or negative value for the distance *sometimes* can help to fix invalid shapes. However, you should remember that the unit of measurement for the distance parameter in the ST_BUFFER will be the same as your data. Therefore, if your data utilizes lon/lat values, the distance's units will also be degrees.
@@ -410,7 +405,6 @@ Excellent! Now that all the datasets are successfully loaded, let's proceed to t
 <!-- ----------------------------------------- -->
 ## Spatial analysis
 
-Duration: 25
 
 To showcase the capabilities of the GEOMETRY data type, you will explore several use cases. In these scenarios, you'll assume you are an analyst working for an energy utilities company responsible for maintaining electrical grids.
 
@@ -426,7 +420,7 @@ LIMIT 5;
 ```
 The results look similar to this:
 
-<img src ='assets/geo_analysis_geometry_16.png'>
+![assets/geo_analysis_geometry_16.png](assets/geo_analysis_geometry_16.png)
 
 The spatial data is stored using the `GEOMETRY` data type and employs the Dutch mapping system, `Amersfoort / RD New` (SRID = 28992). To view the contents of the table containing the boundaries of the administrative areas in the Netherlands, execute the following query:
 
@@ -436,7 +430,7 @@ FROM geolab.geometry.nl_administrative_areas
 LIMIT 5;
 ```
 
-<img src ='assets/geo_analysis_geometry_17.png'>
+![assets/geo_analysis_geometry_17.png](assets/geo_analysis_geometry_17.png)
 
 In order to compute the length of all cables per administrative area, it's essential that both datasets adhere to the same mapping system. You have two options: either project `nl_administrative_areas` to SRID 28992, or project `nl_cables_stations` to SRID 32231. For this exercise, let's choose the first option.
 
@@ -452,7 +446,7 @@ GROUP BY 1
 ORDER BY 2 DESC;
 ```
 
-<img src ='assets/geo_analysis_geometry_18.png'>
+![assets/geo_analysis_geometry_18.png](assets/geo_analysis_geometry_18.png)
 
 You have five areas densely covered by electricity cables, those are the ones that your company is responsible for. For your first analysis, you will focus on these areas.
 
@@ -492,23 +486,23 @@ ALTER TABLE geolab.geography.nl_cables_stations ADD SEARCH OPTIMIZATION ON GEO(g
 You can now go to the CARTO account and visualize administrative areas and cable information in CARTO Builder.
 * Create a new map. Use the navigation menu on the left to get to Maps and then click on (+) New Map.
 
-<img src ='assets/geo_analysis_geometry_27.png' width=700>
+![assets/geo_analysis_geometry_27.png](assets/geo_analysis_geometry_27.png)
 
 * Click on the `Add Source From` → `Data Explorer`
 
-<img src ='assets/geo_analysis_geometry_28.png' width=700>
+![assets/geo_analysis_geometry_28.png](assets/geo_analysis_geometry_28.png)
 
 * In the pop-up select your connection and the `GEOLAB.GEOGRAPHY.NL_ADMINISTRATIVE_AREAS` table.
 
-<img src ='assets/geo_analysis_geometry_29.png' width=700>
+![assets/geo_analysis_geometry_29.png](assets/geo_analysis_geometry_29.png)
 
 Click on the newly created layer and unselect "Fill Color" toggle to see the boundaries of the areas on the map.
 
-<img src ='assets/geo_analysis_geometry_30.gif' width=700>
+![assets/geo_analysis_geometry_30.gif](assets/geo_analysis_geometry_30.gif)
 
 Similarly you can visualize the `GEOLAB.GEOGRAPHY.NL_CABLES_STATIONS` table.
 
-<img src ='assets/geo_analysis_geometry_31.gif' width=700>
+![assets/geo_analysis_geometry_31.gif](assets/geo_analysis_geometry_31.gif)
 
 Now you will create a table with locations of cell towers stored as GEOGRAPHY and enable search optimization, just like for the previous two tables. Run the following query in your Snowflake's worksheet:
 
@@ -526,7 +520,7 @@ ALTER TABLE geolab.geography.nl_lte ADD SEARCH OPTIMIZATION ON GEO(geom);
 
 Finally, you will find all cell towers that don't have an energy line within a 2-kilometer radius. For each cell tower you'll calculate the distance to the nearest electricity cable. In CARTO Builder click on the Add `Source From` → `Custom Query (SQL)` and make sure you have selected the Snowflake Connection that you have created in previous steps.
 
-<img src ='assets/geo_analysis_geometry_32.gif' width=700>
+![assets/geo_analysis_geometry_32.gif](assets/geo_analysis_geometry_32.gif)
 
 Then paste the following query and click on the green `Run` button.
 
@@ -545,12 +539,11 @@ WHERE areas.type = 'Province'
 
 You can modify the colors of cell towers in the output and expand their radius in order to enhance their visibility.
 
-<img src ='assets/geo_analysis_geometry_33.gif' width=700>
+![assets/geo_analysis_geometry_33.gif](assets/geo_analysis_geometry_33.gif)
 
 <!-- ------------------------ -->
 ## Advanced Analysis using Spatial Joins and H3
 
-Duration: 20
 
 In the previous section you've found cell towers that don't have electricity cables nearby. But what about answering more sophisticated questions, like what areas in the Netherlands have very good and bad coverage by LTE (4G) network? You can use geospatial functions combined with spatial join and H3 functions.
 
@@ -589,7 +582,7 @@ WHERE TYPE = 'Municipality'
 
 The result of this query is a number of overlapping circles:
 
-<img src ='assets/geo_analysis_geometry_20.gif' width=700>
+![assets/geo_analysis_geometry_20.gif](assets/geo_analysis_geometry_20.gif)
 
 To calculate the coverage of each district by LTE network, you can create a user-defined Python function that calculates an aggregated union and uses the Shapely library under the hood. Run the following query from Snowflake Worksheets:
 
@@ -623,7 +616,7 @@ AND municipality_name = 'Angerlo';
       
 Note how the result of this function returns a single polygon covering the same area without overlaps.
 
-<img src ='assets/geo_analysis_geometry_20_1.png' width=700>
+![assets/geo_analysis_geometry_20_1.png](assets/geo_analysis_geometry_20_1.png)
 
 Let's now for every municipality compute the following:
 
@@ -663,7 +656,7 @@ SELECT coverage_geom AS geom,
 FROM geolab.geography.nl_municipalities_coverage;
 ```
 
-<img src ='assets/geo_analysis_geometry_19.gif' width=700>
+![assets/geo_analysis_geometry_19.gif](assets/geo_analysis_geometry_19.gif)
 
 ### What percent of the Dutch highways have LTE coverage?
 
@@ -742,16 +735,16 @@ FROM geolab.geography.nl_lte_coverage_h3;
 
 As you create an H3 layer you will need to configure the layer type from the query console:
 
-<img src ='assets/geo_analysis_geometry_34.gif' width=700>
+![assets/geo_analysis_geometry_34.gif](assets/geo_analysis_geometry_34.gif)
 
 H3 layers allow us to show aggregated information at different resolutions for different zoom levels. Because of this, when you style the layer, you need to decide on an aggregation method for the attribute to show, in this example you will use `signal_strength`.
 
-<img src ='assets/geo_analysis_geometry_35.png' width=700>
+![assets/geo_analysis_geometry_35.png](assets/geo_analysis_geometry_35.png)
 
 Remember to select a color palette of your liking and the color scale (the default is custom but you want to *Quantize* bins for this use case).
 You can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity you will see on the map but it will also take longer to load. Select resolution 5.
 
-<img src ='assets/geo_analysis_geometry_36.gif' width=700>
+![assets/geo_analysis_geometry_36.gif](assets/geo_analysis_geometry_36.gif)
 
 Let’s now use the road network from `NL Open Map Data` to see which road segments have good coverage and which do not.
 To intersect the road layer with the H3 signal strength layer you need to find H3 cells covering all motorways in the NL.
@@ -791,7 +784,7 @@ ORDER BY h3;
 
 If you visualize table `GEOLAB.GEOGRAPHY.NL_ROADS_H3` in CARTO Builder (`Add Source From` → `Data Explorer`) you will see tessellated roads.
 
-<img src ='assets/geo_analysis_geometry_39.png' width=700>
+![assets/geo_analysis_geometry_39.png](assets/geo_analysis_geometry_39.png)
 
 Now you use the signal decay model that you built previously to estimate the average signal along each highway. For this you need to join two tables (tessellated highways and the signal strength) using H3 cell id and aggregate the result by road id.
 
@@ -826,11 +819,11 @@ Lastly, with this layer, you can add it to your CARTO map and visualize the road
 
 For this, you can add the layer via `Add source from` → `Data Explorer`. Then select your connection and the `GEOLAB.GEOGRAPHY.OSM_NL_NOT_COVERED` table.
 
-<img src ='assets/geo_analysis_geometry_38.png' width=700>
+![assets/geo_analysis_geometry_38.png](assets/geo_analysis_geometry_38.png)
 
 Once you have your second layer on the map, you can click on it to style it and show the stroke color based on your `SIGNAL_CATEGORY` column. To do that, create a “Custom palette” with just two colors: gray for roads with good signal and red for roads with no/poor signal.
 
-<img src ='assets/geo_analysis_geometry_37.gif' width=700>
+![assets/geo_analysis_geometry_37.gif](assets/geo_analysis_geometry_37.gif)
 
 > aside positive
 >  You may feel that these last several queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!

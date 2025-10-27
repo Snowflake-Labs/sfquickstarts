@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 The [ArcGIS Location Services](https://developers.arcgis.com/documentation/mapping-and-location-services/) are services hosted by Esri that provide geospatial functionality and data for building mapping applications. You can use the service APIs to display maps, access basemaps styles, visualize data, find places, geocode addresses, find optimized routes, enrich data, and perform other mapping operations. The services also support advanced routing operations such as fleet routing, calculating service areas, and solving location-allocation problems. To build applications you can use ArcGIS Maps SDKs, open source libraries, and scripting APIs.
 
@@ -73,7 +72,6 @@ In this Quickstart you will be go over the steps of calculating servicearea/isoc
 
 <!-- ------------------------ -->
 ## Setting Up An ArcGIS account
-Duration: 20
 
 ### (Optional) Create ArcGIS account
 This tutorial requires ArcGIS account, preferrably with appropriate privileges to create API key and optionally to connect via ArcGIS pro.
@@ -100,7 +98,6 @@ Follow the instructions in the [documentation: Connect to Snowflake from ArcGIS]
 
 <!-- ----------------------------------------- -->
 ## Setup An Snowflake Account
-Duration: 10
 
 ### Create Database and assets
 
@@ -135,7 +132,6 @@ create database if not exists arcgis_db;
 
 <!-- ------------------------ -->
 ## Defining UDF ServiceArea Calculation
-Duration: 15
 
 ### Importing and running the notebook
 The codebase needed for the quickstart is available in the notebook. You will need to import it into your Snowflake account as follows:
@@ -167,7 +163,6 @@ The notebook also creates an quick visualization of the service area also:
 
 <!-- ------------------------ -->
 ## Visualizing Using ArcGIS Pro
-Duration: 10
 
 In this step, you will be connecting to your Snowflake account from ArcGIS Pro and visualize the service areas.
 
@@ -198,7 +193,6 @@ Once you have added the features to the map, you will see the service area and t
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Having gone over the tutorial, you now have seen how to communicate with ArcGIS Location services and enrich your data.
 

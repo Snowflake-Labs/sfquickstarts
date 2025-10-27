@@ -10,14 +10,13 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
-<img src="assets/hcls.png"/>
+![assets/hcls.png](assets/hcls.png)
 
 
 In the complex landscape of healthcare, the accurate calculation of patient risk scores is not just a matter of compliance, but a crucial aspect that can significantly influence a provider's financial reimbursements. Accurate risk scoring is instrumental in ensuring that healthcare providers receive the appropriate compensation for the level of care they provide, balancing the dual objectives of delivering high-quality care and maintaining financial viability.
 And these  scores not only influence clinical decisions and resource allocation but also significantly impact reimbursement rates from insurance companies. Given their importance, the need for precision in calculating risk scores cannot be overstated.
 
-<img src="assets/ICDCode.png"/>
+![assets/ICDCode.png](assets/ICDCode.png)
 
 Traditionally, healthcare providers have relied on various tools and methodologies to estimate patient risk scores. However, these conventional methods often fall short in addressing the complexity and variability inherent in patient data.  In this Quickstart guide we will study how to leverage a large language model in the beginning and implement a Distillation flow with a Llama 405b to generate training samples to teach a smaller model perform the code extraction task with the same accuracy but lower cost. Large language model (LLM) distillation focuses on replicating the performance of a large model on a specific task by transferring its capabilities to a smaller model. This allows developers to achieve similar results to models like GPT-4 but with reduced computational cost and faster performance—though only for the targeted task.
 
@@ -52,13 +51,12 @@ Also Cortex fine-tuning does Automatic Parameter Efficient Fine-tuning (PEFT) wi
   
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
 #### High-Level Workflow
 
-<img src="assets/workflow.png"/>
+![assets/workflow.png](assets/workflow.png)
 
 Steps:
 **Step 1**. - Clone [GitHub](https://github.com/Snowflake-Labs/sfguide-llm-assisted-medical-coding-extraction-for-healthcare-in-snowflake) repository.
@@ -77,7 +75,6 @@ We will explore the Notebook in detailed in the next section.
 
 <!-- ------------------------ -->
 ## Cortex Fine Tuning
-Duration: 2
 
 In this section we will explore the notebook. As mentioned earlier, do not execute Run All. Instead execute cell by cell.
 
@@ -137,7 +134,6 @@ If you have customers and a risk score mapping for various conditions, you can n
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 At the end of this guide, we have seen how to create a production ready AI based autonomous medical coding extraction pipeline which is accurate and cost-effective at the same time, and not rely on a low accurate Prompt engineered or RAG application
 We saw that how easily fine tuning alleviates the workload on physicians and medical coders, as we aim to advance the implementation of autonomous medical coding. This approach will not only ensure high accuracy and clinical specificity but also support various healthcare models paving the way for a more sustainable and effective healthcare environment.

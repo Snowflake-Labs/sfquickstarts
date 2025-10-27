@@ -1,7 +1,7 @@
 author: Swathi Jasti
 id: integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
-language: jp
+language: ja
 summary: Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合
 environments: web
 status: Published 
@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 概要
 
-Duration: 2 <img src="assets/tasty_bytes_header.png"/>
 
 Snowflakeは、MLモデルをストアドプロシージャ、ユーザー定義関数（UDF）、ユーザー定義テーブル関数（UDTF）としてデプロイできるようにする便利な機能を通じて、機械学習モデルのデータアプリケーションへの統合を簡素化しました。さらに、Snowflakeは、デプロイされたMLモデルへのクエリを容易にするRESTful APIであるSQL APIを提供し、アプリケーションとMLモデルのシームレスな統合を可能にします。
 
@@ -46,7 +45,6 @@ Snowflakeは、MLモデルをストアドプロシージャ、ユーザー定義
 <!-- ------------------------ -->
 ## Snowflakeでのデータの設定
 
-Duration: 3
 
 Snowflakeウェブインターフェイスである[Snowsight](https://docs.snowflake.com/ja/user-guide/ui-snowsight.html#)を使用して、次のことを行います。
 
@@ -71,7 +69,7 @@ Tasty Bytesは世界中の都市でキッチンカーを運行しており、各
   - データベースの名称をFROSTBYTE_WEATHERSOURCE（すべて大文字）に変更
   - 追加ロールへの付与 -> \[PUBLIC（公開）]
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 > SafeGraphは、世界中のあらゆる場所に関するデータを提供するグローバルな地理空間データ会社です。Esri、Tripadvisor、Mapbox、Syscoなどの顧客は、SafeGraphのデータを使用して、自社の顧客をより正確に把握し、新しい製品を生み出し、より的確な経営判断を行っています。
 
 ### ステップ2 - オブジェクトの作成、データのロード、データの結合を行う
@@ -157,7 +155,6 @@ SELECT * FROM frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v;
 <!-- ------------------------ -->
 ## アプリケーションのユーザーを作成する
 
-Duration: 5
 
 堅牢なセキュリティ対策を確保するには、個人アカウントとは別に、アプリケーション専用のユーザーアカウントを設定することが不可欠です。この新しいアカウントは、Snowflakeのクエリに使用されます。セキュリティに関するベストプラクティスに従い、このアカウントではキーペア認証を採用し、アクセスをSnowflake環境内に制限します。
 
@@ -216,7 +213,6 @@ GRANT ROLE tasty_bytes_data_ml_app_demo TO USER data_ml_app_demo;
 <!-- ------------------------ -->
 ## SnowflakeにおけるMLモデルのトレーニングと展開
 
-Duration: 10
 
 ### 概要
 
@@ -426,7 +422,6 @@ GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLO
 <!-- ------------------------ -->
 ## SQL APIを使ったMLモデルからのデータ取得とデータアプリケーションへの統合
 
-Duration: 10
 
 皆さんが実行するアプリケーションはReact Nativeで記述されます。
 
@@ -454,11 +449,10 @@ Duration: 10
 2. この操作により、Webブラウザでアプリが起動します。
 3. 起動すると、「キュー内の注文」画面が表示されます。
 
-<img src="assets/Locations.png"/>
+![assets/Locations.png](assets/Locations.png)
 <!-- ------------------------ -->
 ## クリーンアップ
 
-Duration: 1
 
 Snowsightワークシートに移動し、右上の「+」をクリックして新しいワークシートを作成し、「SQLワークシート」を選択します。次のSQLをワークシートに貼り付けて実行し、クイックスタートで作成したSnowflakeオブジェクトを削除します。
 
@@ -475,7 +469,6 @@ DROP ROLE tasty_bytes_data_ml_app_demo;
 <!-- ------------------------ -->
 ## まとめ
 
-Duration: 1
 
 ### まとめ
 

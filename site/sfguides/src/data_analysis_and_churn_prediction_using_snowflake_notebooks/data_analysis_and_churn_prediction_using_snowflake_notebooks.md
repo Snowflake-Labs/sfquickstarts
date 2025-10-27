@@ -11,8 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 10
-<img src="assets/banner.png"/>
+![assets/banner.png](assets/banner.png)
 
 Churn prediction relies on data analysis to be effective. Through data analysis, businesses gather, clean, and model customer data to uncover patterns and trends. This understanding of customer behavior is key for building accurate churn prediction models. By applying data analysis techniques, businesses can identify at-risk customers and take targeted actions to retain them. Essentially, data analysis provides the necessary foundation for effective churn prediction, helping businesses reduce churn and boost customer loyalty.
 
@@ -36,7 +35,6 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 
 <!-- ------------------------ -->
 ## Setting Up Snowflake Environment
-Duration: 5
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
@@ -44,7 +42,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 #### Creating Objects and Loading Data
 1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 
-<img src="assets/run_all.png"/>
+![assets/run_all.png](assets/run_all.png)
 
 2. Copy and paste the following code to create Snowflake objects (warehouse, database, schema, role) and click `Run All` at the top of the Worksheet
 
@@ -113,7 +111,6 @@ SELECT 'data analysis and churn prediction sql is now complete' AS note;
 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
-Duration: 10
 
 ### Overview
 For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.
@@ -130,21 +127,20 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 4. Using the `Import .ipynb file`, import the downloaded Notebooks
 
-<img src="assets/import_notebook.png"/>
+![assets/import_notebook.png](assets/import_notebook.png)
 
 5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`
 
 6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`
 
-<img src="assets/anaconda.png"/>
+![assets/anaconda.png](assets/anaconda.png)
 
 7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
 
-<img src="assets/start.png"/>
+![assets/start.png](assets/start.png)
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 2
 
 ### Remove Snowflake Objects
 1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
@@ -159,7 +155,6 @@ DROP WAREHOUSE IF EXISTS churn_ds_wh;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 ### Conclusion
 Congrats! You're reached the end of this Quickstart!

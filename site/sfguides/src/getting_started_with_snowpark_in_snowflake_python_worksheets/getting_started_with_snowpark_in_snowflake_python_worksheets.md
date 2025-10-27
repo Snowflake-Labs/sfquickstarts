@@ -11,7 +11,6 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 By completing this guide, you will be able to try Snowpark for Python all from within the Snowflake UI. At the end, you’ll have a better understanding of how to perform core data engineering tasks using Snowpark in Snowflake Python Worksheet.
 
@@ -46,7 +45,6 @@ A prepared dataset that can be used in downstream analysis and applications. For
 <!-- ------------------------ -->
 ## Get Started
 
-Duration: 10
 
 ### Create a Snowflake Trial Account
 
@@ -70,7 +68,6 @@ The button above will take you to a page in the trial titled **Getting Started w
 <!-- ------------------------ -->
 ## Load Data from Snowflake Tables into Snowpark DataFrames
 
-Duration: 1
 
 > aside positive
 > Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-in-worksheets-notebooks/blob/main/notebooks/0_start_here.ipynb) and import it to your Snowflake account as shown below.
@@ -86,7 +83,6 @@ import snowflake.snowpark as snowpark
 
 ### Load Aggregated Campaign Spend and Revenue Data
 
-Duration: 3
 
 The campaign spend table contains ad click data that has been aggregated to show daily spend across digital ad channels including search engines, social media, email and video. The revenue table contains revenue data for 10yrs.
 
@@ -109,7 +105,6 @@ TIP: Learn more about [Snowpark DataFrames](https://docs.snowflake.com/en/develo
 <!-- ------------------------ -->
 ## Data Transformations
 
-Duration: 10
 
 In this section, we will perform a set of transformations including aggregations and joining two dataframes.
 
@@ -210,7 +205,6 @@ Here's what the **Output** tab looks like after running the worksheet.
 <!-- ------------------------ -->
 ## Save Transformed Data
 
-Duration: 1
 
 Let's save the transformed data into a Snowflake table ***SPEND_AND_REVENUE_PER_MONTH*** so it can be used for further analysis and/or for training a model.
 
@@ -221,7 +215,6 @@ snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND
 <!-- ------------------------ -->
 ## View and Return Transformed Data
 
-Duration: 1
 
 One of the return values of a Python Worksheet is of ***Table()*** type and setting that in our case will enable you to view and return the tranformed data as a Snowpark DataFrame.
 
@@ -240,7 +233,6 @@ Here's what the **Results** tab looks like after running the worksheet.
 <!-- ------------------------ -->
 ## Deploy As A Stored Procedure
 
-Duration: 2
 
 Optionally you can also deploy this worksheet as a Python Stored Procedure so that you can schedule it using [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro), for example. To deploy this worksheet, click on the **Deploy** button on the top right and follow the instructions as shown below.
 

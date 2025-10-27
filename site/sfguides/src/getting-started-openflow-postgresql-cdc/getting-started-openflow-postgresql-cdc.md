@@ -1,5 +1,5 @@
 id: getting-started-with-openflow-postgresql-cdc
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/openflow
 language: en
 summary: Getting Started with Openflow PostgreSQL Change Data Capture (CDC)
 environments: web
@@ -11,7 +11,6 @@ authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This quickstart demonstrates how to build a real-time Change Data Capture (CDC) pipeline from PostgreSQL to Snowflake using Openflow. You'll learn how to capture both initial snapshots and incremental changes, enabling real-time analytics on transactional data.
 
@@ -121,7 +120,6 @@ Before starting, ensure you have:
 
 ## Clone the QuickStart Repository
 
-Duration: 2
 First, clone the repository to get access to SQL scripts and setup files:
 
 ```bash
@@ -140,7 +138,6 @@ cd sfguide-getting-started-openflow-postgresql-cdc
 <!-- ------------------------ -->
 ## Setup PostgreSQL Database
 
-Duration: 8
 
 In this section, we'll configure PostgreSQL for CDC and load the healthcare demo data.
 
@@ -531,7 +528,6 @@ Next, let us setup the Snowflake environment.
 <!-- ------------------------ -->
 ## Setup Snowflake Environment
 
-Duration: 10
 
 In this section, we'll set up the Snowflake objects needed for the CDC pipeline.
 
@@ -692,7 +688,6 @@ You've verified that the Snowflake network rule matches your PostgreSQL host and
 <!-- ------------------------ -->
 ## Openflow Configuration
 
-Duration: 20
 
 In this section, you'll set up the Openflow SPCS infrastructure needed to run the PostgreSQL connector. Before proceeding, ensure you've completed the Snowflake setup with `QUICKSTART_ROLE`, `QUICKSTART_PGCDC_DB` database, and `QUICKSTART_PGCDC_WH` warehouse.
 
@@ -805,7 +800,6 @@ Once your runtime is active, you can access the Openflow canvas to add and confi
 <!-- ------------------------ -->
 ## Add PostgreSQL Connector
 
-Duration: 10
 
 Navigate to your Openflow runtime canvas. In Snowsight's Openflow UI, you can access the canvas by clicking on the runtime name from the Overview page.
 
@@ -837,7 +831,6 @@ The **PostgreSQL** connector is now on your canvas. It includes all the processo
 <!-- ------------------------ -->
 ## Configure PostgreSQL Connector
 
-Duration: 10
 
 The PostgreSQL connector uses three parameter contexts to organize its configuration:
 
@@ -997,7 +990,6 @@ With all three parameter contexts configured, you're now ready to start the CDC 
 <!-- ------------------------ -->
 ## Verify Snapshot Load
 
-Duration: 5
 
 With the connector configured, you're now ready to start the CDC pipeline and verify that the initial snapshot is loaded correctly.
 
@@ -1192,7 +1184,6 @@ You can run this script directly in Snowsight by copying and pasting the SQL.
 <!-- ------------------------ -->
 ## Snowflake Intelligence
 
-Duration: 15
 
 Now that the snapshot is loaded, let's set up Snowflake Intelligence before generating CDC events. This allows you to establish a baseline understanding of your data, then observe changes in real-time after running the CDC demo.
 
@@ -1445,7 +1436,6 @@ Now that your agent is configured, let's ask baseline questions about the snapsh
 <!-- ------------------------ -->
 ## Generate Live CDC Events
 
-Duration: 7
 
 Now that the snapshot is loaded, let's generate live CDC events to see real-time replication in action. We'll simulate a busy morning at DemoClinic Healthcare with various database operations.
 
@@ -1969,7 +1959,6 @@ ORDER BY completed DESC;
 <!-- ------------------------ -->
 ## Cleanup
 
-Duration: 5
 
 When you're done with the quickstart, follow these steps to clean up all resources. This prevents unnecessary compute costs and removes test data from your environment.
 
@@ -2173,7 +2162,6 @@ All resources have been removed. You can verify by:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 2
 
 Congratulations! You've successfully built a real-time CDC pipeline from PostgreSQL to Snowflake using Openflow.
 

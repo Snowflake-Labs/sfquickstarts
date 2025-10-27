@@ -11,8 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Semi-Structured Data Processing in Snowflake
-Duration: 1
-<img src = "assets/semi_structured_header.png">
+![assets/semi_structured_header.png](assets/semi_structured_header.png)
 
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Semi-Structured Data Processing!
@@ -38,7 +37,6 @@ For more detail on Semi-Structured Data in Snowflake please visit the [Semi-Stru
 - An Executive-Worthy Bar Chart
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -66,7 +64,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
@@ -74,7 +72,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Semi-Structured Data and the Variant Data Type
-Duration: 1
 
 ### Overview
 As a Tasty Bytes Data Engineer, we have been tasked with profiling our Menu data that includes a Semi-Structured Data column. From this menu table we need to produce an Analytics layer View that exposes Dietary and Ingredient data to our end users.
@@ -99,7 +96,7 @@ SELECT TOP 10
 FROM raw_pos.menu;
 ```
 
-<img src = "assets/menu.png">
+![assets/menu.png](assets/menu.png)
 
 Within our output, we can see that the `menu_item_health_metrics_obj` must be the Semi-Structured Data we were told contained the metrics we need to provide downstream. 
 
@@ -111,7 +108,7 @@ To dive deeper into how this column in defined in Snowflake, please run the next
 SHOW COLUMNS IN raw_pos.menu;
 ```
 
-<img src = "assets/show_columns.png">
+![assets/show_columns.png](assets/show_columns.png)
 
 Looking at our result set, we see the `menu_item_health_metrics_obj` is a [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured) Data Type.
 
@@ -122,7 +119,6 @@ Looking at our result set, we see the `menu_item_health_metrics_obj` is a [VARIA
 ### Step 3 - Click Next -->
 
 ##  Querying Semi-Structured Data via Dot and Bracket Notation + Flatten
-Duration: 3
 
 ### Overview
 Within our `menu_item_health_metrics_obj` column, we saw that `menu_item_id` was included alongside the more nested Ingredients and Dietary Restriction data we need to access. 
@@ -137,7 +133,7 @@ SELECT
 FROM raw_pos.menu;
 ```
 
-<img src = "assets/dot.png">
+![assets/dot.png](assets/dot.png)
 
 Using Dot Notation we were able to successfully extract `menu_item_id` in full, but look to still be left with additional semi-structured objects in the `menu_item_health_metrics` column output. 
 
@@ -157,7 +153,7 @@ FROM raw_pos.menu m,
 ORDER BY menu_item_id;
 ```
 
-<img src = "assets/dot_flatten.png">
+![assets/dot_flatten.png](assets/dot_flatten.png)
 
 >aside positive
 > **Flatten:** is a table function that takes a VARIANT, OBJECT, or ARRAY column and produces a lateral view. Flatten can be used to convert semi-structured data to a relational representation.
@@ -178,7 +174,7 @@ FROM raw_pos.menu m,
 ORDER BY menu_item_id;
 ```
 
-<img src = "assets/bracket_flatten.png">
+![assets/bracket_flatten.png](assets/bracket_flatten.png)
 
 
 ### Step 4 - Extracting Dietary Columns with Dot Notation
@@ -197,7 +193,7 @@ FROM raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/dot_diet.png">
+![assets/dot_diet.png](assets/dot_diet.png)
 
 ### Step 5 - Extracting Dietary Columns with Bracket Notation
 Let's now extract the remaining Dietary Columns using both Dot Notation alongside the Ingredients Array.
@@ -215,14 +211,13 @@ FROM raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/bracket_diet.png">
+![assets/bracket_diet.png](assets/bracket_diet.png)
 
 
 ### Step 6 - Click Next -->
 
 
 ## Providing Flattened Data to Business Users
-Duration: 2
 
 ### Overview
 With all of the required data, extracted, flattened and available in tabular form, we will now work to provide access to our Business Users.
@@ -294,7 +289,7 @@ FROM analytics.menu_v
 WHERE brand_name = 'Better Off Bread';
 ```
 
-<img src = "assets/better_off_bread.png">
+![assets/better_off_bread.png](assets/better_off_bread.png)
 
 
 ### Step 4 - Grant Access to our Developers
@@ -308,7 +303,6 @@ GRANT SELECT ON analytics.menu_v TO ROLE tb_dev;
 
 
 ## Analyzing Processed Semi-Structured Data in Snowsight
-Duration: 2
 
 ### Overview:
 With our Menu View available in our Analytics layer, let's now jump into the life of a Tasty Bytes Developer. Within this step, we will address questions from  the the Tasty Bytes Leadership Team related to our Food Truck Menu's.
@@ -330,7 +324,7 @@ FROM analytics.menu_v m
 WHERE ARRAY_CONTAINS('Lettuce'::VARIANT, m.ingredients);
 ```
 
-<img src = "assets/array_contains.png">
+![assets/array_contains.png](assets/array_contains.png)
 
 Based on our output, we see that quite a few of our Menu Items include Lettuce. This sort of analysis would be extremely valuable for our Supply Chain Procurement Managers in the event of any food related recalls in the cities and countries we support.
 
@@ -355,7 +349,7 @@ WHERE 1=1
 ORDER BY ARRAY_SIZE(overlapping_ingredients) DESC; -- order by largest number of overlapping ingredients
 ```
 
-<img src = "assets/array_funcs.png">
+![assets/array_funcs.png](assets/array_funcs.png)
 
 > aside positive
 > **Array_intersection:** Returns an array that contains the matching elements in the two input arrays.
@@ -378,7 +372,7 @@ SELECT
 FROM analytics.menu_v m;
 ```
 
-<img src = "assets/metrics.png">
+![assets/metrics.png](assets/metrics.png)
 
 With the output we just recieved we have successfully went from a Raw table containing Semi-Structured Data to a single, aggregate row that can easily be accessed by anyone in our organization to empower Tasty Bytes to be more data driven. 
 
@@ -399,7 +393,7 @@ WHERE m.brand_name IN ('Plant Palace', 'Peking Truck','Revenge of the Curds')
 GROUP BY m.brand_name;
 ```
 
-<img src = "assets/results_1.png">
+![assets/results_1.png](assets/results_1.png)
 
 By default, Snowsight returns our query results in tabular form. However one powerful Snowsight feature we have not covered yet is [Using Charts](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations#using-charts)
 
@@ -417,7 +411,6 @@ To finish off this Quickstart, we must point out how easy a Tasty Bytes Executiv
 ### Step 5 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Semi-Structured Data Quickstart. 

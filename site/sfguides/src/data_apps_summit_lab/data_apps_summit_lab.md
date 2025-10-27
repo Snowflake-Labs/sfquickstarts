@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Data Application with Snowflake Marketplace, Snowflake Notebooks, and Streamlit in Snowflake
 
 ## Overview
-Duration: 2
 
 In this hands-on lab, you will build a weather prediction data application entirely within Snowflake. You'll leverage Weather & Environment data from Snowflake Marketplace, train a simple ML model using sklearn within Snowflake Notebooks, and create an interactive Streamlit application, all without leaving Snowflake.
 
@@ -50,7 +49,6 @@ You will process NOAA weather data with SQL, Snowpark, and develop a simple ML m
 
 <!-- ------------------------ -->
 ## Open a Snowflake Trial Account
-Duration: 5
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
@@ -71,7 +69,6 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 <!-- ------------------------ -->
 ## Data from Snowflake Marketplace
-Duration: 10
 
 Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. 
 
@@ -99,7 +96,6 @@ This is a live dataset! No need to write ingestion logic to bring the data into 
 ![data](./assets/Snowflake_Public_Data_Free.png)
 <!-- ------------------------ -->
 ## Load the Snowflake Notebook
-Duration: 10
 
 Let's prepare our Snowflake environment so that we can begin exploring the weather data. We'll explore the data in a Snowflake Notebook.
 
@@ -141,7 +137,6 @@ The last line of SQL creates a stage that will be used when we deploy our user-d
 
 <!-- ------------------------ -->
 ## Explore data with SQL and Snowpark for Python
-Duration: 15
 
 The notebook contains all of the code necessary to complete the rest of the lab. In this step, we'll explore the weather data using SQL and Snowpark for Python.
 
@@ -268,7 +263,6 @@ In the next steps, we'll dive deeper into the dataset, and use several more colu
 
 <!-- ------------------------ -->
 ## Create features for ML training
-Duration: 15
 
 To train our ML model, we'll need to prepare the data that will be used to train the model. In this step, we'll perform the data preparation by transforming the raw weather measurements into a clean, structured dataset suitable for machine learning.
 
@@ -294,7 +288,6 @@ All of this is setting up the foundation that will feed into the linear regressi
 
 <!-- ------------------------ -->
 ## Train Linear Regression Model
-Duration: 15
 
 In this step, we'll train our ML model. We're specifically going to train a linear regression model to predict weather for the 90210 (Beverly Hills) zip code.
 
@@ -316,7 +309,6 @@ In the next step, we'll deploy the model as a User Defined Function (UDF) for  m
 
 <!-- ------------------------ -->
 ## Create and Register the UDF
-Duration: 5
 
 Let's now deploy this model as a user-defined function (UDF) in Snowflake. By deploying it as a UDF, we're able to quickly call it throughout our Snowflake environment, whether in a SQL worksheet, or in an application. We're going to call this UDF from our application's front-end, so that we can make weather predictions for specific months.
 
@@ -338,7 +330,6 @@ With our model now deployed as a UDF, we can use easily use it within our Stream
 
 <!-- ------------------------ -->
 ## Creating the Streamlit Application in Snowflake
-Duration: 10
 
 Now that we've trained our ML model and created a UDF that allows us to easily use it, we'll build an interactive Streamlit application directly in Snowflake to make predictions about the weather in zip code 90210.
 
@@ -371,7 +362,6 @@ Great job! You successfully created the application.
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 5
 
 Congratulations! You've built a data application using data from Snowflake Marketplace. You used the data to train a linear regression model to predict weather in a zip code, and you created a Streamlit in Snowflake app that uses the model to make predictions for different months. Let's recap what you did. 
 

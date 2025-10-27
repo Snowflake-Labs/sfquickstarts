@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Learn How Alation Powers Data Intelligence on Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Does your organization have data intelligence? Can people easily find, understand, and trust data? If not, you’ll want to join this lab to learn how Alation ensures people have reliable and trustworthy data to make confident, data-driven decisions.
 
@@ -32,7 +31,6 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 
 <!-- ------------------------ -->
 ## Getting Your Snowflake Trial Account (Optional)
-Duration: 3
 
 - To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking Continue. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click: ``` Get Started ```
 
@@ -40,7 +38,6 @@ Duration: 3
 
 <!-- ------------------------ -->
 ## Getting your Alation Trial 
-Duration: 3
 **1. Access Partner Connect from your Snowflake trial account.**
 
 ![Step1](./assets/Section3-AlationTrial-Screen1.png)
@@ -87,7 +84,6 @@ Duration: 3
 
 <!-- ------------------------ -->
 ## Accessing the Lab
-Duration: 2
 
 In this Alation Data Intelligence Platform lab, you can expect to see how the platform helps to solve problems for roles ranging from business analysts to data engineers. Each section will have discussion points along with exercises to help reinforce each topic.
 
@@ -110,7 +106,6 @@ Let's get started with Chapter 01. Establishing a Governance Framework. Please c
 ![VHOL-Screen2](./assets/Section4-Access-Screen2.png)
 
 ## Establishing a Governance Framework
-Duration: 5
 
 **Overview**
 
@@ -130,7 +125,6 @@ To continue to the next section, click on the link in the highlighted box at the
 
 <!-- ------------------------ -->
 ## Identifying Policies
-Duration: 10
 
 **Overview**
 
@@ -148,7 +142,7 @@ In today's world of data management, it is common to have policies and procedure
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -177,7 +171,7 @@ In today's world of data management, it is common to have policies and procedure
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>
@@ -191,7 +185,6 @@ Now it is time to move on to Search and Discovery!
 
 <!-- ------------------------ -->
 ## Search & Discovery
-Duration: 10
 
 **Overview**
 
@@ -212,7 +205,7 @@ Alation creates an experience that allows users to expand their world of knowled
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -247,7 +240,7 @@ Alation creates an experience that allows users to expand their world of knowled
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>
@@ -260,7 +253,6 @@ Now it is time to move on to Compose, Alation's SQL editor!
 ![VHOL-Screen20](./assets/Section7-Search-screen7.png)
 <!-- ------------------------ -->
 ## Compose 
-Duration: 10
 
 **Overview**
 
@@ -283,7 +275,7 @@ Queries can be developed by those who know SQL and shared with others in the org
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -315,7 +307,7 @@ Queries and Compose are accessible from several places in the application. The f
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>
@@ -328,7 +320,6 @@ Now it is time to move onto Data Quality!
 ![VHOL-Screen26](./assets/Section8-Compose-Screen6.png)
 <!-- ------------------------ -->
 ## Data Quality
-Duration: 5
 
 **Overview**
 
@@ -351,7 +342,7 @@ When the stakes are high, especially when providing data for AI models, data qua
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/lightbulb.png" width="30" height="25"/></td>
+            <td>![./assets/lightbulb.png](./assets/lightbulb.png)</td>
             <td><b>Exercise Guidance</b></td>
         </tr>
     </tbody>
@@ -401,7 +392,7 @@ When the stakes are high, especially when providing data for AI models, data qua
     </thead>
     <tbody>
         <tr>
-            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td>![./assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
             <td><b>Benefits</b></td>
         </tr>
     </tbody>
@@ -415,7 +406,6 @@ Time to wrap this up with a quick Summary!
 
 <!-- ------------------------ -->
 ## Conclusion And Resources 
-Duration: 3
 
 You did it! In this short period, you have seen how Alation and Snowflake work together bringing the pillars of Horizon to life for data governance and data quality. Whether your working on data mondernization or AI readiness, Snowflake and Alation are the perfect combination.
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Iceberg Tables
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This guide is designed to help you understand the capabilities included in Snowflake’s support for Apache Iceberg. Iceberg Tables, now generally available, bring Snowflake’s easy platform management and great performance to data stored externally in the open source Apache Iceberg format.
 
@@ -34,7 +33,6 @@ This guide is designed to help you understand the capabilities included in Snowf
 
 <!-- ------------------------ -->
 ## Setup Your Environment
-Duration: 10
 
 ### Install Conda, Spark, DuckDB, Jupyter
 
@@ -102,7 +100,6 @@ This quickstart guide can be run from Snowflake Worksheets or Notebook. In this 
 
 <!-- ------------------------ -->
 ## Create an Iceberg Table
-Duration: 10
 
 ### Create an External Volume
 
@@ -210,7 +207,6 @@ GROUP BY 2;
 
 <!-- ------------------------ -->
 ## Governance on Iceberg Tables
-Duration: 7
 
 Governance and access controls work on Iceberg Tables just like internal tables. As described in the overview section, all of these features require Enterprise or Business Critical Edition of Snowflake.
 
@@ -338,7 +334,6 @@ And if you notice certain tables are missing tags or policies, you can modify, c
 
 <!-- ------------------------ -->
 ## Transform Iceberg Tables
-Duration: 5
 
 Raw data in Iceberg tables may require further cleaning, transformation, and aggregation for downstream consumption. Snowflake supports multiple options for building and orchestrating pipelines including:
 - [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/index): Build and run pipelines with Python, including [support for Iceberg](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameWriter.save_as_table).
@@ -453,7 +448,6 @@ For a deeper dive on Snowpark for data engineering pipelines, try [this quicksta
 
 <!-- ------------------------ -->
 ## Sharing Iceberg Tables
-Duration: 10
 
 Iceberg Tables can be securely shared with consumers either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
 
@@ -546,7 +540,6 @@ As changes are made to the Iceberg Table from the producer’s account, those ch
 
 <!-- ------------------------ -->
 ## Read with Other Engines
-Duration: 10
 
 Suppose other teams use use other engines such as Apache Spark or DuckDB to read the Snowflake-managed Iceberg tables. They can directly access data and metadata in object storage, all without using any Snowflake warehouses.
 
@@ -645,7 +638,6 @@ Now teams can use data stored in Snowflake using both Snowflake as well as DuckD
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 1
 
 To delete all of the objects created in this guide, you can drop the user, role, database, and warehouse.
 
@@ -665,7 +657,6 @@ DROP WAREHOUSE iceberg_lab;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations! You've successfully created an open data lakehouse on Snowflake with Iceberg.
 

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Transformação no Snowflake
-Duration: 1 <img src = "assets/transformation_header.png">
 
 ### Visão geral
 Damos as boas-vindas ao quickstart “Powered by Tasty Bytes: do zero ao Snowflake”, voltado para transformação!
@@ -36,7 +35,6 @@ Neste quickstart, apresentaremos várias funcionalidades do Snowflake, incluindo
 
 
 ## Criação de uma planilha e cópia no código SQL
-Duration: 1
 
 ### Visão geral
 Neste quickstart, vamos acompanhar a história da Tasty Bytes por meio de uma planilha SQL do Snowsight. Esta página servirá como um guia de referência completo com comentários adicionais, imagens e links para a documentação.
@@ -48,26 +46,26 @@ Nesta seção vamos mostrar como acessar o Snowflake, criar uma planilha nova, r
 
 ### Etapa 2 - Fazer login no Snowflake
 - Acesse sua conta Snowflake.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+    - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### Etapa 3 - Acessar as planilhas
 - Clique na guia Worksheets na barra de navegação à esquerda.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+    - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### Etapa 4 - Criar uma planilha
 - Dentro da guia Worksheets, clique no botão “+” no canto superior direito do Snowsight e escolha “SQL Worksheet”.
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+    - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### Etapa 5 - Renomear uma planilha
 - Renomeie a planilha clicando no carimbo de data/hora gerado automaticamente e digite “Tasty Bytes, transformação”.
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+    - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### Etapa 6 - Acessar o código SQL do quickstart no GitHub
 - Clique no botão abaixo para acessar o arquivo SQL da Tasty Bytes hospedado no GitHub. <button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_transformation.sql)</button>
 
 ### Etapa 7 - Copiar o Setup SQL do GitHub
 - No GitHub, navegue para a direita e clique em “Copy raw contents”. Todas as informações SQL necessárias serão copiadas para sua área de transferência.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Etapa 8 - Colar o Setup SQL do GitHub para a sua planilha do Snowflake
 - Volte para o Snowsight e sua planilha recém-criada e cole (*CMD + V no Mac ou CTRL + V no Windows*) o conteúdo copiado do GitHub.
@@ -75,7 +73,6 @@ Nesta seção vamos mostrar como acessar o Snowflake, criar uma planilha nova, r
 ### Etapa 9 - Clicar em Next -->
 
 ## Clonagem instantânea da tabela de produção para desenvolvimento
-Duration: 1
 
 ### Visão geral
 Como parte da análise da frota de caminhões da Tasty Bytes, nosso desenvolvedor recebeu a tarefa de adicionar uma coluna com a idade dos veículos à tabela de caminhões. 
@@ -93,7 +90,7 @@ USE ROLE tasty_dev;
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
     CLONE frostbyte_tasty_bytes.raw_pos.truck; 
 ``` 
-<img src ="assets/3.1.truck_dev_clone.png">
+![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
 > aside positive **Zero Copy Cloning**: cria uma cópia de um banco de dados, esquema ou tabela. Um instantâneo dos dados existentes no objeto original é criado junto ao clone e disponibilizado ao objeto clonado. O objeto clonado é editável e independente do original. Ou seja, as alterações feitas no original ou no clone são independentes. 
 >
@@ -101,7 +98,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ### Etapa 2 - Clicar em Next -->
 
 ## Teste do cache de conjunto de resultados do Snowflake
-Duration: 1
 
 ### Visão geral
 Com nosso clone Zero Copy disponível instantaneamente, podemos programar nele sem correr o risco de afetar a produção. Porém, antes de qualquer mudança, vamos executar algumas consultas simples e testar o cache de conjunto de resultados do Snowflake.
@@ -123,7 +119,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id; 
 ```
 
-<img src = "assets/4.1.truck.png">
+![assets/4.1.truck.png](assets/4.1.truck.png)
 
 ### Etapa 2 - Executar novamente a consulta
 Para testar o [cache de conjunto de resultados](https://docs.snowflake.com/pt/user-guide/querying-persisted-results) do Snowflake, a próxima consulta será igual à que acabamos de executar. Porém, agora vamos mais adiante e acessar o Query Profile, perfil que exibe os resultados dessa consulta instantaneamente conforme eles são enviados pelo cache de conjunto de resultados.
@@ -140,7 +136,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.2.1.truck.png"> <img src = "assets/4.2.2.cache.png">
+![assets/4.2.1.truck.png](assets/4.2.1.truck.png) ![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
 >aside positive Se um usuário repetir uma consulta que já tenha sido executada, e os dados na(s) tabela(s) não mudaram desde a última vez que a consulta foi executada, então o resultado da consulta será o mesmo. Em vez de executar a consulta novamente, o Snowflake simplesmente retorna o mesmo resultado de antes. 
 >         
@@ -150,7 +146,6 @@ ORDER BY t.truck_id;
 ### Etapa 3 - Clicar em Next -->
 
 ## Atualização de dados e cálculo da idade dos food trucks
-Duration: 1
 
 ### Visão geral
 Com base nos resultados acima, precisamos resolver o erro de digitação nos registros Ford_ observados na coluna `make`. Depois disso, vamos poder focar nos cálculos que indicarão a idade de cada veículo.
@@ -164,7 +159,7 @@ SET make = 'Ford'
 WHERE make = 'Ford_';
 ```
 
-<img src = "assets/5.1.ford_.png">
+![assets/5.1.ford_.png](assets/5.1.ford_.png)
 
 ### Etapa 2 - Criar um cálculo de idade
 Depois de resolver o erro de digitação, podemos calcular a idade em anos dos caminhões da nossa frota. Execute a próxima consulta, onde veremos a utilização de [YEAR](https://docs.snowflake.com/pt/sql-reference/functions/year) e [CURRENT_DATE](https://docs.snowflake.com/pt/sql-reference/functions/current_date) para auxiliar no cálculo.
@@ -179,12 +174,11 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
 
-<img src = "assets/5.2.age.png">
+![assets/5.2.age.png](assets/5.2.age.png)
 
 ### Etapa 3 - Clicar em Next -->
 
 ## Adição e atualização de uma coluna
-Duration: 1
 
 ### Visão geral
 Após calcular a idade dos caminhões em anos, vamos agora adicionar uma nova coluna na tabela clonada para ajudar, e encerrar atualizando essa coluna para refletir os valores calculados.
@@ -205,7 +199,7 @@ Com a coluna criada, podemos executar a próxima consulta, que vai atualizar com
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
     SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
 ``` 
-<img src = "assets/6.2.update.png">
+![assets/6.2.update.png](assets/6.2.update.png)
 
 ### Etapa 3 - Realizar uma consulta na nova coluna
 Após atualizar os dados, vamos consultar rapidamente a tabela para ver como está nossa coluna `truck_age`.
@@ -216,7 +210,7 @@ SELECT
     t.truck_age
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ``` 
-<img src = "assets/6.3.bad_data.png">
+![assets/6.3.bad_data.png](assets/6.3.bad_data.png)
 
 **Opa!** Ainda bem que somos desenvolvedores inteligentes e não fizemos nada disso às cegas em produção. 
 
@@ -225,7 +219,6 @@ Parece que erramos o cálculo de `truck_age` e fizemos uma divisão, em vez de u
 ### Etapa 4 - Clicar em Next -->
 
 ## Utilização do recurso Time Travel para recuperação de desastres em dados
-Duration: 1
 
 ### Visão geral
 Apesar do nosso erro, o Snowflake conta com muitos recursos que podem nos ajudar. O processo que aplicaremos vai usar o histórico de consultas, as variáveis SQL e o Time Travel para reverter a tabela `truck_dev` ao estágio anterior antes da instrução de atualização incorreta.
@@ -248,7 +241,7 @@ WHERE 1=1
     AND query_text LIKE '%frostbyte_tasty_bytes.raw_pos.truck_dev%'
 ORDER BY start_time DESC;
 ``` 
-<img src = "assets/7.1.query_history.png">
+![assets/7.1.query_history.png](assets/7.1.query_history.png)
 
 ### Etapa 2 - Configurar uma variável SQL
 Como esperado, vemos a correção do erro de digitação e o cálculo incorreto, bem como suas respectivas query_ids exclusivas. Execute a próxima consulta, que criará uma variável SQL `query_id` a ser usada para reverter as mudanças via Time-Travel na próxima etapa. 
@@ -276,7 +269,7 @@ SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev
 BEFORE(STATEMENT => $query_id); 
 
 ``` 
-<img src = "assets/7.3.time_travel.png">
+![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 Consulte a lista abaixo para ver demais opções de instruções Time-Travel disponíveis.
 >aside positive **AT:** a palavra-chave AT especifica que a solicitação inclui quaisquer alterações feitas por uma instrução ou transação com um carimbo de data/hora igual ao parâmetro especificado.
@@ -293,7 +286,6 @@ Consulte a lista abaixo para ver demais opções de instruções Time-Travel dis
 ### Etapa 4 - Clicar em Next -->
 
 ## Promoção do desenvolvimento para a produção
-Duration: 1
 
 ### Visão geral
 Com a tabela `truck_dev` de volta ao estado em que estava antes da instrução de atualização incorreta, podemos agora garantir que a coluna está atualizada corretamente. Daqui em diante, vamos promover a tabela com o cálculo correto para a produção e completar a tarefa recebida.
@@ -306,7 +298,7 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
 SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
 ```
 
-<img src = "assets/8.1.correct_update.png">
+![assets/8.1.correct_update.png](assets/8.1.correct_update.png)
 
 ### Etapa 2 - Trocar a tabela de desenvolvimento pela de produção
 Ao finalizar a tabela `truck_dev`, execute as duas consultas a seguir, onde assumiremos a função `sysadmin`, com mais privilégios. Já como `sysadmin`, a segunda consulta usa [ALTER TABLE... SWAP WITH](https://docs.snowflake.com/pt/sql-reference/sql/alter-table) para promover nossa tabela `truck_dev` para `truck`, e vice-versa.
@@ -332,12 +324,11 @@ FROM frostbyte_tasty_bytes.raw_pos.truck t W
 HERE t.make = 'Ford';
 ```
 
-<img src = "assets/8.3.validate_prod.png">
+![assets/8.3.validate_prod.png](assets/8.3.validate_prod.png)
 
 ### Etapa 4 - Clicar em Next -->
 
 ## Descarte e restauração de tabelas
-Duration: 1
 
 ### Visão geral
 Podemos afirmar, oficialmente, que nosso desenvolvedor completou sua tarefa. Com a coluna `truck_age` criada e usando o cálculo correto, o `sysadmin` pode eliminar a tabela remanescente e encerrar o dia.
@@ -349,7 +340,7 @@ Para remover a tabela do nosso banco de dados, execute a próxima consulta, que 
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.1.drop.png">
+![assets/9.1.drop.png](assets/9.1.drop.png)
 
 **Opa!** O conjunto de resultados mostra que até mesmo nosso `sysadmin` pode cometer erros. Sem querer, descartamos a tabela de produção `truck`, e não a de desenvolvimento, `truck_dev`! Felizmente, o Snowflake Time-Travel nos ajuda mais uma vez.
 
@@ -360,7 +351,7 @@ Aja rápido e execute a próxima consulta antes que os sistemas sejam afetados. 
 UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.2.undrop.png">
+![assets/9.2.undrop.png](assets/9.2.undrop.png)
 
 ### Etapa 3 - Descartar a tabela correta
 Agora, vamos terminar executando a consulta final e descartando corretamente a tabela `truck_dev`.
@@ -369,12 +360,11 @@ Agora, vamos terminar executando a consulta final e descartando corretamente a t
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ```
 
-<img src = "assets/9.3.correctdrop.png">
+![assets/9.3.correctdrop.png](assets/9.3.correctdrop.png)
 
 ### Etapa 4 - Clicar em Next -->
 
 ## Conclusão e próximas etapas
-Duration: 1
 
 ### Conclusão
 Ótimo trabalho! Você concluiu com sucesso o quickstart “Tasty Bytes: do zero ao Snowflake - transformação”. 

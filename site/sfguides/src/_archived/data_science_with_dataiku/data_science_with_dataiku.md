@@ -12,7 +12,6 @@ Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Lab Overview
 
-Duration: 1
 
 This Snowflake Quickstart introduces you to the basics of using Snowflake together with Dataiku Cloud as part of a Data Science project. We’ll be highlighting some of the well-integrated functionalities between the two cloud-based technologies. It is designed specifically for use with the [Snowflake free 30-day trial](https://trial.snowflake.com), and the Dataiku Cloud trial version via Snowflake’s Partner Connect. In addition, we’ll also take a look at Snowflake’s Data Marketplace and how 3rd party data sets from there can enrich and support your Data Science projects.
 
@@ -53,7 +52,6 @@ The exercises in this lab will walk you through the steps to:
 
 ## Prepare Your Lab Environment
 
-Duration: 5
 
 If you haven’t already, register for a  [Snowflake free 30-day trial](https://trial.snowflake.com?utm_source=Snowflake&utm_medium=labguide&utm_campaign=dataiku-vhol-download-free-trial-from-lab-guide).
 
@@ -78,7 +76,6 @@ Resize your browser window, so that you can view this guide and your web browser
 
 ## The Snowflake User Interface
 
-Duration: 10
 
 ### Logging Into the Snowflake User Interface (UI)
 
@@ -158,7 +155,6 @@ If you click on the top right of the UI where your username appears, you will se
 
 ## Prepare Dataiku Trial Account via Snowflake Partner Connect
 
-Duration: 10
 
 ### Create Dataiku trial via Partner Connect
 
@@ -285,7 +281,6 @@ You’ve now successfully set up your Dataiku trial account via Snowflake’s Pa
 
 ## Getting and Preparing COVID-19 Data from the Snowflake Marketplace
 
-Duration: 20
 
 > aside positive
 > 
@@ -528,7 +523,6 @@ Change the size of this data warehouse from X-Small to Medium. Then click the �
 
 ## Creating and Running a Dataiku Project
 
-Duration: 20
 
 For this module, we will login into the Dataiku hosted trial account and create a Dataiku project.
 
@@ -1090,7 +1084,6 @@ Congratulations! You have built and scored your model.
 
 ## Reviewing Dataiku Predictions in Snowflake
 
-Duration: 5
 
 Now we’re going to look at the Snowflake table where we’ve written the predictions.
 
@@ -1156,7 +1149,6 @@ Check that you can see a new table under the DATAIKU_TEST_DB database.  The deve
 
 ## Using Time Travel
 
-Duration: 5
 
 Snowflake’s Time Travel capability enables accessing historical data at any point within a pre-configurable period of time. The default period of time is 24 hours and with Snowflake Enterprise Edition it can be up to 90 days. Most data warehouses cannot offer this functionality; with Snowflake it is easy!
 
@@ -1336,7 +1328,6 @@ alter warehouse “PC_DATAIKU_WH” set warehouse_size = ‘XSMALL’;
 
 
 ## Conclusion & Next Steps
-Duration: 1
 
 This tutorial was designed as a hands-on introduction to Snowflake and Dataiku to simultaneously teach you how to use it, while showcasing some of its key capabilities.
 

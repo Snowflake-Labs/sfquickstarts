@@ -10,7 +10,6 @@ feedback link: https://github.com/RelationalAI/rai-samples/issues
 # Community Detection using RelationalAI
 
 ## Overview 
-Duration: 1
 
 In this quickstart, we'll use RelationalAI — a Native App available in the Snowflake Marketplace — to run community detection algorithms. The sample data represent food-truck orders, and we'll use them to identify groups of customers who probably know each other. This allows us to build a social graph and interact with groups of related customers.
 
@@ -49,7 +48,6 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 <!-- ------------------------ -->
 
 ## Set Up Your Environment
-Duration: 8
 
 In addition to your Snowflake account setup, follow the steps below to set up a local installation of Python with Jupyter Lab and the RelationalAI Python library.
 
@@ -76,7 +74,7 @@ After installing the `relationalai` package, you will need to set up a RAI confi
 
 Run `rai init` from your terminal and follow the prompts to enter your credentials and other configuration data:
 
-<img src="assets/rai_init.png" alt="RAI Init" width="800">
+![assets/rai_init.png](assets/rai_init.png)
 
 1. Choose `Snowflake` as your host platform.
 2. Select a profile from `~/.snowflake/connections.toml` if you have one, or enter your username, password, and Account ID otherwise. 
@@ -88,7 +86,6 @@ Run `rai init` from your terminal and follow the prompts to enter your credentia
 8. Press `Enter` to accept the default profile name of `default`.
 
 ## Run the Notebook in Jupyter Lab
-Duration: 15
 
 1. Start Jupyter Lab with the following command:
    
@@ -100,7 +97,7 @@ Duration: 15
 
 2. Open the `community-detection.ipynb` file in Jupyter lab. You should see the top of the notebook:
 
-<img src="assets/rai_notebook_1.png" alt="RAI Notebook 1" width="800">
+![assets/rai_notebook_1.png](assets/rai_notebook_1.png)
 
 3. If you don't already have a Snowflake table called `RAI_DEMO.TASTYBYTES.ORDERS`, scroll down to the Appendix and run the cells in that section to insert the data for this demo into your Snowflake account.
    
@@ -109,7 +106,6 @@ Duration: 15
 ---
 
 ## Conclusion & Resources
-Duration: 1
 
 Congratulations on completing the our Community Detection using RelationalAI guide! In this Quickstart you learned
 

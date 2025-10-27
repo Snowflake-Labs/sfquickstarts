@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Building Dynamic Tables in Snowflake with Coalesce
 <!-- ------------------------ -->
 ## Overview  
-Duration: 2
 
 Dynamic tables are a new table type offered by Snowflake that allow data teams to use SQL statements to declaratively define the results of data pipelines. Dynamic tables simplify the process of creating and managing data pipelines by streamlining data transformations without having to manage Streams and Tasks.
 
@@ -43,7 +42,6 @@ In this guide, you will build a small directed acyclic graph (DAG) in Coalesce u
 
 <!-- -------------------------->
 ## Before You Start
-Duration: 10 
 
 Complete the steps in this section to prepare your Coalesce environment. Please note that these steps assume you are using trial Snowflake and Coalesce accounts. If you are using pre-existing accounts, you will need to adjust your [Storage Locations and Mappings](https://docs.coalesce.io/docs/storage-locations) to use the sample Snowflake dataset as shown in this guide. 
 
@@ -136,7 +134,6 @@ Copy and run this [code](https://docs.google.com/document/d/1BMSSVw3uwpFo2KM_GI7
 <!-- -------------------------->
 ## Adding Data Sources
 
-Duration: 2
 
 1. Click back to your Browser tab and click the Nodes icon in the left sidebar. Click the + icon that appears next to the Search bar. Click **Add Sources** from the dropdown menu.
 
@@ -153,7 +150,6 @@ Duration: 2
 <!-- -------------------------->
 ## Creating Dynamic Table Nodes
 
-Duration: 5
 
 1. Select your `CUSTOMER`, `NATION` and `REGION` source nodes. Then right click and hover over **Join Nodes** and select **Dynamic Table Stage**. 
 
@@ -219,7 +215,6 @@ ON "ORDERS"."O_ORDERKEY" = "LINEITEM"."L_ORDERKEY"
 <!---------------------------->
 ## Joining Dynamic Table Nodes
 
-Duration: 5
 
 1. Click on the Browser tab to return to your graph. Select your two dynamic table nodes that you just created. To aggregate quantity of goods by customer, right click and hover over **Join Nodes** and then click on **Dynamic Table Stage** in the dropdown menu. 
 
@@ -267,7 +262,6 @@ Congratulations! You have built out a small DAG of dynamic table nodes.
 
 <!---------------------------->
 ## Running and Visualizing Your DAG
-Duration: 5 
 
 1. To run your nodes as a DAG in its entirety, select your preceding node `DT_ORDERS_LINEITEM` to open it. In the Config section, select the **Downstream** option and press the **Create** button. 
 
@@ -295,7 +289,6 @@ Duration: 5
 
 <!---------------------------->
 ## Preparing for Deployment (Optional)
-Duration: 5 
 
 To deploy your DAG to a non-development environment, you will first need to set up version control in Coalesce by connecting to a git repository.
 
@@ -365,7 +358,6 @@ Congratulations! You’ve set up your `QA` and `PROD` Environments and are now r
 
 <!---------------------------->
 ## Deploying Your DAG (Optional)
-Duration: 2
 
 1. To deploy your DAG to your `QA` Environment, switch over to the **Deploy** interface at the top of your screen:
 
@@ -389,7 +381,6 @@ Duration: 2
 
 <!---------------------------->
 ## Conclusion
-Duration: 1 
 
 Congratulations, you’ve completed this guide on creating dynamic table nodes in Snowflake using Coalesce. Continue with your free trial by loading your own sample or production data and exploring more of Coalesce's capabilities with our [documentation](https://docs.coalesce.io/docs) and [resources](https://coalesce.io/resources/).
 

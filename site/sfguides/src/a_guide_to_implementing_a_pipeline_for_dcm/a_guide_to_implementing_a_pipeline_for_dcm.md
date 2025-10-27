@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Implementing a Pipeline for Database Change Management
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this guide we will walkthrough how to use Snowflake Data Change Management feature as part of a pipeline.
 
@@ -39,7 +38,6 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 
 <!-- ------------------------ -->
 ## Metadata Configuration
-Duration: 2
 
 - **summary**: Implementing a Pipeline for Database Change Management
   - In this guide we will walkthrough how to use Snowflake Data Change Management feature as part of a pipeline.. 
@@ -286,7 +284,6 @@ INSERT INTO order_details VALUES
 ```
 
 ## Setup Github environment
-Duration: 15
 
 1) [Create a repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)
 2) Base64 encode the private key of the Snowflake Key pair    
@@ -652,7 +649,6 @@ git push origin setup_gold
 ![Git action on merge to main](assets/git_action_setup_gold_database.png)
 
 ## Develop and test in the sandbox env to create a dynamic table  
-Duration: 10
 
 1) Create dynamic table customer_dim
 
@@ -763,7 +759,6 @@ git push origin PROJ-002
 
 
 ## Push to gold environment
-Duration: 15
 
   + Make a PR from PROJ-001 to main branch. 
 

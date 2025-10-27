@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview 
-Duration: 8
 
 By completing this QuickStart guide, you will get to explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) (SPCS), currently in `Public Preview`, to deploy and fine-tune open source Llama 2 Large Language Model (LLM) from Hugging Face. ([Check SPCS availability](https://docs.snowflake.com/developer-guide/snowpark-container-services/overview#available-regions)).
 
@@ -50,7 +49,6 @@ For more information on these objects, check out [this blog](https://medium.com/
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 15
 
 **Step 1**. Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services). If you don't have Git installed, you can also download the repo as a .zip file.
 
@@ -63,7 +61,6 @@ Duration: 15
 
 <!-- ------------------------ -->
 ## Build, Tag and Push Docker Image
-Duration: 45
 
 In the cloned repo, you should see a [`Dockerfile`](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services/blob/main/Dockerfile) that looks like this:
 
@@ -180,7 +177,6 @@ If needed, make edits to the default names of the database, schema, and/or image
 
 <!-- ------------------------ -->
 ## Create LLM Service
-Duration: 5
 
 Once we have successfully pushed the Docker image and uploaded the spec YAML, we have all of the components we need in order to create our service. There are three components required to create the service: 
 
@@ -248,7 +244,6 @@ Copy the endpoint URL, and paste it in your browser. At this point, you will be 
 
 <!-- ------------------------ -->
 ## Deploy Llama 2 in SPCS
-Duration: 40
 
 > aside negative
 > NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.
@@ -369,7 +364,6 @@ Once the base model service is deleted, the only service running on your compute
 
 <!-- ------------------------ -->
 ## Fine-tune Llama 2 in SPCS
-Duration: 40
 
 In this section, we will continue working through the same **llm-notebook-with-fine-tune.ipynb** notebook where we left off in the previous **Deploy Llama 2 in SPCS** section.
 
@@ -485,7 +479,6 @@ Here's what the inference output looks like when the model is fine-tuned on the 
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 5
 
 To cleanup resources and remove all of the objects you created during this QuickStart, run the following commands in a SQL worksheet. This will ensure that you don't incur any unnecessary costs specifically associated with this QuickStart guide. 
 
@@ -508,7 +501,6 @@ DROP ROLE DASH_SPCS;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations, you have successfully completed this QuickStart! By completing this guide, you were able to create and manage long-running service using Snowflake's managed Snowpark Container Services to deploy and fine-tune open source Llama 2 LLM from Hugging Face.
 

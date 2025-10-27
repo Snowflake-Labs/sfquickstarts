@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Trasformazione in Snowflake
-Duration: 1 <img src = "assets/transformation_header.png">
 
 ### Panoramica
 Questo quickstart Powered by Tasty Bytes - Da zero a Snowflake è dedicato alla trasformazione.
@@ -37,7 +36,6 @@ In questo quickstart esamineremo un’ampia gamma di funzionalità di Snowflake,
 
 
 ## Creare un foglio di lavoro e copiare il codice SQL
-Duration: 1
 
 ### Panoramica
 In questo quickstart seguiremo la storia del cliente Tasty Bytes attraverso un foglio di lavoro SQL di Snowsight, utilizzando questa pagina come guida completa di commenti aggiuntivi, immagini e link alla documentazione.
@@ -49,26 +47,26 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
 
 ### Passaggio 2 - Effettuare l’accesso a Snowflake
 - Accedi al tuo account Snowflake.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+    - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### Passaggio 3 - Accedere ai fogli di lavoro
 - Fai clic sulla scheda Worksheets nella barra di navigazione sulla sinistra.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+    - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### Passaggio 4 - Creare un foglio di lavoro
 - Nella scheda Worksheets, fai clic sul pulsante “+” nell’angolo superiore destro di Snowsight e scegli “SQL Worksheet”
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+    - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### Passaggio 5 - Rinominare un foglio di lavoro
 - Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Transformation”.
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+    - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### Passaggio 6 - Accedere al codice SQL di questo quickstart in GitHub
 - Fai clic sul pulsante qui sotto, che ti porterà al file SQL di Tasty Bytes archiviato su GitHub. <button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_transformation.sql)</button>
 
 ### Passaggio 7 - Copiare la configurazione SQL da GitHub
 - In GitHub, vai sul lato destro e fai clic su “Copy raw contents”. Tutto il codice SQL necessario verrà copiato nei tuoi Appunti.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Passaggio 8 - Incollare la configurazione SQL da GitHub nel tuo foglio di lavoro Snowflake
 - Torna a Snowsight e al foglio di lavoro che hai appena creato e incolla (*CMD + V per Mac o CTRL + V per Windows*) il codice che abbiamo appena copiato da GitHub.
@@ -76,7 +74,6 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
 ### Passaggio 9 - Fai clic su Next -->
 
 ## Clonare istantaneamente una tabella di produzione per lo sviluppo
-Duration: 1
 
 ### Panoramica
 Nel quadro dell’analisi della flotta di food truck di Tasty Bytes, il nostro sviluppatore è stato incaricato di aggiungere alla tabella dei furgoni una colonna calcolata con l’età dei veicoli. 
@@ -94,7 +91,7 @@ USE ROLE tasty_dev;
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
     CLONE frostbyte_tasty_bytes.raw_pos.truck; 
 ``` 
-<img src ="assets/3.1.truck_dev_clone.png">
+![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
 > aside positive
 **Zero-Copy Cloning**: crea una copia di un database, di uno schema o di una tabella. Al momento della creazione del clone viene creato uno snapshot dei dati contenuti nell’oggetto sorgente, che viene messo a disposizione dell’oggetto clonato. L’oggetto clonato è scrivibile ed è indipendente dalla sorgente del clone. In altri termini, le modifiche apportate all’oggetto sorgente non si riflettono sull’oggetto clone e viceversa. 
@@ -103,7 +100,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ### Passaggio 2 - Fai clic su Next -->
 
 ## Testare la cache dei set di risultati di Snowflake
-Duration: 1
 
 ### Panoramica
 Con il nostro clone Zero-Copy istantaneamente disponibile, possiamo iniziare a utilizzarlo per sviluppare senza temere ripercussioni sull’ambiente di produzione. Tuttavia, prima di apportare qualsiasi modifica, eseguiamo alcune semplici query sul clone per testare la cache dei set di risultati di Snowflake.
@@ -125,7 +121,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id; 
 ```
 
-<img src = "assets/4.1.truck.png">
+![assets/4.1.truck.png](assets/4.1.truck.png)
 
 ### Passaggio 2 - Ripetere la query
 Per testare la [cache dei set di risultati](https://docs.snowflake.com/en/user-guide/querying-persisted-results) di Snowflake, la nostra prossima query sarà identica a quella appena eseguita. Tuttavia, questa volta accederemo anche a Query Profile per evidenziare il fatto che ha restituito i risultati istantaneamente, poiché provenivano dalla cache dei set di risultati.
@@ -142,7 +138,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.2.1.truck.png"> <img src = "assets/4.2.2.cache.png">
+![assets/4.2.1.truck.png](assets/4.2.1.truck.png) ![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
 >aside positive
 Se un utente ripete una query che è già stata eseguita e i dati nelle tabelle non sono cambiati dall’ultima esecuzione della query, il risultato della query è lo stesso. Invece di eseguire nuovamente la query, Snowflake restituisce semplicemente lo stesso risultato fornito in precedenza. 
@@ -153,7 +149,6 @@ Se un utente ripete una query che è già stata eseguita e i dati nelle tabelle 
 ### Passaggio 3 - Fai clic su Next -->
 
 ## Aggiornare i dati e calcolare l’età dei food truck
-Duration: 1
 
 ### Panoramica
 In base all’output ottenuto sopra, per prima cosa dobbiamo correggere l’errore di battitura nei record Ford_ che abbiamo visto nella colonna `make`. Poi potremo iniziare a lavorare sul calcolo che ci fornirà l’età di ogni furgone.
@@ -167,7 +162,7 @@ SET make = 'Ford'
 WHERE make = 'Ford_';
 ```
 
-<img src = "assets/5.1.ford_.png">
+![assets/5.1.ford_.png](assets/5.1.ford_.png)
 
 ### Passaggio 2 - Creare il calcolo dell’età
 Ora che abbiamo corretto l’errore di battitura, possiamo calcolare l’età in anni dei furgoni della nostra flotta. Esegui la prossima query, dove utilizzeremo [YEAR](https://docs.snowflake.com/en/sql-reference/functions/year) e [CURRENT_DATE](https://docs.snowflake.com/en/sql-reference/functions/current_date) per calcolare questo valore.
@@ -182,12 +177,11 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
 
-<img src = "assets/5.2.age.png">
+![assets/5.2.age.png](assets/5.2.age.png)
 
 ### Passaggio 3 - Fai clic su Next -->
 
 ## Aggiungere una colonna e aggiornarla
-Duration: 1
 
 ### Panoramica
 Ora che abbiamo completato il calcolo dell’età dei furgoni in anni, aggiungiamo una nuova colonna alla tabella clonata per supportarlo e quindi aggiorniamo la colonna per riflettere i valori calcolati.
@@ -208,7 +202,7 @@ Dopo avere creato la colonna, possiamo avviare la prossima query che aggiornerà
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
     SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
 ``` 
-<img src = "assets/6.2.update.png">
+![assets/6.2.update.png](assets/6.2.update.png)
 
 ### Passaggio 3 - Eseguire una query sulla nuova colonna
 Dopo avere aggiornato i dati, eseguiamo una query rapida sulla tabella per vedere i risultati nella nuova colonna `truck_age`. 
@@ -219,7 +213,7 @@ SELECT
     t.truck_age
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ``` 
-<img src = "assets/6.3.bad_data.png">
+![assets/6.3.bad_data.png](assets/6.3.bad_data.png)
 
 **Ahi ahi!** Per fortuna siamo sviluppatori intelligenti e non abbiamo rischiato di fare una cosa di questo genere in produzione. 
 
@@ -228,7 +222,6 @@ Evidentemente abbiamo sbagliato il calcolo di `truck_age` inserendo una division
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Utilizzare Time Travel per il disaster recovery dei dati
-Duration: 1
 
 ### Panoramica
 Anche se abbiamo fatto un errore, Snowflake offre molte funzionalità che possono aiutarci a salvare la situazione. In questo processo utilizzeremo Query History, le variabili SQL e Time Travel per ripristinare la tabella `truck_dev` allo stato in cui si trovava prima di quell’istruzione pdate errata.
@@ -252,7 +245,7 @@ WHERE 1=1
     AND query_text LIKE '%frostbyte_tasty_bytes.raw_pos.truck_dev%'
 ORDER BY start_time DESC;
 ``` 
-<img src = "assets/7.1.query_history.png">
+![assets/7.1.query_history.png](assets/7.1.query_history.png)
 
 ### Passaggio 2 - Impostare una variabile SQL
 Come previsto, vediamo la correzione dell’errore di battitura e l’aggiornamento del calcolo errato, accompagnati dai rispettivi query_id univoci. Esegui la prossima query, che crea una variabile SQL `query_id` che utilizzeremo per ripristinare le modifiche mediante Time Travel nel prossimo passaggio. 
@@ -279,7 +272,7 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev 
 BEFORE(STATEMENT => $query_id); 
 ``` 
-<img src = "assets/7.3.time_travel.png">
+![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 Di seguito sono riportate le altre opzioni disponibili per le istruzioni Time Travel.
 >aside positive
@@ -297,7 +290,6 @@ Di seguito sono riportate le altre opzioni disponibili per le istruzioni Time Tr
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Promuovere da sviluppo a produzione
-Duration: 1
 
 ### Panoramica
 Ora che la tabella `truck_dev` è tornata allo stato in cui si trovava prima della nostra istruzione di aggiornamento errata, possiamo assicurarci che la colonna venga aggiornata correttamente. Poi promuoveremo la tabella con il calcolo corretto in produzione per completare il compito che ci è stato assegnato.
@@ -310,7 +302,7 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
 SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
 ```
 
-<img src = "assets/8.1.correct_update.png">
+![assets/8.1.correct_update.png](assets/8.1.correct_update.png)
 
 ### Passaggio 2 - Scambiare la tabella dall’ambiente di sviluppo a quello di produzione
 Ora che abbiamo completato tutte le operazioni in `truck_dev`, esegui le prossime due query, in cui per prima cosa assumiamo il ruolo `sysadmin`, con privilegi più elevati. Come `sysadmin`, la seconda query utilizza [ALTER TABLE… SWAP WITH](https://docs.snowflake.com/en/sql-reference/sql/alter-table) per promuovere la tabella `truck_dev` a `truck` e viceversa.
@@ -336,12 +328,11 @@ FROM frostbyte_tasty_bytes.raw_pos.truck t
 WHERE t.make = 'Ford';
 ```
 
-<img src = "assets/8.3.validate_prod.png">
+![assets/8.3.validate_prod.png](assets/8.3.validate_prod.png)
 
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Fare il drop e l’undrop di tabelle
-Duration: 1
 
 ### Panoramica
 Possiamo dire ufficialmente che il nostro sviluppatore ha completato il compito che gli era stato assegnato. Ora che la colonna `truck_age` è stata creata e calcolata correttamente, il nostro `sysadmin` può eliminare la tabella superflua e consegnare il suo lavoro.
@@ -353,7 +344,7 @@ Per rimuovere la tabella dal database, esegui la prossima query, che utilizza [D
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.1.drop.png">
+![assets/9.1.drop.png](assets/9.1.drop.png)
 
 **Ahi ahi!** Quel set di risultati dimostra che anche il nostro `sysadmin` può fare errori. Abbiamo rimosso per errore la tabella di produzione `truck` e non la tabella di sviluppo `truck_dev`! Per fortuna, la funzionalità Time Travel di Snowflake può di nuovo venire in nostro aiuto.
 
@@ -364,7 +355,7 @@ Prima che altri sistemi possano risentirne, esegui al più presto la prossima qu
 UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.2.undrop.png">
+![assets/9.2.undrop.png](assets/9.2.undrop.png)
 
 ### Passaggio 3 - Fare il drop della tabella giusta
 Va bene, ora completiamo ufficialmente il lavoro eseguendo l’ultima query per fare il drop della tabella corretta `truck_dev`.
@@ -373,12 +364,11 @@ Va bene, ora completiamo ufficialmente il lavoro eseguendo l’ultima query per 
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ```
 
-<img src = "assets/9.3.correctdrop.png">
+![assets/9.3.correctdrop.png](assets/9.3.correctdrop.png)
 
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Conclusione e fasi successive
-Duration: 1
 
 ### Conclusione
 Ottimo lavoro! Hai completato il quickstart Tasty Bytes - Da zero a Snowflake - Trasformazione. 

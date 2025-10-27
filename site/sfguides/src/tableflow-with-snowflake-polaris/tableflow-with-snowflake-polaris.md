@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 5
 
 In this quickstart, you’ll build a real-time data pipeline that connects Apache Kafka with Snowflake, without writing a single custom connector or ETL job. Using Confluent Cloud, Kafka, and Tableflow, you’ll stream simulated data into Kafka topics, automatically materialize that data into Apache Iceberg tables on Amazon S3, and expose those tables directly to Snowflake’s Open Data Catalog.
 
@@ -77,7 +76,6 @@ By the end of this quickstart, you’ll have:
 <!-- ------------------------ -->
 
 ## Create an environment and Kafka cluster within your Confluent Cloud Account
-Duration: 5
 
 In Confluent Cloud, we need to create a Kafka cluster to run our Tableflow examples. This Kakfa cluster will be automatically sized and provisioned with a few clicks. This will allow us to stream our datasets for further work with Tableflow. 
 
@@ -117,7 +115,6 @@ In order to create a Kafka cluster, we need to first create an environment which
 
 ## Getting Started with Tableflow
 
-Duration: 30
 
 Tableflow simplifies the traditionally complex process of moving data from Kafka topics to data lakes or warehouses. It allows users to materialize Kafka topics and schemas into Apache Iceberg or Delta Lake tables within a few clicks, leveraging Confluent’s Schema Registry for schema management and evolution. This eliminates manual data mappings and streamlines the data ingestion pipeline. Tableflow also continuously compacts Parquet files for improved read performance and offers integrations with popular catalog services. By unifying streaming and batch processing, Tableflow enables real-time data availability in the data lakehouse and simplifies stream processing jobs.
 
@@ -342,7 +339,6 @@ Return to the Topics Confluent menu (Environments \> Your Environment \> Your Ka
 <!-- ------------------------ -->
 
 ## Create an Open Catalog Account on Snowflake
-Duration: 10
 
 If you do not already have Open Catalog Account set up on Snowflake, you can create one from the Snowflake homepage:
 
@@ -491,7 +487,6 @@ You are now ready to add your External Provider to Tableflow.
 <!-- ------------------------ -->
 
 ## Add Snowflake as External Provider to Tableflow
-Duration: 5
 
 - Navigate back to your Tableflow console on Confluent Cloud  
 - On the bottom of the page, you will see the External Catalog Integration. Within this sub-menu, click **\+ Add Integration**. 
@@ -533,7 +528,6 @@ After a few moments, you should see the External Catalog integration you have ju
 <!-- ------------------------ -->
 ## Query Iceberg Tables via Snowflake
 
-Duration: 10
 
 Now that we’ve got our Snowflake Open Catalog set up receiving data from our Kafka topics, we can now see the full end-to-end integration by referencing our Snowflake Open Catalog within our Snowflake environment.
 
@@ -775,7 +769,6 @@ These query results should update periodically when run again, showcasing that w
 <!-- ------------------------ -->
 
 ## Optional: Automatic Anomaly Detection with Apache Flink
-Duration: 10
 
 While your data is flowing from Kafka to Snowflake via Tableflow, you may want to enrich or flag certain records *before* they land in the data lake. This is where **Apache Flink** comes in.
 
@@ -866,7 +859,6 @@ This optional step shows how real-time intelligence fits naturally into a stream
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 You’ve now built a complete real-time data pipeline, from ingestion to insight, using Confluent Cloud, Tableflow, Apache Flink, and Snowflake.
 
@@ -887,7 +879,6 @@ This architecture is modular, cloud-native, and scalable giving you a flexible f
 * [Apache Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 
 ## Cleanup
-Duration: 5
 
 Once you’ve completed the lab (or if you’re done experimenting), it’s a good idea to clean up the cloud resources to avoid incurring unnecessary costs and to keep your environment tidy.
 

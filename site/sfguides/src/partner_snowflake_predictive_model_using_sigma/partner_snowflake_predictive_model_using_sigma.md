@@ -13,7 +13,6 @@ lastUpdated: 2024-07-09
 <!-- The above name is what appears on the website and is searchable. -->
 
 ## Overview 
-Duration: 1 
 
 This QuickStart will guide you through an end-to-end example of utilizing Snowflake's new machine learning features. 
 
@@ -85,7 +84,7 @@ GRANT ALL ON SCHEMA SIGMA_INTERNAL.WRITEBACK TO ROLE PC_SIGMA_ROLE;
 
 <button>[Download Snowflake Notebook](https://sigma-quickstarts-main.s3.us-west-1.amazonaws.com/notebooks/notebook_app.ipynb)</button>
 
-<img src="assets/pm1.png" width="800"/>
+![assets/pm1.png](assets/pm1.png)
 
 Upon import, Snowflake will prompt you for a database and schema to be used in the notebook. You can use any database/schema that the Sigma Service Role has access to.
 
@@ -100,7 +99,6 @@ Upon import, Snowflake will prompt you for a database and schema to be used in t
 <!-- END OF SECTION-->
 
 ## Setup
-Duration: 20
 
 We're starting from scratch with a blank Sigma workbook. I'll first load our sales data from Snowflake. If you have sales data in Snowflake, we can directly connect to it from Sigma. In this case, we don’t have that data in Snowflake, so we’ll need to upload it. Fortunately, that’s easy to do in Sigma. Let's upload a CSV file of shift sales from the city of Seattle.
 
@@ -111,38 +109,37 @@ We're starting from scratch with a blank Sigma workbook. I'll first load our sal
 
 2: From the Sigma home page click the "Create New" button in the top left corner and select "Workbook". 
 
-<img src="assets/ml1.png" width="800"/>
+![assets/ml1.png](assets/ml1.png)
 
 3: Now that you are in the Workbook, let's start by saving it with the name "ML Shift Sales" by clicking "Save As" in the top right. 
 
-<img src="assets/ml3.png" width="600"/>
+![assets/ml3.png](assets/ml3.png)
 
 4: Add a new table, and then select Upload CSV as an option  
 
-<img src="assets/ml4.png" width="800"/>
+![assets/ml4.png](assets/ml4.png)
 
 5: Make sure your instance is selected in the connection dropdown (NOT the Sigma Sample Database), and then drag your downloaded file into the upload area and then press save in the upper right to upload the table to your Snowflake instance and view the table in your sigma workbook. 
 
 
-<img src="assets/ml5.png" width="800"/>
+![assets/ml5.png](assets/ml5.png)
 
 ![Footer](assets/sigma_footer.png)
 <!-- END OF SECTION-->
 
 ## Sigma Data Exploration
-Duration: 20
 
 1: Shift sales will be of primary importance for this QuickStart, so let’s adjust adjust its format to `currency` at the start of our analysis. Select the `Shift Sales` column, and use the buttons next to the formula bar to adjust the format:
 
-<img src="assets/ml6.png" width="800"/>
+![assets/ml6.png](assets/ml6.png)
 
 2: We don’t know what variables impact sales, but it’s a safe bet to start with time having some kind of impact. Let’s make a visual to explore this. Create a `Child element` visual: 
 
-<img src="assets/ml7.png" width="600"/>
+![assets/ml7.png](assets/ml7.png)
 
 Drag `Date` and `Shift Sales` columns to the `X` and `Y axis`, respectively:
 
-<img src="assets/ml8.png" width="600"/>
+![assets/ml8.png](assets/ml8.png)
 
 
 3: We can see that Sigma automatically aggregates our data to the `Day level` and applies a `Sum`. 
@@ -151,7 +148,7 @@ Lets adjust this to a monthly aggregation to "quiet out" some of the noise.
 
 You can adjust the formula directly in the formula bar:
 
-<img src="assets/ml9.png" width="800"/>
+![assets/ml9.png](assets/ml9.png)
 
 
 4: We can see the seasonality of the sales around each January, and we can isolate this further to confirm that suspicion. 
@@ -159,7 +156,7 @@ You can adjust the formula directly in the formula bar:
 
 We will switch the formula to a [datepart() function](https://help.sigmacomputing.com/docs/datepart), and see that the first 3 months do indeed have the highest sales:
 
-<img src="assets/ml10.png" width="800"/>
+![assets/ml10.png](assets/ml10.png)
 
 
 5: The second factor that we think may play a role in the sales is the shift that the sales took place in. 
@@ -167,7 +164,7 @@ We will switch the formula to a [datepart() function](https://help.sigmacomputin
 
 We can easily add that to our visual, and then switch to a “No Stacking” bar chart, to see the differences between AM and PM shifts:
 
-<img src="assets/ml11.png" width="800"/>
+![assets/ml11.png](assets/ml11.png)
 
 
 6: The third factor that we think may play a role is the weekday that the sales took place on. This is a very similar question to our monthly analysis. 
@@ -175,41 +172,40 @@ We can easily add that to our visual, and then switch to a “No Stacking” bar
 
 We can duplicate the table:
 
-<img src="assets/ml12.png" width="600"/>
+![assets/ml12.png](assets/ml12.png)
 
 Drag it next to our first chart: 
  
-<img src="assets/ml13.png" width="800"/>
+![assets/ml13.png](assets/ml13.png)
 
 And then adjust the `DatePart() function` to use `weekday`.
 
 Just like in the months, we can see that certain weekdays definitely return greater sales:
 
-<img src="assets/ml14.png" width="800"/>
+![assets/ml14.png](assets/ml14.png)
 
 ![Footer](assets/sigma_footer.png)
 <!-- END OF SECTION-->
 
 ## Create a Dataset for Modeling
-Duration: 20
 
 
 Now that we have identified Month Number, Weekday, and Shift as potential predictors for shift sales, let’s prepare a dataset with these variables for our data scientist. In Sigma, this may be something that a data scientist does in the existing workbook, or the analyst can prepare it with guidance. There is lots of room for collaboration through [live edit](https://help.sigmacomputing.com/docs/workbook-collaboration-with-live-edit) and our [comment feature.](https://help.sigmacomputing.com/docs/workbook-comments)
 
 1: Create a child table of our shift sales table and drag it to the bottom of our workbook:
 
-<img src="assets/ml15.png" width="800"/>
+![assets/ml15.png](assets/ml15.png)
 
 2: For our training set, we want the data to be filtered before a certain date so that we can then assess shifts after that date in the test set. 
 
 
 We right click the `Date` column, and then `filter`:
 
-<img src="assets/ml16.png" width="800"/>
+![assets/ml16.png](assets/ml16.png)
 
 Set the filter to `Between` the dates `1/1/2020 and 12/31/2022`, to get 3 years of training data:
 
-<img src="assets/ml17.png" width="800"/>
+![assets/ml17.png](assets/ml17.png)
 
 Then, rename this table to `Train` by double-clicking the title, to edit it.
 
@@ -219,7 +215,7 @@ Then, rename this table to `Train` by double-clicking the title, to edit it.
 
 Add a column: 
 
-<img src="assets/ml18.png" width="800"/>
+![assets/ml18.png](assets/ml18.png)
 
 Define it as `DatePart(“month”, [Date])`, so that we get the month number.
 
@@ -229,7 +225,7 @@ Define it as `DatePart(“month”, [Date])`, so that we get the month number.
 
 `Duplicate` the column and then change `month` to `weekday` in the formula:
 
-<img src="assets/ml19.png" width="800"/>
+![assets/ml19.png](assets/ml19.png)
 
 
 5: Finally, your data scientist may want you to encode categorical data into numerical values. 
@@ -239,7 +235,7 @@ We can easily do this with Sigma using a formula definition.
 
 Add a new column, define it's function as `If([Shift] = "AM", 1, 0)`, and then rename it to `Encoded Shift`.: 
 
-<img src="assets/ml20.png" width="800"/>
+![assets/ml20.png](assets/ml20.png)
 
 
 6: Now, we need to repeat all the steps to make a Test table....**Just kidding!!**
@@ -247,19 +243,19 @@ Add a new column, define it's function as `If([Shift] = "AM", 1, 0)`, and then r
 
 All we need to do is `duplicate` the table: 
 
-<img src="assets/ml21.png" width="800"/>
+![assets/ml21.png](assets/ml21.png)
 
 Adjust the `date filter` so that it gives us values `on or after 1/1/2023`, and then rename the new table to `Test`:
 
-<img src="assets/ml22.png" width="800"/>
+![assets/ml22.png](assets/ml22.png)
 
 7: Finally, we can make all this work available in your Snowflake Write-back schema by creating a warehouse view from the Train table. 
 
 We recommend calling it `Train`, but you can name it anything you’d like:
 
-<img src="assets/ml23.png" width="800"/><br>
+![assets/ml23.png](assets/ml23.png)<br>
 
-<img src="assets/ml24.png" width="600"/>
+![assets/ml24.png](assets/ml24.png)
  
 <aside class="negative">
 <strong>NOTE:</strong><br> Note that this will get us a fully qualified name that our data scientist can use in their programming.
@@ -273,7 +269,6 @@ We recommend calling it `Train`, but you can name it anything you’d like:
 <!-- END OF SECTION-->
 
 ## Snowflake Programming
-Duration: 20
 
 We can now let our data scientist know that TASTY_BITES_TRAIN is ready for them to train their model on Month, Weekday, and Shift. The Data Scientist can now begin their work in the Snowflake Notebook that was downloaded in the beginning section of this hands on lab.
 
@@ -366,7 +361,6 @@ session.sql("GRANT USAGE ON ALL MODELS IN SCHEMA SE_DEMO_DB.ML_REGISTRY TO ROLE 
 <!-- END OF SECTION-->
 
 ## Using the Model in Sigma
-Duration: 5
 
 We’ll now show how we can apply that trained model in sigma, and look at an example application of that method. 
 
@@ -383,14 +377,14 @@ You should see an error about argument types, as we haven’t provided any input
 <strong>IMPORTANT:</strong><br> Make sure you have given usage to the model as described in Section 5. Visual Studio Code Programming, Step 6.
 </aside>
 
-<img src="assets/ml25.png" width="800"/>
+![assets/ml25.png](assets/ml25.png)
 
 3: Now let’s add the arguments. These should be provided in the same order as in your code: 
 `MONTH_OF_DATE`, `WEEKDAY_OF_DATE`, `ENCODED_SHIFT`. 
 
 Voila, you should now see a JSON output in this column. 
 
-<img src="assets/ml26.png" width="800"/>
+![assets/ml26.png](assets/ml26.png)
 
 4: Finally, we can now extract the prediction from the column. Sigma [reads JSON right out of the box](https://help.sigmacomputing.com/docs/json), so we can just right click and extract the columns. 
 
@@ -398,11 +392,11 @@ For linear regression, there is only one output, `PRED_SHIFT_SALES`, that we car
 
 Confirm your selection, and we have our final prediction that directly runs the model we defined in Snowflake:
 
-<img src="assets/ml27.png" width="800"/>
+![assets/ml27.png](assets/ml27.png)
 
 <br>
 
-<img src="assets/ml28.png" width="800"/>
+![assets/ml28.png](assets/ml28.png)
 
 5: Now, if we combine the steps of the prediction above, we end up with a final syntax that looks something like this:
 ```code
@@ -413,29 +407,29 @@ That’s quite a mouthful, and it is clearly unrealistic to expect later busines
 
 Open up your `Admin Panel` to access the custom functions:
 
-<img src="assets/ml29.png" width="800"/>
+![assets/ml29.png](assets/ml29.png)
 
 6: Currently, `Custom Functions` are located on the bottom of our `Admin Panel`. 
 
 Scroll down to the bottom of the page, and then select `Add`:
 
-<img src="assets/ml30.png" width="800"/>
+![assets/ml30.png](assets/ml30.png)
 
 7: We can paste the formula from Step 5 into the formula box, and then update to your own model location. 
 
 We can then give the Custom Function an easy-to-find name, `PredictShiftSales` - and let our users know what it does:
 
-<img src="assets/ml31.png" width="800"/>
+![assets/ml31.png](assets/ml31.png)
 
 8: Now, we can define the arguments, again using User-Friendly variable names and descriptions. You don’t need the descriptions, but they are a great way to explain and specify what users should enter here. 
 
 For this QuickStart, you can just use the names `Month Number`, `Weekday Number` and `Shift Number` and save the descriptions for later:
 
-<img src="assets/ml32.png" width="800"/>
+![assets/ml32.png](assets/ml32.png)
 
 9: Once we update the formula bar to use these new friendly names, making sure to maintain the order of the arguments, we can save the Custom Function and it will now be available in our workbook:
 
-<img src="assets/ml33.png" width="800"/>
+![assets/ml33.png](assets/ml33.png)
 
 10: Go back to the `ML Shift Sales` workbook and add a `new column` to our `Deploy Model` table. 
 
@@ -443,13 +437,12 @@ You’ll be able to now run the exact same ML model by entering in `PredictShift
 
 This simple format for calling the model will make your Model far more accessible to the end users who stand to benefit from it:
 
-<img src="assets/ml34.png" width="800"/>
+![assets/ml34.png](assets/ml34.png)
 
 ![Footer](assets/sigma_footer.png)
 <!-- END OF SECTION-->
 
 ## Extended Applications
-Duration: 5
 
 This section documents examples of how different personas can benefit from deployed ML functions.
 
@@ -457,21 +450,21 @@ This section documents examples of how different personas can benefit from deplo
 **1: Business Ops: Scoring new data through Input tables:**<br>
 It’s very common for organizations to have operational steps outside the CDW, in the format of Excel or Google Sheets files. Incorporating those files into a Machine Learning framework has historically involved a fair amount of friction. In Sigma, we can do it very simply using an input table. The input table allows us to paste the values from a Google Sheets table, and then transform the variables for the model, and apply the model all in one step:
 
-<img src="assets/ml35.png" width="800"/>
+![assets/ml35.png](assets/ml35.png)
 
 Our Business Op persona can then quickly identify the shifts with the most predicted earnings and allocate more resources to those shifts! In this example, we use a RankPercentile function to find the top and bottom 10% predicted shifts, and mark those for Boosting and Dropping, respectively ml36.png
 
 **2: Data Apps: Scoring a specific shift:**<br>
 Suppose you want to build your manager a tool that allows them to know whether a specific shift is expected to perform well or not. We can build that Data App in seconds in Sigma. In our example, we create two controls for the date and the shift. We can then handle the transformation within a Dynamic Text Element, such that the control is properly formatted for the Model Call. As a result, we get a ready-made Scoring App, where any business user can tweak what day or shift they want to get the prediction for:
 
-<img src="assets/ml37.png" width="800"/>
+![assets/ml37.png](assets/ml37.png)
 
 **3: Data Science: Reviewing the quality of a model:**<br>
 Sigma can also be an excellent place to check the accuracy and performance of an ML model. In this example, we run the Custom Function against our Test Set and compare the output against the actual observed shift sales we saw for that day. We can create a new column, `Residual`, that measures the difference between the observed and predicted value.
 
 Then, the residuals can be plotted to see if the predictive power of our model is sufficient for our use case, or if further refinements in Snowpark or EDA are needed. Because Sigma is so flexible in the calculations and groupings we can apply, customers use Sigma for all sorts of statistical applications, including Power Analyses, Confusion Matrices, and Lift, ROC, and Gain charts:
 
-<img src="assets/ml38.png" width="800"/>
+![assets/ml38.png](assets/ml38.png)
 
 ![Footer](assets/sigma_footer.png)
 <!-- END OF SECTION-->
@@ -479,7 +472,6 @@ Then, the residuals can be plotted to see if the predictive power of our model i
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 3
 
 Congratulations! You've successfully built a training dataset, trained a model, and exposed it in a easy to use medium through a Sigma front end. This exercise is just scratching the surface of what is possible with Snowflake, Snowpark, and Sigma.
 
@@ -501,9 +493,9 @@ Congratulations! You've successfully built a training dataset, trained a model, 
 Be sure to check out all the latest developments at [Sigma's First Friday Feature page!](https://quickstarts.sigmacomputing.com/firstfridayfeatures/)
 <br>
 
-[<img src="./assets/twitter.png" width="75"/>](https://twitter.com/sigmacomputing)&emsp;
-[<img src="./assets/linkedin.png" width="75"/>](https://www.linkedin.com/company/sigmacomputing)&emsp;
-[<img src="./assets/facebook.png" width="75"/>](https://www.facebook.com/sigmacomputing)
+[![./assets/twitter.png](./assets/twitter.png)](https://twitter.com/sigmacomputing)&emsp;
+[![./assets/linkedin.png](./assets/linkedin.png)](https://www.linkedin.com/company/sigmacomputing)&emsp;
+[![./assets/facebook.png](./assets/facebook.png)](https://www.facebook.com/sigmacomputing)
 
 ![Footer](assets/sigma_footer.png)
 

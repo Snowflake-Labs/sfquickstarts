@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Monitor Table Size Growth in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this quickstarts, you'll learn how to leverage Snowflake Notebooks with Streamlit integration to track and analyze table storage growth trends. 
 
@@ -32,7 +31,6 @@ An interactive notebook that helps monitor table storage growth and analyze quer
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 Firstly, to follow along with this quickstart, you can click on [Monitoring_Table_Size_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Monitoring_Table_Size_with_Streamlit/Monitoring_Table_Size_with_Streamlit.ipynb) to download the Notebook from GitHub.
 
@@ -40,7 +38,6 @@ Snowflake Notebooks comes pre-installed with essential Python libraries for data
 
 <!-- ------------------------ -->
 ## Identify Large Tables
-Duration: 10
 
 ### Query Top Tables
 Execute the following SQL to identify the largest tables:
@@ -83,7 +80,6 @@ The returned output is shown below:
 
 <!-- ------------------------ -->
 ## Analyze Query Patterns
-Duration: 10
 
 ### Create Interactive Table Selection
 Let's now create a text box for accepting the table path.
@@ -144,7 +140,6 @@ Make note that the above cell is named `py_visualization`, which we'll make refe
 
 <!-- ------------------------ -->
 ## Track User Interactions
-Duration: 10
 
 ### Identify Active Users
 Let's say we want to take our top most expensive query and turn it into a materialization. Who will be the users who are most likely to be impacted by our activities? 
@@ -200,7 +195,6 @@ And the query output is shown below:
 ![image](assets/img06.PNG)
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an interactive notebook for monitoring table storage growth and analyzing query patterns in Snowflake. This tool will help you make data-driven decisions about storage optimization and query performance improvements.
 

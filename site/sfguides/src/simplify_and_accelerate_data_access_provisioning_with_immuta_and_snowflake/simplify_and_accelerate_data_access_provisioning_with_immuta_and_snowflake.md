@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Simplify and Accelerate Data Access Provisioning with Immuta and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this guide, you’ll learn how to securely provision data access using **Immuta** and **Snowflake** by stepping into the roles of a **Data Consumer**, **Data Product Owner**, and **Data Governor**. 
 
@@ -49,7 +48,6 @@ Immuta simplifies and secures the data access process with a single platform tha
 
 <!-- ------------------------ -->
 ## Sign-in
-Duration: 5
 
 ### Overview
 
@@ -84,7 +82,6 @@ In Snowflake, you’re provisioned as a data owner over a single schema within a
 
 <!-- ------------------------ -->
 ## Data Consumer Experience
-Duration: 15
 
 ### Overview
 
@@ -112,7 +109,6 @@ Duration: 15
 
 <!-- ------------------------ -->
 ## Data Governor Experience
-Duration: 15
 
 ### Overview
 
@@ -151,7 +147,6 @@ Subscription policies determine who can see a dataset, while data policies gover
 
 <!-- ------------------------ -->
 ## Data Product Owner Experience
-Duration: 15
 
 ### Overview
 ![provision](assets/provision.png)
@@ -176,7 +171,6 @@ Duration: 15
 ![publishwf4](assets/publishwf4.png)
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 In this lab, you stepped into the roles of Data Governor, Data Product Owner, and Data Consumer to experience how Immuta and Snowflake work together to simplify and scale secure data access. You discovered how metadata-driven policies, automated workflows, and the Immuta Marketplace reduce friction, accelerate time-to-data, and support compliance without sacrificing control.
 

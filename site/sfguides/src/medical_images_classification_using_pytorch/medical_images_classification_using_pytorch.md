@@ -11,15 +11,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview 
-Duration: 1
-<img src="assets/hcls.png"/>
+![assets/hcls.png](assets/hcls.png)
 
 
 Healthcare delivery is rapidly evolving as health systems and clinics embrace digital technologies to better serve patients. This shift has led to the generation of vast amounts of patient data, much of which is unstructured, including medical images, videos, audio, and logs. Unlocking the potential of this unstructured data and running analytics on it is essential for building a comprehensive patient profile and improving health outcomes through data-driven insights. With advancements in AI and machine learning, it's crucial to develop and deploy these models using user-friendly methods on scalable, high-performance platforms to accelerate time to value.
 
 In this quickstart, we will demonstrate how to classify whether a patient has pneumonia based on chest X-rays. We will train a PyTorch image classification model using transfer learning from torchvision models like ResNet and VGG on GPUs, leveraging the newly announced Snowpark Container Service in Snowflake. After training, we will log and manage the model in the Snowpark Model Registry and deploy it for inference using either Snowflake Warehouses (CPUs) or Snowflake Compute Pools (CPUs or GPUs). Finally, we will run inference within Snowflake using a front-end app built with "Streamlit in Snowflake.
 
-<img src="assets/image1.jpg"/>
+![assets/image1.jpg](assets/image1.jpg)
 
 
 ### Prerequisites
@@ -42,7 +41,6 @@ A Streamlit app to run inference using a PyTorch image classification model trai
 
 ## Setup Environment
 <!-- ------------------------ -->
-Duration: 2
 This section will walk you through creating various objects
 
 
@@ -65,9 +63,8 @@ Fetch the file streamlit_app.py from the [app folder](https://github.com/Snowfla
 
 <!-- ------------------------ -->
 ## Build and containerize a Model Training Service
-Duration: 2
 
-<img src="assets/image2.png"/>
+![assets/image2.png](assets/image2.png)
 
 ### Step 3.1 Build, Tag and Push Docker Image
 
@@ -155,7 +152,6 @@ SHOW MODELS LIKE 'DICOM_PYTORCH_MODEL_MULTIGPU' IN SCHEMA dicom_db.dicom_schema
 
 <!-- ------------------------ -->
 ## Run Inference Application using Streamlit in Snowflake
-Duration: 2
 
 
 Now that the model training is completed and the model is logged in a model registry we use the Streamlit app setup before to carry ongoing inference. The app was already built in Step 2
@@ -164,7 +160,7 @@ A sample test dataset is provided and uploaded to the data stage already and we 
 
 Choose a certain number of images, and these images are then converted to tensors and the logged model from Snowflake Model Registry is used for inference.
 
-<img src="assets/streamlit.png"/>
+![assets/streamlit.png](assets/streamlit.png)
 
 
 ## Cleanup

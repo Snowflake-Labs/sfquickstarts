@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Customer Reviews Analytics using Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 In this Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to identify where their customer experience may be falling short at the truck and business level by leveraging **Snowflake Cortex** within **Snowflake Notebook**. They collect customer reviews to get customer feedback on their food-trucks which come in from multiple sources and span multiple languages. This enables them to better understand the areas which require improvement and drive up customer loyalty along with satisfaction. 
 
@@ -53,7 +52,6 @@ In this quickstart, you will learn:
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 2
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
@@ -249,7 +247,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Setting up Snowflake Notebook
-Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
 
@@ -271,7 +268,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Translate multilingual reviews
-Duration: 2
 
 ### Enabled by Cortex Translate
 
@@ -290,7 +286,6 @@ You will leverage **Translate** - one of the **Snowflake Cortex specialised LLM 
 
 <!-- ------------------------ -->
 ## Categorise unstructured review text data 
-Duration: 5
 
 ### Overview
 In this section, you will make use of **Snowflake Cortex - Complete** to categorise reviews to understand:
@@ -371,7 +366,6 @@ In this section, you will make use of **Snowflake Cortex - Complete** to categor
   ```
 <!-- ------------------------ -->
 ## Understand customer sentiment 
-Duration: 2
 
 ### Enabled by Cortex Sentiment
 
@@ -386,7 +380,6 @@ reviews_df.select(["REVIEW","SENTIMENT"]).show(3)
 
 <!-- ------------------------ -->
 ## Dive deeper with aspect based sentiment
-Duration: 2
 
 ### Enabled by Cortex Complete 
 
@@ -423,7 +416,6 @@ Taking this analysis a step further, you will be looking at aspect based sentime
 
 <!-- ------------------------ -->
 ## Identify the issues
-Duration: 5
 
 ### Overview
 
@@ -485,7 +477,6 @@ In this section, you will leverage **Snowflake Cortex - Complete** to identify t
 
 <!-- ------------------------ -->
 ## Generate email response
-Duration: 2
 ### Take action assisted by Cortex Complete
 
 In the final step, you will utilize **Snowflake Cortex - Complete** to draft an email to the owner of the most negatively reviewed truck summarizing the issues that are highlighted in customer reviews along with any recommendation to remedy those issues.This is done within the notebook using following code snippet in cell `GENERATE_EMAIL_RESPONSE`.
@@ -503,7 +494,6 @@ In the final step, you will utilize **Snowflake Cortex - Complete** to draft an 
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 **Congratulations!** You've successfully enabled customer review analytics by leveraging Snowflake Cortex within Snowflake Notebook. And all this without ever needing to move any data outside of secure walls of Snowflake or managing infrastructure.
 

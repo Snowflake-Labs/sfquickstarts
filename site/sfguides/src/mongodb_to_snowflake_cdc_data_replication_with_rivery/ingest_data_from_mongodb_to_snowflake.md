@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 5
 
 The ability to move MongoDB data into a Snowflake Data Warehouse is key to enabling meaningful analytics using a proper SQL interface.
 
@@ -42,7 +41,6 @@ In this guide, you will learn how to set up a data pipeline that migrates MongoD
 
 <!-- ------------------------ -->
 ## Setup a Rivery Account
-Duration: 2
 
 **If you already have a Rivery account you can skip this step.  
   
@@ -57,7 +55,6 @@ If you’d like to set up a Rivery account separately, you can do so by navigati
 
 <!-- ------------------------ -->
 ## Configure Snowflake Target Connection
-Duration: 5
 
 **If you’ve utilized Snowflake’s Partner Connect to create your Rivery account you can skip to Step 4.  
   
@@ -68,7 +65,6 @@ You can configure your Snowflake connection in Rivery. This will be needed later
 
 <!-- ------------------------ -->
 ## Configure MongoDB Source Connection
-Duration: 8
 
 To configure Source Connection within Rivery, you’ll want to navigate to your [Rivery account](https://console.rivery.io/). From here, you can go to Connections > New Connection > MongoDB, fill in the connection details, and test the connection. More information can be found [here](https://docs.rivery.io/docs/create-a-connection).
  
@@ -85,7 +81,6 @@ Note only versions 4.0 and higher of MongoDB are supported by Rivery for [CDC vi
 <!-- END -->
 <!-- ------------------------ -->
 ## Set the Pipeline Source
-Duration: 7
 
 Once your connections are set up, you’ll want to create your replication data pipeline (River). On the navigation menu, click on Create River > Source to Target River.
 
@@ -103,7 +98,6 @@ As mentioned above, you can also use ‘Standard Extraction’ if you’ve decid
 
 <!-- ------------------------ -->
 ## Set the Pipeline Target
-Duration: 3
 
 Click on the ‘Target’ tab to configure your Target.  
       
@@ -119,7 +113,6 @@ Rivery supports loading your data via 3 different modes including [Upsert-Merge]
 
 <!--------------->
 ## Set the Pipeline Target Schema
-Duration: 5
 
 
 Clicking on the Schema tab you’ll be able to select the specific collections that you want to extract/load.  
@@ -144,7 +137,6 @@ Specifically, under the Table Settings tab, you will find Advanced Options to fi
 
 <!--------------------> 
 ## Schedule and Run the Pipeline
-Duration: 3
 
 Once your setup is complete you can click on the Enable Stream toggle.
 
@@ -165,7 +157,6 @@ Regardless of your replication method, under the Settings tab, you can add any a
 
 <!--------------------> 
 ## Monitoring Your Pipeline
-Duration: 2
 
 You can then monitor the River run from the Activities page via the navigation menu or by clicking on the River Activities icon on the right-hand side.  
     ![](assets/step11.png)  

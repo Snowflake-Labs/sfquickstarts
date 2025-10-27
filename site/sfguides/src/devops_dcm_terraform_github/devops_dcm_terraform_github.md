@@ -10,9 +10,8 @@ feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 # DevOps: Database Change Management with Terraform and GitHub
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
-<img src="assets/devops_dcm_terraform_github-1.png" width="600" />
+![assets/devops_dcm_terraform_github-1.png](assets/devops_dcm_terraform_github-1.png)
 
 This quickstart will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions and Terraform. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake, GitHub Actions, and Terraform.
 
@@ -70,9 +69,8 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## GitHub Overview
-Duration: 2
 
-<img src="assets/devops_dcm_terraform_github-2.png" width="250" />
+![assets/devops_dcm_terraform_github-2.png](assets/devops_dcm_terraform_github-2.png)
 
 ### GitHub
 GitHub provides a complete, end-to-end set of software development tools to manage the SDLC. In particular GitHub provides the following services (from GitHub's [Features](https://github.com/features)):
@@ -85,7 +83,7 @@ GitHub provides a complete, end-to-end set of software development tools to mana
 - Team Administration
 - Community
 
-<img src="assets/devops_dcm_terraform_github-3.png" width="250" />
+![assets/devops_dcm_terraform_github-3.png](assets/devops_dcm_terraform_github-3.png)
 
 ### GitHub Actions
 "GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want" (from GitHub’s [GitHub Actions](https://github.com/features/actions)). GitHub Actions was [first announced in October 2018](https://github.blog/2018-10-16-future-of-software/) and has since become a popular CI/CD tool. To learn more about GitHub Actions, including migrating from other popular CI/CD tools to GitHub Actions check out [Learn GitHub Actions](https://docs.github.com/en/actions/learn-github-actions).
@@ -94,9 +92,8 @@ This quickstart will be focused on the GitHub Actions service.
 
 <!-- ------------------------ -->
 ## Terraform Overview
-Duration: 6
 
-<img src="assets/devops_dcm_terraform_github-4.png" width="250" />
+![assets/devops_dcm_terraform_github-4.png](assets/devops_dcm_terraform_github-4.png)
 
 ### Terraform
 [Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by [HashiCorp](https://www.hashicorp.com/) that "allows you to build, change, and version infrastructure safely and efficiently. This includes low-level components such as compute instances, storage, and networking, as well as high-level components such as DNS entries, SaaS features, etc. Terraform can manage both existing service providers and custom in-house solutions." (from [Introduction to Terraform](https://www.terraform.io/intro/index.html)). With Terraform the primary way to describe your infrastructure is by creating human-readble, declarative configuration files using the high-level configuration language known as [HashiCorp Configuration Language (HCL)](https://www.terraform.io/docs/language/index.html).
@@ -126,7 +123,6 @@ Some of the key features include (from [Why Terraform Cloud?](https://www.terraf
 
 <!-- ------------------------ -->
 ## Setup and Configure Terraform Cloud
-Duration: 8
 
 As discussed in the Overview section, you will need to have a Terraform Cloud Account for this quickstart. If you don't already have a Terraform Cloud account you can create on for free. Visit the [Create an account](https://app.terraform.io/signup/account) page to get started. After you create your account you'll be asked to provide an organization name.
 
@@ -135,7 +131,7 @@ Begin by [logging in to your Terraform Cloud account](https://app.terraform.io/)
 ### Create a new Workspace
 From the Workspaces page click on the "+ New workspace" button near the top right of the page. On the first page, where it asks you to choose the type of workflow, select "API-driven workflow".
 
-<img src="assets/devops_dcm_terraform_github-5.png" width="600" />
+![assets/devops_dcm_terraform_github-5.png](assets/devops_dcm_terraform_github-5.png)
 
 On the second page, where it asks for the "Workspace Name" enter `gh-actions-demo` and then click the "Create workspace" button at the bottom of the page.
 
@@ -180,7 +176,7 @@ In order for Terraform Cloud to be able to connect to your Snowflake account you
 
 When you’re finished adding all the secrets, the page should look like this:
 
-<img src="assets/devops_dcm_terraform_github-6.png" width="600" />
+![assets/devops_dcm_terraform_github-6.png](assets/devops_dcm_terraform_github-6.png)
 
 ### Create an API Token
 The final thing we need to do in Terraform Cloud is to create an API Token so that GitHub Actions can securely authenticate with Terraform Cloud. Click on your user icon near the top right of the screen and then click on "User settings". Then in the left navigation bar click on the user settings page click on the "Tokens" tab.
@@ -190,7 +186,6 @@ Click on the "Create an API token" button, give your token a "Description" (like
 
 <!-- ------------------------ -->
 ## Create the Actions Workflow
-Duration: 8
 
 ### Create Actions Secrets
 Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create a secret to store the API token to Terraform Cloud.
@@ -264,7 +259,6 @@ A few things to point out from the YAML pipeline definition:
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 5
 
 Open up your cloned GitHub repository in your favorite IDE and create a new file in the root named `main.tf` with the following contents. *Please be sure to replace the organization name with your Terraform Cloud organization name.*
 
@@ -299,7 +293,6 @@ Then commit the new script and push the changes to your GitHub repository. By pu
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 4
 
 By now your first database migration should have been successfully deployed to Snowflake, and you should now have a `DEMO_DB` database available. There a few different places that you should check to confirm that everything deployed successfully, or to help you debug in the event that an error happened.
 
@@ -307,13 +300,13 @@ By now your first database migration should have been successfully deployed to S
 
 From your repository in GitHub, click on the "Actions" tab. If everything went well, you should see a successful workflow run listed. But either way you should see the run listed under the "All workflows". To see details about the run click on the run name. From the run overview page you can further click on the job name (it should be `Snowflake Terraform Demo Job`) in the left hand navigation bar or on the node in the yaml file viewer. Here you can browse through the output from the various steps. In particular you might want to review the output from the `Terraform Apply` step.
 
-<img src="assets/devops_dcm_terraform_github-7.png" width="600" />
+![assets/devops_dcm_terraform_github-7.png](assets/devops_dcm_terraform_github-7.png)
 
 ### Terraform Cloud Log
 
 While you'll generally be able to see all the Terraform output in the GitHub Actions logs, you may need to also view the logs on Terraform Cloud. From your Terraform Cloud Workspace, click on the "Runs" tab. Here you will see each run listed out, and for the purposes of this quickstart, each run here corresponds to a run in GitHub Actions. Click on the run to open it and view the output from the various steps.
 
-<img src="assets/devops_dcm_terraform_github-8.png" width="600" />
+![assets/devops_dcm_terraform_github-8.png](assets/devops_dcm_terraform_github-8.png)
 
 ### Snowflake Objects
 
@@ -321,7 +314,6 @@ Log in to your Snowflake account and you should see your new `DEMO_DB` database!
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
-Duration: 4
 
 Now that we've successfully deployed our first change to Snowflake, it's time to make a second one. This time we will add a schema to the `DEMO_DB` and have it deployed through our automated pipeline.
 
@@ -341,7 +333,6 @@ Congratulations, you now have a working CI/CD pipeline with Terraform and Snowfl
 
 <!-- ------------------------ -->
 ## Bonus: Advanced Actions Workflow
-Duration: 10
 
 In the previous sections we created and tested a simple GitHub Actions workflow with Terraform. This section provides a more advanced workflow that you can test out. This one adds the capability for having Terraform validate and plan a change before it's actually deployed. This pipeline adds CI triggers that cause it to run when a Pull Request (PR) is created/updated. During that process it will run a `terraform plan` and stick the results in the PR itself for easy review. Please give it a try!
 
@@ -427,7 +418,6 @@ This worklow was adapted from [Automate Terraform with GitHub Actions](https://l
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 

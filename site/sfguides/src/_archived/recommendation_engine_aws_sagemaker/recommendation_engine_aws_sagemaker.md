@@ -9,7 +9,6 @@ Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 1
 
 This guide will walk you through how to train a recommendation system using Amazon SageMaker with data stored in Snowflake. Along the way, we'll introduce you to the power of External Functions in Snowflake, showing you how we can use them to call external API endpoints.  The lessons found within will serve as an excellent introduction to bringing extensibility to your data pipelines.
 
@@ -42,7 +41,6 @@ You can view all source code of this guide on [GitHub](https://github.com/Snowfl
 <!-- ------------------------ -->
 
 ## Load the data into Snowflake
-Duration: 5
 
 The first thing you'll need to do is download a small version of the dataset. Once downloaded, unzip the folder.
 
@@ -98,7 +96,6 @@ For this file, we'll be creating a new file format. Click the `+` button. Give i
 Great! We've loaded data into the `MOVIES` table. Now it's time to do the same for the `RATINGS` table. Navigate into the empty `RATINGS` table, and click the `Load Data` button, just like before. This time, however, you'll want to select the `ratings.csv` file. Luckily, you don't need to create another file format; this file is formatted just like the previous one, so you can reuse your `MOVIELENS` File Format.
 
 ## Create tables for local testing
-Duration: 5
 
 We've got both tables of data into Snowflake! Now we can view our data. While we're at it, we can create some small testing tables when we test our SageMaker algorithm on our local machine:
 
@@ -119,7 +116,6 @@ Fantastic! Now we can start dabbling in some machine learning code.
 
 <!-- ------------------------ -->
 ## Setup Snowflake and AWS credentials
-Duration: 10
 
 In Amazon SageMaker, you have the option of using "built-in" algorithms or creating your own custom algorithm using Docker images. This lab will be using a single Docker image to package up our training and model inference code. Let’s get started!
 
@@ -187,7 +183,6 @@ docker build -t snf-recommender-lab:latest .
 <!-- ------------------------ -->
 
 ## Test the models locally
-duration: 10
 
 In a real-world development cycle, you'll generally want to test code locally to make sure it runs error-free before sending it off to SageMaker. The code we're using is already developed (and error-free), but let's test it locally anyway.
 
@@ -247,7 +242,6 @@ Both training and inference work on our local machine. Again, that was to be exp
 
 <!-- ------------------------ -->
 ## Upload the Docker image
-Duration: 10
 
 Now we can push the Docker image up to [ECR](https://aws.amazon.com/ecr/), so SageMaker can use it for training and deployment. Go ahead and switch to `sfguide-recommender-pipeline/sagemaker/container` and run:
 
@@ -269,7 +263,6 @@ With that grabbed, we're on our way to using SageMaker!
 
 ## Set up IAM role for Sagemaker
 
-Duration: 5
 
 Okay, so we're not *quite* to using SageMaker yet. First, we need to provision an Amazon API Gateway and the AWS Lambda functions that will help integrate Snowflake with SageMaker. We'll use the [Serverless Framework](https://serverless.com) to help us programmatically define and provision this infrastructure.
 
@@ -288,7 +281,6 @@ And finally, make sure you set the `region` value to the correct region. Checkin
 <!-- ------------------------ -->
 
 ## Set up IAM role Snowflake External Functions
-Duration: 5
 
 Now, we need to create a role in your AWS account that Snowflake can assume and invoke the API Gateway. To do so, we'll need to make another AWS IAM role.
 
@@ -325,7 +317,6 @@ And with that, we can move on to deploying the serverless app.
 
 #### Deploy the Serverless App with AWS Lambda and API Gateway
 
-Duration: 3
 
 With the blanks filled out in the `config.dev.yml` file, let's turn our attention to deploying the API Gateway and Lambda Functions.
 
@@ -342,7 +333,6 @@ Straightforward, right? Now let's start incorporating Snowflake.
 <!-- ------------------------ -->
 
 ## Connect the API Gateway with Snowflake
-Duration: 5
 
 Now that we have our Serverless infrastructure deployed let’s move over to the Snowflake UI and work some SQL magic! 🧙🏼‍♀️
 
@@ -408,7 +398,6 @@ And then, replace the values of `API_AWS_IAM_USER_ARN` and `API_AWS_EXTERNAL_ID`
 
 <!-- ------------------------ -->
 ## Create the External Functions within Snowflake
-Duration: 3
 
 We'll create three External Functions: the first for training and bulk prediction, the second for deploying the model, and the third for invoking the model.
 
@@ -456,7 +445,6 @@ And with usage granted, we can now test the functions out!
 <!-- ------------------------ -->
 
 ## Test the External Functions
-Duration: 15
 
 Now that our Snowflake External Functions are deployed, and the right permissions are in place, it’s time to test the functions and see how we can trigger the training and deployment of models right from Snowflake.
 
@@ -505,7 +493,6 @@ Great! Now let's look at how to make this magic possible in *real-time*!
 
 <!-- ------------------------ -->
 ## Enable real-time predictions
-Duration: 20
 
 When a user pulls up details for a movie, how do we get the predicted rating for this user/movie pair? We'll have to use a *real-time* prediction endpoint. We can create this endpoint by using the model artifact produced by the training step above.
 
@@ -549,7 +536,6 @@ Amazing! Feel free to test it out with some examples. From here, you have now ha
 <!-- ------------------------ -->
 
 ## Next Steps: Automating the ML Pipeline
-Duration: 1
 
 Alright, so what's next? Well, that's the end of this guide, but that's not the end of SageMaker's potential! Try looking into automating this ML workflow. As new users and movies are added, you can automate the ML training, bulk prediction, and model deployment.
 

@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 개요
 
-duration: 15
 
 > “데이터 엔지니어는 기본적으로 여러 단계를 거쳐 데이터를 전송하는 데이터 파이프라인을 구축 및 유지하는 데 집중하고 이를 사용 가능한 상태로 만듭니다. 데이터 엔지니어링 프로세스에는 한 장소에서 다른 장소로 데이터를 전송하는 것을 자동화하고 이러한 데이터를 특정 유형의 분석을 위해 특성 형식으로 변환하는 **데이터 파이프라인**을 생성하기 위한 종합적인 노력이 포함됩니다. 이러한 측면에서 보면 데이터 엔지니어링은 한 번에 끝낼 수 있는 작업이 아닙니다. 이는 지속적인 관행이며 데이터를 수집하고, 준비하고, 변환하고, 전달해야 합니다. 데이터 파이프라인은 신뢰할 수 있는 방식으로 반복할 수 있도록 이러한 작업을 자동화하는 것을 돕습니다. 이는 특정 기술이라기보다는 오히려 관행입니다.” (출처: Cloud Data Engineering for Dummies, Snowflake 특별 에디션)
 
@@ -20,7 +19,7 @@ duration: 15
 
 이 Quickstart는 많은 내용을 다룹니다. 이 가이드를 완료하는 시점에는 Snowpark Python 저장 프로시저를 사용하여 강력한 데이터 엔지니어링 파이프라인을 구축했을 것입니다. 이러한 파이프라인은 데이터를 증분적으로 처리하고, Snowflake 작업과 조정되고, CI/CD 파이프라인을 통해 배포됩니다. 또한, Snowflake의 새로운 개발자 CLI 도구 및 Visual Studio Code 확장 프로그램을 사용하는 방법을 배우게 됩니다. 간략한 시각적 개요는 다음과 같습니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 마음의 준비를 하십시오!
 
@@ -93,7 +92,6 @@ duration: 15
 <!-- ------------------------ -->
 ## Quickstart 설정
 
-duration: 10
 
 ### Quickstart를 위해 리포지토리 포크 및 복제
 
@@ -101,11 +99,11 @@ duration: 10
 
 기본값으로 GitHub Actions는 포크된 리포지토리에 정의된 모든 워크플로우(또는 CI/CD 파이프라인)를 비활성화합니다. 이 리포지토리에는 나중에 사용할 Snowpark Python UDF 및 저장 프로시저를 배포하기 위한 워크플로우가 포함되어 있습니다. 지금은 GitHub에서 포크된 리포지토리를 열어 이 워크플로우를 활성화합니다. 페이지 상단 중앙 부근에 있는 `Actions` 탭을 클릭한 다음 `I understand my workflows, go ahead and enable them` 녹색 버튼을 클릭합니다.
 
-<img src="assets/github-actions-activate.png" width="800" />
+![assets/github-actions-activate.png](assets/github-actions-activate.png)
 
 다음으로 새로운 포크된 리포지토리를 로컬 컴퓨터로 복제해야 합니다. 새로운 Git 리포지토리에 대한 연결 세부 정보를 확인하려면 리포지토리를 열고, 페이지 상단 부근에 있는 녹색 ‘Code’ 아이콘을 클릭하고, ‘HTTPS’ 링크를 복사합니다.
 
-<img src="assets/git_repo_url.png" width="300" />
+![assets/git_repo_url.png](assets/git_repo_url.png)
 
 VS Code에서 이 링크를 사용하여 리포지토리를 컴퓨터에 복제합니다. 상세 정보를 위해 [Visual Studio Code에서 GitHub 리포지토리 복제 및 사용](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository) 지침을 따르십시오. 또한, 선호에 따라 다음 명령을 실행하여 명령줄에서 리포지토리를 복제할 수도 있습니다.
 
@@ -146,7 +144,6 @@ conda activate pysnowpark
 <!-- ------------------------ -->
 ## Snowflake 설정
 
-duration: 10
 
 ### VS Code용 Snowflake 확장 프로그램
 
@@ -163,11 +160,10 @@ VS Code의 왼쪽 탐색 메뉴에서 Snowflake 확장 프로그램을 클릭하
 <!-- ------------------------ -->
 ## 가공 전 데이터 로드
 
-duration: 10
 
 이 단계에서는 가공 전 Tasty Bytes POS 및 고객 충성도 데이터를 `s3://sfquickstarts/data-engineering-with-snowpark-python/`에 있는 가공 전 Parquet 파일에서 Snowflake의 `RAW_POS` 및 `RAW_CUSTOMER` 스키마로 로드하겠습니다. 또한, Snowpark Python API를 사용하여 노트북에서 Python으로 이 프로세스를 조정하게 됩니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **2**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 스크립트 실행
 
@@ -216,7 +212,7 @@ Snowflake의 [쿼리 내역](https://docs.snowflake.com/ko/user-guide/ui-snowsig
 
 Snowflake 계정에 로그인하여 Snowpark API가 생성한 SQL을 잠깐 확인합니다. 이렇게 확인하면 API 현황을 더 잘 이해하고 발생할 수 있는 모든 이슈를 디버그하는 데 도움이 됩니다.
 
-<img src="assets/query_history_sproc.png" width="800" />
+![assets/query_history_sproc.png](assets/query_history_sproc.png)
 
 ### 스키마 추론
 
@@ -267,11 +263,10 @@ Snowflake에는 [가상 웨어하우스](https://docs.snowflake.com/ko/user-guid
 <!-- ------------------------ -->
 ## 날씨 로드
 
-duration: 4
 
 이 단계에서는 가공 전 날씨 데이터를 Snowflake로 ‘로드’하겠습니다. 하지만 ‘로드’는 이 작업을 올바르게 설명하는 단어는 아닙니다. 왜냐하면 우리가 Snowflake의 고유한 데이터 공유 기능을 사용하기 때문입니다. 우리는 실질적으로 사용자 정의 ETL 프로세스를 사용하여 Snowflake 계정에 데이터를 복사할 필요가 없습니다. 대신 Snowflake 데이터 마켓플레이스에서 Weather Source가 공유하는 날씨 데이터에 바로 액세스할 수 있습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **3**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### Snowflake 데이터 마켓플레이스
 
@@ -300,11 +295,10 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 <!-- ------------------------ -->
 ## POS 뷰 생성
 
-duration: 10
 
 이 단계에서는 6개의 각기 다른 테이블을 결합하고 필요한 열만 골라 뷰를 생성하여 가공 전 POS 스키마를 간소화하겠습니다. 정말 멋진 부분은 Snowpark DataFrame API로 해당 뷰를 정의하게 된다는 것입니다! 그런 다음 증분적으로 모든 POS 테이블에 대한 변경 사항을 처리할 수 있도록 해당 뷰에서 Snowflake 스트림을 생성하겠습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **4**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 스크립트 실행
 
@@ -358,11 +352,10 @@ def create_pos_view_stream(session):
 <!-- ------------------------ -->
 ## 화씨 섭씨 변환 UDF
 
-duration: 10
 
 이 단계에서는 첫 번째 Snowpark Python 객체를 생성하고 이를 사용자 정의 함수(또는 UDF)인 Snowflake에 배포하겠습니다. 처음에는 UDF가 매우 단순하지만, 추후 단계에서는 서드 파티 Python 패키지를 포함하도록 업데이트할 것입니다. 또한, 이 단계에서는 새로운 개발자 명령줄 도구인 새로운 SnowCLI를 소개하겠습니다. SnowCLI는 개발자가 Snowpark Python 객체를 구축하고 이를 Snowflake로 배포하는 경험을 일관되게 만듭니다. SnowCLI에 대한 상세 정보는 다음과 같습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **5**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 로컬에서 UDF 실행
 
@@ -448,11 +441,10 @@ CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
 <!-- ------------------------ -->
 ## 주문 업데이트 저장 프로시저
 
-duration: 10
 
 이 단계에서는 첫 번째 Snowpark Python 저장 프로시저를 생성하고 이를 Snowflake에 배포하겠습니다. 이 저장 프로시저는 `HARMONIZED.POS_FLATTENED_V_STREAM` 스트림의 변경 사항을 대상 `HARMONIZED.ORDERS` 테이블과 병합합니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **6**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 로컬에서 저장 프로시저 실행
 
@@ -542,11 +534,10 @@ def create_orders_stream(session):
 <!-- ------------------------ -->
 ## 일일 도시 지표 업데이트 저장 프로시저
 
-duration: 10
 
 이 단계에서는 두 번째 Snowpark Python 저장 프로시저를 생성하고 이를 Snowflake에 배포하겠습니다. 이 저장 프로시저는 `ANALYTICS.DAILY_CITY_METRICS`라는 분석을 위해 집계된 최종 테이블을 생성하기 위해 `HARMONIZED.ORDERS` 데이터와 Weather Source 데이터를 결합합니다. 다른 Snowflake 스트림을 사용하여 해당 데이터를 `HARMONIZED.ORDERS` 테이블에서 증분적으로 처리하겠습니다. 또한, 다시 한번 Snowpark DataFrame `merge()` 메소드를 사용하여 데이터를 병합 또는 업서트하겠습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **7**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 로컬에서 저장 프로시저 실행
 
@@ -620,11 +611,10 @@ def create_daily_city_metrics_table(session):
 <!-- ------------------------ -->
 ## 작업 조정
 
-duration: 10
 
 이 단계에서는 새로운 Snowpark 파이프라인과 Snowflake의 기본 오케스트레이션 기능인 작업을 조정하겠습니다. 각 저장 프로시저를 위한 2개의 작업을 생성하고 이를 연결하겠습니다. 그런 다음 작업을 실행하겠습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **8**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 스크립트 실행
 
@@ -721,22 +711,21 @@ ORDER BY COMPLETED_TIME DESC;
 
 작업 그래프는 다음과 같습니다.
 
-<img src="assets/ui-snowsight-task-graph.png" width="800" />
+![assets/ui-snowsight-task-graph.png](assets/ui-snowsight-task-graph.png)
 
 또한, 작업 실행 기록의 사례는 다음과 같습니다.
 
-<img src="assets/ui-snowsight-task-run-history.png" width="800" />
+![assets/ui-snowsight-task-run-history.png](assets/ui-snowsight-task-run-history.png)
 
 상세 정보와 계정 수준 작업 기록을 확인하는 것에 대해 알아보려면 [작업 기록 보기](https://docs.snowflake.com/ko/user-guide/ui-snowsight-tasks.html) 설명서를 확인하십시오.
 
 <!-- ------------------------ -->
 ## 증분적 처리
 
-duration: 10
 
 이 단계에서는 새로운 데이터를 POS 주문 테이블에 추가한 다음 새로운 데이터를 처리하기 위해 전체 엔드 투 엔드 파이프라인을 실행하겠습니다. 또한, 이 전체 파이프라인은 Snowflake의 고급 스트림 및 CDC 기능을 활용하여 데이터를 증분적으로 처리하게 됩니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **9**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 스크립트 실행
 
@@ -778,11 +767,10 @@ ORDER BY SCHEDULED_TIME DESC
 <!-- ------------------------ -->
 ## CI/CD를 통한 배포
 
-duration: 15
 
 이 단계에서는 `FAHRENHEIT_TO_CELSIUS_UDF()` UDF에 변경 사항을 적용하고 이를 CI/CD 파이프라인을 통해 배포하겠습니다. 서드 파티 Python 패키지를 사용하기 위해 `FAHRENHEIT_TO_CELSIUS_UDF()` UDF를 업데이트하고, 이를 포크된 GitHub 리포지토리로 푸시하고, 마지막으로 GitHub Actions 워크플로우에서 SnowCLI를 사용하여 이를 배포하겠습니다! 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **10**단계로 이동합니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 ### 화씨 섭씨 변환 UDF 업데이트
 
@@ -868,7 +856,7 @@ GitHub Actions 워크플로우를 Snowflake 계정과 연결하려면 Snowflake 
 
 모든 비밀을 추가했다면 페이지가 다음과 같을 것입니다.
 
-<img src="assets/github-actions-secrets.png" width="800" />
+![assets/github-actions-secrets.png](assets/github-actions-secrets.png)
 
 > aside positive
 > 
@@ -880,11 +868,11 @@ GitHub Actions 워크플로우를 Snowflake 계정과 연결하려면 Snowflake 
 
 왼쪽 탐색 모음에서 ‘Source Control’ 확장 프로그램을 열며 시작합니다. 그러면 변경 사항이 적용된 2개의 파일이 나타납니다. 각 파일 이름의 오른쪽에 있는 `+`(더하기) 기호를 클릭하여 변경 사항을 실시합니다. 그럼 다음 ‘Message’ 상자에 메시지를 입력하고 파란색 `Commit` 버튼을 클릭하여 변경 사항을 로컬에서 커밋합니다. 버튼을 클릭하기 전의 모습은 다음과 같아야 합니다.
 
-<img src="assets/vs_code_repo_commit.png" width="400" />
+![assets/vs_code_repo_commit.png](assets/vs_code_repo_commit.png)
 
 이 지점에서 이러한 변경 사항은 로컬에서만 커밋되며 GitHub에서 포크된 리포지토리로 아직 푸시되지 않았습니다. 이 작업을 수행하기 위해 간단히 파란색 `Sync Changes` 버튼을 클릭하여 이러한 커밋을 GitHub로 푸시합니다. 버튼을 클릭하기 전의 모습은 다음과 같아야 합니다.
 
-<img src="assets/vs_code_repo_push.png" width="400" />
+![assets/vs_code_repo_push.png](assets/vs_code_repo_push.png)
 
 ### GitHub Actions 워크플로우 보기
 
@@ -897,25 +885,23 @@ GitHub Actions 워크플로우를 Snowflake 계정과 연결하려면 Snowflake 
 * 가장 최근 특정 실행(입력한 주석과 일치해야 함)의 이름을 클릭합니다.
 * 실행 개요 페이지에서 `deploy` 작업을 클릭한 다음 여러 단계의 출력을 열람합니다. 특히 `Deploy Snowpark apps` 단계의 출력을 검토하면 도움이 될 수 있습니다.
 
-<img src="assets/github-actions-run-summary.png" width="800" />
+![assets/github-actions-run-summary.png](assets/github-actions-run-summary.png)
 
 지금쯤 `Deploy Snowpark apps` 단계의 출력이 익숙하게 여겨질 것입니다. 이는 이전 단계에서 SnowCLI를 실행했을 때 VS Code의 터미널에서 본 내용일 것입니다. 다를 수 있는 부분은 출력 순서입니다. 하지만 현황을 파악할 수 있을 것입니다.
 
 <!-- ------------------------ -->
 ## 해체
 
-duration: 2
 
 Quickstart를 완료하고 정리하고 싶다면 간단히 `steps/11_teardown.sql` 스크립트를 실행하면 됩니다. 이는 SQL 스크립트이므로 이를 실행하기 위해 네이티브 VS Code 확장 프로그램을 사용하겠습니다. 간단히 VS Code에서 `steps/11_teardown.sql` 스크립트를 열고 편집기 창의 오른쪽 상단 모서리에 있는 ‘Execute All Statements’ 버튼을 사용하여 모든 것을 실행합니다.
 
 <!-- ------------------------ -->
 ## 결론
 
-duration: 4
 
 이 Quickstart에서는 많은 내용을 다뤘습니다! 이렇게 Snowpark Python 저장 프로시저를 사용하여 강력한 데이터 엔지니어링 파이프라인을 구축하셨습니다. 이 파이프라인은 데이터를 증분적으로 처리하고, Snowflake 작업과 조정되고, CI/CD 파이프라인을 통해 배포됩니다. 또한, Snowflake의 새로운 개발자 CLI 도구 및 Visual Studio Code 확장 프로그램을 사용하는 방법을 배웠습니다. 간략한 시각적 요약은 다음과 같습니다.
 
-<img src="assets/data_pipeline_overview.png" width="800" />
+![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 
 하지만 실질적으로 Snowpark로 가능한 작업의 극히 일부만을 다뤘습니다. 기본 구성 요소와 사례를 이제 보유하고 계시기를 바랍니다. Snowpark Python으로 자신만의 데이터 엔지니어링 파이프라인을 구축하기 시작하셔야 합니다. 이제 무엇을 구축하시겠어요?
 

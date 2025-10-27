@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Procesamiento de datos semiestructurados en Snowflake
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### Descripción general
 Te damos la bienvenida a la quickstart guide Tasty Bytes - De cero a Snowflake centrada en el procesamiento de datos semiestructurados.
@@ -37,7 +36,6 @@ Para obtener más información sobre los datos semiestructurados en Snowflake, c
 - Un gráfico de barras útil a nivel ejecutivo
 
 ## Creación de una hoja de trabajo y copia en SQL
-Duration: 1
 
 ### Descripción general
 En esta quickstart guide se narra una historia de Tasty Bytes mediante una hoja de trabajo SQL en Snowsight. Esta página servirá de guía completa paralela con comentarios adicionales, imágenes y enlaces a la documentación.
@@ -49,26 +47,26 @@ En esta sección te explicaremos cómo iniciar sesión en Snowflake, crear una n
 
 ### Paso 2: iniciar sesión en Snowflake
 - Inicia sesión en tu cuenta de Snowflake.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+    - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### Paso 3: acceder a las hojas de trabajo
 - Haz clic en la pestaña Worksheets en la barra de navegación situada a la izquierda para acceder a las hojas de trabajo.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+    - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### Paso 4: crear una hoja de trabajo
 - En la pestaña Worksheets, haz clic en el botón “+” en la esquina superior derecha de Snowsight y elige “SQL Worksheet”.
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+    - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### Paso 5: cambiar el nombre de una hoja de trabajo
 - Cambia el nombre de la hoja de trabajo haciendo clic en el nombre generado automáticamente con (marca de tiempo) y escribe “Tasty Bytes - Datos semiestructurados"
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+    - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### Paso 6: acceder a la quickstart guide de SQL en GitHub
 - Haz clic en el botón que aparece a continuación. Te redirigirá a nuestro archivo SQL de Tasty Bytes alojado en GitHub. <button>[tb_zts_semi_structured_data.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_semi_structured_data.sql)</button>
 
 ### Paso 7: copiar el código SQL de configuración de GitHub
 - En GitHub, ve al lado derecho y haz clic en “Copy raw contents”. De esta forma, se copiará todo el código SQL necesario en el portapapeles.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Paso 8: pegar el código SQL de configuración de GitHub en tu hoja de trabajo de Snowflake
 - Vuelve a la hoja de trabajo que acabas de crear en Snowsight y pega (*CMD + V para Mac o CTRL + V para Windows*) lo que has copiado de GitHub.
@@ -76,7 +74,6 @@ En esta sección te explicaremos cómo iniciar sesión en Snowflake, crear una n
 ### Paso 9: hacer clic en Next -->
 
 ## Elaboración de perfiles de datos semiestructurados de la carta
-Duration: 1
 
 ### Descripción general
 Como ingeniero de datos de Tasty Bytes, debes elaborar un perfil para los datos de nuestra carta, lo que incluye una columna para datos semiestructurados. A partir de esta tabla con la carta tendrás que generar la vista de una capa analítica que incluya los datos de los ingredientes y alérgenos para los usuarios finales.
@@ -96,13 +93,13 @@ SELECT TOP 10
 FROM frostbyte_tasty_bytes.raw_pos.menu m; 
 ```
 
-<img src = "assets/3.1.menu.png">
+![assets/3.1.menu.png](assets/3.1.menu.png)
 
 En el resultado, podemos ver que `menu_item_health_metrics_obj` debe ser el dato semiestructurado que nos han dicho que contiene las métricas que necesitamos proporcionar posteriormente. 
 
 Al hacer clic en una de las celdas de esta columna, veremos que Snowsight amplía automáticamente los paneles de estadísticas para que veamos mejor los contenidos.
 
-<img src = "assets/3.1.2.stats.png">
+![assets/3.1.2.stats.png](assets/3.1.2.stats.png)
 
 ### Paso 2: explorar la columna de datos semiestructurados
 Para examinar en más profundidad cómo se define esta columna en Snowflake, ejecuta la siguiente consulta en la que usaremos [SHOW COLUMNS](https://docs.snowflake.com/en/sql-reference/sql/show-columns) para explorar los tipos de datos presentes en nuestra tabla `menu`.
@@ -111,7 +108,7 @@ Para examinar en más profundidad cómo se define esta columna en Snowflake, eje
 SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 ```
 
-<img src = "assets/3.2.show_columns.png">
+![assets/3.2.show_columns.png](assets/3.2.show_columns.png)
 
 Si observamos el conjunto de resultados, podemos ver que `menu_item_health_metrics_obj` es del tipo de datos [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured).
 
@@ -130,20 +127,19 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ```
 
-<img src = "assets/3.3.dot.png">
+![assets/3.3.dot.png](assets/3.3.dot.png)
 
 Al usar la notación de puntos podemos extraer `menu_item_id` al completo, pero parece que aún quedan objetos semiestructurados adicionales en los resultados de la columna `menu_item_health_metrics`. 
 
 Una vez más, vamos a hacer clic en una de las celdas de esta columna para analizarla en detalle.
 
-<img src = "assets/3.3.2.stats.png">
+![assets/3.3.2.stats.png](assets/3.3.2.stats.png)
 
 **¡Estamos avanzando!** Veamos cómo podemos procesar más `menu_item_health_metrics` en la siguiente sección, con funciones adicionales de Snowflake.
 
 ### Paso 4: hacer clic en Next -->
 
 ## Cómo quitar el formato de datos semiestructurados
-Duration: 2
 
 ### Descripción general
 Después de haber visto cómo podemos consultar fácilmente los datos semiestructurados tal y como aparecen en una columna Variant mediante la notación de puntos, nuestro ingeniero de datos de Tasty ya puede proporcionar los datos solicitados a los colaboradores internos.
@@ -166,7 +162,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.1.lat_flat.png">
+![assets/4.1.lat_flat.png](assets/4.1.lat_flat.png)
 
 ### Paso 2: explorar la función ARRAY
 Antes de extraer los datos solicitados sobre ingredientes, completa la siguiente consulta que resalta funciones ARRAY de Snowflake y que explorará la columna `ingredients` para cualquier `menu_item_name` que contenga “lechuga” (lettuce) al usar [ARRAY_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/array_contains).
@@ -180,7 +176,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 WHERE ARRAY_CONTAINS('Lettuce'::VARIANT, obj.value:"ingredients"::VARIANT);
 ```
 
-<img src = "assets/4.2.array_contains.png">
+![assets/4.2.array_contains.png](assets/4.2.array_contains.png)
 
 Según los resultados, vemos que muchos elementos de la carta incluyen lechuga. Este tipo de análisis resultaría extremadamente valioso para los responsables del abastecimiento de la cadena de suministro en caso de que hubiera que retirar alimentos en las ciudades o países donde ofrecemos nuestros productos.
 
@@ -202,14 +198,13 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.3.lat_flat_2.png">
+![assets/4.3.lat_flat_2.png](assets/4.3.lat_flat_2.png)
 
 **¡Genial!** El resultado parece cumplir con los requisitos exactos de las partes interesadas. En la siguiente sección veremos cómo llevar estos resultados a nuestra capa de analíticas, donde las partes interesadas podrán acceder a ellos.
 
 ### Paso 4: hacer clic en Next -->
 
 ## Creación de vistas estructuradas a partir de datos semiestructurados
-Duration: 2
 
 ### Descripción general
 En la sección anterior, hemos utilizado un conjunto de funcionalidades de datos semiestructurados de Snowflake para desarrollar una consulta que proporciona el resultado exacto que necesitan nuestros usuarios finales. A continuación, vamos a seguir el proceso de promoción de esta consulta en nuestra capa sin procesar a través de la capa armonizada y, finalmente, hasta la analítica. Nuestros usuarios poseen privilegios para poder leer esta última capa.
@@ -247,7 +242,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/5.1.harmonized_view.png">
+![assets/5.1.harmonized_view.png](assets/5.1.harmonized_view.png)
 
 Una vez creada la vista `harmonized.menu_v`, podemos realizar una consulta directamente en ella, sin tener que utilizar el SQL más complejo que utilizamos en su momento. Sin embargo, teniendo en cuenta que las partes interesadas acceden a los datos desde la capa de analíticas, hagamos lo siguiente para llegar ahí.
 
@@ -263,12 +258,11 @@ Por otro lado, estamos utilizando los parámetros [SELECT * EXCLUDE y RENAME](ht
 > **RENAME:** al seleccionar todas las columnas (con SELECT * o SELECT table_name.\*), se especifican los alias de las columnas que deben utilizarse en los resultados.
 >
 
-<img src = "assets/5.2.analytics_view.png">
+![assets/5.2.analytics_view.png](assets/5.2.analytics_view.png)
 
 ### Paso 3: hacer clic en Next -->
 
 ## Análisis de los datos semiestructurados procesados en Snowsight
-Duration: 2
 
 ### Descripción general
 Cuando nuestra vista de la carta esté lista en nuestra capa de analíticas, vamos a ejecutar un par de consultas en ella que proporcionaremos a nuestros usuarios finales para mostrar cómo Snowflake impulsa una experiencia de consulta relacional con datos semiestructurados sin tener que hacer copias adicionales ni realizar ningún procesamiento complejo.
@@ -296,7 +290,7 @@ WHERE 1=1
 ORDER BY m1.menu_type;
 ```
 
-<img src = "assets/6.1.arrays.png">
+![assets/6.1.arrays.png](assets/6.1.arrays.png)
 
 De nuevo, utilizando la misma vista, hemos desarrollado este tipo de consulta que puede proporcionar valor empresarial real a nuestros operadores de food trucks, mientras trabajan con los responsables de abastecimiento para predecir y pedir los ingredientes que necesiten cada semana.
 
@@ -315,7 +309,7 @@ SELECT
 FROM frostbyte_tasty_bytes.analytics.menu_v m;
 ```
 
-<img src = "assets/6.2.metrics.png">
+![assets/6.2.metrics.png](assets/6.2.metrics.png)
 
 Y, con los resultados que acabamos de recibir, ya hemos pasado de una tabla sin procesar con datos semiestructurados a una única fila agregada a la que cualquier persona de nuestra organización puede acceder fácilmente para hacer que Tasty Bytes se base más en los datos. 
 
@@ -336,20 +330,19 @@ WHERE m.brand_name IN  ('Plant Palace', 'Peking Truck','Revenge of the Curds')
 GROUP BY m.brand_name;
 ```
 
-<img src = "assets/6.3.results.png">
+![assets/6.3.results.png](assets/6.3.results.png)
 
 Por defecto, Snowsight devuelve los resultados de la consulta en tablas. Sin embargo, hay una potente función de Snowsight que aún no hemos visto: [el uso de gráficos](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations#using-charts).
 
 Sigue las flechas de la siguiente captura de pantalla para crear tu propio gráfico de barras que muestre una comparativa de estas tres marcas de food trucks que muestre los elementos de su carta que tienen en cuenta los ingredientes y alérgenos.
 
-<img src = "assets/6.3.chart.png">
+![assets/6.3.chart.png](assets/6.3.chart.png)
 
 Para terminar con esta quickstart guide, ya solo nos falta recalcar lo fácil que sería para un ejecutivo de Tasty Bytes hacer esta clase de análisis por su cuenta, sin tener que saber nada sobre el procesamiento de datos semiestructurados que hemos incluido en las vistas desarrolladas. Ahora ya podemos descansar sabiendo que estamos fomentando la democratización de los datos en la organización Tasty Bytes.
 
 ### Paso 4: hacer clic en Next -->
 
 ## Conclusión y siguientes pasos
-Duration: 1
 
 ### Conclusión
 ¡Bien hecho! Has completado la quickstart guide Tasty Bytes - De cero a Snowflake sobre datos semiestructurados. 

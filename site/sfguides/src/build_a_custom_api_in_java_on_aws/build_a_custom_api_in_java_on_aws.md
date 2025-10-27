@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Custom API in Java on AWS
 
 ## Overview 
-Duration: 5
 
 Many builders want to share some of the data stored in Snowflake over an http API. Modern mobile and web applications often want to retrieve that data through http APIs. This tutorial will go through how to build, deploy, and host a custom API Powered by Snowflake.
 
@@ -49,7 +48,6 @@ The dataset is the same as used in the [Building a Data Application](https://qui
 - API Powered by Snowflake
 
 ## Downloading the Code
-Duration: 3
 
 The code used in this guide is hosted in github. You can download the code as a ZIP from [GitHub](https://github.com/Snowflake-Labs/sfguide-snowflake-java-api) or use the following git command to clone the repository.
 
@@ -124,7 +122,6 @@ private PreparedStatement monthlyPreparedStatement(Map<String, String> queryStri
 You can also review the other endpoints in [Handler.java](https://github.com/Snowflake-Labs/sfguide-snowflake-java-api/blob/main/src/main/java/com/snowflake/Handler.java) to see how simple it is to host multiple endpoints.
 
 ## Building the Application
-Duration: 2
 
 This project uses Maven to manage dependencies and to perform the build. To build the project, run maven:
 
@@ -136,7 +133,6 @@ The build artifact should be created under ./target/snowflake-java-api.jar which
 
 
 ## Configuring the Application
-Duration: 3
 
 The Handler class requires environment variables for configuration. These environment variables will be set for the lambda in AWS by the Serverless Framework automatically.
 
@@ -161,7 +157,6 @@ aws ssm get-parameter --name <ACCOUNT>.DATA_APPS_DEMO
 ```
 
 ## Configuring, Packaging, and Testing
-Duration: 5
 
 Serverless login will open a browser to authenticate the serverless tool. When running serverless, it will ask you what org to add it to. You can choose the default or any org you have setup in serverless.com. You can also keep the original snowflake-java-api name for the application or give it a new name. When asked to deploy the application, choose No.
 
@@ -173,7 +168,6 @@ serverless
 After this is complete, Serverless Framework is configured for use.
 
 ## Deploying the API
-Duration: 3
 
 Now that the application and configuration is complete, you can deploy it to AWS by running the following command:
 
@@ -204,12 +198,10 @@ curl "http://<DEPLOYMENT>.execute-api.<REGION>/dev/trips/monthly?start_range=201
 Your api is now available for use by your mobile and web applications.
 
 ## Monitoring your API with Serverless Framework
-Duration: 3
 
 To monitor your API you can login to the AWS console and view the metrics under Services, Lambda, Applications, Monitoring and your logs under Services, Lambda, Functions, snowflake-java-api-dev-api.
 
 ## Cleanup
-Duration: 1
 
 If you are done with this exercise you can remove all aws resources by having Serverless Framework cleanup.
 
@@ -218,7 +210,6 @@ serverless remove
 ```
 
 ## Conclusion
-Duration: 1
 
 You've successfully built, tested, and deployed a custom API on AWS Powered by Snowflake. The serverless stack from AWS is a great way to quickly and easily build a powerful API with little operational overhead. It's also very cost effective for most uses.
 

@@ -25,7 +25,7 @@ There are 4 steps to setting up the template:
   3.  Transform the Google Analytics events data using the provided SQL script
   4.  Launch the template in Sigma and **Swap Sources** to the table created in step 3
 
-<img src="assets/template_preview.png" width="800"/>
+![assets/template_preview.png](assets/template_preview.png)
 
 ### What You’ll Build
 <ul>
@@ -49,7 +49,6 @@ How to deploy Sigma's **Google Analytics 4** template.
 <!-- END OF OVERVIEW -->
 
 ## Preparing your Google Analytics and GCP accounts
-Duration: 20
 
 Before configuring the Snowflake Connector for Google Analytics Raw Data (GARD), you will need to perform some one-time setup in your Google account.  This process requires access to both Google Analytics and Google Cloud Platform (GCP).  
 
@@ -65,7 +64,6 @@ For a detailed step-by-step process, we refer to Snowflake's documentation on [P
 <!-- END OF SECTION-->
 
 ## Install and configure Snowflake's Google Analytics Raw Data Connector
-Duration: 10
 
 Once your Google Analytics data is in BigQuery, it's time to install the GARD Connector. To do that, find the [Snowflake Connector for Google Analytics Raw Data](https://app.snowflake.com/marketplace/listing/GZSTZTP0KKC/snowflake-snowflake-connector-for-google-analytics-raw-data) listing on the Snowflake Marketplace.
 
@@ -80,7 +78,6 @@ Now the GA4 raw data will sync into your Snowflake account at the desired cadenc
 <!-- END OF SECTION-->
 
 ## Transforming the Raw GA4 Data
-Duration: 5
 
 The Google Analytics data that the Snowflake Connector loads into your account is raw events data.  Each row represents a unique event, but that data is wrapped in nested JSON.
 
@@ -588,12 +585,11 @@ call usp_materialize_ga_events('GA_RAW_DATA_DEST_DB.GA_RAW_DATA_DEST_SCHEMA.ANAL
 <br>
 Once you've set this value, you can run the entire script and verify that you can see the new `events` table in your Sigma connection browser.
 <br>
-<img src="assets/events_in_connection.png" width=300>
+![assets/events_in_connection.png](assets/events_in_connection.png)
 
 <!-- END OF SECTION-->
 
 ## Deploying the template
-Duration: 5
 
 Once you have created the `events` table, go to Sigma.
 
@@ -601,15 +597,15 @@ From the home page, navigate to the `Templates` section, then to `External`.
 
 Click on the `Google Analytics 4` template:
 
-<img src="assets/template_in_menu.png" width=700>
+![assets/template_in_menu.png](assets/template_in_menu.png)
 
 You will be prompted to swap data sources. Click `Swap Now`:
 
-<img src="assets/swap_source_prompt.png" width=500>
+![assets/swap_source_prompt.png](assets/swap_source_prompt.png)
 
 Verify that Sigma has found the `events` table and click `Swap Now`:
 
-<img src="assets/sources_matched.png" width=800>
+![assets/sources_matched.png](assets/sources_matched.png)
 
 Click `Save As` and give your workbook a title.
 
@@ -619,12 +615,11 @@ You should now see the Google Analytics 4 Template on top of your own data.
 
 For example:
 
-<img src="assets/template_preview.png" width="800"/>
+![assets/template_preview.png](assets/template_preview.png)
 
 <!-- END OF SECTION-->
 
 ## Conclusion and Resources
-Duration: 5
 
 ### What You Learned
 In this QuickStart we created a table called `events` with analytics-ready GA4 data and launched Sigma's `Google Analytics 4` template.
@@ -642,8 +637,8 @@ In this QuickStart we created a table called `events` with analytics-ready GA4 d
 [Sigma Blog](https://www.sigmacomputing.com/blog/)<br>
 <br>
 
-[<img src="./assets/twitter.png" width="75"/>](https://twitter.com/sigmacomputing)&emsp;
-[<img src="./assets/linkedin.png" width="75"/>](https://www.linkedin.com/company/sigmacomputing)&emsp;
-[<img src="./assets/facebook.png" width="75"/>](https://www.facebook.com/sigmacomputing)
+[![./assets/twitter.png](./assets/twitter.png)](https://twitter.com/sigmacomputing)&emsp;
+[![./assets/linkedin.png](./assets/linkedin.png)](https://www.linkedin.com/company/sigmacomputing)&emsp;
+[![./assets/facebook.png](./assets/facebook.png)](https://www.facebook.com/sigmacomputing)
 
 <!-- END OF QUICKSTART -->

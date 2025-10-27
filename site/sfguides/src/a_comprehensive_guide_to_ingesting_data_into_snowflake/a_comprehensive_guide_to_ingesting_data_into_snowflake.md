@@ -10,7 +10,6 @@ authors: Brad Culberson
 # A Comprehensive Guide: Ingesting Data into Snowflake
 
 ## Overview 
-Duration: 3
 
 There are many different ways to get data into Snowflake. Different use cases, requirements, team skillsets, and technology choices all
 contribute to making the right decision on how to ingest data. This quickstart will guide you through an example of the same data loaded with different methods:
@@ -57,7 +56,6 @@ By the end of this guide you should be familiar with many ways to load data, and
 - A project which can load data many different ways into your Snowflake account.
 
 ## Environment Setup
-Duration: 3
 
 This guide has a data generator and several examples which need Python 3.8, Java, and some other libraries and utilities. 
 
@@ -103,7 +101,6 @@ conda activate sf-ingest-examples
 ```
 
 ## Test Data Generation
-Duration: 5
 
 It is nice to have real-world looking data for testing. This guide will generate fictitious lift tickets for patrons of ski resorts.
 
@@ -182,7 +179,6 @@ python ./data_generator.py 100000 | gzip > data.json.gz
 You can increase or decrease the size of records to any number that you would like to use. This will currently output the sample data to your current directory, but you can pick any folder you would like. This file will be used in subsequent steps so note where you stored this data and replace later if needed.
 
 ## Database Setup
-Duration: 3
 
 Kafka and the Snowpipe API both require the use of key pair authentication. Due to this, I will use keypair for all the ingest solutions so they are all in common. 
 
@@ -236,7 +232,6 @@ PRIVATE_KEY=<PRIVATE_KEY_HERE>
 Make sure you protect your .env and .p8 file as those are credentials directly to the INGEST user.
 
 ## SQL Inserts from the Python Connector
-Duration: 5
 
 Snowflake has a [Python connector](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector) which is an easy way to run sql and upload files. One way to get data in would be to do an SQL INSERT statement for each record. While this is a convenient way to insert data, it is not efficient as Snowflake is an OLAP engine and is optimized around writing large batches of data.
 
@@ -362,7 +357,6 @@ The next methods will show how to batch into better sized blocks of work which w
 
 
 ## File Upload & Copy (Warehouse) from the Python Connector
-Duration: 5
 
 To get to better sized batches, the client can upload a file and have a warehouse copy the data into the destination. The Python connector can execute the COPY after uploading the file.
 
@@ -518,7 +512,6 @@ This last call will batch together 10,000 records into each file for processing.
 
 
 ## File Upload & Copy (Snowpipe) using Python
-Duration: 5
 
 Another way to get data into Snowflake is to use a service specifically designed for this task: [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro). Snowpipe uses serverless infrastructure to ingest data from a file uploaded from a client. In this use case I will upload a file to an internal stage and call the Snowpipe service to ingest the file.
 
@@ -659,7 +652,6 @@ Test this approach with more test data and larger batch sizes. Review INFORMATIO
 * Expect delays when Snowpipe has enqueued the request to ingest the data. This process is asynchronous. In most cases these patterns can deliver ~ minute ingest times when including the time to batch, upload, and copy but this varies based on your use case.
 
 ## File Upload & Copy (Serverless) from the Python Connector
-Duration: 5
 
 It can be useful to leverage a [Serverless Task](https://docs.snowflake.com/en/user-guide/tasks-intro) which is scheduled every minute to ingest the files uploaded by clients over the last minute.
 
@@ -800,7 +792,6 @@ It is also common to schedule the task to run every n minutes instead of calling
 
 
 ## Kafka Setup and Data Publisher
-Duration: 5
 
 The following 2 ingest patterns will need Kafka. I will use [Redpanda](http://redpanda.com) in this example, but you could also use Apache or Confluent Kafka as well as MSK from AWS and Event Hubs from Azure.
 
@@ -995,7 +986,6 @@ python ./data_generator.py 1 | python ./publish_data.py
 This should succeed by creating the topic and inserting the data. You can view the success in the [Redpanda console](http://localhost:8080).
 
 ## From Kafka - in Snowpipe (Batch) mode
-Duration: 5
 
 The table for the data to be written to will be automatically created by the connector.
 
@@ -1075,7 +1065,6 @@ cat data.json.gz | zcat | python ./publish_data.py
 * Kafka Connector for Snowflake is billed by the second of compute needed to ingest files (Snowpipe).
 
 ## From Kafka - in Snowpipe Streaming mode
-Duration: 5
 
 Configure and install a new connector to load data in streaming mode:
 
@@ -1154,7 +1143,6 @@ SELECT count(*) FROM LIFT_TICKETS_KAFKA_STREAMING;
 * Streaming is the best ingest pattern when using Kafka.
 
 ## From Kafka - Streaming with Schematization
-Duration: 5
 
 The previous methods for loading data from Kafka landed the data in a Variant field. While this is flexible, it is not the most user friendly or performant way to land data. The Snowflake Connector for Kafka can use schematization to maintain the schema of the landed data.
 
@@ -1222,7 +1210,6 @@ SELECT * FROM LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED;
 ```
 
 ## From Java SDK - Using the Snowflake Ingest Service
-Duration: 10
 
 Many developers want to be able to directly stream data into Snowflake (without Kafka). In order to do so, Snowflake has a Java SDK.
 
@@ -1602,7 +1589,6 @@ SELECT count(*) FROM LIFT_TICKETS_JAVA_STREAMING;
 * Best ingest pattern when not using Kafka and are processing streaming data
 
 ## Cleanup
-Duration: 1
 
 In order to cleanup from all the ingest patterns built, you can drop the USER, ROLE, DATABASE, and WAREHOUSE:
 
@@ -1628,7 +1614,6 @@ conda remove -n sf-ingest-examples --all
 ```
 
 ## Conclusion And Resources
-Duration: 1
 
 As you've seen, there are many ways to load data into Snowflake. It is important to understand the benefits and consequenses so you can make the right choice when ingesting data into Snowflake. 
 

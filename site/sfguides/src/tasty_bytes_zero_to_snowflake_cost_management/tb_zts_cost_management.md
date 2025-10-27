@@ -11,8 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Cost Management in Snowflake
-Duration: 1
-<img src = "assets/cost_management_header.png">
+![assets/cost_management_header.png](assets/cost_management_header.png)
 
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Cost Management!
@@ -40,7 +39,6 @@ For more detail on Cost Management in Snowflake please visit the [Cost Managemen
 
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -68,15 +66,14 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
-    - <img src = "assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 ### Step 9 - Click Next -->
 
 ## Virtual Warehouses and Settings 
-Duration: 2
 
 ### Overview
 As a Tasty Bytes Snowflake Administrator we have been tasked with gaining an understanding of the features Snowflake provides to help ensure proper Financial Governance is in place before we begin querying and analyzing data.
@@ -96,7 +93,7 @@ USE WAREHOUSE tb_de_wh;
 USE DATABASE tb_101;
 ```
 
-<img src = "assets/use_role_and_wh.png"> 
+![assets/use_role_and_wh.png](assets/use_role_and_wh.png) 
 
 ### Step 2 - Creating and Configuring a Warehouse
 Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to meet compute needs or scaling out to meet concurrency needs. 
@@ -143,7 +140,6 @@ Based on the query we ran, please see the details below on what each configurati
 ### Step 3 - Click Next -->
 
 ## Resuming, Suspending and Scaling a Warehouse
-Duration: 2
 
 ### Overview
 With a Warehouse created, let's now use it to answer a few questions from the business. While doing so we will learn how to resume, suspend and elastically scale the Warehouse.
@@ -163,7 +159,7 @@ SELECT
 FROM raw_pos.menu m
 WHERE truck_brand_name = 'Plant Palace';
 ```
-<img src = "assets/menu_items_plant_palace.png"> 
+![assets/menu_items_plant_palace.png](assets/menu_items_plant_palace.png) 
 
 
 ### Step 2 - Scaling Our Warehouse Up
@@ -192,7 +188,7 @@ JOIN analytics.customer_loyalty_metrics_v clm
 GROUP BY o.customer_id, name
 ORDER BY order_count DESC;
 ```
-<img src = "assets/total_orders_volume_loyalty.png">
+![assets/total_orders_volume_loyalty.png](assets/total_orders_volume_loyalty.png)
 
 ### Step 4 - Scale our Warehouse Down
 Having seen the instant upward scalability of our Snowflake Warehouse and how it can aggregate large result sets with ease, let's now instantly scale our `tb_test_wh` back down by running the next query. 
@@ -218,7 +214,6 @@ ALTER WAREHOUSE tb_test_wh SUSPEND;
 
 
 ## Controlling Cost with Session Timeout Parameters
-Duration: 1
 
 ### Overview
 With monitoring in place, let's now make sure we are protecting ourselves from bad long running queries ensuring timeout parameters are adjusted on the Warehouse.
@@ -229,7 +224,7 @@ To begin, let's run the next query to find all Warehouse Parameters related to S
 ```
 SHOW PARAMETERS LIKE '%statement%' IN WAREHOUSE tb_test_wh;
 ```
-<img src= "assets/show_parameters.png">
+![assets/show_parameters.png](assets/show_parameters.png)
 
  
 ### Step 2 - Adjusting Warehouse Statement Timeout Parameter
@@ -265,7 +260,6 @@ ALTER WAREHOUSE tb_test_wh SET statement_queued_timeout_in_seconds = 600;
 ### Step 4 - Click Next -->
 
 ## Controlling Cost with Account Timeout Parameters
-Duration: 1
 
 ### Overview
 The Timeout Parameters we set on our Test Warehouse are also available at the Account, User and Session level. Within this step, we will adjust these at the Account level.
@@ -306,7 +300,6 @@ ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
 
 
 ## Monitoring Cost with Resource Monitors
-Duration: 2
 
 ### Overview
 With a Test Warehouse in place, let's now leverage Snowflakes Resource Monitors to ensure the Warehouse has a monthly quota. 
@@ -333,7 +326,7 @@ WITH
         ON 100 PERCENT DO SUSPEND -- suspend warehouse at 100 percent, let queries finish
         ON 110 PERCENT DO SUSPEND_IMMEDIATE;
 ```
-<img src = "assets/create_rm.png"> 
+![assets/create_rm.png](assets/create_rm.png) 
 
 For additional detail on what each configuration handles in our statement above please see below:
 > aside positive
@@ -365,7 +358,6 @@ ALTER WAREHOUSE tb_test_wh SET RESOURCE_MONITOR = tb_test_rm;
 
 
 ## Tag Objects to Attribute Spend
-Duration: 2
 
 ### Overview
 Within this step, we will help our Finance department attribute consumption costs for the Test Warehouse to our Development Team. 
@@ -390,7 +382,6 @@ ALTER WAREHOUSE tb_test_wh SET TAG cost_center = 'DEVELOPMENT_TEAM';
 
 
 ## Exploring Cost with Snowsight
-Duration: 1
 
 ### Overview
 Snowflake also provides many ways to visually inspect Cost data within Snowsight.
@@ -413,7 +404,6 @@ To access and drill down into overall cost within Snowsight:
 
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Cost Management Quickstart. 

@@ -9,7 +9,6 @@ tags: Snowflake, Machine Learning, Python, NVIDIA, GPU, scikit-learn, pandas
 
 # Accelerate Topic Modeling with GPUs in Snowflake ML
 ## Overview
-Duration: 5
 
 As datasets continue to grow, GPU acceleration has become critical for machine learning workflows. To address this, [Snowflake ML](http://www.snowflake.com/ml) has integrated with NVIDIA’s cuML and cuDF libraries to provide significant performance boosts for popular ML algorithms. These libraries are part of the [NVIDIA CUDA-X Data Science](https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries) ecosystem, an open-source suite of GPU-accelerated tools designed to speed up data processing pipelines. 
 
@@ -32,7 +31,6 @@ You will build and execute a topic modeling pipeline that processes 500,000 book
 
 
 ## Setup
-Duration: 5
 
 ### Retrieving demo notebooks
 
@@ -62,7 +60,6 @@ import cuml; cuml.accel.install()
 > - This "flips the switch," allowing the libraries to automatically handle the execution on GPUs.
 
 ## Use Case: Large-Scale Topic Modeling
-Duration: 10
 
 ### The Challenge with Large-Scale Text Analysis
 Topic modeling is a common text analysis technique, but it can be computationally expensive, especially with large datasets. The iterative nature of data science means that waiting hours for a single run is not practical. With NVIDIA CUDA-X libraries in Snowflake, you can achieve significant speed-ups with zero or near-zero code changes. This example demonstrates topic modeling on 500,000 book reviews, reducing the runtime from over 8 hours on a CPU to a few minutes on a GPU.
@@ -104,7 +101,6 @@ You can proceed to the remainder of the [topic modeling notebook](https://github
 ![](assets/topic-modeling-screenshot.png)
 
 ## Conclusion And Resources
-Duration: 2
 
 The integration of NVIDIA's cuML and cuDF libraries into Snowflake ML offers a powerful solution for accelerating large-scale machine learning workflows. By abstracting away the complexities of GPU infrastructure management, Snowflake enables data scientists to significantly boost performance for popular libraries like pandas and scikit-learn with no code changes. This enhancement dramatically speeds up iterative development in computationally demanding fields like topic modeling from hours to minutes.
 

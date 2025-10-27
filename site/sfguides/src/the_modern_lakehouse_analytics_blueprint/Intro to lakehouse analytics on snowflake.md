@@ -9,7 +9,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Intro to Lakehouse Analytics on Snowflake
 <!-- ------------------------ -->
-Duration:5
 
 ## Overview
 
@@ -53,7 +52,6 @@ A [catalog-linked database](https://docs.snowflake.com/en/user-guide/tables-iceb
 <!-- ------------------------ -->
 ## Run Lakehouse Analtytics
 
-Duration:15
 
 During this step you will learn how to run analytics on your lakehouse. 
 
@@ -174,7 +172,6 @@ You can also follow along and run each of the cells in the [Notebook](https://gi
 <!-- ------------------------ -->
 ## RBAC Setup
 
-Duration:5
 
 In this section, you will learn how to use Snowflake Horizon to create fine-grained access controls to secure and manage your iceberg tables. It's important to ensure only the right users and teams have access to the right data.
 
@@ -187,7 +184,6 @@ Run the cell `Role Based Access Control: Row Access Policy` cell in the [Noteboo
 <!-- ------------------------ -->
 ## Snowflake Intelligence (Optional)
 
-Duration:10
 
 In this section, you will learn how to use Snowflake Intelligence to talk to your lakehouse data in natural language.
 
@@ -244,7 +240,6 @@ Open Snowflake Intelligence and make sure you're signed into the right account. 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration:2
 
 Congratulations, you have successfully completed this quickstart! 
 

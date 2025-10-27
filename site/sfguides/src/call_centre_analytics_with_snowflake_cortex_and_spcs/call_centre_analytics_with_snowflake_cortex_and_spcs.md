@@ -11,7 +11,6 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 15
 
 **Note:** We recommend checking out our [Building Cortex AISQL Powered Call Centre Analytics Solution](https://quickstarts.snowflake.com/guide/building-cortex-aisql-powered-call-centre-analytics/index.html?index=..%2F..index#0) quickstart, which uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion. This original version is useful if Cortex cannot be used or if further model tuning is desirable.
 
@@ -19,7 +18,7 @@ Audio files in call centers offer rich insights beyond text. With Snowflake Cort
 
 In this quick start you focus on a scenario where you are a supervisor in a vehicle insurance call centre company. As a supervisor you have to identify metrics about the agent , track few key metrics like Average Handle Time(AHT), total number of first call resolution, Sentiment count to name a few. With the help of running Whisper model with in Snowpark Container Services we can transcribe the text from audio, get the call duration and using Snowflake Cortex functions supervisor can get all these details with a help of a Streamlit App. Supervisors also get options to ask questions on the extracted audio files using natural language. Following is the solution diagram for building this solution end-end in Snowflake.
 
-<img src="assets/CallCentre_SolutionArch.png" width="800" />
+![assets/CallCentre_SolutionArch.png](assets/CallCentre_SolutionArch.png)
 
 This Quickstart will cover a lot of ground, and by the end you will have built a AI application for you the Call Centre .
 
@@ -81,20 +80,19 @@ Below gif explaining the main pages of the app and the information it gives abou
 
 * Audio Analytics Page
 
-<img src="assets/video_AnalyticsPage.gif" width="800" />
+![assets/video_AnalyticsPage.gif](assets/video_AnalyticsPage.gif)
 
 * RAG based chatbot
 
-<img src="assets/video_RAG.gif" width="800" />
+![assets/video_RAG.gif](assets/video_RAG.gif)
 
 * Text2SQL Bot
 
-<img src="assets/video_Text2SQL.gif" width="800" />
+![assets/video_Text2SQL.gif](assets/video_Text2SQL.gif)
 
 
 ## Setup
 
-Duration: 15
 
 ### Clone GitHub repository
 
@@ -173,12 +171,11 @@ Run the following notebook to bring up the Snowpark container required for runni
  [streamlit_setup_code.ipynb](https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs/blob/main/streamlit/streamlit_setup_code.ipynb) found in **streamlit** folder in your cloned local directory.
 
  After running the notebook below is the screenshot of home page of the streamlit app.
-<img src="assets/CallCentre_HomePage.png" width="800" />
+![assets/CallCentre_HomePage.png](assets/CallCentre_HomePage.png)
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
 
-Duration: 5
 
 Congratulations! You have successfully learnt how to transcibe audio files, perform analytics on unstructured data using the power of Cortex LLM functions and build a text summarization, audio analytics dashboards, RAG based and Text2SQL chatbots using Streamlit and all with in the Snowflake platform.
 

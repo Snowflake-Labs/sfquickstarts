@@ -11,7 +11,6 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 10
 
 In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Azure OpenAI that will generate a response from leveraging context from Snowflake data.
 
@@ -54,7 +53,6 @@ This use case will leverage movie reviews and we will build a Streamlit app that
 <!-- ------------------------ -->
 ## Azure / Open AI Environment
 
-Duration: 10
 
 For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openai.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
 
@@ -69,7 +67,6 @@ Head back to the Azure portal and find the Azure Open AI service then click on "
 <!-- ------------------------ -->
 ## Snowflake Environment
 
-Duration: 10
 
 Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with the movie reviews and the related fields. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.
 
@@ -103,7 +100,6 @@ select top 10 * from MOVIE_REVIEWS;
 <!-- ------------------------ -->
 ## Exploratory Analysis 
 
-Duration: 10
 
 You can download the notebook [here](https://github.com/Snowflake-Labs/sfguide-using-snowflake-and-azure-openai-for-rag-workflow/blob/main/notebook_app.ipynb) and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.
 
@@ -118,7 +114,6 @@ You will be able to run through the code to explore the data that we just loaded
 <!-- ------------------------ -->
 ## Snowpark External Access to call OpenAI
 
-Duration: 10
 
 Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access OpenAI via two functions, one called CHATGPT() and CHATGPT_EMBED() that leverage a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to OpenAI (or any other external service).
 
@@ -194,7 +189,6 @@ SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC;
 <!-- ------------------------ -->
 ## Build Streamlit App - With data in Snowflake 
 
-Duration: 10
 
 Now that we have our OpenAI functions, let’s build our App.
 
@@ -261,7 +255,6 @@ Important to note that the VECTOR_COSINE_SIMILARITY() function is being used her
 <!-- ------------------------ -->
 ## Conclusion  And Resources
 
-Duration: 5
 
 Congratulations! You've successfully built your first Streamlit App with OpenAI for a RAG workload! After setting up our Azure and Snowflake and environments we built two primary things: UDFs that utilize Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!
 

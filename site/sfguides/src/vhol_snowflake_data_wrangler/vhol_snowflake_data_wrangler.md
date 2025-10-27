@@ -12,7 +12,6 @@ authors: andries.engelbrecht@snowflake.com
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 
 This guide will take you through the process of integrating SageMaker and Snowflake using Data Wrangler and SageMaker Studio. It will cover the powerful features in both Snowflake and Data Wrangler to enrich your data with Snowflake Marketplace data, and also how to quickly and effectively evaluate the enriched data’s potential to train ML models.
@@ -72,7 +71,6 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 
 ## Setting up Snowflake
-Duration: 3
 
 
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab. **Click the green button to download the file**
@@ -154,7 +152,6 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
 
 <!-- ------------------------ -->
 ## Configure Amazon SageMaker Studio and Snowflake Storage Integration with AWS
-Duration: 12
 
 Before configuring the Sagemaker environment we will need to determine the **Snowflake Account Identifier** for your account.
 First you can reference the Snowflake region by running the following SQL.
@@ -270,7 +267,6 @@ It may take a few minutes for the stack to be created and we will use the time t
 
 <!-- ------------------------ -->
 ## Load data in Snowflake and access the Marketplace
-Duration: 7
 
 
 Next we will create a virtual warehouse that we will use to compute with the **SYSADMIN** role, and then grant all privileges to the **ML\_ROLE**.
@@ -618,7 +614,6 @@ You can also find Snowflake Secret ARN in the Output tab.
 - - -
 <!-- ------------------------ -->
 ## Data Wrangler - Data Prep &amp; Feature Analysis
-Duration: 30
 
 
 
@@ -1125,7 +1120,6 @@ Take note of the feature importance ranking in the bar chart. This gives you an 
 
 <!-- ------------------------ -->
 ## Iterate, Experiment and Improve
-Duration: 5
 
 
 We will now add additional data to your existing flow.
@@ -1267,7 +1261,6 @@ This tells us that we are likely heading in the right direction. We added a feat
 
 <!-- ------------------------ -->
 ## Generate the Dataset and Train your Model
-Duration: 10
 
 
 
@@ -1362,7 +1355,6 @@ You can monitor the training job in the SageMaker Console
 
 <!-- ------------------------ -->
 ## Deploy your Model [Optional]
-Duration: 0
 
 
 
@@ -1541,7 +1533,6 @@ You can monitor the pipeline in SageMaker Studio.
 
 <!-- ------------------------ -->
 ## Evaluate Model Performance and Write Back to Snowflake [Optional]
-Duration: 0
 
 
 
@@ -1622,7 +1613,6 @@ Congratulations! You have completed the lab.
 
 <!-- ------------------------ -->
 ## Conclusions &amp; Next Steps
-Duration: 5
 
 
 

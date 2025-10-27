@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/technology.png)
-Duration: 5
 
 Sales teams in SaaS organizations often face challenges in consolidating and analyzing call data to identify gaps in their go-to-market (GTM) strategies and product offerings. A common limitation is the inability to comprehensively capture and centralize transcripts across all sales calls, which results in fragmented insights. This lack of a holistic view creates challenges for both GTM and product teams:
 
@@ -22,7 +21,7 @@ Sales teams in SaaS organizations often face challenges in consolidating and ana
 Addressing these challenges with a centralized, AI-driven approach can empower teams to gain actionable insights, enhance decision-making, and drive better alignment between product and GTM strategies.
 
 The AI Assistant for Sales Calls helps organizations derive actionable insights from their sales call data. Built using Snowflake Cortex, this guide demonstrates how to query, analyze, and visualize sales call transcripts and associated datasets to improve sales strategies and customer interactions.
-<img src='assets/chatbot.png'>
+![assets/chatbot.png](assets/chatbot.png)
 
 This guide covers:
 - **Data Consolidation**: Aggregating transcripts and related call data into a single platform for efficient analysis.
@@ -53,17 +52,16 @@ This guide covers:
 
 **Architecture Diagram:**
 
-<img src="assets/architecture_diagram.png"/>
+![assets/architecture_diagram.png](assets/architecture_diagram.png)
 
 
 ## Data and Snowflake Setup
-Duration: 15
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/tree/main).**
 
 To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click "+ Create" to create a new Worksheet, and choose "SQL Worksheet".
 
-<img src="assets/create_worksheet.png"/>
+![assets/create_worksheet.png](assets/create_worksheet.png)
 
 <br></br>
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/blob/main/scripts/setup.sql) in the SQL worksheet to create Snowflake objects (warehouse, database, schema).
@@ -174,20 +172,20 @@ CREATE OR REPLACE STAGE CHATBOT_APP DIRECTORY=(ENABLE=true); --to store streamli
 ```
 
 **Upload required files** to the correct stages within the `SALES_CALLS_SCHEMA`
-<img src="assets/upload_files.png"/>
+![assets/upload_files.png](assets/upload_files.png)
 
 
 Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
 
 - **Notebook Files:** Upload notebook files to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks).
-<img src="assets/notebook_stage.png"/>
+![assets/notebook_stage.png](assets/notebook_stage.png)
 
 - **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/scripts/streamlit). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well. Make sure to upload the [analytics.py](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/blob/main/scripts/streamlit/pages/analytics.py) within a `/pages/` path.
 
-<img src="assets/pages_folder.png"/>
+![assets/pages_folder.png](assets/pages_folder.png)
 <br></br>
 
-<img src="assets/chatbot_stage.png"/>
+![assets/chatbot_stage.png](assets/chatbot_stage.png)
 <br></br>
 
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/blob/main/scripts/setup.sql) in the SQL worksheet to load the  data into tables and create a notebook and streamlit app from the staged files.
@@ -212,23 +210,21 @@ COMMENT = '{"origin":"sf_sit-is", "name":"ai_assistant_sales_call", "version":{"
 ```
 
 ## Access Notebook
-Duration: 20
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
 
 To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open **ai_assistant_sales_calls_notebook** and run each of the cells.
 
-<img src='assets/notebook.png'>
+![assets/notebook.png](assets/notebook.png)
 
 Within this notebook, you'll explore sales call transcripts, apply Snowflake Cortex AI models for sentiment analysis and summarization, and visualize key trends such as customer sentiment, product feedback, and competitor mentions.
 
 ## Run Streamlit Application
-Duration: 20
 
 Chatbot Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open **ai_assistant_sales_calls_chatbot** and explore.
 
 In the **Chatbot** tab, you can interact with your sales call transcripts using an intuitive Q&A interface powered by Snowflake Cortex. Ask questions about customer sentiment, product feedback, competitor mentions, and other key insights. Customize the AI model settings, search for specific details, and receive concise answers backed by transcript context.
-<img src='assets/chatbot_settings.png'>
+![assets/chatbot_settings.png](assets/chatbot_settings.png)
 
 Here are some example questions you can ask the chatbot:
 1. How do customers feel about the notification features? Are there any consistent suggestions or frustrations that should be prioritized?
@@ -238,12 +234,12 @@ Here are some example questions you can ask the chatbot:
 
 Once you ask a question, the assistant begins processing it. You'll see a status update showing the steps being performed. Once the process completes, the assistant provides a concise answer to your question in the chat window. Below the answer, you’ll see a section titled 'Context used to generate the answer'. Click on any transcript ID to expand and view the full context of the relevant document.
 
-<img src='assets/chatbot_question.png'>
+![assets/chatbot_question.png](assets/chatbot_question.png)
 <br></br>
 
 In the **Analytics** tab, you can explore visualizations and metrics derived from your sales call data. Analyze sentiment trends, product and competitor mentions, and other critical metrics to uncover actionable insights and improve decision-making.
 
-<img src='assets/analytics.png'>
+![assets/analytics.png](assets/analytics.png)
 
 Here are some examples you can visualize:
 1. What is the average sentiment of the calls per month?
@@ -251,11 +247,10 @@ Here are some examples you can visualize:
 
 When you submit a question, the system processes your input by generating Python code to query and analyze the relevant data. The generated code and its corresponding output—such as graphs, charts, or tables—are displayed in the interface, allowing you to immediately see the insights.
 
-<img src='assets/sentiment.png'>
+![assets/sentiment.png](assets/sentiment.png)
 
 
 ## Conclusion And Resources
-Duration: 1
 
 In this guide, you learned how to use Snowflake's Cortex AI to analyze sales call transcripts and extract actionable insights to improve go-to-market (GTM) strategies and product offerings. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.
 

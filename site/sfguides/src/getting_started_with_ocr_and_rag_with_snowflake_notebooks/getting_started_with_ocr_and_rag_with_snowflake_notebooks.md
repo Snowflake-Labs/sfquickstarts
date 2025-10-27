@@ -11,7 +11,6 @@ author: James Cha Earley
 # Getting Started with OCR and RAG with Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this quickstart, you'll learn how to build an end-to-end application that extracts text from images and makes it searchable using Large Language Models (LLMs). The application combines Optical Character Recognition (OCR), vector embeddings, and Retrieval Augmented Generation (RAG) to create an intelligent document assistant. 
 
@@ -38,7 +37,6 @@ A full-stack application that enables users to:
   - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 
 ## Setup Environment
-Duration: 10
 
 ### Create Database and Schema
 
@@ -141,7 +139,6 @@ database = root.databases[session.get_current_database()]
 ```
 
 ## Create Table Structure
-Duration: 5
 
 In the Notebook we will create the table that will store processed documents:
 
@@ -166,7 +163,6 @@ This table stores:
 - `chunk_vec`: Vector embedding for semantic search
 
 ## Implement OCR Processing
-Duration: 15
 
 ### Create OCR Function
 
@@ -226,7 +222,6 @@ FROM
 > - Tesseract installation
 
 ## Process Text and Create Embeddings
-Duration: 10
 
 In the Notebook we will insert processed text and create embeddings:
 
@@ -255,7 +250,6 @@ SELECT COUNT(*) FROM docs_chunks_table;
 ```
 
 ## Build Question-Answering Interface
-Duration: 15
 
 ### Create Streamlit App
 
@@ -341,7 +335,6 @@ Key parameters:
 - `model`: LLM model (default: mistral-7b)
 
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You've successfully built an end-to-end OCR and RAG application in Snowflake that transforms images into searchable, queryable content. Using Snowflake Notebooks and Cortex capabilities, you've implemented a solution that processes images through OCR, creates vector embeddings for semantic search, and provides AI-powered answers using Large Language Models - all while keeping your data secure within Snowflake's environment. Finally, you created a Streamlit application that allows users to interactively query their document content using natural language.
 

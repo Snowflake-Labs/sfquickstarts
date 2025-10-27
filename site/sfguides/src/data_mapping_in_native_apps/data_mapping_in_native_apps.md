@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Data Mapping in Snowflake Native Apps using Streamlit
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 The Snowflake Native App Framework is a fantastic way for Snowflake application providers to distribute proprietary functionality to their customers, partners and to the wider Snowflake Marketplace. As a provider you can be assured that your code and data (if included) is secure and that the consumers of your application can take advantage of the functionality but not see the details of the implementation. As a consumer of an application you can be assured that the provider via the application is not able to see or operate on any data in your account unless you explicitly allow them access.
 
@@ -68,7 +67,6 @@ The first solution is not really what we want to be doing because the consumer w
 
 <!-- ------------------------ -->
 ## Project Structure
-Duration: 7
 
 The project we are about to create is composed of several files in the following tree structure:
 
@@ -118,7 +116,7 @@ package:
 
 Finally, the tree structure inside your project structure should look like this:
 
-<img src="assets/folder_structure.png" width="288" />
+![assets/folder_structure.png](assets/folder_structure.png)
 
 
 
@@ -127,7 +125,6 @@ Finally, the tree structure inside your project structure should look like this:
 
 <!-- ------------------------ -->
 ## Building the Application
-Duration: 7
 
 The application itself has been broken down into three parts:
 
@@ -216,7 +213,6 @@ We now have the referenced database setup in the provider account so we are read
 
 <!-- ------------------------ -->
 ## Provider Setup
-Duration: 5
 
 > aside positive
 > 
@@ -244,7 +240,6 @@ Fantastic,  we now have an application package with permissions onto the lookup 
 
 <!-- ------------------------ -->
 ## The Manifest File
-Duration: 3
 
 Every Snowflake Native App is required to have a manifest file.  The manifest file defines any properties of the application as well as the location of the application's setup script.  The manifest file for this application will not use all the possible fetures of the manifest file so you can read more about it [here](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).  The manifest file has three requirements:
 
@@ -283,7 +278,6 @@ The **artifacts** section details what files will be included in the application
 
 <!-- ------------------------ -->
 ## The Setup Script
-Duration: 10
 
 In a Snowflake Native App, the setup script is used to define what objects will be created when the application is installed on the consumer account.  The location of the file as we have seen is defined in the manifest file.  The setup script is run on initial installation of the application and any subsequent upgrades/patches.
 
@@ -409,7 +403,6 @@ $$;
 
 <!-- ------------------------ -->
 ## Creating the Streamlit
-Duration: 5
 
 We now come to arguably the most important part of the application for us which is the user interface.  We have defined all the objects we need to create and also the permissions we will require from the consumer of the application.
 
@@ -479,7 +472,6 @@ All the pieces are in place for our application, we just created (manifest.yml, 
 
 <!-- ------------------------ -->
 ## Creating and Deploying the Application
-Duration: 2
 
 There are a few ways we could deploy our application:
 
@@ -504,11 +496,11 @@ Click on the link that appeared in your console output.
 
  The application if you remember needs permissions onto a table in the consumer account (the one we just created).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the shield icon to go to **Security**.
 
-<img src="assets/security_tab.png" width="288" />
+![assets/security_tab.png](assets/security_tab.png)
 
  This will take you through to a page which will allow you to specify the table that you want the application to work with.  This dialog is a result of the **REFERENCE** section in the manifest file.
 
-<img src="assets/assign_perms.png" width="901" />
+![assets/assign_perms.png](assets/assign_perms.png)
 
 Click **Add** and navigate to the table we just created and select it:
 
@@ -516,19 +508,19 @@ Click **Add** and navigate to the table we just created and select it:
 > 
 > **Note** - You may at this point be asked to specify a warehouse, because assigning permissions requires a warehouse.
 
-<img src="assets/table_chosen.png" width="719" />
+![assets/table_chosen.png](assets/table_chosen.png)
 
 Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to the **Dashboard** section and click it. It should open to a screen like the following:
 
-<img src="assets/app_entry.png" width="975" />
+![assets/app_entry.png](assets/app_entry.png)
 
 You should recognise the layout from building the streamlit earlier.  If you drop down either of the two boxes you will see that they are populated with the columns from the table the application has been assigned permissions to.  If we populate the mappings correctly, hit **Update Mappings** then you will see the piece of JSON underneath change to tell us the currently set mappings.  The ones we want for this application are:
 
-<img src="assets/correct_mappings.png" width="703" />
+![assets/correct_mappings.png](assets/correct_mappings.png)
 
 Hit the **Update Mappings** button and then the **UPDATE!** button.  At the top of the screen you will see the SQL that you just executed on your data.
 
-<img src="assets/statement.png" width="336" />
+![assets/statement.png](assets/statement.png)
 
 Now go back to your console to confirm that enhanced data has been written to your database table.
 
@@ -537,11 +529,10 @@ snow sql -q " USE DATABASE TEST_IPLOCATION;
 USE SCHEMA TEST_IPLOCATION;
 SELECT * FROM TEST_DATA;"
 ```
-<img src="assets/complete.png" width="1243" />
+![assets/complete.png](assets/complete.png)
 
 <!-- ------------------------ -->
 ## Teardown
-Duration: 1
 
 Once you have finished with the application and want to clean up your environment you can execute the following script
 
@@ -552,7 +543,6 @@ snow app teardown
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 We have covered a lot of ground in this Quickstart.  We have covered the building blocks of almost every Snowflake Native App you will ever build.  Sure some will be more complicated but the way you structure them will be very similar to what you have covered here.
 

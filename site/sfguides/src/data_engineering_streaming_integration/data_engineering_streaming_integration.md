@@ -10,7 +10,6 @@ author: Dmytro Yaroshenko
 # Streaming Data Integration with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 In today's fast-paced business environment, companies are facing increasing competition. Those that can effectively leverage the value of their data to drive improved outcomes will have the upper hand. With the ever-increasing volume and availability of data from sources such as IoT devices, mobile devices, and websites, there is a growing need for real-time data processing.
 
@@ -48,9 +47,8 @@ By the end of this guide, readers will learn about:
 * Simple pipelines for various types of Streaming data
 
 ## Introduction 
-Duration: 30
 
-<img src="assets/img1.png"  />
+![assets/img1.png](assets/img1.png)
 
 Before we begin, let's take a few minutes to clarify the terminology as this topic can become quite confusing. It is crucial that we are all on the same page when discussing the variations in design patterns.
 
@@ -91,9 +89,8 @@ Whilst delivering great possibilities for parallelization & efficiency, async pr
 This is excellent, but how does it relate to Snowpipe, the COPY command, and other fundamental tools that Snowflake offers? Let's discuss the available options in the next section!
 
 ## Options. How to decide? 
-Duration: 5
 
-<img src="assets/img2.png"  />
+![assets/img2.png](assets/img2.png)
 
 Snowflake offers a variety of building blocks for working with streaming data. There is no one-size-fits-all approach, so it is important to understand the differences in order to effectively address requirements.  
 
@@ -136,7 +133,6 @@ Additionally, Snowflake Secure Data Sharing is a key component used within the S
 Hope reviewing these patterns will help you to choose the right option for your next data pipeline. Seeing is believing! Let's see them in action. 
 
 ## Snowpipe batch
-Duration: 10
 
 In this section, we will construct a pipeline that is prepared to integrate a stream of data that arrives as files. The steps are as follows:
 
@@ -300,7 +296,6 @@ Here's a challenge for you. In the scripts we created earlier, we only loaded a 
 Also, if you'd like to learn more about SnowPipe and levelrage Cloud Storage Events for auto-ingest setup please have a look in our [Getting Started with Snowpipe](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html?index=..%2F..index#0) quickstart. 
 
 ## COPY command
-Duration: 15
 
 Now that we have seen Snowpipe, let's run a similar experiment with COPY command. For this, let's reset the environment:
 
@@ -441,7 +436,6 @@ SELECT *
 Now that we covered most common file-based integration approaches for data that streams down into your warehouse let's talk about Streaming Snowpipe in the next section. 
 
 ## Streaming Snowpipe
-Duration: 20
 
 The Snowpipe Streaming service is implemented as a set of APIs for the Snowflake Ingest SDK, which can be downloaded from the [Maven Central Repository]((https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk)). The APIs require a custom Java application interface capable of pushing rows of data through one or more [channels](https://docs.snowflake.com/en/LIMITEDACCESS/snowpipe-streaming.html#channels) and handling encountered errors.
 
@@ -579,7 +573,6 @@ For those of you who would like to know more about use of Snowpipe Streaming in 
 Hope you enjoyed this section. Let's summarize and provide some pointers to continue refining your streaming data pipeline skills.
 
 ## Cleanup
-Duration: 5
 
 To clean up the objects we created for this lab, let's get back to SnowSight and run the following SQL:
 
@@ -594,7 +587,6 @@ And of course delete the **HOL_kafka** you created in the operating system.
 
 
 ## Conclusion
-Duration: 5
 
 So, here you have it! 
 

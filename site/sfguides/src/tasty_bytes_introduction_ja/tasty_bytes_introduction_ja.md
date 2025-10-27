@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
-language: jp
+language: ja
 summary: これはTasty Bytesの紹介とデータ基盤クイックスタートガイドです。
 environments: web
 status: Published 
@@ -11,8 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Tasty Bytesの紹介
-Duration: 1
-<img src="assets/tasty_bytes_header.png"/>
+![assets/tasty_bytes_header.png](assets/tasty_bytes_header.png)
 
 ### 概要
 このTasty Bytes紹介クイックスタートでは、まずSnowflakeのfrostbyteチームによって作成された架空のキッチンカーブランド、Tasty Bytesについて学びます。
@@ -22,14 +21,14 @@ Tasty Bytesの組織について学んだ後、Tasty Bytes基盤のデータモ�
 このクイックスタートを終了すると、「[Powered by Tasty Bytes - クイックスタート](/guide/tasty_bytes_introduction_ja/index.html#3)」セクションにあるクイックスタートを実行するために必要な基盤が展開されます。
 
 ### Tasty Bytesとは
-<img src="assets/who_is_tasty_bytes.png"/>
+![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
 
 ### 前提条件
 - サポートされているSnowflake[ブラウザ](https://docs.snowflake.com/ja/user-guide/setup#browser-requirements)
 - エンタープライズまたはビジネスクリティカルなSnowflakeアカウント
   - Snowflakeアカウントをお持ちでない場合は、[**30日間の無料トライアルアカウントに登録してください**](https://signup.snowflake.com/?utm_cta=quickstarts_&_l=ja)。サインアップする際は、必ず**エンタープライズ**エディションを選択してください。[Snowflakeクラウド/リージョン](https://docs.snowflake.com/en/user-guide/intro-regions)は、どれを選択しても構いません。
   - 登録後、アクティベーションリンクとSnowflakeアカウントURLが記載されたメールが届きます。
-  - <img src="assets/choose_edition.png" width="300"/>
+  - ![assets/choose_edition.png](assets/choose_edition.png)
 
 ### 学習する内容
 - Snowflakeワークシートの作成方法
@@ -44,7 +43,6 @@ Tasty Bytesの組織について学んだ後、Tasty Bytes基盤のデータモ�
   - ロールベースのアクセス制御（RBAC）
 
 ## Tasty Bytesの設定
-Duration: 6
 
 ### 概要
 このクイックスタートでは、Snowsightとして知られるSnowflakeウェブインターフェースを使用します。Snowsightを初めて利用する場合は、[Snowsightのドキュメント](https://docs.snowflake.com/ja/user-guide/ui-snowsight)でその概要を確認することを強くお勧めします。
@@ -54,19 +52,19 @@ Duration: 6
 
 ### ステップ2 - Snowflakeにログインする
 - Snowflakeアカウントにログインします。
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### ステップ3 - ワークシートに移動する
 - 左側のナビゲーションバーにある「ワークシート」タブをクリックします。
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### ステップ4 - ワークシートを作成する
 - ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### ステップ5 - ワークシートの名前を変更する
 - 自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - 設定」と入力してワークシートの名前を変更します。
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### ステップ6 - GitHubでホストされているSetup SQLにアクセスする
 - 下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQL設定ファイルに移動します。
@@ -75,23 +73,22 @@ Duration: 6
 
 ### ステップ7 - GitHubからSetup SQLをコピーする
 - GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける
 - Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（*Macの場合はCMD + V、Windowsの場合はCTRL + V*）。
 
 ### ステップ9 - すべてのSetup SQLを同期的に実行する
 - 新しく作成したTasty Bytes - 設定ワークシート内をクリックし、すべて選択し（*Macの場合はCMD + A、Windowsの場合はCTRL + A*)、「► 実行」をクリックします。
-  - <img src ="assets/run_all_queries.gif"/>
+  - ![assets/run_all_queries.gif](assets/run_all_queries.gif)
 
 ### ステップ10 - 設定を完了する
 - 「► 実行」をクリックすると、クエリが実行されます。これらのクエリは順次実行され、ワークシート全体では約5分かかります。完了すると、「`frostbyte_tasty_bytes setup is now complete`」というメッセージが表示されます。
-  - <img src="assets/setup_complete.png">
+  - ![assets/setup_complete.png](assets/setup_complete.png)
 
 ### ステップ11 - 「Next」をクリックする
 
 ## Tasty Bytes基盤の探索
-Duration: 2
 
 ### 概要
 Tasty Bytesの設定が完了したので、作成したデータベース、ロール、ウェアハウスを探索できるようになりました。
@@ -105,35 +102,35 @@ Tasty Bytesの設定が完了したので、作成したデータベース、ロ
 ```
 SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
 ```
-<img src = "assets/show_tb_db.png"> 
+![assets/show_tb_db.png](assets/show_tb_db.png) 
 
 ### ステップ2 - Tasty Bytesデータベース内のスキーマを探索する
 このクエリは、[SHOW SCHEMAS](https://docs.snowflake.com/ja/sql-reference/sql/show-schemas)で作成したデータベース内のスキーマを返します。
 ```
 SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
 ```
-<img src = "assets/show_tb_schemas.png"> 
+![assets/show_tb_schemas.png](assets/show_tb_schemas.png) 
 
 ### ステップ3 - Tasty Bytesデータベース内のRAW_POSスキーマ内のテーブルを探索する
 このクエリは、[SHOW TABLES](https://docs.snowflake.com/ja/sql-reference/sql/show-tables)を使用して`raw_pos`スキーマ内のテーブルを返します。
 ```
 SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
 ```
-<img src = "assets/show_tb_tables.png"> 
+![assets/show_tb_tables.png](assets/show_tb_tables.png) 
 
 ### ステップ4 - Tasty Bytesロールを探索する
 このクエリは、[SHOW ROLES](https://docs.snowflake.com/ja/sql-reference/sql/show-roles)で作成したロールを返します。
 ```
 SHOW ROLES LIKE 'tasty%';
 ```
-<img src = "assets/show_tb_roles.png"> 
+![assets/show_tb_roles.png](assets/show_tb_roles.png) 
 
 ### ステップ5 - Tasty Bytesウェアハウスを探索する
 このクエリは、[SHOW WAREHOUSES](https://docs.snowflake.com/ja/sql-reference/sql/show-warehouses)で作成したウェアハウスを返します。
 ```
 SHOW WAREHOUSES LIKE 'tasty%';
 ```
-<img src = "assets/show_tb_whs.png"> 
+![assets/show_tb_whs.png](assets/show_tb_whs.png) 
 
 ### ステップ6 - すべてをまとめる
 次の3つのクエリを使用して以下を実行します。
@@ -153,21 +150,20 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.menu m
 WHERE m.truck_brand_name = 'Plant Palace';
 ```
-<img src = "assets/plant_palace.png">
+![assets/plant_palace.png](assets/plant_palace.png)
 
 驚きました！数分で、データ、ロール、ウェアハウスを完備したTasty Bytesのデモ環境がSnowflakeアカウントに設定されました。それでは、私たちが活用できる他のTasty Bytesクイックスタートをすべて見てみましょう。
 
 ### ステップ7 - 「Next」をクリックする
 
 ## Powered by Tasty Bytes - クイックスタート
-Duration: 1
 
 ### 概要
 おめでとうございます。これでTasty Bytes基盤の設定が完了しました。
 
 以下の目次には、先ほど構築した基盤を活用する、利用可能なTasty Bytesクイックスタートの概要が記載されています。
 
-<img src ="assets/pbtb_quickstarts.png"/>
+![assets/pbtb_quickstarts.png](assets/pbtb_quickstarts.png)
 
 ### ゼロからのSnowflake
 

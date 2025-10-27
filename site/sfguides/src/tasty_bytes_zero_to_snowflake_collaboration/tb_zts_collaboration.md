@@ -12,8 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Collaboration in Snowflake
-Duration: 1
-<img src = "assets/collaboration_header.png">
+![assets/collaboration_header.png](assets/collaboration_header.png)
 
 ### Overview
 Welcome to the Tasty Bytes - Zero to Snowflake Quickstart focused on Collaboration! Within this Quickstart we will highlight how you can enrich your first-party data with weather data via Snowflake Marketplace. Snowflake Marketplace is where you can find, try, and buy third party data and apps, all without having to set up any ETL, data pipelines, or integrations.
@@ -36,7 +35,6 @@ Welcome to the Tasty Bytes - Zero to Snowflake Quickstart focused on Collaborati
 - An Understanding of How to Unlock Additional Insights via the Snowflake Marketplace
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -65,7 +63,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
@@ -73,7 +71,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Investigating Days with Zero Sales
-Duration: 1
 
 ### Overview
 Tasty Bytes Financial Analysts have let the business know that there are Trucks in the Raw Point of Sales Sytem Data that are missing Sales for various days.
@@ -108,14 +105,13 @@ GROUP BY fdd.date
 ORDER BY fdd.date ASC;
 ```
 
-<img src = "assets/orders_v.png">
+![assets/orders_v.png](assets/orders_v.png)
 
 Based on what we are seeing above, we can agree with our analysts that we do not have daily sales records for a few days in February so our analysts are definitely on to something. Let's see if we can dig further into why this may have happened in our next section.
 
 ### Step 2 - Click Next -->
 
 ## Acquiring Weather Source Data from the Snowflake Marketplace 
-Duration: 2
 
 ### Overview
 From what we saw above, it looks like we are missing sales for February 16th through February 21st for Hamburg. Within our first party data there is not much else we can use to investigate what might have caused this.
@@ -188,14 +184,14 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/germany_temp.png">
+![assets/germany_temp.png](assets/germany_temp.png)
 
 To further investigate trends, let's utilize Snowsight Charting to create a Line Graph of the Average Temperature over time.
 - Chart Type: Line
 - X-Axis: DATE_VALID_STD(none)
 - Line: AVG_TEMPERATURE_AIR_2M_F(none)
 
-<img src = "assets/temp_chart.png">
+![assets/temp_chart.png](assets/temp_chart.png)
 
 Based on what we saw above, there is nothing really standing out yet as the obvious reason for zero sales days at our trucks. Let's see what else we can find that might explain things in the next step.
 
@@ -220,21 +216,20 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/germany_wind.png">
+![assets/germany_wind.png](assets/germany_wind.png)
 
 Once again this sort of data might better present trends via a quick Snowsight Chart.
 - Chart Type: Line
 - X-Axis: DATE
 - Line: MAX_WIND_SPEED_100M_MPH(none)
 
-<img src = "assets/wind_chart.png">
+![assets/wind_chart.png](assets/wind_chart.png)
 
 **Ah ha!** The wind for those zero sales days was at hurricane levels. This seems to be a better reason for why our trucks were not able to sell anything on those days. However since we ran this analysis in Harmonized let's now begin on our path to make this accessible in Analytics where our analysts can access these insights on their own.
 
 ### Step 5 - Click Next -->
 
 ## Democratizing First and Third Party Data
-Duration: 3
 
 ### Overview
 We have determined that hurricane-level winds were likely the reason for the days with zero sales that our financial analysts brought to our attention.
@@ -298,7 +293,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 ```
 
-<img src = "assets/sql_for_view.png">
+![assets/sql_for_view.png](assets/sql_for_view.png)
 
 The results we have just recieved look great. We can now wrap this SQL within a View in our next step.
 
@@ -335,7 +330,6 @@ Amazing we have now democratized these sort of insights to the Tasty Bytes organ
 ### Step 4 - Click Next -->
 
 ## Using Harmonized Data to Answer Questions from the Business
-Duration: 1
 
 ### Overview
 With Harmonized Sales and Weather Data now available in our Analytics layer, our users can begin to leverage this data to derive insights and ensure we are using data when making decisions.
@@ -362,7 +356,7 @@ WHERE 1=1
 ORDER BY date DESC;
 ```
 
-<img src = "assets/q1.png">
+![assets/q1.png](assets/q1.png)
 
 
 
@@ -381,7 +375,7 @@ WHERE 1=1
 GROUP BY city;
 ```
 
-<img src = "assets/q2.png">
+![assets/q2.png](assets/q2.png)
 
 
 
@@ -392,7 +386,6 @@ By completing this Quickstart we have seen how quickly we are able to derive rea
 ### Step 2 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Collaboration Quickstart. 

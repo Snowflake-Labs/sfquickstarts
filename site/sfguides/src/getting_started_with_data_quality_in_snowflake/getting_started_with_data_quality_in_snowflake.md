@@ -11,7 +11,6 @@ authors: Vino Duraisamy, Pino Suliman
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 3
 
 Trusted data is essential for confident decision-making, analytics, and AI. Snowflake’s Data Quality Framework provides a native, end-to-end approach for ensuring that data is accurate, complete, and reliable throughout its lifecycle.
 
@@ -48,7 +47,6 @@ A Snowflake account with Enterprise edition or higher.
 
 ## Setup
 
-Duration: 10
 
 ### Environment Setup
 
@@ -177,20 +175,18 @@ In the next section, we will learn how to use data profiling statistics to analy
 
 ## Analyze
 
-Duration: 5
 
 ### Analyze dataset with profiling statistics
 
 The first step in the data quality lifecycle is data profiling. Data profiling is the process of analyzing a dataset to understand its structure, content, and quality. It typically includes gathering statistics such as data types, value distributions, null counts, and uniqueness to identify patterns and potential data quality issues.
 Using Snowsight, you can easily profile a dataset by accessing the Data Quality Tab. This is an important role in helping you get started with continuous data quality monitoring by laying the groundwork for identifying data quality rules.
 
-![customer orders](assets/customer orders.png)
+![customer_orders](assets/customer_orders.png)
 
 <!-- ------------------------ -->
 
 ## Best Practices
 
-Duration: 10
 
 ### Best practices for monitoring data quality with DMFs and Expectations
 
@@ -303,7 +299,6 @@ Now that we’ve set up DMFs and Expectations to monitor our pipeline, let’s e
 
 ## Review
 
-Duration: 10
 
 ### Review Data Quality Monitoring Dashboard in Snowsight
 
@@ -333,7 +328,6 @@ The DMF side panel automatically displays the objects that are [downstream](http
 
 ## Conclusion and Resources
 
-Duration: 5
 
 You've successfully implemented data quality monitoring for your pipeline. By combining proactive monitoring with an interactive UI for root cause analysis, it simplifies data quality management directly within Snowflake. 
 

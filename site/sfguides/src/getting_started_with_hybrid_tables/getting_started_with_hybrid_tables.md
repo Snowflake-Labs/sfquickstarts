@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Hybrid Tables  
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 ### Hybrid Tables
 
@@ -53,7 +52,6 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 ## Setup
 
-Duration: 5
 
 In this part of the step, we will setup our Snowflake account, create new worksheets, role, database structures, create a Virtual Warehouse and create two hybrid tables and one standard table that we will use in this step.
 
@@ -293,7 +291,6 @@ insert into ORDER_HEADER (
 	FROM @FROSTBYTE_TASTY_BYTES_STAGE (pattern=>'.*ORDER_HEADER.csv') t;
 ```
 ## Explore Data
-Duration: 3
 
 In the previous Setup step we created HYBRID_QUICKSTART_ROLE role, HYBRID_QUICKSTART_WH warehouse, HYBRID_QUICKSTART_DB database and DATA schema. Let's use them.
 ```sql
@@ -344,7 +341,6 @@ select * from ORDER_HEADER limit 10;
 ```
 
 ## Unique and Foreign Keys Constraints
-Duration: 5
 
 In this part of the step, we will test Unique and Foreign Keys Constraints.
 
@@ -467,7 +463,6 @@ Both statements should run successfully.
 
 ## Row Level Locking
 
-Duration: 5 
 
 Unlike standard tables, which utilize partition or table-level locking, hybrid tables employ row-level locking for update operations.
 Row Level locking allows for concurrent updates on independent records.
@@ -556,7 +551,6 @@ SELECT * from ORDER_HEADER where order_status = 'COMPLETED';
 ```
 
 ## Consistency 
-Duration: 5
 
 In this step, we will demonstrate a unique hybrid tables feature that shows how we can run multi-statement operations natively, easily and effectively in one consistent atomic transaction across both hybrid and standard table types.
 We'll execute a use case where a truck owner acquires a new truck of the same model. Consequently we will have to update the YEAR column for relevant record in the TRUCK hybrid table to reflect the change. As a result of this update, the TRUCK_HISTORY standard table will be promptly updated to track and preserve changes over time. 
@@ -605,7 +599,6 @@ select * from TRUCK where TRUCK_ID = 1;
 ```
 
 ## Hybrid Querying
-Duration: 5
 
 In this step, we will test the join between hybrid and standard tables. We will use the TRUCK_HISTORY table and join it with the hybrid table ORDER_HEADER.
 
@@ -646,7 +639,6 @@ select HY.*,ST.* from ORDER_HEADER as HY join TRUCK_HISTORY as ST on HY.truck_id
 After executing the join statement, examine and analyze the data in the result set.
 ## Security & Governance
 
-Duration: 5
 
 In this step, we will demonstrate that the security and governance functionalities applied to the standard table also extend to the hybrid table, by running two security use cases. 
 

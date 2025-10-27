@@ -44,7 +44,6 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment
-Duration: 2
 
 > aside positive
 >
@@ -102,7 +101,6 @@ CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_
 
 <!-- ------------------------ -->
 ## Ingest Revenue Data and Semantic Model YAML
-Duration: 10
 
 > aside positive
 >
@@ -196,7 +194,6 @@ FORCE = TRUE;
 ```
 <!-- ------------------------ -->
 ## Create Streamlit Conversational App
-Duration: 10
 
 Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit in Snowflake application:
 
@@ -237,7 +234,6 @@ You can now begin asking natural language questions about the revenue data in th
 
 <!-- ------------------------ -->
 ## Semantic Models
-Duration: 5
 
 *[Optional reading]*
 
@@ -301,7 +297,6 @@ For more information about the semantic model, please refer to the [documentatio
 
 <!-- ------------------------ -->
 ## Verified Query Repository
-Duration: 5
 
 *[Optional reading]*
 

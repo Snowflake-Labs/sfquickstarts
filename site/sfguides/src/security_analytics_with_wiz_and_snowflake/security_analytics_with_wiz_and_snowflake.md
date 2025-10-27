@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Security Analytics with Wiz and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this guide, you'll learn how to analyze Wiz data in Snowflake. The Snowflake and Wiz integration enables teams using Wiz to store Wiz Issues, Vulnerabilities, Host Configuration Findings, and other findings in Snowflake for historical analysis and other security analytics use cases such as: 
 1. Incident response
@@ -37,7 +36,6 @@ Wiz scans cloud workloads and generate Issues and security findings which then a
 - a Snowsight dashbaord that will be powered by these queries
 <!-- ------------------------ -->
 ## Setting up Snowflake
-Duration: 5
 
 At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
 
@@ -54,7 +52,6 @@ Each step throughout the guide has an associated SQL command to perform the work
 
 <!-- ------------------------ -->
 ## Creating Snowflake Role, User, Database & Warehouse
-Duration: 5
 
 To get started, we are going to create the Snowflake objects for this lab. You can create objects using the UI, but for the purposes of this lab we will use Snowflake DDL commands in the SQL script file that we downloaded in the previous step. 
 
@@ -105,7 +102,6 @@ The warehouse is now ready to use.
 
 <!-- ------------------------ -->
 ## Load Wiz data into Snowflake
-Duration: 5
 
 Mutual Snowflake and Wiz customers usually use Wiz's native Snowflake integration to automatically ingest Wiz reports data into Snowflake. In this lab, we'll skip the part of creating the Snowflake integration in Wiz and start by creating the tables in Snowflake with synthetic Wiz data we generated for this lab.
 
@@ -242,7 +238,6 @@ group by 1,2;
 
 <!-- ------------------------ -->
 ## Querying the Issues table
-Duration: 5
 Wiz Issues represent real risks in the cloud environment, combining various risk factors such as misconfigurations, vulnerabilities, and more across accounts, users, workloads, APIs, and critical data. These are the risks you should prioritize for fixing.
 
 ### Identifying Critical Issues
@@ -351,7 +346,6 @@ We can see that the most comon issue type is "VM/serverless with high/critical s
 <!-- ------------------------ -->
 <!-- ------------------------ -->
 ## Querying the vulnerabilities table
-Duration: 5
 In the last section, we saw that the most common Issue type is "VM/serverless with high/critical severity network vulnerabilities with a known exploit ". Let's use the vulnerabilities table to get a better understanding of the vulnerability-related information that Wiz ingested into Snowflake. The Vulnerabilities data provide insights into resolved and unresolved vulnerabilities in your cloud environment. First, let's have a look at the data:
 
 ```sql
@@ -407,7 +401,6 @@ ORDER BY oldest_vuln_age DESC;
 ```
 <!-- ------------------------ -->
 ## Building some dashboards
-Duration: 5
 
 Let's use the same queries we created in the last sections in order to create a dashboard where we can track Wiz Issues, vulnerabilities, and Host Configuration Findings. First, let's go to the Dashboards page in Snowflake and create a new dashboard. Then let's hit the "+" button and create a "New Tile" and select "From SQL Worksheet". Let's place the query we used before for identifying the cloud platform with the most Issues:
 ```sql
@@ -424,7 +417,6 @@ We can repeat the same process for other queries we executed against the Issues,
 
 <!-- ------------------------ -->
 ## Teardown of the Lab
-Duration: 2
 
 Once you have completed the lab, it is important to clean up the resources you have created to avoid incurring unnecessary costs and to keep your environment tidy. Follow these steps to teardown the lab:
 
@@ -483,7 +475,6 @@ This command deletes the CLOUD_SECURITY_ANALYST_ROLE role.
 
 
 ## Conclusion And Resources
-Duration: 1
 
 In this lab, we explored how to integrate and analyze Wiz data in Snowflake. We set up the environment, imported Wiz data, executed queries and build a dashboard to gain insights on Wiz data.
 ### Related Resources

@@ -1,6 +1,6 @@
 author: Jonathan Tao and Hanbing Yan
 id: snowpark_python_top_three_tips_for_optimal_performance
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
 summary: Snowpark Python: Top Three Tips for Optimal Performance
 environments: web
@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Snowpark Python: Top Three Tips for Optimal Performance
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 This Quickstart guide contains key tips for optimal performance when using Snowpark Python.  The guide is broken up into multiple labs, each covering a key concept that can improve performance and/or efficiency while running workloads in Snowpark.  
 
@@ -34,7 +33,6 @@ In this quickstart, you will learn how to make optimized decisions when using Sn
 
 
 ## Setup
-Duration: 5
 
 ### Python Environment Setup 
 
@@ -107,7 +105,6 @@ Now we will see how Pandas works with Snowpark and how Snowflake has tried to pa
 <!-- ------------------------ -->
 ## Lab 1 (Snowpark Dataframes) - Execution
 
-Duration: 15
 
 ### Prerequisites
 - Your snowflake user needs to be granted to a role have write access to database SNOWFLAKE_SAMPLE_DATA. For instructions to import SNOWFLAKE_SAMPLE_DATA, please click [here](https://docs.snowflake.com/en/user-guide/sample-data-using).
@@ -133,7 +130,6 @@ I have summarized the performance differences between Snowpark Dataframe and Pan
 ![compare](assets/snowparkbp_lab3_compare.png)
 
 ## Lab 2 (Vectorised UDFs) - Overview
-Duration: 2
 
 ### Lab Summary
 
@@ -151,7 +147,6 @@ In this notebook, we will do the following:
  - We will execute 4 different use-cases, namely, Numerical Computation, String Manipulation, Regex Masking, and Timestamp Manipulation. Please note, these are hypothetical use-cases but are commonly found when working with data in Snowflake.
 
 ## Lab 2 (Vectorised UDFs) - Execution
-Duration: 20
 
 ### Prerequisites
 - Your snowflake user needs to be granted to a role have write access to database SNOWFLAKE_SAMPLE_DATA. For instructions to import SNOWFLAKE_SAMPLE_DATA, please click [here](https://docs.snowflake.com/en/user-guide/sample-data-using).
@@ -247,7 +242,6 @@ Your Python code must operate efficiently on batch of rows
 
 
 ## Lab 3 (Cachetools) - Overview
-Duration: 3
 
 ### Lab Summary
 
@@ -276,7 +270,6 @@ To analyze this data in Snowflake Snowpark Python, we have created a Python User
 Lately as the number of transactions are growing we are seeing performance degradation of our select queries which is using the UDF to fetch the required information from the pickle file. We need to look for ways to improve the performance of the Python UDF that we have created.
 
 ## Lab 3 (Cachetools) - Execution
-Duration: 5
 
 ### What You'll Do
 
@@ -297,7 +290,6 @@ Open up the jupyter notebook titled [lab3_cachetools_library](https://github.com
 Based on the our testing, we have identified that the total duration for the query using Cachetools decorator for this use case yields a significant performance increase for the Python UDF execution.
 
 ## Conclusion and Resources
-Duration: 3
 
 Congratulations! You've successfully performed all the labs illustrating the best practices for getting optimal performance when using Snowpark Python.  You're now ready to implement these concepts in your own projects.
 

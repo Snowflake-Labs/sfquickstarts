@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 2
 
 Datameer provides users with data discovery & transformation capabilities to visually explore and transform their data to identify the key insights for improving data driven decisions. Users can transform their data using a variety of no-code, low-code and SQL transformation recipes and then quickly publish this data back into Snowflake to support the development of BI dashboards, reports and data science driven insights in your organization. All this can be delivered without the need for IT assistance or formal training and without leaving a single user interface.  
 
@@ -50,7 +49,6 @@ For the purposes of this workshop, you play the role of a loans analyst. Through
 
 ## Prepare Your Lab Environment
 
-Duration: 2
 
 Click the link below to get to the trial setup:
 
@@ -74,7 +72,6 @@ But before, let's have a quick look at the Datameer Workbench UI:
 
 ## Data Exploration
 
-Duration: 8
 
 Let’s add our first data source by clicking the **+** button next to the `LOANS` table from the Data Browser. This will add the table to our Workbench for discovery and transformation. 
 
@@ -99,7 +96,6 @@ Let’s now add another dataset to this Project - this time by adding the `ZIPCO
 
 ## No-Code Transformations
 
-Duration: 10
 
 Click on the **LOANS** node and select the **+** button to bring up the list of no-code transformations.
 
@@ -144,7 +140,6 @@ You should now see the following flow:
 
 ## Low-Code Transformations 
 
-Duration: 17
 
 The Formula Builder can be used to enter low-code formulas on a columnar basis. All functions can be found on the right hand side, grouped together by different categories (STRING, NUMERIC, DATE & TIME, CONVERSION, CONTEXT & CONDITIONAL) - selecting a category allows you to browse the Snowflake functions and obtain help on how to use these against your data. Inside the Formula Builder we can select a field to transform using a variety of functions or we can select the **+** button to add a new column. 
 
@@ -170,7 +165,6 @@ You will see the following screen after entering the formula described in Step 3
 
 ## Joining Data Together
 
-Duration: 11
 The third Recipe step is complete and now we want to join our `LOANS` data with our `ZIPCODE` (POSTCODE) dataset. Let’s apply a join:
 
 1. Click the **+** button next to the ´Formula node and select **Join**.
@@ -191,7 +185,6 @@ The resultant flow:
 
 ## Exploring the Data
 
-Duration: 16
 
 Datameer provides functionality to perform exploration of datasets through dimensions and measures without having to export to a BI tool. For example, to calculate the average interest rate by loan grade and purpose, perform the following steps:
 
@@ -218,7 +211,6 @@ You will then see the aggregated results, which are always calculated based on t
 
 ## Aggregating Data
 
-Duration: 10
 
 Users can create persistent aggregation and pivot nodes. For example, we can create an aggregation of the interest rate by the state:  
 
@@ -240,7 +232,6 @@ The updated pipeline flow:
 
 ## Deploying Assets
 
-Duration: 8
 
 We now want to deploy our newly transformed joined and aggregated data back into Snowflake:
 
@@ -257,7 +248,6 @@ Your transformations are now deployed to Snowflake as a table!
 
 ## Uploading Files
 
-Duration: 5
 
 Users can upload files through Datameer which are then materialized as Snowflake tables. You can download a sample CSV file [here](https://datameer.box.com/s/0wfvv4gue31ng2311c81i6fq8lzivfzk).
 
@@ -275,7 +265,6 @@ The file is now materialized as a table.
 
 ## SQL Transformations
 
-Duration: 10
 
 Users can also add SQL nodes as part of the overall transformation process. SQL nodes can be combined with no- or low-code nodes. We can try the following to insert a SQL node into our pipeline:
 
@@ -303,7 +292,6 @@ You can now see the SQL node in your Flow Area:
 
 ## Conclusion and Next Steps
 
-Duration: 2
 
 ### Summary
 

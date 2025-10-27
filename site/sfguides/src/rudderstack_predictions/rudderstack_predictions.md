@@ -10,7 +10,6 @@ author: RudderStack
 # Build predictive features without MLOps using RudderStack and Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 Predictive features like future LTV and churn propensity can be game changing for a business. If your marketing, customer success, and other teams want to use them, though, your company often faces a binary choice: use a one-size-fits-all solution within an existing SaaS platform (i.e., marketing automation tool), or build out ML and MLOps capabilities internally.
 
@@ -61,7 +60,6 @@ By completing this guide you will create predictive models and features using Ru
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 15
 
 ### Setting up Snowflake for Event Stream Data
 Because Predictions is designed to run in a production environment, you need to perform some basic set up in Snowflake (and later, your RudderStack workspace) to simulate the pipelines you would run when collecting user event data. 
@@ -375,7 +373,6 @@ This will run python code in a virtual warehouse in Snowflake and will incur com
 
 <!-- ------------------------ -->
 ## Build Automated Features in the RudderStack UI - Setup
-Duration: 5
 
 Setting up automated features in the RudderStack UI is a straight-forward process. Predictive features are configured within a Profiles project and automatically added to the feature table output when the project is run.
 
@@ -405,7 +402,6 @@ Once you select your warehouse, you will be able to choose from RudderStack even
 
 <!-- ------------------------ -->
 ## Map ID Fields
-Duration: 5
 
 ![MapID](assets/Map-ID.png)
 
@@ -430,7 +426,6 @@ Click on `Add mapping` and map the `USER_ID` and `ANONYMOUS_ID` columns to stand
 
 <!-- ------------------------ -->
 ## Create Default Features in the UI
-Duration: 5
 
 There are two types of automated features you can define in the UI:
 
@@ -498,7 +493,6 @@ Once permissions are granted, you will be able to run jobs that produce predicti
 
 <!-- ------------------------ -->
 ## Create Custom Features in the UI
-Duration: 5
 
 If a needed feature is not in the template library, you can define a custom feature in the UI. Custom features can be standard or predictive features.
 
@@ -525,7 +519,6 @@ Once complete click `Save`. The custom feature will be added to the top of the p
 
 <!-- ------------------------ -->
 ## Set Schedule
-Duration: 5
 
 There are three options to set a schedule for how often the feature generation job runs:
 
@@ -566,7 +559,6 @@ For this guide, select Manual.
 
 <!-- ------------------------ -->
 ## Save, Review, and Create Project
-Duration: 3
 
 ### Save Project
 
@@ -582,7 +574,6 @@ Finally review all the settings and when ready click `Create user 360`.
 
 <!-- ------------------------ -->
 ## Review Created Features
-Duration: 5
 
 Once the initial project run is initiated, it may take up to 25-30 minutes to complete. Once the job is done, you are able to explore the data in RudderStack's UI, including model fit charts for predictive features and individual user records with all features.
 
@@ -592,7 +583,6 @@ Once the initial project run is initiated, it may take up to 25-30 minutes to co
 
 <!-- ------------------------ -->
 ## Code Your Own Custom Predictive Features
-Duration: 15
 
 ### Use Case
 
@@ -874,7 +864,6 @@ pb run
 
 <!-- ------------------------ -->
 ## Final Table
-Duration: 1
 
 The final predictive features can be found in your Snowflake environment together in the same table. The table will provide you with the unified user id, created by RudderStack, when the features are valid as of (i.e. when the model was last run to create these features), and model ID, and your predictive features.
 
@@ -882,7 +871,6 @@ The final predictive features can be found in your Snowflake environment togethe
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 In this quickstart we created a project that leveraged RudderStack data and the power of Snowpark to generate predictive features directly in the Snowflake environment.
 

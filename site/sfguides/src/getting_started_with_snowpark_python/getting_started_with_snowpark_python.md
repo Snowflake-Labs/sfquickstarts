@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowpark Python
 <!-- ------------------------ -->
 ## Overview 
-Duration: 7
 
 Python is the language of choice for Data Science and Machine Learning workloads. Snowflake has long supported Python via the Python Connector, allowing data scientists to interact with data stored in Snowflake from their preferred Python environment. This did, however, require data scientists to write verbose SQL queries. To provide a more friendly, expressive, and extensible interface to Snowflake, we built **Snowpark Python**, a native Python experience with a pandas and PySpark-like API for data manipulation. This includes a client-side API to allow users to write Python code in a Spark-like API without the need to write verbose SQL. Python UDF and Stored Procedure support also provides more general additional capabilities for compute pushdown.
 
@@ -46,7 +45,6 @@ You will build an end-to-end data science workflow leveraging Snowpark for Pytho
 
 <!-- ------------------------ -->
 ## Use-Case: Predicting Customer Churn
-Duration: 1
 
 You are part of a team of data engineers and data scientists at a Telecom company that has been tasked to reduce customer churn using a machine learning based solution. 
 
@@ -60,7 +58,6 @@ To streamline your path to production, we will learn how to bring trained models
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 Let's set up the Python environment necessary to run this quickstart:
 
@@ -116,7 +113,6 @@ Now, you are ready to get started with the notebooks. For each notebook, make su
 
 <!-- ------------------------ -->
 ## Load Data Using Snowpark Python Client API
-Duration: 10
 
 **Persona**: DBA/Platform Administrator/Data Engineer
 
@@ -129,7 +125,6 @@ Open up the [`01-Load-Data-with-Snowpark`](https://github.com/Snowflake-Labs/sfg
 
 <!-- ------------------------ -->
 ## Analyze Data Using Snowpark Python Dataframe API
-Duration: 10
 
 **Persona**: Data Scientist 
 
@@ -141,7 +136,6 @@ Open up the [`02-Data-Analysis`](https://github.com/Snowflake-Labs/sfguide-getti
 
 <!-- ------------------------ -->
 ## Deploy Trained Models using Snowpark Python UDFs
-Duration: 10
 
 **Persona**: Data Scientist/ML Engineer
 
@@ -153,7 +147,6 @@ Open up the [`03-Snowpark-UDF-Deployment`](https://github.com/Snowflake-Labs/sfg
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 Through this Quickstart we were able to experience how Snowpark for Python enables you to use familiar syntax and constructs to process data where it lives with Snowflake’s elastic, scalable and secure engine, accelerating the path to production for data pipelines and ML workflows. Here’s what you were able to complete:
 

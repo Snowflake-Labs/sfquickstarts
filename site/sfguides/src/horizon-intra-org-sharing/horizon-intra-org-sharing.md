@@ -11,7 +11,6 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 15
 
 Sharing information between departments, business units and subsidiaries of a company is critical for success, particularly when there are organizational silos in place. A modern data platform must provide decentralized ownership, universal discovery, access control, federated governance, and observability.
 
@@ -183,7 +182,6 @@ snow --info
 <!-- ------------------------ -->
 ## Citations and Terms of Use
 
-Duration: 1
 
 Raw text data provided for this lab is an extract from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/)
 
@@ -205,7 +203,6 @@ Use of this dataset requires that we cite this ACL 2011 paper by Andrew Maas, et
 <!-- ------------------------ -->
 ## Horizon AWS Provider Account Setup
 
-Duration: 10
 
 Clone our [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository to your local machine with `git`:
 
@@ -217,7 +214,7 @@ cd horizon-intra-org-scripts
 ```
 
 If you prefer not to use git, `Download ZIP` from the Lab Scripts [github site](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
-<img src="assets/code-download.jpg" width="400" height="250">
+![assets/code-download.jpg](assets/code-download.jpg)
 
 Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface) - one script per worksheet
 
@@ -285,7 +282,6 @@ Setup is now complete!
 <!-- ------------------------ -->
 ## Publish a Data Listing
 
-Duration: 20
 
 In this section you will create, publish, consume, alter, and monitor a [listing](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about).
 
@@ -408,7 +404,6 @@ In this section you will create, publish, consume, alter, and monitor a [listing
 
 ## Listing Management and Monitoring
 
-Duration: 20
 
 ### Use the Listing API to modify listing properties programmatically
 
@@ -536,7 +531,6 @@ FROM stream_daily_weather_changes;
 <!-- ------------------------ -->
 ## Protect Data with Governance Policies
 
-Duration: 20
 
 This section of the lab introduces several capabilities for data providers to restrict the usage of their products by consumers.
 
@@ -908,7 +902,6 @@ WHERE city = 'Melbourne' AND last_name = 'Arellano';
 
 ## Publish Listing with Data Quality Metrics
 
-Duration: 15
 
 In this section the data provider will capture [data quality metrics](https://docs.snowflake.com/en/user-guide/data-quality-intro) and share them with the data consumers. In particular, we want to monitor the data quality in the view ANALYTICS.ORDERS_BY_POSTAL_CODE_V.
 
@@ -1099,7 +1092,6 @@ Take the following 3 steps in the UI:
 <!-- ------------------------ -->
 ## Publish a Native Application Listing
 
-Duration: 20
 
 The [Snowflake Native Application Framework](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/native-apps/overview) provides developers the ability to create data intensive applications that run _within_ the Snowflake platform with versioning controls.
 
@@ -1319,7 +1311,6 @@ select distinct primary_city from tasty_bytes_global_sales.app_instance_schema.o
 <!-- ------------------------ -->
 ## Share Snowflake-Managed Iceberg Tables
 
-Duration: 10
 
 Iceberg tables in Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage managed by the customer. Snowflake supports Iceberg tables that use the Apache Parquet file format.
 
@@ -1451,7 +1442,6 @@ LIMIT 10
 <!-- ------------------------ -->
 ## Share Unstructured Data
 
-Duration: 20
 
 We have previously staged 100 movie reviews extracted from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/).
 
@@ -1588,7 +1578,6 @@ Try the same steps on the **Azure Consumer Account**:
 <!-- ------------------------ -->
 ## Conclusion & Resources
 
-Duration: 5
 
 Congratulations, you made it through our Horizon Collaboration journey! You have exercised a broad range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions.
 

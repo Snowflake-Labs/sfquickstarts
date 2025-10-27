@@ -12,7 +12,6 @@ authors: Phani Raj
 
 ## Overview
 
-Duration: 3
 
 This quickstart demonstrates how to build a comprehensive retail analytics data analytics pipeline using Snowflake's latest data engineering capabilities in Python. Python has become the preferred language for data engineers due to its rich ecosystem of data processing libraries, ease of use, and extensive community support. Snowflake offers native Python support through Snowpark API, Snowpark Pandas APIs and offers  seamless integration with popular Python libraries, and familiar APIs that make data engineering accessible and efficient.
 
@@ -68,7 +67,6 @@ An end to end Data Engineering pipeline which does the following:
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 ### 1. Environment Setup
 
@@ -376,7 +374,6 @@ This notebook contains comprehensive instructions for implementing the data engi
 
 Please ensure that all prerequisite steps mentioned in the **Setup** have been completed prior to executing the notebook. Failure to complete will result in code execution errors within the notebook environment.
 
-Duration: 10
 
 ### 1. Multi-Source Data Loading
 
@@ -614,7 +611,6 @@ Reference implementation: [`dashboard.py`](https://github.com/Snowflake-Labs/sfg
 
 ## Observability and Monitoring
 
-Duration: 5
 
 ### Snowflake Trail Integration
 

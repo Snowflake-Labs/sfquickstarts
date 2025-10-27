@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Iceberg in OneLake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 Apache Iceberg is an open table format for huge analytical datasets that enables high performance analytics on open data formats with ACID compliance. Snowflake and Azure both support Iceberg format that enables customers to drastically improve data interoperability, speed of implmentation, and peformance for integrated data lakes.
 
@@ -41,7 +40,6 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Prepare Sample Data
-Duration: 3
 
 The first thing you will do is create a database and warehouse in your Snowflake environment. Then create a database for the sample data from a public share in the Data Cloud. Copy and paste the code below to a SQL Worksheet in Snowflake and run through it.
 ```sql
@@ -66,7 +64,6 @@ SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.customer;
 
 <!-- ------------------------ -->
 ## Create an Iceberg table in OneLake
-Duration: 15
 
 ### Create the External Volume
 Before you create an Iceberg table, you must have an external volume. An external volume is a Snowflake object that stores information about your cloud storage locations, and identity and access management (IAM) entities (in this case, your Entra ID Tenant). Snowflake uses an external volume to establish a connection with your cloud storage in order to access Iceberg metadata and Parquet data.
@@ -155,7 +152,6 @@ Select * from SnowflakeQS.ICEBERGTEST.dim_customer
 
 <!-- ------------------------ -->
 ## Accessing the Data in Fabric
-Duration: 10
 
 1. In order for Fabric to work on the Iceberg tables, you need to set up shortcuts to the data.
 
@@ -194,7 +190,6 @@ Note: This is a temporary step – we will remove this as a required step in the
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 
 Congratulations! You've successfully created an Iceberg table in OneLake as a Snowflake data object. You can now use this data for power BI reports, querying from Snowflake, working with Snowpark, working with Synapse Notebooks, and many more use-cases.

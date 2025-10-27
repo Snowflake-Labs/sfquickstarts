@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with The Microsoft Teams and M365 Copilot Cortex App
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 The Microsoft M365 Copilot and Snowflake Cortex Agents integration simplifies AI-powered data interactions so that both technical and business users can interact with their structured and unstructured data using natural language. Direct access to Cortex Agents from Microsoft M365 Copilot makes it possible to combine powerful generative AI data agents with secure data in Snowflake, unlocking endless business efficiencies for every organization, from faster customer support to optimized supply chain operations.
 
@@ -63,7 +62,6 @@ The authentication and user flow goes like this:
 
 <!-- ------------------------ -->
 ## Setup Snowflake
-Duration: 9
 
 Copy and paste the code below into a Snowflake Worksheet to create the following:
 1. A dataset with unstructured data on sales conversations.
@@ -226,7 +224,6 @@ GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
 ```
 <!-- ------------------------ -->
 ## App Connectivity
-Duration: 12
 
 A Global Administrator for your Microsoft Entra ID tenant must use the two links below to grant the necessary permissions for the applications. Please review the permissions requested on each consent screen before accepting.
 
@@ -309,7 +306,6 @@ The Snowflake Cortex Teams and M365 App now supports the below functionality. Us
 :brain: Improved Reasoning & UX: Agents now use a multi-step “Reasoning Path” for tools, and the UI shows “thinking” traces and status updates.
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 ### Technical Considerations
 Now that you've mastered creating a Cortex Agent app, you're ready to unlock powerful insights for your organization. We're excited to see how you build on this new capability, enabling your business users to query all types of data using plain text within Microsoft Teams and M365 Copilot.

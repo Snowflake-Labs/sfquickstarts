@@ -1,5 +1,5 @@
 id: getting_started_with_Openflow_unstructured_data_pipeline
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/openflow
 language: en
 summary: Getting Started with Openflow Unstructured Data Pipeline using Google Drive and Snowflake Intelligence
 environments: web
@@ -11,7 +11,6 @@ authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This demo showcases how to transform Google Drive business documents into actionable strategic intelligence using Snowflake's unstructured data processing capabilities.
 
@@ -115,7 +114,6 @@ Before starting, ensure you have:
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 10
 
 ### Clone the QuickStart Repository
 
@@ -315,7 +313,6 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 <!-- ------------------------ -->
 ## Openflow Configuration
 
-Duration: 25
 
 This section guides you through setting up Openflow SPCS infrastructure and creating a runtime for the Festival Operations document pipeline.
 
@@ -461,7 +458,6 @@ Before configuring the connector, set up your Google Drive location:
 <!-- ------------------------ -->
 ## Configure Document Ingestion Pipeline
 
-Duration: 10
 
 Now configure the Google Drive connector with the following parameters:
 
@@ -542,7 +538,6 @@ The pipeline will automatically:
 <!-- ------------------------ -->
 ## Prepare Sample Documents
 
-Duration: 5
 
 Before running the pipeline, you need to prepare the Festival Operations sample documents in your Google Drive.
 
@@ -656,7 +651,6 @@ The animation demonstrates:
 <!-- ------------------------ -->
 ## Data Pipeline Results
 
-Duration: 5
 
 ### Verify Document Ingestion
 
@@ -812,7 +806,6 @@ The pipeline should have ingested the Festival Operations business document coll
 <!-- ------------------------ -->
 ## Cortex Search
 
-Duration: 5
 
 ### Automatic Cortex Search Service Creation
 
@@ -973,7 +966,6 @@ Based on the Festival Operations dataset, here are sample questions organized by
 <!-- ------------------------ -->
 ## Snowflake Intelligence
 
-Duration: 15
 
 Snowflake Intelligence enables you to create AI agents that can query and analyze your unstructured data using natural language. This section shows how to connect Snowflake Intelligence to the Cortex Search service created by your Openflow pipeline.
 
@@ -1193,7 +1185,6 @@ Focus on actionable insights and business value in your responses.
 <!-- ------------------------ -->
 ## Advanced Use Cases
 
-Duration: 10
 
 ### Multi-Document Analysis
 
@@ -1409,7 +1400,6 @@ Runs all conversion tasks to generate documents in all supported formats (PDF, D
 <!-- ------------------------ -->
 ## Cleanup
 
-Duration: 2
 
 When you're finished with the demo, follow these steps to clean up resources.
 
@@ -1460,7 +1450,6 @@ DROP ROLE IF EXISTS FESTIVAL_DEMO_ROLE;
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 2
 
 Congratulations! You've successfully built an end-to-end unstructured data pipeline using Openflow and Snowflake Intelligence. You can now:
 

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Retrieval-Augmented Generation (RAG) has become a cornerstone technique for enhancing Large Language Models (LLMs) with domain-specific knowledge. In this guide, you'll learn how to build a RAG application using the `langchain-snowflake` package with `SnowflakeCortexSearchRetriever` and `ChatSnowflake`. You'll then evaluate your RAG's performance using TruLens and Snowflake's AI Observability features.
 
@@ -39,7 +38,6 @@ A complete RAG application that can answer questions about sales conversations b
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10
 
 Firstly, to follow along with this quickstart, you can click on [build-and-evaluate-rag-with-langchain-and-snowflake.ipynb](https://github.com/Snowflake-Labs/sfguide-build-and-evaluate-rag-with-langchain-and-snowflake/blob/main/build-and-evaluate-rag-with-langchain-and-snowflake.ipynb) to download the Notebook from GitHub.
 
@@ -73,7 +71,6 @@ Notebooks come pre-installed with common Python libraries for data science and m
 <!-- ------------------------ -->
 ## Creating a Snowflake Session
 
-Duration: 5
 
 ### Setting Up Environment Variables
 
@@ -105,7 +102,6 @@ This session will handle authentication and connection management for all Snowfl
 <!-- ------------------------ -->
 ## Building the Retriever
 
-Duration: 10
 
 ### Creating a Cortex Search Retriever
 
@@ -147,7 +143,6 @@ The retriever should return the most relevant documents from our sales conversat
 <!-- ------------------------ -->
 ## Building the RAG Chain
 
-Duration: 15
 
 ### Creating the LLM Component
 
@@ -212,7 +207,6 @@ The RAG chain should retrieve relevant context about DataDriven from our knowled
 <!-- ------------------------ -->
 ## Evaluating RAG Performance
 
-Duration: 20
 
 ### Setting Up TruLens with Snowflake
 
@@ -308,7 +302,6 @@ You can view the evaluation results in Snowflake's AI Observability UI: [Open in
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations! You've successfully built and evaluated a complete RAG application using LangChain and Snowflake. You've learned how to create a retriever using Snowflake Cortex Search, build a RAG chain with LangChain, and evaluate its performance using TruLens and Snowflake's AI Observability features.
 

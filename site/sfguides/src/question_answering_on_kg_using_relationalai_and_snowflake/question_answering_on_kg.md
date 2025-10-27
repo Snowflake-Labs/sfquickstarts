@@ -12,7 +12,6 @@ feedback link: https://github.com/RelationalAI/QuestionAnsweringKG/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Knowledge graphs are a useful structure to use to encode information about a particular domain. They allow for explicit inspection of the data encoded and the ability to reason over the relations. However, writing a query against a knowledge graph can be more challenging than other systems given that they generally lack a natural language interface. In order to query over a knowledge graph such as the one created by Wikidata, the user must know the specialized syntax of SPARQL as well as the knowledge graph representation of the entities and relations. For example, the concept of a hospital in wikidata is represented internally as Q16917.
 
@@ -62,7 +61,7 @@ In our case, we will utilize RelationalAI’s Native App to construct an executa
 <!-- ------------------------ -->
 
 ## Architecture Diagram
-<img src="./assets/kgqa_architecture.png" alt="KGQA Architecture" width="1400">
+![./assets/kgqa_architecture.png](./assets/kgqa_architecture.png)
 
 Users may already have  their data in Snowflake. RelationalAI runs within the user's Snowflake account, creating a graph index over the Snowflake tables.  This allows a user to create a RelationalAI model in python. This model can be interpreted as an executable Knowledge Graph. When a user asks a natural language question, the system generates a RelationalAI Python query that is then executed and retrieves the relevant answers to the user. Our system is hosted on a Snowpark Container, and uses  Snowflake’s Cortex AI.  In summary, our solution leverages data in Snowflake tables, CortexAI to translate natural language to queries, and RelationalAI’s Native App to construct  an executable Knowledge graph that answers  these queries.
 
@@ -70,9 +69,8 @@ Users may already have  their data in Snowflake. RelationalAI runs within the us
 <!-- ------------------------ -->
 
 ## Example Walkthrough
-Duration: 2
 
-<img src="./assets/kgqa_example_udf.png" alt="KGQA Example" width="1400">
+![./assets/kgqa_example_udf.png](./assets/kgqa_example_udf.png)
 
 
 - The end-to-end pipeline begins with a natural language question set by the end user. For instance, consider the question: “List the movies directed by John Krasinski.” The goal is to answer this question by using the information in the Wikidata Knowledge Graph. 
@@ -95,7 +93,6 @@ Note that everything runs securely in the user’s  Snowflake account on snowpar
 <!-- ------------------------ -->
 
 ## Demo Setup
-Duration: 25
 
 Follow the below steps to launch End-to-End Demo Setup.
 
@@ -173,7 +170,6 @@ Now, we are all set to run the Demo notebook!
 
 
 ## Demo Notebook 
-Duration: 10
 
 ### STEP 1 : Create API Integration
 - Open a SQL Worksheet on Snowflake and execute the following command on your database and schema as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json). 
@@ -202,13 +198,12 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 Run the [KGQA Demo Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo.ipynb) in Snowflake to play with our pipeline!
 
 
-<img src="./assets/kgqa_demo_nb.png" alt="KGQA Example" width="1400">
+![./assets/kgqa_demo_nb.png](./assets/kgqa_demo_nb.png)
 
 <!-- ------------------------ -->
 
 
 ## Launch the KGQA SF Service
-Duration: 25
 
 Follow the below steps to launch End-to-End pipeline as a Service on Snowflake and interact with it.
 
@@ -292,7 +287,6 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 <!-- ------------------------ -->
 
 ## Troubleshooting
-Duration: 1
 
 In case you encounter any of the following issues, please follow the recommended steps:
 
@@ -335,7 +329,6 @@ drop warehouse temp_wh;
 <!-- ------------------------ -->
 
 ## Conclusion & Resources
-Duration: 1
 
 Congratulations on completing the our Question and Answering on Knowledge Graphs using RelationalAI and Snowflake guide! In this Quickstart you learned
 

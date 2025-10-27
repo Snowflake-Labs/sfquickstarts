@@ -11,7 +11,6 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 2
 
 In this guide, we will review how to build image recognition applications in Snowflake using Snowpark for Python, PyTorch, Streamlit and OpenAI's DALL-E 2 -- "*a new AI system that can create realistic images and art from a description in natural language*".
 
@@ -73,7 +72,6 @@ Two web-based image recognition applications in Streamlit. These applications ca
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 5
 
 In order to build and run the applications, setup your environment as described below.
 
@@ -121,7 +119,6 @@ list @dash_files;
 <!-- ------------------------ -->
 ## PyTorch and Snowpark Python
 
-Duration: 10
 
 ### PyTorch
 
@@ -220,7 +217,6 @@ Notes:
 <!-- ------------------------ -->
 ## Streamlit Applications
 
-Duration: 5
 
 Now let's review the two image recognition applications you'll build in Streamlit.
 
@@ -302,7 +298,6 @@ predicted_label = session.sql(f"SELECT image_recognition_using_bytes(image_bytes
 <!-- ------------------------ -->
 ## Build and Run Applications
 
-Duration: 5
 
 Once you have satisfied the prerequisites and set up your environment as described, running the two applications is pretty straightforward.
 
@@ -333,7 +328,6 @@ streamlit run Snowpark_PyTorch_Streamlit_OpenAI_Image_Rec.py
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created image recognition applications in Snowflake using Snowpark for Python, PyTorch, Streamlit and OpenAI.
 

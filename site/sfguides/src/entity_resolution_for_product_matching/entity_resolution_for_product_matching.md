@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ## Overview
 ![banner](assets/entity_res_banner.png)
 
-**Duration: 3 minutes**
 Retailers and e-commerce platforms often face challenges in aggregating data about their products, which limits them in various aspects such as supply chain management, competitive pricing, demand forecasting, inventory optimization and much, much more. The root of this issue can be attributed to the lack of standardized UPCs or product descriptions across these various retailers and e-commerce platforms, resulting in a complex system that creates a need for companies to spend hundreds of thousands on DBT jobs or various other approaches to harmonizing their product data. 
 
 Addressing these challenges with a centralized, AI-driven approach can empower these retailers to gain actionable insights off their product perforamnce based on the data available.
@@ -44,13 +43,12 @@ This guide covers:
 
 <!-- --------------------------->
 ## Architecture
-**Duration: 3 minutes**
 
 The architecture of the Entity Resolution solution is designed to generate and validate product matches. 
 
 Here's a detailed walkthrough of how we use Snowflake's AI features to complete this workflow:
 
-<img src="assets/lucid.png"/>
+![assets/lucid.png](assets/lucid.png)
 
 **Preprocessing Data**: This process begins with data from Similarweb Ltd, a provider on Snowflake Marketplace. The dictionary for their dataset includes product UPCs, descriptions, and performance on company websites, measured by estimated view and purchase data from various retailers and e-commerce platforms. From there, we simply create tables to provide two product catalogs to match between. The descriptions of the products are cleaned, having special characters removed so they do not influence feature extraction.
 
@@ -66,7 +64,6 @@ This architecture integrates various Snowflake features to create a robust end-t
 
 <!-- --------------------------->
 ## Data from Marketplace
-**Duration: 5 minutes**
 The first step of this quickstart is to get the data we'll be using from Snowflake Marketplace: 
 - On the left hand side of Snowsight, navigate to Data Products, then Marketplace. 
 - Search for Similarweb Ltd, and click on their provider page.
@@ -76,35 +73,33 @@ The first step of this quickstart is to get the data we'll be using from Snowfla
     - Give access to the database to PUBLIC
     - Click Get
 
-<img src='assets/similarweb.png'/>
+![assets/similarweb.png](assets/similarweb.png)
 
 A SQL worksheet will be added to your account; feel free to explore the data we'll be working with! There is also more information on the page of the dataset, including a brief summary of the business needs it can address, as well as a data dictionary to give a precursor to the sorts of values it contains.
 
 <!-- --------------------------->
 ## Snowflake Setup
 
-**Duration: 10 minutes**
 To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click "+ Create" to create a new Worksheet, and choose "SQL Worksheet".
-<img src="assets/create_worksheet.png"/>
+![assets/create_worksheet.png](assets/create_worksheet.png)
 <br></br>
 
 Paste and run the [setup.sql](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts) **line by line** in the worksheet to create objects (warehouse, database, schema, stage).
 
 Now on the left hand side, navigate to Data > Databases and find the `PRODUCT_MATCHING_DB` database and `MATCH` schema we just defined.
 
-<img src="assets/upload_files.png"/>
+![assets/upload_files.png](assets/upload_files.png)
 
 Click '+ Files' in the top right of the stage. We'll be downloading a semantic model from the github repository, and uploading it to a stage. **Follow these steps**:
 
 
 - *Semantic Model:* Download the `matches_semantic_model.yml` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/streamlit/model) and upload it to the `MODEL` stage.
-<img src="assets/model_stage.png"/>
+![assets/model_stage.png](assets/model_stage.png)
 
 For the Cortex Analyst we will use later to power our chatbot, the semantic model is crucial for driving context-aware searches and matches. It structures raw data into interconnected concepts and relationships, empowering Cortex to produce precise, meaningful results. By aligning domain-specific terms with user queries, the model aids analysts in identifying patterns and gaining insights while mitigating issues related to identifying specific products or terms.
 
 <!-- --------------------------->
 ## Access Notebook
-**Duration: 10 minutes**
 
 Please download the [notebook](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/notebooks) from the repo.
 
@@ -122,11 +117,10 @@ For the Notebook, please follow these steps:
 
 Please note the notebook will take about 10 minutes to run!
 
-<img src="assets/notebook_run_1.png"/>
+![assets/notebook_run_1.png](assets/notebook_run_1.png)
 
 <!-- --------------------------->
 ## Run Streamlit Application
-**Duration: 20 minutes**
 
 Similarly to the notebook, we will be creating the streamlit application **directly on Snowsight**!
 
@@ -142,13 +136,13 @@ For the Streamlit application, please follow these steps:
 
 Snowflake will create a default Streamlit application for you with example code. Please copy the contents of the `streamlit_app.py` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/streamlit), and replace the code on the left hand side. Afterwards, please click the Close Editor option on the bottom left to view the Streamlit application!
 
-<img src="assets/editor.png"/>
+![assets/editor.png](assets/editor.png)
 
 The semantic model from earlier is being used earlier in this app! It powers advanced data analysis by structuring and interpreting concepts in the dataset, enabling the chatbot to respond meaningfully. By integrating this model, the app can answer complex questions, and provide insights based on relationships in the data. This foundation ensures the chatbot delivers contextually relevant and actionable outputs.
 
 With this **Chatbot** you can now interact with product data using an intuitive Q&A interface powered by Snowflake Cortex. Ask questions about listings, comparative sales and views data, and general brand performance comparisons. Search for specific details, and receive concise answers along with the queries generated by **Cortex Analyst**.
 
-<img src='assets/chatbot.png'>
+![assets/chatbot.png](assets/chatbot.png)
 
 
 Here are some example questions you can ask the chatbot:
@@ -157,13 +151,12 @@ Here are some example questions you can ask the chatbot:
 3. Find me the 5 products with the greatest disparity in purchases at these retailers. <br>
 
 Once you ask a question, the assistant begins processing it, translating your natural language prompt into a SQL query it then runs against the table we generated from running the Notebook! Once the process completes, the assistant provides a concise answer to your question in the chat window. Below the answer, you’ll see sections titled 'SQL Query' and 'Results'. Click on these to see the query the Analyst ran to determine the answer to your question, and the returned data it based it's answer on.
-<img src='assets/chatbot_question.png'/>
+![assets/chatbot_question.png](assets/chatbot_question.png)
 
 Since our data from Similarweb Ltd is based around estimated product views and purchases on websites, we can ask comparative questions about specific products or about the retailers at large. However, different data involving the stocks of specific products, their costs across retailers or e-commerce platforms, and so on, can make this solution viable for teams dedicated towards supply chain, competitive pricing and much, much more! 
 
 <!-- --------------------------->
 ## Conclusion And Resources
-**Duration: 1 minute**
 In this guide, you learned how to use Snowflake's Notebooks and Cortex AI to harmonize retailer data, finding shared product offerings and aggregating their performane data. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.
 ### What You Learned
 - How to use Snowflake Notebooks and Snowpark Python for data processing

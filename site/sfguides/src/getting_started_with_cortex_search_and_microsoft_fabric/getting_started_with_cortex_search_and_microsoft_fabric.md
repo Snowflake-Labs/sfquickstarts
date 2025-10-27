@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Cortex Search and Microsoft Fabric
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
 
 Cortex Search enables low-latency, high-quality “fuzzy” search over your Snowflake data. Cortex Search powers a broad array of search experiences for Snowflake users including Retrieval Augmented Generation (RAG) applications leveraging Large Language Models (LLMs).
 
@@ -50,7 +49,6 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 5
 
 In this use case you will build a Cortex SEarch service on the free text data healthcare that represents discharge notes from a medical provider. The data is largely from this dataset on [Kaggle](https://www.kaggle.com/datasets/bpkapkar/health-prescription-data). 
 
@@ -58,7 +56,6 @@ There are many additional use cases that can be built on this dataset, but speci
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment and Cortex Search
-Duration: 5
 
 The first thing we will do is create a database and warehouse in your Snowflake environment. Copy and paste the below code to a SQL Worksheet in Snowflake an Snowsight and run through it.
 
@@ -139,7 +136,6 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE MEDNOTES_SEARCH_SERVICE
 Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "ADMISSION_TYPE".
 
 ## Set Up Fabric Environment
-Duration: 2
 
 Head to your Fabric workspace, click "New" in the top left then "More Options" and select the "Notebook" widget.
 
@@ -148,7 +144,6 @@ Head to your Fabric workspace, click "New" in the top left then "More Options" a
 
 <!-- ------------------------ -->
 ## Querying Cortex Search from Fabric
-Duration: 15
 
 Now let's copy and paste several blocks of code to the Fabric notebook and work through connecting to the Cortex Search service from Fabric.
 
@@ -284,7 +279,6 @@ You can head back to Snowflake to verify the table was created. And you can do w
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Fabric and Snowflake Cortex Search. There are plenty of different directions and enhancements you can make to this. The key thing is knowing that when you deploy Snowflake on Azure you have plenty of secure options for using Generative AI services regardless of where your data is and where you are orchestrating from!
 

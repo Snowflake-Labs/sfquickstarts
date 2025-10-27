@@ -10,7 +10,6 @@ authors: Serge Gershkovich
 # Cloud-native Database Modeling with SqlDBM 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 Relational database modeling enables instant visual review of a database landscape and the relationships between its entities - like a map for your data. 
 
@@ -41,7 +40,6 @@ A sample schema diagram like the one we will create:
 
 <!-- ------------------------ -->
 ## Use Case Overview 
-Duration: 3
 
 ### What is Database Modeling?
 An entity-relationship (ER) diagram is the traditional way of visualizing the tables and their relationships in a relational database. Having a diagram makes it easier to find relevant tables and gives the user an instantaneous idea of how tables can be joined for analytics purposes. 
@@ -56,7 +54,6 @@ We’ll go through all these features in detail as part of this Quickstart, so l
 
 <!-- ------------------------ -->
 ## Snowflake Configuration 
-Duration: 3
 
 
 * Log in to your Snowflake using an existing or trial account.  
@@ -84,7 +81,6 @@ _If you wish to use an existing schema, skip this step._
 
 <!-- ------------------------ -->
 ## Create a New SqlDBM Project 
-Duration: 5
 
 After logging in to [SqlDBM](https://www.SqlDBM.com), you will be taken to the Projects Dashboard. Otherwise, select “Dashboard” from the top-right dropdown.
 
@@ -142,7 +138,6 @@ Download our [example DDL](https://github.com/Snowflake-Labs/sfquickstarts/blob/
 
 <!-- ------------------------ -->
 ## Configure project defaults
-Duration: 5
 
 Let’s configure some initial time-saving defaults for our project and set the visual level of detail and look-and-feel for our diagrams.
 
@@ -175,7 +170,6 @@ Let’s configure some initial time-saving defaults for our project and set the 
 ![PK expression](assets/PK_expression.jpg)
 
 ## Diagram look and feel 
-Duration: 3
 
 Get familiar with the look-and-feel configuration for diagrams and learn to view them at varying levels of detail. 
 
@@ -208,7 +202,6 @@ View Mode | Description
 
 
 ## Editing objects
-Duration: 6 
 
 Let’s organize our project by creating some subject areas. These serve as folders for keeping your diagrams organized. Then we’ll learn to create and edit its properties, as well as add/copy fields. 
 
@@ -274,7 +267,6 @@ Begin typing the template name and select it from the auto-suggestion. Hit “Ad
 Keep in mind that while the association exists, changes to the template will be reflected in the associated tables. To break the association, click the “X” next to the template name in the table options; you will be given a choice to keep or delete the template columns in the process. 
 
 ## Working with primary and foreign keys
-Duration: 2
 
 Although we covered the technical aspect of creating and assigning PK and FK constraints, their importance in a relational database deserves its own section. But first, a refresher: 
 
@@ -298,7 +290,6 @@ We also know that we can join hotels to bookings using the Hotel_ID.
 ![constraints defined ](assets/const.png)
 
 ## Set Snowflake table properties
-Duration: 4
 SqlDBM’s no-code interface is intended to minimize syntax errors associated with manually keying DDL. By using a GUI to manipulate database objects, SqlDBM generates neat, error-free, database-specific DDL behind the scenes. 
 
 ### Column-level properties 
@@ -328,7 +319,6 @@ Review and set the following options as needed:
 
 
 ## Add functional information and comments
-Duration: 5 
 
 Add some functional details to your project to give it some context and make it easier for team members to navigate. 
 
@@ -361,7 +351,6 @@ The descriptions provided here will become part of the object DDL. They can be d
 ![documentation](assets/documentation.png)
 
 ## Change tracking
-Duration: 3
 
 Every save in SqlDBM generates a versioned _revision_, which allows for change tracking and version control. SqlDBM projects store an infinite revision history, and any two revisions can be compared to track changes. The latest revision is indicated next to the project name at the top of the screen (v12 in the example below). 
 
@@ -383,7 +372,6 @@ Color | Description
 3. Click on any object on the top half of the screen to see the details of the change.
 
 ## Deployment
-Duration: 5
 
 The time has come to deploy all of the changes made during this exercise to a Snowflake environment. 
 
@@ -439,7 +427,6 @@ Whether you are looking to perform a fresh deployment using a Create Script, or 
 * Run the script, and enjoy a job well done. 
 
 ## Conclusion & Next Steps
-Duration: 4
 
 Visually guided database modeling can help an enterprise data team make sense of, and accelerate database development. In this Quickstart, we followed a simple development workflow: from creating and instantiating a new Snowflake project and schema, to making changes, all the way to deployment. However, the benefits of a centralized modeling tool extend well beyond the role of a developer. 
 

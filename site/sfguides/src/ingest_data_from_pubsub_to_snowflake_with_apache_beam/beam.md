@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 30
 
 
 This guide shows you how to set up your Google Cloud project, Snowflake account, create a Java project with Maven by using the Apache Beam SDK and run a streaming pipeline locally and on the Dataflow service. Each step is presented as a console command or an SQL command to reduce the possibility of incorrect execution of a step.

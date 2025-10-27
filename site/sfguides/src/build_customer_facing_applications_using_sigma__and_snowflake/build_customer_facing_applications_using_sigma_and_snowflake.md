@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build Customer Facing Applications Using Sigma and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
  This lab introduces you to the user interface and embedding capabilities of Sigma Workbooks. This lab does not get into complex data analysis use cases for Sigma, but is designed to showcase the type of capabilities available in an application development use case with Sigma.
 
@@ -37,7 +36,6 @@ Duration: 5
 ![Footer](assets/Sigma_Footer.png)
 <!-- ------------------------ -->
 ## Setting up Snowflake 
-Duration: 5
 
 ### Prepare Your Snowflake Lab Environment
 
@@ -88,7 +86,6 @@ Duration: 5
 ![Footer](assets/Sigma_Footer.png)
 
 ## Preparing and Loading Data into Snowflake
-Duration: 5
 
 # <Strong>The Lab Story</strong>
 
@@ -180,7 +177,6 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
   
 ![Footer](assets/Sigma_Footer.png)
 ## Building Your Sigma Workbook 
-Duration: 10
 ### Connecting Your Workbook to the Dataset
 
 1. Navigate to the Sigma tab that was previously opened through partner connect. Select the top left Paper Crane logo to navigate back to the Sigma homepage if you are not there already. 
@@ -240,7 +236,6 @@ Duration: 10
  - If we navigate back to our Snowflake environment, we can see the queries being pushed down in our Snowflake query history view as well.
 ![Footer](assets/Sigma_Footer.png)
   ## Creating Visualizations & Filters
-Duration:15
   ### Creating Visualizations
   It is often easier to spot trends, outliers, or insights which lead to further questions when viewing data in a visualization. Sigma makes it easy to create visualizations of your data while also enabling you to dig into the data that makes up the visualization. 
 
@@ -380,7 +375,6 @@ In Sigma, you can add a variety of UI elements to your workbook to customize the
 5. Click Publish to save these changes. 
 ![Footer](assets/Sigma_Footer.png)   
 ## Embedding the Sigma Workbook into an Application
-Duration: 10
    ### Building the Application / Portal
 
   We are now going to begin building our portal where we can embed our workbook. This will be a Sales Performance dashboard where the Plugs Electronics family of brands can log in to see how their products are performing in our store. 
@@ -479,7 +473,6 @@ There are two key edits we need to make in order for the server to use our workb
 
 ![Footer](assets/Sigma_Footer.png)
 ## Row Level Security 
-Duration: 5
 1. Now we might want to put some row level security on this dashboard, so that brands can only see data related to the sale of their own products. Navigate back to your data page in your Sigma workbook. 
 
 2. On the data page, find the page control we created previously for Product-Brand. When we select it the left panel will show its properties. Find the Control ID and copy the value. It should be a value similar to "Product-Brand". 
@@ -514,7 +507,6 @@ Update control-id to 'Product-Brand' (or whatever the control ID was labeled in 
 For more details on how to set up dynamic row-level security in Sigma, refer [here](https://help.sigmacomputing.com/hc/en-us/articles/6709896696979-User-Attributes).
 ![Footer](assets/Sigma_Footer.png)
 ## Exploring the Embed
-Duration: 10
 For the purpose of this lab, we will now explore the portal as a member of the Samsung marketing team. We have been tasked with identifying which regions to focus our in store marketing efforts on, and will use the Plugs Sales Performance portal to help identify where the majority of our in store purchases happen. 
 
 1. Looking at the customer portal, click maximize element in the top right of the Revenue by Store Region bar chart. 
@@ -556,7 +548,6 @@ For the purpose of this lab, we will now explore the portal as a member of the S
 
 ![Footer](assets/Sigma_Footer.png)
 ## Conclusion & Helpful Resources
-Duration: 5
 
 ### Conclusion
 Thank you for your participation in this hands-on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)

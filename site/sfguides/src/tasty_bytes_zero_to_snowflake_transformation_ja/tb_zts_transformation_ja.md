@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_transformation_ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
-language: jp
+language: ja
 summary: Tasty Bytes - ゼロからのSnowflake - 変換クイックスタート
 environments: web
 status: Published 
@@ -11,8 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Snowflakeでの変換
-Duration: 1
-<img src = "assets/transformation_header.png">
+![assets/transformation_header.png](assets/transformation_header.png)
 
 ### 概要
 Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。今回は変換を中心的に取り上げます。
@@ -37,7 +36,6 @@ Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへよ�
 
 
 ## ワークシートの作成とSQLのコピー
-Duration: 1
 
 ### 概要
 このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。
@@ -49,27 +47,27 @@ Duration: 1
 
 ### ステップ2 - Snowflakeにログインする
 - Snowflakeアカウントにログインします。
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 
 ### ステップ3 - ワークシートに移動する
 - 左側のナビゲーションバーにある「ワークシート」タブをクリックします。
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### ステップ4 - ワークシートを作成する
 - ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### ステップ5 - ワークシートの名前を変更する
 - 自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - 変換」と入力してワークシートの名前を変更します。
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### ステップ6 - GitHubでQuickstart SQLにアクセスする
 - 下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQLファイルに移動します。<button>[tb_zts_transformation](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_transformation.sql)</button>
 
 ### ステップ7 - GitHubからSetup SQLをコピーする
 - GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける
 - Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（*Macの場合はCMD + V、Windowsの場合はCTRL + V*）。
@@ -77,7 +75,6 @@ Duration: 1
 ### ステップ9 - 「Next」をクリックする
 
 ## 開発用に本番テーブルのクローンを即座に作成する
-Duration: 1
 
 ### 概要
 Tasty Bytesのキッチンカーフリート分析の一環として、私たちの開発者は、計算されたキッチンカーの使用年数列をキッチンカーテーブルに追加するタスクを任されました。
@@ -95,7 +92,7 @@ USE ROLE tasty_dev;
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
     CLONE frostbyte_tasty_bytes.raw_pos.truck;
 ```
-<img src ="assets/3.1.truck_dev_clone.png">
+![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
 > aside positive
 > **ゼロコピークローン**：データベース、スキーマまたはテーブルのコピーを作成します。クローンの作成時にソースオブジェクトに存在するデータのスナップショットが取得され、クローンオブジェクトで利用できるようになります。
@@ -105,7 +102,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ### ステップ2 - 「Next」をクリックする
 
 ## Snowflakeのクエリ結果セットキャッシュのテスト
-Duration: 1
 
 ### 概要
 ゼロコピークローンが即時に利用できるため、本番環境に影響を与える不安なく、クローンに対して開発を開始できます。ただし、何らかの変更を加える前に、まず簡単なクエリを実行し、Snowflakeの結果セットキャッシュをテストしてみましょう。
@@ -127,7 +123,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.1.truck.png">
+![assets/4.1.truck.png](assets/4.1.truck.png)
 
 ### ステップ2 - クエリを再実行する
 Snowflakeの[結果セットキャッシュ](https://docs.snowflake.com/ja/user-guide/querying-persisted-results)をテストするために実行するクエリは、先ほど実行したものと同じです。しかし、ここではさらに一歩進んで、このクエリが結果セットキャッシュから結果が届くとすぐに結果を返したことを示すクエリプロファイルにアクセスします。
@@ -144,8 +140,8 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.2.1.truck.png">
-<img src = "assets/4.2.2.cache.png">
+![assets/4.2.1.truck.png](assets/4.2.1.truck.png)
+![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
 >aside positive
 > ユーザーが既に実行されたクエリを繰り返し、クエリが最後に実行されてからテーブル内のデータが変更されていない場合、クエリの結果は同じになります。Snowflakeは、クエリを再実行する代わりに、以前に返された結果と同じ結果を返します。
@@ -156,7 +152,6 @@ ORDER BY t.truck_id;
 ### ステップ3 - 「Next」をクリックする
 
 ## データの更新とキッチンカーの使用年数の計算
-Duration: 1
 
 ### 概要
 上記の出力に基づき、まず`make`列に表示されたFord\_ recordsのタイプミスに対処する必要があります。その後、各キッチンカーの使用年数を算出する計算に取りかかることができます。
@@ -170,7 +165,7 @@ SET make = 'Ford'
 WHERE make = 'Ford_';
 ```
 
-<img src = "assets/5.1.ford_.png">
+![assets/5.1.ford_.png](assets/5.1.ford_.png)
 
 ### ステップ2 - 使用年数計算を構築する
 
@@ -186,12 +181,11 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
 
-<img src = "assets/5.2.age.png">
+![assets/5.2.age.png](assets/5.2.age.png)
 
 ### ステップ3 - 「Next」をクリックする
 
 ## 列の追加と更新
-Duration: 1
 
 ### 概要
 
@@ -213,7 +207,7 @@ ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
     SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
 ```
-<img src = "assets/6.2.update.png">
+![assets/6.2.update.png](assets/6.2.update.png)
 
 ### ステップ 3 - 新しい列をクエリする
 データの更新が成功したら、次にテーブルに対して簡単なクエリを実行し、`truck_age`列がどのように見えるか確認してみましょう。
@@ -224,7 +218,7 @@ SELECT
     t.truck_age
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
-<img src = "assets/6.3.bad_data.png">
+![assets/6.3.bad_data.png](assets/6.3.bad_data.png)
 
 **大変です！** 私たちが優れた開発者であり、やみくもに本番環境でこれをしでかさなかったことに感謝しておきましょう。
 
@@ -233,7 +227,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ### ステップ4 - 「Next」をクリックする
 
 ## タイムトラベルを利用したデータ災害からの回復
-Duration: 1
 
 ### 概要
 私たちはミスをしましたが、Snowflakeにはトラブル解消に役立つ多くの機能が備わっています。このプロセスでは、クエリ履歴、SQL変数、タイムトラベルを活用して、`truck_dev`テーブルを、誤った更新ステートメントを実行する前の状態に戻します。
@@ -257,7 +250,7 @@ WHERE 1=1
     AND query_text LIKE '%frostbyte_tasty_bytes.raw_pos.truck_dev%'
 ORDER BY start_time DESC;
 ```
-<img src = "assets/7.1.query_history.png">
+![assets/7.1.query_history.png](assets/7.1.query_history.png)
 
 ### ステップ2 - SQL変数を設定する
 予想通り、タイプミスの修正と間違った計算の更新、およびそれらに関連する一意のquery_idが表示されます。次のクエリを実行してください。ここでは、`query_id` SQL変数を作成します。次のステップではその変数を使ってタイムトラベルで変更を元に戻します。
@@ -285,7 +278,7 @@ SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev
 BEFORE(STATEMENT => $query_id); 
 
 ```
-<img src = "assets/7.3.time_travel.png">
+![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 利用できるその他のタイムトラベルステートメントのオプションについては、以下のリストを参照してください。
 >aside positive
@@ -303,7 +296,6 @@ BEFORE(STATEMENT => $query_id);
 ### ステップ4 - 「Next」をクリックする
 
 ## 開発を本番に昇格
-Duration: 1
 
 ### 概要
 `truck_dev`テーブルを誤った更新ステートメントの前の状態に戻すことができたので、次に列を正しく更新することができます。ここから、正しい計算を行ったテーブルを本番に昇格させ、割り当てられたタスクを完了させます。
@@ -316,7 +308,7 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
 SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
 ```
 
-<img src = "assets/8.1.correct_update.png">
+![assets/8.1.correct_update.png](assets/8.1.correct_update.png)
 
 ### ステップ2 - 開発テーブルを本番と入れ替える
 `truck_dev`のすべてが完了したところで、次の2つのクエリを開始してください。ここではまず、より権限のある`sysadmin`ロールを引き受けます。`sysadmin`として、2つ目のクエリは[ALTER TABLE... SWAP WITH](https://docs.snowflake.com/ja/sql-reference/sql/alter-table)を使用して、`truck_dev`テーブルを`truck`に昇格させ、その逆も実行します。
@@ -343,12 +335,11 @@ WHERE t.make = 'Ford';
 
 ```
 
-<img src = "assets/8.3.validate_prod.png">
+![assets/8.3.validate_prod.png](assets/8.3.validate_prod.png)
 
 ### ステップ4 - 「Next」をクリックする
 
 ## テーブルのドロップとドロップ解除
-Duration: 1
 
 ### 概要
 
@@ -361,7 +352,7 @@ Duration: 1
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.1.drop.png">
+![assets/9.1.drop.png](assets/9.1.drop.png)
 
 **大変です！** この結果セットを見ると、`sysadmin`でさえも間違いを犯すということが分かります。誤って、開発の`truck_dev`ではなく本番の`truck`をドロップしてしまいました。ありがたいことに、ここでもSnowflakeのタイムトラベルが活躍します。
 
@@ -372,7 +363,7 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.2.undrop.png">
+![assets/9.2.undrop.png](assets/9.2.undrop.png)
 
 ### ステップ3 - 正しいテーブルをドロップする
 さて、最後に、締めくくりとして`truck_dev`を正しくドロップするクエリを実行しましょう。
@@ -381,12 +372,11 @@ UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ```
 
-<img src = "assets/9.3.correctdrop.png">
+![assets/9.3.correctdrop.png](assets/9.3.correctdrop.png)
 
 ### ステップ4 - 「Next」をクリックする
 
 ## まとめと次のステップ
-Duration: 1
 
 ### まとめ
 すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - 変換クイックスタートが無事完了しました。

@@ -10,7 +10,6 @@ authors: James Sun
 # Getting Started with Snowpipe Streaming and Amazon MSK
 <!---------------------------->
 ## Overview
-Duration: 5
 
 Snowflake's Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency.
 It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake
@@ -77,7 +76,6 @@ to SSH if your instance is in a private subnet
 
 <!---------------------------->
 ## Create a provisioned Kafka cluster and a Linux jumphost in AWS
-Duration: 30
 
 #### 1. Create an MSK cluster and an EC2 instance
 The MSK cluster is created in a VPC managed by Amazon. We will deploy our Kafka clients in our own VPC and use security groups to ensure
@@ -296,7 +294,6 @@ See below example screenshot:
 
 <!---------------------------->
 ## Prepare the Snowflake account for streaming
-Duration: 10
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -414,7 +411,6 @@ At this point, the Snowflake setup is complete.
 
 <!---------------------------->
 ## Configure Kafka connector for Snowpipe Streaming
-Duration: 10
 
 #### 1. Run the following commands to collect various connection parameters for the Kafka connector
 ```commandline
@@ -496,7 +492,6 @@ EOF
 
 <!---------------------------->
 ## Putting it all together
-Duration: 10
 
 Finally, we are ready to start ingesting data into the Snowflake table.
 
@@ -530,7 +525,6 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 
 <!---------------------------->
 ## Query ingested data in Snowflake
-Duration: 10
 
 Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
 The data should have been streamed into a table, ready for further processing.
@@ -609,7 +603,6 @@ You can now go back to the Snowflake worksheet to run a `select count(1) from fl
 
 <!---------------------------->
 ## Configuring Kafka Connector with Apache Iceberg tables - New
-Duration: 20
 
 Iceberg table ingestion requires version 3.0.0 or later of the Kafka connector and is only supported with Snowpipe Streaming.
 To configure the Kafka connector for Iceberg table ingestion, follow the regular setup steps for a Snowpipe Streaming-based connector mentioned in the Section 4 in the left pane of this quickstart with a few differences noted in the following sections.
@@ -741,7 +734,6 @@ You should see that the table contains the keys in json records as column names 
 
 <!---------------------------->
 ## Use MSK Connect (MSKC) - Optional
-Duration: 15
 
 So far we have been hosting the Kafka connector for Snowpipe Streaming on the EC2 instance. You can also use
 [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/) to manage the connector.
@@ -803,7 +795,6 @@ run the source connector to ingest live data continuously as shown in Step 3 of 
 
 <!---------------------------->
 ## Schema detection - Optional
-Duration: 10
 
 Previously we ingested raw jsons into the table `MSK_STREAMING_TBL` and did a DDL to create a nicely formulated view with 
 the column names mapped to the keys in the jsons. You can now skip the DDL step with [schema detection](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-kafka-schema-detection) enabled to detect the schema of the streaming data and load data into tables that automatically match any user-defined schema. 
@@ -902,7 +893,6 @@ DROP USER IF EXISTS STREAMING_USER;
 
 <!---------------------------->
 ## Conclusion and Resources
-Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 
 connector on an EC2 instance. However, for a production environment, we recommend using [Amazon MSK Connect](https://aws.amazon.com/msk/features/msk-connect/), which offers 

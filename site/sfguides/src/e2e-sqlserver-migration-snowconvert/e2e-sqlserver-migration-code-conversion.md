@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # End-to-End Migration to Snowflake: SQL Code Conversion and Data Migration
 
 ## Overview
-Duration: 5
 
 Want to migrate to Snowflake in less than 90 minutes? Come to this hands-on lab. We will work through Snowflake's migration strategy and automation tools—for example, SnowConvert to assess, move, and validate an entire pipeline with data into Snowflake. Our data will be in another data warehouse, a data lake, and even on prem. Can we move it into Snowflake? Our pipelines are written in Jupyter notebooks utilizing Spark. Can those fully exist in Snowflake? Can all of it happen in Snowflake? Let's find out.
 
@@ -39,7 +38,6 @@ Over time, they have decided to consider using Snowflake. They want to take one 
 AdventureWorks has decided to do a Proof of Concept (POC) with a single database. The goal is to move everything from this database into Snowflake, as well as at least one of the pipelines bringing data into this database and at least one of the reporting notebooks they have connected to this database.
 
 ## Assessment
-Duration: 10
 
 Assessing what you have and developing a plan is the most essential part of a migration. When done right, this will set you up for success over the remainder of the migration. Whether it’s one table, pipeline, or data warehouse, you need to have a plan that takes into account not just your data, but everything that interacts with your data. A successful migration is built at the beginning with a complete picture of what you want to migrate. With that assessment, comes a plan of attack on how to migrate.
 
@@ -123,7 +121,6 @@ We’ll walk through moving the following steps:
 While at the highest level, this phase focuses on moving or converting from the source to Snowflake, there will often be testing and additional pieces of code to assess as we move through it. Meaning that while we do this conversion, it will be iterative with the testing intermixed into the process.
 
 ## Database Code Conversion
-Duration: 5
 
 We will start by assessing what we have. SnowConvert.
 
@@ -339,7 +336,6 @@ Understanding what we have is essential to successfully completing a migration. 
 Since we have a good understanding of what needs to be done and it’s relatively small, let’s go ahead and attack this. Let’s resolve the issues that we have present. Before we do that, let’s take a look at the status in our object inventory. Select “GO TO DEPLOYMENT” in the application.
 
 ## Deployment And Issues
-Duration: 20
 
 This will take you back to the inventory screen. It should look something like this:
 
@@ -676,7 +672,6 @@ Success! We have all of our tables and functions deployed. There was one view th
 Success again! We have officially deployed all of the schema to Snowflake. There’s one more thing we can do in the SnowConvert application, and that is move the data from the original SQL Server database into Snowflake. Select “GO TO DATA MIGRATION” at the bottom right of the screen.
 
 ## Data Migration
-Duration: 10
 
 The Data Migration page will give you the same catalog that you can see on the previous screens. For the migration of the data, note that only the data in tables will be migrated. The rest of the DDL is already present, but there is no “data” present in a view or a function, so the tables will be what is migrated. Also note that no data can be migrated to a table where the DDL wasn’t already successfully deployed. 
 
@@ -743,7 +738,6 @@ And you can generally see that most of these activities fit our **assess** -> **
 As we continue to walk through the migration process, let’s take a look at our data pipelines. 
 
 ## Conclusion And Resources
-Duration: 5
 
 ### Overview
 Congratulations! You've successfully completed an end-to-end migration from SQL Server to Snowflake from data base tables, views and procedures conversion, deployment of these objects and historical data migration.

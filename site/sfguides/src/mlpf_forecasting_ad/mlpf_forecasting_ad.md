@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake ML Functions: Anomaly Detection & Forecasting
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: make forecasts, identify long running trends, and identify abnormalities within their data. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach. 
 
@@ -47,7 +46,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Setting Up Data in Snowflake
-Duration: 10
 
 ### Overview:
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), the Snowflake web interface, to: 
@@ -63,17 +61,17 @@ The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/co
 - Follow the steps below to access the **Snowflake Public Data (Free)** listing in your account. 
   - Click on 'Marketplace' on the left hand banner:
   
-    <img src = "assets/marketplace.png">
+    ![assets/marketplace.png](assets/marketplace.png)
   
   - In the search bar, search for 'Snowflake Public Data (Free)'
     
   - Click on the first listing, with the same title: 
 
-    <img src = "assets/Search_result.png">
+    ![assets/Search_result.png](assets/Search_result.png)
 
   - Click on get, and on the pop-up screen, rename the database to FROSTBYTE_CS_PUBLIC (in all caps). Note - if prompted, you may need to fill in your details before being able to get access. Grant access to the `PUBLIC` role in the dropdown menu: 
   
-    <img src = "assets/FROSTBYTE_CS_PUBLIC.png">
+    ![assets/FROSTBYTE_CS_PUBLIC.png](assets/FROSTBYTE_CS_PUBLIC.png)
 
 ### Step 2: Creating Objects, Load Data, & Set Up Tables
 
@@ -134,7 +132,6 @@ At this point, we have all the data we need to start building models. We will ge
 
 <!-- ------------------------ -->
 ## Forecasting Demand for Lobster Mac & Cheese
-Duration: 10
 
 We will start off by first building a forecasting model to predict the demand for Lobster Mac & Cheese in Vancouver.
 
@@ -151,7 +148,7 @@ SELECT *
 ```
 After toggling to the chart, we should see a daily sales for the item Lobster Mac & Cheese going back all the way to 2014: 
 
-<img src = "assets/vancouver_daily_sales.png">
+![assets/vancouver_daily_sales.png](assets/vancouver_daily_sales.png)
 
 Observing the chart, one thing we can notice is that there appears to be a seasonal trend present for sales, on a yearly basis. This is an important consideration for building robust forecasting models, and we want to make sure that we feed in enough training data that represents one full cycle of the time series data we are modeling for. The forecasting ML function is smart enough to be able to automatically identify and handle multiple seasonality patterns, so we will go ahead and use the latest year's worth of data as input to our model. In the query below, we will also convert the date column using the `to_timestamp_ntz` function, so that it be used in the forecasting function. 
 
@@ -235,7 +232,7 @@ ORDER BY
     timestamp asc;
 
 ```
-<img src = "assets/lobster_cheese.png">
+![assets/lobster_cheese.png](assets/lobster_cheese.png)
 
 There we have it! We just created our first set of predictions for the next 10 days worth of demand, which can be used to inform how much inventory of raw ingredients we may need. As shown from the above visualization, there seems to also be a weekly trend for the items sold, which the model was also able to pick up on. 
 
@@ -249,7 +246,7 @@ If we have a look at the tabular results below, we can see that the following co
 2. Forecast: The output/prediction made by the model
 3. Lower/Upper_Bound: Separate columns that specify the [prediction interval](https://en.wikipedia.org/wiki/Prediction_interval)
 
-<img src = "assets/upper_lower_bound.png">
+![assets/upper_lower_bound.png](assets/upper_lower_bound.png)
 
 The forecast function exposes a  `config_object` that allows you to control the outputted prediction interval. This value ranges from 0 to 1, with a larger value providing a wider range between the lower and upper bound. See below for an example of how change this when producing inferences: 
 
@@ -260,7 +257,6 @@ CALL lobstermac_forecast!FORECAST(FORECASTING_PERIODS => 10, CONFIG_OBJECT => {'
 
 <!-- ------------------------ -->
 ## Building Multiple Forecasts & Adding Holiday Information
-Duration: 15
 
 In the previous section, we built a forecast model to predict the demand for only the Lobster Mac & Cheese item our food trucks were selling. However, this is not the only item sold in the city of Vancouver - what if we wanted to build out a separate forecast model for each of the individual items? We can use the `series_colname` argument in the forecasting ML function, which lets a user specify a column that contains the different series that needs to be forecasted individually. 
 
@@ -397,7 +393,7 @@ CALL VANCOUVER_FORECAST!explain_feature_importance();
 
 The output of this call for our multi-series forecast model is shown below, which you can explore further on snowsight. One thing to notice here is that, for this particular dataset, including holidays as an exogenous variable didn't dramatically impact our predictions. We may consider dropping this altogether, and only rely on the daily sales themselves. **Note**, based on the version of the ML Function, the outputted feature importances may be different compared to what is shown below due how features are generated by the model. 
 
-<img src = "assets/feature_importances.png">
+![assets/feature_importances.png](assets/feature_importances.png)
 
 In addition to feature importances, evaluating model accuracy is important in knowing if the model is able to accurately make future predictions. Using the sql command below, you can get a variety of model metrics that describe how well it performed on a holdout set. For more details please see [understanding evaluation metrics](https://docs.snowflake.com/en/user-guide/ml-powered-forecasting#understanding-evaluation-metrics).
 
@@ -408,7 +404,6 @@ CALL VANCOUVER_FORECAST!show_evaluation_metrics();
 
 <!-- ------------------------ -->
 ## Identifying Anomalous Sales with the Anomaly Detection ML Function
-Duration: 10
 
 In the past couple of sections we have built forecasting models for the items sold in Vancouver to plan ahead to meet demand. As an analyst, another question we might be interested in understanding further are anomalous sales. If there is a consistent trend across a particular food item, this may constitute a recent trend, and we can use this information to better understand the customer experience and optimize it. 
 
@@ -465,7 +460,7 @@ A few comments on the code above:
 
 The output of the model should look similar to that found in the image below. Refer to the [output documentation](https://docs.snowflake.com/sql-reference/classes/anomaly_detection#id7) for further details on what all the columns specify. 
 
-<img src = "assets/anomaly_output.png">
+![assets/anomaly_output.png](assets/anomaly_output.png)
 
 ### Step 2: Identifying Trends
 
@@ -480,13 +475,12 @@ GROUP BY ALL
 ORDER BY num_records DESC
 LIMIT 5;
 ```
-<img src = "assets/trending_items.png">
+![assets/trending_items.png](assets/trending_items.png)
 
 From the image above, it seems as if Hot Ham & Cheese, Pastrami, and Italian have had the most number of anomalous sales in the month of May!
 
 <!-- ------------------------ -->
 ## Productionizing Your Workflow Using Tasks & Stored Procedures
-Duration: 15
 
 In this last section, we will walk through how we can use the models created previously and build them into a pipeline to send email reports for the most trending items in the past 30 days. This involves a few components that includes: 
 
@@ -579,7 +573,7 @@ Some considerations to keep in mind from the above code:
 3. **Formatting results**: We've made use of a snowpark stored procedure, to take advantage of the functions that pandas has to neatly present the resultset into an email. For futher details and options, refer to this [medium post](https://medium.com/snowflake/hey-snowflake-send-me-an-email-243741a0fe3) by Felipe Hoffa.
 4. **Executing the Tasks**: We have set this task to run the first of every month - if you would like to run it immediately, you'll have to change the state of the task to `RESUME` as shown in the last three lines of code above, before executing the parent task `AD_VANCOUVER_TRAINING_TASK`. Note that we have orchestrated the task to send the email to the user *after* the model has been retrained. After executing, you may expect to see an email similar to the one below within a few minutes.
 
-<img src = "assets/email_report.png">
+![assets/email_report.png](assets/email_report.png)
 
 
 <!-- ------------------------ -->

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 10
 
 This first half of this guide blazes through the setup of a premade UDF so you can start playing with text embedding in Snowflake as quickly as possible!
 
@@ -109,7 +108,6 @@ Feel free to give it a shot by running the last couple cells of the notebook.
 
 <!-- ------------------------ -->
 ## Interlude: A Reminder To Clean Up
-Duration: 1
 
 If you don't plan to use the warehouse, database, schema, stage, or UDFs we've defined in this Quickstart, now might be a good time to do some deletion. Below are the SQL commands to wipe out everything we've built so far.
 
@@ -126,7 +124,6 @@ drop warehouse text_embedding_quickstart_wh;
 
 <!-- ------------------------ -->
 ## Part Two: Tips For Building Your Own Text Embedding UDF
-Duration: 0
 
 I promised that after rushing to get something up and running in part one, I would come back with a part two to help you craft your own text embedding UDFs. While the source code example from part one is probably the most useful reference I can provide, I'll use this section to explain some "tricks of the trade" from the implementation.
 ### Saving Yourself From Unprotected File Access In A Parallel Universe
@@ -220,6 +217,5 @@ With the above pointers and the original code as a starting point, you are now w
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations, you've made it all the way through! I hope this guide has helped kickstart your journey to securely applying text embedding on your data without anything having to leave the warehouse.

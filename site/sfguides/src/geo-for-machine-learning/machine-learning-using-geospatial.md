@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ----------------------------------------- -->
 ## Overview 
 
-Duration: 6
 
 Snowflake offers a rich toolkit for predictive analytics with a geospatial component. It includes two data types and specialized functions for transformation, prediction, and visualization. This guide is divided into multiple labs, each covering a separate use case that showcases different features for a real-world scenario.
 
@@ -51,7 +50,6 @@ When you complete this quickstart, you will have gained practical experience in 
 
 ## Setup your Account
 
-Duration: 10
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -66,7 +64,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > aside positive
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-<img src ='assets/geo_ml_1.png' width=500>
+![assets/geo_ml_1.png](assets/geo_ml_1.png)
 
 ### Create a Virtual Warehouse
 
@@ -76,7 +74,7 @@ You will need to create a Virtual Warehouse to run queries.
 * Click the big blue `+ Warehouse` button in the upper right of the window
 * Create a LARGE Warehouse as shown in the screen below
 
-<img src ='assets/geo_ml_2.png' width=500>
+![assets/geo_ml_2.png](assets/geo_ml_2.png)
 
 Be sure to change the `Suspend After (min)` field to 5 min to avoid wasting compute credits.
 
@@ -85,7 +83,7 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 - Click the + Worksheet button in the upper right of your browser window. This will open a new window.
 - In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
 
-<img src ='assets/geo_ml_3.png' width=700>
+![assets/geo_ml_3.png](assets/geo_ml_3.png)
 
 Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
@@ -99,7 +97,6 @@ ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 
 ## Geospatial 101
 
-Duration: 30
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -164,7 +161,7 @@ WHERE CATEGORIES['primary'] ='health_and_medical'
 LIMIT 100;
 ```
 
-<img src ='assets/geo_ml_40.png' width=700>
+![assets/geo_ml_40.png](assets/geo_ml_40.png)
 
 Note that while the column is named `GEOMETRY` in this data source, it is stored in a `GEOGRAPHY` column in Snowflake, using the coordinate system [ESPG:4326](https://epsg.io/4326), also known as [WGS 84](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84). This coordinate system uses latitude and longitude as coordinates and is the most widely used coordinate system worldwide. If you are storing geospatial data using latitude and longitude, then the `GEOGRAPHY` data type is the most suitable for storing your data.
 
@@ -192,7 +189,7 @@ LATERAL FLATTEN(INPUT => ADDRESSES:list) AS ADDRESS
 WHERE CATEGORIES['primary'] ='health_and_medical'
 LIMIT 100;
 ```
-<img src ='assets/geo_ml_41.png' width=700>
+![assets/geo_ml_41.png](assets/geo_ml_41.png)
 
 ### Constructing geospatial objects
 You can use constructor functions such as [ST_MAKEPOINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint), [ST_MAKELINE](https://docs.snowflake.com/en/sql-reference/functions/st_makeline) and [ST_POLYGON](https://docs.snowflake.com/en/sql-reference/functions/st_makepolygon) to create geospatial objects. Run the code below to create a geo point from latitude and longitude.
@@ -201,7 +198,7 @@ You can use constructor functions such as [ST_MAKEPOINT](https://docs.snowflake.
 SELECT ST_MAKEPOINT(-74.0266511, 40.6346599) GEO_POINT
 ```
 
-<img src ='assets/geo_ml_42.png' width=250>
+![assets/geo_ml_42.png](assets/geo_ml_42.png)
 
 Alternatively, you can use the TO_GEOGRAPHY constructor function to create geospatial values. [TO_GEOGRAPHY](https://docs.snowflake.com/en/sql-reference/functions/to_geography) is a general purpose constructor where [ST_MAKEPOINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) specifically makes a POINT object. Run the code below:
 
@@ -209,7 +206,7 @@ Alternatively, you can use the TO_GEOGRAPHY constructor function to create geosp
 SELECT TO_GEOGRAPHY('POINT(-74.0266511 40.6346599)') GEO_POINT
 ```
 
-<img src ='assets/geo_ml_42.png' width=250>
+![assets/geo_ml_42.png](assets/geo_ml_42.png)
 
 ### 4. Visualizing spatial data in Streamlit
 Using Streamlit, you can visualize your data using tools like `st.map` or popular python packages like `pydeck`. 
@@ -235,7 +232,7 @@ st.title("Display a Points with st.map")
 st.map(data)
 ```
 
-<img src ='assets/geo_ml_43.png' width=800>
+![assets/geo_ml_43.png](assets/geo_ml_43.png)
 
 ### Accessing coordinates of a geospatial object
 Sometimes you need to do the opposite - access individual coordinates in a geospatial object. You can do that with accessor functions [ST_X](https://docs.snowflake.com/en/sql-reference/functions/st_x) and [ST_Y](https://docs.snowflake.com/en/sql-reference/functions/st_y) to access longitude and latitude accordingly. Run the code below:
@@ -251,7 +248,7 @@ WHERE CATEGORIES['primary'] ='health_and_medical'
 LIMIT 100;
 ```
 
-<img src ='assets/geo_ml_44.png' width=500>
+![assets/geo_ml_44.png](assets/geo_ml_44.png)
 
 ### Finding the nearest points and calculating distances
 You can use relationship and measurement functions to perform spatial joins and other analytical operations. For example, you can use [ST_DWITHIN](https://docs.snowflake.com/en/sql-reference/functions/st_dwithin) to find health facilities that are within a mile from you, and you can use [ST_DISTANCE](https://docs.snowflake.com/en/sql-reference/functions/st_distance) to measure the actual distance between points.
@@ -272,7 +269,7 @@ ST_DWITHIN(GEOMETRY,ST_MAKEPOINT(-73.986226, 40.755702),1600) = TRUE
 ORDER BY 5 LIMIT 10;
 ```
 
-<img src ='assets/geo_ml_45.png' width=700>
+![assets/geo_ml_45.png](assets/geo_ml_45.png)
 
 Notice that this query runs on a table with over 53M rows. Snowflake's geospatial data types are very efficient!
 
@@ -349,7 +346,7 @@ st.write('10 Nearest Health Facilities')
 st.pydeck_chart(r, use_container_width=True)
 ```
 
-<img src ='assets/geo_ml_46.png' width=800>
+![assets/geo_ml_46.png](assets/geo_ml_46.png)
 
 ### Conclusion
 
@@ -387,19 +384,19 @@ The first step in the guide is to acquire geospatial data sets that you can free
 * Search for `OpenCelliD` in the search bar
 * Find and click the` OpenCelliD - Open Database of Cell Towers` tile or just use [this](https://app.snowflake.com/marketplace/listing/GZSVZ8ON6J/dataconsulting-pl-opencellid-open-database-of-cell-towers) link
 
-<img src ='assets/geo_ml_47.png' width=700>
+![assets/geo_ml_47.png](assets/geo_ml_47.png)
 
 * Once in the listing, click the big blue `Get` button
 
-<img src ='assets/geo_ml_48.png' width=500>
+![assets/geo_ml_48.png](assets/geo_ml_48.png)
 
 * On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all future instructions will assume this name for the database.
 
-<img src ='assets/geo_ml_49.png' width=500>
+![assets/geo_ml_49.png](assets/geo_ml_49.png)
 
 Similarly to the above dataset, acquire [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow) application which extends Snowflake core geo features with more than 100 spatial functions. Navigate to the `Marketplace` screen using the menu on the left side of the window and find the `SedonaSnow`. Keep the the database name `SEDONASNOW` and optionally add more roles that can access the database.
 
-<img src ='assets/geo_ml_22.png' width=500>
+![assets/geo_ml_22.png](assets/geo_ml_22.png)
 
 Congratulations! You have just acquired all the listings you need for this lab.
 
@@ -482,7 +479,7 @@ In the result set, notice the `GEOMETRY` column and how it displays a JSON repre
 Unlike `GEOGRAPHY`, which treats all points as longitude and latitude on a spherical earth, `GEOMETRY` considers the Earth as a flat surface. More information about Snowflake's specification can be found [here](https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html).
 In this example it uses scientific notation and the numbers are much larger than latitude and longitude boundaries [-180; 180].
 
-<img src ='assets/geo_ml_57.png' width=700>
+![assets/geo_ml_57.png](assets/geo_ml_57.png)
 
 Now look at the same query but in a different format. Run the following query:
 
@@ -572,7 +569,7 @@ FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_
 ORDER BY is_valid ASC;
 ```
 
-<img src ='assets/geo_ml_50.png' width=700>
+![assets/geo_ml_50.png](assets/geo_ml_50.png)
 
 This query completed without error and now you see that the shape of the province Zeeland is invalid. Let's repair it by applying the [ST_MakeValid](https://sedona.apache.org/1.5.1/api/snowflake/vector-data/Function/#st_makevalid) function from SedonaSnow Native app:
 
@@ -586,7 +583,7 @@ FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_
 ORDER BY is_valid ASC;
 ```
 
-<img src ='assets/geo_ml_51.png' width=700>
+![assets/geo_ml_51.png](assets/geo_ml_51.png)
 
 Now all shapes are valid and the data is ready to be ingested. One additional thing you should do is to set SRID, since otherwise it will be set to 0. This dataset is in the reference system [WGS 72 / UTM zone 31N](https://epsg.io/32231), so it makes sense to add the SRID=32231 to the constructor function.
 
@@ -620,7 +617,7 @@ FROM geolab.geometry.nl_cables_stations
 LIMIT 5;
 ```
 
-<img src ='assets/geo_ml_52.png' width=700>
+![assets/geo_ml_52.png](assets/geo_ml_52.png)
 
 The spatial data is stored using the `GEOMETRY` data type and employs the Dutch mapping system, `Amersfoort / RD New` (SRID = 28992). 
 
@@ -631,7 +628,7 @@ SELECT *
 FROM geolab.geometry.nl_administrative_areas
 LIMIT 5;
 ```
-<img src ='assets/geo_ml_53.png' width=700>
+![assets/geo_ml_53.png](assets/geo_ml_53.png)
 
 In order to compute the length of all cables per administrative area, it's essential that both datasets adhere to the same mapping system. You have two options: either project `nl_administrative_areas` to SRID 28992, or project `nl_cables_stations` to SRID 32231. For this exercise, let's choose the first option. Run the following query:
 
@@ -645,7 +642,7 @@ WHERE st_intersects(st_transform(t1.geometry, 28992), t2.geometry)
 GROUP BY 1
 ORDER BY 2 DESC;
 ```
-<img src ='assets/geo_ml_54.png' width=700>
+![assets/geo_ml_54.png](assets/geo_ml_54.png)
 
 You have five areas densely covered by electricity cables, those are the ones that your company is responsible for. For your first analysis, you will focus on these areas.
 
@@ -781,7 +778,7 @@ st.pydeck_chart(pdk.Deck(
 ))
 ```
 
-<img src ='assets/geo_ml_56.png' width=700>
+![assets/geo_ml_56.png](assets/geo_ml_56.png)
 
 Another way to visualise geospatial data is using open-source geo analytics tool QGIS. Do the following steps:
 * Install the latest [Long Term Version of QGIS](https://qgis.org/download/)
@@ -812,7 +809,6 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 
 ## Geocoding and Reverse Geocoding
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -840,17 +836,17 @@ For this project you will use a dataset with locations of restaurants and cafes 
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-<img src ='assets/geo_ml_10.png' width=500>
+![assets/geo_ml_10.png](assets/geo_ml_10.png)
 
 Another dataset that you will use in this Lab is [Worldwide Address Data](https://app.snowflake.com/marketplace/listing/GZSNZ7F5UT/starschema-worldwide-address-data) and you can also get it from the Snowflake Marketplace. It's a free dataset from the OpenAddresses project that allows Snowflake customers to map lat/long information to address details. 
 - Search for `Worldwide Address Data` in the search bar
 - Find and click on the corresponding dataset from Starschema
 
-<img src ='assets/geo_ml_20.png' width=800>
+![assets/geo_ml_20.png](assets/geo_ml_20.png)
 
 - On the `Get Data` screen, don't change the name of the database from `WORLDWIDE_ADDRESS_DATA`.
  
-<img src ='assets/geo_ml_21.png' width=500>
+![assets/geo_ml_21.png](assets/geo_ml_21.png)
 
 Nice! You have just got two listings that you will need for this project.
 
@@ -1186,7 +1182,6 @@ There is a high chance that datasets focused on particular counties have richer 
 
 ## Forecasting time series on a map
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete preparation steps from `Setup your account` page.
@@ -1211,17 +1206,17 @@ The New York Taxi and Limousine Commission (TLC) has provided detailed, anonymiz
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-<img src ='assets/geo_ml_10.png' width=500>
+![assets/geo_ml_10.png](assets/geo_ml_10.png)
 
 Another dataset you will use is events data and you can also get it from the Snowflake Marketplace. It is provided by PredictHQ and called [PredictHQ Quickstart Demo](https://app.snowflake.com/marketplace/listing/GZSTZ3TGTNLQM/predicthq-quickstart-demo).
 * Search for` PredictHQ Quickstart Demo` in the search bar
 * Find and click the `Quickstart Demo` tile
 
-<img src ='assets/geo_ml_4.png' width=700>
+![assets/geo_ml_4.png](assets/geo_ml_4.png)
 
 * On the `Get Data` screen click `Get`.
 
-<img src ='assets/geo_ml_6.png' width=500>
+![assets/geo_ml_6.png](assets/geo_ml_6.png)
 
 Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace. 
 
@@ -1450,11 +1445,11 @@ order by 2 asc;
 
 In this step, you will visualize the actual and predicted results and think on how you can improve our model. Open `Projects > Streamlit > + Streamlit App`. Give the new app a name, for example `Demand Prediction - model analysis`, and pick `ADVANCED_ANALYTICS.PUBLIC` as an app location.
 
-<img src ='assets/geo_ml_7.png' width = 500>
+![assets/geo_ml_7.png](assets/geo_ml_7.png)
 
 Click on the packages tab and add `pydeck`, `branca` and `plotly` to the list of packages as our app will be using them. 
 
-<img src ='assets/geo_ml_8.png' width = 450>
+![assets/geo_ml_8.png](assets/geo_ml_8.png)
 
 Then copy-paste the following code to the editor and click `Run`:
 
@@ -1662,7 +1657,7 @@ render_plotly_line_chart(df_time_series_filtered)
 
 After clicking `Run` button you will see the following UI:
 
-<img src ='assets/geo_ml_14.png'>
+![assets/geo_ml_14.png](assets/geo_ml_14.png)
 
 Click `Expand to see SMAPE metric` in the sidebar and find hexagons with good/bad MAPE values. Find them on the map using `H3 cells to display` dropdown.
 
@@ -1670,7 +1665,7 @@ As you can see, overall, the model is quite good, with SMAPE below 0.3 for most 
 
 The worst predictions are for hexagons corresponding to LaGuardia Airport (`882a100e25fffff`, `882a100f57fffff`, `882a100f53fffff`). To address this, you might consider adding information about flight arrivals and departures, which could improve the model's quality. It is a bit surprising to see poor quality at the hexagon `882a100897fffff`, which is close to Central Park. However, it seems that June 7th is the main driver of the poor prediction, as model significantly underpredicted during both day and night hours.
 
-<img src ='assets/geo_ml_9.png' width = 600>
+![assets/geo_ml_9.png](assets/geo_ml_9.png)
 
 You have information about public and school holidays and sports events among our features. Perhaps adding information about other local events, such as festivals, could improve the overall quality of the model.
 
@@ -1679,7 +1674,6 @@ You have information about public and school holidays and sports events among ou
 
 ## Customer Reviews Sentiment Analysis
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -1803,7 +1797,7 @@ FROM
 
   If you look inside of `ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_TEST` you'll notice two new columns: `sentiment_assesment` and `sentiment_categories`. `sentiment_assesment` contains overall assessment of the sentiment based on the review and `sentiment_categories` has an evaluation of each of three components individually: cost, quality and delivery time.
 
-  <img src ='assets/geo_ml_11.png'>
+  ![assets/geo_ml_11.png](assets/geo_ml_11.png)
 
   Now when you see that the results stick to the expected format, you can run the query above without the `top 10` limit. This query might take some time to complete, so to save time for this quickstart we've ran it for you in advance and stored results which you can import into new table by running following two queries:
 
@@ -1894,11 +1888,11 @@ FROM
 
 In this step, you will visualize the scoring results on the map. Open `Projects > Streamlit > + Streamlit App`. Give the new app a name, for example `Sentiment analysis - results`, and pick `ADVANCED_ANALYTICS.PUBLIC` as an app location.
 
-<img src ='assets/geo_ml_12.png' width = 500>
+![assets/geo_ml_12.png](assets/geo_ml_12.png)
 
 Click on the packages tab and add `pydeck` and `branca` to the list of packages as our app will be using them. 
 
-<img src ='assets/geo_ml_8.png' width = 450>
+![assets/geo_ml_8.png](assets/geo_ml_8.png)
 
 Then copy-paste the following code to the editor and click `Run`:
 
@@ -2015,23 +2009,23 @@ render_pydeck_chart(quantiles, df, chckbox_3d_value)
 
 After clicking `Run` button you will see the following UI:
 
-<img src ='assets/geo_ml_13.png'>
+![assets/geo_ml_13.png](assets/geo_ml_13.png)
 
 You can start with the overall analysis of the order density. When you select "DELIVERY_LOCATION" as a Dimension and "ORDERS" as a Measure you'll see what areas correspond to the high number of orders. You can use scale 7 and zoom in to identify clear clusters of where the most deliveries are occurring. In this case you see most deliveries are in Santa Clara, San Jose, and the San Francisco Bay. In particular, the area on the San Francisco peninsula looks to be an area of interest. Zooming in further you can see a dense area of delivery orders. 
 
-<img src ='assets/geo_ml_15.png'>
+![assets/geo_ml_15.png](assets/geo_ml_15.png)
 
 Using a finer H3 resolution, 8 shows how the delivery densities are distributed more finely. From this resolution, you can see the orders are concentrated in Daly City and proceed down to San Bruno. Additionally, in the North, the majority of the orders are coming from the stretch of the Sunset District to the Mission District.
 
-<img src ='assets/geo_ml_16.png' width=300>
+![assets/geo_ml_16.png](assets/geo_ml_16.png)
 
 Now that you know where the majority of orders are coming from, let's analyze whether there are interesting differences in customer satisfaction depending on where they are located. Select DELIVERY LOCATION as a dimension and SENTIMENT_SCORE as a Measure to see the overall sentiment score that the Cortex LLM Complete Function generated. You can notice that the customers are mostly satisfied in the areas of Daly City down to San Jose, in the Santa Rosa area, and around Dublin. You also see that the area between these is mostly showing unhappy customers.
 
-<img src ='assets/geo_ml_17.png' width=300>
+![assets/geo_ml_17.png](assets/geo_ml_17.png)
 
 In order to understand why customers in this area are unhappy, you analyze the aspect based sentiment results of the Cortex LLM Complete Function generated  for the categories of interest: food cost, delivery time, and the food quality. If you focus purely on the customers that were unhappy, you see that the primary reasons are food quality and food cost getting poor scores. Essentially, the food is not worth the cost and delivery time being fast does not make up for this. Check visualizations using the following combinations of parameters:
 
-<img src ='assets/geo_ml_18.png'>
+![assets/geo_ml_18.png](assets/geo_ml_18.png)
 
 If you look at all H3 cells where food quality was high, the average sentiment score is also generally high. Again, you can see there are no cells where customers felt the food quality was above average in the greater Berkeley area. This could indicate either that high quality delivery food is uncommon or that the customers in these areas have higher expectations for delivery food.
 
@@ -2042,7 +2036,6 @@ You can also analyze what areas are getting higher scores for each of the catego
 
 ## Processing unstructured geospatial data
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -2088,7 +2081,7 @@ For this lab, you will also use a native application called [SedonaSnow](https:/
 > aside negative 
 >  On the `Get` screen, you may be prompted to complete your user profile if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue Save button. You will be returned to the `Get` screen.
 
-<img src ='assets/geo_ml_22.png' width=500>
+![assets/geo_ml_22.png](assets/geo_ml_22.png)
 
 Congratulations, you have now acquired all the data sources that you need for this lab.
 
@@ -2411,7 +2404,7 @@ st.pydeck_chart(pdk.Deck(
 ))
 ```
 
-<img src ='assets/geo_ml_23.png' width=800>
+![assets/geo_ml_23.png](assets/geo_ml_23.png)
 
 ### Step 3. Load Shapefile
 
@@ -2532,7 +2525,7 @@ SELECT top 10 *
 FROM table(PY_LOAD_GEOFILE(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'WorldClim.zip'), 'WorldClim.shp'));
 ```
 
-<img src ='assets/geo_ml_24.png' width=500>
+![assets/geo_ml_24.png](assets/geo_ml_24.png)
 
 It stores geo objects in the `WKT` column and precipitation (`PREC`) and average temperature (`TAVG`) as properties in a JSON-like object. Knowing this information, it's easy to create a query that reads data from a Shapefile and stores it in a table. This is what you will do in the following query:
 
@@ -2613,7 +2606,7 @@ st.pydeck_chart(pdk.Deck(
 ))
 ```
 
-<img src ='assets/geo_ml_25.png' width=800>
+![assets/geo_ml_25.png](assets/geo_ml_25.png)
 
 Now that you have all the data from GeoTiff and Shapefile stored in Snowflake tables, you can join them.
 
@@ -2750,7 +2743,7 @@ Let's look inside of the newly created table:
 SELECT TOP 5 * FROM ADVANCED_ANALYTICS.RASTER.ELEVATION_WEATHER_VORONOI
 ```
 
-<img src ='assets/geo_ml_26.png' width=700>
+![assets/geo_ml_26.png](assets/geo_ml_26.png)
 
 Now you have data from two unstructured sources stored in a single table. You can use this table to feed into an ML model or enrich it further with some additional features.
 
@@ -2967,7 +2960,7 @@ st.pydeck_chart(pdk.Deck(
 ))
 ```
 
-<img src ='assets/geo_ml_27.png' width=800>
+![assets/geo_ml_27.png](assets/geo_ml_27.png)
 
 ### Conclusion
 
@@ -2975,13 +2968,12 @@ In this lab, you have learned how to load geospatial data from unstructured form
 
 ## Creating Interactive Maps with Kepler.gl
 
-Duration: 30
 
 In this Lab you will learn how to create interactive maps directly within Snowflake using [Kepler.gl](https://kepler.gl), powered by [Dekart.xyz](https://dekart.xyz/docs/snowflake-snowpark/about/). You will use Dekart.XYZ app and use public datasets from Marketplace to visualize UK highways with color-coded density of nearby EV charging stations. 
 
 Yor final result will be a map similar to this one:
 
-<img src ='assets/geo_ml_39.png' width=800>
+![assets/geo_ml_39.png](assets/geo_ml_39.png)
 
 ### Data aquisition 
 For this project you will use an Overture Maps [Divisions](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9M9/carto-overture-maps-divisions), [Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and [Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets offered by CARTO as free Marketplace listins.
@@ -2993,7 +2985,7 @@ For this project you will use an Overture Maps [Divisions](https://app.snowflake
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-<img src ='assets/geo_ml_28.png' width=500>
+![assets/geo_ml_28.png](assets/geo_ml_28.png)
 
 Similarly you need to find and install [Overture Maps - Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and [Overture Maps - Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets.
 
@@ -3012,22 +3004,22 @@ As a first step you will install the Marketplace listing:
 - In the "Warehouse used for installation" field select the warehouse which will be used for installation process.
 - Click the `Try for Free` button
 
-<img src ='assets/geo_ml_29.png' width=500>
+![assets/geo_ml_29.png](assets/geo_ml_29.png)
 
 > aside negative
 >  Note: When trial end you won't be automatically swithched to Subscription-based usage. If you decide to continue using Dekart, you would need to manually enable subscription.
 
 Follow the installation instructions as displayed in the Snowsight interface.
 
-<img src ='assets/geo_ml_30.png' width=800>
+![assets/geo_ml_30.png](assets/geo_ml_30.png)
 
 Grant Account Privileges to Dekart and allow connections to the Mapbox API. Dekart uses Mapbox for rendering maps. No user data is sent to Mapbox. Dekart creates a single node `CPU_X64_XS` compute pool and `XSMALL` warehouse.
 
-<img src ='assets/geo_ml_31.png' width=800>
+![assets/geo_ml_31.png](assets/geo_ml_31.png)
 
 Click `Activate`. Activation process might take up to 10 minutes.
 
-<img src ='assets/geo_ml_32.png' width=800>
+![assets/geo_ml_32.png](assets/geo_ml_32.png)
 
 While it's activating you can go to Worksheets and grant access to Overture Maps datasets. This ensures that Dekart can read and visualize the data within Snowflake. Note, tht since you run Dekart withon Snowflake Container Services, your data stays in Snowflake and won't be transfered externally. Execute the following SQL commands in Snowflake (make sure you have the `ACCOUNTADMIN` role for these operations):
 
@@ -3041,7 +3033,7 @@ When Activation is done, do the following steps:
 - Authorize the Dekart App with your Snowflake account.
 - In the Dekart interface, click `Create Report` to start building your map.
 
-<img src ='assets/geo_ml_33.png' width=800>
+![assets/geo_ml_33.png](assets/geo_ml_33.png)
 
 Congratulations! You have now Dekart app running in your Snowflake environment and now you're ready to start creating maps!
 
@@ -3058,7 +3050,7 @@ WHERE COUNTRY = 'GB' AND SUBTYPE = 'country';
 
 In this query you use Overture Maps - Divisions dataset to get the shape of the UK boundary. As soon as query is completed, you will see a new layer in the `Layers` panel. You can expand it, to customise if needed, for example to make it transparent you can turn off `Fill color` toggle.
 
-<img src ='assets/geo_ml_35.gif' width=800>
+![assets/geo_ml_35.gif](assets/geo_ml_35.gif)
 
 As a next step, add a road network for the UK. Create a new tab in `SQL` panel and name it `uk_roads`. Run the following query that joins road data from `Overture Maps - Transportation` dataset and filters it so it shows only motoways and trunk roads for the UK area:
 
@@ -3073,7 +3065,7 @@ WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY) AND s.CLASS IN ('motorway', 'trunk'
 
 When the query is complete, you'll see the new layer in the Layers panel with the name `uk_roads` and it contains about 126K road segments that are viualised on the map. You can change the colour of the linestrings using `Stroke Color` field in the corresponding Layer.
 
-<img src ='assets/geo_ml_36.png' width=700>
+![assets/geo_ml_36.png](assets/geo_ml_36.png)
 
 In the next step you will add locations of Electric Vehicles charging sttions as a new layer. Create a new SQL tab, name it `EV_stations` and run the following query:
 
@@ -3088,7 +3080,7 @@ WHERE ST_CONTAINS(ub.GEOMETRY, p.GEOMETRY) AND p.CATEGORIES::TEXT ILIKE '%chargi
 
 In the newly created layer `EV_stations` play with `Stroke Color` and `Radius` to adjust the size of points that correspond to chargins stations locations.
 
-<img src ='assets/geo_ml_37.png' width=700>
+![assets/geo_ml_37.png](assets/geo_ml_37.png)
 
 As a last step, create a new SQL tab, name it `EV_stations_density` and run the following query that for each road segment calculates number of charging stations within 50km radius:
 
@@ -3115,7 +3107,7 @@ JOIN charging_count cc ON r.ID = cc.road_id;
 
 This is our final visualization. Before editing its look and feel, you can hide other layers by clicking on the 'eye' icon. Then, select `EV_stations_density`, click on the three dots next to the `Stroke Color` field, and choose `NUM_CHARGING_STATIONS` as the source for the stroke color. You can also change the color map and select a color scheme of your choice.
 
-<img src ='assets/geo_ml_38.gif' width=700>
+![assets/geo_ml_38.gif](assets/geo_ml_38.gif)
 
 You can now use top right menu to save the newly created map and to share it within your organization.
 
@@ -3123,7 +3115,7 @@ You can now use top right menu to save the newly created map and to share it wit
 
 In this Lab, you created an interactive, real-time map within Snowflake, using Dekart and the Overture Maps datasets. You explored UK highway infrastructure with a focus on EV charging station density.
 
-<img src ='assets/geo_ml_39.png' width=800>
+![assets/geo_ml_39.png](assets/geo_ml_39.png)
 
 #### What You Learned
 - Creating interactive maps directly within Snowflake using Kepler.gl and Dekart.
@@ -3137,7 +3129,6 @@ In this Lab, you created an interactive, real-time map within Snowflake, using D
 
 ## Conclusion And Resources
 
-Duration: 4
 
 Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.
 Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.

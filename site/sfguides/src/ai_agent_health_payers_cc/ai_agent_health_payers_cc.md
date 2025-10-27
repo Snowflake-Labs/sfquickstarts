@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ## Overview
 ![banner](assets/banner.png)
 
-Duration: 5
 
 In this quickstart, you will learn how to easily build an AI agent entirely in Snowflake. We will walk through a scenario in the healthcare industry to illustrate this.
 
@@ -59,17 +58,16 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 
 **Architecture Diagram:**
 
-<img src="assets/architecture_diagram.png"/>
+![assets/architecture_diagram.png](assets/architecture_diagram.png)
 
 The created "Data Agent" ties these features together to provide a single app for end users to use natural language to ask questions and get answers in natural language regardless of whether the underlying data is structured or unstructured.
 
-<img src="assets/payer_cc_agentic.png"/>
+![assets/payer_cc_agentic.png](assets/payer_cc_agentic.png)
 
 **Note:** We also include an older Streamlit app to show how to build an "agentic" workflow without Cortex Agent as well.
 
 ## Data and Snowflake Setup
 
-Duration: 15
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main).**
 
@@ -160,23 +158,23 @@ ENCRYPTION=(TYPE='SNOWFLAKE_SSE'); --to store data assets
 ```
 
 **Upload files** to the stages within the `PAYER_CC_SCHEMA`
-<img src="assets/notebook_files.png"/>
-<img src="assets/streamlit_files.png"/>
-<img src="assets/raw_data_stage_final.png"/>
+![assets/notebook_files.png](assets/notebook_files.png)
+![assets/streamlit_files.png](assets/streamlit_files.png)
+![assets/raw_data_stage_final.png](assets/raw_data_stage_final.png)
 
 Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
 
 - **Data Files:** Upload data files to the `RAW_DATA` stage from [data](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks/data). MAKE SURE TO KEEP THE SAME FOLDER STRUCTURE.
-<img src="assets/upload_call_recordings.png"/>
-<img src="assets/upload_caller_intent.png"/>
-<img src="assets/upload_data_product.png"/>
-<img src="assets/upload_faqs.png"/>
+![assets/upload_call_recordings.png](assets/upload_call_recordings.png)
+![assets/upload_caller_intent.png](assets/upload_caller_intent.png)
+![assets/upload_data_product.png](assets/upload_data_product.png)
+![assets/upload_faqs.png](assets/upload_faqs.png)
 
 - **Notebook Files:** Upload notebook files to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
-<img src="assets/upload_notebook_files.png"/>
+![assets/upload_notebook_files.png](assets/upload_notebook_files.png)
 
 - **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/scripts/streamlit). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/streamlit/environment.yml) file as well. You can also upload the older Streamlit app (`payer_assistant_old.py`), which does not use Cortex Agents.
-<img src="assets/upload_streamlit_files.png"/>
+![assets/upload_streamlit_files.png](assets/upload_streamlit_files.png)
 
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create the Notebooks and Streamlit app from the staged files.
 
@@ -298,13 +296,12 @@ COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "vers
 
 ## Access Setup Notebook
 
-Duration: 20
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
 
 To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open `PAYERS_CC_MAIN_SETUP` and run each of the cells.
 
-<img src='assets/notebook.png'>
+![assets/notebook.png](assets/notebook.png)
 
 Within this notebook, you'll prepare all the unstructured data needed before you can run the Streamlit App. Once this data is processed, the chatbot will have a rich knowledge base to start from that's all stored within the Cortex Search and Cortex Analyst services.
 
@@ -312,19 +309,17 @@ You will also predict the intent of a caller using historical data.This will all
 
 ## Run Streamlit Application
 
-Duration: 20
 
 The Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open `PAYERS_CC_CHATBOT` and explore.
 
 This app simulates a few different scenarios where Contact Center Agents have to assist with incoming calls. You will find sample questions and other configs in the sidebar.
 
-<img src='assets/streamlit_app.png'>
+![assets/streamlit_app.png](assets/streamlit_app.png)
 
 You can also open `PAYERS_CC_CHATBOT_OLD` to access the version that does not include Cortex Agents to show you what a more manual "agentic" flow would look like.
 
 ## Conclusion And Resources
 
-Duration: 1
 
 In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI-powered Assistant for a Contact Center.
 

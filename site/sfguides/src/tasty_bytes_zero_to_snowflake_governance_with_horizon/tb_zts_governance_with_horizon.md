@@ -12,8 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Governance in Snowflake 
-Duration: 1
-<img src = "assets/governance_with_horizon_header.png">
+![assets/governance_with_horizon_header.png](assets/governance_with_horizon_header.png)
 
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Data Governance! 
@@ -43,7 +42,6 @@ Within this Quickstart we will learn about Snowflake Roles, Role Based Access Co
 - A Robust Data Governance Foundation for your Account
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -71,7 +69,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
@@ -79,7 +77,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Exploring Available Roles
-Duration: 1
 
 ### Overview
 Our Tasty Bytes Administrator has been tasked with learning the process of deploying Role Based Access Control (RBAC) and proper Governance across our Snowflake Account. 
@@ -123,7 +120,7 @@ FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
 WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN','PUBLIC');
 ```
 
-<img src = "assets/sysroles.png">
+![assets/sysroles.png](assets/sysroles.png)
 
 
 In our result set we can see the high-level descriptions of what these Snowflake System Defined Roles have privileges to do. 
@@ -133,7 +130,6 @@ In our result set we can see the high-level descriptions of what these Snowflake
 >
 
 ## Creating a Role and Granting Privileges
-Duration: 1
 
 ### Overview
 Now that we understand these System Defined roles, let's begin leveraging them to create a test role and grant it access to the Customer Loyalty data we will deploy our initial Data Governance features against and also providing the ability to use our `tb_dev_wh` Warehouse.
@@ -240,7 +236,6 @@ GRANT ROLE tb_test_role TO USER identifier($my_user_var);
 
 
 ## Column-Level Security and Tagging = Tag-Based Masking
-Duration: 4
 
 ### Overview
 The first Governance feature set we want to deploy and test will be Snowflake Tag Based Dynamic Data Masking. This will allow us to mask PII data in columns from our Test Role but not from more privileged Roles.
@@ -271,7 +266,7 @@ FROM raw_customer.customer_loyalty cl
 SAMPLE (1000 ROWS);
 ```
 
-<img src = "assets/customer_loyalty.png">
+![assets/customer_loyalty.png](assets/customer_loyalty.png)
 
 **Woah!!** there is a lot of PII we need to take care before our users can touch this data. Luckily we can use Snowflakes native Tag-Based Masking functionality to do just this.
 
@@ -340,14 +335,13 @@ FROM TABLE(information_schema.tag_references_all_columns
     ('tb_101.raw_customer.customer_loyalty','table'));
 ```
 
-<img src = "assets/tag_ref_all.png">
+![assets/tag_ref_all.png](assets/tag_ref_all.png)
 
 **Perfect!** Just as desired, we see our created tag is associated to the PII columns we will look to mask in the next section.
 
 ### Step 6 - Click Next -->
 
 ## Creating Masking Policies and Applying to Tags
-Duration: 3
 
 ### Overview
 With our Tags in place we can now create our Masking Policies that will mask data for all but privileged Roles. We need to create 1 policy for every data type where the return data type can be implicitly cast into the column datatype. We can only assign 1 policy per datatype to an individual Tag.
@@ -432,7 +426,7 @@ FROM raw_customer.customer_loyalty cl
 WHERE cl.country IN ('United States','Canada','Brazil');
 ```
 
-<img src = "assets/raw_mask_test.png">
+![assets/raw_mask_test.png](assets/raw_mask_test.png)
 
 Since we reference this `raw_customer.customer_loyalty` Table in downstream Views let's see if this Masking Policy impacts us there as well. Please kick off the next query which calculates our Customer Loyalty members `lifetime_sales_usd` totals and sorts them in descending order by this amount.
 
@@ -450,12 +444,11 @@ GROUP BY clm.customer_id, clm.first_name, clm.last_name, clm.phone_number, clm.e
 ORDER BY lifetime_sales_usd;
 ```
 
-<img src = "assets/analytics_mask_test.png"> 
+![assets/analytics_mask_test.png](assets/analytics_mask_test.png) 
 
 ### Step 5 - Click Next -->
 
 ## Row-Access Policies
-Duration: 5
 
 ### Overview
 Happy with our Tag Based Dynamic Masking controlling masking at the Column level,
@@ -542,7 +535,7 @@ FROM raw_customer.customer_loyalty cl SAMPLE (10000 ROWS)
 GROUP BY cl.customer_id, cl.first_name, cl.last_name, cl.city, cl.marital_status, age;
 ```
 
-<img src = "assets/raw_rls_test.png">
+![assets/raw_rls_test.png](assets/raw_rls_test.png)
 
 **Yay!** Our Row Access Policy is working as expected and we are also seeing our masking in place since we are using the `tb_test_role`. 
 
@@ -558,7 +551,7 @@ FROM analytics.customer_loyalty_metrics_v clm
 GROUP BY clm.city;
 ```
 
-<img src = "assets/analytics_rls_test.png">
+![assets/analytics_rls_test.png](assets/analytics_rls_test.png)
 
 Just as expected, our Governance features are seen downstream despite only having to define them once and apply them to the Raw Tables our Analytics Views retrieve query results from. 
 
@@ -566,7 +559,6 @@ Just as expected, our Governance features are seen downstream despite only havin
 
 
 ## Aggregation Policies
-Duration: 4
 
 ### Overview
  Outside of the Data Access Policies (Masking and Row Access) we have covered, Snowflake Horizon also provides [Privacy Policies](https://docs.snowflake.com/en/user-guide/aggregation-policies). In this section we will cover the ability to set Aggregation Policies on Database Objects which can restrict certain roles to only aggregate data by only allowing for queries that aggregate data into groups of a minimum size versus retrieving individual roles.
@@ -611,11 +603,11 @@ USE ROLE tb_test_role;
 SELECT TOP 10 * FROM raw_pos.order_header;
 ```
 
-<img src = "assets/agg_test_fail.png">
+![assets/agg_test_fail.png](assets/agg_test_fail.png)
 
 Run the next query to see what happens if we include over 1000 rows.
 
-<img src = "assets/agg_test_fail.png">
+![assets/agg_test_fail.png](assets/agg_test_fail.png)
 
 ### Step 4 - Conducting Aggregate Analysis
 Bringing in the Customer Loyalty table that we have previously:
@@ -639,7 +631,7 @@ GROUP BY ALL
 ORDER BY order_total DESC;
 ```
 
-<img src = "assets/agg_1.png">
+![assets/agg_1.png](assets/agg_1.png)
 
 
 **Question 2** - What are the total order amounts by Postal Code?
@@ -657,7 +649,7 @@ GROUP BY ALL
 ORDER BY order_total DESC;
 ```
 
-<img src = "assets/agg_2.png">
+![assets/agg_2.png](assets/agg_2.png)
 
 
 > aside positive
@@ -666,7 +658,6 @@ ORDER BY order_total DESC;
 
 
 ## Projection Policies
-Duration: 3
 
 ### Overview:
 Within this step, we will cover another Privacy Policy framework provided by Snowflake Horizon, this time diving into [Projection Policies](https://docs.snowflake.com/en/user-guide/projection-policies) which in short will prevent queries from using a SELECT statement to project values from a column.
@@ -714,7 +705,7 @@ USE ROLE tb_test_role;
 SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 ```
 
-<img src = "assets/projection_fail.png">
+![assets/projection_fail.png](assets/projection_fail.png)
 
 
 Let's execute the next query to see what happens if we EXCLUDE the `postal_code` column.
@@ -723,13 +714,12 @@ Let's execute the next query to see what happens if we EXCLUDE the `postal_code`
 SELECT TOP 100 * EXCLUDE postal_code FROM raw_customer.customer_loyalty;
 ```
 
-<img src = "assets/projection_no_postal.png">
+![assets/projection_no_postal.png](assets/projection_no_postal.png)
 
 ### Step 4 - Click Next -->
 
 
 ## Sensitive Data Classification
-Duration: 3
 
 ### Overview
 In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to attempt to automatically detect sensitive information and apply relevant Snowflake system defined privacy tags. 
@@ -753,7 +743,7 @@ USE ROLE accountadmin;
 CALL SYSTEM$CLASSIFY('raw_customer.customer_loyalty', {'auto_tag': true});
 ```
 
-<img src = "assets/system$classify.png">
+![assets/system$classify.png](assets/system$classify.png)
 
 
 Now let's view the new Tags Snowflake applied automatically via Data Classification by executing the next query.
@@ -762,7 +752,7 @@ Now let's view the new Tags Snowflake applied automatically via Data Classificat
 SELECT * FROM TABLE(information_schema.tag_references_all_columns('raw_customer.customer_loyalty','table'));
 ```
 
-<img src = "assets/system$classify_info.png">
+![assets/system$classify_info.png](assets/system$classify_info.png)
 
 ### Step 2 - SYSTEM$CLASSIFY_SCHEMA
 As our Raw Point-of-Sale Schema includes numerous tables, let's use [SYSTEM$CLASSIFY_SCHEMA](https://docs.snowflake.com/en/sql-reference/stored-procedures/system_classify_schema) against it in our next query.
@@ -771,7 +761,7 @@ As our Raw Point-of-Sale Schema includes numerous tables, let's use [SYSTEM$CLAS
 CALL SYSTEM$CLASSIFY_SCHEMA('raw_pos', {'auto_tag': true});
 ```
 
-<img src = "assets/system$classify_schema.png">
+![assets/system$classify_schema.png](assets/system$classify_schema.png)
 
 
 Once again, let's view the Tags applied using the Franchise table within the Schema.
@@ -780,14 +770,13 @@ Once again, let's view the Tags applied using the Franchise table within the Sch
 SELECT * FROM TABLE(information_schema.tag_references_all_columns('raw_pos.franchise','table'));
 ```
 
-<img src = "assets/system$classify_schema_info.png">
+![assets/system$classify_schema_info.png](assets/system$classify_schema_info.png)
 
 ### Step 3 - Click Next -->
 
 
 
 ## Custom Data Classification
-Duration: 4
 
 ### Overview
 Snowflake provides the CUSTOM_CLASSIFIER class in the SNOWFLAKE.DATA_PRIVACY schema to enable Data Engineers to extend their Data Classification capabilities based on their own knowledge of their data.
@@ -804,7 +793,7 @@ FROM raw_pos.location
 WHERE city = 'London';
 ```
 
-<img src = "assets/london.png">
+![assets/london.png](assets/london.png)
 
 ### Step 2 - Creating our Classifiers Schema and Placekey Custom Classifier
 
@@ -831,7 +820,7 @@ FROM raw_pos.location
 WHERE placekey REGEXP('^[a-zA-Z0-9\d]{3}-[a-zA-Z0-9\d]{3,4}@[a-zA-Z0-9\d]{3}-[a-zA-Z0-9\d]{3}-.*$');
 ```
 
-<img src = "assets/placekey_regex.png">
+![assets/placekey_regex.png](assets/placekey_regex.png)
 
 Let's now use the [ADD_REGEX](https://docs.snowflake.com/en/sql-reference/classes/custom_classifier/methods/add_regex) method to assign this to our Placekey Classifier
 ```
@@ -850,7 +839,7 @@ With the details in place, we can now use the [LIST](https://docs.snowflake.com/
 SELECT placekey!LIST();
 ```
 
-<img src = "assets/list.png">
+![assets/list.png](assets/list.png)
 
 ### Step 4 - Using our Placekey Custom Classifier
 Let's now use [SYSTEM$CLASSIFY](https://docs.snowflake.com/en/sql-reference/stored-procedures/system_classify) and our Classifier against the `Location` table
@@ -859,7 +848,7 @@ Let's now use [SYSTEM$CLASSIFY](https://docs.snowflake.com/en/sql-reference/stor
 CALL SYSTEM$CLASSIFY('raw_pos.location', {'custom_classifiers': ['placekey'], 'auto_tag':true});
 ```
 
-<img src = "assets/classify_location.png">
+![assets/classify_location.png](assets/classify_location.png)
 
 To finish, let's confirm our `Placekey` column was successfully tagged
 ```
@@ -872,13 +861,12 @@ FROM TABLE(information_schema.tag_references_all_columns('raw_pos.location','tab
 WHERE tag_value = 'PLACEKEY';
 ```
 
-<img src = "assets/placekey_info.png">
+![assets/placekey_info.png](assets/placekey_info.png)
 
 Moving forward as Schemas or Tables are created and updated we can use this exact process of Automatic and Custom Classification to maintain a strong governance posture and build rich semantic-layer metadata.
 
 
 ## Access History (Reads and Writes)
-Duration: 3
 
 ### Overview:
 Access History provides insights into user queries encompassing what data was  read and when, as well as what statements have performed a write operations.
@@ -906,7 +894,7 @@ GROUP BY object_name
 ORDER BY number_of_queries DESC;
 ```
 
-<img src = "assets/ah_1.png">
+![assets/ah_1.png](assets/ah_1.png)
 *Please note your results may not match the image above*
 
 Within the next query we will determined what is the breakdown between Read and Write queries and when did they last occur.
@@ -927,7 +915,7 @@ GROUP BY object_name, query_type
 ORDER BY object_name, number_of_queries DESC;
 ```
 
-<img src = "assets/ah_2.png">
+![assets/ah_2.png](assets/ah_2.png)
 *Please note your results may not match the image above*
 
 To wrap things up, our last query will determine how many queries have accessed each of our Raw layer tables indirectly.
@@ -946,7 +934,7 @@ GROUP BY object_name
 ORDER BY number_of_queries DESC;
 ```
 
-<img src = "assets/ah_3.png">
+![assets/ah_3.png](assets/ah_3.png)
 
 > aside positive
 > **Direct Objects Accessed:** Data objects directly named in the query explicitly.
@@ -956,7 +944,6 @@ ORDER BY number_of_queries DESC;
 ### Step 2 - Click Next -->
 
 ## Discovery with Snowflake Horizon - Universal Search
-Duration: 2
 
 ### Overview
 Having explored a wide variety of Governance functionality available in Snowflake, it is time to put it all together with Universal Search.
@@ -977,13 +964,12 @@ To leverage Universal Search in Snowsight:
     - Snowflake Best Practices
     - How to use Snowflake Column Masking
 
-<img src = "assets/tasty_bytes.png">
+![assets/tasty_bytes.png](assets/tasty_bytes.png)
 
 
 ### Step 2 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart. 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowpark for Machine Learning on AzureML
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
 
 Python is the language of choice for Data Science and Machine Learning workloads. Snowflake has long supported Python via the Python Connector, allowing data scientists to interact with data stored in Snowflake from their preferred Python environment. This did, however, require data scientists to write verbose SQL queries. To provide a more friendly, expressive, and extensible interface to Snowflake, we built Snowpark Python, a native Python experience with a pandas and PySpark-like API for data manipulation. This includes a client-side API to allow users to write Python code in a Spark-like API without the need to write verbose SQL. Python UDF and Stored Procedure support also provides more general additional capabilities for compute pushdown.
 
@@ -54,7 +53,6 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 5
 
 In this use case you will build a binary model based on the 'Machine Predictive Maintenance Classification' dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](https://www.snowflake.com/en/data-cloud/marketplace/).
 
@@ -62,7 +60,6 @@ The use case uses information related to machine diagnostics (torque, rotational
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 2
 
 The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
 ```sql
@@ -74,7 +71,6 @@ CREATE OR REPLACE DATABASE HOL_DB;
 ```
 <!-- ------------------------ -->
 ## Set Up AzureML Environment
-Duration: 15
 
 If you haven't used AzureML before, for first time setup you will need to create an AzureML workspace. You can do so by following this [Link](https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2) 
 
@@ -86,7 +82,6 @@ Give the compute any unique name you would like and leave the default settings a
 
 <!-- ------------------------ -->
 ## Clone Github Repo
-Duration: 5
 
 Click on the "Notebooks" blade and open a terminal as shown below.
 
@@ -102,7 +97,6 @@ git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpar
 
 <!-- ------------------------ -->
 ## Load data into Snowflake
-Duration: 5
 
 You should now be able to navigate back to the 'File Browser' tab on the left and see your cloned repo. Open the setup.ipynb notebook (ensure that you select the correct environment), [0_setup_data.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml/blob/main/0_setup_data.ipynb) and work through the set up script here to load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
 
@@ -132,7 +126,6 @@ Once complete with the script, check back to your Snowflake environment to make 
 
 <!-- ------------------------ -->
 ## Build and Deploy Model
-Duration: 10
 
 Now open and work through the `1_mfr_mlflow.ipynb` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
 
@@ -163,7 +156,6 @@ AzureML Data Registry:
 
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
-Duration: 5
 
 This quickstart is just that, a quick way to get you started with using AzureML with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. 
 

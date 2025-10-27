@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 이 데이터 사이언스를 위한 Snowpark 101 Quickstart에서는 가상의 푸드 트럭 회사인 Tasty Bytes가 트럭 기사에게 위치 추천을 제공하기 위해 모델을 훈련시켜 매출을 올리는 것을 돕게 됩니다. 여러분은 데이터를 준비하고, 모델을 훈련시키고, 모델을 배포하기 위해 **Snowpark for Python**을 사용할 것입니다. 배포한 후에는 **Streamlit**을 사용해 애플리케이션 프로토타입을 생성하여 트럭 기사가 다가오는 교대조를 위해 주차할 최고의 위치를 찾는 데 모델을 사용할 수 있는 방법을 확인할 것입니다.
 
@@ -41,14 +40,13 @@ Streamlit*(2022년 3월에 Snowflake에서 인수)*은 사용자 정의 웹 앱�
 
 ### 구축할 것
 
-- **위치별 매출 예측**<br> <img src="assets/notebook_preview.gif"/>
+- **위치별 매출 예측**<br> ![assets/notebook_preview.gif](assets/notebook_preview.gif)
 
-- **예상 매출에 따라 상위 위치를 찾기 위한 Streamlit 애플리케이션**<br> <img src="assets/streamlit_preview.gif"/>
+- **예상 매출에 따라 상위 위치를 찾기 위한 Streamlit 애플리케이션**<br> ![assets/streamlit_preview.gif](assets/streamlit_preview.gif)
 
 <!-- ------------------------ -->
 ## Snowflake에서 데이터 설정
 
-Duration: 6
 
 ### 개요
 
@@ -75,7 +73,7 @@ Tasty Bytes는 전 세계 도시에서 푸드 트럭을 운영합니다. 각 트
   - 데이터베이스 이름 바꾸기 -> FROSTBYTE_SAFEGRAPH(전부 대문자)
   - 추가 역할에 부여 -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 > aside positive SafeGraph는 전 세계 모든 장소에 대한 모든 데이터를 제공하는 전 세계적인 지리 공간 데이터 회사입니다. Esri, Tripadvisor, Mapbox 및 Sysco와 같은 고객은 SafeGraph 데이터를 사용하여 고객을 더 잘 이해하고, 신제품을 만들고, 비즈니스를 위한 더 나은 결정을 내립니다.
 
@@ -158,7 +156,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 <!-- ------------------------ -->
 ## Snowpark를 통한 데이터 사이언스
 
-Duration: 22
 
 ### 개요
 
@@ -187,7 +184,7 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 
 ### 2단계 - 인증 파일 업데이트
 
-- Snowflake 계정 자격 증명으로 [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) 파일을 업데이트합니다. Python 노트북은 이 파일을 사용하여 자격 증명에 액세스하고 Snowflake와 연결합니다.<br> <img src="assets/auth_file.png">
+- Snowflake 계정 자격 증명으로 [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) 파일을 업데이트합니다. Python 노트북은 이 파일을 사용하여 자격 증명에 액세스하고 Snowflake와 연결합니다.<br> ![assets/auth_file.png](assets/auth_file.png)
 
 > aside positive  
 `account` 매개변수에는 [계정 식별자](https://docs.snowflake.com/ko/user-guide/admin-account-identifier)를 사용합니다. 계정 식별자에는 snowflakecomputing.com 접미사가 포함되지 않습니다.
@@ -230,7 +227,7 @@ jupyter notebook
 
 ### 4단계- Jupyter Notebook 실행
 
-- Jupyter Notebook에서 [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb)를 열고 셀을 실행합니다. <img src = "assets/notebook_preview.png">
+- Jupyter Notebook에서 [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb)를 열고 셀을 실행합니다. ![assets/notebook_preview.png](assets/notebook_preview.png)
 
 ### 문제 해결
 
@@ -259,7 +256,6 @@ jupyter notebook
 <!-- ------------------------ -->
 ## Streamlit을 사용한 애플리케이션 프로토타입
 
-Duration: 6
 
 ### 개요
 
@@ -288,12 +284,11 @@ Duration: 6
   ```
   streamlit run streamlit_app.py
   ```
-- 드롭다운 메뉴를 사용하여 도시를 선택하고 업데이트된 추천을 확인합니다. <img src = "assets/streamlit_preview.png">
+- 드롭다운 메뉴를 사용하여 도시를 선택하고 업데이트된 추천을 확인합니다. ![assets/streamlit_preview.png](assets/streamlit_preview.png)
 
 <!-- ------------------------ -->
 ## 정리
 
-Duration: 5
 
 ### 이 Quickstart에 생성된 객체 개요
 
@@ -359,7 +354,6 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 <!-- ------------------------ -->
 ## 종료 및 다음 단계
 
-Duration: 1
 
 ### 결론
 

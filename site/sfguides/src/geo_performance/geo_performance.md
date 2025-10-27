@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview 
 
-Duration: 10
 
 This Quickstart guide contains key tips for optimal performance when using Snowflake Geospatial Feature. The guide is broken up into multiple labs, each covering a separate technique that can improve performance and/or efficiency while running geo workloads in Snowflake.
 
@@ -34,7 +33,6 @@ In this quickstart, you will learn how to improve performance of queries when us
 
 ## Setup your Account
 
-Duration: 10
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -49,7 +47,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > aside positive
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-<img src ='assets/geo_performance_1.png' width=500>
+![assets/geo_performance_1.png](assets/geo_performance_1.png)
 
 ### Create a Virtual Warehouse
 
@@ -59,7 +57,7 @@ You will need to create a Virtual Warehouse to run queries.
 * Click the big blue `+ Warehouse` button in the upper right of the window
 * Create an Large Warehouse as shown in the screen below
 
-<img src ='assets/geo_performance_2.png' width=500>
+![assets/geo_performance_2.png](assets/geo_performance_2.png)
 
 Be sure to change the `Suspend After (min)` field to 5 min to avoid wasting compute credits.
 
@@ -70,7 +68,7 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 - Click the + Worksheet button in the upper right of your browser window. This will open a new window.
 - In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
 
-<img src ='assets/geo_performance_3.png' width=700>
+![assets/geo_performance_3.png](assets/geo_performance_3.png)
 
 Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
@@ -87,7 +85,6 @@ ALTER SESSION SET USE_CACHED_RESULT = FALSE;
 
 ## Acquire Data 
 
-Duration: 10
 
 The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality. 
 
@@ -99,18 +96,18 @@ The best place to acquire this data is the Snowflake Marketplace!
 * Search for `OpenCelliD` in the search bar
 * Find and click the `OpenCelliD - Open Database of Cell Towers` tile
 
-<img src ='assets/geo_performance_4.png' width=700>
+![assets/geo_performance_4.png](assets/geo_performance_4.png)
 
 * Once in the listing, click the big blue `Get` button
 
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-<img src ='assets/geo_performance_5.png' width=500>
+![assets/geo_performance_5.png](assets/geo_performance_5.png)
 
 * On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all future instructions will assume this name for the database.
 
-<img src ='assets/geo_performance_6.png' width=500>
+![assets/geo_performance_6.png](assets/geo_performance_6.png)
 
 Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace. 
 
@@ -158,7 +155,6 @@ MATCH_BY_COLUMN_NAME = case_insensitive;
 
 ## Lab 1: Storing geospatial data types
 
-Duration: 5
 
 Geospatial types are designed for quick and efficient spatial operations and GEOGRAPHY is the ideal choice when your coordinates are in latitude and longitude.
 
@@ -168,7 +164,7 @@ GEOGRAPHY data is stored in a binary format and optimised for fast read operatio
 
 Let's explore the OpenCellID dataset, which contains the locations of over 40 million cell towers. The image below illustrates the locations of these towers.
 
-<img src ='assets/geo_performance_15.png'>
+![assets/geo_performance_15.png](assets/geo_performance_15.png)
 
 Now you will look inside of the table. Run the following query:
 
@@ -211,7 +207,6 @@ This query was completed in 2.5 seconds, which is more than three times faster t
 
 ## Lab 2: Geospatial Joins
 
-Duration: 10
 
 Another advantage of using materialized geospatial types is that you can use fast and efficient geospatial joins. Whenever you join two datasets using geo predicate, such as [ST_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/st_contains), [ST_WITHIN](https://docs.snowflake.com/en/sql-reference/functions/st_within), etc., Snowflake under the hood builds a spatial grid for both datasets and then compares the content of cells. If both objects are within some cell, then the actual geo predicate executes. Snowflake decides on the size of the cells in the grid based on the size of the objects that take part in a join. 
 
@@ -227,7 +222,7 @@ GROUP BY 1;
 
 It is completed in about 40 seconds on a LARGE warehouse. Let's look inside of the dataset with shapes of dissemination areas and bucket its records based on the size of the area. If you visualize the `canada_dissemination_areas` table, you'll see that there is several extremely large polygons that correspond to areas with low population density.
 
-<img src ='assets/geo_performance_7.png' width=700>
+![assets/geo_performance_7.png](assets/geo_performance_7.png)
 
 Let's bucket dissemination areas based on their size. Run the following query:
 
@@ -247,7 +242,7 @@ ORDER BY 2 DESC;
 
 You can see that most of the boundaries are below 10 billion sq.m in size. Only 98 areas are larger than that threshold.
 
-<img src ='assets/geo_performance_8.png' width=300>
+![assets/geo_performance_8.png](assets/geo_performance_8.png)
 
 For some use cases, those large, not inhabitant areas don't bring much value. However, they slow down calculations since they skew a dataset. Let's run the same query with join you ran earlier, but this time, you exclude shapes larger than 10B sq.m:
 
@@ -264,13 +259,12 @@ The query is completed in about 12 sec. By cleaning 0.17% of the boundaries data
 
 ## Lab 3: Search Optimization for lookup queries
 
-Duration: 20
 
 In this lab, you'll step into the role of an analyst working with a dataset containing New York taxi trips. Your task is to identify all trips that occurred within a specific location. You will see how you can improve the execution time of lookup queries even on extra small warehouse when you enable Search Optimization (SO) for the geography column.
 
 For this, we will use a publicly available dataset: [New York Taxi Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). To give you a sense of data, below is a visualization that shows the density of taxi pickups.
 
-<img src ='assets/geo_performance_9.png' width=700>
+![assets/geo_performance_9.png](assets/geo_performance_9.png)
 
 You'll be working with a table named `GEOLAB.PERFORMANCE.NY_TAXI_RIDES`, which contains the raw dataset. Let's look into this dataset:
 
@@ -322,7 +316,7 @@ SHOW TABLES LIKE '%TAXI_RIDES%';
 
 When the `search_optimization_progress` for `NY_TAXI_RIDES_SO` reaches 100, it indicates that all the internal processes required to enable Search Optimization have been completed. This process may take up to 15 minutes, but it's an important step that should be completed before you can move forward with this lab. Once you see this status, it means you're ready to proceed to the next step.
 
-<img src ='assets/geo_performance_14.png' width=600>
+![assets/geo_performance_14.png](assets/geo_performance_14.png)
 
 For the next steps you'll change the size of warehouse to XSMALL. Run the following query:
 ```
@@ -364,15 +358,14 @@ This query was finished in just 2 seconds, which is about 20 times faster compar
 
 ## Lab 4: H3 for approximate calculations
 
-Duration: 10
 
 In certain situations, users need to determine the distance between objects. For example, consider a logistics company that keeps track of where their trucks are. They do this by recording the GPS location of each truck every two minutes. To check if this location data is accurate, they might measure the distance between the most recent location they recorded and the one before that. If this distance is too large – say, more than three miles – it could indicate that the latest GPS reading was wrong. Below is a visualization displaying correct GPS records (in green) and two incorrect records (in red).
 
-<img src ='assets/geo_performance_10.png' width=500>
+![assets/geo_performance_10.png](assets/geo_performance_10.png)
 
 In this situation, they don't need to know the exact distance, but just want to make sure it's not too far, within a certain acceptable limit. For this purpose, estimating the distance using H3 cells of a certain size is good enough. This method is not only simpler but also faster to compute.
 
-<img src ='assets/geo_performance_11.png' width=500>
+![assets/geo_performance_11.png](assets/geo_performance_11.png)
 
 
 Let's continue being analysts who work with the New York taxi dataset. Our job often involves preparing data for training models or analysis. An important part of this is making sure the data is of good quality. This means you need to get rid of any records where the GPS coordinates don't seem right. In this project, you're particularly focused on removing records where the taxi trips are longer than about 100 kilometers. These long trips are usually either mistakes in the data or very unusual cases that could skew our analysis or predictions.
@@ -444,7 +437,6 @@ Note that in the query above, you cast `value` as an integer since `H3_GRID_DISK
 
 ## Lab 5: H3 for speeding up queries with joins
 
-Duration: 15
 
 For this Lab you need to change the warehouse size back to LARGE as you will be running quite complex queries:
 ```
@@ -483,7 +475,7 @@ You need to join this data with a dataset of Dissemination Area boundaries in Ca
 
 One approach is to join all the GPS points from every trip with the borders of dissemination areas. The images below helps illustrate this concept. In the first image, each linestring represents a trip, and each point is a GPS location where the truck's speed was captured (in reality each trip could include up to several thousand points). The black shapes in the second image are the dissemination areas.
 
-<img src ='assets/geo_performance_12.png'  width=600>
+![assets/geo_performance_12.png](assets/geo_performance_12.png)
 
 As a first step you will "unpack" arrays with trips information into a table that contains all GPS points. Then you'll join GPS points and boundaries by matching each GPS point to the specific dissemination area it falls within. And finally you'll group these points based on the unique ID of each dissemination area and calculate the average speed for each area. Run the following query:
 
@@ -504,7 +496,7 @@ It's completed in around 6 minutes and returned 9970 rows. As one of the interme
 
 Now, instead of joining the full dataset with trips, which could contain billions of points after flattening, you will aggregate trip data into H3 buckets based on the GPS location. Then, you'll calculate the average speed per H3 cell, reducing the size of the trips table before joining it with the dissemination areas. In this scenario you join much smaller table with centroids of H3 cells with dissemination area boundaries. This makes the join operation much faster. The images below illustrate this approach.
 
-<img src ='assets/geo_performance_13.png' width=598>
+![assets/geo_performance_13.png](assets/geo_performance_13.png)
 
 Run the following query:
 
@@ -529,7 +521,6 @@ This query completed in 40 seconds and returned 9985 rows. A different number of
 
 ## Conclusion
 
-Duration: 5
 
 In this guide, you acquired geospatial data from different sources and explored various techniques for improving the performance of geospatial queries. You can now apply those techniques to your data and use cases.
 

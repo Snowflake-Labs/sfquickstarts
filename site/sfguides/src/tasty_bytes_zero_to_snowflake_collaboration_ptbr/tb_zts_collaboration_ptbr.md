@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Acesso direto a dados de terceiros via Snowflake Marketplace
-Duration: 1 <img src = "assets/collaboration_header.png">
 
 ### Visão geral
 Damos as boas-vindas ao quickstart “Tasty Bytes:do zero ao Snowflake”, voltado para colaboração! Neste quickstart, destacaremos como você pode enriquecer seus próprios dados com dados meteorológicos por meio do Snowflake Marketplace. O Snowflake Marketplace é o lugar onde você pode encontrar, testar e comprar dados e aplicações de terceiros sem ter que configurar processos de extração, transformação e carga (extract, transform, load; ETL), pipelines de dados ou integrações.
@@ -34,7 +33,6 @@ Damos as boas-vindas ao quickstart “Tasty Bytes:do zero ao Snowflake”, volta
 - Uma introdução sobre como descobrir insights adicionais por meio do Snowflake Marketplace.
 
 ## Criação de uma planilha e cópia no código SQL
-Duration: 1
 
 ### Visão geral
 Neste quickstart, vamos acompanhar a história da Tasty Bytes por meio de uma planilha SQL do Snowsight. Esta página servirá como um guia de referência completo com comentários adicionais, imagens e links para a documentação.
@@ -46,19 +44,19 @@ Nesta seção vamos mostrar como acessar o Snowflake, criar uma planilha nova, r
 
 ### Etapa 2 - Fazer login no Snowflake
 - Acesse sua conta Snowflake.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+    - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### Etapa 3 - Acessar as planilhas
 - Clique na guia Worksheets na barra de navegação à esquerda.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+    - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### Etapa 4 - Criar uma planilha
 - Dentro da guia Worksheets, clique no botão “+” no canto superior direito do Snowsight e escolha “SQL Worksheet”.
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+    - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### Etapa 5 - Renomear uma planilha
 - Renomeie a planilha clicando no carimbo de data/hora gerado automaticamente e digite “Tasty Bytes, colaboração”.
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+    - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### Etapa 6 - Acessar o código SQL do quickstart no GitHub
 - Clique no botão abaixo para acessar o arquivo SQL da Tasty Bytes hospedado no GitHub.
@@ -67,7 +65,7 @@ Nesta seção vamos mostrar como acessar o Snowflake, criar uma planilha nova, r
 
 ### Etapa 7 - Copiar o Setup SQL do GitHub
 - No GitHub, navegue para a direita e clique em “Copy raw contents”. Todas as informações SQL necessárias serão copiadas para sua área de transferência.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Etapa 8 - Colar o Setup SQL do GitHub para a sua planilha do Snowflake
 - Volte para o Snowsight e sua planilha recém-criada e cole (*CMD + V no Mac ou CTRL + V no Windows*) o conteúdo copiado do GitHub.
@@ -75,7 +73,6 @@ Nesta seção vamos mostrar como acessar o Snowflake, criar uma planilha nova, r
 ### Etapa 9 - Clicar em Next -->
 
 ## Estudo dos dias sem nenhuma venda nos dados próprios
-Duration: 1
 
 ### Visão geral
 Os analistas financeiros da Tasty Bytes alertaram que, ao realizar análises ano a ano, há dias inexplicáveis em diversas cidades em que não houve nenhuma venda nos caminhões. Um exemplo citado foi o de Hamburgo, na Alemanha, em fevereiro de 2022.
@@ -88,14 +85,13 @@ Vamos começar realizando três consultas para definir o contexto de função e 
 
 SELECT o.date, SUM(o.price) AS daily\_sales FROM frostbyte\_tasty\_bytes.analytics.orders\_v o WHERE 1=1 AND o.country = 'Germany' AND o.primary\_city = 'Hamburg' AND DATE(o.order\_ts) BETWEEN '2022-02-10' AND '2022-02-28' GROUP BY o.date ORDER BY o.date ASC; \`\`\`
 
-<img src = "assets/3.1.orders_v.png">
+![assets/3.1.orders_v.png](assets/3.1.orders_v.png)
 
 Com base no que vemos acima, podemos concordar com os analistas de que não há registros de vendas em alguns dias de fevereiro, então eles realmente identificaram algo. Na próxima seção, veremos se conseguimos analisar melhor o que pode ter acontecido.
 
 ### Etapa 2 - Clicar em Next -->
 
 ## Obtenção de dados da Weather Source no Snowflake Marketplace
-Duration: 2
 
 ### Visão geral
 Com base no que vimos na seção anterior, parece que não temos dados de vendas de 16 a 21 de fevereiro em Hamburgo, Alemanha. Não há muito que possamos fazer para investigar com os dados próprios, mas provavelmente algo ocorreu aqui. 
@@ -115,7 +111,7 @@ Siga as etapas e o vídeo abaixo para adquirir a oferta na sua conta Snowflake.
 - Renomeie o banco de dados -> FROSTBYTE\_WEATHERSOURCE (tudo em maiúsculas)
 - Permissão para funções adicionais -> PUBLIC
 
-<img src = "assets/4.1.acquire_weather_source.gif">
+![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 
 >aside positive A Weather Source é uma fornecedora líder global de dados de meteorologia, e seu OnPoint Product Suite oferece às empresas os dados meteorológicos necessários para geração de insights relevantes e úteis para diversos casos de uso em diversos setores.
 >
@@ -140,7 +136,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
     AND c.city = hd.city_name;
 ```
 
-<img src = "assets/4.2.daily_weather_v.png">
+![assets/4.2.daily_weather_v.png](assets/4.2.daily_weather_v.png)
 
 Como podemos ver na definição do modo de exibição acima, estamos juntando duas das tabelas `frostbyte_weathersource` dentro do esquema `onpoint_id` e harmonizando-as com a nossa tabela `country` do banco de dados `frostbyte_tasty_bytes` e o esquema `raw_pos`. 
 
@@ -167,11 +163,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.3.results.png">
+![assets/4.3.results.png](assets/4.3.results.png)
 
 Para investigar melhor as tendências, vamos usar os gráficos do Snowsight para criar um gráfico de linha com a temperatura média no período de tempo.
 
-<img src = "assets/4.3.chart.png">
+![assets/4.3.chart.png](assets/4.3.chart.png)
 
 Com base no que vimos acima, não há nada que se destaque como causa dos dias sem vendas dos nossos food trucks. Veremos na próxima etapa o que mais podemos descobrir para explicar o que aconteceu.
 
@@ -196,18 +192,17 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.4.result.png">
+![assets/4.4.result.png](assets/4.4.result.png)
 
 Novamente, as tendências desse tipo de dados podem ser melhor apresentadas por meio de um gráfico rápido do Snowsight. Na captura de tela abaixo, siga as setas para ir de Results para Charts.
 
-<img src = "assets/4.4.chart.png">
+![assets/4.4.chart.png](assets/4.4.chart.png)
 
 **Veja só!** As condições de vento nos dias sem vendas estavam em níveis de furacão. Esse parece ser um bom motivo por que nossos food trucks não realizaram nenhuma venda nesses dias. Como executamos essa análise na seção harmonizada, agora começaremos o processo de disponibilizar na parte de análise de dados, onde os analistas poderão acessar esses insights por conta própria.
 
 ### Etapa 5 - Clicar em Next -->
 
 ## Democratização dos insights de dados
-Duration: 3
 
 ### Visão geral
 Já determinamos que os ventos de nível de furacão foram, provavelmente, a causa para não haver nenhuma venda nos dias indicados pelos analistas financeiros.
@@ -229,7 +224,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.f_to_c.png">
+![assets/5.1.f_to_c.png](assets/5.1.f_to_c.png)
 
 ```
 CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
@@ -240,7 +235,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.inch_to_mm.png">
+![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
 >aside positive Ao criar uma função definida pelo usuário (user-defined function, UDF), você especifica um manipulador cujo código é escrito em uma das linguagens compatíveis. De acordo com a linguagem do manipulador, você pode incluir o código fonte dele em linha com a instrução CREATE FUNCTION ou fazer referência à localização do manipulador a partir de CREATE FUNCTION, onde o manipulador é pré-compilado ou o código fonte é extraído de um estágio.
 >
@@ -274,7 +269,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 ```
 
-<img src = "assets/5.2.SQL.png">
+![assets/5.2.SQL.png](assets/5.2.SQL.png)
 
 
 Os resultados parecem ótimos. Agora podemos colocar esse SQL em uma exibição na próxima etapa.
@@ -307,14 +302,13 @@ WHERE 1=1
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ```
 
-<img src = "assets/5.3.view.png">
+![assets/5.3.view.png](assets/5.3.view.png)
 
 Ótimo, acabamos de democratizar esses insights para toda a organização Tasty Bytes. Na próxima seção, vamos combinar todo o conhecimento aprendido e validar nosso trabalho.
 
 ### Etapa 4 - Clicar em Next -->
 
 ## Obtenção de insights a partir de dados de vendas e clima do marketplace
-Duration: 1
 
 ### Visão geral
 Com os dados disponíveis de vendas e clima de todas as cidades atendidas pelos nossos food trucks, vamos observar como reduzimos o tempo que os analistas financeiros levam para obter os insights.
@@ -343,7 +337,7 @@ WHERE 1=1
 ORDER BY date DESC;
 ```
 
-<img src = "assets/6.1.results.png">
+![assets/6.1.results.png](assets/6.1.results.png)
 
 **Viva!** Se isso já estivesse disponível quando os analistas financeiros estavam conduzindo a pesquisa inicial, eles nem precisariam ter falado com a equipe de dados, pois os insights já estariam ali. 
 
@@ -352,7 +346,6 @@ Ao finalizar este quickstart, vimos como é simples derivar o valor comercial re
 ### Etapa 2 - Clicar em Next -->
 
 ## Conclusão e próximas etapas
-Duration: 1
 
 ### Conclusão
 Ótimo trabalho! Você concluiu com sucesso o quickstart “Tasty Bytes: do zero ao Snowflake - colaboração”. 

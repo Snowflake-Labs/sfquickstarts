@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 2
 
 ### What Is Neo4j Graph Analytics For Snowflake? 
 
@@ -38,11 +37,10 @@ Neo4j helps organizations find hidden relationships and patterns across billions
 - How to read and write directly from and to your snowflake tables
 
 ## Load The Data
-Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze patients and different procedures that they undergo using graph analytics. 
 
-<img src="assets/datamodel.png" alt="image" width="400"/>
+![assets/datamodel.png](assets/datamodel.png)
 
 
 Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/patient_journey/data), We are going to add two new tables:
@@ -53,7 +51,6 @@ Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://
 Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load-web-ui) to load in your data.
 
 ## Set Up
-Duration: 5
 
 ### Import The Notebook
 
@@ -113,7 +110,6 @@ USE ROLE gds_user_role;
 
 ## Clean Our Data
 
-Duration: 5
 
 We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:
 
@@ -135,14 +131,14 @@ Let's take a look at the starting point for our data. We have a table for patien
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES LIMIT 10;
 ```
 
-<img src="assets/procedures.png" alt="image" width="400"/>
+![assets/procedures.png](assets/procedures.png)
 
 
 ```sql
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PATIENTS LIMIT 10;
 ```
 
-<img src="assets/patients.png" alt="image" width="400"/>
+![assets/patients.png](assets/patients.png)
 
 We are then going to clean this up into two tables that just have the `nodeids` for both patient and procedure:
 
@@ -190,7 +186,6 @@ CREATE OR REPLACE VIEW KidneyPatientProcedure_relationship_vw (sourceNodeId, tar
 ```
 
 ## Visualize Your Graph (Experimental)
-Duration: 10
 
 At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Before we do that, we will need to create a subset of our graph to make the visualization more managable.
 
@@ -255,7 +250,6 @@ components.html(
 
 ## Find Similar Patients
 
-Duration: 10
 
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.
 
@@ -370,7 +364,6 @@ select * from neo4j_patient_db.public.patient_community
 
 ##  Conclusions And Resources
 
-Duration: 2
 
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 
