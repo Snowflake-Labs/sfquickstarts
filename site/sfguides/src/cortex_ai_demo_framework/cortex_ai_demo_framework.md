@@ -1048,8 +1048,6 @@ Your demo is complete! You can:
 - Edit YAML to add more steps or visualizations
 - Share demo with colleagues by sharing the YAML file
 
-**Return to Page 5** to explore other workflows or **continue to Page 12** for cleanup instructions.
-
 <!-- ------------------------ -->
 ## YAML Wizard
 
@@ -1534,18 +1532,6 @@ Shows complete dataset in table format with sortable columns and CSV export opti
 - Verify metrics calculate correctly
 - Deploy for customers or business stakeholders
 
----
-
-### Best Practices
-
-**Explore systematically**: Start with Overview, then drill into specific tabs  
-**Use AI Assistant**: Natural language queries are powerful and intuitive  
-**Compare entities**: VS tab helps identify top performers  
-**Export insights**: Share findings via CSV export  
-**Adjust time windows**: Find the right time range for your analysis
-
----
-
 ### What's Next?
 
 **For Persona 1 (Solutions Engineer / BI Developer)**:
@@ -1557,8 +1543,6 @@ Your complete analytics pipeline is built! You've created:
 - Interactive multi-tab dashboard (Snow Viz)
 
 **Deploy your dashboard** for customers, prospects, or business stakeholders to explore!
-
-**Return to Page 5** to explore other workflows or **continue to Page 12** for cleanup instructions.
 
 <!-- ------------------------ -->
 ## Clean Up Resources
