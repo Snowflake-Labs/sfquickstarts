@@ -747,17 +747,6 @@ ORDER BY total_spent DESC
 LIMIT 10;
 ```
 
-**Tips**:
-- Use your actual table names from Structured Tables
-- Include Cortex AI functions for interactive demos
-- Separate steps with SQL comments (`-- Step X:`)
-- Mix different query types (SELECT, GROUP BY, Cortex functions)
-
-> aside positive
-> 
-> **Cortex AI Integration**: The app automatically detects `SNOWFLAKE.CORTEX.COMPLETE()` calls and creates interactive steps where users can modify prompts and see real-time AI responses!
-
-
 ### Step 4: Configure Demo Metadata
 
 **Demo Metadata Section (Two Columns):**
@@ -805,18 +794,12 @@ Comprehensive analysis of Acme Corp customer order data showcasing:
 - AI-powered customer insights and recommendations
 ```
 
-**Tips**:
-- Keep Topic/Sub-topic/Tertiary Topic hierarchical (broad → specific)
-- Title is the main heading users see
-- Use bullet points with `-` for better formatting in Overview
-
-
-### Step 5: Configure Advanced Options (Optional)
+### Step 5: Configure Advanced Options
 
 **Expandable Advanced Options Section:**
 
 ```
-SQL Block Separator: GO
+SQL Block Separator: Semicolon (;)
 Role: (leave blank)
 Warehouse: (leave blank)
 ```
@@ -976,26 +959,18 @@ SELECT
 FROM my_table;
 ```
 
----
-
-### Best Practices
-
-**Write clear SQL comments**: Use `-- Step X:` format for step detection  
-**Include Cortex AI**: Add CORTEX.COMPLETE() for interactive demos  
-**Mix query types**: Combine SELECT, GROUP BY, and AI functions  
-**Use descriptive metadata**: Clear titles and topics help viewers understand  
-**Test queries first**: Run SQL in worksheet before converting
-
----
-
 ### What's Next?
 
 **For Persona 2 (Data Engineer)**:
 
-1. **Upload your YAML to Snowflake Stage** (see upload instructions in Snow Demo section below)
-2. **Continue to Page 9 (Snow Demo)** to run your interactive presentation
+1. **Upload your YAML to Snowflake Stage**:
+   - Navigate to **Data** → **Databases** → **CORTEX_AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **FRAMEWORK_YAML_STAGE**
+   - Click **"+ Files"** button
+   - Select your downloaded YAML file
+   - In path field, enter a project name (e.g., `/analytics/`, `/sales_demo/`, `/customer_insights/`)
+   - Click **"Upload"**
 
-Your SQL queries are now a professional, interactive demo ready for presentations!
+2. **Continue to Page 9 (Snow Demo)** to run your interactive presentation
 
 <!-- ------------------------ -->
 ## Snow Demo
@@ -1019,7 +994,7 @@ Before using Snow Demo, upload your YAML file to Snowflake:
 1. Navigate to **Data** → **Databases** → **CORTEX_AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **FRAMEWORK_YAML_STAGE**
 2. Click **"+ Files"** button
 3. Select your downloaded YAML file
-4. In path field, enter: `/analytics/` (or choose: `sales_demo`, `customer_insights`, etc.)
+4. In path field, enter a project name (e.g., `/analytics/`, `/sales_demo/`, `/customer_insights/`)
 5. Click **"Upload"**
 
 
@@ -1287,7 +1262,7 @@ Upload your YAML file to Snowflake:
 1. Navigate to **Data** → **Databases** → **CORTEX_AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **VISUALIZATION_YAML_STAGE**
 2. Click **"+ Files"** button
 3. Select your downloaded YAML file
-4. In path field, enter: `/customer_orders/` (or your project name)
+4. In path field, enter a project name (e.g., `/customer_orders/`, `/dashboards/`, `/analytics/`)
 5. Click **"Upload"**
 
 ---
