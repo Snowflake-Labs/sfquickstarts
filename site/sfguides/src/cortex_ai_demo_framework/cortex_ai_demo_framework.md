@@ -3,7 +3,7 @@ id: cortex_ai_demo_framework
 summary: Cortex AI Demo Framework - Build sophisticated Cortex-powered demos in ~5 minutes
 categories: Cortex, AI, Demo Development, Getting-Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, AI, Demo Development, Framework
 
