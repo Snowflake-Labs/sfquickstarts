@@ -895,7 +895,7 @@ Customer_Analytics_Order_Analysis_Revenue_Insights_20250115
 
 **Option 1: Save to Database** (Recommended)
 - Click **"Save to Database"** button
-- Config saved to `CORTEX_AI_FRAMEWORK_DB.CONFIG.DEMO_CONFIGURATIONS`
+- Config saved to `CORTEX_AI_FRAMEWORK_DB.CONFIGS.DEMO_CONFIGURATIONS`
 
 **Option 2: Download YAML File**
 - Click **"Download YAML Configuration"** button
