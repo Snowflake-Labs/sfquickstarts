@@ -35,14 +35,6 @@ In this lab, we will go through everything you need to know to get started with 
 
 We will be using Tasty Bytes data in this lab. Run the script [here](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake/blob/main/tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql) in Snowsight to build the objects and data required for this lab.
 
-Workspaces that you create in Snowflake are created in the personal database associated with the active user. To use Workspaces, you must run the following SQL commands to activate all secondary roles for your user.
-
-``` sql
-ALTER USER my_user SET DEFAULT_SECONDARY_ROLES = ('ALL');
-```
-
-Sign out of Snowsight and sign back in.
-
 <!-- ------------------------ -->
 ## Introduction to Workspaces
 
@@ -96,7 +88,7 @@ Let's now clone an example dbt project we will use in the rest of this lab.
     1. Repository URL: `https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake.git`
     2. Workspace Name: `Example-dbt-Project`
     3. API Integration: `GIT_INTEGRATION`. Note: the [API Integration](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#label-integrating-git-repository-api-integration) has already been configured for you. 
-    4. Select Public Repository
+    4. Select Public Repository. Note: Private repos can be authenticated with personal access tokens and GitHub users can authenticate with [OAuth](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#configure-for-authenticating-with-oauth).
 3. Click Create!
 
 ![create-dbt-project](assets/create-workspace-git.png)
@@ -168,7 +160,7 @@ Let's start by running `dbt deps` to pull in the dbt_utils package. The dbt_util
 From the dbt toolbar, you get dropdowns for the project, target, and command. Clicking the play button will run the relevant command. You can also click the down arrow to override the arguments. 
 
 1. From the toolbar, select dev and deps. 
-2. Click the dropdown arrow and enter `dbt_access_integration`. This [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) has already been configured for you. 
+2. Click the dropdown arrow and select `dbt_access_integration`. This [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) has already been configured for you. 
 3. Click the Deps button.
 
 ![dbt-deps](assets/dbt-deps.png)
@@ -228,23 +220,23 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 <!-- ------------------------ -->
 ## Orchestration and Monitoring
 
-### Monitor dbt Projects
-
-You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to monitoring > dbt Projects to view overall status of dbt Projects and quickly jump to the deployed projects.
-
-![dbt-projects](assets/dbt-projects.png)
-
 ### Orchestrate with Tasks
+
+Navigate to Catalog > Database Explorer > TASTY_BYTES_DBT_DB > RAW > dbt Projects > DBT_PROJECT to view the project details. From the Run History tab, you can view all runs associated with the project. 
+
+![project-details](assets/dbt_project_details.png)
 
 #### Create Scheduled dbt Tasks
 
 Let's create tasks to regularly run and test our dbt project. 
 
-1. Click dbt_project in the top right corner of Workspaces
-2. Click Create Schedule from the dropdown
+1. Navigate to the Project Details tab
+2. Click Create Schedule from the Schedules dropdown
 3. Enter a name, schedule, and profile, then click create
 
-![create-task](assets/create-task.png)
+![create-schedule](assets/dbt-create-schedule.png)
+
+![create-task](assets/create-schedule.png)
 
 #### Complex Tasks and Alerts
 
@@ -263,18 +255,7 @@ CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_run_task
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_test_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
 	AFTER tasty_bytes_dbt_db.raw.dbt_run_task
-	AS
-        DECLARE 
-            dbt_success BOOLEAN;
-            dbt_exception STRING;
-            my_exception EXCEPTION (-20002, 'My exception text');
-        BEGIN
-            EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='test --target dev';
-            SELECT SUCCESS, EXCEPTION into :dbt_success, :dbt_exception FROM TABLE(result_scan(last_query_id()));
-            IF (NOT :dbt_success) THEN
-              raise my_exception;
-            END IF;
-        END;
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='test --target dev';
 
 -- Run the tasks once
 ALTER TASK tasty_bytes_dbt_db.raw.dbt_test_task RESUME;
@@ -325,6 +306,12 @@ EXECUTE ALERT tasty_bytes_dbt_db.raw.dbt_alert;
 You can view the status or running tasks by going to Monitoring > Task History.
 
 ![tasks](assets/tasks.png)
+
+### Monitor dbt Projects
+
+You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to Monitoring > dbt Projects to view overall status of dbt Projects and quickly jump to the deployed projects.
+
+![dbt-projects](assets/dbt-projects.png)
 
 ### Tracing
 
