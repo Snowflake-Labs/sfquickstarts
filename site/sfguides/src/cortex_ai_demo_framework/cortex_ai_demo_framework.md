@@ -14,6 +14,8 @@ tags: Getting Started, Cortex, AI, Demo Development, Framework
 
 Demo development traditionally takes weeks of engineering effort, creating bottlenecks that slow sales cycles and delay proof-of-concept delivery. Sales teams need to rapidly showcase AI capabilities with professional, interactive demonstrations to win customers, but building custom demos for each prospect is time-prohibitive. The Cortex AI Demo Framework solves this challenge by providing a 6-application demo development platform built on Snowflake Cortex AI. You'll learn to generate synthetic data, create interactive analytics, and deploy Streamlit applications transforming weeks of development into minutes and enabling your team to build AI-powered demos on-demand for any industry or use case.
 
+![Architecture Diagram](assets/architecture_diagram.png)
+
 ### What You Will Build
 
 **6 Integrated Streamlit Applications:**
@@ -202,7 +204,7 @@ The framework supports **3 user personas**. Choose your workflow based on your r
 Build interactive dashboards for customer demos or business analytics.
 
 **Apps:** Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz  
-**Time:** ~25 minutes  
+**Time:** ~20 minutes  
 **Output:** Multi-tab dashboard with AI Assistant integration
 
 ---
@@ -212,7 +214,7 @@ Build interactive dashboards for customer demos or business analytics.
 Create interactive SQL presentations with live Cortex AI experimentation.
 
 **Apps:** Synthetic Data Generator → Structured Tables → SQL to YAML Converter → Snow Demo  
-**Time:** ~30 minutes  
+**Time:** ~20 minutes  
 **Output:** Multi-step SQL demo with visualizations and AI panels
 
 ---
@@ -222,7 +224,7 @@ Create interactive SQL presentations with live Cortex AI experimentation.
 Generate synthetic datasets for machine learning and experimentation.
 
 **Apps:** Synthetic Data Generator → Structured Tables  
-**Time:** ~15 minutes  
+**Time:** ~10 minutes  
 **Output:** Clean, export-ready datasets for ML training
 
 ---
@@ -895,7 +897,7 @@ Customer_Analytics_Order_Analysis_Revenue_Insights_20250115
 
 **Option 1: Save to Database** (Recommended)
 - Click **"Save to Database"** button
-- Config saved to `CORTEX_AI_FRAMEWORK_DB.CONFIG.DEMO_CONFIGURATIONS`
+- Config saved to `CORTEX_AI_FRAMEWORK_DB.CONFIGS.DEMO_CONFIGURATIONS`
 
 **Option 2: Download YAML File**
 - Click **"Download YAML Configuration"** button
@@ -1551,7 +1553,7 @@ Your complete analytics pipeline is built! You've created:
 
 When you're ready to remove all the resources created during this quickstart:
 
-1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-cortex-demo-developer-framework/blob/main/scripts/setup.sql) script
+1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-demo-framework/blob/main/scripts/setup.sql) script
 2. Scroll to the bottom to find the "TEARDOWN SCRIPT" section
 3. Uncomment the teardown statements
 4. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
