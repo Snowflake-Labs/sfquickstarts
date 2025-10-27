@@ -501,19 +501,6 @@ Right Column:
 Avg Length: 2,500 chars
 ```
 
-**What to look for**:
-- **Valid JSON** should match **Total Records** (if using mistral-large2)
-- **Invalid JSON** should be 0 or very low
-- **Very Short** indicates truncated records
-
-> aside positive
-> 
-> **Good Quality Indicators**:
-> - Valid JSON = Total Records (100% success rate)
-> - Invalid JSON = 0 (no errors)
-> - Avg Length > 1,000 chars (complete records)
-
-
 ### Step 6: Preview Sample Data
 
 **Sample of Cleaned Data section:**
@@ -570,9 +557,6 @@ This process:
 - Creates structured table in `SILVER_LAYER`
 - Validates data quality
 
-**Expected time**: 30 seconds to 2 minutes depending on data volume
-
-
 ### Step 9: Verify Success
 
 **Expected Output**:
@@ -622,7 +606,7 @@ FROM CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
 ```
 
 
-### Step 11: Save Configuration (Optional)
+### Step 11: Save Configuration
 
 If you clicked **"💾 Save Configuration"** before transforming, your settings are saved for reuse:
 - Source table selection
@@ -675,37 +659,6 @@ SILVER_LAYER (Structured Data)
 ├─ Columns: CUSTOMER_ID, CUSTOMER_NAME, EMAIL, ORDER_DATE, etc.
 └─ Rows: 100 (individual records)
 ```
-
----
-
-### Common Use Cases
-
-#### **For Dashboard Building (Persona 1)**
-After transformation, your data is ready for:
-- YAML Wizard (create dashboard configs)
-- Snow Viz (render dashboards)
-- Direct SQL analysis
-
-#### **For SQL Demos (Persona 2)**
-Structured tables work with:
-- SQL to YAML Converter
-- Snow Demo presentations
-- Custom SQL queries
-
-#### **For ML & Data Export (Persona 3)**
-Export structured data via:
-```sql
--- Export to CSV
-SELECT * 
-FROM CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
-
--- Use in Python/Snowpark for ML training
-session.table("CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED").to_pandas()
-
--- Connect to Jupyter notebooks or ML frameworks
-```
-
----
 
 ### What's Next?
 
