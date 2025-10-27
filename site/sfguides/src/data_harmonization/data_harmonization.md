@@ -1,5 +1,5 @@
 author: Joshua Rauh and Ben Marzec
-id: abt-bestbuy-entity-resolution
+id: data-harmonization
 summary: Build an end-to-end data harmonization solution using Snowflake Cortex AI, Streamlit, and hybrid matching techniques to reconcile product data between competing retailers
 categories: data-engineering, ai-ml, streamlit, cortex
 environments: web
