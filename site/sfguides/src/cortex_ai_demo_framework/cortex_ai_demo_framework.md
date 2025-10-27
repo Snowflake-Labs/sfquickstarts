@@ -193,127 +193,37 @@ Renders advanced interactive dashboards with multi-tab analytics and AI integrat
 <!-- ------------------------ -->
 ## Persona Workflows
 
-### Who Should Use This Framework?
-
-The framework supports **4 different user personas**. Find your role below to see which apps you need and in what order.
+The framework supports **3 user personas**. Choose your workflow based on your role:
 
 ---
 
-### Persona 1: Solutions Engineer
+### Persona 1: Solutions Engineer / BI Developer
 
-**Who You Are**:
-- Solutions engineers building customer demos and POCs
-- Technical evangelists showcasing Snowflake capabilities
-- Sales engineers creating interactive presentations for prospects
+Build interactive dashboards for customer demos or business analytics.
 
-**What You'll Build**: A complete analytics pipeline from data generation to interactive dashboards
-
-**Apps You'll Use**: Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz
-
-**Time Required**: ~25 minutes
-
-**Your Workflow**:
-1. **Synthetic Data Generator**: Generate synthetic data
-2. **Structured Tables**: Transform JSON to structured table
-3. **YAML Wizard**: Create dashboard configuration
-4. **Snow Viz**: View your interactive dashboard
-
-**What You'll Get**:
-- Synthetic dataset with realistic values
-- Clean, structured database table
-- Interactive dashboard with multiple visualization tabs
+**Apps:** Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz  
+**Time:** ~25 minutes  
+**Output:** Multi-tab dashboard with AI Assistant integration
 
 ---
 
 ### Persona 2: Data Engineer
 
-**Who You Are**:
-- Data engineers building end-to-end data pipelines
-- Technical users creating data infrastructure for demos
-- Developers showcasing SQL and Cortex AI capabilities
+Create interactive SQL presentations with live Cortex AI experimentation.
 
-**What You'll Build**: Interactive SQL-driven presentations with live query execution and AI experimentation
-
-**Apps You'll Use**: Synthetic Data Generator → Structured Tables → SQL to YAML Converter → Snow Demo
-
-**Time Required**: ~30 minutes
-
-**Your Workflow**:
-1. **Synthetic Data Generator**: Generate synthetic data for demos
-2. **Structured Tables**: Create structured table
-3. **SQL to YAML Converter**: Write SQL queries and convert to demo format
-4. **Snow Demo**: Run interactive SQL presentation
-
-**What You'll Get**:
-- Realistic demo dataset
-- Multi-step SQL presentation
-- Interactive visualizations with live AI experimentation
+**Apps:** Synthetic Data Generator → Structured Tables → SQL to YAML Converter → Snow Demo  
+**Time:** ~30 minutes  
+**Output:** Multi-step SQL demo with visualizations and AI panels
 
 ---
 
-### Persona 3: BI Developer
+### Persona 3: Data Scientist
 
-**Who You Are**:
-- BI developers creating dashboards and visualizations for business users
-- Analytics professionals building reporting layers
-- Technical users creating self-service analytics
+Generate synthetic datasets for machine learning and experimentation.
 
-**What You'll Build**: Interactive dashboards with multiple visualization tabs for business stakeholders
-
-**Apps You'll Use**: Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz
-
-**Time Required**: ~25 minutes
-
-**Your Workflow**:
-1. **Synthetic Data Generator**: Generate synthetic data
-2. **Structured Tables**: Transform to structured table
-3. **YAML Wizard**: Create dashboard configuration
-4. **Snow Viz**: Deploy interactive dashboard for business users
-
-**What You'll Get**:
-- Synthetic dataset with realistic values
-- Clean, structured database table
-- Multi-tab interactive dashboard with AI Assistant integration
-
----
-
-### Persona 4: Data Scientist
-
-**Who You Are**:
-- Data scientists needing synthetic training data for ML models
-- ML engineers requiring realistic test datasets
-- Researchers prototyping AI/ML experiments
-
-**What You'll Build**: High-quality synthetic datasets for machine learning and experimentation
-
-**Apps You'll Use**: Synthetic Data Generator → Structured Tables
-
-**Time Required**: ~15 minutes
-
-**Your Workflow**:
-1. **Synthetic Data Generator**: Generate large-scale synthetic datasets (300-1000+ records)
-2. **Structured Tables**: Transform to clean, structured format
-3. Export to Snowpark, Python notebooks, or ML pipelines
-
-**What You'll Get**:
-- Realistic synthetic datasets for ML training
-- Clean, structured tables ready for feature engineering
-- Export-ready data for Snowpark ML, scikit-learn, or other frameworks
-
----
-
-### Choose Your Path
-
-**Ready to get started?** Jump to the pages for your persona:
-
-| Persona | Apps to Follow | What You'll Build |
-|---------|----------------|-------------------|
-| **Solutions Engineer** | Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz | Complete analytics pipeline with dashboards |
-| **Data Engineer** | Synthetic Data Generator → Structured Tables → SQL to YAML Converter → Snow Demo | Interactive SQL presentations with AI |
-| **BI Developer** | Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz | Dashboard visualizations for business users |
-| **Data Scientist** | Synthetic Data Generator → Structured Tables | Synthetic datasets for ML training and experimentation |
-
-**Or read all app instructions** (Pages 6-11) to understand the full framework capabilities.
+**Apps:** Synthetic Data Generator → Structured Tables  
+**Time:** ~15 minutes  
+**Output:** Clean, export-ready datasets for ML training
 
 <!-- ------------------------ -->
 ## Synthetic Data Generator
@@ -328,10 +238,9 @@ The framework supports **4 different user personas**. Find your role below to se
 
 **All Personas start here!** This is the foundation of the framework.
 
-- **Persona 1** (Solutions Engineer): Generate 100-500 records for customer demos
+- **Persona 1** (Solutions Engineer / BI Developer): Generate 100-500 records for demos and dashboards
 - **Persona 2** (Data Engineer): Generate 150-500 records for SQL presentations  
-- **Persona 3** (BI Developer): Generate 100-500 records for dashboards
-- **Persona 4** (Data Scientist): Generate 300-1000+ records for ML training datasets
+- **Persona 3** (Data Scientist): Generate 300-1000+ records for ML training datasets
 
 ---
 
@@ -564,10 +473,9 @@ Your data is now in raw JSON format. App 2 will clean and structure it into prop
 
 ### Who Uses This App
 
-- **Persona 1** (Solutions Engineer): Transform to structured tables for customer demos
+- **Persona 1** (Solutions Engineer / BI Developer): Transform to structured tables for demos and dashboards
 - **Persona 2** (Data Engineer): Clean data for SQL presentations
-- **Persona 3** (BI Developer): Structure data for dashboard visualizations
-- **Persona 4** (Data Scientist): Clean data for ML training and experimentation
+- **Persona 3** (Data Scientist): Structure data for ML training and experimentation
 
 ---
 
@@ -793,7 +701,7 @@ SILVER_LAYER (Structured Data)
 
 ### Common Use Cases
 
-#### **For Dashboard Building (Personas 1 & 3)**
+#### **For Dashboard Building (Persona 1)**
 After transformation, your data is ready for:
 - YAML Wizard (create dashboard configs)
 - Snow Viz (render dashboards)
@@ -805,7 +713,7 @@ Structured tables work with:
 - Snow Demo presentations
 - Custom SQL queries
 
-#### **For ML & Data Export (Persona 4)**
+#### **For ML & Data Export (Persona 3)**
 Export structured data via:
 ```sql
 -- Export to CSV
@@ -822,16 +730,13 @@ session.table("CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED").t
 
 ### What's Next?
 
-**For Persona 1** (Solutions Engineer):
+**For Persona 1** (Solutions Engineer / BI Developer):
 → Continue to **Page 10 (YAML Wizard)** to create dashboard configurations
 
 **For Persona 2** (Data Engineer):
 → Continue to **Page 8 (SQL to YAML Converter)** to create demo flows
 
-**For Persona 3** (BI Developer):
-→ Continue to **Page 10 (YAML Wizard)** to create dashboard configurations
-
-**For Persona 4** (Data Scientist):
+**For Persona 3** (Data Scientist):
 → **Export your data** from SILVER_LAYER for ML training and experimentation
 
 **For All Personas**:
@@ -1253,7 +1158,7 @@ Your demo is complete! You can:
 
 ### Who Uses This App
 
-- **Persona 1** (Solutions Engineer): Create dashboard YAML from structured tables for Snow Viz
+- **Persona 1** (Solutions Engineer / BI Developer): Create dashboard YAML from structured tables for Snow Viz
 
 ---
 
@@ -1503,8 +1408,7 @@ Your data is now ready for visual analytics with 8 interactive dashboard tabs!
 
 ### Who Uses This App
 
-- **Persona 1** (Solutions Engineer): View and validate dashboards for customer demos
-- **Persona 3** (BI Developer): Deploy and test dashboards for business users
+- **Persona 1** (Solutions Engineer / BI Developer): View, validate, and deploy dashboards for customers or business users
 
 ---
 
@@ -1775,17 +1679,11 @@ Shows complete dataset in table format with sortable columns and CSV export opti
 
 ### Use Cases
 
-#### **For Persona 1 (Solutions Engineer)**
+#### **For Persona 1 (Solutions Engineer / BI Developer)**
 - Validate dashboard configuration
 - Test all tabs and features
 - Verify metrics calculate correctly
-- Share with business users
-
-#### **For Persona 3 (BI Developer)**
-- Validate dashboard configuration
-- Test all visualization tabs
-- Verify metrics calculate correctly
-- Deploy for business stakeholders
+- Deploy for customers or business stakeholders
 
 ---
 
@@ -1801,25 +1699,15 @@ Shows complete dataset in table format with sortable columns and CSV export opti
 
 ### What's Next?
 
-**For Persona 1 (Solutions Engineer)**:
+**For Persona 1 (Solutions Engineer / BI Developer)**:
 
 Your complete analytics pipeline is built! You've created:
 - Synthetic data (Synthetic Data Generator)
 - Structured tables (Structured Tables)
 - Dashboard configuration (YAML Wizard)
-- Interactive dashboard (Snow Viz)
-
-**Share your dashboard** with customers and prospects!
-
-**For Persona 3 (BI Developer)**:
-
-Your dashboard is ready for business users! You've created:
-- Synthetic data (Synthetic Data Generator)
-- Structured tables (Structured Tables)
-- Dashboard configuration (YAML Wizard)
 - Interactive multi-tab dashboard (Snow Viz)
 
-**Deploy your dashboard** for business stakeholders to explore!
+**Deploy your dashboard** for customers, prospects, or business stakeholders to explore!
 
 **Return to Page 5** to explore other workflows or **continue to Page 12** for cleanup instructions.
 
