@@ -1,5 +1,5 @@
 author: Well Architected Framework Team
-id: performance
+id: well-architected-framework-performance
 categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
 language: en
 summary: Optimizing performance on Snowflake is crucial for efficient data analysis. 

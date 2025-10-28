@@ -1,5 +1,5 @@
 author: Well Architected Framework Team
-id: cost_optimization
+id: well-architected-framework-cost-optimization
 categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
 language: en
 summary: The Cost Optimization Pillar focuses on integrating financial accountability and cost awareness throughout the cloud platform lifecycle. 

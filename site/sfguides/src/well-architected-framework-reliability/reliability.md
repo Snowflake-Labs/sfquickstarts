@@ -1,5 +1,5 @@
 author: Well Architected Framework Team
-id: reliability
+id: well-architected-framework-reliability
 categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
 language: en
 summary: The Reliability Pillar focuses on ensuring a workload performs its intended function correctly and consistently, recovering from failures to meet business and regulatory demands. 
