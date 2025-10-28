@@ -100,7 +100,7 @@ SELECT START_TIME
 ```
 #### Screenshot
 ![alt-text-here](assets/averagehourbyhourconsumption.png)
-#### SQL (by hour)
+####SQL (by hour)
 ```sql
 SELECT DATE_PART('HOUR', START_TIME) AS START_HOUR
       ,WAREHOUSE_NAME

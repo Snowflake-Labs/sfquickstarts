@@ -17,6 +17,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 ### Prerequisites
 - Familiarity with Snowflake, Github
 - A snowflake user with [Key Pair](https://docs.snowflake.com/en/user-guide/key-pair-auth), role sysadmin. 
+- A XSMALL snowflake warehouse. 
 - Setup Snowflake [cli connections](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections)
 
 ### What You’ll Learn 
@@ -61,7 +62,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 
 ```shell
 openssl genrsa -out snowflake_demo_key 4096
-openssl rsa -in snowflake_demo_key.pem -pubout -out snowflake_demo_key.pub
+openssl rsa -in snowflake_demo_key -pubout -out snowflake_demo_key.pub
 openssl pkcs8 -topk8 -nocrypt -in snowflake_demo_key.pem -out snowflake_demo_key.p8
 ```
   + You could also use a [online service](https://www.cryptool.org/en/cto/openssl/) to create the key pair.
@@ -76,33 +77,19 @@ openssl pkcs8 -topk8 -nocrypt -in snowflake_demo_key.pem -out snowflake_demo_key
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-CREATE OR REPLACE USER "DCM_DEMO" RSA_PUBLIC_KEY='RSA_PUBLIC_KEY_HERE' MUST_CHANGE_PASSWORD=FALSE;
-GRANT ROLE SYSADMIN TO USER DCM_DEMO;
+CREATE OR REPLACE USER "DCM_DEMO" RSA_PUBLIC_KEY='RSA_PUBLIC_KEY_HERE' DEFAULT_ROLE=SYSADMIN MUST_CHANGE_PASSWORD=FALSE;
 ```
 
-3) Create warehouse and grant 
+3) Use role SYSADMIN.
 
-```sql
-CREATE WAREHOUSE XSMALL
-  WITH WAREHOUSE_SIZE = XSMALL
-  AUTO_SUSPEND = 30
-  AUTO_RESUME = TRUE
-  COMMENT = 'This is a warehouse for dcm quickstart.';
-
-
-GRANT USAGE ON WAREHOUSE XSMALL TO ROLE SYSADMIN;
-```
-
-4) Use role SYSADMIN.
-
-5) Create database and schema to hold the objects that will be managed via DCM.
+4) Create database and schema to hold the objects that will be managed via DCM.
 
 ```sql
 create database DCM_PROJECTS;
 create schema DCM_PROJECTS.DCM_PROJECTS;
 ```
 
-6) Create Database, schema, tables for bronze layer. We will be using a subset of the tables/data.
+5) Create Database, schema, tables for bronze layer. We will be using a subset of the tables/data.
 
 ```sql
 create database bronze;
@@ -159,7 +146,7 @@ CREATE TABLE order_details (
 );
 
 ```
-7) Load the data
+6) Load the data
 
 ```sql
 INSERT INTO customers VALUES
@@ -362,11 +349,11 @@ jobs:
           --no-interactive --default
     - name: Create DCM Project if not exists 
       run: |
-        cd ./dcm_project && snow dcm create --if-not-exists proj1
+        cd ./data_project && snow dcm create --if-not-exists proj1
         
     - name: Execute PLAN with config PROD 
       run: |
-        cd ./dcm_project && snow dcm plan DCM.DCM.PROJ1 --configuration="prod"
+        cd ./data_project && snow dcm plan DCM.DCM.PROJ1 --configuration="prod"
         
 ```
 
@@ -415,13 +402,13 @@ jobs:
           --no-interactive --default
     - name: Create DCM Project if not exists 
       run: |
-        cd ./dcm_project && snow dcm create --if-not-exists proj1
+        cd ./data_project && snow dcm create --if-not-exists proj1
     - name: Execute PLAN with config PROD 
       run: |
-        cd ./dcm_project && snow dcm plan DCM.DCM.PROJ1 --configuration="prod"
+        cd ./data_project && snow dcm plan DCM.DCM.PROJ1 --configuration="prod"
     - name: Execute deploy with config prod
       run: |
-        cd ./dcm_project && snow dcm deploy DCM.DCM.PROJ1 --configuration="prod"
+        cd ./data_project && snow dcm deploy DCM.DCM.PROJ1 --configuration="prod"
         
 ```
 5) Add sandbox script and requirements.txt
@@ -499,7 +486,7 @@ SANITIZED_NAME=$(echo ${BRANCH_NAME//-/_} | tr '[:lower:]' '[:upper:]')
 
 pushd $REPO_ROOT
 snow sql -q "CREATE OR REPLACE STAGE ${SANITIZED_NAME}_FILES"
-snow stage copy --recursive ./dcm_project @${SANITIZED_NAME}_FILES/
+snow stage copy --recursive ./data_project @${SANITIZED_NAME}_FILES/
 snow sql -q "EXECUTE DCM PROJECT ${SANITIZED_NAME} PLAN USING CONFIGURATION non_prod (target_db => '${SANITIZED_NAME}', target_schema => '${SANITIZED_NAME}') FROM @${SANITIZED_NAME}_FILES/;"
 popd
 
@@ -515,7 +502,7 @@ SANITIZED_NAME=$(echo ${BRANCH_NAME//-/_} | tr '[:lower:]' '[:upper:]')
 
 pushd $REPO_ROOT
 snow sql -q "CREATE OR REPLACE STAGE ${SANITIZED_NAME}_FILES"
-snow stage copy --recursive ./dcm_project @${SANITIZED_NAME}_FILES/
+snow stage copy --recursive ./data_project @${SANITIZED_NAME}_FILES/
 
 snow sql -q "EXECUTE DCM PROJECT ${SANITIZED_NAME} DEPLOY USING CONFIGURATION non_prod (target_db => '${SANITIZED_NAME}', target_schema => '${SANITIZED_NAME}') FROM @${SANITIZED_NAME}_FILES/;"
 popd
@@ -592,12 +579,12 @@ urllib3==2.5.0
 wcwidth==0.2.13
 ```
 
-6) Create folder called dcm_project with manifest.yml
+6) Create folder called data_project with manifest.yml
 
 ```shell
 cd <your repo>
-mkdir -p dcm_project/definitions
-cd dcm_project
+mkdir -p data_project/definitions
+cd data_project
 ```
   + In your code editor create file manifest.yml. Copy following content into manifest.yml
 
@@ -629,11 +616,11 @@ git push origin main
 
 ## Setup DCM to manage the gold layer
 1) Create gold database and schema
-  + Add a sql file into the dcm_project/definitions folder called gold.sql.
+  + Add a sql file into the data_project/definitions folder called gold.sql.
 
 ```shell
 git checkout -b setup_gold
-cd dcm_project/definitions
+cd data_project/definitions
 ```
 
   + In your code editor create file gold.sql. Contents of gold.sql:
@@ -672,8 +659,8 @@ git pull
 cd sandbox
 ./do.sh create PROJ-001
 cd ..
-mkdir -p dcm_project/definitions
-cd dcm_project/definitions
+mkdir -p data_project/definitions
+cd data_project/definitions
 ```
 
   + do.sh creates a git branch named 'PROJ-001' and all changes are made in the context of this branch. It also creates a sandbox environment by cloning the gold layer.
@@ -736,8 +723,8 @@ git pull
 cd sandbox
 ./do.sh create PROJ-002
 cd ..
-mkdir -p dcm_project/definitions
-cd dcm_project/definitions
+mkdir -p data_project/definitions
+cd data_project/definitions
 ```
 
   + In your code editor create file order_fact.sql. Copy following content into order_fact.sql
@@ -822,7 +809,6 @@ In this guide we targetted a subset of tables in the northwind database.
   + You can have the main branch map to the prod snowflake account, and an integration branch can be mapped
    to the non-prod snowflake account.
   + The sandbox creation script can be hosted in a CI system like Jenkins, etc
-  + You can enhance the worklfow by adding Expectations attached to tables in project and using the TEST ALL command to 
 
 
 5) All scripts/shell commands in this quickstart are tested to work on macOS.
