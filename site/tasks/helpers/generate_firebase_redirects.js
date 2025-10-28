@@ -9,6 +9,7 @@ Notes:
 - Existing status code in CSV is informational only; we always emit final redirects per rules below.
 - Destination URLs must include https:// and end with a trailing slash.
 - Emit one brace-pattern rule per legacy base path: /path{,/**}.
+- If the source slug contains underscores, align the destination slug to the same (underscored) slug for www.snowflake.com/developers/guides paths.
 
 Usage:
   node site/tasks/helpers/generate_firebase_redirects.js \
@@ -77,6 +78,40 @@ function toBasePath(pathname) {
   return p || '/';
 }
 
+function getLastSegment(pathname) {
+  if (!pathname) return '';
+  const parts = pathname.split('/').filter(Boolean);
+  return parts.length ? parts[parts.length - 1] : '';
+}
+
+function alignDestinationSlugIfNeeded(destUrl, sourceSlug) {
+  try {
+    const u = new URL(destUrl);
+    const host = u.host.toLowerCase();
+    const pathLower = u.pathname.toLowerCase();
+    if (!sourceSlug || !sourceSlug.includes('_')) return destUrl; // only adjust when source uses underscores
+    if (host !== 'www.snowflake.com') return destUrl; // only adjust AEM
+    if (!pathLower.includes('/developers/guides/')) return destUrl; // only adjust guides pages
+
+    // Replace the last path segment with the sourceSlug
+    const parts = u.pathname.split('/');
+    // Remove any trailing '' from a trailing slash for segment calc
+    const endsWithSlash = parts[parts.length - 1] === '';
+    const endIdx = endsWithSlash ? parts.length - 2 : parts.length - 1;
+    if (endIdx < 0) return destUrl;
+    // Guard: don't replace if the last segment is literally 'guides'
+    if (parts[endIdx].toLowerCase() === 'guides') return destUrl;
+
+    parts[endIdx] = sourceSlug;
+    // Ensure trailing slash
+    const newPath = parts.join('/').replace(/\/+/g, '/');
+    u.pathname = newPath.endsWith('/') ? newPath : newPath + '/';
+    return u.toString();
+  } catch (e) {
+    return destUrl;
+  }
+}
+
 function readCsv(filepath) {
   const raw = fs.readFileSync(filepath, 'utf8');
   const lines = raw.split(/\r?\n/).filter(Boolean);
@@ -107,9 +142,12 @@ function buildRedirectEntries(rows, statusDefault) {
   const baseToDest = new Map();
 
   for (const { oldUrl, newUrl } of rows) {
-    const dest = ensureHttpsAndSlash(newUrl);
     const oldPath = toPathOnly(oldUrl);
     const base = toBasePath(oldPath);
+    const sourceSlug = getLastSegment(base);
+
+    let dest = ensureHttpsAndSlash(newUrl);
+    dest = alignDestinationSlugIfNeeded(dest, sourceSlug);
 
     // Special-case: avoid a root-wide catch-all from '/index.html' mapping
     if (base === '/' && /\/index\.html$/i.test(oldPath)) {
