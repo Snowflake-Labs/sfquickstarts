@@ -8,7 +8,7 @@ Input CSV (UTF-8): quickstarts-redirects.csv with columns:
 Notes:
 - Existing status code in CSV is informational only; we always emit final redirects per rules below.
 - Destination URLs must include https:// and end with a trailing slash.
-- Emit variant rules for each legacy path: clean, trailing slash, index.html, index.html/.
+- Emit one brace-pattern rule per legacy base path: /path{,/**}.
 
 Usage:
   node site/tasks/helpers/generate_firebase_redirects.js \
@@ -63,6 +63,20 @@ function toPathOnly(oldUrl) {
   }
 }
 
+function toBasePath(pathname) {
+  if (!pathname) return pathname;
+  let p = pathname;
+  // Remove any trailing '/index.html'
+  if (p.toLowerCase().endsWith('/index.html')) {
+    p = p.slice(0, -('/index.html'.length));
+  }
+  // Remove trailing slash (but keep root '/')
+  if (p.length > 1 && p.endsWith('/')) {
+    p = p.slice(0, -1);
+  }
+  return p || '/';
+}
+
 function readCsv(filepath) {
   const raw = fs.readFileSync(filepath, 'utf8');
   const lines = raw.split(/\r?\n/).filter(Boolean);
@@ -90,24 +104,37 @@ function readCsv(filepath) {
 function buildRedirectEntries(rows, statusDefault) {
   const entries = [];
   const seen = new Set();
+  const baseToDest = new Map();
+
   for (const { oldUrl, newUrl } of rows) {
     const dest = ensureHttpsAndSlash(newUrl);
-    const basePath = toPathOnly(oldUrl);
+    const oldPath = toPathOnly(oldUrl);
+    const base = toBasePath(oldPath);
 
-    const variants = [
-      basePath,
-      basePath.endsWith('/') ? basePath : basePath + '/',
-      (basePath.endsWith('/') ? basePath.slice(0, -1) : basePath) + '/index.html',
-      (basePath.endsWith('/') ? basePath.slice(0, -1) : basePath) + '/index.html/',
-    ];
-
-    for (const source of variants) {
-      const key = `${source}=>${dest}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      entries.push({ source, destination: dest, type: Number(statusDefault) });
+    // Special-case: avoid a root-wide catch-all from '/index.html' mapping
+    if (base === '/' && /\/index\.html$/i.test(oldPath)) {
+      const sources = ['/', '/index.html'];
+      for (const source of sources) {
+        const key = `${source}=>${dest}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        entries.push({ source, destination: dest, type: Number(statusDefault) });
+      }
+      continue;
     }
+
+    // Use a single brace-pattern rule per base path
+    const source = `${base}{,/**}`;
+    baseToDest.set(source, dest);
   }
+
+  for (const [source, dest] of baseToDest.entries()) {
+    const key = `${source}=>${dest}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    entries.push({ source, destination: dest, type: Number(statusDefault) });
+  }
+
   return entries;
 }
 
