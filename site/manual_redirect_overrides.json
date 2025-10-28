@@ -1,0 +1,28 @@
+[
+  { "source": "/guide/cost_optimization", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-cost-optimization-and-finops/", "type": 301 },
+  { "source": "/guide/cost_optimization/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-cost-optimization-and-finops/", "type": 301 },
+  { "source": "/guide/cost_optimization/index.html", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-cost-optimization-and-finops/", "type": 301 },
+  { "source": "/guide/cost_optimization/index.html/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-cost-optimization-and-finops/", "type": 301 },
+
+  { "source": "/guide/security_and_governance", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-security-and-governance/", "type": 301 },
+  { "source": "/guide/security_and_governance/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-security-and-governance/", "type": 301 },
+  { "source": "/guide/security_and_governance/index.html", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-security-and-governance/", "type": 301 },
+  { "source": "/guide/security_and_governance/index.html/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-security-and-governance/", "type": 301 },
+
+  { "source": "/guide/performance", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-performance/", "type": 301 },
+  { "source": "/guide/performance/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-performance/", "type": 301 },
+  { "source": "/guide/performance/index.html", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-performance/", "type": 301 },
+  { "source": "/guide/performance/index.html/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-performance/", "type": 301 },
+
+  { "source": "/guide/reliability", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-reliability/", "type": 301 },
+  { "source": "/guide/reliability/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-reliability/", "type": 301 },
+  { "source": "/guide/reliability/index.html", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-reliability/", "type": 301 },
+  { "source": "/guide/reliability/index.html/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-reliability/", "type": 301 },
+
+  { "source": "/guide/operational_excellence", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-operational-excellence/", "type": 301 },
+  { "source": "/guide/operational_excellence/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-operational-excellence/", "type": 301 },
+  { "source": "/guide/operational_excellence/index.html", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-operational-excellence/", "type": 301 },
+  { "source": "/guide/operational_excellence/index.html/", "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-operational-excellence/", "type": 301 }
+]
+
+
