@@ -2,7 +2,7 @@ id: from_dev_to_production_why_ml_teams_are_migrating_to_snowflake
 summary: Build a complete ML lifecycle in Snowflake from development to production with call center quality analysis
 categories: featured,data-science-&-ml,app-development
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake ML, Model Registry, Feature Store, Streamlit, Machine Learning
 authors: James Cha Earley
