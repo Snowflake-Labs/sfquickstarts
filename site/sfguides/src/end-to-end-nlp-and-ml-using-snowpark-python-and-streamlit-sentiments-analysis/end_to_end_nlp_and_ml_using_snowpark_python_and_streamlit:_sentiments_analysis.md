@@ -1,5 +1,5 @@
 author: sfc-gh-imehaddi
-id: end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis
+id: end-to-end-nlp-and-ml-using-snowpark-python-and-streamlit-sentiments-analysis
 language: en
 summary: This is a sample Snowflake Guide
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/snowpark

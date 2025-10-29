@@ -1,3 +1,13 @@
+author: Parag Jain
+id: kafka_docker_setup_readme
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+language: en
+summary: Getting Started with Snowflake Dynamic Tables
+environments: web
+status: Hidden
+
+
+
 # Use this README file for Streaming data into Snowflake using Kafka connect
 
 ## Alternatively you can use the instruction to simulate streaming with the Python UDF functions defined in the setup step of this [Quickstart guide](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html?index=..%2F..index#1).
