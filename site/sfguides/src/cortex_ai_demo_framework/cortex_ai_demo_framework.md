@@ -25,6 +25,8 @@ This Quickstart showcases the complete Cortex AI Demo Framework with:
 - **Production-ready applications** with professional UI/UX
 
 
+![Architecture Diagram](assets/architecture_diagram.png)
+
 ### What You Will Build
 - Complete 6-application integrated demo platform
 - AI-powered synthetic data generation system using Cortex functions
@@ -1259,8 +1261,6 @@ Your demo is complete! You can:
 - Edit YAML to add more steps or visualizations
 - Share demo with colleagues by sharing the YAML file
 
-**Return to Page 5** to explore other workflows or **continue to Page 12** for cleanup instructions.
-
 <!-- ------------------------ -->
 ## YAML Wizard
 
@@ -1806,18 +1806,6 @@ Shows complete dataset in table format with sortable columns and CSV export opti
 - Compare entities side-by-side
 - Export data for presentations
 
----
-
-### Best Practices
-
-**Explore systematically**: Start with Overview, then drill into specific tabs  
-**Use AI Assistant**: Natural language queries are powerful and intuitive  
-**Compare entities**: VS tab helps identify top performers  
-**Export insights**: Share findings via CSV export  
-**Adjust time windows**: Find the right time range for your analysis
-
----
-
 ### What's Next?
 
 **For Persona 1 (Full-Stack Developer)**:
@@ -1837,8 +1825,6 @@ You now have an interactive analytics dashboard! You can:
 - Ask questions in plain English
 - Compare products/customers/categories
 - Export data for presentations
-
-**Return to Page 5** to explore other workflows or **continue to Page 12** for cleanup instructions.
 
 <!-- ------------------------ -->
 ## Clean Up Resources
