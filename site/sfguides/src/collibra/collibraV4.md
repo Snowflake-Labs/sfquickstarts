@@ -25,7 +25,7 @@ Collibra overall functionality in integration with Snowflake can be summarized w
 
 Collibra is a Data Intelligence platform that allows users to search, and find or create trusted data Enterprise wide. Collibra allows users to automatically catalog technical metadata and link it to the business and logical and data privacy context required. It also allows for Data Quality discovery and metrics. Collibra has automation in the collaboration of users, the certification of data assets and in general of data intelligence processes. 
 
-![Catalog](assets/dataintelligence.png)
+![Catalog](assets/Dataintelligence.png)
 
 
 
