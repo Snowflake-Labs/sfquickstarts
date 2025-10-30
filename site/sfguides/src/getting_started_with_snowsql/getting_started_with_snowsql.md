@@ -279,7 +279,7 @@ drop warehouse if exists sf_tuts_wh;
 ```
 
 After practicing the basics covered in this tutorial, you’ll no longer need the `sf-tuts` database and warehouse. To remove them altogether, use the `drop` command.
-<!--![Snowflake_DROP_image](assets/Snowflake_DROP.png)-->
+<!--![Snowflake_DROP_image](assets/snowflake_drop.png)-->
 
 - Close Your Connection with `!exit` or `!disconnect`
 

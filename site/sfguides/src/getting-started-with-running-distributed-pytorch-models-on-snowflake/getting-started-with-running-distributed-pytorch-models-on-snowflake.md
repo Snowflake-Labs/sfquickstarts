@@ -71,7 +71,7 @@ Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-getting-st
 
 The architecture of the Tasty Bytes ML solution is designed to generate personalized upsell and cross-sell recommendations. Here's a detailed walkthrough of how we use components of Snowflake ML to complete this workflow:
 
-![assets/Architecture.png](assets/Architecture.png)
+![Architecture](assets/architecture.png)
 
 **Extracting Features:** This begins with the ingestion of data into Snowflake. Data sources include customer profiles, menu details, and purchase histories. Snowflake Notebooks can be leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. The team automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps.
 
