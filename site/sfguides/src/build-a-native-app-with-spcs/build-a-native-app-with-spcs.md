@@ -242,7 +242,7 @@ call spcs_app_instance.app_public.app_url();
 ```
 
 When up and running you should see a screen like this at your service endpoint. 
-![CLERKS](assets/CLERKS.png)
+![CLERKS](assets/clerks.png)
 
 
 <!-- ------------------------ -->
