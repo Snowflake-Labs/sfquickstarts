@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-![assets/tb_endtoendml_banner.png](assets/tb_endtoendml_banner.png)
+![assets/tb_endtoendml_banner.png](assets/TB_EndToEndml_banner.png)
 
 This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). This involves:
 
@@ -135,7 +135,7 @@ This application generates menu item recommendations based on the filters select
 
 When you click the **Get Recommendations** button, the application filters the data based on your selections, processes the features for the model, and runs the deep learning model inference to generate menu item recommendations along with purchase history for better context. You also have the option to save these results for use in campaigns and marketing efforts. By clicking the **Save** button, the results are saved to the Stage.
 
-![assets/app_preview.png](assets/app_preview.png)
+![assets/app_preview.png](assets/App_Preview.png)
 
 ## Conclusion And Resources
 
