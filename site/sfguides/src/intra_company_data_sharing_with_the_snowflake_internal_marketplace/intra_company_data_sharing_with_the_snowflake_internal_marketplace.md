@@ -439,7 +439,7 @@ In this section you will request access to the new data product for the **Market
 - After submitting the access request click the grey **View request** button to review or even withdraw your request. 
     - If you withdraw the request, please submit it again.
 
-![](assets/raw01.png)
+![](assets/RAW01.png)
 
 Now let's also request access for the  **Supply chain** team.
 - In a separate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user.
