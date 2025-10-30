@@ -101,7 +101,7 @@ In this stage, we will specifically define the Data Privacy policies and rules t
 
 Please click on the Collibra Protect option after clicking the nine dots all the way to the top right of the Collibra User Interface:
 
-![Protect](assets/protect.jpg)
+![Protect](assets/Protect.jpg)
 
 This will take you to the Collibra Protect environment, then click on the Data Access Rules. And then click on Create a Data Access Rule button:
 

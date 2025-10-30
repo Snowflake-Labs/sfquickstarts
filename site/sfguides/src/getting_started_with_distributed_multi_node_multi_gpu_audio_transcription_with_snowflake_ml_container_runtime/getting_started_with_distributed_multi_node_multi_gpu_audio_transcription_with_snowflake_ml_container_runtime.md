@@ -1,16 +1,17 @@
 author: Dharmendra Shavkani
 id: getting_started_with_distributed_multi_node_multi_gpu_audio_transcription_with_snowflake_ml_container_runtime
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
-language: en
 summary: This guide will provide step-by-step details for using multi-node multi-gpu audio transcription with snowflake ml container runtime
+categories: ML Container Runtime
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # **Distributed Multi-Node and Multi GPU Audio Transcription with Snowflake ML Container Runtime**
 <!-- ------------------------ -->
 ## Overview 
 
+Duration: 10
 
 In this Quickstart guide, we will walk through how to use [Container Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) in [Snowflake ML](http://www.snowflake.com/ml) to perform Multi-Node, Multi-GPU audio transcription at limitless scale over multiple audio files.
 
@@ -81,7 +82,7 @@ Whisper large-v3 has the same architecture as the previous [large](https://huggi
 
 See details here for the [model](https://huggingface.co/openai/whisper-large-v3)
 
-![ContainerRuntime Multi Node Multi GPU Inferencing](assets/multi_node_multi_gpu_inferencing.png)
+![ContainerRuntime Multi Node Multi GPU Inferencing](assets/multi-node_multi-gpu_inferencing.png)
 
 ### Prerequisites
 
@@ -106,6 +107,7 @@ This guide will show you:
 
 ## Setup Environment
 <!-- ------------------------ -->
+Duration: 5
 
 This section will walk you through creating various objects. The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime).
 
@@ -126,6 +128,7 @@ Complete the following steps to setup your account:
 
 ## Audio Processing Setup
 <!-- ------------------------ -->
+Duration: 10
 
 This notebook linked below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
 
@@ -153,24 +156,25 @@ To get started, follow these steps:
 
   * Click on **Create Button**
 
-![Audio Processing Setup](assets/audio_processing_setup_create_notebook.png)
+![Audio Processing Setup](assets/Audio_processing_Setup_create_notebook.png)
 
 * Click the three dots in the top right \> Notebook Settings  
 * Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
 
-![Audio Processing Setup External Access](assets/audio_processing_setup_notebook_settings_external_access.png)
+![Audio Processing Setup External Access](assets/Audio_processing_Setup_notebook_settings_external_access.png)
 
 * Run cells in the notebook\!
 
 * Notebook will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named AUDIO\_FILES\_STAGE.
 
-![Audio Processing Setup Notebook](assets/audio_processing_notebook.png)
+![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
 
 
 Note: - "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
 
 ## Audio Transcription
 <!-- ------------------------ -->
+Duration: 10
 
 The samples shown below demonstrate the distributed inferencing of audio files on Snowflake ML Container Runtime using multiple nodes and multiple GPUs.
 
@@ -236,13 +240,13 @@ To get started, follow these steps:
 
   * Click on **Create Button**
 
-![Audio Processing Distributed Inferencing Notebook](assets/audio_processing_distributed_inferencing_create_notebook.png)
+![Audio Processing Distributed Inferencing Notebook](assets/Audio_processing_Distributed_Inferencing_create_notebook.png)
 
 * Click the three dots in the top right \> Notebook Settings  
 * Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
 
 
-![Audio Processing Distributed Inferencing Notebook External Access](assets/audio_processing_distributed_inferencing_notebook_settings_external_access.png)
+![Audio Processing Distributed Inferencing Notebook External Access](assets/Audio_processing_Distributed_Inferencing_notebook_settings_external_access.png)
 
 * Run cells in the notebook\!
 
@@ -279,7 +283,7 @@ You can also leverage Snowflake ML Container Runtime outside of Snowflake Notebo
 
 * You can monitor the job execution in the Services and Jobs UI in Snowsight
 
-![Services and Jobs UI](assets/services_and_jobs_ui.png)
+![Services and Jobs UI](./assets/services_and_jobs_ui.png)
 
 Let's break down what the ML Job workflow is doing:
 
@@ -295,6 +299,7 @@ Let's break down what the ML Job workflow is doing:
 
 ## Value Proposition
 <!-- ------------------------ -->
+Duration: 5
 
 Snowflake ML Container Runtime offers significant value for distributed multi-node, multi-GPU audio transcription. Here are the key benefits:
 
