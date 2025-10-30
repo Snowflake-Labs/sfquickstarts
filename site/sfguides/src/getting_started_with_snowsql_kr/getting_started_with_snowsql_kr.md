@@ -1,16 +1,17 @@
 id:getting_started_with_snowsql_kr
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
-language: ko
 summary: SnowSQL 시작하기
+categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL, kr
 
 # SnowSQL 시작하기
 
 <!-- ------------------------ -->
 ## 개요
 
+Duration: 2
 
 SnowSQL은 Snowflake와 상호 작용하기 위해 사용되는 소프트웨어 CLI 도구입니다. SnowSQL을 사용하여 Snowflake Data Cloud의 모든 측면을 제어할 수 있습니다. 여기에는 데이터 업로드, 데이터 쿼리, 데이터 변경 및 데이터 삭제가 포함됩니다.  이 가이드에서는 SnowSQL을 검토하고 이를 사용하여 데이터베이스를 생성하고, 데이터를 로드하고, CLI에서 바로 테이블 및 데이터를 관리하는 데 유용한 명령을 배울 수 있습니다.
 
@@ -44,6 +45,7 @@ SnowSQL은 Snowflake와 상호 작용하기 위해 사용되는 소프트웨어 
 <!-- ------------------------ -->
 ## SnowSQL 설정
 
+Duration: 8 우선 Snowflake 계정을 만들고 웹 콘솔 탐색에 익숙해져 보겠습니다. SnowSQL 설치 프로그램을 다운로드한 다음 이를 설치하고 성공 여부를 확인하겠습니다.
 
 ### Snowflake 계정 생성
 
@@ -77,7 +79,7 @@ curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/​<bootstrap-
 curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86_64/snowsql-1.2.9-darwin_x86_64.pkg​
 ```
 
-![Snowflake_Download_Installer_image](assets/snowflake_download_installer.png)
+![Snowflake_Download_Installer_image](assets/Snowflake_Download_Installer.png)
 
 ### 로컬에서 SnowSQL 설치
 
@@ -90,6 +92,7 @@ curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86
 <!-- ------------------------ -->
 ## 데이터베이스 생성
 
+Duration: 6 여러분의 계정이 활성 상태이고 SnowSQL이 설치되었다면 터미널을 사용하여 로그인하고 클라우드 저장소에 필요한 오브젝트를 생성할 것입니다.
 
 ### 터미널에서 로그인
 
@@ -129,7 +132,7 @@ create or replace table emp_basic (
 
 [CREATE TABLE 또는 REPLACE TABLE](https://docs.snowflake.com/ko/sql-reference/sql/create-table.html)을 실행하면 지정된 매개 변수에 따라 새로운 테이블이 구축될 것입니다. 이 예는 샘플 CSV 직원 데이터 파일에 있는 동일한 열을 반영합니다.
 
-![Snowflake_Create_Table_image](assets/snowflake_createtable.png)
+![Snowflake_Create_Table_image](assets/Snowflake_createTable.png)
 
 ### 가상 웨어하우스 생성
 
@@ -143,13 +146,14 @@ create or replace warehouse sf_tuts_wh with
 
 생성한 후 이 가상 웨어하우스는 여러분의 현재 세션을 위해 활성 상태가 되며 컴퓨팅 리소스가 필요해지면 실행됩니다.
 
-![Snowflake_createWarehouse_image](assets/snowflake_createwarehouse.png)
+![Snowflake_createWarehouse_image](assets/Snowflake_createWarehouse.png)
 
 데이터베이스 오브젝트가 준비되었다면 SnowSQL을 사용하여 샘플 데이터를 `emp_basic` 테이블로 이동하겠습니다.
 
 <!-- ------------------------ -->
 ## 데이터 업로드
 
+Duration: 8 이 섹션에서는 여러분의 샘플 CVS 직원 파일을 스테이징하고 데이터를 여러분의 테이블로 복사하기 위해 SQL 명령을 실행하겠습니다.
 
 아직 샘플 파일을 다운로드하지 않았다면 다음에서 다운로드할 수 있습니다.
 
@@ -179,7 +183,7 @@ put file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;
 
 macOS `file:///tmp/` 폴더의 샘플 직원 CSV 파일을 `sf_tuts` 데이터베이스 내에 있는 `emp_basic` 테이블로 스테이징하기 위한 PUT 호출입니다.
 
-![Snowflake_StagePut_image](assets/snowflake_stageput.png)
+![Snowflake_StagePut_image](assets/Snowflake_StagePut.png)
 
 ### 스테이징된 파일 LIST
 
@@ -195,7 +199,7 @@ list @sf_tuts.public.%emp_basic;
 
 위 예시 명령은 `emp_basic` 테이블을 위해 스테이징된 파일을 출력하기 위한 것입니다. 더 많은 LIST 구문은 [여기](https://docs.snowflake.com/ko/sql-reference/sql/list.html)에서 자세히 알아보십시오.
 
-![Snowflake_ViewStaged_image](assets/snowflake_viewstaged.png)
+![Snowflake_ViewStaged_image](assets/Snowflake_ViewStaged.png)
 
 ### 테이블로 [COPY INTO](https://docs.snowflake.com/ko/sql-reference/sql/copy-into-table.html)
 
@@ -209,13 +213,14 @@ copy into emp_basic
 
 파일을 스테이징한 다음 데이터는 `emp_basic` 테이블로 복사됩니다. 이 DML 명령은 또한 이전에 만든 가상 웨어하우스를 자동으로 재개합니다.
 
-![Snowflake_CopyStaged_image](assets/snowflake_copystaged.png)
+![Snowflake_CopyStaged_image](assets/Snowflake_CopyStaged.png)
 
 출력은 데이터가 성공적으로 복사되었으며 모든 오류를 기록하는지를 나타냅니다.
 
 <!-- ------------------------ -->
 ## 데이터 쿼리
 
+Duration: 15
 
 클라우드에 있는 데이터를 쿼리하는 방법을 알아야 합니다. 여러분의 데이터를 빠르게 호출할 수 있도록 하는 몇몇 호출을 다루겠습니다.
 
@@ -227,7 +232,7 @@ select * from emp_basic;
 
 다음 예시 명령은 `emp_basic` 테이블에 있는 모든 것을 대상으로 `select` 명령을 수행합니다.
 
-![Snowflake_SELECT_image](assets/snowflake_select.png)
+![Snowflake_SELECT_image](assets/Snowflake_SELECT.png)
 
 테이블에 있는 모든 데이터를 살피는 것은 가장 효율적으로 시간을 사용하는 방법이 아닙니다. 몇몇 함수와 일부 쿼리 구문을 사용하면 특정 결과를 간단히 가져올 수 있습니다.
 
@@ -239,7 +244,7 @@ select * from emp_basic where first_name = 'Ron';
 
 이 쿼리는 `emp_basic` 테이블에서 `first_name`이 ‘Ron’인 직원 목록을 반환합니다.
 
-![Snowflake_SELECTRon_image](assets/snowflake_selectron.png)
+![Snowflake_SELECTRon_image](assets/Snowflake_SELECTRon.png)
 
 - [LIKE](https://docs.snowflake.com/ko/sql-reference/functions/like.html) 함수는 `%` 및 `_` 와일드카드를 지원합니다.
 
@@ -249,13 +254,14 @@ select email from emp_basic where email like '%.au';
 
 LIKE 함수는 `au`를 위해 `emp_basic` 테이블에 있는 모든 이메일을 확인하며 레코드를 반환합니다.
 
-![Snowflake_SELECTEmailAU_image](assets/snowflake_selectemailau.png)
+![Snowflake_SELECTEmailAU_image](assets/Snowflake_SELECTEmailAU.png)
 
 Snowflake는 다양한 [함수](https://docs.snowflake.com/ko/sql-reference-functions.html), [연산자](https://docs.snowflake.com/ko/sql-reference/operators.html) 및 [명령](https://docs.snowflake.com/ko/sql-reference-commands.html)을 지원합니다. 그러나 보다 구체적인 작업을 수행해야 한다면 [외부 함수](https://docs.snowflake.com/ko/sql-reference/external-functions-introduction.html) 설정을 고려하십시오.
 
 <!-- ------------------------ -->
 ## 데이터 관리 및 삭제
 
+Duration: 6
 
 종종 데이터는 고정적이지 않습니다. 여러분의 클라우드 데이터베이스를 유지하기 위한 몇몇 일반적인 방법을 검토하겠습니다.
 
@@ -275,7 +281,7 @@ insert into emp_basic values
 
 표시된 명령에서 `insert`는 2명의 새로운 직원을 `emp_basic` 테이블에 추가하기 위해 사용됩니다.
 
-![Snowflake_INSERT_image](assets/snowflake_insert.png)
+![Snowflake_INSERT_image](assets/Snowflake_INSERT.png)
 
 - [DROP](https://docs.snowflake.com/ko/sql-reference/sql/drop.html) 오브젝트는 더 이상 사용되지 않습니다.
 
@@ -287,7 +293,7 @@ drop warehouse if exists sf_tuts_wh;
 
 이 자습서에서 기본 사항을 연습한 후에는 `sf-tuts` 데이터베이스와 웨어하우스가 더 이상 필요하지 않습니다. 이를 모두 삭제하려면 `drop` 명령을 사용합니다.
 
-<!--![Snowflake_DROP_image](assets/snowflake_drop.png)-->
+<!--![Snowflake_DROP_image](assets/Snowflake_DROP.png)-->
 - `!exit` 또는 `!disconnect`로 연결 종료
 
 보안상의 이유로 여러분의 터미널 연결을 불필요하게 유지하는 않는 것이 좋습니다. SnowSQL 연결을 종료할 준비가 되었다면 단순히 `!exit`를 입력합니다.
@@ -295,6 +301,7 @@ drop warehouse if exists sf_tuts_wh;
 <!-- ------------------------ -->
 ## 결론
 
+Duration: 1
 
 ### 애플리케이션을 위해 SnowSQL 사용
 
