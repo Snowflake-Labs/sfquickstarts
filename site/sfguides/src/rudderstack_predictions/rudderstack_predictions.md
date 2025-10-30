@@ -141,7 +141,7 @@ To set up automated features, you will need RudderStack event data in your Snowf
 
 If you are setting up RudderStack for the first time go to the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZT0Z856CMJ/rudderstack-inc-rudderstack-event-data-for-quickstart) and add RudderStack Event Data for Quickstart to your Snowflake account for free. This will add a database with the needed tables to your Snowflake warehouse with no additional storage cost for you.
 
-![Marketplace](assets/Snowflake-marketplace.png)
+![Marketplace](assets/snowflake_marketplace.png)
 
 At the next screen open options and add role `QUICKSTART` to have access to this database.
 
@@ -178,7 +178,7 @@ RudderStack's Profiles and Predictions products require a warehouse destination 
 
 After logging into RudderStack, navigate to the Directory from the sidebar on the left, then select the JavaScript source from the list of sources.
 
-![JS](assets/select-js-source.png)
+![JS](assets/select_js_source.png)
 
 Enter "QuickStart Test Site" for the source name and click `Continue`. You have successfully added a source!
 
@@ -188,11 +188,11 @@ Note at the bottom of the JavaScript Source page is a `Write Key`. You will need
 
 Navigate to the "Overview" tab in the JavaScript source view and click on `Add Destination`.
 
-![add-destination](assets/add-destination.png)
+![add-destination](assets/add_destination.png)
 
 Select the Snowflake destination from the list, then on the next page give it the name "Snowflake QuickStart" and click `Continue`.
 
-![select-snowflake](assets/select-snowflake.png)
+![select-snowflake](assets/select_snowflake.png)
 
 Add in your Snowflake connection credentials:
 
@@ -204,11 +204,11 @@ Add in your Snowflake connection credentials:
 - **Password**: Password for `QUICKSTART_USER`
 - **Namespace**: `EVENTS`
 
-![snowflake-config](assets/snowflake-config.png)
+![snowflake-config](assets/snowflake_config.png)
 
 At the bottom under "Object Storage Configuration" toggle "Use RudderStack managed object storage" ON.
 
-![toggle-on](assets/object-storage-toggle.png)
+![toggle-on](assets/object_storage_toggle.png)
 
 Leave the defaults for all other settings and click `Continue`. RudderStack will verify credentials and that it has the needed permissions.
 
@@ -227,23 +227,23 @@ We will use a test site to send a `connection_setup` event. This will not effect
 
 Go to the Connections page in the RudderStack app and copy the Data Plane URL at the top of the page.
 
-![data-plane](assets/data-plane-url.png)
+![data-plane](assets/data_plane_url.png)
 
 #### Write Key
 
 Go into your JavaScript source in RudderStack and on the `Setup` tab scroll down and copy the write key.
 
-![write-key](assets/write-key.png)
+![write-key](assets/write_key.png)
 
 #### Test Event
 
 Go to RudderStack's [test website](https://ryanmccrary.github.io/rudderstackdemo/) and copy your Data Plane URL and Write Key into the top fields and press `Submit`.
 
-![test-site-setup](assets/test-site-setup.png)
+![test-site-setup](assets/test_site_setup.png)
 
 Enter `connection_setup` into the `event_name` field next to `Send Custom Event` and then click on `Send Custom Event`.
 
-![test-site-event](assets/test-site-event.png)
+![test-site-event](assets/test_site_event.png)
 
 You can check the event using RudderStack's ["Live events" view](https://www.rudderstack.com/docs/dashboard-guides/live-events/) or check the `Syncs` tab in the Snowflake QuickStart destination.
 
@@ -390,7 +390,7 @@ You can log-in [here](https://app.rudderstack.com/login).
 
 Enter in a unique name and description for the Profiles Project where you will build your predictive features.
 
-![Name](assets/Profiles-Name.png)
+![Name](assets/profiles_name.png)
 
 ### Select Sources
 
@@ -403,7 +403,7 @@ Once you select your warehouse, you will be able to choose from RudderStack even
 <!-- ------------------------ -->
 ## Map ID Fields
 
-![MapID](assets/Map-ID.png)
+![MapID](assets/map_id.png)
 
 Map the fields from the source table(s) to the correct type of ID. The standard types of ID are:
 
@@ -422,7 +422,7 @@ Click on `Add mapping` and map the `USER_ID` and `ANONYMOUS_ID` columns to stand
 | QuickStart Test Site | ORDER_COMPLETED | USER_ID | user_id |
 | QuickStart Test Site | ORDER_COMPLETED | ANONYMOUS_ID | anonymous_id |
 
-![map-orders-completed](assets/map-id-orders.png)
+![map-orders-completed](assets/map_id_orders.png)
 
 <!-- ------------------------ -->
 ## Create Default Features in the UI
@@ -438,7 +438,7 @@ We will go over both types of features, but this guide will focus on the default
 
 Default features are features commonly used in Profiles projects. RudderStack provides a template library for these features to make them easy to add to your project. Templated features give you access to over 40 different standard and predictive features, which are generated in Snowflake automatically.
 
-![categories](assets/feature-categories.png)
+![categories](assets/feature_categories.png)
 
 Default features are divided into 4 categories:
 
@@ -449,7 +449,7 @@ Default features are divided into 4 categories:
 
 You can open the drop down menu for each category and select as many as you would like for your project.
 
-![attribution](assets/feature-attribution.png)
+![attribution](assets/feature_attribution.png)
 
 For this quickstart select:
 
@@ -471,7 +471,7 @@ For this quickstart select:
 
 It is important to remember that RudderStack runs all of the feature-generation code transparently in Snowflake. For any of the default features, other than Predictive ML Features, you can click on `Preview Code` and get a yaml code snippet defining that feature (the yaml definition is used to generate SQL). This is helpful for technical users who want a deeper understanding of feature logic (and a running start for coding their own features).
 
-![churn-snippet](assets/churn-code-snippet.png)
+![churn-snippet](assets/churn_code_snippet.png)
 
 #### Churn definition
 
@@ -498,7 +498,7 @@ If a needed feature is not in the template library, you can define a custom feat
 
 ### Add Custom Features
 
-![custom-feature](assets/custom-feature.png)
+![custom-feature](assets/custom_feature.png)
 
 Click on `Add a custom feature` at the top of the page.
 
@@ -513,7 +513,7 @@ We will build an `average_order` feature with the following values:
 | **Event** | EVENTS.ORDER_COMPLETED |
 | **Property or Trait** | TOTAL |
 
-![define-feature](assets/custom-feature-define.png)
+![define-feature](assets/custom_feature_define.png)
 
 Once complete click `Save`. The custom feature will be added to the top of the page.
 
@@ -528,7 +528,7 @@ There are three options to set a schedule for how often the feature generation j
 
 ### Basic
 
-![basic](assets/schedule-basic.png)
+![basic](assets/schedule_basic.png)
 
 Schedule on a predetermined interval.
 
@@ -545,7 +545,7 @@ Then select a starting time for the initial sync
 
 ### Cron
 
-![cron](assets/schedule-cron.png)
+![cron](assets/schedule_cron.png)
 
 Schedule using cron expressions for more specific scheduling (i.e. Daily on Tuesdays and Thursdays).
 
@@ -562,13 +562,13 @@ For this guide, select Manual.
 
 ### Save Project
 
-![save](assets/save-project.png)
+![save](assets/save_project.png)
 
 Fill in the Schema field with `PROFILES` (to match what we created earlier). This is where the feature table will be written to in Snowflake.
 
 ### Review and Create Project
 
-![review](assets/review-create.png)
+![review](assets/review_create.png)
 
 Finally review all the settings and when ready click `Create user 360`.
 
@@ -577,9 +577,9 @@ Finally review all the settings and when ready click `Create user 360`.
 
 Once the initial project run is initiated, it may take up to 25-30 minutes to complete. Once the job is done, you are able to explore the data in RudderStack's UI, including model fit charts for predictive features and individual user records with all features.
 
-![ui-predictive-review](assets/ui-predictive.png)
-![ui-predictive-graphs](assets/ui-predictive-graphs.png)
-![ui-review](assets/ui-explorer.png)
+![ui-predictive-review](assets/ui_predictive.png)
+![ui-predictive-graphs](assets/ui_predictive_graphs.png)
+![ui-review](assets/ui_explorer.png)
 
 <!-- ------------------------ -->
 ## Code Your Own Custom Predictive Features
@@ -598,7 +598,7 @@ RudderStack makes it easy to migrate from the UI-based workflow to the code-base
 
 On the Profiles screen, find your project and click the "Download this Project" button in the upper right. This will download all the files for that Profiles project in a compressed (zip) file including the modeling files.
 
-![download](assets/download-project.png)
+![download](assets/download_project.png)
 
 Inside the Profiles folder you will find `pb_project.yaml` and a `models` folder with `resources.yaml`.
 
@@ -867,7 +867,7 @@ pb run
 
 The final predictive features can be found in your Snowflake environment together in the same table. The table will provide you with the unified user id, created by RudderStack, when the features are valid as of (i.e. when the model was last run to create these features), and model ID, and your predictive features.
 
-![final-table](assets/final-table.png)
+![final-table](assets/final_table.png)
 
 <!-- ------------------------ -->
 ## Conclusion

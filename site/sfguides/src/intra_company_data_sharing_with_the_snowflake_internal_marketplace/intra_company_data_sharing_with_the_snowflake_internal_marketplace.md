@@ -47,7 +47,7 @@ The setup instructions for this lab describe all the steps for you to create the
 
 The internal marketplace exists by default. It does not need to be created. But, you will configure it with provider profiles for the different business units via the [organization account](https://docs.snowflake.com/en/user-guide/organization-accounts). The organization account is a recent Snowflake capability to optionally monitor and manage a set of regular accounts.
 
-![LabScenario](assets/DemoScenario-and-Accounts.png)
+![LabScenario](assets/demoscenario_and_accounts.png)
 
 The setup follows these steps:
 - Step 1: Create a Snowflake trial account in a region of your choice
@@ -321,11 +321,11 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 > aside positive
 > IMPORTANT: some code later in this lab will reference the listing by the name **Order Insights**. 
 
-![](assets/Publish01-Title.png)
+![](assets/publish01_title.png)
 
 4. Click on the **+Profile** button and select the **Sales** profile as the owner of this data product. 
 
-![](assets/Publish02-Profile.png)
+![](assets/publish02_profile.png)
 
 - When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change this on a per listing basis if you want. 
 
@@ -336,7 +336,7 @@ Now let's select the data objects that we want to share in this data product.
 
 - Then, click **+ Select**, navigate to the SF1 schema of the TPCH database, and select all tables except *Region* and *Part*. Also select the ORDER_SUMMARY view and the  function ORDERS_PER_CUSTOMER. Click **Done** and **Save**.
 
-![](assets/Publish03-ObjectSelection.png)
+![](assets/publish03_objectselection.png)
 
 ### Publishing Flow (Step 3 of 5): Configure Access Control and the Approval Process
 
@@ -351,17 +351,17 @@ For this first data product we keep it simple and stick with the defaults:
 
 As a result, every data consumer will need to request access to obtain approval to use the data product. Click on **Set up request approval flow** to proceed.
 
-![](assets/Publish04-AccessControl.png)
+![](assets/publish04_accesscontrol.png)
 
 You could configure an external workflow engine for the request approval process. But for this lab we choose to **Manage requests in Snowflake**. The email address for notifications defaults to the one from the *Sales* profile but could be changed.
 
-![](assets/Publish05-RequestConfig.png)
+![](assets/publish05_requestconfig.png)
 
 After you confirm the approval flow settings, Snowflake prompts you for one more configuration. Here is why: this listing is configured to be discoverable by the entire organization. What if you add another account to the organization but in a different cloud region? Then Snowflake would transparently perform incremental replication to that region to minimize egress cost. As the data provider you can choose the frequency of this replication.
 
 So lets (1) **Review** the settings, (2) Change the replication interval to daily (1 Days), and then (3) **Save** the settings for this listing:
 
-![](assets/Publish06-LAF.png)
+![](assets/publish06_laf.png)
 
 ### Publishing Flow (Step 4 of 5): Add Optional Metadata and SLOs
 Data products should be understandable and trustworthy for data consumers so let's add additional metadata to describe the product (see screenshot below).
@@ -377,7 +377,7 @@ Data products should be understandable and trustworthy for data consumers so let
   - **Time Range**: Amount of history data included.
   - **Timestamp Granularity**: The interval between data points. For example, "*Event-based*" if there is one record for each incoming order, or "*Daily*" if order volumes are aggregated by date, and so on.
   
-  ![](assets/Publish07-MetaData.png)
+  ![](assets/publish07_metadata.png)
 
 
 - Add at least two **Usage examples** such as the following two queries.
@@ -408,7 +408,7 @@ Data products should be understandable and trustworthy for data consumers so let
     Select at least one (and up to 5) data objects and click **+Add to Featured**. These are the objects that consumers will see first in the dictionary.
     Suggestion: Select `customer`, `orders`, and `order_summary` to be featured.
 
-![](assets/Publish08-DataDictionary.png)
+![](assets/publish08_datadictionary.png)
 
 ### Publishing Flow (Step 5 of 5): Publish your listing to the internal marketplace
 
@@ -420,7 +420,7 @@ Your data product is now live! You can see it when you navigate to the Internal 
 - In the new UI, choose **Catalog** in the menu on the left, then **Internal Marketplace** (see below).
 - Use the *Provider* filter to show listings for specific domains only.
 
-![](assets/Publish10-Done-NewUI.png)
+![](assets/publish10_done_newui.png)
 
 ## Request and Grant Access
 
@@ -637,15 +637,15 @@ In this section we will review further capabilities for managing and monitoring 
 - Log into account `HOL_ACCOUNT1` as the `sales_admin` user
 - Navigate to the Provider Studio and open the **Order Insights** listing
 
-    ![](assets/ManageListings-01.png)
+    ![](assets/managelistings_01.png)
 
 - In the top right, click on the Access definition of the listing.
 
-    ![](assets/ManageListings-02.png)
+    ![](assets/managelistings_02.png)
 
 - You can now add or remove roles or entire accounts that access the data product. Same for discoverability.
 
-    ![](assets/ManageListings-03.png)
+    ![](assets/managelistings_03.png)
 
 ---
 ### How to Grant Listing Management Privileges
@@ -655,7 +655,7 @@ In this section we will review further capabilities for managing and monitoring 
 - In the side panel you can now edit listing settings and privileges.
 - For example, you can authorize additional roles to *Modify* this listing and respond to access requests from data consumers:
 
-    ![](assets/ManageListings-04.png)
+    ![](assets/managelistings_04.png)
 
 ---
 ### How to Audit Access to Organizational Listing 

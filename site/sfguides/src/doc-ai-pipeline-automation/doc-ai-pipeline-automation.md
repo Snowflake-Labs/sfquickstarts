@@ -51,7 +51,7 @@ The pipeline ensures that documents meet business expectations through pre-proce
 The pre-processing stage validates document attributes such as size and page count to ensure only processable documents proceed further. Criteria can be customized to align with business needs and Document AI guidelines, as outlined in the [Snowflake Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/preparing-documents)
 Files failing these checks are routed to a "Manual Review" stage, where users can review and, if necessary, resend documents for processing via a Streamlit app.
 
-![Pre-Process](assets/pre-processing.png)
+![Pre-Process](assets/pre_processing.png)
 
 
 Documents are ingested from the Internal Stage and processed through a stream. A Python-based UDF evaluates the attributes, storing results in a pre-filter table. Documents passing the validation move to the DOC AI Data Extraction, while invalid ones are redirected for manual review.

@@ -157,7 +157,7 @@ In Collibra Data Marketplace the user is searching for customer data:
 
 Filters the search by pressing the Data Sets tab and the Certified option in the filters to the left.
 
-![datamarketplace-filter](assets/datamarketplace-filter.jpg)
+![datamarketplace-filter](assets/datamarketplace_filter.jpg)
 
 The second dataset is the one that seems proper since in the description it states that it contains names, birthdates and emails. 
 
@@ -228,7 +228,7 @@ At this point the Data Owner receives notification that the requester accepted t
 
 Go to Snowflake in the area Users and Roles and Search for the user to which we are going to grant access. Then click on the three dots to the right of the user and choose the Grant Role option in order to grant the Role to the User. 
 
-![snowflake-user](assets/snowflake-user.jpg)
+![snowflake-user](assets/snowflake_user.jpg)
 
 At this point look for the Role in Collibra which gives access with enforced policies to a user, in this case the SE_MKT_ANALYST. 
 

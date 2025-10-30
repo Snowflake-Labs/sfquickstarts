@@ -32,7 +32,7 @@ In addition to base data, this will then be enriched with unemployment data from
 We will build a project. The project contains the input datasets from Snowflake. We’ll build a data science pipeline by applying data transformations, enriching from Marketplace employment data, building a machine learning model, and deploying it to the Flow. We will then see how you can score the model against fresh data from Snowflake and automate
 
 
-![1](assets/SF-1.jpg)
+![1](assets/sf_1.jpg)
 
 
 
@@ -85,20 +85,20 @@ Operational end-to-end ML project using joint capabilities of Snowflake and Data
 
 
 
-![2](assets/sf-2-signup.png)
+![2](assets/sf_2_signup.png)
 
 
-![3](assets/SF-3.jpg)
+![3](assets/sf_3.jpg)
 
 After registering, you will receive an ```email```with an ```activation``` link and your Snowflake account URL. Kindly activate the account.
 
 
-![4](assets/SF-4.jpg)
+![4](assets/sf_4.jpg)
 
 
 After activation, you will create a ```user name```and ```password```. Write down these credentials. ```Bookmark this URL for easy, future access```.
 
-![5](assets/sf-5-user_id_password.png)
+![5](assets/sf_5_user_id_password.png)
 
 <!-- ------------------------ -->
 ## Logging in  Snowflake 
@@ -111,7 +111,7 @@ Log in with your credentials. ```Bookmark this URL for easy, future access```.
 
 
 
-![6](assets/sf-6-login.png)
+![6](assets/sf_6_login.png)
 
 Resize your browser window, so that you can view this guide and your web browser side-by-side and follow the lab instructions. If possible, use a secondary display dedicated to the lab guide.
 
@@ -122,7 +122,7 @@ Log into your Snowflake account. By default it will open up ```home``` page.
 
 
 
-![7](assets/sf-7-firstpage.png)
+![7](assets/sf_7_firstpage.png)
 
 
 
@@ -131,26 +131,26 @@ Log into your Snowflake account. By default it will open up ```home``` page.
 To create ```Worksheet``` . Click on the ```Worksheets``` tab. A new screen will open up. 
 
 
-![8](assets/sf-8-createworksheet.png)
+![8](assets/sf_8_createworksheet.png)
 
 #### Step 4
 
 Click on ```+ Worksheet``` to create your first worksheet. 
 
-![9](assets/sf-9-createworksheet2.png)
+![9](assets/sf_9_createworksheet2.png)
 
 #### Step 5
 
 New ```Worksheet``` will be created with a ```Time stamp```. Let's now rename this ```Worksheet``` by clicking on the ```Time stamp```. 
 
 
-![10](assets/sf-10-createworksheet.png)
+![10](assets/sf_10_createworksheet.png)
 
 
 You can name anything, but for this lab we will Rename it as ```Data Loading```.
 
 
-![11](assets/sf-11-renameworksheet.png)
+![11](assets/sf_11_renameworksheet.png)
 
 
 
@@ -181,13 +181,13 @@ After creating the ```worksheet``` in the last step we can import the sql file p
 
 Click on ```drop down``` button.
 
-![13](assets/SF-13.jpg)
+![13](assets/sf_13.jpg)
 
 
 Select ``` Import SQL from File ``` option to import the SQL file just downloaded. Select it and ```Enter```.
 
 
-![13](assets/SF-12.jpg)
+![13](assets/sf_12.jpg)
 
 
 #### Data Loading : Steps
@@ -316,7 +316,7 @@ CREATE OR REPLACE TABLE loan_data (
 After running the cell above, we have successfully created a ```loan_data``` table. 
 
 
-![15](assets/sf-15-dataloading2.png)
+![15](assets/sf_15_dataloading2.png)
 
 
 **Step 3** : In this step we will create an external stage ```LOAN_DATA``` to load the lab data. This is done from a public S3 bucket to simplified for this workshop.
@@ -339,7 +339,7 @@ Listing the files from ```S3``` bucket
 
 
 
-![16](assets/sf-16-dataloading3.png)
+![16](assets/sf_16_dataloading3.png)
 
 
 **Step 4** : In this step we will ```copy``` the ```loan_data``` csv file to the ```loan_data``` table we created. 
@@ -357,7 +357,7 @@ SELECT * FROM loan_data LIMIT 100;
 
 Below is the snapshot of the data and it represents aggregation from various internal systems for lender information and loans. We can have a quick look and see the various attributes in it.
 
-![17](assets/sf-17-dataloading4.png)
+![17](assets/sf_17_dataloading4.png)
 
 
 
@@ -376,7 +376,7 @@ We can now look at additional data in the Snowflake Marketplace that can be help
 
 Lets go to ```home screen``` by clicking on ```home``` icon. 
 
-![18](assets/sf-18-dataloading5.png)
+![18](assets/sf_18_dataloading5.png)
 
 
 #### Imp Note 
@@ -389,7 +389,7 @@ Lets go to ```home screen``` by clicking on ```home``` icon.
 
 
 
-![19](assets/sf-19-marketplace1.png)
+![19](assets/sf_19_marketplace1.png)
 
 
 
@@ -397,7 +397,7 @@ Lets go to ```home screen``` by clicking on ```home``` icon.
  Click on the tile with ```Labor Data Atlas```
 
 
-![20](assets/sf-20-marketplace2.png)
+![20](assets/sf_20_marketplace2.png)
 
 
 Next click on the ```Get Data``` button. This will provide a pop up window in which you can create a database in your account that will provide the data from the data provider.
@@ -412,7 +412,7 @@ Next click on the ```Get Data``` button. This will provide a pop up window in wh
 3. Click ```Get Data```
 
 
-![21](assets/sf-21-marketplace3.png)
+![21](assets/sf_21_marketplace3.png)
 
 
 
@@ -420,7 +420,7 @@ When the confirmation is provided click on ```done``` and then you can close the
 
 
 
-![22](assets/sf-22-marketplace4.png)
+![22](assets/sf_22_marketplace4.png)
 
 
   Other advantage of using Snowflake Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.
@@ -433,7 +433,7 @@ When the confirmation is provided click on ```done``` and then you can close the
 
 3. You should see ```KNOEMA_LABOR_DATA_ATLAS```  and ```ML_DB```
 
-![23](assets/sf-23-marketplace5.png)
+![23](assets/sf_23_marketplace5.png)
 
 
 
@@ -441,7 +441,7 @@ After confirming ```Databases```.  Lets go to ```Worksheets tab``` and  then ```
 
 
 
-![24](assets/sf-24-marketplace6.png)
+![24](assets/sf_24_marketplace6.png)
 
 
 **Step 6** : Querying the ```KNOEMA_LABOR_DATA_ATLAS```for some basic analysis 
@@ -462,7 +462,7 @@ AND "DatasetName" ILIKE '%U.S%';
 ```
 
 
-![22](assets/sf-22-marketplace4a.png)
+![22](assets/sf_22_marketplace4a.png)
 
 
 Amazing! We have successfully tapped into live data collection of the most important, used, and high-quality datasets on the labor market and human resources on national and sub-national levels from a dozen of sources.
@@ -478,7 +478,7 @@ SELECT * FROM "LABOR"."USUID2017Sep" WHERE "Region Name" = 'United States' AND
 ```
 
 
-![22](assets/sf-22-marketplace4b.png)
+![22](assets/sf_22_marketplace4b.png)
 
 
 
@@ -511,7 +511,7 @@ SELECT * FROM KNOEMA_EMPLOYMENT_DATA LIMIT 100;
 
 ```
 
-![25](assets/sf-25-marketplace7.png)
+![25](assets/sf_25_marketplace7.png)
  
 We have successfully created the view. 
 
@@ -535,7 +535,7 @@ CREATE OR REPLACE TABLE UNEMPLOYMENT_DATA AS
 SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 
 ```
-![26](assets/sf-26-marketplace8.png)
+![26](assets/sf_26_marketplace8.png)
 
 
 > aside negative
@@ -548,13 +548,13 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 
 Go to ```home screen``` clicking on home button. 
 
-![27](assets/SF-17.JPG)
+![27](assets/sf_17.jpg)
 
 
 `Select` the `Admin` from the list.
 
 
-![27a](assets/SF-17a.png)
+![27a](assets/sf_17a.png)
 
 
 
@@ -571,12 +571,12 @@ For the ```next steps```
 
 Your screen should like below ```Screen Shot ```
 
-![28](assets/SF-16.png)
+![28](assets/sf_16.png)
 
 
 After you have clicked on ```Dataiku```.  This will launch the following window, which will automatically create the ```connection parameters``` required for Dataiku to connect to Snowflake.
 
-![29](assets/sf-27-partnerconnect1.png)
+![29](assets/sf_27_partnerconnect1.png)
 
 
 
@@ -592,7 +592,7 @@ Click on ```Connect```. You may be asked to provide your first and last name.  I
 
 
 
-![30](assets/dk-1_100_PC_created.png)
+![30](assets/dk_1_100_pc_created.png)
 
 
 
@@ -601,7 +601,7 @@ This will launch a new page that will redirect you to a launch page from Dataiku
 For the lab ae assume that you’re new to ```Dataiku```, so ensure the “Sign Up” box is selected, and sign up using the email address **(Note: This should be the same email address that you used to set up your Snowflake account)** and a new password of your choosing. 
 
 
-![31](assets/dk-2_signin.jpg)
+![31](assets/dk_2_signin.jpg)
 
 
 When using your email address, ensure your password fits the following criteria:
@@ -615,25 +615,25 @@ When using your email address, ensure your password fits the following criteria:
 
 Upon clicking on the activation link, please briefly review the Terms of Service of Dataiku Cloud. In order to do so, please scroll down to the bottom of the page. Click on ```I AGREE```
 
-![32](assets/dk-3_100_DKU_Online_T&Cs.png)
+![32](assets/dk_3_100_dku_online_tcs.png)
 
 
 Next, you’ll need to complete your sign up information then click on ```Start```.
 
 
 
-<!-- ![33](assets/dk-4_sign_in_details.png) -->
+<!-- ![33](assets/dk_4_sign_in_details.png) -->
 
 
 You will be redirected to the Dataiku Cloud Launchpad site. Click ```GOT IT!``` to continue.
 
 
 
-![34](assets/dk-5_100_DKU_Online_welcome.png)
+![34](assets/dk_5_100_dku_online_welcome.png)
 
 
 
-![35](assets/dk-6_100_DKU_Online_launch_screen.png)
+![35](assets/dk_6_100_dku_online_launch_screen.png)
 
 
 
@@ -652,13 +652,13 @@ Snowflake provides a very unique feature called [Zero Copy Cloning](https://www.
 You should see three database now  ```PC_DATAIKU_DB``` is the system generated database created. 
 
 
-![36](assets/sf-28-partnerconnect2.png)
+![36](assets/sf_28_partnerconnect2.png)
 
 
 You should see  ```PC_DATAIKU_USER``` is the system generated database created. 
 
 
-![36a](assets/sf-28-partnerconnect2b.png)
+![36a](assets/sf_28_partnerconnect2b.png)
 
 
 Go back to ```Data_Loading Worksheet``` you are working and run below commands. 
@@ -708,7 +708,7 @@ After running above commands, we have created clones for the tables to be used f
 
 you should have two datasets ```LOANS_ENRICHED``` and ```UNEMPLOYMENT_DATA```
 
-![37](assets/sf-29-partnerconnect4.png)
+![37](assets/sf_29_partnerconnect4.png)
 
 
 > aside negative
@@ -721,12 +721,12 @@ you should have two datasets ```LOANS_ENRICHED``` and ```UNEMPLOYMENT_DATA```
 
 Return to Dataiku Online and if you haven't already click on **OPEN DATAIKU DSS** from the Launchpad to start your instance of Dataiku DSS
 
-![35](assets/dk-6_100_DKU_Online_launch_screen.png)
+![35](assets/dk_6_100_dku_online_launch_screen.png)
 
 
 Here is the project we are going to build along with some annotations to help you understand some key concepts in Dataiku DSS: 
 
-![35a](assets/dk-flow-overview.png)
+![35a](assets/dk_flow_overview.png)
 
 
 * A **dataset** is represented by a blue square with a symbol that depicts the dataset type or connection. The initial datasets (also known as input datasets) are found on the left of the Flow. In this project, the input datasets will be the ones we created in the first part of the lab.
@@ -759,7 +759,7 @@ Once you’ve logged in, `click` on `+ NEW PROJECT` and select `+ Blank project`
 
 Name the project as ``Credit Scoring``
 
-![35d](assets/dk6d-new_project.png)
+![35d](assets/dk6d_new_project.png)
 
 
 <!-- ------------------------ -->
@@ -771,31 +771,31 @@ The project home acts as the command center from which you can see the overall s
 * From the Flow click `+ Import Your First Dataset` in the centre of the screen.
 
 
-![37](assets/dk7b-first_import.png)
+![37](assets/dk7b_first_import.png)
 
 
 * Select the `Search and import option` 
 
-![38](assets/dk-search-import.png)
+![38](assets/dk_search_import.png)
 
 * Select the `PC_DATAIKU_DB` connection from the dropdown then `click the refresh icon` next to the database or schema dropdowns to populate these options.
 * Select the database and schema as below then click on `LIST TABLES`
 
 
-![39](assets/dk-9_400_Connection_explorer_with_filled_out_values.png)
+![39](assets/dk_9_400_connection_explorer_with_filled_out_values.png)
 
 
 * Select the `Loans_Enriched` and `Unemployment_Data` datasets and click `CREATE 2 DATASETS` followed by `OK`
 
 
-![40](assets/dk-10_400_Renamed_tables.png)
+![40](assets/dk_10_400_renamed_tables.png)
 
 
-![41](assets/dk-11_400_Datasets_imported_screen.png)
+![41](assets/dk_11_400_datasets_imported_screen.png)
 
 * Navigate to the Flow from the left-most menu in the top navigation bar `(or use the keyboard shortcut G+F)`.
 
-![42](assets/dk-12_500_Two_datasets_in_flow.png)
+![42](assets/dk_12_500_two_datasets_in_flow.png)
 
 In DSS, the datasets and the recipes together make up the `flow`. We have created a visual grammar for data science, so users can quickly understand a data pipeline through the flow.
 
@@ -810,7 +810,7 @@ One column to note is the **LOAN_STATUS** column. This will be our target variab
 * You can analyze column metrics to better understand your data: Either click on the column name and `select Analyze` or, if you wish for a quick overview of columns key statistics, `select Quick Column Stats` button on the top-right.
 
 
-![43](assets/dk-13_analyze.png)
+![43](assets/dk_13_analyze.png)
 
 ### Join the Data 
 
@@ -825,12 +825,12 @@ So far, your Flow only contains datasets. To take action on datasets, you need t
  
 * Leave the defaults for `Name` and `PC_DATAIKU_DB for “Store into”` and `Create` the recipe. 
 
-![44](assets/dk-15_700_join_tables.png)
+![44](assets/dk_15_700_join_tables.png)
 
 
 * Leave the defaults for the `Join` and `Selected columns` steps.
 
-![45](assets/dk-join1.png)
+![45](assets/dk_join1.png)
 
 * Select the `Output step`
 * Note: You can view the SQL query as well as the execution plan generated by selecting `VIEW QUERY`
@@ -839,12 +839,12 @@ So far, your Flow only contains datasets. To take action on datasets, you need t
 * Click the `RUN` button
 * If prompted agree to `Update Schema` then return to the `flow (G+F)`
 
-![45](assets/dk-loan2.png)
+![45](assets/dk_loan2.png)
 
 Your flow should now look like this
 
 
-![45](assets/dk-17_700_Flow_join.png)
+![45](assets/dk_17_700_flow_join.png)
 
 ## Prepare the Data 
 
@@ -855,12 +855,12 @@ Let’s take a brief look at the `Prepare recipe`, the workhorse of the visual r
 * From the flow `Single click` on the **LOANS_ENRICHED_joined** dataset that was the output of our Join recipe and `select Prepare` from the visual recipes in the `Actions Panel`. 
 * Leave the `Name` and `Store into` options as the defaults and click `CREATE RECIPE`
 
-![45](assets/dk-prep-create.png)
+![45](assets/dk_prep_create.png)
 
 In a Prepare recipe you assemble a series of steps to transform your data from a library of ~100 processors. There are a couple of ways you can select these processors to build your script. Firstly you can select these processors directly by using the `+ADD A NEW STEP` button on the left.
 Secondly because Dataiku DSS infers meanings for each column, it suggests relevant actions in many cases. In the example below although the column is stored in Snowflake as a String Dataiku DSS recognizes it as a date format so infers a `Date(unparsed)` meaning and suggests the `Parse Date` processor, by selecting the `More actions` menu item further suggestions are made.
 
-![46](assets/dk-prepare_overview2.png)
+![46](assets/dk_prepare_overview2.png)
 
 
 > aside negative
@@ -875,13 +875,13 @@ Let's try using processors with both methods, firstly via the suggested actions:
 
 * A step is generated on the left. Change the `Locale` to `en_US`
 
-![46](assets/dk-18_800_parse_date.jpg)
+![46](assets/dk_18_800_parse_date.jpg)
 
 
-![47](assets/dk-19_800_date_format.jpg)
+![47](assets/dk_19_800_date_format.jpg)
 
 
-![48](assets/dk-20_800_parse_en.jpg)
+![48](assets/dk_20_800_parse_en.jpg)
 
 
 * Click on the newly created column (click outside the step to action the change) and select `Compute time since`
@@ -891,20 +891,20 @@ Let's try using processors with both methods, firstly via the suggested actions:
 * Change the unit to `Years` and name the new column `since_Earliest_CR_LINE_years`
 
 
-![48](assets/dk-21_800_compute_time_since.jpg)
+![48](assets/dk_21_800_compute_time_since.jpg)
 
 Now we have our desired feature we can remove the two date columns.
 
 * Click on `EARLIEST_CR_LINE` and select `delete`, do the same for `EARLIEST_CR_LINE_parsed` and `ISSUE_DATE_PARSED`.
 
-![48a](assets/dk-prepared-actual-deletion.png)
+![48a](assets/dk_prepared_actual_deletion.png)
 
 
 
 Your script steps should now look like this:
 
 
-![49](assets/dk-prepared-deletion.png)
+![49](assets/dk_prepared_deletion.png)
 
 
 
@@ -914,11 +914,11 @@ Let’s turn our attention to the `INT_RATE` column. The interest rate is likely
 * Click on the `+ADD A NEW STEP` button at the bottom of your script steps.
 * Select the `Find and Replace` processor either by looking in the `Strings` menu or using the search function.
 
-![50](assets/dk-23b_replace.png)
+![50](assets/dk_23b_replace.png)
 
 * Select `INT_RATE` as the column then click `+ADD REPLACEMENT` and `replace % with a blank value`. Ensure the `Matching Mode` dropdown is set to `Substring`
 
-![50a](assets/dk-23c_replace_sub.png)
+![50a](assets/dk_23c_replace_sub.png)
 
 
 
@@ -927,7 +927,7 @@ Our `INT_RATE` column has some suspiciously high values. Let’s use the Analyze
 * Click on the `INT_RATE` column header dropdown, select `Analyze`.
 * In the Outliers section, choose `Remove rows outside 1.5 IQR` from the menu then close the `Analyze` window.
 
-![52](assets/dk-25_800_outliers.jpg)
+![52](assets/dk_25_800_outliers.jpg)
 
 Finally lets take a look at our `DTI` column which is a ratio of the borrower’s total monthly debt payments on the total debt obligations divided by the borrower’s self-reported monthly income. 
 
@@ -935,7 +935,7 @@ Finally lets take a look at our `DTI` column which is a ratio of the borrower’
 
 
 
-![52](assets/dku-prep-dti.png)
+![52](assets/dku_prep_dti.png)
 
 We can see that there are a very small number of missing rows. We're going to perform some calculations using this column in our next lab section so lets fix that now.
 
@@ -944,7 +944,7 @@ We can see that there are a very small number of missing rows. We're going to pe
 
 Your final series of steps should look like this
 
-![52](assets/dk-prepared-final.png)
+![52](assets/dk_prepared_final.png)
 
 
 
@@ -966,12 +966,12 @@ Return to your browser tab with `Dataiku Launchpad` open (if you have shut this 
 
 
 `Select` the `Features` menu
-![64](assets/dk-spk1.png)
+![64](assets/dk_spk1.png)
 
 
 
 Your Snowpark extension is now ready to use.
-![64](assets/dk-spk6.png)
+![64](assets/dk_spk6.png)
 
 
 
@@ -1023,12 +1023,12 @@ Either `select notebooks` from the menu or use the `G+N` keyboard shortcut. Sele
 
 
 
-![66](assets/dk-snowpark-2.png)
+![66](assets/dk_snowpark_2.png)
 
 
 
 
-![67](assets/dk-snowpark-3.png)
+![67](assets/dk_snowpark_3.png)
 
 
 
@@ -1038,27 +1038,27 @@ Either `select notebooks` from the menu or use the `G+N` keyboard shortcut. Sele
 Here is the notebook we imported, click `create recipe`
 
 
-![65](assets/dku-spk-recipe1b.png)
+![65](assets/dku_spk_recipe1b.png)
 
 select `Python recipe` and click `ok ` 
 
-![66](assets/dku-spk-recipe2.png)
+![66](assets/dku_spk_recipe2.png)
 
 
 For the input dataset we will select `LOANS_ENRICHED_joined_prepared` and for the output dataset type `LOANS_FE` and then click `Create recipe`
 
-![67](assets/dku-spk-recipe3b.png)
+![67](assets/dku_spk_recipe3b.png)
 
 You now have the notebook set up with correct input and output datasets in our flow. You can either use the default code editor or jupyter notebook. We will work on jupyter notebook. `Click edit in notebook`
 
 
 
-![68](assets/dku-spk-recipe4b.png)
+![68](assets/dku_spk_recipe4b.png)
 
 Ensure your Jupyter notebook is using the `snowpark` kernel, if not change it from the `Change Kernel` menu
 
 
-![68](assets/dk-snowpark-4b.png)
+![68](assets/dk_snowpark_4b.png)
 
 
 Test running your cells (note the code assumes the dataset names specified above. If you have changed any input or output dataset names be sure and make those updates in the code).
@@ -1067,9 +1067,9 @@ Feel free to add you own code and experiment, when you are done click `SAVE BACK
 
 From the default Code Editor lets check apply the correct code environment. Click on `Advanced` and then select a Snowpark code environment from the dropdown (Note: Your available code environments may differ from the screenshot)
 
-![68a](assets/dku-snowpark-9.png)
+![68a](assets/dku_snowpark_9.png)
 
-![68b](assets/dku-snowpark-10.png)
+![68b](assets/dku_snowpark_10.png)
 
 
  Return to the `Code` screen and click the `Run` button to execute the recipe using Snowpark and to generate the output dataset in the flow.
@@ -1095,7 +1095,7 @@ These two phases work in tandem to realize the idea of Responsible AI. Either th
 Before building our model first we will split our output dataset from our python step.
 
 This is how your flow should look like before splitting
-![54](assets/dk-flow-postpy.png)
+![54](assets/dk_flow_postpy.png)
 
 
 * Return to the flow and select the output dataset ```LOANS_FE``` of the python recipe and then select  the `Split` recipe from the `Actions` menu.
@@ -1103,7 +1103,7 @@ This is how your flow should look like before splitting
 * Add two datasets named `LOANS_TRAIN` and `LOANS_TEST` (leave `Store into` as the default for both) and click `CREATE RECIPE`
 
 
-![55](assets/dk-split.png)
+![55](assets/dk_split.png)
 
 
 
@@ -1112,11 +1112,11 @@ This is how your flow should look like before splitting
 
 
 
-![55a](assets/dk-split3.png)
+![55a](assets/dk_split3.png)
 
 * `LOAN_ID` as the column to split on, `70 & 30 ` split for Train and Test data. `Click run`
 
-![56](assets/dk-split2.png)
+![56](assets/dk_split2.png)
 
 
 
@@ -1125,10 +1125,10 @@ This is how your flow should look like before splitting
 
 * Select `AutoML Prediction` (aka supervised machine learning) and set `LOAN_STATUS` as the target and leave the default template of `Quick Prototypes` then click `CREATE`
 
-![57](assets/dk-30_1100_Lab_button.jpg)
+![57](assets/dk_30_1100_lab_button.jpg)
 
 
-![58](assets/dk-31_1100_lab_options.jpg)
+![58](assets/dk_31_1100_lab_options.jpg)
 
 
 When building a visual model, users can choose a template instructing DSS to prioritize considerations like speed, performance, and interpretability. Having decided on the basic type of machine learning task, you retain full freedom to adjust the default settings chosen by DSS before training any models. These options include the metric for which to optimize, what features to include, and what algorithms should be tested etc.
@@ -1137,7 +1137,7 @@ Lets take a look at the settings from the template.
 
 * Click on `DESIGN` at the top of the page.
 
-![58](assets/dk-ml-1.png)
+![58](assets/dk_ml_1.png)
 
 On the left side we can view/adjust the various settings for our current experiment. We don't have time in todays lab to cover all the options but here is a brief outline of a few we will use in the lab:
 
@@ -1154,9 +1154,9 @@ Let's use the defaults the template has set.
 
 * Click on the `TRAIN` button to start the experiment.
 
-![58](assets/dk-ml-train.png)
+![58](assets/dk_ml_train.png)
 
-![58](assets/dk-ml-train3.png)
+![58](assets/dk_ml_train3.png)
 
 The `RESULTS` pane in DSS provides a single interface to compare performance in terms of sessions or models, making it easy to find the best performing model for the chosen metric.
 
@@ -1169,7 +1169,7 @@ We can also see that some `Diagnostics` checks have been flagged.
 
 **Imp Note : Your results may vary from the screen shots below.**
 
-![58](assets/dk-train1.png)
+![58](assets/dk_train1.png)
 
 Here we can see there a number of potential issues DSS has identified for us. It seems we have an imbalanced dataset which is leading to the model almost always predicting class 1 (that there will be no default on the loan).
 
@@ -1177,7 +1177,7 @@ We can see this in our distribution.
 
 * Go back to the `DESIGN` menu and choose `Features handling` and our target variable `LOAN_STATUS`
 
-![58](assets/dk-ml-target1.png)
+![58](assets/dk_ml_target1.png)
 
 Here we can see that our loan defaults only make 4% of the dataset. So even if our model erroneously predicted that no loan would ever default it would still be correct 96% of the time for this imbalanced dataset! This is a common issue in certain types of classification problems such as credit card fraud, identifying rare diseases or, as in our case, loan defaults.
 
@@ -1188,20 +1188,20 @@ Firstly we can a look at class rebalance.
 * Go to the `Train/Test Set` and from the `Sampling method` dropdown select `Class rebalance (approx. ratio)`
 * Set the percentage to 20% and the Column as our target **LOAN_STATUS**
 
-![58](assets/dk-train2.png)
+![58](assets/dk_train2.png)
 
 Lets also change the algorithms we are using as logistic regression and tree-based algos tend not to perform as well with imbalanced datasets. Let's look at some of our boosting algos.
 
 * Go to `Algorithms` and deselect `Logistic Regression` and `Random Forest` and then select `XGBoost` and `LightGBM` (Note: you can select many more algo's but be aware it may take longer depending on your runtime setup)
 
-![58](assets/dk-ml-algoboost.png)
+![58](assets/dk_ml_algoboost.png)
 
 
 * `Save` your settings and then click `TRAIN`
 
 As you can see on our results page we saw an improvement in our score and addressed our imbalance issue. The diagnostics warn us the test set might be too small now but we have a much larger dataset available to us from the LendingClub if we want to use it.
 
-![58](assets/dk-train3.png)
+![58](assets/dk_train3.png)
 
 
 ## Evaluate a Model 
@@ -1210,17 +1210,17 @@ After having trained as many models as desired, DSS offers tools for full traini
 
 * We can directly compare models from different experiments by selecting them via the `checkbox` and then selecting `Compare` from the `ACTIONS` menu.
 
-![58](assets/dk-train4.png)
+![58](assets/dk_train4.png)
 
 * Make sure `Create a new comparison` and then click `compare`
 
-![58](assets/dk-model_compare.png)
+![58](assets/dk_model_compare.png)
 
 We can compare across our experiments, saved models and evaluations from a DSS evaluation store (not part of this lab). You can set a champion and compare to challengers.
 
 * Explore some of the options. When you are done `click` on the `model name` of your best performing model from the `Summary` menu.
 
-![58](assets/dk-model-eval2.png)
+![58](assets/dk_model_eval2.png)
 
 Clicking on any model produces a full report of tables and visualizations of performance against a range of different possible metrics.
 
@@ -1228,13 +1228,13 @@ Clicking on any model produces a full report of tables and visualizations of per
 * For example `Subpopulations Analysis` allows you to identify potential bias in your model by seeing how it performs across different sub-groups
 * `Interactive Scoring` allows you to run real time `“what-if” analysis` to understand the impact of given features
 
-![60](assets/dk-33_1100_subpop.jpg)
+![60](assets/dk_33_1100_subpop.jpg)
 
 
 Here we can see `Variable importance` 
 
 
-![61](assets/dk-35-1100_variable_imp.jpg)
+![61](assets/dk_35_1100_variable_imp.jpg)
 
 
 <!-- ------------------------ -->
@@ -1247,11 +1247,11 @@ Deploying a model creates a “saved” model in the Flow, together with its lin
 
 * Click on `DEPLOY`, accept the default model name and click `CREATE`
 
-![61](assets/df-deploy2.png)
+![61](assets/df_deploy2.png)
 
 Your flow should now look like this:
 
-![61](assets/dk-flow-model.png)
+![61](assets/dk_flow_model.png)
 
 
 <!-- ------------------------ -->
@@ -1260,21 +1260,21 @@ Your flow should now look like this:
 
 * From your `Flow` select the `newly deployed model` (Green diamond) and the `Score` recipe from the `actions menu`
 
-![62](assets/dk-score1.png)
+![62](assets/dk_score1.png)
 
 * Select your `LOANS_TEST` from the `Input dataset dropdown`. Leave the `Name` and `Store into` for the output as the defaults and click `CREATE RECIPE`
 
 
-![62](assets/dk-score2.png)
+![62](assets/dk_score2.png)
 
 * Ensure `In-Database (Snowflake native)` is selected as the engine in order to use the Java UDF capability then click `RUN'
 
 
-![62](assets/dk-37-1200_score.jpg)
+![62](assets/dk_37_1200_score.jpg)
 
 Your final project flow should now look like this.
 
-![62](assets/dk-final-flow.png)
+![62](assets/dk_final_flow.png)
 
 We can now We can see the results back on the Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the `CREDIT_SCORING_LOANS_TEST_SCORED` table that was created once we kicked off our prediction job. 
 
@@ -1292,7 +1292,7 @@ LIMIT 10;
 ```
 
 
-![62](assets/sf-score-results.png)
+![62](assets/sf_score_results.png)
 
 Additional info 
 
@@ -1314,7 +1314,7 @@ order by prediction_yes DESC;
 
 Congratulations  you have now successfully built,  deployed and scored your model results back to Snowflake. Your final flow should look like this.
 
-![63](assets/dk-final-flow2.png)
+![63](assets/dk_final_flow2.png)
 
 **What we have covered**
 
@@ -1353,4 +1353,4 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 
 5.Click on Terms & Billing, and enable Anaconda terms.
 
-![73](assets/sf-anaconda1.png)
+![73](assets/sf_anaconda1.png)

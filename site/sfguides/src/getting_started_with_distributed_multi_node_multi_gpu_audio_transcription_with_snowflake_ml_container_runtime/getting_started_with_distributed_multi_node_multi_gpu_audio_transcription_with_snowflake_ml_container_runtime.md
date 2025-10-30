@@ -81,7 +81,7 @@ Whisper large-v3 has the same architecture as the previous [large](https://huggi
 
 See details here for the [model](https://huggingface.co/openai/whisper-large-v3)
 
-![ContainerRuntime Multi Node Multi GPU Inferencing](assets/multi-node_multi-gpu_inferencing.png)
+![ContainerRuntime Multi Node Multi GPU Inferencing](assets/multi_node_multi_gpu_inferencing.png)
 
 ### Prerequisites
 
