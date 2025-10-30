@@ -87,7 +87,7 @@ Technical lineage in Collibra looks for Snowflake data includes the SQL transfor
 
 Users can see the actual SQL transformations if needed: 
 
-![filteredcountry](assets/sqltransformations.jpg)
+![filteredcountry](assets/SQLTransformations.jpg)
 
 Collibra also allows users to see profiling information and sampling (anonymized) if needed. Here is an example of profiling information:
 
