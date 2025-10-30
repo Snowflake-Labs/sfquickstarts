@@ -1,17 +1,18 @@
 author: Kala Govindarajan
 id: root-cause-analysis-for-vehicle-product-quality-with-snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
-language: en
 summary: 
+categories: Getting-Started,data-science-&-ml, solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Cortex, Data Science & Ai
 
 # Root Cause Analysis for Vehicle Product Quality with Snowflake
 <!-- ------------------------ -->
 ## Overview 
+Duration: 1
 
-![assets/manufacturing.png](assets/manufacturing.png)
+<img src="assets/manufacturing.png"/>
 
 In the automotive industry, OEMs often use a hybrid cloud strategy for data storage. For example, Connected Mobility data (vehicle and telematics) might reside in AWS's US-West-2 region, while parts manufacturing data is stored in GCP's US-Central-1. Additionally, Supplier Quality data could be hosted in yet another cloud or region, such as Azure US-West-2. This distribution is merely illustrative, emphasizing a strategy to avoid reliance on any single public cloud provider. However, this multi-cloud approach introduces several challenges, particularly for the customer. One notable challenge is conducting "Vehicle Quality Root Cause Analysis (RCA)."
 
@@ -54,12 +55,13 @@ The Cross-region data sharing from Snowflake offers a robust solution to the mul
 
 <!-- ------------------------ -->
 ## Setup Environment
+Duration: 2
 
 This section will walk you through creating various objects
 
 #### High-Level Workflow
 
-![assets/connectedmobilityflow.png](assets/connectedmobilityflow.png)
+<img src="assets/connectedmobilityflow.png"/>
 
 
 In a real-world situation with Snowflakes Data Sharing each of the data will be shared from a particular region and cloud provider. In this scenario for sake of simplicity we will assume the data is available in a single cloud provider, AWS S3 bucket. We will be downloading the data and storing in tables in a Snowflake account and use that for further analytics.
@@ -106,6 +108,7 @@ After successful completion of the data loading in the notebook, you are all set
 
 <!-- ------------------------ -->
 ## Streamlit App
+Duration: 2
 
 We will now build a quick multi-page Streamlit in Snowflake app. The app and necessary files are present in the cloned repository [streamlit folder](https://github.com/Snowflake-Labs/sfguide-root-cause-analysis-for-vehicle-product-quality-with-snowflake/tree/main/scripts/streamlit) in the git repository.
 
@@ -116,11 +119,11 @@ We will carry the same assumption and the data and maps displyed in the apps wil
 
 This page displays a map with the locations of data sources. It uses Pydeck for the visualization.
 
-![assets/homepage.png](assets/homepage.png)
+<img src="assets/homepage.png"/>
 
 ### Connected Mobility Data App
 
-![assets/connectedmobilitydata_analysis.png](assets/connectedmobilitydata_analysis.png)
+<img src="assets/ConnectedMobilitydata_Analysis.png"/>
 
 This page serves to display and analyze connected mobility data. Overall in this page the user can :
 
@@ -134,7 +137,7 @@ This page serves to display and analyze connected mobility data. Overall in this
 
 ### Manufacturing Data App
 
-![assets/manufacturingdata_analysis.png](assets/manufacturingdata_analysis.png)
+<img src="assets/Manufacturingdata_analysis.png"/>
 
 This page serves to display and analyze manufacturing data related to vehicle battery parts. This page provides insights into the suppliers, manufacturing facilities, battery types, and components involved in the production process. Let's break down its functionality:
 
@@ -144,7 +147,7 @@ This page serves to display and analyze manufacturing data related to vehicle ba
   
 ### Supplier Quality App
 
-![assets/supplierquality_analysis.png](assets/supplierquality_analysis.png)
+<img src="assets/Supplierquality_analysis.png"/>
 
 
 This page provides a detailed analysis of battery part numbers, their performance metrics, and the corresponding supplier information.  Let's break down its functionality:
@@ -159,7 +162,7 @@ This page provides a detailed analysis of battery part numbers, their performanc
 
 ### RCA Bot
 
-![assets/rcabot.png](assets/rcabot.png)
+<img src="assets/RCABot.png"/>
 
 This page provides a chat interface for users to input natural language queries and get corresponding SQL queries, which can then be executed to retrieve and visualize data. Here’s a detailed breakdown of its functionality:
 
@@ -181,6 +184,7 @@ Some of the LLM options include:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
+Duration: 1
 
 Vehicle Quality Root Cause Analysis is a complex yet critical process for OEMs to ensure the reliability and safety of their vehicles. The Cross-region data sharing capability from Snowflake, offers a robust solution by providing a unified, scalable, and secure data platform. By centralizing data storage and processing in Snowflake, OEMs can streamline the RCA process, enhance collaboration, and derive meaningful insights, ultimately leading to better decision-making and improved vehicle quality.
 
