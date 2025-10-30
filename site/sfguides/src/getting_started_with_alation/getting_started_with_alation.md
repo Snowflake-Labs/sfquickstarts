@@ -46,17 +46,17 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 * Then select ``` Partner Connect ```
 * Either type in Alation in the search or scroll down to the Security & Governance section.
 
-![Line1](./assets/BorderLine.png)
+![Line1](./assets/borderline.png)
 **2. Default Objects Created in your Snowflake trial account.**
 ![Step2](./assets/section3_alationtrial_screen2.png)
 * Click: ``` Connect ```
 
-![Line2](./assets/BorderLine.png)
+![Line2](./assets/borderline.png)
 **3. Your Partner Connect Account has been Created**    
 ![Step3](./assets/section3_alationtrial_screen3.png)
 * Click: ``` Activate ```
 
-![Line3](./assets/BorderLine.png)
+![Line3](./assets/borderline.png)
 **4. Alation Account set up**
 
 ![Step4](./assets/section3_alationtrial_screen4.png)
@@ -65,7 +65,7 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 * Verify your password.
 * Click: ``` Start Free Trial ```
 
-![Line4](./assets/BorderLine.png)
+![Line4](./assets/borderline.png)
 **5. Getting Started User Information**
 
 ![Step5](./assets/section3_alationtrial_screen5.png)
@@ -74,7 +74,7 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 * Note: the business email provided is how Alation will share additional infomation throughout the trial.
 * Click: ``` Next ```
 
-![Line5](./assets/BorderLine.png)
+![Line5](./assets/borderline.png)
 **6. Your Account is Ready**
 
 ![Step6](./assets/section3_alationtrial_screen6.png)
@@ -96,7 +96,7 @@ Access the URL provided for your Alation trial in your preferred browser, like C
 **2. On the home page scroll down to the bottom and click on Data Governance and Quality.**
 
 ![VHOL-Screen1](./assets/section4_access_screen1.png)
-![VHOL-Border1](./assets/BorderLine.png)
+![VHOL-Border1](./assets/borderline.png)
 **3. The Data Governance and Quality Lab.**
 
 This is the main page that has the six chapters that will be covered in the lab. Each chapter covers a particular topic.
@@ -132,7 +132,7 @@ In today's world of data management, it is common to have policies and procedure
 
 ![VHOL-Screen8](./assets/section6_policies_screen1.png)
 ![VHOL-Screen9](./assets/section6_policies_screen2.png)
-![VHOL-Border4](./assets/BorderLine.png)
+![VHOL-Border4](./assets/borderline.png)
 
 <table>   
     <thead>
@@ -161,7 +161,7 @@ In today's world of data management, it is common to have policies and procedure
 
 ![VHOL-Screen12](./assets/section6_policies_screen5.png)
 
-![VHOL-Border5](./assets/BorderLine.png)
+![VHOL-Border5](./assets/borderline.png)
 
 <table>   
     <thead>
@@ -195,7 +195,7 @@ Alation creates an experience that allows users to expand their world of knowled
 ![VHOL-Screen14](./assets/section7_search_screen1.png)
 ![VHOL-Screen15](./assets/section7_search_screen2.png)
 
-![VHOL-Border6](./assets/BorderLine.png)
+![VHOL-Border6](./assets/borderline.png)
 
 <table>   
     <thead>
@@ -230,7 +230,7 @@ Alation creates an experience that allows users to expand their world of knowled
 
 ![VHOL-Screen19](./assets/section7_search_screen6.png)
 
-![VHOL-Border7](./assets/BorderLine.png)
+![VHOL-Border7](./assets/borderline.png)
 
 <table>   
     <thead>
@@ -265,7 +265,7 @@ Queries can be developed by those who know SQL and shared with others in the org
 ![VHOL-Screen21](./assets/section8_compose_screen1.png)
 ![VHOL-Screen22](./assets/section8_compose_screen2.png)
 
-![VHOL-Border8](./assets/BorderLine.png)
+![VHOL-Border8](./assets/borderline.png)
 
 <table>   
     <thead>
@@ -297,7 +297,7 @@ Queries and Compose are accessible from several places in the application. The f
 6. The Connection Settings is where you provide your credentials to connect to the Alation provided Demo Sample Data - data source.
 
 ![VHOL-Screen25](./assets/section8_compose_screen5.png)
-![VHOL-Border9](./assets/BorderLine.png)
+![VHOL-Border9](./assets/borderline.png)
 
 <table>   
     <thead>
@@ -332,7 +332,7 @@ When the stakes are high, especially when providing data for AI models, data qua
 ![VHOL-Screen27](./assets/section9_quality_screen1.png)
 ![VHOL-Screen28](./assets/section9_quality_screen2.png)
 
-![VHOL-Border4](./assets/BorderLine.png)
+![VHOL-Border4](./assets/borderline.png)
 
 <table>   
     <thead>
@@ -412,7 +412,7 @@ You did it! In this short period, you have seen how Alation and Snowflake work t
 ![VHOL-Screen38](./assets/section10_summary_screen1.png)
 ![VHOL-Screen39](./assets/section10_summary_screen2.png)
 
-![VHOL-Border10](./assets/BorderLine.png)
+![VHOL-Border10](./assets/borderline.png)
 
 
 3. Throughout the trial, self-guided Self-service Analytics, Data Governance, and Compose SQL Editor demos will be launched. A new one each day will display. Visit Help Center is located under the ? in the top right of the webpage should you need any help about the features you are trying out.

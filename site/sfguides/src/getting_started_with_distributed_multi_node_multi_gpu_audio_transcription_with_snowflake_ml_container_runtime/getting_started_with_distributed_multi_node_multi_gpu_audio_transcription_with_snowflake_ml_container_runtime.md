@@ -153,18 +153,18 @@ To get started, follow these steps:
 
   * Click on **Create Button**
 
-![Audio Processing Setup](assets/Audio_processing_Setup_create_notebook.png)
+![Audio Processing Setup](assets/audio_processing_setup_create_notebook.png)
 
 * Click the three dots in the top right \> Notebook Settings  
 * Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
 
-![Audio Processing Setup External Access](assets/Audio_processing_Setup_notebook_settings_external_access.png)
+![Audio Processing Setup External Access](assets/audio_processing_setup_notebook_settings_external_access.png)
 
 * Run cells in the notebook\!
 
 * Notebook will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named AUDIO\_FILES\_STAGE.
 
-![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
+![Audio Processing Setup Notebook](assets/audio_processing_notebook.png)
 
 
 Note: - "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
@@ -236,13 +236,13 @@ To get started, follow these steps:
 
   * Click on **Create Button**
 
-![Audio Processing Distributed Inferencing Notebook](assets/Audio_processing_Distributed_Inferencing_create_notebook.png)
+![Audio Processing Distributed Inferencing Notebook](assets/audio_processing_distributed_inferencing_create_notebook.png)
 
 * Click the three dots in the top right \> Notebook Settings  
 * Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
 
 
-![Audio Processing Distributed Inferencing Notebook External Access](assets/Audio_processing_Distributed_Inferencing_notebook_settings_external_access.png)
+![Audio Processing Distributed Inferencing Notebook External Access](assets/audio_processing_distributed_inferencing_notebook_settings_external_access.png)
 
 * Run cells in the notebook\!
 

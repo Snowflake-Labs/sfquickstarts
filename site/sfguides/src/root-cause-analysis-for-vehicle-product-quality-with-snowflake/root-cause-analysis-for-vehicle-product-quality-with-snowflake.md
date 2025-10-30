@@ -120,7 +120,7 @@ This page displays a map with the locations of data sources. It uses Pydeck for 
 
 ### Connected Mobility Data App
 
-![assets/ConnectedMobilitydata_Analysis.png](assets/ConnectedMobilitydata_Analysis.png)
+![assets/connectedmobilitydata_analysis.png](assets/connectedmobilitydata_analysis.png)
 
 This page serves to display and analyze connected mobility data. Overall in this page the user can :
 
@@ -134,7 +134,7 @@ This page serves to display and analyze connected mobility data. Overall in this
 
 ### Manufacturing Data App
 
-![assets/Manufacturingdata_analysis.png](assets/Manufacturingdata_analysis.png)
+![assets/manufacturingdata_analysis.png](assets/manufacturingdata_analysis.png)
 
 This page serves to display and analyze manufacturing data related to vehicle battery parts. This page provides insights into the suppliers, manufacturing facilities, battery types, and components involved in the production process. Let's break down its functionality:
 
@@ -144,7 +144,7 @@ This page serves to display and analyze manufacturing data related to vehicle ba
   
 ### Supplier Quality App
 
-![assets/Supplierquality_analysis.png](assets/Supplierquality_analysis.png)
+![assets/supplierquality_analysis.png](assets/supplierquality_analysis.png)
 
 
 This page provides a detailed analysis of battery part numbers, their performance metrics, and the corresponding supplier information.  Let's break down its functionality:
@@ -159,7 +159,7 @@ This page provides a detailed analysis of battery part numbers, their performanc
 
 ### RCA Bot
 
-![assets/RCABot.png](assets/RCABot.png)
+![assets/rcabot.png](assets/rcabot.png)
 
 This page provides a chat interface for users to input natural language queries and get corresponding SQL queries, which can then be executed to retrieve and visualize data. Here’s a detailed breakdown of its functionality:
 

@@ -77,7 +77,7 @@ curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/​<bootstrap-
 curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86_64/snowsql-1.2.9-darwin_x86_64.pkg​
 ```
 
-![Snowflake_Download_Installer_image](assets/Snowflake_Download_Installer.png)
+![Snowflake_Download_Installer_image](assets/snowflake_download_installer.png)
 
 ### 로컬에서 SnowSQL 설치
 
@@ -129,7 +129,7 @@ create or replace table emp_basic (
 
 [CREATE TABLE 또는 REPLACE TABLE](https://docs.snowflake.com/ko/sql-reference/sql/create-table.html)을 실행하면 지정된 매개 변수에 따라 새로운 테이블이 구축될 것입니다. 이 예는 샘플 CSV 직원 데이터 파일에 있는 동일한 열을 반영합니다.
 
-![Snowflake_Create_Table_image](assets/Snowflake_createTable.png)
+![Snowflake_Create_Table_image](assets/snowflake_createtable.png)
 
 ### 가상 웨어하우스 생성
 
@@ -143,7 +143,7 @@ create or replace warehouse sf_tuts_wh with
 
 생성한 후 이 가상 웨어하우스는 여러분의 현재 세션을 위해 활성 상태가 되며 컴퓨팅 리소스가 필요해지면 실행됩니다.
 
-![Snowflake_createWarehouse_image](assets/Snowflake_createWarehouse.png)
+![Snowflake_createWarehouse_image](assets/snowflake_createwarehouse.png)
 
 데이터베이스 오브젝트가 준비되었다면 SnowSQL을 사용하여 샘플 데이터를 `emp_basic` 테이블로 이동하겠습니다.
 
@@ -179,7 +179,7 @@ put file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;
 
 macOS `file:///tmp/` 폴더의 샘플 직원 CSV 파일을 `sf_tuts` 데이터베이스 내에 있는 `emp_basic` 테이블로 스테이징하기 위한 PUT 호출입니다.
 
-![Snowflake_StagePut_image](assets/Snowflake_StagePut.png)
+![Snowflake_StagePut_image](assets/snowflake_stageput.png)
 
 ### 스테이징된 파일 LIST
 
@@ -195,7 +195,7 @@ list @sf_tuts.public.%emp_basic;
 
 위 예시 명령은 `emp_basic` 테이블을 위해 스테이징된 파일을 출력하기 위한 것입니다. 더 많은 LIST 구문은 [여기](https://docs.snowflake.com/ko/sql-reference/sql/list.html)에서 자세히 알아보십시오.
 
-![Snowflake_ViewStaged_image](assets/Snowflake_ViewStaged.png)
+![Snowflake_ViewStaged_image](assets/snowflake_viewstaged.png)
 
 ### 테이블로 [COPY INTO](https://docs.snowflake.com/ko/sql-reference/sql/copy-into-table.html)
 
@@ -209,7 +209,7 @@ copy into emp_basic
 
 파일을 스테이징한 다음 데이터는 `emp_basic` 테이블로 복사됩니다. 이 DML 명령은 또한 이전에 만든 가상 웨어하우스를 자동으로 재개합니다.
 
-![Snowflake_CopyStaged_image](assets/Snowflake_CopyStaged.png)
+![Snowflake_CopyStaged_image](assets/snowflake_copystaged.png)
 
 출력은 데이터가 성공적으로 복사되었으며 모든 오류를 기록하는지를 나타냅니다.
 
@@ -227,7 +227,7 @@ select * from emp_basic;
 
 다음 예시 명령은 `emp_basic` 테이블에 있는 모든 것을 대상으로 `select` 명령을 수행합니다.
 
-![Snowflake_SELECT_image](assets/Snowflake_SELECT.png)
+![Snowflake_SELECT_image](assets/snowflake_select.png)
 
 테이블에 있는 모든 데이터를 살피는 것은 가장 효율적으로 시간을 사용하는 방법이 아닙니다. 몇몇 함수와 일부 쿼리 구문을 사용하면 특정 결과를 간단히 가져올 수 있습니다.
 
@@ -239,7 +239,7 @@ select * from emp_basic where first_name = 'Ron';
 
 이 쿼리는 `emp_basic` 테이블에서 `first_name`이 ‘Ron’인 직원 목록을 반환합니다.
 
-![Snowflake_SELECTRon_image](assets/Snowflake_SELECTRon.png)
+![Snowflake_SELECTRon_image](assets/snowflake_selectron.png)
 
 - [LIKE](https://docs.snowflake.com/ko/sql-reference/functions/like.html) 함수는 `%` 및 `_` 와일드카드를 지원합니다.
 
@@ -249,7 +249,7 @@ select email from emp_basic where email like '%.au';
 
 LIKE 함수는 `au`를 위해 `emp_basic` 테이블에 있는 모든 이메일을 확인하며 레코드를 반환합니다.
 
-![Snowflake_SELECTEmailAU_image](assets/Snowflake_SELECTEmailAU.png)
+![Snowflake_SELECTEmailAU_image](assets/snowflake_selectemailau.png)
 
 Snowflake는 다양한 [함수](https://docs.snowflake.com/ko/sql-reference-functions.html), [연산자](https://docs.snowflake.com/ko/sql-reference/operators.html) 및 [명령](https://docs.snowflake.com/ko/sql-reference-commands.html)을 지원합니다. 그러나 보다 구체적인 작업을 수행해야 한다면 [외부 함수](https://docs.snowflake.com/ko/sql-reference/external-functions-introduction.html) 설정을 고려하십시오.
 
@@ -275,7 +275,7 @@ insert into emp_basic values
 
 표시된 명령에서 `insert`는 2명의 새로운 직원을 `emp_basic` 테이블에 추가하기 위해 사용됩니다.
 
-![Snowflake_INSERT_image](assets/Snowflake_INSERT.png)
+![Snowflake_INSERT_image](assets/snowflake_insert.png)
 
 - [DROP](https://docs.snowflake.com/ko/sql-reference/sql/drop.html) 오브젝트는 더 이상 사용되지 않습니다.
 

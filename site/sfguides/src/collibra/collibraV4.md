@@ -21,11 +21,11 @@ technical metadata and lineage, as well as perform profiling and classification.
 
 Collibra overall functionality in integration with Snowflake can be summarized with the following diagram:
 
-![Catalog](assets/Diagram1.jpg)
+![Catalog](assets/diagram1.jpg)
 
 Collibra is a Data Intelligence platform that allows users to search, and find or create trusted data Enterprise wide. Collibra allows users to automatically catalog technical metadata and link it to the business and logical and data privacy context required. It also allows for Data Quality discovery and metrics. Collibra has automation in the collaboration of users, the certification of data assets and in general of data intelligence processes. 
 
-![Catalog](assets/DataIntelligence.png)
+![Catalog](assets/dataintelligence.png)
 
 
 
@@ -62,7 +62,7 @@ In this step we will import into Collibra the techincal metadata from a Snowflak
 
 Go to Collibra and click on Catalog to start the ingestion:
 
- ![Catalog](assets/Catalog.jpg)
+ ![Catalog](assets/catalog.jpg)
 
 Click on the plus sign (green square box with white plus sign,top right on the screen) to choose the database:
 
@@ -83,11 +83,11 @@ Collibra, in addition to technical metadata it can also import technical lineage
 
 Technical lineage in Collibra looks for Snowflake data includes the SQL transformations. Here is an example of technical lineage of Snowflake data in Collibra:
 
-![filteredcountry](assets/TechnicalLineage.jpg)
+![filteredcountry](assets/technicallineage.jpg)
 
 Users can see the actual SQL transformations if needed: 
 
-![filteredcountry](assets/SQLTransformations.jpg)
+![filteredcountry](assets/sqltransformations.jpg)
 
 Collibra also allows users to see profiling information and sampling (anonymized) if needed. Here is an example of profiling information:
 
@@ -101,7 +101,7 @@ In this stage, we will specifically define the Data Privacy policies and rules t
 
 Please click on the Collibra Protect option after clicking the nine dots all the way to the top right of the Collibra User Interface:
 
-![Protect](assets/Protect.jpg)
+![Protect](assets/protect.jpg)
 
 This will take you to the Collibra Protect environment, then click on the Data Access Rules. And then click on Create a Data Access Rule button:
 
@@ -262,7 +262,7 @@ Collibra provides value for Snowflake users because it provides a unified enviro
 
 The value that Collibra brings to Snowflake implementations in brief:
 
-![value](assets/Value.jpg)
+![value](assets/value.jpg)
 
 Collibra is an ideal environment for all Snowflake users, business or technical, to view, search, understand, trust and collaborate with data. 
 

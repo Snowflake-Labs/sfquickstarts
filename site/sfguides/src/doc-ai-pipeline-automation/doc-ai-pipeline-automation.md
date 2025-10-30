@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 This QuickStart help you understand and build the Snowflake Document AI Data Extraction & Validation Pipeline, designed for seamless and reusable document processing. The pipeline enables users to load their files into a Snowflake stage and leverages streams, tasks, and Python-based procedures for efficient data extraction, validation, and downstream integration. It can be easily adapted to work with multiple Document AI models by creating an appropriate end table to capture the final data points.
 
-![DataFlow](assets/Flow.png)
+![DataFlow](assets/flow.png)
 
 The pipeline ensures that documents meet business expectations through pre-processing checks, feeds suitable documents into a DOC AI model for data extraction, validates the extracted data against business-specific accuracy thresholds, and routes clean data to downstream systems. Additionally, the Streamlit UI provides a live view of the data flow and key performance metrics, enabling real-time monitoring and insights into pipeline performance. This flexible, automated solution is ideal for handling diverse document processing requirements.
 
@@ -199,14 +199,14 @@ The Streamlit app provides full control over the pipeline and enables real-time 
 
 This step completes the setup, allowing you to see the automated document processing pipeline in action!
 
-![Streamlit](assets/Streamlit_screen.png)
+![Streamlit](assets/streamlit_screen.png)
 
 
 <!-- ------------------------ -->
 ## Data Validation
 
 Once extracted, data is validated to ensure accuracy. Key data points, such as the **invoice number**, are assigned high validation scores since incorrect values impact downstream processes. Validation rules help maintain data integrity and ensure only high-quality data is processed.
-![Validation](assets/Validation.png)
+![Validation](assets/validation.png)
 
 <!-- ------------------------ -->
 ## Cleanup

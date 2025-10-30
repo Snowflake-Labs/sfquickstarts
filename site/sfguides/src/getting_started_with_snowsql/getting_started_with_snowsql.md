@@ -72,7 +72,7 @@ bootstrap version 1.2 and SnowSQL version 1.2.9.
 curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86_64/snowsql-1.2.9-darwin_x86_64.pkg​
 ```
 
-![Snowflake_Download_Installer_image](assets/Snowflake_Download_Installer.png)
+![Snowflake_Download_Installer_image](assets/snowflake_download_installer.png)
 
 ### Install SnowSQL Locally
 - Double-click the installer file and walk through the wizard prompts.
@@ -124,7 +124,7 @@ create or replace table emp_basic (
 
 Running [​create or replace table​](https://docs.snowflake.com/en/sql-reference/sql/create-table.html) will build a new table based on the parameters specified. This example reflects the same columns in the sample CSV employee data files.
 
-![Snowflake_Create_Table_image](assets/Snowflake_createTable.png)
+![Snowflake_Create_Table_image](assets/snowflake_createtable.png)
 
 ### Make a Virtual Warehouse
 ```console
@@ -136,7 +136,7 @@ create or replace warehouse sf_tuts_wh with
 ```
 After creation, this virtual warehouse will be active for your current session and begin running once the computing resources are needed.
 
-![Snowflake_createWarehouse_image](assets/Snowflake_createWarehouse.png)
+![Snowflake_createWarehouse_image](assets/snowflake_createwarehouse.png)
 
 With the database objects ready, you’ll employ SnowSQL to move the sample data onto the `emp_basic` table.
 
@@ -171,7 +171,7 @@ put file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;
 
 Here is a PUT call to stage the sample employee CSV files from a macOS `file:///tmp/` folder onto the `emp_basic` table within the `sf_tuts` database.
 
-![Snowflake_StagePut_image](assets/Snowflake_StagePut.png)
+![Snowflake_StagePut_image](assets/snowflake_stageput.png)
 
 ### LIST Staged Files
 
@@ -188,7 +188,7 @@ list @sf_tuts.public.%emp_basic;
 The example command above is to output the staged files for the `emp_basic` table. Learn
 more LIST syntax [​here​](https://docs.snowflake.com/en/sql-reference/sql/list.html).
 
-![Snowflake_ViewStaged_image](assets/Snowflake_ViewStaged.png)
+![Snowflake_ViewStaged_image](assets/snowflake_viewstaged.png)
 
 ### [COPY INTO​](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) Your Table
 
@@ -201,7 +201,7 @@ copy into emp_basic
 ```
 After getting the files staged, the data is copied into the `emp_basic` table. This DML command also auto-resumes the virtual warehouse made earlier.
 
-![Snowflake_CopyStaged_image](assets/Snowflake_CopyStaged.png)
+![Snowflake_CopyStaged_image](assets/snowflake_copystaged.png)
 
 The output indicates if the data was successfully copied and records any errors.
 
@@ -219,7 +219,7 @@ select * from emp_basic;
 
 Here is an example command to `select` everything on the `emp_basic` table.
 
-![Snowflake_SELECT_image](assets/Snowflake_SELECT.png)
+![Snowflake_SELECT_image](assets/snowflake_select.png)
 
 Sifting through everything on your table may not be the best use of your time. Getting specific
 results are simple, with a few functions and some query syntax.
@@ -232,7 +232,7 @@ select * from emp_basic where first_name = 'Ron';
 
 This query returns a list of employees by the `first_name` of ‘Ron’ from the `emp_basic` table.
 
-![Snowflake_SELECTRon_image](assets/Snowflake_SELECTRon.png)
+![Snowflake_SELECTRon_image](assets/snowflake_selectron.png)
 
 - [LIKE​](https://docs.snowflake.com/en/sql-reference/functions/like.html) function supports wildcard `%` and `_`.
 
@@ -242,7 +242,7 @@ select email from emp_basic where email like '%.au';
 
 The like function checks all emails in the `emp_basic` table for `au` and returns a record.
 
-![Snowflake_SELECTEmailAU_image](assets/Snowflake_SELECTEmailAU.png)
+![Snowflake_SELECTEmailAU_image](assets/snowflake_selectemailau.png)
 
 Snowflake supports many [​functions](https://docs.snowflake.com/en/sql-reference-functions.html)​, [​operators](https://docs.snowflake.com/en/sql-reference/operators.html)​, and [​commands](https://docs.snowflake.com/en/sql-reference-commands.html)​. However, if you need more
 specific tasks performed, consider setting up an [​external function](https://docs.snowflake.com/en/sql-reference/external-functions-introduction.html)​​.
@@ -268,7 +268,7 @@ insert into emp_basic values
 #### Drop Objects
 In the command displayed, `insert` is used to add two new employees to the `emp_basic` table.
 
-![Snowflake_INSERT_image](assets/Snowflake_INSERT.png)
+![Snowflake_INSERT_image](assets/snowflake_insert.png)
 
 - [DROP​](https://docs.snowflake.com/en/sql-reference/sql/drop.html) objects no longer in use.
 

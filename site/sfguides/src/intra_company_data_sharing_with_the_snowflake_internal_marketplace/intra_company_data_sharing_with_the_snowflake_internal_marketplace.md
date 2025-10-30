@@ -16,7 +16,7 @@ Sharing information between departments or business units ("domains") of a compa
 
 **Snowflake Internal Marketplace** enables companies to publish documented and governed data products, so they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data products and wrap detailed governance around them to control which consumers can use which data products or which parts of a data product.
 
-![Snowflake Horizon Diagram](assets/Overview.png)
+![Snowflake Horizon Diagram](assets/overview.png)
 
 
 ### What You’ll Learn
@@ -60,7 +60,7 @@ The setup follows these steps:
 
 For Steps 2 through 7 you can download [scripts here](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/tree/main/sql) and execute them in different accounts as per the instructions below. In the Snowflake UI you can easily import these scripts like this:
 
-![Import](assets/ImportScript.png)
+![Import](assets/importscript.png)
 
 ### Step 1: Create a Snowflake trial account
 
@@ -273,7 +273,7 @@ Continue working as the `org_admin` user in your Organization Account `HOL_ORG_A
 
 - Run the downloaded script `STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql` in a worksheet.
 
-![Import](assets/ReplaceEmail.png)
+![Import](assets/replaceemail.png)
 
 ### Step 6: Setup of a TPC-H sample database
 - Download the script [`STEP6(HOL_ACCOUNT1)_create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP6(HOL_ACCOUNT1)_create_lab_database.sql) 
@@ -314,7 +314,7 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 1. Navigate to the Provider Studio and click the blue **+Create Listing** button in the top right. 
 2. Select **"Internal Marketplace"**.
 
-![IM](assets/ProviderStudio.png)
+![IM](assets/providerstudio.png)
 
 3. Click on **“Untitled Listing”** and give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
 
@@ -439,7 +439,7 @@ In this section you will request access to the new data product for the **Market
 - After submitting the access request click the grey **View request** button to review or even withdraw your request. 
     - If you withdraw the request, please submit it again.
 
-![](assets/RAW01.png)
+![](assets/raw01.png)
 
 Now let's also request access for the  **Supply chain** team.
 - In a separate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user.
@@ -453,11 +453,11 @@ Let's switch back to the perspective of the data product owner to review and gra
 - Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
 - Click on each of the two requests to review the details and use the green **Grant** button to approve.
 
-![](assets/RAW02.png)
+![](assets/raw02.png)
 
 Switch from **Needs Review** to **Resolved Requests** to see the history of requests. 
 
-![](assets/RAW03.png)
+![](assets/raw03.png)
 
 ---
 ###
@@ -479,7 +479,7 @@ Now that access has been granted, let's go back to the consumer roles:
   - Schema and object names are appended to access specific objects in the data product.
 - **Optional**: Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and perform the same steps.
 
-![](assets/ConsumeListing.png)
+![](assets/consumelisting.png)
 
 ---
 ## Live Data Sharing

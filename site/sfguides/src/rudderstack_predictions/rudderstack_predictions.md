@@ -384,7 +384,7 @@ You can log-in [here](https://app.rudderstack.com/login).
 
 ### Navigate to Profiles Screen
 
-![Profiles](assets/Navigation.png)
+![Profiles](assets/navigation.png)
 
 ### Enter a Name and Description for the Profiles Project
 
@@ -394,7 +394,7 @@ Enter in a unique name and description for the Profiles Project where you will b
 
 ### Select Sources
 
-![Source](assets/Sources.png)
+![Source](assets/sources.png)
 
 Select your Snowflake warehouse. If you do not have your Snowflake warehouse configured, please set up an event stream connection to Snowflake in RudderStack ([see details here](https://www.rudderstack.com/docs/destinations/warehouse-destinations/snowflake/)) and refer to the setup steps above.
 
