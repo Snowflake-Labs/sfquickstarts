@@ -287,7 +287,7 @@ drop warehouse if exists sf_tuts_wh;
 
 이 자습서에서 기본 사항을 연습한 후에는 `sf-tuts` 데이터베이스와 웨어하우스가 더 이상 필요하지 않습니다. 이를 모두 삭제하려면 `drop` 명령을 사용합니다.
 
-<!--![Snowflake_DROP_image](assets/Snowflake_DROP.png)-->
+<!--![Snowflake_DROP_image](assets/snowflake_drop.png)-->
 - `!exit` 또는 `!disconnect`로 연결 종료
 
 보안상의 이유로 여러분의 터미널 연결을 불필요하게 유지하는 않는 것이 좋습니다. SnowSQL 연결을 종료할 준비가 되었다면 단순히 `!exit`를 입력합니다.

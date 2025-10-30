@@ -91,7 +91,7 @@ Users can see the actual SQL transformations if needed:
 
 Collibra also allows users to see profiling information and sampling (anonymized) if needed. Here is an example of profiling information:
 
-![filteredcountry](assets/Profiling.jpg)
+![filteredcountry](assets/profiling.jpg)
 
 <!-- ------------------------ -->
 

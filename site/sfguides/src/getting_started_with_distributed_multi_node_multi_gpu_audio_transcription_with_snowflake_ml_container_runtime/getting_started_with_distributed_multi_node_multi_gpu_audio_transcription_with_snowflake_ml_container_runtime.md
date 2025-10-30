@@ -279,7 +279,7 @@ You can also leverage Snowflake ML Container Runtime outside of Snowflake Notebo
 
 * You can monitor the job execution in the Services and Jobs UI in Snowsight
 
-![Services and Jobs UI](./assets/services_and_jobs_ui.png)
+![Services and Jobs UI](assets/services_and_jobs_ui.png)
 
 Let's break down what the ML Job workflow is doing:
 
