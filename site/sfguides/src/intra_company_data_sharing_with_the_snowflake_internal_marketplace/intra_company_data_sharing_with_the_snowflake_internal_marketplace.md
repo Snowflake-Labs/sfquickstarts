@@ -314,7 +314,7 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 1. Navigate to the Provider Studio and click the blue **+Create Listing** button in the top right. 
 2. Select **"Internal Marketplace"**.
 
-![IM](assets/providerstudio.png)
+![IM](assets/publish09_providerstudio.png)
 
 3. Click on **“Untitled Listing”** and give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
 
@@ -453,7 +453,7 @@ Let's switch back to the perspective of the data product owner to review and gra
 - Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
 - Click on each of the two requests to review the details and use the green **Grant** button to approve.
 
-![](assets/raw02.png)
+![](assets/raw02_newui.png)
 
 Switch from **Needs Review** to **Resolved Requests** to see the history of requests. 
 

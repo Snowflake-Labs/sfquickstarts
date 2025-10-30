@@ -199,7 +199,7 @@ The Streamlit app provides full control over the pipeline and enables real-time 
 
 This step completes the setup, allowing you to see the automated document processing pipeline in action!
 
-![Streamlit](assets/streamlit_screen.png)
+![Streamlit](assets/create_streamlit.png)
 
 
 <!-- ------------------------ -->

@@ -48,7 +48,7 @@ This lab will walk you through the process of connecting to a Sigma template, ex
 
 2.3 Fill out the form to access a free trial, including your name, email, company, title, and phone number. Then click "Start Trial" 
 
-![image1](assets/connectingtosigma3.png)
+![image1](assets/connectingtosigma4.png)
 
 2.4 You will get an email from Sigma asking you to verify your email to get started. Click "Verify Email Address".
 
