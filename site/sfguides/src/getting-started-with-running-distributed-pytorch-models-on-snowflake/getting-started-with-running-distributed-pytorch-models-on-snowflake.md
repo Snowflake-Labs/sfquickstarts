@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-![assets/tb_endtoendml_banner.png](assets/TB_EndToEndml_banner.png)
+![assets/TB_EndToEndml_banner.png](assets/TB_EndToEndml_banner.png)
 
 This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). This involves:
 
