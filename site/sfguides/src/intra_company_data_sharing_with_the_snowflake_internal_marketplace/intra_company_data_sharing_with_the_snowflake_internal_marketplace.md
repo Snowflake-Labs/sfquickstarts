@@ -784,7 +784,7 @@ FROM stream_daily_weather_changes;
 
 Just when we thought we had all the necessary governance controls in place, Frosty has a new requirement for us.
 
-![503_DataSteward_3](assets/503_DataSteward_3.png)
+![503_DataSteward_3](assets/503_datasteward_3.png)
 
 So far we have been using the context function **CURRENT_ACCOUNT_NAME()** in our governance policies to control which consumer account can see which data. Now Frosty is telling us, that this needs to be more fine-grained down to indivudal roles on the consumer side.
 
@@ -880,13 +880,13 @@ Here are two options how to find the share name for your listing:
 **Option 1:**
 
 In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. In the section "Data Product" you find the name of the Secure Share that bundles the shared data objects.
-![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png)
+![602_DMF_AddTableToShare_1](assets/602_dmf_addtabletoshare_1.png)
 
 **Option 2:**
 
 Use the SHOW SHARES command:
 
-![504_ShowShares](assets/504_ShowShares.png)
+![504_ShowShares](assets/504_shares.png)
 
 Copy the share name to a text file or worksheet because you will need it again later.
 
@@ -929,7 +929,7 @@ grant database role tastybytes_manager_role  to role sales_manager_role;
 
 The following picture illustrates the use of our database roles in this data sharing scenario.
 
-![505_Database_Roles_Sharing](assets/505_Database_Roles_Sharing.png)
+![505_Database_Roles_Sharing](assets/505_database_roles_sharing.png)
 
 Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) in each of your consumer accounts to verify that each local role can only see those rows in the CUSTOMER_LOYALTY_METRICS_V view that are permitted by the row-level access policy in the provider account.
  -->
