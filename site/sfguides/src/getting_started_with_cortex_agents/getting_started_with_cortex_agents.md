@@ -6,6 +6,8 @@ summary: Get started with Cortex Agents
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents
+
 
 # Getting Started with Cortex Agents
 

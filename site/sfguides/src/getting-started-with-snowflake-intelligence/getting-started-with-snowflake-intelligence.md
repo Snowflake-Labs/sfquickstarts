@@ -6,6 +6,9 @@ environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
+Open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_snowflake_intelligence
+
+
 
 # Getting Started with Snowflake Intelligence
 <!-- ------------------------ -->
