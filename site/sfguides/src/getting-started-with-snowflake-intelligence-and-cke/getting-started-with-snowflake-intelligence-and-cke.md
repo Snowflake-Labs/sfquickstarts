@@ -107,8 +107,8 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
     - Click on **+ Add**
       - Name: Send_Email
       - Resource type: procedure
-      - Database & Schema: **SNOWFLAKE_INTELLIGENCE.DATA**
-      - Custom tool identifier: **SNOWFLAKE_INTELLIGENCE.DATA.SEND_EMAIL()**
+      - Database & Schema: **SNOWFLAKE_INTELLIGENCE.TOOLS**
+      - Custom tool identifier: **SNOWFLAKE_INTELLIGENCE.TOOLS.SEND_EMAIL()**
       - Parameter: body
         - Description: *If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
@@ -119,7 +119,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 * Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
 
-* Access: SNOWFLAKE_INTELLIGENCE_ADMIN
+* Access: CORTEX_ADMIN
 
 > aside positive
 > NOTE: On the top right corner, click on **Save** to save the newly updated **Snowflake_Documentation** agent.
