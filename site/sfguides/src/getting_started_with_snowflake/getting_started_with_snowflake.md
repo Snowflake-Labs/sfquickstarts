@@ -491,7 +491,7 @@ The JSON data consists of SEC filings provided by *Snowflake Public Data*, detai
 
 ![raw JSON sample](assets/7SemiStruct_1_1.png)
 
-_(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with the semi-structured JSON file to learn how to load structured data into Snowflake.)_
+_(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with the semi-structured JSON file to learn how to load structured data into Snowflake.)_
 
 > aside negative
 > 
