@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# **Distributed Multi-Node and Multi GPU Audio Transcription with Snowflake ML Container Runtime**
+# Distributed Multi-Node and Multi GPU Audio Transcription with Snowflake ML Container Runtime
 <!-- ------------------------ -->
 ## Overview 
 
