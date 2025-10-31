@@ -10,6 +10,8 @@ authors: Dash Desai
 # Getting Started with Snowflake Intelligence and Cortex Knowledge Extensions
 <!-- ------------------------ -->
 
+
+
 ## Overview
 
 
