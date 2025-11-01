@@ -37,8 +37,7 @@ Apache&reg;, Apache Iceberg&trade;, and Apache Kafka&reg; are either registered 
 
 ## Setup Catalog and Permissions
 
-Before initiating the integration of Snowflake Open Catalog with StreamNative Cloud, please ensure the following steps are completed. The following video will also guide you through this process.
-<video id="R0uPsIIVmO8"></video>
+Before initiating the integration of Snowflake Open Catalog with StreamNative Cloud, please ensure the following steps are completed. [This video](https://www.youtube.com/watch?v=R0uPsIIVmO8) will also guide you through this process.
 
 ### Create a Snowflake AI Data Cloud Account
 
@@ -338,9 +337,8 @@ We will resuse the connection when connecting Snowflake AI Data Cloud to Snowfla
 
 To proceed, you will need to first complete the steps for [granting vendor access, creating a Cloud Connection, and setting up the Cloud Environment](https://docs.streamnative.io/docs/byoc-overview). This process will grant StreamNative permissions into your cloud provider and deploy the required infrastructure before you begin the process of deploying a StreamNative BYOC Ursa Cluster. [This video](https://youtu.be/vsHjaQNKFRk?si=2pUJXE_s0LfzH3At) provides an overview of this process with detailed videos available in this [playlist](https://www.youtube.com/playlist?list=PL7-BmxsE3q4W5QnrusLyYt9_HbX4R7vEN).
 
-Once this process is complete, the following video will also guide you through the process of deploying the StreamNative BYOC Ursa Cluster following the directions below.
+Once this process is complete, [this video](https://www.youtube.com/watch?v=UQoyYSSSaDc) will also guide you through the process of deploying the StreamNative BYOC Ursa Cluster following the directions below.
 
-<video id="UQoyYSSSaDc"></video>
 
 ### Create a StreamNative BYOC Ursa Cluster in StreamNative Cloud Console
 
@@ -500,9 +498,8 @@ The data is now queryable through Snowflake Open Catalog. In the following step 
 
 Querying a table in Snowflake Open Catalog using Snowflake AI Data Cloud requires completing the following [from the Snowflake documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog-query).
 
-This video shows detailed queries for our example. Exact queries used are also available below. Please refer to Snowflake documentation for any changes in creating an external volume, creating a catalog integration, and creating an externally managed table.
+[This video](https://www.youtube.com/watch?v=658ZV78lyew) shows detailed queries for our example. Exact queries used are also available below. Please refer to Snowflake documentation for any changes in creating an external volume, creating a catalog integration, and creating an externally managed table.
 
-<video id="658ZV78lyew"></video>
 
 ### Create an external volume in Snowflake
 

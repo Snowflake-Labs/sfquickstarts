@@ -19,9 +19,8 @@ The Coalesce product is built around the concept of "metadata" - column and tabl
 
 This guide will help you quickly get started with Coalesce, connecting your database and creating a small data mart for a hypothetical sales team.  Using the Snowflake sample database, we will be implementing a Dimension node to track historical changes of their customers and a Fact node to record order transactions.
 
-The following video provides a brief overview of (most of) what this guide will be covering.
+[This video](https://www.youtube.com/watch?v=MVQRH2qsizg) provides a brief overview of (most of) what this guide will be covering.
 
-<video id="MVQRH2qsizg"></video>
 
 ### Prerequisites
 - Familiarity with SQL and Snowflake

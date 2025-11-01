@@ -363,9 +363,8 @@ You can choose to build one or all of these.
 
 In this step, we'll build a sigma dashboard that will rely on data available on our primary account. Once we replicate this data to our secondary account and failover, we'll see the sigma dashboard seamlessly point to the failover region and powered by our secondary account.
 
-In the video, you will see we connect Sigma to Snowflake by creating a connection. When filling up the connection details ensure that account name is same as the value recorded for "connection_url" at the end of step 4.
+In the video, [Build a BI Dashboard with Sigma](https://www.youtube.com/watch?v=vfmmDcQ1uB0), you will see we connect Sigma to Snowflake by creating a connection. When filling up the connection details ensure that account name is same as the value recorded for "connection_url" at the end of step 4.
 
-<video id="vfmmDcQ1uB0"></video>
 
 #### Query used to build the global sales dashboard
 Here's the code snippet used for charting the global revenue figures. 

@@ -106,9 +106,8 @@ After this section you will set up the Snowflake account and Configure ADF. If y
 Prerequisites:
   * Admin rights on an [Azure account](https://learn.microsoft.com/en-us/training/modules/create-an-azure-account/)
   * Access to https://cal.sap.com
-Use the following video to set up your Azure account and create an SAP instance in Azure through SAP CAL:
+Use the [this video](https://www.youtube.com/watch?v=iORePziUMBk) to set up your Azure account and create an SAP instance in Azure through SAP CAL:
 
-<video id="iORePziUMBk"></video>
 
 Adjust the following resources in Usage + quotas in your Azure subscription, before deploying from SAP CAL. 
   * Total Regional vCPUs to `50`.
@@ -656,13 +655,13 @@ There are [several tools on the market](https://medium.com/snowflake/if-extracti
 <aside class="callout">
 It is not required to perform the steps in the videos.
 </aside>
-### How to install Qlik Replicate to get data out of an SAP system:
 
-<video id="EwhgASMXGR4"></video>
+### Watch "How to [install Qlik Replicate](https://www.youtube.com/watch?v=EwhgASMXGR4)" video to get data out of an SAP system
 
-### How to use SNP Glue to get data out of an SAP systems:
 
-<video id="PyybzHl6A3M"></video>
+
+### Watch "[How to use SNP Glue](https://www.youtube.com/watch?v=PyybzHl6A3M) " video to get data out of an SAP systems
+
 
 ## [Appendix] Business Semantics
 

@@ -77,9 +77,9 @@ The last setup screen invites you to choose a target platform.
 It will take a couple of minutes for Matillion to create a free, empty, trial Snowflake account and connect everything together.
 Once that's done you'll end up in the Matillion Data Productivity Cloud's main ETL [pipeline designer interface](https://docs.matillion.com/data-productivity-cloud/designer/docs/designer-overview/).
 
-For reference here's a video that takes you through all the steps above.
+For reference [here's a video](https://www.youtube.com/watch?v=G2Rc7K_8pZw) that takes you through all the steps above.
 
-<video id="G2Rc7K_8pZw"></video>
+
 
 <!-- ------------------------ -->
 ## Create a Development branch
@@ -610,6 +610,5 @@ Continue to use your free trial of Matillion and Snowflake: load and process you
 - Learn how to [bring the power of AI to data engineering](https://www.matillion.com/ai)
 - Take a training course from the [Matillion Academy](https://academy.matillion.com/trainings)
 
-A full video demonstration of this lab is also available:
-<video id="FGaf-6TcGYU"></video>
+A full [video demonstration](https://www.youtube.com/watch?v=FGaf-6TcGYU) of this lab is also available.
 

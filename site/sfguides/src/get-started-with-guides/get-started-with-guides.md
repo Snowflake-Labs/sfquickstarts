@@ -137,6 +137,36 @@ Sticking to these guidelines ensures that all Guides have a similar look and fee
  (this includes the What We've Covered and Related Resources links)
 
 
+#### Adding Colors
+
+Basic colors can be  added to callouts using "diff" in a code block in between "```".  
+
+```diff
+- text in red
++ text in green
+# text in white
+``` 
+
+
+```
+```diff
+- text in red
++ text in green
+# text in white
+```
+
+
+
+Multiple colors can also be added for emphasis at times:
+
+$${\color{red}Adding \space \color{lightblue}Different \space \color{orange}Colors}$$
+```
+$${\color{red}Adding \space \color{lightblue}Different \space \color{orange}Colors}$$  
+
+
+```
+
+
 #### JavaScript
 ```javascript
 { 
@@ -205,8 +235,19 @@ Use this markdown format for images:
 
 
 #### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
+Videos from youtube can be linked to the text like a normal link
+```
+[this video](https://www.youtube.com/watch?v=KmeiFXrZucE)>
+
+```
+
+```diff 
+- DO NOT -
+use HTML tags in the markdown file since that will cause errors! 
+```
+
+
+
 
 #### Inline Surveys
 <form>
