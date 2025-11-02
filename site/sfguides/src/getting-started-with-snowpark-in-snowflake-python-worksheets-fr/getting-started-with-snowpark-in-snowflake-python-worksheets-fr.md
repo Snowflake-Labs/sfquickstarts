@@ -259,12 +259,12 @@ N’hésitez pas à nous faire part de vos commentaires sur ce guide Quickstart�
 
 ### Prochaines étapes
 
-Pour découvrir comme traiter des données de manière incrémentielle, orchestrer des pipelines de données à l’aide de tâches Snowflake Tasks, les déployer via un pipeline CI/CD et utiliser le nouvel outil CLI de Snowflake destiné aux développeurs ainsi que l’extension Visual Studio Code, consultez le guide Quickstart [Pipelines de Data Engineering avec Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html).
+Pour découvrir comme traiter des données de manière incrémentielle, orchestrer des pipelines de données à l’aide de tâches Snowflake Tasks, les déployer via un pipeline CI/CD et utiliser le nouvel outil CLI de Snowflake destiné aux développeurs ainsi que l’extension Visual Studio Code, consultez le guide Quickstart [Pipelines de Data Engineering avec Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/).
 
 ### Ressources connexes
 
 - [Guide du développeur dans les feuilles de calcul Python](https://docs.snowflake.com/fr/developer-guide/snowpark/python/python-worksheets)
 - [Premiers pas avec le Data Engineering et le Machine Learning à l’aide de Snowpark for Python](/guide/getting_started_with_dataengineering_ml_using_snowpark_python_fr/index.html)
-- [Avancé : Guide de Machine Learning avec Snowpark for Python ](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Avancé : Guide de Machine Learning avec Snowpark for Python ](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Démos de Snowpark for Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guide du développeur Snowpark for Python](https://docs.snowflake.com/fr/developer-guide/snowpark/python/index.html)

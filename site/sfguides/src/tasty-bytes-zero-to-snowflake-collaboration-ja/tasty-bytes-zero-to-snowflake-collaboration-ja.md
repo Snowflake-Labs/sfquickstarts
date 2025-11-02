@@ -19,7 +19,7 @@ Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。
 
 
 ### 前提条件
-- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html)を完了しておくようにしてください。
+- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://www.snowflake.com/ja/developers/guides/tasty-bytes-introduction-ja/)を完了しておくようにしてください。
 
 ### 学習する内容
 - Snowflakeマーケットプレイスへのアクセス方法
@@ -378,4 +378,4 @@ ORDER BY date DESC;
 ### 次のステップ
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html#3)
+- ### [Powered by Tasty Bytes - クイックスタート目次](https://www.snowflake.com/ja/developers/guides/tasty-bytes-introduction-ja/)

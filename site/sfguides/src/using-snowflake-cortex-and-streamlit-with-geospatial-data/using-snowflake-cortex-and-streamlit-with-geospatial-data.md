@@ -1994,6 +1994,6 @@ You will have learned the following:
 
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
-- [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
+- [Getting started with Geospatial AI and ML using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/geo-for-machine-learning/)
 
 - [Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex](https://quickstarts.snowflake.com/guide/asking_questions_to_your_own_documents_with_snowflake_cortex/index.html#0)

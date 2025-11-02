@@ -370,4 +370,4 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なTasty Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
+- ### [Powered by Tasty Bytes - クイックスタート目次](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/)

@@ -266,6 +266,6 @@ return snow_df_spend_and_revenue_per_month
 
 - [Python 워크시트 개발자 가이드](https://docs.snowflake.com/ko/developer-guide/snowpark/python/python-worksheets)
 - [Snowpark for Python를 사용하여 데이터 엔지니어링 및 ML 시작하기](/guide/getting_started_with_dataengineering_ml_using_snowpark_python_kr/index.html)
-- [Advanced:　Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Advanced:　Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python 데모](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python 개발자 가이드](https://docs.snowflake.com/ko/developer-guide/snowpark/python/index.html)

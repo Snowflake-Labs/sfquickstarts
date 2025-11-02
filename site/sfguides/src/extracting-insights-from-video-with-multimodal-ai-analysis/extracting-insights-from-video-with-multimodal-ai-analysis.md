@@ -405,6 +405,6 @@ In this quickstart, you used Optical Character Recognition (OCR),  Automatic Spe
 - Github repo [Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis)
 - Snowpark Container Services [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - Snowflake Cortex AI [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Getting Started with Cortex Analyst Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/)
+- [Getting Started with Cortex Analyst Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
 
 

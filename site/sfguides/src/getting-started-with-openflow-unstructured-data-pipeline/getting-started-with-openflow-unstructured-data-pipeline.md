@@ -323,7 +323,7 @@ This section guides you through setting up Openflow SPCS infrastructure and crea
 
 Follow the comprehensive **Getting Started with Openflow SPCS** quickstart to set up your infrastructure:
 
-**Quickstart Guide**: [Getting Started with Openflow SPCS](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html)
+**Quickstart Guide**: [Getting Started with Openflow SPCS](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/)
 
 This 25-minute setup includes:
 
@@ -1486,7 +1486,7 @@ Congratulations! You've successfully built an end-to-end unstructured data pipel
 
 **Quickstarts:**
 
-- [Getting Started with Openflow SPCS](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html) - Complete infrastructure setup guide
+- [Getting Started with Openflow SPCS](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/) - Complete infrastructure setup guide
 - [Source Code and Sample Data](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline)
 
 **Documentation:**

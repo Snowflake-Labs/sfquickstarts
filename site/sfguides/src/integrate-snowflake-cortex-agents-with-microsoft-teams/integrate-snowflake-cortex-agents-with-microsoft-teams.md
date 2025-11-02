@@ -18,7 +18,7 @@ Cortex Agents simplify AI-powered data interactions via a REST API, combining hy
 In this guide, we will see how to integrate the Cortex Agents with Microsoft Teams.
 
 > aside positive
-> Also check out [Getting Started with The Microsoft Teams and M365 Copilot Cortex App](https://quickstarts.snowflake.com/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/#0).
+> Also check out [Getting Started with The Microsoft Teams and M365 Copilot Cortex App](https://www.snowflake.com/en/developers/guides/getting-started-with-the-microsoft-teams-and-365-copilot-cortex-app/).
 
 ### Why Cortex Agents?
 

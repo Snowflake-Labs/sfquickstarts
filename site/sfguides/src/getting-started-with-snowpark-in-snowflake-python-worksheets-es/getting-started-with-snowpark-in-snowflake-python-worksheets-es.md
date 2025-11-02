@@ -259,12 +259,12 @@ Nos encantaría conocer tu opinión sobre esta quickstart guide. Puedes enviárn
 
 ### Siguientes pasos
 
-Si quieres aprender a procesar datos de forma incremental, a organizar flujos de datos con Snowflake Tasks e implementarlos a través de un flujo de integración y desarrollo continuos (continuous integration/continuous development, CI/CD) o si quieres aprender a usar la nueva herramienta de interfaz de línea de comandos (command-line interface, CLI) de Snowflake para desarrolladores, así como su extensión de Visual Studio Code, continúa tu aventura y adéntrate en [Flujos de ingeniería de datos con Snowpark para Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html).
+Si quieres aprender a procesar datos de forma incremental, a organizar flujos de datos con Snowflake Tasks e implementarlos a través de un flujo de integración y desarrollo continuos (continuous integration/continuous development, CI/CD) o si quieres aprender a usar la nueva herramienta de interfaz de línea de comandos (command-line interface, CLI) de Snowflake para desarrolladores, así como su extensión de Visual Studio Code, continúa tu aventura y adéntrate en [Flujos de ingeniería de datos con Snowpark para Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/).
 
 ### Recursos relacionados
 
 - [Guía para desarrolladores de hojas de trabajo para Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets)
 - [Introducción a la ingeniería de datos y al ML con Snowpark para Python](/guide/getting_started_with_dataengineering_ml_using_snowpark_python_es/index.html)
-- [Avanzado: Guía de ML de Snowpark para Python](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Avanzado: Guía de ML de Snowpark para Python](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Demos de Snowpark para Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guía de Snowpark para Python para desarrolladores](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)

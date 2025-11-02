@@ -167,7 +167,7 @@ WHERE m.truck_brand_name = 'Plant Palace';
 
 ### ゼロからのSnowflake
 
-- #### [コスト管理](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/)
+- #### [コスト管理](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-cost-management/)
   
   - Snowflake仮想ウェアハウスとその構成、リソースモニター、アカウントおよびウェアハウスレベルのタイムアウトパラメータ、そしてコスト調査について学びます。
 - #### [変換](/guide/tasty_bytes_zero_to_snowflake_transformation_ja/)
@@ -182,7 +182,7 @@ WHERE m.truck_brand_name = 'Plant Palace';
 - #### [コラボレーション](/guide/tasty_bytes_zero_to_snowflake_collaboration_ja/)
   
   - Weathersourceから無料ですぐに利用できるライブデータを活用して、ファーストパーティとサードパーティのソースを調和させたデータドリブンな分析を行うことで、Snowflakeマーケットプレイスに関する理解を深めます。
-- #### [地理空間](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
+- #### [地理空間](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
   
   - SafeGraphから無料ですぐに利用できるライブデータの取得から、地理点の構築（ST_POINT）、距離の計算（ST_DISTANCE）、座標の収集（ST_COLLECT）、最小境界ポリゴンの描画（ST_ENVELOPE）、面積の計算（ST_AREA）、中心点の検出（ST_CENTROID）まで、Snowflakeの地理空間サポートについて学びます。
 

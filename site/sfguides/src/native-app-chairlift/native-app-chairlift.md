@@ -670,4 +670,4 @@ Congratulations! In just a few minutes, you built a Snowflake Native App that al
 - [Official Native App documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Tutorial: Developing an Application with the Native Apps Framework](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial)
 - [Snowflake Demos](https://developers.snowflake.com/demos)
-- [Getting Started with Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/)
+- [Getting Started with Native Apps](https://www.snowflake.com/en/developers/guides/getting-started-with-native-apps/)

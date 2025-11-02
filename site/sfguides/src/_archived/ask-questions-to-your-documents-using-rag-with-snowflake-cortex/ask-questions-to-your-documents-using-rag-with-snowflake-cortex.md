@@ -17,7 +17,7 @@ In this quickstart we will show you how to quickly and securely build a document
 Along the way, we will also share tips on how you could turn what may seem like a prototype into a production pipeline by showing you how to automatically process new documents as they are uploaded as well as learn about relevant Snowflake functionality to consider for additional enhancements.
 
 > aside positive
-> NOTE: A new guide has been published that leverages Cortex Search (in Public Preview)--a fully managed service that automatically creates embeddings for your data and performs retrievals using a hybrid search engine including embeddings for semantic similarity and keyword search for lexical similarity. To learn more, [click here](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html).
+> NOTE: A new guide has been published that leverages Cortex Search (in Public Preview)--a fully managed service that automatically creates embeddings for your data and performs retrievals using a hybrid search engine including embeddings for semantic similarity and keyword search for lexical similarity. To learn more, [click here](https://www.snowflake.com/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/).
 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s).

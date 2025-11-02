@@ -28,7 +28,7 @@ This quickstart will focus primarily on automated release management for Snowfla
 
 > aside positive
 > 
->  **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0).
+>  **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](https://www.snowflake.com/en/developers/guides/terraforming-snowflake/).
 
 Let’s begin with a brief overview of GitHub and Terraform.
 
@@ -447,5 +447,5 @@ With that you should now have a working CI/CD pipeline in GitHub Actions and som
 
 * [Terraform](https://www.terraform.io/)
 * [Chan Zuckerberg Terraform Provider for Snowflake](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest)
-* [Terraforming Snowflake Quickstart](https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0)
+* [Terraforming Snowflake Quickstart](https://www.snowflake.com/en/developers/guides/terraforming-snowflake/)
 * [GitHub Actions](https://github.com/features/actions)

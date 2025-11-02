@@ -24,7 +24,7 @@ In this guide, you will build a small directed acyclic graph (DAG) in Coalesce u
 ### Prerequisites
 - Familiarity with Snowflake
 - Basic knowledge of SQL, database concepts, and objects
-- Optional completion of the foundational Coalesce Quickstart [Accelerating Transformations with Coalesce and Snowflake](https://quickstarts.snowflake.com/guide/transform_your_data_with_coalesce/index.html?index=..%2F..index#0)
+- Optional completion of the foundational Coalesce Quickstart [Accelerating Transformations with Coalesce and Snowflake](https://www.snowflake.com/en/developers/guides/transform-your-data-with-coalesce/)
 
 ### What You’ll Need 
 - A Snowflake account [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) or access to an existing account with `ACCOUNT ADMIN` privileges 

@@ -18,7 +18,7 @@ This exercise will illustrate how Snowflake Notebooks lets you quickly tap into 
 ### Prerequisites
 - A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
 - Foundational knowledge of Data Science workflows
-- For an intro to Snowflake Notebooks on Container Runtime, try this [quickstart](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0) first
+- For an intro to Snowflake Notebooks on Container Runtime, try this [quickstart](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/) first
 
 ### What You Will Learn 
 - Use Snowflake Notebooks with GPUs to speed up model training jobs with distributed processing
@@ -157,11 +157,11 @@ Ready to accelerate your ML workflows in [Snowflake ML](https://www.snowflake.co
 
 ### Related Quickstarts
   - Intro:
-    - [Getting Started with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/)
+    - [Getting Started with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
   - Advanced:
-    - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks)
-    - [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime)
-    - [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+    - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+    - [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+    - [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
     - [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb?_fsi=EwgOAmF4&_fsi=EwgOAmF4&_fsi=EwgOAmF4)
     - [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/harness-gpus-in-snowflake-notebooks-to-train-an-xgboost-model.pdf)
     - [Read Engineering Blog](https://www.snowflake.com/en/engineering-blog/machine-learning-container-runtime/)

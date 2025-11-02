@@ -36,7 +36,7 @@ Ingest data into structured and unstructured data stores then:
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account with Cortex Search.
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
 - Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account.
 
 

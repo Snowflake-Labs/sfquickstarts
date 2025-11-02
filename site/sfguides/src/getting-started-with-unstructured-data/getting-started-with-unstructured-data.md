@@ -16,7 +16,7 @@ This Quickstart is designed to help you understand the capabilities included in 
 ### Prerequisites
 - Snowflake account
 - Basic knowledge of SQL, database concepts, and objects
-- Recommended to first complete [Getting Started with SnowSQL](https://quickstarts.snowflake.com/guide/getting_started_with_snowsql/index.html?index=..%2F..index)
+- Recommended to first complete [Getting Started with SnowSQL](https://www.snowflake.com/en/developers/guides/getting-started-with-snowsql/)
 
 ### What You’ll Learn 
 - How to access and store unstructured data

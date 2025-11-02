@@ -245,6 +245,6 @@ Congratulations! You've successfully built an end-to-end ML workflow in Snowflak
 ### Resources
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 - [Documentation](https://docs.snowflake.com/en/user-guide/snowflake-ml)
-- [Quickstart: Build an End-to-End ML Model in Snowflake](https://quickstarts.snowflake.com/)
-- [Other Related Quickstarts](https://quickstarts.snowflake.com/)
+- [Quickstart: Build an End-to-End ML Model in Snowflake](https://www.snowflake.com/en/developers/guides/)
+- [Other Related Quickstarts](https://www.snowflake.com/en/developers/guides/)
 - Have a question? Ask in [Snowflake Community](https://community.snowflake.com/)

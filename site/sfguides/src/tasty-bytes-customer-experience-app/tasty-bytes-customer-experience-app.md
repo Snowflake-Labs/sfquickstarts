@@ -139,7 +139,7 @@ code = Complete('mistral-large', prompt.replace("'", "''"))
 
 ### DocumentAI
 
-Unstructured inspection documents are used in the app. We have previously used DocumentAI to structure the contents of inspection reports and use that data for insights. Check out the [Extracting Insights from Unstructured Data with Document AI](https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index#0) Quickstart for details on that process. 
+Unstructured inspection documents are used in the app. We have previously used DocumentAI to structure the contents of inspection reports and use that data for insights. Check out the [Extracting Insights from Unstructured Data with Document AI](https://www.snowflake.com/en/developers/guides/tasty-bytes-extracting-insights-with-docai/) Quickstart for details on that process. 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -155,8 +155,8 @@ If you want to learn more about Enhancing Customer Experience with Tasty Bytes, 
 - How DocumentAI can be used to create analytics from unstructured data
 
 ### Related Resources
-- [Extracting Insights from Unstructured Data with Document AI](https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index#0) 
+- [Extracting Insights from Unstructured Data with Document AI](https://www.snowflake.com/en/developers/guides/tasty-bytes-extracting-insights-with-docai/) 
 - [Streamlit in Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html?index=..%2F..index)
-- [Tasty Bytes - Customer Support Streamlit App](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_support_email_app/index.html?index=..%2F..index#0)
+- [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-experience-app/)
+- [Tasty Bytes - Customer Support Streamlit App](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-support-email-app/)

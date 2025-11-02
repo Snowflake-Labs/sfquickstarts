@@ -1635,9 +1635,9 @@ When well-sized batches are not possible, leveraging our Streaming ingest will s
 - [Snowflake Connector for Python](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector)
 - [Java SDK for the Snowflake Ingest Service](https://github.com/snowflakedb/snowflake-ingest-java)
 - [Python Snowflake Ingest Service SDK](https://github.com/snowflakedb/snowflake-ingest-python)
-- [Getting Started with Snowpipe](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html)
-- [Getting Started with Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html)
-- [Streaming Data Integration with Snowflake](https://quickstarts.snowflake.com/guide/data_engineering_streaming_integration/index.html)
+- [Getting Started with Snowpipe](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/)
+- [Getting Started with Snowpipe Streaming and Amazon MSK](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/)
+- [Streaming Data Integration with Snowflake](https://www.snowflake.com/en/developers/guides/data-engineering-streaming-integration/)
 
 
 

@@ -628,7 +628,7 @@ scalability and resilience through the AWS infrastructure.
 
 Related Resources
 
-- [Getting started with Snowflake](https://quickstarts.snowflake.com/)
+- [Getting started with Snowflake](https://www.snowflake.com/en/developers/guides/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)

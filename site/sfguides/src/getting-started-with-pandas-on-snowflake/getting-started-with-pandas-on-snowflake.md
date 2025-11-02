@@ -134,5 +134,5 @@ For more information, check out the resources below:
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas)
 - [Documentation: pandas on Snowflake Developer Guide](https://docs.snowflake.com/developer-guide/snowpark/python/pandas-on-snowflake)
-- [Quickstart: Data Engineering Pipeline with pandas on Snowflake](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_pandas/)
+- [Quickstart: Data Engineering Pipeline with pandas on Snowflake](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-pandas/)
 <!-- ------------------------ -->

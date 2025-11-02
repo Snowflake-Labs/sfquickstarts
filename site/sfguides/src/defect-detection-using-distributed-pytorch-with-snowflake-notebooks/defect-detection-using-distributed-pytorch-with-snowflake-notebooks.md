@@ -54,8 +54,8 @@ Key Features:
 - A Snowflake Account
 - Access to run Notebooks in Snowflake
 - A Snowflake Account. Sign up for a 30-day free trial account, if required.
-- To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
-- (Optional) [Completed Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+- To try Snowflake ML in a free trial, check out this [quickstart](https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+- (Optional) [Completed Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
 
 
 
@@ -209,8 +209,8 @@ To cleanup resources and remove all of the objects and compute pools that you cr
 
 Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts: 
 
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)
-- [Scale Embeddings with Snowflake Notebooks](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#0)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Scale Embeddings with Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
 
 
 ### Related Resources

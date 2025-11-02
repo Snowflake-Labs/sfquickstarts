@@ -847,5 +847,5 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 * How to use Search Optimization to speed up geospatial queries.
 
 ### Related Resources
-* [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
-* [Geospatial Analytics for Telecom with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geo_analysis_telecom/index.html)
+* [Geospatial Analytics for Retail with Snowflake and CARTO](https://www.snowflake.com/en/developers/guides/geospatial-analytics-with-snowflake-and-carto-ny/)
+* [Geospatial Analytics for Telecom with Snowflake and CARTO](https://www.snowflake.com/en/developers/guides/geo-analysis-telecom/)

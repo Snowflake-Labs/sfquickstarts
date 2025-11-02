@@ -225,7 +225,7 @@ For more information, check out the resources below:
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 - [Snowflake ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
 - [Quickstart: Build an End-to-End ML Workflow in Snowflake
-](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/#0)
+](https://www.snowflake.com/en/developers/guides/end-to-end-ml-workflow/)
 - Check out other Snowflake ML quickstarts [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 - [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/snowflake_ml_e2e.png)
 - [Read the Blog](https://medium.com/snowflake/end-to-end-machine-learning-with-snowpark-ml-in-snowflake-notebooks-faa42f1f57fc)

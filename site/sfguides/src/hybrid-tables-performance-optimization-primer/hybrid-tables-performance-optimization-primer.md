@@ -51,7 +51,7 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 
 ### Process
-- We will be creating three tables that represent a data model. Following the trucking example from the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables/index.html#0) quickstart, we will use TRUCK and ORDER_HEADER tables to represent our data.
+- We will be creating three tables that represent a data model. Following the trucking example from the [Getting Started with Hybrid Tables](https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/) quickstart, we will use TRUCK and ORDER_HEADER tables to represent our data.
 - Create and work with TRUCK table to understand primary keys, secondary indexes, and accompanying query patterns
 - Build on TRUCK with ORDER_HEADER to work with foreign key relationships
 - Add a secondary index to find orders for trucks based on order date
@@ -473,5 +473,5 @@ Having completed this quickstart you have successfully
 - [Snowflake Unistore Landing Page](https://www.snowflake.com/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
 - [Hybrid Table Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
-- [Hybrid Table Performance Testing Quickstart](https://quickstarts.snowflake.com/guide/hybrid-tables-jmeter-performance-testing/index.html#0)
+- [Hybrid Table Performance Testing Quickstart](https://www.snowflake.com/en/developers/guides/hybrid-tables-jmeter-performance-testing/)
 - [Simplify Application Development Hybrid Tables Blog](https://www.snowflake.com/blog/simplify-application-development-hybrid-tables)

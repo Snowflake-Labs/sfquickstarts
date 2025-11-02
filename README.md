@@ -83,9 +83,9 @@ If you see any issues or any inconsistencies as outlined above, please do NOT cr
 
 Here are three QS Guides you can take a look as references:
 
-- https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#0
+- https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/
 - https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_arctic/index.html#0
-- https://quickstarts.snowflake.com/guide/build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services/index.html?index=..%2F..index#0
+- https://www.snowflake.com/en/developers/guides/build-genai-inpainting-and-hybridtable-app-in-snowpark-container-services/
 
 We want to maintain a standard and consistency across all QS guides and it's very imp that we all follow these guidelines. Really appreciate your help and support. 
 

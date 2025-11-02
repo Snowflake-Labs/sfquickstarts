@@ -483,8 +483,8 @@ DROP ROLE tasty_bytes_data_ml_app_demo;
 
 ### 次のステップ
 
-ロケーション推奨MLモデルの詳細については、[Tasty Bytes - データサイエンスのためのSnowpark入門](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science)クイックスタートを参照してください。
+ロケーション推奨MLモデルの詳細については、[Tasty Bytes - データサイエンスのためのSnowpark入門](https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/)クイックスタートを参照してください。
 
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なTasty Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja)
+- ### [Powered by Tasty Bytes - クイックスタート目次](https://www.snowflake.com/ja/developers/guides/tasty-bytes-introduction-ja/)

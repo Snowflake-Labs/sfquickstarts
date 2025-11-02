@@ -18,7 +18,7 @@ Within this Tasty Bytes Introduction Quickstart you will first be learning about
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
-Upon finishing this Quickstart, you will have deployed the foundation required to run the Quickstarts seen in our [Powered by Tasty Bytes - Quickstarts](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3) section.
+Upon finishing this Quickstart, you will have deployed the foundation required to run the Quickstarts seen in our [Powered by Tasty Bytes - Quickstarts](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/) section.
 
 ### Who is Tasty Bytes?
 ![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
@@ -170,33 +170,33 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 
 ### Zero to Snowflake
 
-- #### [Cost Management](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/index.html?index=..%2F..index)
+- #### [Cost Management](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-cost-management/)
     - Learn about Snowflake Virtual Warehouses and their configurability, Resource Monitors, Account and Warehouse Level Timeout Parameters, and Exploring Cost.
-- #### [Transformation](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/index.html?index=..%2F..index)
+- #### [Transformation](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation/)
     - Learn about Snowflake Cloning, Caching, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.
-- #### [Semi-Structured Data](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/index.html?index=..%2F..index)
+- #### [Semi-Structured Data](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data/)
     - Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot and Bracket Notation and Lateral Flattening, Array Functions, View creation, and Snowsight Charting.
-- #### [Governance with Snowflake Horizon](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index)
+- #### [Governance with Snowflake Horizon](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-governance-with-horizon/)
     - Learn about Snowflake System Defined Roles, Role Based Access Control, Tag Based Masking, Policies (Row-Access, Aggregation, and Projection), Data Classification, Access History and Universal Search.
-- #### [Collaboration](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/index.html?index=..%2F..index)
+- #### [Collaboration](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration/)
     - Learn about the Snowflake Marketplace by leveraging free, instantly available, live data from Weathersource to conduct data driven analysis harmonizing first and third party sources.
-- #### [Geospatial](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/index.html?index=..%2F..index)
+- #### [Geospatial](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
     - Learn Snowflake's Geospatial capabilities, beginning with obtaining free, real-time data from SafeGraph. Progress through creating geographic points (ST_POINT), measuring distances (ST_DISTANCE), aggregating coordinates (ST_COLLECT), establishing a Minimum Bounding Polygon (ST_ENVELOPE), determining areas (ST_AREA), identifying central points (ST_CENTROID), and executing advanced Geospatial Analysis using the H3 (Hexagonal Hierarchical Geospatial Indexing System).
 
 ### Other Tasty Bytes Quickstarts
-- #### [Extracting Insights from Unstructured Data using DocumentAI](https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index)
+- #### [Extracting Insights from Unstructured Data using DocumentAI](https://www.snowflake.com/en/developers/guides/tasty-bytes-extracting-insights-with-docai/)
 
-- #### [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index)
+- #### [Customer Reviews Analytics using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/customer-reviews-analytics-using-snowflake-cortex/)
 
-- #### [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index)
+- #### [Tasty Bytes - Snowpark 101 for Data Science](https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/)
 
-- #### [Developing React Native Applications using Snowflake Hybrid Tables](https://quickstarts.snowflake.com/guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/index.html?index=..%2F..index)
+- #### [Developing React Native Applications using Snowflake Hybrid Tables](https://quickstarts.snowflake.com/guide/404.html/)
 
-- #### [Tasty Bytes - Developing React Native Data Application with SQL API](https://quickstarts.snowflake.com/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api/index.html?index=..%2F..index)
+- #### [Tasty Bytes - Developing React Native Data Application with SQL API](https://www.snowflake.com/en/developers/guides/developing-tasty-bytes-react-native-application-with-snowflake-sql-api/)
 
-- #### [Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application](https://quickstarts.snowflake.com/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/index.html?index=..%2F..index)
+- #### [Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application](https://quickstarts.snowflake.com/guide/404.html/)
 
-- #### [Tasty Bytes - Working with Iceberg Tables](https://quickstarts.snowflake.com/guide/tasty_bytes_working_with_iceberg_tables/index.html?index=..%2F..index)
+- #### [Tasty Bytes - Working with Iceberg Tables](https://www.snowflake.com/en/developers/guides/tasty-bytes-working-with-iceberg-tables/)
 
 
 

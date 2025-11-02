@@ -209,10 +209,10 @@ By doing so you have learned how to:
 
 ### Resources
 
-- #### [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index#0)
+- #### [Customer Reviews Analytics using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/customer-reviews-analytics-using-snowflake-cortex/)
 
-- #### [Tasty Bytes - Customer Support Streamlit Application Powered by Cortex](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_support_email_app/index.html?index=..%2F..index#0)
+- #### [Tasty Bytes - Customer Support Streamlit Application Powered by Cortex](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-support-email-app/)
 
-- #### [Tasty Bytes - Enhance Customer Experience Streamlit App](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html?index=..%2F..index#0)
+- #### [Tasty Bytes - Enhance Customer Experience Streamlit App](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-experience-app/)
 
-- #### [Build Rag Based Equipment Maintenance App Using Snowflake Cortex](https://quickstarts.snowflake.com/guide/build_rag_based_equipment_maintenance_app_using_snowflake_cortex/index.html?index=..%2F..index#0)
+- #### [Build Rag Based Equipment Maintenance App Using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/build-rag-based-equipment-maintenance-app-using-snowflake-cortex/)

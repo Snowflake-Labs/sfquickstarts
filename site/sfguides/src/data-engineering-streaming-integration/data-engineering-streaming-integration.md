@@ -17,7 +17,7 @@ This quickstart is a part of a series covering various aspects of wваorking wi
 
 * **Streaming Data Integration with Snowflake (this very guide)** - This guide will focus on design patterns and building blocks for data integration within Snowflake
 
-* **Popular Kafka Integration options with Snowflake(coming up later!)** - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations. In the meantime, please check out our quickstart on [Streaming Snowpipe with Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0). 
+* **Popular Kafka Integration options with Snowflake(coming up later!)** - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations. In the meantime, please check out our quickstart on [Streaming Snowpipe with Amazon MSK](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/). 
 
 * **Streaming Use cases(coming up later!)** - This guide will share examples of common streaming use cases such as Change Data Capture (CDC), near real-time data sharing and others 
 
@@ -142,7 +142,7 @@ In this section, we will construct a pipeline that is prepared to integrate a st
 * Evaluate the results
 
 For the sake of simplicity, we will manually notify Snowpipe of the availability of new files to ingest in the stage. However, in real-life scenarios, it is more efficient to automate this process using the Snowpipe auto-ingest option and take advantage of storage events. If you'd like to experience this in action, the quickstart guide may be helpful: 
- [Snowpipe quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html?index=..%2F..index#0)
+ [Snowpipe quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/)
 
 Let's login to Snowflake account (as agreed, we are going to use the ACCOUNTADMIN role for simplicity) and run the following:
 
@@ -293,7 +293,7 @@ select *
 
 Here's a challenge for you. In the scripts we created earlier, we only loaded a small amount of data, around 1000 rows. Try generating more files based on sample data and observe how Snowpipe can handle a larger influx of data. 
 
-Also, if you'd like to learn more about SnowPipe and levelrage Cloud Storage Events for auto-ingest setup please have a look in our [Getting Started with Snowpipe](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html?index=..%2F..index#0) quickstart. 
+Also, if you'd like to learn more about SnowPipe and levelrage Cloud Storage Events for auto-ingest setup please have a look in our [Getting Started with Snowpipe](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/) quickstart. 
 
 ## COPY command
 
@@ -568,7 +568,7 @@ Thanks to Snowflake's exceptional support for querying semi-structured data, wor
 ![staged data](assets/img12.png) 
 As you can see, Snowpipe Streaming is a fantastic new capability that can significantly reduce integration latency and improve pipeline efficiency. It also opens up new opportunities for your business, providing near-real-time insights and operational reporting, among other benefits.
 
-For those of you who would like to know more about use of Snowpipe Streaming in Amazon MSK (Managed Streaming for Apache Kafka) please have a look at this [Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0)!
+For those of you who would like to know more about use of Snowpipe Streaming in Amazon MSK (Managed Streaming for Apache Kafka) please have a look at this [Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/)!
 
 Hope you enjoyed this section. Let's summarize and provide some pointers to continue refining your streaming data pipeline skills.
 

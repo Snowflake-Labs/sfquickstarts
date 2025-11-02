@@ -603,8 +603,8 @@ alter task monthly_revenue_data_pipeline_task suspend;
 ### 関連リソース
 
 - [GitHubのソースコード](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [上級：Snowpark for Pythonデータエンジニアリングガイド](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
-- [上級：Snowpark for Python機械学習ガイド](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [上級：Snowpark for Pythonデータエンジニアリングガイド](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [上級：Snowpark for Python機械学習ガイド](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Pythonデモ](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python開発者ガイド](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Streamlitドキュメント](https://docs.streamlit.io/)

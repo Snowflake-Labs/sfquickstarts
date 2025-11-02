@@ -22,7 +22,7 @@ Here are some of the use cases that can benefit from tracking your live data str
 
 In this workshop, we will visualize real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) with [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io/).
 The architecture diagram below illustrates the deployment, with the non-greyed out area being the focus of our workshop. The grey out area is covered in the
-[Snowpipe Streaming quickstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/).
+[Snowpipe Streaming quickstarts](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/).
 
 The data in Snowflake table is visualized in real-time with [AMG (Amazon Managed Service for Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
 Note that Streamlit is containerized and managed by [Amazon Elastic Container Service (ALB)](https://aws.amazon.com/ecs/). An [Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) is used to front-end the container.
@@ -43,7 +43,7 @@ Note that Streamlit is containerized and managed by [Amazon Elastic Container Se
 To participate in the virtual hands-on lab, attendees need the following resources.
 
 - A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access
-- Optional - Finished the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and has ingested and kept live data in Snowflake.
+- Optional - Finished the quickstarts for [Snowpipe Streaming and Amazon MSK](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/) and has ingested and kept live data in Snowflake.
 - An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
 - Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. Please refer
 to this [AWS document](https://docs.aws.amazon.com/whitepapers/latest/amazon-msk-migration-guide/amazon-managed-streaming-for-apache-kafka-amazon-msk.html) for the MSK networking topology)
@@ -70,7 +70,7 @@ Note that you must have network administrator permissions to deploy these resour
 <!---------------------------->
 ## Data Ingestion, Option 1
 
-If you have completed the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and haven't cleaned up the database, there is no further actions required, just skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane.
+If you have completed the quickstarts for [Snowpipe Streaming and Amazon MSK](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/) and haven't cleaned up the database, there is no further actions required, just skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane.
 
 <!---------------------------->
 ## Data Ingestion, Option 2
@@ -310,7 +310,7 @@ In the search box, type in Snowflake, and the Snowflake plugin appears. Select i
 
 ![](assets/grafana-ds-2.png)
 
-Type in the name for your source, e.g., `Snowflake` and the connection info such as your Snowflake account locator, its AWS region, username `streaming_user` and password `Test1234567`. For Environment, type in the role `msk_streaming_rl`, warehouse `msk_streaming_wh`, database `msk_streaming_db` and schema `msk_streaming_schema` you used in the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0).  Leave the remaining options as default and click ‘Save & test’. You will see the ‘Data source is working’ sign when it is done.
+Type in the name for your source, e.g., `Snowflake` and the connection info such as your Snowflake account locator, its AWS region, username `streaming_user` and password `Test1234567`. For Environment, type in the role `msk_streaming_rl`, warehouse `msk_streaming_wh`, database `msk_streaming_db` and schema `msk_streaming_schema` you used in the quickstarts for [Snowpipe Streaming and Amazon MSK](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/).  Leave the remaining options as default and click ‘Save & test’. You will see the ‘Data source is working’ sign when it is done.
 If you are not sure about the Snowflake account locator, please run the following query in Snowflake to get it:
 
 ```commandline
@@ -350,7 +350,7 @@ First click [here](https://console.aws.amazon.com/cloudformation/home?region=us-
 deploy the environment with Cloudformation. Click `Next`.
 
 In the next page, pick a stack name and ECS cluster name of your choice, pick the VPC and Subnets where you want to deploy the ECS cluster. For Snowflake parameters, use
-the default values (already filled in), the Snowflake password should be `Test1234567` from the [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) workshop if you have not changed it. 
+the default values (already filled in), the Snowflake password should be `Test1234567` from the [Snowpipe Streaming and Amazon MSK](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/) workshop if you have not changed it. 
 For `SnowflakeAccount`, run the following command in your Snowflake cluster to get the `Account Identifier`:
 
 ```
@@ -385,7 +385,7 @@ Related Resources
 
 - [Streamlit](https://streamlit.io/)
 - [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/)
-- [Getting started with Snowflake](https://quickstarts.snowflake.com/)
+- [Getting started with Snowflake](https://www.snowflake.com/en/developers/guides/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)

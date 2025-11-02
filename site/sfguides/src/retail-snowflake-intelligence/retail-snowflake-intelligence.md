@@ -134,5 +134,5 @@ Congratulations! You have successfully built and deployed a complete Retail Inte
 
 * [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
 * [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
-* [Additional Quickstarts](https://quickstarts.snowflake.com/)
+* [Additional Quickstarts](https://www.snowflake.com/en/developers/guides/)
 

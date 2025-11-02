@@ -176,7 +176,7 @@ INNER JOIN snowflake_sample_data.tpch_sf1.nation n
     ON c.c_nationkey = n.n_nationkey;
 ```
 
-You can also leverage Snowflake's built-in LLM functions to easily leverage AI in your queries as demonstrated [here](https://quickstarts.snowflake.com/guide/cortex_ai_sentiment_iceberg/index.html#3).
+You can also leverage Snowflake's built-in LLM functions to easily leverage AI in your queries as demonstrated [here](https://www.snowflake.com/en/developers/guides/cortex-ai-sentiment-iceberg/).
 
 Benefits of the additional metadata that table formats like Iceberg and Snowflake’s provide are, for example, time travel.
 
@@ -444,7 +444,7 @@ With this Iceberg table created based on other Iceberg tables, you can view the 
 
 ![Lineage](assets/5-3_lineage.png)
 
-For a deeper dive on Snowpark for data engineering pipelines, try [this quickstart](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html).
+For a deeper dive on Snowpark for data engineering pipelines, try [this quickstart](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/).
 
 <!-- ------------------------ -->
 ## Sharing Iceberg Tables

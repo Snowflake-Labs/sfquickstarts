@@ -17,7 +17,7 @@ Te damos la bienvenida a la quickstart guide De cero a Snowflake de Tasty Bytes 
 
 
 ### Requisitos previos
-- Antes de empezar, asegúrate de haber completado la [**quickstart guide Introducción a Tasty Bytes**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html), donde aprenderás a configurar una cuenta de prueba y a implementar los conceptos esenciales de Tasty Bytes necesarios para completar esta quickstart guide.
+- Antes de empezar, asegúrate de haber completado la [**quickstart guide Introducción a Tasty Bytes**](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/), donde aprenderás a configurar una cuenta de prueba y a implementar los conceptos esenciales de Tasty Bytes necesarios para completar esta quickstart guide.
 
 ### Contenido que se enseñará
 - Cómo acceder a Snowflake Marketplace
