@@ -17,7 +17,7 @@ This guide outlines the process for creating agentic workflows in [Snowflake Not
 
 ### What is Container Runtime? 
 
-Snowflake Notebooks on Container Runtime enable flexible and scalable model development and deployment directly within Snowflake for [machine learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/) and [gen AI](https://www.snowflake.com/en/data-cloud/cortex/) workflows. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference. Container Runtime offers greater flexibility and tailored compute options for complex modeling workloads. ***NOTE: This feature is currently in Public Preview.***
+Snowflake Notebooks on Container Runtime enable flexible and scalable model development and deployment directly within Snowflake for [machine learning](/en/data-cloud/snowflake-ml/) and [gen AI](/en/data-cloud/cortex/) workflows. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference. Container Runtime offers greater flexibility and tailored compute options for complex modeling workloads. ***NOTE: This feature is currently in Public Preview.***
 
 Learn more about [Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
 
@@ -25,7 +25,7 @@ Learn more about [Container Runtime](https://docs.snowflake.com/en/user-guide/ui
 
 Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.
 
-Learn more about [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/).
+Learn more about [Snowflake Cortex AI](/en/data-cloud/cortex/).
 
 ### What is Smolagents?
 
@@ -148,6 +148,6 @@ Congratulations! You've successfully created agentic workflow using smolagents l
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake)
 - [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - [Smolagents](https://huggingface.co/blog/smolagents#introducing-smolagents-a-simple-library-to-build-agents)
-- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
-- [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
+- [Snowflake ML](/en/data-cloud/snowflake-ml/)
+- [Snowflake Cortex AI](/en/data-cloud/cortex/)
 

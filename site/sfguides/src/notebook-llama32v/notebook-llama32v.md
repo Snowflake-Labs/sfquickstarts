@@ -149,4 +149,4 @@ You have successfully run a Snowflake Notebook on Snowpark Container Services th
 ### Related Resources
 - [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
 - [Meta's 3.2 11B Vision Model](https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct)
-- [Using Container Notebook](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
+- [Using Container Notebook](/en/developers/guides/notebook-container-runtime/)

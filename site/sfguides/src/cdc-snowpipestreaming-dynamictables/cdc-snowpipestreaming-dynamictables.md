@@ -635,6 +635,6 @@ drop role PII_ALLOWED;
 - Secured Sensitive Fields, beginning from the Source, but also decrypted for those authorized
 
 ### Resources
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/07/Industrial-IoT_-Snowpipe-Streaming_Reference-Architecture.pdf)
-- [Read the Blog](https://www.snowflake.com/blog/manufacturing-data-ingestion-into-snowflake/)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/07/Industrial-IoT_-Snowpipe-Streaming_Reference-Architecture.pdf)
+- [Read the Blog](/blog/manufacturing-data-ingestion-into-snowflake/)
 - [Watch the Demo](https://youtu.be/MIJ2suyE2io?list=TLGG99oO9HwspOgyNDA5MjAyNQ)

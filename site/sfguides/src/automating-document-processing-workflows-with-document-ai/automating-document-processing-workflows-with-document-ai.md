@@ -571,6 +571,6 @@ Congratulations, you have successfully completed this quickstart! Through this q
 * How to create a Streamlit application in Snowflake to verify extracted values
 
 ### Related Resources
-* [Extracting Insights from Unstructured Data with Document AI QuickStart](https://www.snowflake.com/en/developers/guides/tasty-bytes-extracting-insights-with-docai/)
+* [Extracting Insights from Unstructured Data with Document AI QuickStart](/en/developers/guides/tasty-bytes-extracting-insights-with-docai/)
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai)
 * [Document AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)

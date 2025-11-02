@@ -37,7 +37,7 @@ feature selection, feature engineering, and hyperparameter tuning. Deepnote’s
 collaborative data notebook is an interoperable Python and SQL environment 
 that includes a suite of no-code tools to help with EDA. To learn more 
 about how Deepnote helps with EDA and its tight integration with 
-Snowflake, see [this](https://www.snowflake.com/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/) quickstart.
+Snowflake, see [this](/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/) quickstart.
 
 ### Using Snowpark & Deepnote together
 
@@ -57,7 +57,7 @@ evaluate and deploy the model inside Snowflake’s DWH.
 ### Prerequisites
 
 - Familiarity with basic Python and SQL
-- Familiarity with data science notebooks (see [this guide](https://www.snowflake.com/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/) for an introduction to Deepnote)
+- Familiarity with data science notebooks (see [this guide](/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/) for an introduction to Deepnote)
 
 ### What You’ll Learn
 
@@ -89,7 +89,7 @@ can only be viewed by the workspace Admin.
 Note that once you are connected to Snowflake, you will be able to browse 
 your schema directly from Deepnote and query your tables with [SQL blocks](https://deepnote.com/docs/sql-cells). 
 For more detailed information on using Deepnote and Snowflake together, 
-please see [this quickstart](https://www.snowflake.com/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/).
+please see [this quickstart](/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/).
 
 <!-- ------------------------ -->
 

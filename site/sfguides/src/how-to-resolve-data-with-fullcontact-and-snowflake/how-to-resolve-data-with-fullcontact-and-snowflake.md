@@ -244,7 +244,7 @@ If you want to learn more about FullContact for Snowflake check out the [officia
 - Running the FullContact for Snowflake App on sample customer data to unify and deduplicate disparate datasets
 
 ### Resources
-- [Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/V2-FullContact-Solution-Architecture-Sept-2024.pdf)
+- [Reference Architecture](/content/dam/snowflake-site/developers/2024/10/V2-FullContact-Solution-Architecture-Sept-2024.pdf)
 - [Read the Blog](https://medium.com/snowflake/unifying-customer-data-with-fullcontact-for-snowflake-b355a4970c74)
 - [Watch the Demo](https://youtu.be/Ft8FT-ngffc?si=9vcJAG2T3S-wTqNu)
   

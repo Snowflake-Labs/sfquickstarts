@@ -131,7 +131,7 @@ Each platform will have a slightly different process for configuring the connect
 Tables can be either standard Snowflake tables or Dynamic Tables.
 
 ### (Optional) Creating a Dynamic Table
-Dynamic Tables are specifically optimized for low-latency transformations and can simplify data engineering pipelines as data is loaded into Snowflake. Read more about Dynamic Tables [here](https://www.snowflake.com/blog/dynamic-tables-delivering-declarative-streaming-data-pipelines/). 
+Dynamic Tables are specifically optimized for low-latency transformations and can simplify data engineering pipelines as data is loaded into Snowflake. Read more about Dynamic Tables [here](/blog/dynamic-tables-delivering-declarative-streaming-data-pipelines/). 
 
 ![](assets/QS4.png)
 
@@ -195,7 +195,7 @@ Congratulations! You have successfully created a live sync between Snowflake and
 ### Resources
 - [Census Live Syncs documentation](https://docs.getcensus.com/basics/live-syncs)
 - [Census Snowflake source documentation](https://docs.getcensus.com/sources/available-sources/snowflake)
-- [Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Snowflake-Census-Reference-Architecture.pdf)
+- [Reference Architecture](/content/dam/snowflake-site/developers/2024/10/Snowflake-Census-Reference-Architecture.pdf)
 - [Read the Blog](https://medium.com/snowflake/a-developers-guide-to-activating-snowflake-data-with-census-929add207129)
 - [Watch the Demo](https://youtu.be/G_qHyY-95lU?si=L8l1lSQaBeYaFkOf)
   

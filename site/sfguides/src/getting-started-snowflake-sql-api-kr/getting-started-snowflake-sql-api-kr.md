@@ -474,6 +474,6 @@ Link: </api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=918e221
 Snowflake 무료 평가판을 사용하여 이 랩을 완료했다면 Snowflake로 수행할 수 있는 작업을 계속해서 탐색하는 것을 권장합니다. Snowflake는 다음을 통해 여러 방법으로 도움을 줄 수 있습니다.
 
 - Snowflake를 통해 여러분의 데이터를 분석하는 데 도움을 받기 위해 평가판/무료 ETL 및 BI 도구에 대한 액세스를 얻으려면 UI 맨 위에 있는 'Partner Connect' 아이콘을 클릭하십시오
-- '[무료 평가판 극대화를 위한 가이드](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)' 문서를 확인하십시오
-- Snowflake 가상 또는 현장 [이벤트](https://www.snowflake.com/about/webinars/)에 참석하여 Snowflake의 기능 및 고객에 관해 자세히 알아보십시오.
-- 더 자세한 내용은 [영업 팀](https://www.snowflake.com/free-trial-contact-sales/)에 문의하시기 바랍니다
+- '[무료 평가판 극대화를 위한 가이드](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)' 문서를 확인하십시오
+- Snowflake 가상 또는 현장 [이벤트](/about/webinars/)에 참석하여 Snowflake의 기능 및 고객에 관해 자세히 알아보십시오.
+- 더 자세한 내용은 [영업 팀](/free-trial-contact-sales/)에 문의하시기 바랍니다

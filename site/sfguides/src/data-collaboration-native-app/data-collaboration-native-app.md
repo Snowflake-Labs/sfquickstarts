@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-This Quickstart guide is the second in a series of Collaboration & Applications in Snowflake. Part One of the series can be found [here](https://www.snowflake.com/en/developers/guides/data-collaboration-two-way/)
+This Quickstart guide is the second in a series of Collaboration & Applications in Snowflake. Part One of the series can be found [here](/en/developers/guides/data-collaboration-two-way/)
 
 In Part One, we showed how using Snowflake's unique collaboration features, we could:
 - share data from an organisation to another

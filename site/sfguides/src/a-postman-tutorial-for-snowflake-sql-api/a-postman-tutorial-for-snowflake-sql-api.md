@@ -325,7 +325,7 @@ Update the SQL statement and parameters to your liking, and then find the `Code`
 
 This tutorial was a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the [Snowflake SQL API Reference](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html) and the [Snowflake public workspace in Postman](https://www.postman.com/snowflake/workspace/snowflake-public-workspace/overview).
 
-If you want more hands-on learning, check out [this in-depth lab](https://www.snowflake.com/en/developers/guides/getting-started-snowflake-sql-api/) to dig deeper into the Snowflake SQL API, and learn about the following topics:
+If you want more hands-on learning, check out [this in-depth lab](/en/developers/guides/getting-started-snowflake-sql-api/) to dig deeper into the Snowflake SQL API, and learn about the following topics:
 
 - Using bind variables in a statement
 - Retriving and getting metadata about the result
@@ -334,6 +334,6 @@ If you want more hands-on learning, check out [this in-depth lab](https://www.sn
 If you've completed this lab using the Snowflake free trial, continue exploring what Snowflake can help you accomplish. There are several ways Snowflake can help you with this:
 
 - At the very top of the UI, click on the "Partner Connect" icon to get access to trial/free ETL and BI tools to help you analyze your data with Snowflake
-- Read the "[Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)"
-- Attend a Snowflake virtual or in-person [event](https://www.snowflake.com/about/webinars/) to learn more about our capabilities and how customers use us
-- Contact [Sales](https://www.snowflake.com/free-trial-contact-sales/) to learn more
+- Read the "[Definitive Guide to Maximizing Your Free Trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)"
+- Attend a Snowflake virtual or in-person [event](/about/webinars/) to learn more about our capabilities and how customers use us
+- Contact [Sales](/free-trial-contact-sales/) to learn more

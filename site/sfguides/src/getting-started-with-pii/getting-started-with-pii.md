@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-This is the code companion to the "Journey to Processing PII in the Data Cloud" session from [Snowflake BUILD 2021](https://www.snowflake.com/build/). That session was itself a companion to [a blog post by the same name](https://www.snowflake.com/blog/the-journey-to-processing-pii-in-the-data-cloud/) which had a business concept focus. As promised in the BUILD session, this code walkthrough is meant to show you how the features Snowflake offers can help you achieve your governance, security, and compliance goals for protecting PII and other sensitive information while leveraging the power of the Data Cloud.
+This is the code companion to the "Journey to Processing PII in the Data Cloud" session from [Snowflake BUILD 2021](/build/). That session was itself a companion to [a blog post by the same name](/blog/the-journey-to-processing-pii-in-the-data-cloud/) which had a business concept focus. As promised in the BUILD session, this code walkthrough is meant to show you how the features Snowflake offers can help you achieve your governance, security, and compliance goals for protecting PII and other sensitive information while leveraging the power of the Data Cloud.
 
 ### Prerequisites
 - Basic SQL Knowledge
@@ -435,7 +435,7 @@ drop role infosec;
 drop role executive;
 ```
 
-If you missed the session this guide is based on, check out the official [Snowflake BUILD 2021 site](https://www.snowflake.com/build/) to watch the replay. And you can also read the [blog post by the same name](https://www.snowflake.com/blog/the-journey-to-processing-pii-in-the-data-cloud/).
+If you missed the session this guide is based on, check out the official [Snowflake BUILD 2021 site](/build/) to watch the replay. And you can also read the [blog post by the same name](/blog/the-journey-to-processing-pii-in-the-data-cloud/).
 
 ### What we've covered
 - How to use Snowflake [RBAC and DAC](https://docs.snowflake.com/en/user-guide/security-access-control-overview.html)

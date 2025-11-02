@@ -17,7 +17,7 @@ En esta quickstart guide Introducción a Tasty Bytes descubrirás, antes de nada
 
 Cuando ya conozcas la organización Tasty Bytes, realizaremos el proceso de configuración del modelo de base de datos de Tasty Bytes, además de los roles y almacenes específicos de cada workload, así como cualquier control de acceso basado en funciones (role-based access control, RBAC) que sea necesario. 
 
-Al terminar esta quickstart guide, habrás implementado los conceptos esenciales necesarios para ejecutar el resto de quickstart guides de nuestra sección [ Powered by Tasty Bytes - Quickstart guides](/guide/tasty_bytes_introduction_es/index.html#3).
+Al terminar esta quickstart guide, habrás implementado los conceptos esenciales necesarios para ejecutar el resto de quickstart guides de nuestra sección [ Powered by Tasty Bytes - Quickstart guides](/es/developers/guides/tasty-bytes-introduction-es/).
 
 ### ¿Qué es Tasty Bytes?
 ![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
@@ -162,13 +162,13 @@ El siguiente índice recoge todas las quickstart guides de Tasty Bytes disponibl
 
 ### De cero a Snowflake
 
-- #### [Transformación](/guide/tasty_bytes_zero_to_snowflake_transformation_es/)
+- #### [Transformación](/es/developers/guides/tasty-bytes-zero-to-snowflake-transformation-es/)
     - Obtén más información sobre Zero Copy Cloning de Snowflake, la caché del conjunto de resultados, Time Travel y las funcionalidades de cambio, borrado y recuperación a nivel de tabla.
-- #### [Datos semiestructurados](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_es/)
+- #### [Datos semiestructurados](/es/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-es/)
     - Obtén más información sobre el tipo de datos VARIANT de Snowflake, el procesamiento de datos semiestructurados con notación de puntos y cómo quitar el formato lateral, así como la creación de vistas y los gráficos de Snowsight.
-- #### [Colaboración](/guide/tasty_bytes_zero_to_snowflake_collaboration_es/)
+- #### [Colaboración](/es/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-es/)
     - Obtén más información sobre Snowflake Marketplace utilizando datos actualizados de Weather Source gratuitos y disponibles al instante para realizar análisis basados en datos de fuentes propias y de terceros armonizados.
-- #### [Geoespacial](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
+- #### [Geoespacial](/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
     - Obtén más información sobre la asistencia geoespacial de Snowflake, por ejemplo, sobre la adquisición de datos actualizados y gratuitos, disponibles al instante en SafeGraph o la construcción de puntos geográficos (ST_POINT), el cálculo de distancias (ST_DISTANCE), la recopilación de coordenadas (ST_COLLECT), cómo dibujar un polígono de delimitación mínimo (ST_ENVELOPE), el cálculo de área (ST_AREA) y la búsqueda de puntos centrales (ST_CENTROID).
 
 ### Guías detalladas de workloads (*próximamente*)

@@ -29,7 +29,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ### 사전 필요 조건 및 지식
 
 - Scala에 대한 이해
-- Amazon Web Services(AWS) 또는 Microsoft Azure에서 호스트하는 [Snowflake](https://www.snowflake.com/) 계정.
+- Amazon Web Services(AWS) 또는 Microsoft Azure에서 호스트하는 [Snowflake](/) 계정.
 - [git](https://git-scm.com/downloads)
 - [SBT](https://www.scala-sbt.org/)
 

@@ -15,7 +15,7 @@ authors: Robert Fehrmann
 
 ![](assets/stock_small.jpg)
 
-이 프로젝트에서는 2021년 Snowflake Summit에서 [공개 미리 보기](https://www.snowflake.com/blog/welcome-to-snowpark-new-data-programmability-for-the-data-cloud/)를 위해 Snowflake가 발표한 새로운 제품 기능인 [Snowpark](https://docs.snowflake.com/ko/developer-guide/snowpark/index.html)에서 Jupyter Notebook을 시작하는 방법을 선보입니다. 이 자습서에서는 무한한 정확성, 감정 분석 및 머신 러닝을 통해 ELT 처리와 같이 명확한 실제 비즈니스 문제와 더불어 유리수를 포함한 수학과 같이 다양한 문제를 해결하는 방법을 알아보겠습니다.
+이 프로젝트에서는 2021년 Snowflake Summit에서 [공개 미리 보기](/blog/welcome-to-snowpark-new-data-programmability-for-the-data-cloud/)를 위해 Snowflake가 발표한 새로운 제품 기능인 [Snowpark](https://docs.snowflake.com/ko/developer-guide/snowpark/index.html)에서 Jupyter Notebook을 시작하는 방법을 선보입니다. 이 자습서에서는 무한한 정확성, 감정 분석 및 머신 러닝을 통해 ELT 처리와 같이 명확한 실제 비즈니스 문제와 더불어 유리수를 포함한 수학과 같이 다양한 문제를 해결하는 방법을 알아보겠습니다.
 
 Snowpark는 Jupyter Notebook만이 아닌 다양한 IDE와 작동합니다. 여러분이 즐겨 사용하는 개발 환경 설정 방법에 대한 지침은 [Snowpark를 위한 개발 환경 설정](https://docs.snowflake.com/ko/developer-guide/snowpark/setup.html) 아래에 있는 Snowpark 설명서에서 찾을 수 있습니다.
 
@@ -246,11 +246,11 @@ Snowpark는 데이터 클라우드에 확장성이 뛰어난 데이터 처리를
 
 ### 추가 리소스:
 
-- [무료 평가판 극대화를 위한 가이드](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) 문서를 확인하십시오
-- [Snowflake 가상 또는 현장 이벤트](https://www.snowflake.com/about/events/)에 참석하여 Snowflake의 기능 및 고객에 관해 자세히 알아보십시오.
+- [무료 평가판 극대화를 위한 가이드](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) 문서를 확인하십시오
+- [Snowflake 가상 또는 현장 이벤트](/about/events/)에 참석하여 Snowflake의 기능 및 고객에 관해 자세히 알아보십시오.
 - [Snowflake 커뮤니티에 참여하세요](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
 - [Snowflake University에 등록하세요](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
-- 더 자세한 내용은 [Snowflake 영업팀에 문의](https://www.snowflake.com/free-trial-contact-sales/)하시기 바랍니다
+- 더 자세한 내용은 [Snowflake 영업팀에 문의](/free-trial-contact-sales/)하시기 바랍니다
 
 ### 다룬 내용:
 

@@ -17,7 +17,7 @@ This quickstart is a part of a series covering various aspects of wваorking wi
 
 * **Streaming Data Integration with Snowflake (this very guide)** - This guide will focus on design patterns and building blocks for data integration within Snowflake
 
-* **Popular Kafka Integration options with Snowflake(coming up later!)** - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations. In the meantime, please check out our quickstart on [Streaming Snowpipe with Amazon MSK](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/). 
+* **Popular Kafka Integration options with Snowflake(coming up later!)** - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations. In the meantime, please check out our quickstart on [Streaming Snowpipe with Amazon MSK](/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/). 
 
 * **Streaming Use cases(coming up later!)** - This guide will share examples of common streaming use cases such as Change Data Capture (CDC), near real-time data sharing and others 
 
@@ -128,7 +128,7 @@ Efficiency benefits are similar to using the Snowpipe Streaming API.
  
 Lastly, integration using [Snowflake Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro.html#how-does-secure-data-sharing-work) is superior in terms of its characteristics, despite being listed last. With Snowflake Data Sharing, consumers have the ability to access datasets published by providers live. Once the data share is configured, consumers can query new data immediately whenever changes occur on the provider side. 
 
-Additionally, Snowflake Secure Data Sharing is a key component used within the Snowflake Cloud Marketplace, which offers additional data cataloging, making it easier for consumers to discover and access datasets, as well as providing providers with a range of metrics and controls. To take advantage of these features, it is recommended to explore the [thousands of listings](https://www.snowflake.com/snowflake-marketplace/)  available on the Snowflake Marketplace to see what datasets can be added to your analytical landscape, all with minimal latency and effortless integration.
+Additionally, Snowflake Secure Data Sharing is a key component used within the Snowflake Cloud Marketplace, which offers additional data cataloging, making it easier for consumers to discover and access datasets, as well as providing providers with a range of metrics and controls. To take advantage of these features, it is recommended to explore the [thousands of listings](/snowflake-marketplace/)  available on the Snowflake Marketplace to see what datasets can be added to your analytical landscape, all with minimal latency and effortless integration.
 
 Hope reviewing these patterns will help you to choose the right option for your next data pipeline. Seeing is believing! Let's see them in action. 
 
@@ -142,7 +142,7 @@ In this section, we will construct a pipeline that is prepared to integrate a st
 * Evaluate the results
 
 For the sake of simplicity, we will manually notify Snowpipe of the availability of new files to ingest in the stage. However, in real-life scenarios, it is more efficient to automate this process using the Snowpipe auto-ingest option and take advantage of storage events. If you'd like to experience this in action, the quickstart guide may be helpful: 
- [Snowpipe quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/)
+ [Snowpipe quickstart](/en/developers/guides/getting-started-with-snowpipe/)
 
 Let's login to Snowflake account (as agreed, we are going to use the ACCOUNTADMIN role for simplicity) and run the following:
 
@@ -293,7 +293,7 @@ select *
 
 Here's a challenge for you. In the scripts we created earlier, we only loaded a small amount of data, around 1000 rows. Try generating more files based on sample data and observe how Snowpipe can handle a larger influx of data. 
 
-Also, if you'd like to learn more about SnowPipe and levelrage Cloud Storage Events for auto-ingest setup please have a look in our [Getting Started with Snowpipe](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/) quickstart. 
+Also, if you'd like to learn more about SnowPipe and levelrage Cloud Storage Events for auto-ingest setup please have a look in our [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/) quickstart. 
 
 ## COPY command
 
@@ -568,7 +568,7 @@ Thanks to Snowflake's exceptional support for querying semi-structured data, wor
 ![staged data](assets/img12.png) 
 As you can see, Snowpipe Streaming is a fantastic new capability that can significantly reduce integration latency and improve pipeline efficiency. It also opens up new opportunities for your business, providing near-real-time insights and operational reporting, among other benefits.
 
-For those of you who would like to know more about use of Snowpipe Streaming in Amazon MSK (Managed Streaming for Apache Kafka) please have a look at this [Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/)!
+For those of you who would like to know more about use of Snowpipe Streaming in Amazon MSK (Managed Streaming for Apache Kafka) please have a look at this [Quickstart](/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/)!
 
 Hope you enjoyed this section. Let's summarize and provide some pointers to continue refining your streaming data pipeline skills.
 

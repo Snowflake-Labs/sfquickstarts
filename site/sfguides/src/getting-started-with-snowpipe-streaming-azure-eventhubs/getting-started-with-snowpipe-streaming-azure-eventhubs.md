@@ -620,9 +620,9 @@ In this lab, we built a demo to show how to ingest time-series data using Snowpi
 Related Resources
 
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
-- [Getting started with Snowflake](https://www.snowflake.com/en/developers/guides/)
-- [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
-- [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
+- [Getting started with Snowflake](/en/developers/guides/)
+- [Snowflake for Data Sharing](/Workloads/data-sharing/)
+- [Snowflake Marketplace](/en/data-cloud/marketplace/)
 - [Azure Event Hubs](https://azure.microsoft.com/en-us/products/event-hubs)
 - [Snowflake on Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/snowflake.snowflake_contact_me?tab=overview)
 

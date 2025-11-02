@@ -243,7 +243,7 @@ Verify the database is entirely gone by checking the **Results** for `UDF_DB suc
 
 You should now have a good handle on SQL UDFs by practicing both scalar and table functions. With our database objects cleared, it's time to look ahead.
 
-Consider the potential of a sharable and [secure](https://docs.snowflake.com/en/sql-reference/udf-secure.html#secure-udfs) user-defined function. You can learn how to share user-defined functions, such as the market basket analysis table, following this post about [the power of secure UDFs](https://www.snowflake.com/blog/the-power-of-secure-user-defined-functions-for-protecting-shared-data/).
+Consider the potential of a sharable and [secure](https://docs.snowflake.com/en/sql-reference/udf-secure.html#secure-udfs) user-defined function. You can learn how to share user-defined functions, such as the market basket analysis table, following this post about [the power of secure UDFs](/blog/the-power-of-secure-user-defined-functions-for-protecting-shared-data/).
 
 ### What we've covered
 

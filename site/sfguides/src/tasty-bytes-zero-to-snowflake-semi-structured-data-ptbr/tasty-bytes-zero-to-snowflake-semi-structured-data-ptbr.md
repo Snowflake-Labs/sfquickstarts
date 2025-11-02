@@ -20,7 +20,7 @@ Neste quickstart, vamos aprender sobre o processamento de dados semiestruturados
 Para obter mais informações sobre dados semiestruturados no Snowflake, consulte a documentação [visão geral de dados semiestruturados](https://docs.snowflake.com/pt/user-guide/semistructured-concepts).
 
 ### Pré-requisitos
-- Antes de começar, é necessário ter concluído o [**Quickstart “Introdução à Tasty Bytes”**](/guide/tasty_bytes_introduction_ptbr/index.html), que oferece um passo a passo para criar uma conta de avaliação gratuita e implementar os elementos básicos da Tasty Bytes necessários para completar este módulo.
+- Antes de começar, é necessário ter concluído o [**Quickstart “Introdução à Tasty Bytes”**](/pt_br/developers/guides/tasty-bytes-introduction-ptbr/), que oferece um passo a passo para criar uma conta de avaliação gratuita e implementar os elementos básicos da Tasty Bytes necessários para completar este módulo.
 
 ### Você vai aprender
 - O que é o tipo de dados VARIANT.
@@ -363,4 +363,4 @@ Caso queira refazer este quickstart, use os scripts de Reset que aparecem no fin
 ### Próximas etapas
 Para continuar sua jornada no Snowflake Data Cloud, clique no link abaixo para ver mais quickstarts Powered By Tasty Bytes disponíveis para você.
 
-- ### [Powered by Tasty Bytes - Índice de quickstarts](/guide/tasty_bytes_introduction_ptbr/index.html#3)
+- ### [Powered by Tasty Bytes - Índice de quickstarts](/pt_br/developers/guides/tasty-bytes-introduction-ptbr/)

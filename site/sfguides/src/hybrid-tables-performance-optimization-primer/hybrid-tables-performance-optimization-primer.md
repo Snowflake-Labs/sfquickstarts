@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### Hybrid Tables
 
-A [hybrid table](https://docs.snowflake.com/en/user-guide/tables-hybrid) is a Snowflake table type that is optimized for hybrid transactional and operational workloads that require low latency and high throughput on small random point reads and writes. A hybrid table supports unique and referential integrity constraint enforcement that is critical for transactional workloads. You can use a hybrid table along with other Snowflake tables and features to power [Unistore workloads](https://www.snowflake.com/en/data-cloud/workloads/unistore/) that bring transactional and analytical data together in a single platform.
+A [hybrid table](https://docs.snowflake.com/en/user-guide/tables-hybrid) is a Snowflake table type that is optimized for hybrid transactional and operational workloads that require low latency and high throughput on small random point reads and writes. A hybrid table supports unique and referential integrity constraint enforcement that is critical for transactional workloads. You can use a hybrid table along with other Snowflake tables and features to power [Unistore workloads](/en/data-cloud/workloads/unistore/) that bring transactional and analytical data together in a single platform.
 
 Use cases that may benefit from hybrid tables include:
 
@@ -51,7 +51,7 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 
 ### Process
-- We will be creating three tables that represent a data model. Following the trucking example from the [Getting Started with Hybrid Tables](https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/) quickstart, we will use TRUCK and ORDER_HEADER tables to represent our data.
+- We will be creating three tables that represent a data model. Following the trucking example from the [Getting Started with Hybrid Tables](/en/developers/guides/getting-started-with-hybrid-tables/) quickstart, we will use TRUCK and ORDER_HEADER tables to represent our data.
 - Create and work with TRUCK table to understand primary keys, secondary indexes, and accompanying query patterns
 - Build on TRUCK with ORDER_HEADER to work with foreign key relationships
 - Add a secondary index to find orders for trucks based on order date
@@ -470,8 +470,8 @@ Having completed this quickstart you have successfully
 
 
 ### Related Resources:
-- [Snowflake Unistore Landing Page](https://www.snowflake.com/en/data-cloud/workloads/unistore/)
+- [Snowflake Unistore Landing Page](/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
 - [Hybrid Table Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
-- [Hybrid Table Performance Testing Quickstart](https://www.snowflake.com/en/developers/guides/hybrid-tables-jmeter-performance-testing/)
-- [Simplify Application Development Hybrid Tables Blog](https://www.snowflake.com/blog/simplify-application-development-hybrid-tables)
+- [Hybrid Table Performance Testing Quickstart](/en/developers/guides/hybrid-tables-jmeter-performance-testing/)
+- [Simplify Application Development Hybrid Tables Blog](/blog/simplify-application-development-hybrid-tables)

@@ -12,7 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Through this quickstart, you will learn how to [get started with Lakehouse Analytics on Snowflake](https://www.snowflake.com/en/product/use-cases/lakehouse-analytics/).
+Through this quickstart, you will learn how to [get started with Lakehouse Analytics on Snowflake](/en/product/use-cases/lakehouse-analytics/).
 
 ### What You’ll Learn
 
@@ -23,7 +23,7 @@ By the end of this quickstart, you will learn how to:
 * Build an open lakehouse on Snowflake
 * Run analytics on your lakehouse
 
-### How to Build an [Open Lakehouse on Snowflake](https://www.snowflake.com/en/product/use-cases/lakehouse-analytics/)
+### How to Build an [Open Lakehouse on Snowflake](/en/product/use-cases/lakehouse-analytics/)
 
 Using Snowflake's fully managed, unified query engine that supports open table formats, you can run advanced analytics such as forecasting, anomaly detection, sentiment analysis and time series analysis, on complex data types like VARIANT and geospatial — across all your data sources, wherever they reside.
 
@@ -252,9 +252,9 @@ Congratulations, you have successfully completed this quickstart!
 ### Related Resources
 
 * [Catalog Linked Databases in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) 
-* [Lakehouse Analytics on Snowflake](https://www.snowflake.com/en/product/use-cases/lakehouse-analytics/)  
+* [Lakehouse Analytics on Snowflake](/en/product/use-cases/lakehouse-analytics/)  
 * [Source code on GitHub](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/lakehouse_analytics)  
-* [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
+* [Getting Started with Snowflake Intelligence](/en/developers/guides/getting-started-with-snowflake-intelligence/)
 * [Download Reference Architecture](https://quickstarts.snowflake.com/guide/modern_lakehouse_analytics_on_snowflake/img/a2adb3f9c152831d.png)
 * [Access Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/lakehouse_analytics/LAKEHOUSE_ANALYTICS_DEMO.ipynb)
 * 

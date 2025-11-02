@@ -201,14 +201,14 @@ agent_history = session.sql("""SELECT
 
 ### RAG Chatbot
 
-The app has an embedded RAG chatbot for agents to ask more questions of the knowlege base. Check out the [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](https://www.snowflake.com/en/developers/guides/tasty-bytes-rag-chatbot-using-cortex-and-streamlit/) quickstart for more details on building RAG chatbots. 
+The app has an embedded RAG chatbot for agents to ask more questions of the knowlege base. Check out the [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](/en/developers/guides/tasty-bytes-rag-chatbot-using-cortex-and-streamlit/) quickstart for more details on building RAG chatbots. 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Congratulations! You have built a customer support email application in Streamlit using Cortex LLMs. This powerful application helps Tasty Bytes customer support agents quickly and accurately answer customer emails, including automatic responses. 
 
-Check out several the [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-experience-app/) and [Tasty Bytes - Enhance Customer Experience Streamlit App](https://www.snowflake.com/en/developers/guides/tasty-bytes-rag-chatbot-using-cortex-and-streamlit/) to learn more about how Streamlit and Cortex helps Tasty Bytes improve customer experience. 
+Check out several the [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](/en/developers/guides/tasty-bytes-customer-experience-app/) and [Tasty Bytes - Enhance Customer Experience Streamlit App](/en/developers/guides/tasty-bytes-rag-chatbot-using-cortex-and-streamlit/) to learn more about how Streamlit and Cortex helps Tasty Bytes improve customer experience. 
 
 ### What You Learned
 - How Snowflake tools can build a full email support application using powerful LLM functionality
@@ -220,5 +220,5 @@ Check out several the [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](htt
 ### Related Resources
 - [Streamlit in Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-experience-app/)
-- [Tasty Bytes - Enhance Customer Experience Streamlit App](https://www.snowflake.com/en/developers/guides/tasty-bytes-rag-chatbot-using-cortex-and-streamlit/)
+- [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](/en/developers/guides/tasty-bytes-customer-experience-app/)
+- [Tasty Bytes - Enhance Customer Experience Streamlit App](/en/developers/guides/tasty-bytes-rag-chatbot-using-cortex-and-streamlit/)

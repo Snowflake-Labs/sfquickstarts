@@ -963,8 +963,8 @@ Congratulations, you completed this **Snowflake Internal Marketplace** journey! 
 
 - [Managing Listings via API](https://other-docs.snowflake.com/progaccess/listing-progaccess-about)
 
-- White Paper: [How to Knit Your Data Mesh on Snowflake](https://www.snowflake.com/resource/how-to-knit-your-data-mesh-on-snowflake/) (March 2025)
+- White Paper: [How to Knit Your Data Mesh on Snowflake](/resource/how-to-knit-your-data-mesh-on-snowflake/) (March 2025)
 
 - Webinar Recording with a demo of the Snowflake Internal Marketplace:
-[How to Build and Govern Your Data Products in Snowflake](https://www.snowflake.com/webinars/product-demo/data-mesh-demo-how-to-build-and-govern-your-data-products-in-snowflake-2025-04-29/) (April 2025)
+[How to Build and Govern Your Data Products in Snowflake](/webinars/product-demo/data-mesh-demo-how-to-build-and-govern-your-data-products-in-snowflake-2025-04-29/) (April 2025)
 

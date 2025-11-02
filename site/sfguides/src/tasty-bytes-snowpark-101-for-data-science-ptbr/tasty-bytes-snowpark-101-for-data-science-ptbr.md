@@ -322,4 +322,4 @@ Neste módulo, você:
 ### Próximas etapas
 Para continuar sua jornada no Snowflake Data Cloud, clique no link abaixo para ver os outros quickstarts Tasty Bytes disponíveis para você.
 
-- ### [Powered by Tasty Bytes - Índice de quickstarts](/guide/tasty_bytes_introduction_ptbr/index.html#3)
+- ### [Powered by Tasty Bytes - Índice de quickstarts](/pt_br/developers/guides/tasty-bytes-introduction-ptbr/)

@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an ML development workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.
+Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an ML development workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.
 
 ### What is Snowflake ML?
 
@@ -222,12 +222,12 @@ For more information, check out the resources below:
 
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 - [Snowflake ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
 - [Quickstart: Build an End-to-End ML Workflow in Snowflake
-](https://www.snowflake.com/en/developers/guides/end-to-end-ml-workflow/)
+](/en/developers/guides/end-to-end-ml-workflow/)
 - Check out other Snowflake ML quickstarts [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/snowflake_ml_e2e.png)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/snowflake_ml_e2e.png)
 - [Read the Blog](https://medium.com/snowflake/end-to-end-machine-learning-with-snowpark-ml-in-snowflake-notebooks-faa42f1f57fc)
 - [Watch the Demo](https://youtu.be/LeSGBW0YoLg?list=TLGGS3MVx9ovt9oyNDA5MjAyNQ)
 

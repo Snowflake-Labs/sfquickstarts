@@ -140,6 +140,6 @@ Congratulations! You’ve successfully built a Prophet forecasting model in a Sn
 ### Related Resources
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml)
 - [Snowflake Logging Custom Models](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types)
-- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML](/en/data-cloud/snowflake-ml/)
 - [Prophet Forecast Model](https://facebook.github.io/prophet/docs/quick_start.html)
 

@@ -443,7 +443,7 @@ CREATE PROCEDURE usp_generateValidationResults()
 
 Reference implementation: [`data_validation_ge.sql`](https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/data_validation_ge.sql). This is a sample implementation to demonstrate how to use any open source library which is not found in anaconda channel and can be downloaded from PyPI.
 
->For more details: https://www.snowflake.com/en/blog/snowpark-supports-pypi-packages/
+>For more details: /en/blog/snowpark-supports-pypi-packages/
 
 ### 2.3. Gold Layer Storage
 
@@ -657,5 +657,5 @@ You've built a comprehensive retail analytics pipeline that demonstrates:
 - [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
 - [Streamlit Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
-- [Snowflake Trail](https://www.snowflake.com/en/product/use-cases/observability/)
+- [Snowflake Trail](/en/product/use-cases/observability/)
 - [Snowpark DB API](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameReader.dbapi)

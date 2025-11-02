@@ -693,7 +693,7 @@ In this section, you'll set up the Openflow SPCS infrastructure needed to run th
 
 ### Complete Openflow SPCS Setup
 
-This CDC quickstart builds on the foundational Openflow SPCS setup. Navigate to the [Getting Started with Openflow SPCS](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/) quickstart and complete the following two sections (approximately 15 minutes total):
+This CDC quickstart builds on the foundational Openflow SPCS setup. Navigate to the [Getting Started with Openflow SPCS](/en/developers/guides/getting-started-with-openflow-spcs/) quickstart and complete the following two sections (approximately 15 minutes total):
 
 - **Setup Core Snowflake**: Create `OPENFLOW_ADMIN` role and enable BCR Bundle 2025_06.
 
@@ -779,7 +779,7 @@ Expected status: **ACTIVE**
 >
 > - Verify the external access integration exists: `SHOW INTEGRATIONS LIKE 'quickstart_pgcdc_access';`
 > - Check that `QUICKSTART_ROLE` has all required grants: `SHOW GRANTS TO ROLE QUICKSTART_ROLE;`
-> - Review the [Openflow SPCS troubleshooting guide](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/)
+> - Review the [Openflow SPCS troubleshooting guide](/en/developers/guides/getting-started-with-openflow-spcs/)
 
 #### Access the Runtime Canvas
 

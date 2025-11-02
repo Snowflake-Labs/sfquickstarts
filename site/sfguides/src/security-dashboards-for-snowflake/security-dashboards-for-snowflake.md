@@ -534,7 +534,7 @@ You can easily modify this to watch for modifications to any of the policies con
 
 The Security Dashboard you've built here is a starting point. The hope is you've seen that all the information you would likely want to use is available, and we make it relatively easy to get that information displayed in a useful way. 
 
-If you want to learn more about Snowflake security, check out the official documentation here: [Summary of Security Features (Docs)](https://docs.snowflake.com/user-guide/admin-security). There is also a lot more information about Security at Snowflake here: [Snowflake Security & Trust Center](https://www.snowflake.com/product/security-and-trust-center/). 
+If you want to learn more about Snowflake security, check out the official documentation here: [Summary of Security Features (Docs)](https://docs.snowflake.com/user-guide/admin-security). There is also a lot more information about Security at Snowflake here: [Snowflake Security & Trust Center](/product/security-and-trust-center/). 
 
 ### What we've covered
 - How to use Snowsight to create dashboard tiles

@@ -15,7 +15,7 @@ Open in snowflake link: https://app.snowflake.com/templates?template=data_engine
 
 > "Data engineers are focused primarily on building and maintaining data pipelines that transport data through different steps and put it into a usable state ... The data engineering process encompasses the overall effort required to create **data pipelines** that automate the transfer of data from place to place and transform that data into a specific format for a certain type of analysis. In that sense, data engineering isn’t something you do once. It’s an ongoing practice that involves collecting, preparing, transforming, and delivering data. A data pipeline helps automate these tasks so they can be reliably repeated. It’s a practice more than a specific technology." (From Cloud Data Engineering for Dummies, Snowflake Special Edition)
 
-Are you interested in unleashing the power of Snowpark Python to build data engineering pipelines? Well then, this Quickstart is for you! The focus here will be on building data engineering pipelines with Python, and not on data science. For examples of doing data science with Snowpark Python please check out our [Machine Learning with Snowpark Python: - Credit Card Approval Prediction](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/) Quickstart.
+Are you interested in unleashing the power of Snowpark Python to build data engineering pipelines? Well then, this Quickstart is for you! The focus here will be on building data engineering pipelines with Python, and not on data science. For examples of doing data science with Snowpark Python please check out our [Machine Learning with Snowpark Python: - Credit Card Approval Prediction](/en/developers/guides/getting-started-snowpark-machine-learning/) Quickstart.
 
 This Quickstart will cover a lot of ground, and by the end you will have built a robust data engineering pipeline using Snowpark Python stored procedures. That pipeline will process data incrementally, be orchestrated with Snowflake tasks, and be deployed via a CI/CD pipeline. You'll also learn how to use Snowflake's new developer CLI tool and Visual Studio Code extension! Here's a quick visual overview:
 
@@ -883,7 +883,7 @@ And finally, here's a quick recap of related resources:
     * [Writing Stored Procedures in Snowpark (Python)](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html)
     * [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)
 * [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python?_fsi=TNKw8Mx5&amp;_fsi=TNKw8Mx5)
-* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Data-Engineering-Pipelines-with-Snowpark-in-Snowflake-Notebooks.pdf)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/04/Data-Engineering-Pipelines-with-Snowpark-in-Snowflake-Notebooks.pdf)
 * [Read the Blog](https://medium.com/snowflake/building-data-engineering-pipelines-with-snowpark-python-e14f2b525510)
 * [Watch the Demo](https://youtu.be/mpstEt0fU8U?list=TLGGTh02wdk5rsQyMjA5MjAyNQ)
   

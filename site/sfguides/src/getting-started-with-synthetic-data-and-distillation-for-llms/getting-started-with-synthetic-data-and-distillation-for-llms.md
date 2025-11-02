@@ -18,7 +18,7 @@ In this quickstart we will specifically show you how to use Llama 3.1 405B and L
 
 ### What is Snowflake Cortex AI?
 
-[Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex) is an intelligent, fully managed service that provides access to industry-leading large language models (LLMs) and chat with your data services. Cortex AI capabilities include:
+[Snowflake Cortex AI](/en/data-cloud/cortex) is an intelligent, fully managed service that provides access to industry-leading large language models (LLMs) and chat with your data services. Cortex AI capabilities include:
 
 ![Cortex](./assets/cortex.png)
 

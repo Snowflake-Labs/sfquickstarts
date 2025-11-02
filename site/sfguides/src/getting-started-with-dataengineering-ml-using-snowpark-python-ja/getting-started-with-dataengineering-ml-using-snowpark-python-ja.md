@@ -34,7 +34,7 @@ Python、Java、Scalaなどの非SQLコードを安全にデプロイして処�
 
 **柔軟なランタイムコンストラクト** - Snowparkは、ユーザーがカスタムロジックを取り込んで実行できるようにする柔軟なランタイムコンストラクトを提供します。開発者は、ユーザー定義関数とストアドプロシージャを使用して、データパイプライン、MLモデル、データアプリケーションをシームレスに構築できます。
 
-詳しくは、[Snowpark](https://www.snowflake.com/snowpark/)をご覧ください。
+詳しくは、[Snowpark](/snowpark/)をご覧ください。
 
 ![Snowpark](assets/snowpark.png)
 
@@ -603,8 +603,8 @@ alter task monthly_revenue_data_pipeline_task suspend;
 ### 関連リソース
 
 - [GitHubのソースコード](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [上級：Snowpark for Pythonデータエンジニアリングガイド](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [上級：Snowpark for Python機械学習ガイド](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [上級：Snowpark for Pythonデータエンジニアリングガイド](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [上級：Snowpark for Python機械学習ガイド](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Pythonデモ](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python開発者ガイド](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Streamlitドキュメント](https://docs.streamlit.io/)

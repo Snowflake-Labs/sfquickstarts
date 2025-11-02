@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-ShareWatch is a Streamlit-based application installed on consumers of data share's Snowflake accounts to detect schema drifts in data shares received by these consumers.  ShareWatch triggers notifications based on schema drift detection, which is part of Snowflake's [best practices to operationalize shares](https://www.snowflake.com/en/resources/white-paper/data-sharing-best-practices-managing-schema-drift-and-data-change-with-shared-data/), and integrates them in mission-critical data pipelines. The app provides a starting point and can be extended to implemenet other best practices discussed in the whitepaper. 
+ShareWatch is a Streamlit-based application installed on consumers of data share's Snowflake accounts to detect schema drifts in data shares received by these consumers.  ShareWatch triggers notifications based on schema drift detection, which is part of Snowflake's [best practices to operationalize shares](/en/resources/white-paper/data-sharing-best-practices-managing-schema-drift-and-data-change-with-shared-data/), and integrates them in mission-critical data pipelines. The app provides a starting point and can be extended to implemenet other best practices discussed in the whitepaper. 
 
 Schema drift occurs where the structure (schema) of shared data is changed over time by the data provider. ShareWatch detects schema drifts by comparing the expected schema of each share to its current schema, and displaying the state of each share monitored in the app. ShareWatch also sets up a master task that runs all monitors on a schedule and sends email notifications if:
 1. Share is in "Warning" State: schema is appended i.e. new schema, object, or attribute is added to the schema. 
@@ -148,6 +148,6 @@ Congratulations! You've successfully installed and configured sharewatch app to 
 - how to modify configuration settings of the app
 
 ### Related Resources
-- [Data sharing best practices: managing schema drift and data changes](https://www.snowflake.com/en/resources/white-paper/data-sharing-best-practices-managing-schema-drift-and-data-change-with-shared-data/)
+- [Data sharing best practices: managing schema drift and data changes](/en/resources/white-paper/data-sharing-best-practices-managing-schema-drift-and-data-change-with-shared-data/)
 - [Getting Started with Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started)
 - [Sharewatch Code on Github](https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/tree/main)

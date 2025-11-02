@@ -29,7 +29,7 @@ For more information on these objects, check out [this blog](https://medium.com/
 
 ### What are Hybrid Tables?
 
-A hybrid table is a Snowflake table type that is optimized for hybrid transactional and operational workloads that require low latency and high throughput on small random point reads and writes. A hybrid table supports unique and referential integrity constraint enforcement that is critical for transactional workloads. You can use a hybrid table along with other Snowflake tables and features to power [Unistore workloads](https://www.snowflake.com/en/data-cloud/workloads/unistore/) that bring transactional and analytical data together in a single platform.
+A hybrid table is a Snowflake table type that is optimized for hybrid transactional and operational workloads that require low latency and high throughput on small random point reads and writes. A hybrid table supports unique and referential integrity constraint enforcement that is critical for transactional workloads. You can use a hybrid table along with other Snowflake tables and features to power [Unistore workloads](/en/data-cloud/workloads/unistore/) that bring transactional and analytical data together in a single platform.
 
 Learn more about [Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid).
 
@@ -333,8 +333,8 @@ Congratulations, you have successfully completed this QuickStart! By completing 
 ### Related Resources
 
 - [QuickStart GitHub Repo](https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services)
-- [QuickStart Guide: Intro to Snowpark Container Services](https://www.snowflake.com/en/developers/guides/intro-to-snowpark-container-services/)
-- [Blog: Snowflake Announces Snowpark Container Services](https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
+- [QuickStart Guide: Intro to Snowpark Container Services](/en/developers/guides/intro-to-snowpark-container-services/)
+- [Blog: Snowflake Announces Snowpark Container Services](/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
 - [Blog: Snowpark Container Services - A Tech Primer](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741)
 - [Docs: Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - [Docs: Snowpark Container Services SQL Commands](https://docs.snowflake.com/en/sql-reference/commands-snowpark-container-services)
@@ -342,5 +342,5 @@ Congratulations, you have successfully completed this QuickStart! By completing 
 - [Video: Building Advanced ML with Snowpark Container Services - Summit 2023](https://www.youtube.com/watch?v=DelaJBm0UgI)
 - [Video: Snowpark Container Services with NVIDIA](https://www.youtube.com/watch?v=u98YTgCelYg)
 - [Watch Demo](https://youtu.be/l8NZSY3C7OU?si=WHphvkTe8b3j1N6m)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/06/Build-AI-Apps-Fast-using-Hybrid-Tables-Native-Apps-and-GenAI.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/06/Build-AI-Apps-Fast-using-Hybrid-Tables-Native-Apps-and-GenAI.pdf)
 

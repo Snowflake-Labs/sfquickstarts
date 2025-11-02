@@ -17,7 +17,7 @@ In this Quickstart guide, we will walk through how to use [Container Runtime](ht
 
 ### What is Snowflake ML?
 
-[Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+[Snowflake ML](/en/data-cloud/snowflake-ml/) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 ### What is Container Runtime?
 
@@ -36,7 +36,7 @@ Key Features:
 
 ### What is Snowflake Notebooks on Container Runtime?
 
-[Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)  are a powerful IDE option for building ML models at scale in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). 
+[Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)  are a powerful IDE option for building ML models at scale in [Snowflake ML](/en/data-cloud/snowflake-ml/). 
 
 Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of Python, Markdown and SQL code. By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for ML use cases. Notebooks on Container Runtime offer a robust environment with a comprehensive repository of pre-installed CPU and GPU machine learning packages and frameworks, significantly reducing the need for package management and dependency troubleshooting. This allows you to quickly get started with your preferred frameworks and even import models from external sources. Additionally, you can use pip to install any custom package as needed. The runtime also features an optimized data ingestion layer and provides a set of powerful APIs for training and hyperparameter tuning. These APIs extend popular ML packages, enabling you to train models efficiently within Snowflake. At the core of this solution is a Ray-powered distributed compute cluster, giving you seamless access to both CPU and GPU resources. This ensures high performance and optimal infrastructure usage without the need for complex setup or configuration, allowing you to focus solely on your machine learning workloads.
 
@@ -90,7 +90,7 @@ See details here for the [model](https://huggingface.co/openai/whisper-large-v3)
 
 * Foundational knowledge of Data Science workflows
 
-* (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
+* (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
 
 * (Optional) Completed [Getting Started with Snowflake ML Jobs](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml/ml_jobs#getting-started)
 
@@ -307,7 +307,7 @@ Snowflake ML Container Runtime offers significant value for distributed multi-no
 
 **GPU Acceleration**: Supports GPU machine types for faster processing, demonstrated by the example using 5 GPU_NV_S nodes.
 
-**Cost-Effectiveness**: The demo processed approximately 2700 audio files in just 2 minutes using 5 Small GPU nodes on AWS (specifically GPU_NV_S compute family), each costing 0.57 credits/hour. The cost is derived from the Credit Consumption Table 1 (d) highlighted [here](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf)
+**Cost-Effectiveness**: The demo processed approximately 2700 audio files in just 2 minutes using 5 Small GPU nodes on AWS (specifically GPU_NV_S compute family), each costing 0.57 credits/hour. The cost is derived from the Credit Consumption Table 1 (d) highlighted [here](/legal-files/CreditConsumptionTable.pdf)
 
 **Minimal Credit Consumption**: This resulted in a very low cost of only (2/60) * 0.57 = 0.019 credits per node, so 0.095 credits for 5 nodes or $0.285 to transcribe 2700 audio files (based on $3 per credit).
 
@@ -329,10 +329,10 @@ In conclusion, running Container Runtime in Snowflake ML and Snowflake Notebooks
 
 Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts:
 
-* [Build an End-to-End ML Workflow in Snowflake](https://www.snowflake.com/en/developers/guides/end-to-end-ml-workflow/)  
-* [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)  
-* [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/).  
-* [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+* [Build an End-to-End ML Workflow in Snowflake](/en/developers/guides/end-to-end-ml-workflow/)  
+* [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)  
+* [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/).  
+* [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
 
 ### What You Learned
 
@@ -340,17 +340,17 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 
 ### Related Quickstarts
 
-* [Train an XGBoost model with GPUs in Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)  
-* [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)  
-* [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)  
-* [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)  
-* [Getting Started with Snowflake ML](https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+* [Train an XGBoost model with GPUs in Snowflake Notebooks](/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)  
+* [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)  
+* [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)  
+* [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)  
+* [Getting Started with Snowflake ML](/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
 
 ### Related Resources
 
 * [Documentation: Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)  
 * [Documentation: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)  
 * [Documentation: Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)  
-* [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)  
-* [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+* [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)  
+* [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 * [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)

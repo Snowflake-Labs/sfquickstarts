@@ -389,7 +389,7 @@ Want to dive deeper or explore related topics? Check out these valuable resource
 **Articles:**
 - [pandas on Snowflake](https://docs.snowflake.com/en/developer-guide/snowpark/python/pandas-on-snowflake)
 - [Using Snowflake Cortex LLM functions with Snowpark pandas](https://docs.snowflake.com/en/developer-guide/snowpark/python/pandas-on-snowflake#using-snowflake-cortex-llm-functions-with-snowpark-pandas)
-- [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/)
+- [Snowflake Cortex AI](/en/product/features/cortex/)
 
 **Documentation:**
 - [Snowflake Documentation](https://docs.snowflake.com/)

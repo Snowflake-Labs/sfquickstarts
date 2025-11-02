@@ -20,7 +20,7 @@ Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on 
 Within this Quickstart we will learn about Snowflake Roles, Role Based Access Control and deploy both Column and Row Level Security that can scale with your business.
 
 ### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](/en/developers/guides/tasty-bytes-introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 - Please note that features leveraged within this Quickstart will require an Enterprise or Business Critical Snowflake account. Please see our documentation an [**Overview of Snowflake Editions**](https://docs.snowflake.com/en/user-guide/intro-editions#overview-of-editions).
 
 
@@ -992,6 +992,6 @@ If you would like to re-run this Quickstart please leverage the Reset scripts in
 ### Next Steps
 To continue your journey in the Snowflake AI Data Cloud, please now visit the link below to see all other Powered by Tasty Bytes - Quickstarts available to you.
 
-- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/)
+- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](/en/developers/guides/tasty-bytes-introduction/)
 
 

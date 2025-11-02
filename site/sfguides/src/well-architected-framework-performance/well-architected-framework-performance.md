@@ -1255,7 +1255,7 @@ reducing data processing overhead.
 - Step-by-step Instruction
 
   - [<u>A Data-Driven Methodology for Choosing a Snowflake Clustering
-    Key</u>](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cluster-key-selection/)
+    Key</u>](/en/developers/guides/getting-started-with-snowflake-cluster-key-selection/)
 
 - Blog Articles
 

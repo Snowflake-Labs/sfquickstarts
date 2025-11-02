@@ -16,7 +16,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 In this guide, we will review how to access and use Cybersyn’s Financial & Economic Essentials App.
 
 ### What is a Snowflake Native App?
-[Snowflake Native Apps](https://www.snowflake.com/native-apps/) are deployed by third party companies, like Cybersyn, through Snowflake Marketplace. Instead of customers having to copy data to apps, this technology enables data to be deployed and distributed directly through an app that lives inside an end users’ existing Snowflake account.
+[Snowflake Native Apps](/native-apps/) are deployed by third party companies, like Cybersyn, through Snowflake Marketplace. Instead of customers having to copy data to apps, this technology enables data to be deployed and distributed directly through an app that lives inside an end users’ existing Snowflake account.
 
 ### What is Streamlit?
 Streamlit is a pure Python [open source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about [Streamlit](https://streamlit.io/).

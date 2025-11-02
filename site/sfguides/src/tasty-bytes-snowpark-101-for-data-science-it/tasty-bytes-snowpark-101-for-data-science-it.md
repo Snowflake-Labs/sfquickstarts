@@ -324,4 +324,4 @@ In questo quickstart hai:
 ### Fasi successive
 Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere gli altri quickstart Powered by Tasty Bytes disponibili.
 
-- ### [Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_it/index.html#3)
+- ### [Quickstart Powered by Tasty Bytes](/it/developers/guides/tasty-bytes-introduction-it/)

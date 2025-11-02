@@ -47,7 +47,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 * [An SAP s- or p-user or linked Universal ID](https://blogs.sap.com/2020/01/17/creating-a-p-user-in-sap-cloud-platform-to-practise-sap-hana./) to log on to SAP's Cloud Appliance Library (cal.sap.com). 
 * A credit card to add billing information to the Azure account 
 * A Snowflake account with `ACCOUNTADMIN` access (you can get a [free Trial account here](https://signup.snowflake.com/?utm_cta=quickstarts_))
-* Familiarity with Snowflake and Snowflake objects (eg. through the [Zero-To-Snowflake hands-on-lab](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/))
+* Familiarity with Snowflake and Snowflake objects (eg. through the [Zero-To-Snowflake hands-on-lab](/en/developers/guides/getting-started-with-snowflake/))
 * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed on your local machine
 * [Tableau desktop](https://www.tableau.com/products/desktop/download) installed on your local machine (optional)
 
@@ -677,7 +677,7 @@ For further details on the available scripts please refer to the `README.md` in 
 
 [Connecting to SAP](https://medium.com/snowflake/if-extraction-from-sap-were-easy-b5f3d02f0ec9)
 
-[Accelerating Data Teams with dbt Core & Snowflake](https://www.snowflake.com/en/developers/guides/data-teams-with-dbt-core/)
+[Accelerating Data Teams with dbt Core & Snowflake](/en/developers/guides/data-teams-with-dbt-core/)
 
 [Optimising hierarchical data in Snowflake](https://medium.com/@sasha.mitrovich/optimize-your-hierarchical-data-with-snowflake-part-one-508384b9b857)
 

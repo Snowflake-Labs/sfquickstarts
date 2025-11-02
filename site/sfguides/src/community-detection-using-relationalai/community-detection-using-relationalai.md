@@ -119,6 +119,6 @@ Congratulations on completing the our Community Detection using RelationalAI gui
 - [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 - More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Fork the Repo on GitHub](https://github.com/RelationalAI/rai-samples/blob/main/samples/tastybytes-communities/community_detection_RelationalAI_V1.ipynb)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Community-Detection-using-RelationalAI-and-Snowflake-1.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/05/Community-Detection-using-RelationalAI-and-Snowflake-1.pdf)
 - [Read the Blog](https://medium.com/snowflake/unveiling-customer-communities-harnessing-social-graphs-for-community-detection-with-014fb35dc696)
 - [Watch the Demo](https://youtu.be/xxoV55of0FE?list=TLGGv5k24DoRmicyMjA5MjAyNQ)

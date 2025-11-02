@@ -582,9 +582,9 @@ A fantastic reference for downloading the snowflake-python connector .zip file  
 
 
 
-To learn more about Snowflake Marketplace visit the official website here: [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/)
+To learn more about Snowflake Marketplace visit the official website here: [Snowflake Marketplace](/data-marketplace/)
 
-To learn more about Building Data Applications visit the official  website here: [Building Data Applications](https://www.snowflake.com/workloads/data-applications/)
+To learn more about Building Data Applications visit the official  website here: [Building Data Applications](/workloads/data-applications/)
 
 
 

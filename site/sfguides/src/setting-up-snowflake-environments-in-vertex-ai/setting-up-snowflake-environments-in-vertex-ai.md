@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Snowflake and Google Cloud empower countless customers to seamlessly run AI and machine learning (AI/ML) workloads, including cutting-edge Generative AI. With several proven architectural patterns, integrating Snowflake with Google services like Vertex AI has never been easier. Whether you're diving into traditional AI/ML or  Generative AI, we have quickstart guides to get you up and running fast ([AI/ML quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-machine-learning-on-vertexai/) and [Snowflake + VertexAI for Generative AI quickstart](https://www.snowflake.com/en/developers/guides/customer-insights-analyzer-using-vertex-ai-and-snowflake/)).
+Snowflake and Google Cloud empower countless customers to seamlessly run AI and machine learning (AI/ML) workloads, including cutting-edge Generative AI. With several proven architectural patterns, integrating Snowflake with Google services like Vertex AI has never been easier. Whether you're diving into traditional AI/ML or  Generative AI, we have quickstart guides to get you up and running fast ([AI/ML quickstart](/en/developers/guides/getting-started-with-snowpark-for-machine-learning-on-vertexai/) and [Snowflake + VertexAI for Generative AI quickstart](/en/developers/guides/customer-insights-analyzer-using-vertex-ai-and-snowflake/)).
 
 The Snowflake + Vertex AI Generative AI quickstarts are designed to be quick, practical, and simple to follow. But we also know that setting up Vertex AI to fully leverage Snowflake's capabilities can be a bit tricky at first. That's why we’re here to help you configure your Vertex AI environment step-by-step—making it easy to connect with Snowflake. In this guide, we’ll walk you through everything, from configuring scripts to pushing container images to Google Container Registry (GCR).
 
@@ -20,7 +20,7 @@ The Snowflake + Vertex AI Generative AI quickstarts are designed to be quick, pr
 As this quickstart is targeted at getting environments there are no specific industry use cases, but rather "Hello World" examples to verify that the configuration scripts and containers are working appropriately. 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with [GCP](https://cloud.google.com/free) and a GCP account.
 
 ### What You'll Learn
@@ -334,8 +334,8 @@ With these two methods customers are now equipped to use Snowflake from Vertex A
 ### Resources
 There are some great resources for using Snowflake and GCP.
 
-- [Snowflake and Vertex AI](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-machine-learning-on-vertexai/)
+- [Snowflake and Vertex AI](/en/developers/guides/getting-started-with-snowpark-for-machine-learning-on-vertexai/)
 
-- [Snowflake and GCP for Generative AI](https://www.snowflake.com/en/developers/guides/customer-insights-analyzer-using-vertex-ai-and-snowflake/)
+- [Snowflake and GCP for Generative AI](/en/developers/guides/customer-insights-analyzer-using-vertex-ai-and-snowflake/)
 
 - [Snowflake on Google Cloud Storage](https://docs.snowflake.com/en/user-guide/data-load-gcs-config)

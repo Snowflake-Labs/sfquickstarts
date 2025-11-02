@@ -373,9 +373,9 @@ We would love your feedback on this Quickstart! Please submit any and all feedba
 ### **Next Steps and Related Resources** 
 We encourage you to continue with your free trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
 
-1. Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab). 
-2. Attend a Snowflake virtual or in-person [event](https://www.snowflake.com/about/webinars/) to learn more about our capabilities and how customers use us. 
-3. Contact [Sales](https://www.snowflake.com/free-trial-contact-sales/?utm_source=Snowflake&utm_medium=lab) to learn more. 
+1. Read the [Definitive Guide to Maximizing Your Free Trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab). 
+2. Attend a Snowflake virtual or in-person [event](/about/webinars/) to learn more about our capabilities and how customers use us. 
+3. Contact [Sales](/free-trial-contact-sales/?utm_source=Snowflake&utm_medium=lab) to learn more. 
 
 
 

@@ -25,7 +25,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 
 ### Prerequisites
 - Working knowledge of [Python](https://www.udemy.com/course/data-analysis-with-python-and-pandas/)
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/)
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/)
 - Familiarity with Git/GitHub
 
 ### What You’ll Learn 

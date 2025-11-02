@@ -427,7 +427,7 @@ After importing our sample retail dataset, we developed and trained two predicti
 * [Predictive Query Tutorial](https://docs.kumo.ai/docs/tutorial)  
 * [Predictive Query Reference](https://docs.kumo.ai/docs/primary-commands)
 * [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/leveraging_kumo_for_smarter_recommendations)
-* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/09/Making-Product-Recommendations-to-High-Value-Customers-Reference-Architecture.pdf)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/09/Making-Product-Recommendations-to-High-Value-Customers-Reference-Architecture.pdf)
 * [Read the Blog](https://medium.com/snowflake/using-kumo-in-snowflake-for-smarter-product-recommendation-79f64ba3b8c8)
 * [Watch the Demo](https://youtu.be/UtwLQgoHHss?list=TLGGrjSJvHTYVnYyNDA5MjAyNQ)
 

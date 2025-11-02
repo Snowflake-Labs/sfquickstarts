@@ -21,7 +21,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### 사전 필요 조건 및 지식
 
-- 시작하기 전에 평가판 계정 설정과 이 Quickstart를 완료하기 위해 필요한 Tasty Bytes 기초를 배포하는 것을 안내하는 [**Tasty Bytes 소개 Quickstart**](/guide/tasty_bytes_introduction_kr/index.html)를 완료하십시오.
+- 시작하기 전에 평가판 계정 설정과 이 Quickstart를 완료하기 위해 필요한 Tasty Bytes 기초를 배포하는 것을 안내하는 [**Tasty Bytes 소개 Quickstart**](/en/developers/guides/tasty-bytes-introduction-kr/)를 완료하십시오.
 
 ### 알아볼 내용
 
@@ -444,4 +444,4 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 
 Snowflake 데이터 클라우드에서의 여정을 계속하려면 이제 아래 링크를 방문하여 사용 가능한 모든 Tasty Bytes 활용 - Quickstart를 확인하십시오.
 
-- ### [Tasty Bytes 사용 - Quickstarts 목차](/guide/tasty_bytes_introduction_kr/index.html#3)
+- ### [Tasty Bytes 사용 - Quickstarts 목차](/en/developers/guides/tasty-bytes-introduction-kr/)

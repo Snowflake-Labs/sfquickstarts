@@ -330,7 +330,7 @@ parameters. High-level categories are below.
   and reduce platform administration while providing increased
   performance to customers. The cost varies by feature and is outlined
   in [<u>Snowflake’s Credit Consumption
-  Document</u>](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
+  Document</u>](/legal-files/CreditConsumptionTable.pdf).
 
 - **Cloud services layer:** This encompasses essential background
   services, including query compilation, metadata management,
@@ -362,7 +362,7 @@ parameters. High-level categories are below.
   by data consumed with shared outside organizations. This rebate is
   proportional to the consumption of your shared data by consumer
   Snowflake accounts. See the latest terms and more details
-  [<u>here</u>](https://www.snowflake.com/en/legal/).
+  [<u>here</u>](/en/legal/).
 
 #### 
 

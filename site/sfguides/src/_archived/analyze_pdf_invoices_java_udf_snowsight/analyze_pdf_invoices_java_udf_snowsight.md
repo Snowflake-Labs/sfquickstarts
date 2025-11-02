@@ -14,7 +14,7 @@ tags: Data Science, Data Engineering, Unstructured Data
 This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for unstructured data and Snowpark. Although this guide is specific to processing PDF files, you can apply this pattern of processing natively in Snowflake to many types of unstructured data. All source code for this guide can be found on [Github](https://github.com/Snowflake-Labs/sfquickstarts).
 
 ### Prerequisites
-- Completion of [Getting Started with Unstructured Data](https://www.snowflake.com/en/developers/guides/getting-started-with-unstructured-data/)
+- Completion of [Getting Started with Unstructured Data](/en/developers/guides/getting-started-with-unstructured-data/)
 
 ### What You'll Need
 - Snowflake account
@@ -399,6 +399,6 @@ Congratulations! You used Snowflake to analyze PDF invoices.
 - Visualize data with __Snowsight__
 
 ### Related Resources
-- [Quickstart: Extract Attributes from DICOM Files using a Java UDF](https://www.snowflake.com/en/developers/guides/extract-attributes-dicom-files-java-udf/)
+- [Quickstart: Extract Attributes from DICOM Files using a Java UDF](/en/developers/guides/extract-attributes-dicom-files-java-udf/)
 - [Unstructured Data Docs](https://docs.snowflake.com/en/user-guide/unstructured.html)
 - [Snowpark Docs](https://docs.snowflake.com/en/developer-guide/snowpark/index.html)

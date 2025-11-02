@@ -149,5 +149,5 @@ If you want to learn more about the many different free data sets that Snowflake
 
 ### Related Resources
 - [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-sec-tariff-sentiment/tree/main)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/en/developers/solution-center/snowflake-public-data.jpg)
+- [Download Reference Architecture](/content/dam/snowflake-site/en/developers/solution-center/snowflake-public-data.jpg)
 - [Watch the Demo](https://youtu.be/scmY5at0Fig?list=TLGG7_O_3yx38OoyNDA5MjAyNQ)

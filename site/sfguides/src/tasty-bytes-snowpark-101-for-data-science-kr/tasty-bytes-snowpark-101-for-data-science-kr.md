@@ -371,4 +371,4 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 
 Snowflake 데이터 클라우드에서의 여정을 계속하려면 아래 링크를 방문하여 사용 가능한 더 많은 Tasty Bytes - Quickstart를 확인하십시오.
 
-- ### [Tasty Bytes 사용 - Quickstarts 목차](/guide/tasty_bytes_introduction_kr/index.html#3)
+- ### [Tasty Bytes 사용 - Quickstarts 목차](/en/developers/guides/tasty-bytes-introduction-kr/)

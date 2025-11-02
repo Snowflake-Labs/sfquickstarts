@@ -471,6 +471,6 @@ Congratulations! You have learned about optimization features and tools to assis
 - How to implement automatic clustering, materialized views, query acceleration or search optimization service to improve performance of Snowflake workloads
 
 #### Call to Action
-- [Definitive Guide to managing spend in Snowflake](https://www.snowflake.com/wp-content/uploads/2023/10/Definitive-Guide-to-Managing-Spend-in-Snowflake.pdf).
+- [Definitive Guide to managing spend in Snowflake](/wp-content/uploads/2023/10/Definitive-Guide-to-Managing-Spend-in-Snowflake.pdf).
 - [Snowflake Education](https://learn.snowflake.com/en/) 
-- [Professional Services](https://www.snowflake.com/snowflake-professional-services/)
+- [Professional Services](/snowflake-professional-services/)

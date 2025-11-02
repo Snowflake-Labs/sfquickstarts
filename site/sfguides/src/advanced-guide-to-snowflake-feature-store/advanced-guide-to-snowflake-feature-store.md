@@ -40,7 +40,7 @@ Snowpark is the set of libraries and code execution environments that run Python
 
 **Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
-Learn more about Snowpark [here](https://www.snowflake.com/snowpark/).
+Learn more about Snowpark [here](/snowpark/).
 
 ### What is Snowflake ML?
 
@@ -500,9 +500,9 @@ We would love your feedback on this Guide! Please submit your feedback using thi
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store)
-- [Intro to Machine Learning with Snowpark ML](https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
-- [Advanced: Snowpark for Python Data Engineering Guide](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Intro to Machine Learning with Snowpark ML](/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+- [Advanced: Snowpark for Python Data Engineering Guide](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Advanced: Snowpark for Python Machine Learning Guide](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Snowflake Feature Store](https://docs.snowflake.com/developer-guide/snowpark-ml/feature-store/overview)

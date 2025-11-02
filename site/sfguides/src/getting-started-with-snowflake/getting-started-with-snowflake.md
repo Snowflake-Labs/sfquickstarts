@@ -17,7 +17,7 @@ authors: Victoria Warner (Cybersyn)
 Welcome to Snowflake! This entry-level guide, designed for database and data warehouse administrators and architects, will help you navigate the Snowflake interface and introduce you to some of our core capabilities. [Sign up for a free 30-day trial of Snowflake](https://trial.snowflake.com) and follow along with this lab. Once we cover the basics, you'll be ready to start processing your own data and diving into Snowflake's more advanced features!
 
 ### Free Virtual Hands-on Lab
-This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab. [Sign up for the VHOL today](https://www.snowflake.com/virtual-hands-on-lab/).
+This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab. [Sign up for the VHOL today](/virtual-hands-on-lab/).
 
 ### Prerequisites:
 - Use of the [Snowflake free 30-day trial environment](https://trial.snowflake.com)
@@ -1083,7 +1083,7 @@ With secure data sharing:
 
 > aside positive
 > 
->  **Cross-region & cross-cloud data sharing** To share data across regions or cloud platforms, you must set up replication. This is outside the scope of this lab, but more information is available in [this Snowflake article](https://www.snowflake.com/trending/what-is-data-replication).
+>  **Cross-region & cross-cloud data sharing** To share data across regions or cloud platforms, you must set up replication. This is outside the scope of this lab, but more information is available in [this Snowflake article](/trending/what-is-data-replication).
 
 Snowflake uses secure data sharing to provide account usage data and sample data sets to all Snowflake accounts. In this capacity, Snowflake acts as the data provider of the data and all other accounts.
 
@@ -1150,11 +1150,11 @@ We encourage you to continue with your free trial by loading your own sample or 
 ### Additional Resources:
 
 - Learn more about the [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight) docs.
-- Read the [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document.
-- Attend a [Snowflake virtual or in-person event](https://www.snowflake.com/about/events/) to learn more about our capabilities and customers.
+- Read the [Definitive Guide to Maximizing Your Free Trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/) document.
+- Attend a [Snowflake virtual or in-person event](/about/events/) to learn more about our capabilities and customers.
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
 - Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
-- Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
+- Contact our [Sales Team](/free-trial-contact-sales/) to learn more.
 - Access Snowflake Public Data's analytics-ready data on [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
 
 ### What we've covered:
@@ -1169,5 +1169,5 @@ We encourage you to continue with your free trial by loading your own sample or 
 - How to securely and easily share data with other accounts.
 
 - [Fork repo on GitHub](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Create%20and%20Manage%20Snowflake%20Objects%20like%20a%20Pro/Create%20and%20Manage%20Snowflake%20Objects%20like%20a%20Pro.ipynb)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Citibike-Data-Analysis_-Create-and-manage-Snowflake-Objects-like-a-pro.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/05/Citibike-Data-Analysis_-Create-and-manage-Snowflake-Objects-like-a-pro.pdf)
 - [Watch the Demo](https://youtu.be/Dj8aAoEOfrw?list=TLGGDV2-mOUmeyYyMDA5MjAyNQ)

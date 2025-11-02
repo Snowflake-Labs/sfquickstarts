@@ -20,7 +20,7 @@ For those who are interested in exploring a little deeper how everything works, 
 
 - Familiarity with Snowpark Python UDFs
   - The [Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index) serves as an excellent overview and reference for all things Snowpark Python
-  - If you want a holistic bootcamp, consider spending an hour or two with the [Getting Started with Data Engineering and ML using Snowpark for Python Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
+  - If you want a holistic bootcamp, consider spending an hour or two with the [Getting Started with Data Engineering and ML using Snowpark for Python Quickstart](/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
 - Familiarity with running Jupyter notebooks
   - Before proceeding, make sure you've got Python 3.8+ and Jupyter Lab installed in a Python environment that you feel comfortable installing more Python packages into.
 - A conceptual grasp of text embedding

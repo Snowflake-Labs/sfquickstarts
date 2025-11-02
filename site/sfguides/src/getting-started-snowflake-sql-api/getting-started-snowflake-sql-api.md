@@ -480,6 +480,6 @@ This tutorial was designed as a hands-on introduction to the Snowflake SQL API. 
 If you've completed this lab using the Snowflake free trial, we encourage you to continue exploring what Snowflake can help you accomplish. There are several ways Snowflake can help you with this:
 
 - At the very top of the UI, click on the "Partner Connect" icon to get access to trial/free ETL and BI tools to help you analyze your data with Snowflake
-- Read the "[Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)"
-- Attend a Snowflake virtual or in-person [event](https://www.snowflake.com/about/webinars/) to learn more about our capabilities and how customers use us
-- Contact [Sales](https://www.snowflake.com/free-trial-contact-sales/) to learn more
+- Read the "[Definitive Guide to Maximizing Your Free Trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)"
+- Attend a Snowflake virtual or in-person [event](/about/webinars/) to learn more about our capabilities and how customers use us
+- Contact [Sales](/free-trial-contact-sales/) to learn more

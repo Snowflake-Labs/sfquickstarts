@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-**Note: if this is your first time experimenting with Snowpark Python, we recommend completing the [Getting Started with Snowpark for Python](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python/) Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.**
+**Note: if this is your first time experimenting with Snowpark Python, we recommend completing the [Getting Started with Snowpark for Python](/en/developers/guides/getting-started-with-snowpark-python/) Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.**
 
 *This quickstart was initially built as a Hands-on-Lab at Snowflake Summit 2022*
 
@@ -26,7 +26,7 @@ Throughout this quickstart, we will specifically explore the power of the Snowpa
 The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main).
 
 ### Prerequisites
-- Completion of the [Getting Started with Snowpark for Python](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python/) Quickstart
+- Completion of the [Getting Started with Snowpark for Python](/en/developers/guides/getting-started-with-snowpark-python/) Quickstart
 - Working knowledge of Python
 - Familiarity with Snowflake
 - Familiarity with Docker, Apache AirFlow, Streamlit a +
@@ -154,7 +154,7 @@ Run the last few cells of the notebook to bulk-load ~94M records into your Snowf
 **What You'll Do**: Use the Snowflake Marketplace to subscribe to weather data from Weather Source.
 
 **Snowflake Features**:
-- [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/)
+- [Snowflake Marketplace](/data-marketplace/)
 
 Weather Source is a leading provider of global weather and climate data and the OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries.
 
@@ -176,7 +176,7 @@ Open up the [02_Data_Marketplace](https://github.com/Snowflake-Labs/sfguide-citi
 **What You'll Do**: 
 - Query daily trip data in Snowflake using Snowpark Python and visualize time-series data
 - Train a preliminary PyTorch TabNet model to predict daily trip counts
-- Augment your model feature trips data with Holiday reference data, along with weather data available in the [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/?_sft_dataset-category=weather)
+- Augment your model feature trips data with Holiday reference data, along with weather data available in the [Snowflake Marketplace](/data-marketplace/?_sft_dataset-category=weather)
 - Consolidate final feature data into feature engineering functions and write them to a Python module for use by the ML engineering team to operationalize your model.
 
 **Snowflake Features**:
@@ -305,7 +305,7 @@ _**Note:** The `Dockerfile` file for this project has been modified to make thin
 
 **Snowflake Features**:
 - Snowpark Python
-- [Streamlit](https://streamlit.io/), recently [acquired by Snowflake](https://www.snowflake.com/blog/snowflake-to-acquire-streamlit/)
+- [Streamlit](https://streamlit.io/), recently [acquired by Snowflake](/blog/snowflake-to-acquire-streamlit/)
 
 Streamlit is an open-source app framework for ML and Data Science teams that allows non-application developers to turn data scripts into shareable web apps in very little time, all using pure Python, without any front-end experience required.
 
@@ -315,7 +315,7 @@ Navigate to your Streamlit app on port `6006`:
 
 ![](./assets/streamlit.jpeg)
 
-For more information on Streamlit + Snowflake, please visit [the Snowflake blog.](https://www.snowflake.com/blog/snowflake-to-acquire-streamlit/)
+For more information on Streamlit + Snowflake, please visit [the Snowflake blog.](/blog/snowflake-to-acquire-streamlit/)
 
 <!-- ------------------------ -->
 ## Conclusion

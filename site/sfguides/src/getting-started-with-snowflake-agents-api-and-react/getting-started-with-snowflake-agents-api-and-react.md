@@ -442,6 +442,6 @@ Documentation:
 Sample Code & Guides:
 
 - [Agent API Chatbot Tutorial](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react)
-- [Getting Started with Snowflake Agents API](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agents/)
-- [Getting Started with Snowflake Agents (API) and Microsoft Teams](https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-microsoft-teams/)  
-- [Getting Started with Snowflake Agents (API) and Slack](https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-slack/)
+- [Getting Started with Snowflake Agents API](/en/developers/guides/getting-started-with-cortex-agents/)
+- [Getting Started with Snowflake Agents (API) and Microsoft Teams](/en/developers/guides/integrate-snowflake-cortex-agents-with-microsoft-teams/)  
+- [Getting Started with Snowflake Agents (API) and Slack](/en/developers/guides/integrate-snowflake-cortex-agents-with-slack/)

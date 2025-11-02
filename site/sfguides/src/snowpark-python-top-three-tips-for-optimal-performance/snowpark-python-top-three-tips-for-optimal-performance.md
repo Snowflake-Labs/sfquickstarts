@@ -22,9 +22,9 @@ This Quickstart guide contains key tips for optimal performance when using Snowp
 
 In this quickstart, you will learn how to make optimized decisions when using Snowpark Python.  These choices will be compared with others to show performance improvements.  Each concept is broken up into a lab, listed below:
 
-- [Lab 1](https://www.snowflake.com/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/): Using Snowpark dataframes perform ~8X faster compared to Pandas dataframes
-- [Lab 2](https://www.snowflake.com/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/): Using Vectorized UDFs can improve numerical computations by 30-40%
-- [Lab 3](https://www.snowflake.com/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/): Using Cachetools library to improve performance up to 20x (~20 mins)
+- [Lab 1](/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/): Using Snowpark dataframes perform ~8X faster compared to Pandas dataframes
+- [Lab 2](/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/): Using Vectorized UDFs can improve numerical computations by 30-40%
+- [Lab 3](/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/): Using Cachetools library to improve performance up to 20x (~20 mins)
 
 ### What You’ll Need 
 
@@ -302,9 +302,9 @@ Congratulations! You've successfully performed all the labs illustrating the bes
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-python-top-three-tips-for-optimal-performance)
-- [Getting Started with Data Engineering and ML using Snowpark Python](https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/) 
-- [Advanced: Snowpark for Python Data Engineering Guide](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Getting Started with Data Engineering and ML using Snowpark Python](/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/) 
+- [Advanced: Snowpark for Python Data Engineering Guide](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Advanced: Snowpark for Python Machine Learning Guide](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 

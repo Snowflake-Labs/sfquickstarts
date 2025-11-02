@@ -17,7 +17,7 @@ Neste quickstart “Introdução à Tasty Bytes“, você vai conhecer a marca f
 
 Após saber mais sobre a organização Tasty Bytes, vamos realizar o processo de configuração do modelo de dados funcional da Tasty Bytes, bem como de funções e armazenamentos específicos das cargas de trabalho e de todo o controle de acesso baseado em funções (role-based access control, RBAC) necessário. 
 
-Ao finalizar este guia, você terá implementado os elementos básicos necessários para executar os quickstarts da seção [Powered by Tasty Bytes - quickstarts](/guide/tasty_bytes_introduction_ptbr/index.html#3).
+Ao finalizar este guia, você terá implementado os elementos básicos necessários para executar os quickstarts da seção [Powered by Tasty Bytes - quickstarts](/pt_br/developers/guides/tasty-bytes-introduction-ptbr/).
 
 ### Quem é a Tasty Bytes?
 ![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
@@ -164,15 +164,15 @@ O índice abaixo vai listar todos os Tasty Bytes Quickstarts que podem utilizar 
 
 - #### [Governança financeira](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
     - Saiba mais sobre os armazenamentos virtuais Snowflake e suas opções de configuração, monitores de recursos e parâmetros de tempo limite no nível de conta e armazenamento.
-- #### [Transformação](/guide/tasty_bytes_zero_to_snowflake_transformation_ptbr/)
+- #### [Transformação](/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ptbr/)
     - Saiba mais sobre o Snowflake Zero Copy Cloning, cache de conjunto de resultados, manipulação de tabelas, Time-Travel e funcionalidades de troca, descarte e cancelamento de descarte de tabelas.
-- #### [Dados semiestruturados](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ptbr/)
+- #### [Dados semiestruturados](/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ptbr/)
     - Saiba mais sobre o formato VARIANT de dados do Snowflake, processamento de dados semiestruturados com uso de notação de pontos e nivelamento lateral, bem como criação de exibições e criação de gráficos com o Snowsight.
 - #### [Governança de dados](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
     - Saiba mais sobre as funções definidas pelo sistema Snowflake, crie e aplique permissões a uma função personalizada e implemente Dynamic Data Masking baseado em tags e políticas de acesso a linhas.
-- #### [Colaboração](/guide/tasty_bytes_zero_to_snowflake_collaboration_ptbr/)
+- #### [Colaboração](/pt_br/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-ptbr/)
     - Saiba mais sobre o Snowflake Marketplace com dados ativos gratuitos, disponibilizados instantaneamente pelo Weather Source para conduzir análises baseadas em dados, harmonizando fontes primárias e terciárias.
-- #### [Geoespacial](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
+- #### [Geoespacial](/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
     - Saiba mais sobre o suporte geoespacial do Snowflake, começando pela aquisição gratuita de dados ativos e disponíveis instantaneamente do SafeGraph, depois passando para a criação de pontos geográficos (ST_POINT), cálculos de distância (ST_DISTANCE), coleta de coordenadas (ST_COLLECT), criação de um polígono de delimitação mínimo (ST_ENVELOPE), cálculo de área (ST_AREA) e determinação de pontos centrais (ST_CENTROID).
 
 ### Guias detalhados das cargas de trabalho (*em breve*)

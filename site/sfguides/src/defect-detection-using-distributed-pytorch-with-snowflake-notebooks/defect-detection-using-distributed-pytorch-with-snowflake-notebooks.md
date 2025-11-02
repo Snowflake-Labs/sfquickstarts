@@ -29,7 +29,7 @@ The process includes the following steps:
 
 #### What is Snowflake ML?
 
-[Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+[Snowflake ML](/en/data-cloud/snowflake-ml/) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 #### What is Snowflake Notebooks on Container Runtime?
 
@@ -54,8 +54,8 @@ Key Features:
 - A Snowflake Account
 - Access to run Notebooks in Snowflake
 - A Snowflake Account. Sign up for a 30-day free trial account, if required.
-- To try Snowflake ML in a free trial, check out this [quickstart](https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
-- (Optional) [Completed Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
+- To try Snowflake ML in a free trial, check out this [quickstart](/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+- (Optional) [Completed Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
 
 
 
@@ -209,8 +209,8 @@ To cleanup resources and remove all of the objects and compute pools that you cr
 
 Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts: 
 
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
-- [Scale Embeddings with Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Scale Embeddings with Snowflake Notebooks](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
 
 
 ### Related Resources
@@ -219,11 +219,11 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 - #### [Docs: Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
 - #### [Docs: Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - #### [Docs: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
-- #### [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml)
+- #### [Snowflake ML Webpage](/en/data-cloud/snowflake-ml)
 
 ### Attribution
 PyTorch, the PyTorch logo and any related marks are trademarks of The Linux Foundation.
 
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/computer-vision-defect-detection-distributed-pytorch-snowflake-notebooks.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2025/computer-vision-defect-detection-distributed-pytorch-snowflake-notebooks.pdf)
 - [Watch the Demo](https://youtu.be/LX0FCz8ujZI?list=TLGG-aLeSqUmxJQyMDA5MjAyNQ)
 

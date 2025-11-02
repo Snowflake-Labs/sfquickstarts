@@ -33,7 +33,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### 필요한 것
 
-- [Snowflake](https://www.snowflake.com/) 계정
+- [Snowflake](/) 계정
 - 텍스트 편집기
 
 ### 구축할 것

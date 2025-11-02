@@ -341,7 +341,7 @@ create a production ready ingestion pipeline.
 - How to using Snowflake to query realtime data
 
 ### Related Resources
-- [Getting started with Snowflake](https://www.snowflake.com/en/developers/guides/)
+- [Getting started with Snowflake](/en/developers/guides/)
 - [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
 - [Snowpipe Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Redpanda Serverless](https://www.redpanda.com/redpanda-cloud/serverless)

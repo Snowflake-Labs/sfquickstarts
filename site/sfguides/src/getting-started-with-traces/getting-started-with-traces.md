@@ -418,8 +418,8 @@ Traces and Metrics are a very powerful tool to develop, optimize, and debug jobs
 If you want to learn more, check out the docs on [Traces](https://docs.snowflake.com/en/LIMITEDACCESS/logging-tracing/tracing-accessing-events) and [Metrics](https://docs.snowflake.com/LIMITEDACCESS/snowpark-python-metrics).
 
 Also checkout other related guides:
-- [Event Tables and Alerts](https://www.snowflake.com/en/developers/guides/alert-on-events/)
-- [Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
+- [Event Tables and Alerts](/en/developers/guides/alert-on-events/)
+- [Snowflake Notebooks](/en/developers/guides/getting-started-with-snowflake-notebooks/)
 
 ### What You Learned
 - Creating a Notebook

@@ -12,7 +12,7 @@ authors: Matt Meredith
 <!-- -------------->
 ## 개요
 
-이 [블로그 포스트](https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/)는 여러분이 Snowflake의 리소스 최적화 기능을 더 잘 이해할 수 있도록 합니다.
+이 [블로그 포스트](/blog/understanding-snowflakes-resource-optimization-capabilities/)는 여러분이 Snowflake의 리소스 최적화 기능을 더 잘 이해할 수 있도록 합니다.
 
 ### 성능
 
@@ -26,7 +26,7 @@ authors: Matt Meredith
 
 ### 필요한 것
 
-- [Snowflake](https://www.snowflake.com/) 계정
+- [Snowflake](/) 계정
 - [계정 사용량 데이터 공유](https://docs.snowflake.com/ko/sql-reference/account-usage.html#enabling-account-usage-for-other-roles)를 보기 위한 액세스
 
 ### 관련 자료

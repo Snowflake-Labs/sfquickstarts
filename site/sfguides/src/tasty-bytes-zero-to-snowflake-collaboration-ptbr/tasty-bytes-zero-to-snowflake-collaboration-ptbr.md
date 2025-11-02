@@ -17,7 +17,7 @@ Damos as boas-vindas ao quickstart “Tasty Bytes:do zero ao Snowflake”, volta
 
 
 ### Pré-requisitos
-- Antes de começar, é necessário ter concluído o [**Quickstart “Introdução à Tasty Bytes”**](/guide/tasty_bytes_introduction_ptbr/index.html), que oferece um passo a passo para criar uma conta de avaliação gratuita e implementar os elementos básicos da Tasty Bytes necessários para completar este módulo.
+- Antes de começar, é necessário ter concluído o [**Quickstart “Introdução à Tasty Bytes”**](/pt_br/developers/guides/tasty-bytes-introduction-ptbr/), que oferece um passo a passo para criar uma conta de avaliação gratuita e implementar os elementos básicos da Tasty Bytes necessários para completar este módulo.
 
 ### Você vai aprender
 - Acessar o Snowflake Marketplace.
@@ -96,7 +96,7 @@ Com base no que vemos acima, podemos concordar com os analistas de que não há 
 ### Visão geral
 Com base no que vimos na seção anterior, parece que não temos dados de vendas de 16 a 21 de fevereiro em Hamburgo, Alemanha. Não há muito que possamos fazer para investigar com os dados próprios, mas provavelmente algo ocorreu aqui. 
         
-Uma ideia que podemos explorar imediatamente usando o [Snowflake Marketplace](https://www.snowflake.com/pt_br/data-cloud/marketplace/) é verificar se houve alguma condição meteorológica extrema, empregando a oferta de dados pública e gratuita da Weather Source.
+Uma ideia que podemos explorar imediatamente usando o [Snowflake Marketplace](/pt_br/data-cloud/marketplace/) é verificar se houve alguma condição meteorológica extrema, empregando a oferta de dados pública e gratuita da Weather Source.
 
 ### Etapa 1 - Adquirir a oferta da Weather Source LLC: frostbyte no Snowflake Marketplace
 O Snowflake Marketplace é o melhor lugar para procurar, testar e comprar dados e aplicações necessários para desenvolver soluções de negócios inovadoras. Nesta etapa, vamos acessar a ofertar da [Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte) para ajudar a orientar as análises adicionais sobre a queda nas vendas em Hamburgo.
@@ -362,4 +362,4 @@ Caso queira refazer este quickstart, use os scripts de Reset que aparecem no fin
 ### Próximas etapas
 Para continuar sua jornada no Snowflake Data Cloud, clique no link abaixo para ver mais quickstarts Powered By Tasty Bytes disponíveis para você.
 
-- ### [Powered by Tasty Bytes - Índice de quickstarts](/guide/tasty_bytes_introduction_ptbr/index.html#3)
+- ### [Powered by Tasty Bytes - Índice de quickstarts](/pt_br/developers/guides/tasty-bytes-introduction-ptbr/)

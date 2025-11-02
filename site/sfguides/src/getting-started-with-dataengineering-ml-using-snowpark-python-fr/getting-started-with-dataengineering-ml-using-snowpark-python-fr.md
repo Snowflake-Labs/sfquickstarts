@@ -32,7 +32,7 @@ Il s’agit d’un ensemble de bibliothèques et d’environnements d’exécuti
 
 **Constructions d’exécution flexibles** : Snowpark fournit des constructions d’exécution flexibles qui permettent aux utilisateurs d’ajouter et d’exécuter une logique personnalisée. Les développeurs peuvent créer facilement des pipelines de données, des modèles de ML et des applications de données avec des fonctions définies par l’utilisateur et des procédures stockées.
 
-Pour en savoir plus sur Snowpark, cliquez [ici](https://www.snowflake.com/fr/data-cloud/snowpark/).
+Pour en savoir plus sur Snowpark, cliquez [ici](/fr/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -601,8 +601,8 @@ N’hésitez pas à nous faire part de vos commentaires sur ce guide Quickstart�
 ### Ressources connexes
 
 - [Code source sur GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Avancé : Guide de Data Engineering avec Snowpark for Python ](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Avancé : Guide de Machine Learning avec Snowpark for Python ](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Avancé : Guide de Data Engineering avec Snowpark for Python ](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Avancé : Guide de Machine Learning avec Snowpark for Python ](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Démos de Snowpark for Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guide du développeur Snowpark for Python](https://docs.snowflake.com/fr/developer-guide/snowpark/python/index.html)
 - [Documents Streamlit](https://docs.streamlit.io/)

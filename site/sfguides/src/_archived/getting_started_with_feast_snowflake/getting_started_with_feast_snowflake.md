@@ -29,9 +29,9 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 
 ### Prerequisites
 - Working knowledge of [Python](https://www.udemy.com/course/data-analysis-with-python-and-pandas/)
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/)
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/)
 - Familiarity with Git/GitHub
-- Familiarity with [Snowpark Python](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- Familiarity with [Snowpark Python](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - Familiarity with [Feast feature store concepts](https://docs.feast.dev/getting-started/architecture-and-components/overview) and [Feast feature store architecture](https://docs.feast.dev/getting-started/architecture-and-components/overview)
 
 ### What You’ll Learn 

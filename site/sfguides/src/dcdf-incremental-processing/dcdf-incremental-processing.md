@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-The topics of covered in this guide were originally presented in Episode 2 of Snowflake's Data Cloud Deployment Framework (DCDF) webinar series. [DCDF Webinar Episode 2](https://www.snowflake.com/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/) focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.
+The topics of covered in this guide were originally presented in Episode 2 of Snowflake's Data Cloud Deployment Framework (DCDF) webinar series. [DCDF Webinar Episode 2](/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/) focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.
 
 In this quickstart, we will focus on the actual SQL code templates for ingesting, transforming, and restructuring data into the presentation layer using incremental processing and logical partition definitions.
 
@@ -48,7 +48,7 @@ An extensible ELT data pipeline, using logical partitions, that employs repeatab
 <!-- ------------------------ -->
 ## DCDF Data Architecture Review
 
-Let's review the DCDF Data Architecture processing layers and the purpose of each layer.  This was discussed in detail in the [DCDF Webinar Series Episode 1](https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/).
+Let's review the DCDF Data Architecture processing layers and the purpose of each layer.  This was discussed in detail in the [DCDF Webinar Series Episode 1](/webinar/for-customers/data-cloud-deployment-framework-series/).
 
 ![img](assets/dcdf_architecture_review.png)
 
@@ -1632,7 +1632,7 @@ drop database dev_webinar_common_db;
 
 This tutorial was designed as a hands-on introduction to the Data Cloud Deployment Framework (DCDF) data architecture incremental processing and logical partitions.
 
-We encourage you to continue learning about the Data Cloud Deployment Framework, by watching the [Data Cloud Deployment Framework Series Webinars](https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/) either on-demand on register for upcoming episodes.  
+We encourage you to continue learning about the Data Cloud Deployment Framework, by watching the [Data Cloud Deployment Framework Series Webinars](/webinar/for-customers/data-cloud-deployment-framework-series/) either on-demand on register for upcoming episodes.  
 
 Also the github repo contains more scripts than what was covered in this lab.  It's a full, working template model taking source data from the Raw layer, through the Integration layer, and finally to the Presentation layer dimension model, ready for consumption. Please take the time to go through each one of these scripts and slowly work through the examples. Feel free to use these as code templates to be implemented in your own environments and accounts for your data processing.
 

@@ -605,7 +605,7 @@ You have experienced how Matillion's close integration with Snowflake benefits t
 
 Continue to use your free trial of Matillion and Snowflake: load and process your own sample or real data, investigating some of the more advanced platform features that are not covered in this lab.
 
-- Read the definitive Snowflake guide to [maximizing your free trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
+- Read the definitive Snowflake guide to [maximizing your free trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
 - Visit the [Matillion](https://www.matillion.com/) [product tour](https://www.matillion.com/tour) and interactive demo experience
 - Learn how to [bring the power of AI to data engineering](https://www.matillion.com/ai)
 - Take a training course from the [Matillion Academy](https://academy.matillion.com/trainings)

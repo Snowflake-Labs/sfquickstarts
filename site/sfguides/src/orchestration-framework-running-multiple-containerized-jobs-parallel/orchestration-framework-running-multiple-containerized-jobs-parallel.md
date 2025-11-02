@@ -658,5 +658,5 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 * [Snowpark Container Services Tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-* [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Snowpark Guide for Data Engineers](/resource/the-data-engineers-guide-to-python-for-snowflake/)
 

@@ -25,7 +25,7 @@ Want to migrate to Snowflake in less than 90 minutes? Come to this hands-on lab.
 
 ### What You'll Need
 
-- [SnowConvert](https://www.snowflake.com/en/migrate-to-the-cloud/snowconvert-ai/) Installed
+- [SnowConvert](/en/migrate-to-the-cloud/snowconvert-ai/) Installed
 - [VSCode](https://code.visualstudio.com/download) and [Snowflake Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) Installed
 - [Snowflake Account](https://signup.snowflake.com/).
 
@@ -132,7 +132,7 @@ The SQL Server is in an Azure environment that we have in Snowflake, but can mak
 
 How do we connect to it? Through SnowConvert. Let’s do that now.
 
-Open SnowConvert. Currently, [it can be downloaded from here](https://www.snowflake.com/en/migrate-to-the-cloud/snowconvert-ai/). An installation package file will be created. You can then open this file and install the application on your machine.
+Open SnowConvert. Currently, [it can be downloaded from here](/en/migrate-to-the-cloud/snowconvert-ai/). An installation package file will be created. You can then open this file and install the application on your machine.
 
 Agree to the Terms of Use by selecting “Agree”.
 > aside positive

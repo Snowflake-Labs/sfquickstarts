@@ -996,9 +996,9 @@ There are several ways Snowflake can help you with this:
 
 - At the very top of the UI click on the “Partner Connect” icon to get access to trial/free ETL and BI tools to help you get more data into Snowflake and then analyze it
 - Read the “Definitive Guide to Maximizing Your Free Trial” document at:
-  [https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
-- Attend a Snowflake virtual or in-person event to learn more about our capabilities and how customers use us  [https://www.snowflake.com/about/events/](https://www.snowflake.com/about/events/)
-- Contact Sales to learn more [https://www.snowflake.com/free-trial-contact-sales/](https://www.snowflake.com/free-trial-contact-sales/)
+  [/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
+- Attend a Snowflake virtual or in-person event to learn more about our capabilities and how customers use us  [/about/events/](/about/events/)
+- Contact Sales to learn more [/free-trial-contact-sales/](/free-trial-contact-sales/)
 
 We also encourage you to continue to explore the capabilities of Power BI. 
 

@@ -23,7 +23,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 - Optional - How to view the output in Splunk
 
 ### What You’ll Need 
-- A [Snowflake](https://www.snowflake.com/login/) Account 
+- A [Snowflake](/login/) Account 
 - Optional - A [Splunk](https://www.splunk.com/) Account or instance
 
 ### What You’ll Build 
@@ -201,4 +201,4 @@ Congratulations, you just ran the world's first purpose-built LogLM available as
 
 
 To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo)
-[Snowflake Native Apps ](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/) 
+[Snowflake Native Apps ](/en/data-cloud/workloads/applications/native-apps/) 

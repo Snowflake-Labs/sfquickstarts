@@ -461,8 +461,8 @@ Completando questo quickstart hai:
 - Integrato il modello ML nella data application
 
 ### Fasi successive
-Per saperne di più sul modello ML per i suggerimenti sulle posizioni, fai riferimento al nostro quickstart [Tasty Bytes - Introduzione a Snowpark per la data science](/guide/tasty_bytes_snowpark_101_for_data_science_it).
+Per saperne di più sul modello ML per i suggerimenti sulle posizioni, fai riferimento al nostro quickstart [Tasty Bytes - Introduzione a Snowpark per la data science](/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-it/).
 
 Per continuare il tuo percorso nel Data Cloud di Snowflake, visita il link riportato sotto per vedere gli altri quickstart Powered by Tasty Bytes disponibili.
 
-- ### [Quickstart Powered by Tasty Bytes - Sommario](/guide/tasty_bytes_introduction_it/)
+- ### [Quickstart Powered by Tasty Bytes - Sommario](/it/developers/guides/tasty-bytes-introduction-it/)

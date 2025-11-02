@@ -17,7 +17,7 @@ In questo quickstart Introduzione a Tasty Bytes per prima cosa farai la conoscen
 
 Dopo avere conosciuto l’organizzazione Tasty Bytes, completeremo la configurazione del suo modello dati di base, dei ruoli e dei warehouse specifici per i workload e di tutti i controlli degli accessi basati sui ruoli (RBAC) necessari. 
 
-Al termine di questo quickstart avrai implementato l’ambiente base necessario per eseguire i quickstart contenuti nella sezione [Quickstart Powered by Tasty Bytes](https://www.snowflake.com/it/developers/guides/tasty-bytes-introduction-it/).
+Al termine di questo quickstart avrai implementato l’ambiente base necessario per eseguire i quickstart contenuti nella sezione [Quickstart Powered by Tasty Bytes](/it/developers/guides/tasty-bytes-introduction-it/).
 
 ### Che cos’è Tasty Bytes?
 ![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
@@ -168,15 +168,15 @@ Il sommario riportato di seguito descrive tutti i quickstart Tasty Bytes disponi
 
 - #### [Governance finanziaria](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
     - Scopri i Virtual Warehouse di Snowflake con le loro configurabilità, i monitor delle risorse e i parametri di timeout a livello di account e di warehouse.
-- #### [Trasformazione](/guide/tasty_bytes_zero_to_snowflake_transformation_it/)
+- #### [Trasformazione](/it/developers/guides/tasty-bytes-zero-to-snowflake-transformation-it/)
     - Scopri le funzionalità di cache dei set di risultati, Zero-Copy Cloning, manipolazione delle tabelle, Time Travel e swap, drop e undrop delle tabelle di Snowflake.
-- #### [Dati semi-strutturati](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_it/)
+- #### [Dati semi-strutturati](/it/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-it/)
     - Scopri il tipo di dati VARIANT di Snowflake, l’elaborazione dei dati semi-strutturati tramite notazione punto e appiattimento laterale, la creazione di viste e i grafici Snowsight.
 - #### [Governance dei dati](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
     - Scopri i ruoli definiti dal sistema di Snowflake, crea e concedi privilegi a un ruolo personalizzato e implementa Dynamic Data Masking basato sui tag e Row Access Policies.
-- #### [Collaborazione](/guide/tasty_bytes_zero_to_snowflake_collaboration_it/)
+- #### [Collaborazione](/it/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-it/)
     - Scopri il Marketplace Snowflake utilizzando dati aggiornati gratuiti e immediatamente disponibili forniti da Weather Source per svolgere analisi data-driven armonizzando le fonti di dati interne ed esterne.
-- #### [Analisi geospaziale](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
+- #### [Analisi geospaziale](/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
     - Scopri il supporto per l’analisi geospaziale di Snowflake, iniziando dall’acquisizione di dati aggiornati gratuiti e immediatamente disponibili da SafeGraph per poi creare punti geografici (ST\_POINT), calcolare distanze (ST\_DISTANCE), raccogliere coordinate (ST\_COLLECT), disegnare un poligono di delimitazione minimo (ST\_ENVELOPE), calcolare aree (ST\_AREA) e trovare i punti centrali (ST\_CENTROID).
 
 ### Approfondimenti sui workload (*disponibili a breve*)

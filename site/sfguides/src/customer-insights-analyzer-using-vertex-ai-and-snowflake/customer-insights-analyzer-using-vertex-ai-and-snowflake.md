@@ -38,7 +38,7 @@ Snowflake is a cloud-based data warehousing solution that allows businesses to s
 Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.
 
 ### Pre-requisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 with Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
 - [Google Cloud Account](https://cloud.google.com/) with Vertex AI.
 - Familiarity with the Python programming language.
@@ -582,7 +582,7 @@ Congratulations! You've successfully built your first Streamlit App with Vertex 
 
 - [Blog on this use case](https://cloudydata.substack.com/p/snowflake-and-vertex-ai-foundational)
 
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Customer-Insights-Analyzer-using-Vertex-Generative-AI-and-Snowflake.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/05/Customer-Insights-Analyzer-using-Vertex-Generative-AI-and-Snowflake.pdf)
 
 - [Read the Blog](https://medium.com/@cloudydata/customer-insights-analyzer-using-vertex-generative-ai-and-snowflake-8f8150316da9)
 

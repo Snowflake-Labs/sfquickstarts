@@ -324,4 +324,4 @@ Vous avez :
 ### Prochaines étapes
 Pour continuer à découvrir le Data Cloud Snowflake, cliquez sur le lien ci-dessous pour voir les autres guides Quickstart Tasty Bytes à votre disposition.
 
-- ### [Table des matières des guides Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_fr/index.html#3)
+- ### [Table des matières des guides Quickstart Powered by Tasty Bytes](/fr/developers/guides/tasty-bytes-introduction-fr/)

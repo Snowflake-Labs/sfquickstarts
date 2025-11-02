@@ -65,7 +65,7 @@ In this Quickstart you will be go over the steps of calculating servicearea/isoc
   - Basic understanding of Geospatial concepts.
 
 > aside positive
-> **INFO:** If you want to understand Geospatial capabilities of Snowflake, please feel free to go over the [Quickstart: Getting Started with Geospatial - Geography](https://www.snowflake.com/en/developers/guides/getting-started-with-geospatial-geography/).
+> **INFO:** If you want to understand Geospatial capabilities of Snowflake, please feel free to go over the [Quickstart: Getting Started with Geospatial - Geography](/en/developers/guides/getting-started-with-geospatial-geography/).
 
 > aside positive
 > **IMPORTANT:** Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
@@ -128,7 +128,7 @@ create database if not exists arcgis_db;
 ~~~
 
 > aside positive
-> **IMPORTANT:** If you want to explore and learn more about the Snowflake Notebook, please go over the [Quickstart: Getting Started with Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/).
+> **IMPORTANT:** If you want to explore and learn more about the Snowflake Notebook, please go over the [Quickstart: Getting Started with Snowflake Notebooks](/en/developers/guides/getting-started-with-snowflake-notebooks/).
 
 <!-- ------------------------ -->
 ## Defining UDF ServiceArea Calculation
@@ -205,5 +205,5 @@ Snowflake provides powerful solutions when you bring Snowflake's advanced analyt
 
 ### Related Resources
 - [Snowflake Geospatial functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
-- [Geospatial Analytics, AI and ML using Snowflake](https://www.snowflake.com/en/developers/guides/geo-for-machine-learning/)
+- [Geospatial Analytics, AI and ML using Snowflake](/en/developers/guides/geo-for-machine-learning/)
 - [ArcGIS Location services](https://developers.arcgis.com/rest/location-based-services/)

@@ -28,7 +28,7 @@ The set of libraries and runtimes in Snowflake that securely deploy and process 
 
 **Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+Learn more about [Snowpark](/snowpark/).
 
 ![App](assets/snowpark.png)
 
@@ -36,7 +36,7 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
-Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
+Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What You Will Learn
 
@@ -48,7 +48,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 
 ### Prerequisites
 
-- A [Snowflake](https://www.snowflake.com/) account
+- A [Snowflake](/) account
 - Access to the **Snowflake Public Data (Free)** dataset
   - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data), click on **Get Data** and follow the instructions to gain access. In particular, we will use data from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 

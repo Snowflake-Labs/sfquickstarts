@@ -16,7 +16,7 @@ Azure OpenAI is a groundbreaking collaboration between two industry leaders, Mic
 In this quickstart we will build an architecture that demonstrates how to use Azure OpenAI with an AzureML Prompt Flow, AzureML Notebooks, Snowflake and the Snowflake + AzureML Connector to quickly generate results.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with Azure and an Azure account an AzureML workspace.
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 

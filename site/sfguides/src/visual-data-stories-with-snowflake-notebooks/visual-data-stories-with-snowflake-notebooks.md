@@ -202,7 +202,7 @@ You can use the Markdown Syntax to embed images and GIFs in your notebook.
 
 The syntax looks like `![text](hyperlink)`. Here are some examples!
 
-`![](https://www.snowflake.com/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg)`
+`![](/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg)`
 `![](https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif)`
 
 <!-- ------------------------ -->
@@ -219,7 +219,7 @@ We saw how you can embed images using Markdown. Here we show how you can embed i
 
 ```python
 import streamlit as st
-st.image("https://www.snowflake.com/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg",width=500)
+st.image("/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg",width=500)
 ```
 
 ```python
@@ -287,7 +287,7 @@ Here are some resources to learn more about Snowflake Notebooks:
 
 * [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-about)
 * [Github Demo Repo]([https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Visual%20Data%20Stories%20with%20Snowflake%20Notebooks?_fsi=JPxvZrjh))
-* [View the Notebook](https://www.snowflake.com/notebooks/?staticAppId=Visual_Data_Stories_with_Snowflake_Notebooks)
+* [View the Notebook](/notebooks/?staticAppId=Visual_Data_Stories_with_Snowflake_Notebooks)
 * [YouTube Playlist](https://www.youtube.com/playlist?list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI)
 * [Solution Center](https://developers.snowflake.com/solutions/?_sft_technology=notebooks)
-* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/07/Visual-Data-Stories-with-Snowflake-Notebooks.pdf)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/07/Visual-Data-Stories-with-Snowflake-Notebooks.pdf)

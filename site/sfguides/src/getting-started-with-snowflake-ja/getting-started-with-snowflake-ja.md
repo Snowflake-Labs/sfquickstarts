@@ -16,7 +16,7 @@ Snowflakeへようこそデータベースおよびデータウェアハウス�
 
 ### 無料のバーチャルハンズオンラボ
 
-このSnowflakeガイドは、インストラクター主導の無料のバーチャルハンズオンラボとしてご利用いただけます。[今すぐVHOLに登録してください](https://www.snowflake.com/virtual-hands-on-lab/)。
+このSnowflakeガイドは、インストラクター主導の無料のバーチャルハンズオンラボとしてご利用いただけます。[今すぐVHOLに登録してください](/virtual-hands-on-lab/)。
 
 ### 前提条件：
 
@@ -1021,7 +1021,7 @@ Snowflakeは、安全なデータシェアリング機能を通じて、アカ�
 
 > aside positive
 > 
-> **クロスリージョンおよびクロスクラウドなデータシェアリング** リージョンまたはクラウドプラットフォームをまたいでデータを共有するには、レプリケーションを設定する必要があります。これはこのラボの範囲外ですが、詳細は[こちらのSnowflakeの記事](https://www.snowflake.com/trending/what-is-data-replication)でご確認いただけます。
+> **クロスリージョンおよびクロスクラウドなデータシェアリング** リージョンまたはクラウドプラットフォームをまたいでデータを共有するには、レプリケーションを設定する必要があります。これはこのラボの範囲外ですが、詳細は[こちらのSnowflakeの記事](/trending/what-is-data-replication)でご確認いただけます。
 
 Snowflakeは、安全なデータシェアリングを使用して、アカウント使用状況データおよびサンプルデータセットをすべてのSnowflakeアカウントに提供します。この機能において、Snowflakeはデータプロバイダーとして機能し、他のすべてのアカウントはコンシューマーとして機能します。
 
@@ -1151,11 +1151,11 @@ drop role if exists junior_dba;
 ### 関連リソース：
 
 - [Snowsight](https://docs.snowflake.com/ja/user-guide/ui-snowsight.html#using-snowsight)ドキュメントの詳細を確認する。
-- [無料トライアルを最大限に活用するための決定版ガイド](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)を読む。
-- [Snowflakeのバーチャルイベントまたは対面イベント](https://www.snowflake.com/about/events/)に参加し、当社の機能や顧客についてさらに詳しい情報を得る。
+- [無料トライアルを最大限に活用するための決定版ガイド](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)を読む。
+- [Snowflakeのバーチャルイベントまたは対面イベント](/about/events/)に参加し、当社の機能や顧客についてさらに詳しい情報を得る。
 - [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)に参加する。
 - [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)に登録する。
-- 詳細を当社[セールスチーム](https://www.snowflake.com/free-trial-contact-sales/)に問い合わせる。
+- 詳細を当社[セールスチーム](/free-trial-contact-sales/)に問い合わせる。
 
 ### ここまで学んだ内容：
 

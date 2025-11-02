@@ -12,9 +12,9 @@ authors: Matt Meredith
 <!-- -------------->
 
 ## Overview
-This resource optimization guide represents one module of the four contained in the series. These guides are meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Quickstarts for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming [education and training](https://www.snowflake.com/education-and-training/). 
+This resource optimization guide represents one module of the four contained in the series. These guides are meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Quickstarts for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming [education and training](/education-and-training/). 
 
-This [blog post](https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/) can provide you with a better understanding of Snowflake's Resource Optimization capabilities.
+This [blog post](/blog/understanding-snowflakes-resource-optimization-capabilities/) can provide you with a better understanding of Snowflake's Resource Optimization capabilities.
 
 Contact our team at [marketing@snowflake.com](mailto:marketing@snowflake.com), we appreciate your feedback. 
 
@@ -27,7 +27,7 @@ Usage Monitoring queries are designed to identify the warehouses, queries, tools
 - how to analyze partner tool consumption metrics
 
 ### What You’ll Need 
-- A [Snowflake](https://www.snowflake.com/) Account 
+- A [Snowflake](/) Account 
 - Access to view [Account Usage Data Share](https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles)
 
 ### Related Materials

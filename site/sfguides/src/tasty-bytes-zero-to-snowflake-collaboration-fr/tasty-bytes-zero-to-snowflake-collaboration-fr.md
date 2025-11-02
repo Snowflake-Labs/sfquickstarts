@@ -17,7 +17,7 @@ Bienvenue dans ce guide Quickstart Tasty Bytes Débuter avec Snowflake sur la co
 
 
 ### Conditions préalables
-- Avant de commencer, assurez-vous de suivre l’intégralité du guide Quickstart [**Présentation de Tasty Bytes**](/guide/tasty_bytes_introduction_fr/index.html), qui explique comment configurer un compte d’essai et déployer les éléments de base de Tasty Bytes requis pour suivre ce guide Quickstart.
+- Avant de commencer, assurez-vous de suivre l’intégralité du guide Quickstart [**Présentation de Tasty Bytes**](/fr/developers/guides/tasty-bytes-introduction-fr/), qui explique comment configurer un compte d’essai et déployer les éléments de base de Tasty Bytes requis pour suivre ce guide Quickstart.
 
 ### Vous allez apprendre :
 - Comment accéder à la Marketplace Snowflake
@@ -108,7 +108,7 @@ Selon ce que nous observons ci-dessus, nous sommes d’accord avec les analystes
 ### Présentation
 D’après ce que nous avons vu dans la section précédente, il semble qu’il manque les chiffres des ventes du 16 au 21 février pour la ville de Hambourg, en Allemagne. Il n’y a pas grand-chose de plus dans nos données internes que nous pouvons utiliser pour y voir plus clair, mais il doit bien y avoir une explication. 
         
-En exploitant la [Marketplace Snowflake](https://www.snowflake.com/fr/data-cloud/marketplace/), nous pouvons immédiatement vérifier les conditions météorologiques extrêmes en consultant l’annonce publique gratuite de Weather Source.
+En exploitant la [Marketplace Snowflake](/fr/data-cloud/marketplace/), nous pouvons immédiatement vérifier les conditions météorologiques extrêmes en consultant l’annonce publique gratuite de Weather Source.
 
 ### Étape 1 – Se procurer les données Weather Source LLC: frostbyte sur la Marketplace Snowflake
 La Marketplace Snowflake vous permet de trouver, d’essayer et d’acheter les applications et données dont vous avez besoin pour créer des solutions professionnelles innovantes. Dans cette étape, nous allons accéder à l’annonce [Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte) pour analyser plus en détail le recul de nos ventes à Hambourg.
@@ -374,4 +374,4 @@ Si vous voulez recommencer ce guide Quickstart, utilisez les scripts de réiniti
 ### Prochaines étapes
 Pour continuer à découvrir le Data Cloud Snowflake, cliquez sur le lien ci-dessous pour voir tous les autres guides Quickstart Powered by Tasty Bytes à votre disposition.
 
-- ### [Table des matières des guides Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_fr/index.html#3)
+- ### [Table des matières des guides Quickstart Powered by Tasty Bytes](/fr/developers/guides/tasty-bytes-introduction-fr/)

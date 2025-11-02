@@ -16,7 +16,7 @@ Use this quickstart lab to configure and understand the Snowflake Connector for 
 ![now](assets/first.png)
 
 > aside positive
-> Note: This quickstart assumes you do not have a ServiceNow® account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow® account, please feel free to try it out, with the caveat that, at the time of this writing, the connector is in public preview and therefore the [preview terms](https://www.snowflake.com/legal/preview-terms-of-service/) apply. 
+> Note: This quickstart assumes you do not have a ServiceNow® account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow® account, please feel free to try it out, with the caveat that, at the time of this writing, the connector is in public preview and therefore the [preview terms](/legal/preview-terms-of-service/) apply. 
 ### Prerequisites
 - ServiceNow® account with administrator's rights.
 - ORGADMIN rights to Accept the Terms of Service in the Snowflake Marketplace.
@@ -47,7 +47,7 @@ Deployment is usually pretty quick, around five minutes. But, while you wait, le
 ## Create and set up the Snowflake Account
 
 ### Create the Snowflake Account
-If you do not have a Snowflake account, no problem, you can get a free trial  at [snowflake.com](https://www.snowflake.com/en/). Select **Start for Free** and follow the instructions. 
+If you do not have a Snowflake account, no problem, you can get a free trial  at [snowflake.com](/en/). Select **Start for Free** and follow the instructions. 
 ### Accept the Terms & Conditions
 1. Log on to your Snowflake account through the Snowsight web interface and change to the **ORGADMIN** role. 
 1. Select “Admin -> Billing & Terms”.
@@ -64,7 +64,7 @@ Change to the **ACCOUNTADMIN** role.
 
 ### Install the ServiceNow® connector
 
-The connector, the first of its kind to be deployed on Snowflake's [Native App Framework](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/), is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. 
+The connector, the first of its kind to be deployed on Snowflake's [Native App Framework](/en/data-cloud/workloads/applications/native-apps/), is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. 
 Once chosen, it is installed into your account as an application with several views, and stored procedures. 
 
 1. In the left menu select **Data Products** and then **Marketplace**.
@@ -347,8 +347,8 @@ Congratulations! You've successfully installed and configured the Snowflake Conn
 - How to stop the connector to avoid unnecessary costs in a development environment.
 
 ### Related Resources
-* [Snowflake Connector for ServiceNow Available in Public Preview](https://www.snowflake.com/blog/snowflake-connector-servicenow-in-public-preview/)
-* [Introducing the Snowflake Native Application Framework](https://www.snowflake.com/blog/introducing-snowflake-native-application-framework/)
+* [Snowflake Connector for ServiceNow Available in Public Preview](/blog/snowflake-connector-servicenow-in-public-preview/)
+* [Introducing the Snowflake Native Application Framework](/blog/introducing-snowflake-native-application-framework/)
 * [Snowflake Connector for ServiceNow documentation](https://other-docs.snowflake.com/en/connectors/servicenow/v2/index-2.0)
 
 

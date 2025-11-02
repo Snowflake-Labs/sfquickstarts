@@ -336,4 +336,4 @@ Together with Snowflake and DataRobot you can:
 
 3. Efficient Deployment & Seamless Monitoring: Simplify and streamline your deployment journey in the Snowflake environment. With the amalgamation of DataRobot AI Production capabilities and Snowpark, ensure not just the deployment but also the scoring and proactive monitoring of your models, ensuring maximum uptime and efficiency.
 
-For more, check our [partnership page](https://www.snowflake.com/en/why-snowflake/partners/technology-partners/DataRobot/)
+For more, check our [partnership page](/en/why-snowflake/partners/technology-partners/DataRobot/)

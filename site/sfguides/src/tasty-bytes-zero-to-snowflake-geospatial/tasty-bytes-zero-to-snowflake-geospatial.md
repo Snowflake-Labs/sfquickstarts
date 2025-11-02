@@ -19,7 +19,7 @@ Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on 
 Within this Quickstart we will conduct in-depth Geospatial analysis leveraging powerful Snowflake functionality coupled with a SafeGraph POI listing from the Snowflake Marketplace.
 
 ### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](/en/developers/guides/tasty-bytes-introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - How to Access the Snowflake Marketplace
@@ -478,6 +478,6 @@ If you would like to re-run this Quickstart please leverage the Reset scripts in
 ### Next Steps
 To continue your journey in the Snowflake AI Data Cloud, please now visit the link below to see all other Powered by Tasty Bytes - Quickstarts available to you.
 
-- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/)
+- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](/en/developers/guides/tasty-bytes-introduction/)
 
 

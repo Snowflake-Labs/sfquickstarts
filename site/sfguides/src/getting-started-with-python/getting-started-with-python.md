@@ -27,7 +27,7 @@ You can connect to Snowflake in many languages. If your language of choice is Py
 - how to query data
 
 ### What You’ll Need 
-- A [Snowflake](https://www.snowflake.com/) Account 
+- A [Snowflake](/) Account 
 - A Text Editor
 
 ### What You’ll Build 

@@ -36,7 +36,7 @@ Snowflake Cortex Search is a fully managed indexing and retrieval service that s
 - How to create functions that use Python libraries using [Snowpark](https://snowflake.com/snowpark)
 - How to use power search experiences using [Snowflake Cortex Search](https://docs.snowflake.com/LIMITEDACCESS/cortex-search/cortex-search-overview)
 - How to use LLMs using serverless functions in [Snowflake Cortex AI](https://snowflake.com/cortex)
-- How to build a front-end with Python using [Streamlit in Snowflake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/)
+- How to build a front-end with Python using [Streamlit in Snowflake](/en/data-cloud/overview/streamlit-in-snowflake/)
 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
@@ -1236,7 +1236,7 @@ Congratulations! You've successfully performed RAG using Snowflake Cortex Search
 ### Related Resources
 
 - [Docs: Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Blog: RAG explainer and how it works in Snowflake](https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex)
+- [Blog: RAG explainer and how it works in Snowflake](/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex)
 - [Blog: Customizing RAG framework components using Snowpark Container Services](https://medium.com/@jason.summer/developing-a-product-chatbot-with-airmiles-in-snowflake-6b197d3fc424)
 - [Docs: Snowflake Directory Tables](https://docs.snowflake.com/en/user-guide/data-load-dirtables)
 - [Docs: Creating User-Defined Table Functions](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)

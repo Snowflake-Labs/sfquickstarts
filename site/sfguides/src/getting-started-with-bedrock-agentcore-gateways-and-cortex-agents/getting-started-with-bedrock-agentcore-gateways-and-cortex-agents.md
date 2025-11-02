@@ -36,7 +36,7 @@ Ingest data into structured and unstructured data stores then:
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
 - Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account.
 
 
@@ -603,7 +603,7 @@ This quickstart is just that, a quick way to get you started with using AgentCor
 There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together:
 
 
-- [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
+- [Snowflake Cortex](/en/data-cloud/cortex/)
 
 
 - [Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/)

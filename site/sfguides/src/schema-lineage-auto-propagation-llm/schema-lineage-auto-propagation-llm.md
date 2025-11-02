@@ -745,7 +745,7 @@ Summary:
 
 ### Resources
 - [Snowflake Documentation](https://docs.snowflake.com/)
-- [Introduction to Snowflake Data Engineering](https://www.snowflake.com/data-engineering/)
+- [Introduction to Snowflake Data Engineering](/data-engineering/)
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [Getting Started with Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro.html)
 - [Snowflake’s Get Lineage Function](https://docs.snowflake.com/en/sql-reference/functions/get_lineage-snowflake-core)
