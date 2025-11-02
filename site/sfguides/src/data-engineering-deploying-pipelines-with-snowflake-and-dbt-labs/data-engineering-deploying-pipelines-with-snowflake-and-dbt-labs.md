@@ -353,6 +353,6 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 
 ### Related Resources
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs)
-* [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) (Advanced Quickstart)
+* [Data Engineering Pipelines with Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/) (Advanced Quickstart)
 * [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 * [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)

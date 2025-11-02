@@ -231,7 +231,7 @@ library(ggplot2)
 Before starting the modeling process, we need to connect to our database and load
 the loan data.
 
-We'll use the DBI and odbc R packages to connect to the database. We'll then use dplyr and dbplyr to query the data with R without having to write raw SQL. To learn more, see [Analyze Data with R using Posit Workbench and Snowflake](https://quickstarts.snowflake.com/guide/analyze_data_with_r_using_posit_workbench_and_snowflake/#0).
+We'll use the DBI and odbc R packages to connect to the database. We'll then use dplyr and dbplyr to query the data with R without having to write raw SQL. To learn more, see [Analyze Data with R using Posit Workbench and Snowflake](https://www.snowflake.com/en/developers/guides/analyze-data-with-r-using-posit-workbench-and-snowflake/).
 
 ### Connect with DBI
 

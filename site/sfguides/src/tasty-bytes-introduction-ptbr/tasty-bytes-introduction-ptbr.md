@@ -172,7 +172,7 @@ O índice abaixo vai listar todos os Tasty Bytes Quickstarts que podem utilizar 
     - Saiba mais sobre as funções definidas pelo sistema Snowflake, crie e aplique permissões a uma função personalizada e implemente Dynamic Data Masking baseado em tags e políticas de acesso a linhas.
 - #### [Colaboração](/guide/tasty_bytes_zero_to_snowflake_collaboration_ptbr/)
     - Saiba mais sobre o Snowflake Marketplace com dados ativos gratuitos, disponibilizados instantaneamente pelo Weather Source para conduzir análises baseadas em dados, harmonizando fontes primárias e terciárias.
-- #### [Geoespacial](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
+- #### [Geoespacial](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
     - Saiba mais sobre o suporte geoespacial do Snowflake, começando pela aquisição gratuita de dados ativos e disponíveis instantaneamente do SafeGraph, depois passando para a criação de pontos geográficos (ST_POINT), cálculos de distância (ST_DISTANCE), coleta de coordenadas (ST_COLLECT), criação de um polígono de delimitação mínimo (ST_ENVELOPE), cálculo de área (ST_AREA) e determinação de pontos centrais (ST_CENTROID).
 
 ### Guias detalhados das cargas de trabalho (*em breve*)

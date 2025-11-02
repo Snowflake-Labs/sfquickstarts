@@ -33,7 +33,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 
 ### Prerequisites
 - Working knowledge of [Python](https://www.udemy.com/course/data-analysis-with-python-and-pandas/)
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0)
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/)
 
 ### What You’ll Learn 
 - Loading and transforming data via Snowpark

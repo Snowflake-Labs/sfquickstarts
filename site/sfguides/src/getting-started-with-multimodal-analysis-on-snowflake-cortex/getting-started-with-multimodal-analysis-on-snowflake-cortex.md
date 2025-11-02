@@ -134,5 +134,5 @@ The combination of visual and audio analysis capabilities opens up powerful poss
 ### Related Resources
 - [AI_COMPLETE Function Reference](https://docs.snowflake.com/en/sql-reference/functions/ai_complete)
 - [AI_TRANSCRIBE Function Reference](https://docs.snowflake.com/en/sql-reference/functions/ai-transcribe)
-- [Anthropic Tool Use on Snowflake Cortex Quickstart](https://quickstarts.snowflake.com/guide/getting-started-with-tool-use-on-cortex-and-anthropic-claude/index.html?index=..%2F..index#0)
-- [Anthropic RAG on Snowflake Cortex Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_anthropic_on_snowflake_cortex/index.html?index=..%2F..index#0)
+- [Anthropic Tool Use on Snowflake Cortex Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-tool-use-on-cortex-and-anthropic-claude/)
+- [Anthropic RAG on Snowflake Cortex Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-anthropic-on-snowflake-cortex/)

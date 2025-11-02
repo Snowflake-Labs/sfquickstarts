@@ -17,7 +17,7 @@ This API consists of reporting endpoints from data stored in Snowflake. [Serverl
 
 After completing this guide, you will have built, tested, and deployed a custom API built with [Python Flask](https://flask.palletsprojects.com/en/2.0.x/), [Serverless Framework](https://www.serverless.com/), and [AWS](https://aws.amazon.com/) Lambda/API Gateway. 
 
-The dataset is the same as used in the [Building a Data Application](https://quickstarts.snowflake.com/guide/data_app/index.html) guide.
+The dataset is the same as used in the [Building a Data Application](https://www.snowflake.com/en/developers/guides/data-app/) guide.
 
 ### Prerequisites
 - Privileges necessary to create a user, database, and warehouse in Snowflake
@@ -37,7 +37,7 @@ The dataset is the same as used in the [Building a Data Application](https://qui
 - [Serverless.com](https://serverless.com) Account 
 - [Docker](https://docs.docker.com/get-docker/) Installed
 - [VSCode](https://code.visualstudio.com/download) Installed
-- DATA_APPS_DEMO database and key pair for service user DATA_APPS_DEMO from first 4 steps of [Building a Data Application](https://quickstarts.snowflake.com/guide/data_app/index.html)
+- DATA_APPS_DEMO database and key pair for service user DATA_APPS_DEMO from first 4 steps of [Building a Data Application](https://www.snowflake.com/en/developers/guides/data-app/)
 - [NodeJS](https://nodejs.org/en/download/) Installed
 - [Serverless Framework](https://www.serverless.com/framework/docs/providers/aws/guide/installation) Installed
 - [Python 3](https://www.python.org/) Installed
@@ -82,7 +82,7 @@ If you would also like to see how to build endpoints using the Snowflake SQL API
 
 The config.py file is setup to configure the application from environment variables. These environment variables will be set for the lambda in AWS by the Serverless Framework automatically.
 
-Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to name your service by replacing <NAME_OF_YOUR_SERVICE> and update your Snowflake account in both places that have <ACCOUNT> (SNOWFLAKE_ACCOUNT and SNOWFLAKE_PRIVATE_KEY). This Snowflake account must be the same one used for the [Building a Data Application](https://quickstarts.snowflake.com/guide/data_app/index.html) guide as we will be using the same database and user. If you haven't completed the first 4 steps of that guide, do so before continuing.
+Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to name your service by replacing <NAME_OF_YOUR_SERVICE> and update your Snowflake account in both places that have <ACCOUNT> (SNOWFLAKE_ACCOUNT and SNOWFLAKE_PRIVATE_KEY). This Snowflake account must be the same one used for the [Building a Data Application](https://www.snowflake.com/en/developers/guides/data-app/) guide as we will be using the same database and user. If you haven't completed the first 4 steps of that guide, do so before continuing.
 
 Modify the region in the serverless.yml (line 17) to the same region as your credentials.
 

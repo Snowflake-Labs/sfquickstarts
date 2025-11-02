@@ -32,7 +32,7 @@ Amazon SageMaker is a fully managed machine learning (ML) service. With SageMake
 Azure Machine Learning empowers data scientists and developers to build, deploy, and manage high-quality models faster and with confidence. It accelerates time to value with industry-leading machine learning operations (MLOps), open-source interoperability, and integrated tools. This trusted AI learning platform is designed for responsible AI applications in machine learning.
 
 ### Pre-requisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account.
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account.
 - [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/).
 - The AWS account should be a sandbox account with open network policies or you you should [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the same region as the Snowflake account with access to Sagemaker.
 - Similarly users will want to have an [Azure Account](https://azure.microsoft.com/en-us/free) with an AzureML with open network policies or a VNET n the same region as the Snowflake account with access to AzureML.
@@ -228,6 +228,6 @@ There are several things to be aware of when deploying model to SnowparkML regis
 - [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
 - [Sagemaker Documentation](https://docs.aws.amazon.com/sagemaker/)
 - [Azure ML](https://learn.microsoft.com/en-us/azure/machine-learning/?view=azureml-api-2)
-- [Introduction to ML with Snowpark ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html?index=..%2F..index#0)
+- [Introduction to ML with Snowpark ML](https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
 
 If you have any questions, reach out to your Snowflake account team!

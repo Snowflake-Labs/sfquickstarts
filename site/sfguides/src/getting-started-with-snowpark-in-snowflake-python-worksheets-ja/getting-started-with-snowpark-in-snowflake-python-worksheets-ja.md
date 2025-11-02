@@ -260,12 +260,12 @@ return snow_df_spend_and_revenue_per_month
 
 ### 次のステップ
 
-データを段階的に処理する方法、Snowflakeタスクでデータパイプラインをオーケストレーションする方法、これらをCI/CDパイプラインで展開する方法、Snowflakeの新しい開発者CLIツールとVisual Studio Code拡張機能を使用する方法を学ぶには、引き続き[Snowpark Pythonを使用してデータエンジニアリングパイプライン](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)を深く掘り下げてください。
+データを段階的に処理する方法、Snowflakeタスクでデータパイプラインをオーケストレーションする方法、これらをCI/CDパイプラインで展開する方法、Snowflakeの新しい開発者CLIツールとVisual Studio Code拡張機能を使用する方法を学ぶには、引き続き[Snowpark Pythonを使用してデータエンジニアリングパイプライン](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)を深く掘り下げてください。
 
 ### 関連リソース
 
 - [Pythonワークシート開発者ガイド](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets)
-- [Snowpark for Pythonを使用したデータエンジニアリングとMLの入門](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html)
-- [上級：Snowpark for Python機械学習ガイド](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Snowpark for Pythonを使用したデータエンジニアリングとMLの入門](https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
+- [上級：Snowpark for Python機械学習ガイド](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Pythonデモ](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python開発者ガイド](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)

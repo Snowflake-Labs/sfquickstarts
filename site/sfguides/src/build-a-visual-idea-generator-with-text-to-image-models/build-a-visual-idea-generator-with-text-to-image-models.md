@@ -258,7 +258,7 @@ GRANT USAGE ON INTEGRATION EXTERNAL_LOGO_ACCESS_INTEGRATION TO ROLE CONCEPT_GEN_
 ### Create Sample Data
 In this demo, we will create a mock dataset of product ideas that have been taken from a combination of magazine articles, customer reviews, and qualitative interviews. 
 
-In a full automated architecture flow, this could be a table created from a RAG-based flow which sources from a document repository and converts the information into a structured table of customer comments. For more information on how to do this, you can read [this blog post(https://www.snowflake.com/en/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)] and explore quickstarts [like this one](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/#0).
+In a full automated architecture flow, this could be a table created from a RAG-based flow which sources from a document repository and converts the information into a structured table of customer comments. For more information on how to do this, you can read [this blog post(https://www.snowflake.com/en/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)] and explore quickstarts [like this one](https://www.snowflake.com/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/).
 
 ``` sql
 CREATE OR REPLACE TABLE IDEA_REPOSITORY (
@@ -288,7 +288,7 @@ VALUES
 
 > aside negative
 >
-> Basic familiarity with Snowflake Notebooks is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Quickstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+> Basic familiarity with Snowflake Notebooks is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Quickstarts](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
 
 In this section, we will do a full end-to-end creation of a concept image all within a Snowflake Notebook! This will allow you to quickly see how this process works. At the end of this step, however, we cannot call the image model from elsewhere, say a Streamlit app or from your own Application - that requires a service which is detailed in the next section.
 
@@ -405,7 +405,7 @@ This flow is what will guide our Streamlit application in the next section. Whil
 
 > aside negative
 >
-> Basic familiarity with Streamlit in Snowflake is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started) and [Quickstarts](https://quickstarts.snowflake.com/guide/tasty_bytes_price_optimization_using_snowflake_notebooks_and_streamlit/index.html?index=..%2F..index#0)
+> Basic familiarity with Streamlit in Snowflake is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started) and [Quickstarts](https://www.snowflake.com/en/developers/guides/tasty-bytes-price-optimization-using-snowflake-notebooks-and-streamlit/)
 
 In this section, we will create a Streamlit application that will follow a similar flow to the Notebook path in the last step, but with an easy-to-use UI for non-technical users. We will be referencing the `3_streamlit_app.py` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/3_streamlit_app.py) and can be loaded into a Streamlit app using Snowsight.
 
@@ -440,9 +440,9 @@ This quickstart help you to quickly create a service and an accompanying Streaml
 
 The orange areas highlighted in the image above represent the scope of this quickstart, however, for a full idea generation program, you may also want to consider the following:
 
-* **Automatically process unstructured data from documents.** Leverage information from industry reports, customer interviews, and reviews to develop the idea repository that we mocked in this quickstart. For this, you can process new documents with Cortex capabilities like Analyst and Search to automatically distill the information. See this [Quickstart](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html?index=..%2F..index#0) for ideas.
+* **Automatically process unstructured data from documents.** Leverage information from industry reports, customer interviews, and reviews to develop the idea repository that we mocked in this quickstart. For this, you can process new documents with Cortex capabilities like Analyst and Search to automatically distill the information. See this [Quickstart](https://www.snowflake.com/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/) for ideas.
 
-* **Continuously generate concept images from new inbound ideas.** Once ideas are flowing into your idea repository, you can automatically kick off image generation using Dynamic Tables and Scheduled Tasks. See this [Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html?index=..%2F..index#0) for more information. This image database could be powered by a Streamlit app which exposes ideas across different topic areas for an end-user.
+* **Continuously generate concept images from new inbound ideas.** Once ideas are flowing into your idea repository, you can automatically kick off image generation using Dynamic Tables and Scheduled Tasks. See this [Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-dynamic-tables/) for more information. This image database could be powered by a Streamlit app which exposes ideas across different topic areas for an end-user.
 
 * **Create Automated Review & Testing flows to get feedback about concepts.** Connect your image database with an activation target, such as a survey, to automatically activate to gather feedback or measure performance. For this step, you may want to enable [Cortex Guard](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete-cortex-guard) to ensure that input concepts or output images follow your safety and privacy policies.
 

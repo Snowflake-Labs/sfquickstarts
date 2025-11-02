@@ -42,7 +42,7 @@ A Data Agent that can intelligently respond to questions by reasoning over both 
 
 ### What You Will Need
 
-* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](https://quickstarts.snowflake.com/guide/build-agentic-application-in-snowflake/index.html?index=..%2F..index#1).
+* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](https://www.snowflake.com/en/developers/guides/build-agentic-application-in-snowflake/).
 
 <!-- ------------------------ -->
 ## Snowflake Trial Account

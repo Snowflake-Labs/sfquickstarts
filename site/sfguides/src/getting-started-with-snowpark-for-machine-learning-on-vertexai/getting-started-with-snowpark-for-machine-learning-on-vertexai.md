@@ -21,7 +21,7 @@ Vertex AI is Google's unified artificial intelligence platform designed to strea
 This quickstart is designed to service as an introduction to using Vertex AI with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Vertex AI workloads.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with Vertex AI and a Google Cloud account
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 

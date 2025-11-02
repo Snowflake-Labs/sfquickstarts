@@ -500,9 +500,9 @@ We would love your feedback on this Guide! Please submit your feedback using thi
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store)
-- [Intro to Machine Learning with Snowpark ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html)
-- [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Intro to Machine Learning with Snowpark ML](https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+- [Advanced: Snowpark for Python Data Engineering Guide](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Advanced: Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Snowflake Feature Store](https://docs.snowflake.com/developer-guide/snowpark-ml/feature-store/overview)

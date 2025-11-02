@@ -22,7 +22,7 @@ Amazon SageMaker is a fully managed machine learning service. With SageMaker, da
 This quickstart is designed to service as an introduction to using SageMaker with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing SageMaker workloads.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with SageMaker and an AWS account
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 

@@ -478,7 +478,7 @@ Try these common use cases:
 - **Multi-source Integration** - Combine data from multiple connectors
 
 > aside positive
-> **RECOMMENDED:** Start with the [Google Drive Document Intelligence quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_unstructured_data_pipeline/index.html) for a complete end-to-end example using Openflow SPCS.
+> **RECOMMENDED:** Start with the [Google Drive Document Intelligence quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-unstructured-data-pipeline/) for a complete end-to-end example using Openflow SPCS.
 
 <!-- ------------------------ -->
 ## Troubleshooting

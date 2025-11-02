@@ -513,7 +513,7 @@ Congratulations, you have successfully completed this QuickStart! By completing 
 ### Related Resources
 
 - [QuickStart GitHub Repo](https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services)
-- [QuickStart Guide: Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#0)
+- [QuickStart Guide: Intro to Snowpark Container Services](https://www.snowflake.com/en/developers/guides/intro-to-snowpark-container-services/)
 - [Blog: Snowflake Announces Snowpark Container Services](https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
 - [Blog: Snowpark Container Services - A Tech Primer](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741)
 - [Docs: Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)

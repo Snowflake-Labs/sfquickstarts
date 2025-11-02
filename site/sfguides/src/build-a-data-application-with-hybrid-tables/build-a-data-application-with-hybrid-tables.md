@@ -17,7 +17,7 @@ This quickstart walks through setting up Snowflake and a table structure for Hyb
 
 The application is built in Python and uses Flask as a web server framework and the Snowflake Python Connector to connect to Snowflake and the data. While the code is presented in Python, the concept and approach could be repurposed for just about any language.
 
-As a primer, you may want to go through the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables) quickstart to familirize yourself with the concepts of Hybrid Tables. This guide will mainly cover how to build with the Hybrid Tables as a backing source.
+As a primer, you may want to go through the [Getting Started with Hybrid Tables](https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/) quickstart to familirize yourself with the concepts of Hybrid Tables. This guide will mainly cover how to build with the Hybrid Tables as a backing source.
 
 ![Main screen](assets/hybrid-tables-app-main-view.png)
 
@@ -883,7 +883,7 @@ DROP ROLE HYBRID_TASK_APP_ROLE;
 
 Congratulations on completing this end-to-end guide on building a data application running directly on Snowflake Hybrid Tables. You should now have the tools to work with Hybrid Tables for other types of applications that are working with operational or transactional data, which is expecially useful when you want to combine that with analytical data and operations also living on the Snowflake platform. Withouth having to manage connections to multiple databases and database technologies, your applications are becoming both easier to write and to maintain.
 
-If you want to learn more about Snowflake Hybrid Tables, checkout the official documentation here: [Snowflake Docs: Hybrid tables](https://docs.snowflake.com/en/user-guide/tables-hybrid?_fsi=siV2rnOG). You can also go through the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables) quickstart that covers additional capabilities of Hybrid Tables.
+If you want to learn more about Snowflake Hybrid Tables, checkout the official documentation here: [Snowflake Docs: Hybrid tables](https://docs.snowflake.com/en/user-guide/tables-hybrid?_fsi=siV2rnOG). You can also go through the [Getting Started with Hybrid Tables](https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/) quickstart that covers additional capabilities of Hybrid Tables.
 
 ![Complete the quickstart](./assets/hybrid-tables-app-complete-learning.png)
 

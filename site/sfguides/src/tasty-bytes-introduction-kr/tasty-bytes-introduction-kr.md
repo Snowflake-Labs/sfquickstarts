@@ -219,7 +219,7 @@ WHERE m.truck_brand_name = 'Plant Palace';
 - #### [협업](/guide/tasty_bytes_zero_to_snowflake_collaboration_kr/)
   
   - 자사 및 서드 파티 소스를 조정하여 데이터 기반 분석을 수행하기 위해 Weathersource에서 제공하는 즉각적으로 사용 가능한 무료 라이브 데이터를 활용하여 Snowflake 마켓플레이스를 알아보십시오.
-- #### [지리 공간](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
+- #### [지리 공간](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
   
   - SafeGraph에서 제공하는 즉각적으로 사용 가능한 무료 라이브 데이터를 습득하는 것부터 시작하여 지리 공간 지점을 만들고(ST_POINT), 거리를 계산하고(ST_DISTANCE), 좌표를 수집하고(ST_COLLECT), 최소 바운딩 폴리곤을 그리고(ST_ENVELOPE), 면적을 계산하고(ST_AREA), 중심점을 찾아(ST_CENTROID) Snowflake 지리 공간 지원을 알아보십시오.
 

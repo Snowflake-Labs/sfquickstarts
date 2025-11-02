@@ -325,7 +325,7 @@ Update the SQL statement and parameters to your liking, and then find the `Code`
 
 This tutorial was a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the [Snowflake SQL API Reference](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html) and the [Snowflake public workspace in Postman](https://www.postman.com/snowflake/workspace/snowflake-public-workspace/overview).
 
-If you want more hands-on learning, check out [this in-depth lab](https://quickstarts.snowflake.com/guide/getting_started_snowflake_sql_api/index.html) to dig deeper into the Snowflake SQL API, and learn about the following topics:
+If you want more hands-on learning, check out [this in-depth lab](https://www.snowflake.com/en/developers/guides/getting-started-snowflake-sql-api/) to dig deeper into the Snowflake SQL API, and learn about the following topics:
 
 - Using bind variables in a statement
 - Retriving and getting metadata about the result

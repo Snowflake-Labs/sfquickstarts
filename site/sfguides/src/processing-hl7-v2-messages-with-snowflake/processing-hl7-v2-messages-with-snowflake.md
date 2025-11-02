@@ -23,7 +23,7 @@ Sign up for a free 30-day trial of Snowflake and follow along with this lab exer
 - Basic knowledge of SQL, database concepts, and objects
 - Basic Python and Java knowledge
 - Recommend to get familiarized with the [Snowflake User Interface](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting_started_with_snowflake/getting_started_with_snowflake.md)
-- Recommended to also complete [Getting Started with SnowSQL](https://quickstarts.snowflake.com/guide/getting_started_with_snowsql/index.html?index=..%2F..index)
+- Recommended to also complete [Getting Started with SnowSQL](https://www.snowflake.com/en/developers/guides/getting-started-with-snowsql/)
 
 
 ### What You’ll Learn

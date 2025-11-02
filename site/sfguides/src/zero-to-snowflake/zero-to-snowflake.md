@@ -908,10 +908,10 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new SQL File to follow along in Snowflake. 
 <!-- Uncomment when Copilot is added back -->
-<!-- **Note that once you've reached the end of the SQL File you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
+<!-- **Note that once you've reached the end of the SQL File you can skip to [Step 19 - Snowflake Copilot](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/).** -->
 
 <!-- Remove when Copilot is added back -->
-**Note: Once you've reached the end of the SQL File, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+**Note: Once you've reached the end of the SQL File, you can skip to [Step 19 - Cortex Search](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/).**
 <!-- End remove -->
 
 ### Step 1 - Setting Context
@@ -1400,10 +1400,10 @@ In this section, we'll demonstrate how Snowflake Intelligence tackles this chall
 Before starting this module, your environment includes pre-configured AI services that power Snowflake Intelligence:
 
 * **Cortex Search Service:** `tasty_bytes_review_search` - analyzing customer reviews and feedback
-    * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18)
+    * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/)
 
 * **Cortex Analyst Service:** `TASTY_BYTES_BUSINESS_ANALYTICS` - for translating natural language questions into SQL and providing insights from structured data, enabling self-service analytics.
-    * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19)
+    * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/)
 
 ---
 
@@ -1631,7 +1631,7 @@ Within this vignette, we will explore some of the powerful governance features w
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new SQL File to follow along in Snowflake.**
 
-**Note that once you've reached the end of the SQL File you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** 
+**Note that once you've reached the end of the SQL File you can skip to [Step 29 - Apps & Collaboration](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/).** 
 
 ## Roles and Access Control
 

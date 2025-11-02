@@ -512,7 +512,7 @@ SnowConvert AI facilitates the direct deployment of converted code objects and s
 > 
 > **Handling EWI Errors:**   
 > SnowConvert AI is designed to flag these high-impact errors, but cannot always fix them. To resolve an EWI, you must:  
-> 1. **Examine the code snippet** in the SnowConvert AI interface that triggered the EWI or better yet in your preferred Source Code IDE. [Learn more](https://quickstarts.snowflake.com/guide/end2endmigration/index.html?index=..%2F..index#3)  
+> 1. **Examine the code snippet** in the SnowConvert AI interface that triggered the EWI or better yet in your preferred Source Code IDE. [Learn more](https://www.snowflake.com/en/developers/guides/end2endmigration/)  
 > 2. **Manually modify the converted source code** to fix the issue..  
 > 3. **Unit test** on the corrected file.  
 >

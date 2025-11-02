@@ -31,7 +31,7 @@ The data pipeline used as an example in this quickstart makes use of data availa
 ### Prerequisites
 
 - Familiarity with Snowflake
-- Fundamentals of data engineering. You can use [Intro to Data Engineering with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_with_snowpark_python_intro/index.html) to refresh your memory
+- Fundamentals of data engineering. You can use [Intro to Data Engineering with Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-with-snowpark-python-intro/) to refresh your memory
 - Familiarity with Git repositories and GitHub
 
 ### What you will learn
@@ -245,15 +245,15 @@ FROM TABLE(QUICKSTART_PROD.INFORMATION_SCHEMA.TASK_HISTORY(
 ORDER BY SCHEDULED_TIME DESC;
 ```
 
-Check out [this](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/#9) guide to learn more about the powerful Snowflake features enabling you to monitor the execution of your tasks.
+Check out [this](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/) guide to learn more about the powerful Snowflake features enabling you to monitor the execution of your tasks.
 
 <!-- ------------------------ -->
 ## Database Change Management
 
 
-Just as business needs change, so do data needs. Over time our data pipeline will need to adapt to capture new or differently formatted data. It is our responsibility as data engineers to make sure that these changes can be made in a safe manner. In DevOps, Infrastructure as Code (IaC) is a common pattern applied when making infrastructure changes. Managing our database resources in a common, versioned source allows us to effectively collaborate and have a source off truth that is consistent across all deployments. IaC if often done in a declarative manner using tools such as [terraform](https://quickstarts.snowflake.com/guide/devops_dcm_terraform_github/#0).
+Just as business needs change, so do data needs. Over time our data pipeline will need to adapt to capture new or differently formatted data. It is our responsibility as data engineers to make sure that these changes can be made in a safe manner. In DevOps, Infrastructure as Code (IaC) is a common pattern applied when making infrastructure changes. Managing our database resources in a common, versioned source allows us to effectively collaborate and have a source off truth that is consistent across all deployments. IaC if often done in a declarative manner using tools such as [terraform](https://www.snowflake.com/en/developers/guides/devops-dcm-terraform-github/).
 
-Declarative definitions are concise, idempotent and easy to understand as we don’t need to understand the entire stack of historic changes leading up to the current state as in tools like [schemachange](https://quickstarts.snowflake.com/guide/devops_dcm_schemachange_github/#0). Rolling back multiple ALTER statements to get back to a previous state can be a pain.
+Declarative definitions are concise, idempotent and easy to understand as we don’t need to understand the entire stack of historic changes leading up to the current state as in tools like [schemachange](https://www.snowflake.com/en/developers/guides/devops-dcm-schemachange-github/). Rolling back multiple ALTER statements to get back to a previous state can be a pain.
 
 ### Declarative Pipeline Evolution
 
@@ -610,8 +610,8 @@ You have learned a ton in this guide. Here are the highlights:
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-devops)
 - [DevOps in Snowflake: How Git and Database Change Management enable a file-based object lifecycle](https://medium.com/snowflake/devops-in-snowflake-how-git-and-database-change-management-enable-a-file-based-object-lifecycle-1f61a0d5257c)
-- [DevOps: Database Change Management with Terraform and GitHub](https://quickstarts.snowflake.com/guide/devops_dcm_terraform_github/#0)
-- [Advanced: Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/#0)
+- [DevOps: Database Change Management with Terraform and GitHub](https://www.snowflake.com/en/developers/guides/devops-dcm-terraform-github/)
+- [Advanced: Data Engineering Pipelines with Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
 - Related Tools
   - [Snowflake Visual Studio Code Extension](https://docs.snowflake.com/en/user-guide/vscode-ext)
   - [SnowflakeCLI Tool](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) and [GitHub Action](https://github.com/Snowflake-Labs/snowflake-cli-action)

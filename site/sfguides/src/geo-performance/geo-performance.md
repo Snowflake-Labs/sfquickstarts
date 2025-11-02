@@ -17,7 +17,7 @@ This Quickstart guide contains key tips for optimal performance when using Snowf
 ### Prerequisites
 * Understanding of [Geospatial Data Types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial) in Snowflake
 * Understanding of [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
-* Recommended: Complete [Geospatial Analysis using Geometry Data Type](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) quickstart
+* Recommended: Complete [Geospatial Analysis using Geometry Data Type](https://www.snowflake.com/en/developers/guides/geo-analysis-geometry/) quickstart
 
 
 ### What You’ll Learn
@@ -532,6 +532,6 @@ In this guide, you acquired geospatial data from different sources and explored 
 * How to use H3 to speed up aggregated statistics calculation
 
 ### Related Resources
-* [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
-* [Geospatial Analytics using Geometry Data Type](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html#0)
+* [Geospatial Analytics for Retail with Snowflake and CARTO](https://www.snowflake.com/en/developers/guides/geospatial-analytics-with-snowflake-and-carto-ny/)
+* [Geospatial Analytics using Geometry Data Type](https://www.snowflake.com/en/developers/guides/geo-analysis-geometry/)
 

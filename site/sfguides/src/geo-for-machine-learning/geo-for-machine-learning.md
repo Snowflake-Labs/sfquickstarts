@@ -17,8 +17,8 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 ### Prerequisites
 * Understanding of [Discrete Global Grid H3](https://www.snowflake.com/blog/getting-started-with-h3-hexagonal-grid/)
 * Recommend: Understanding of [Geospatial Data Types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial) and [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial) in Snowflake
-* Recommended: Complete [Geospatial Analysis using Geometry and Geography Data Types](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) quickstart
-* Recommended: Complete [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0) quickstart
+* Recommended: Complete [Geospatial Analysis using Geometry and Geography Data Types](https://www.snowflake.com/en/developers/guides/geo-analysis-geometry/) quickstart
+* Recommended: Complete [Performance Optimization Techniques for Geospatial queries](https://www.snowflake.com/en/developers/guides/geo-performance/) quickstart
 
 ### What You’ll Learn
 In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. The quickstart is broken up into separate labs:
@@ -3143,9 +3143,9 @@ Congratulations! You've successfully performed data analytics, data engineering 
 * How to visualize data with Streamlit
 
 ### Related Resources
-- [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
-- [Geospatial Analysis using Geometry and Geography Data Types quickstart](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) 
-- [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0)
+- [Geospatial Analytics for Retail with Snowflake and CARTO](https://www.snowflake.com/en/developers/guides/geospatial-analytics-with-snowflake-and-carto-ny/)
+- [Geospatial Analysis using Geometry and Geography Data Types quickstart](https://www.snowflake.com/en/developers/guides/geo-analysis-geometry/) 
+- [Performance Optimization Techniques for Geospatial queries](https://www.snowflake.com/en/developers/guides/geo-performance/)
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
 

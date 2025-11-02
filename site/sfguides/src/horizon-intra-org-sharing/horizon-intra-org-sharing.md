@@ -223,7 +223,7 @@ Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](htt
 ### Execute Setup SQL Scripts
 
 1. `100_Setup_Data_Model`: create the TastyBytes foundational data model.
-[TastyBytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
+[TastyBytes](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
 
 - `RAW_CUSTOMER`: raw customer loyalty data with personally identifiable information (PII)
 - `RAW_POS`: raw point-of-sale data denormalized by orders, menu, franchise and country
@@ -1170,7 +1170,7 @@ ALTER VIEW app_instance_schema.orders_v
 
 >`frosty_bytes_sis.py` - Streamlit visualization python script that accesses the shared data within the application package.
 
-Refer to the [Getting Started with Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/index.html?index=..%2F..index#0) Quickstart for more details.
+Refer to the [Getting Started with Native Apps](https://www.snowflake.com/en/developers/guides/getting-started-with-native-apps/) Quickstart for more details.
 
 ### Create Application Package using Snowflake CLI
 
@@ -1221,7 +1221,7 @@ Navigate to **Provider Studio** (under Data Products) and click on `+ Listing` t
 Now select the `HORIZON_QUICKSTART_PACKAGE` and fill in a brief description using the rich text editor.
 You can use this text to get started, but feel free to get creative!
 
-> _[Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0) is a fictitious global food truck network_
+> _[Tasty Bytes](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/) is a fictitious global food truck network_
 > _that is on a mission to serve unique food options with high quality items in a safe, convenient and cost effective way._
 > _In order to drive forward on their mission, Tasty Bytes is beginning to leverage the Snowflake Data Cloud._
 >
@@ -1316,7 +1316,7 @@ Iceberg tables in Snowflake combine the performance and query semantics of regul
 
 Creating and writing data into a Snowflake Iceberg table is beyond the scope of this lab; we will focus only on the Consumer side of Iceberg table sharing.
 
-Using the method outlined in [Getting Started with Iceberg Tables](https://quickstarts.snowflake.com/guide/getting_started_iceberg_tables/index.html?index=..%2F..index#0) Quickstart, create Iceberg Tables and policies based on what we created in the previous lab section.
+Using the method outlined in [Getting Started with Iceberg Tables](https://www.snowflake.com/en/developers/guides/getting-started-iceberg-tables/) Quickstart, create Iceberg Tables and policies based on what we created in the previous lab section.
 
 On the `Provider AWS Account` execute the steps listed in `code/sql/reference/iceberg_provider.sql` cloned from [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository earlier:
 

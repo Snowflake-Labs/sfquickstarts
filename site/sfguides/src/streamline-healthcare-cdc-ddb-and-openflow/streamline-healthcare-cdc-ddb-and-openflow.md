@@ -56,7 +56,7 @@ Before proceeding with the quickstart, ensure you have:
 
 4. **An Openflow deployment either on AWS BYOC or Snowflake VPC with Snowpark Container Services (SPCS) versions**
    - Refer to this [blog](https://medium.com/@rahul.reddy.ai/your-step-by-step-practical-guide-to-setting-up-snowflake-openflow-on-aws-byoc-07e5b7be5056) to deploy Openflow on AWS BYOC.
-   - Openflow - Snowflake Deployment, using Snowpark Container Services (SPCS), provides a streamlined and integrated solution for connectivity. Because SPCS is a self-contained service within Snowflake, it’s easy to deploy and manage and offers a convenient and cost-effective environment for running your data flows. Refer to this [quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html?index=..%2F..index#0) to get started.
+   - Openflow - Snowflake Deployment, using Snowpark Container Services (SPCS), provides a streamlined and integrated solution for connectivity. Because SPCS is a self-contained service within Snowflake, it’s easy to deploy and manage and offers a convenient and cost-effective environment for running your data flows. Refer to this [quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/) to get started.
 
 5. **A Snowflake role that can access or create Openflow runtimes**
    - Refer to this [doc](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow) for more details.

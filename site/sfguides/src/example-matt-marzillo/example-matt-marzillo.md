@@ -26,7 +26,7 @@ This quickstart is designed to service as an introduction to using AzureML with 
 [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml)
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with AzureML, an Azure account with an AzureML workspace
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 

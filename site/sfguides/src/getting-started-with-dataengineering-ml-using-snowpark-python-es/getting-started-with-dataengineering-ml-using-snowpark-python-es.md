@@ -600,8 +600,8 @@ Nos encantaría conocer tu opinión sobre esta quickstart guide. Puedes enviárn
 ### Recursos relacionados
 
 - [Código fuente en GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Avanzado: Guía de ingeniería de datos de Snowpark para Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
-- [Avanzado: Guía de ML de Snowpark para Python](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Avanzado: Guía de ingeniería de datos de Snowpark para Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Avanzado: Guía de ML de Snowpark para Python](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Demos de Snowpark para Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guía de Snowpark para Python para desarrolladores](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)

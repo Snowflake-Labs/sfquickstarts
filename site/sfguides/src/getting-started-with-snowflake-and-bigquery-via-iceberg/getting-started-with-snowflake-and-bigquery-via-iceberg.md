@@ -23,7 +23,7 @@ There is often no one-size-fits-all approach to tackling complex business challe
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with [Google Cloud](https://cloud.google.com/free) and a Google Cloud account.
 
 ### What You’ll Learn
@@ -497,5 +497,5 @@ By following this quickstart, you learned how to:
 - Keep BigQuery in-sync with Iceberg tables hosted in Snowflake
 
 ### Resources
-Google Cloud and Snowflake’s commitment to Apache Iceberg’s open-source table format empowers our customers to unite their data across query engines and platforms and use it to solve business problems with familiar features, tools, and services from both organizations. Learn how to build your first open data lakehouse with [Google Cloud](https://cloud.google.com/bigquery/docs/iceberg-external-tables) and [Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg) by exploring documentation from Google Cloud and Snowflake, watching a [tutorial](https://www.snowflake.com/en/resources/video/what-are-iceberg-tables-in-snowflake-6-minute-demo/), then diving into the [Quickstart Guide](https://quickstarts.snowflake.com/guide/getting_started_iceberg_tables/index.html?index=..%2F..index&_ga=2.118770249.1746561633.1731441235-1839732901.1722365997&_gac=1.79615718.1729101473.Cj0KCQjwyL24BhCtARIsALo0fSDcmw4TgPEhApywE1DwnzydK-hvnDtflFy4rTLx7QCKjh1hhw5cKfoaAjzUEALw_wcB#0).
+Google Cloud and Snowflake’s commitment to Apache Iceberg’s open-source table format empowers our customers to unite their data across query engines and platforms and use it to solve business problems with familiar features, tools, and services from both organizations. Learn how to build your first open data lakehouse with [Google Cloud](https://cloud.google.com/bigquery/docs/iceberg-external-tables) and [Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg) by exploring documentation from Google Cloud and Snowflake, watching a [tutorial](https://www.snowflake.com/en/resources/video/what-are-iceberg-tables-in-snowflake-6-minute-demo/), then diving into the [Quickstart Guide](https://www.snowflake.com/en/developers/guides/getting-started-iceberg-tables/).
 

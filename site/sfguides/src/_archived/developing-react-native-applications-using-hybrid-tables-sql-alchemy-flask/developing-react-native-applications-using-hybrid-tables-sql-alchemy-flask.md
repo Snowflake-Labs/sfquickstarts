@@ -554,5 +554,5 @@ By doing so you have learned:
 ### Next Steps
 To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes - Quickstarts available to you.
 
-- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html)
+- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/)
 

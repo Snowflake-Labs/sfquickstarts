@@ -356,7 +356,7 @@ Documentation:
 - [Fork Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks)
 
 Blogs & Articles:
-- [Introduction to RAG Applications](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/#0)
+- [Introduction to RAG Applications](https://www.snowflake.com/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/)
 - [Cortex Search Best Practices](https://www.snowflake.com/engineering-blog/cortex-search-and-retrieval-enterprise-ai/)
 - [Read Medium Blog](https://medium.com/snowflake/unlocking-insights-from-images-with-ocr-and-rag-in-snowflake-968298b0c3cc)
 

@@ -254,7 +254,7 @@ Congratulations, you have successfully completed this quickstart!
 * [Catalog Linked Databases in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) 
 * [Lakehouse Analytics on Snowflake](https://www.snowflake.com/en/product/use-cases/lakehouse-analytics/)  
 * [Source code on GitHub](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/lakehouse_analytics)  
-* [Getting Started with Snowflake Intelligence](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-intelligence/index.html?index=..%2F..index#0)
+* [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 * [Download Reference Architecture](https://quickstarts.snowflake.com/guide/modern_lakehouse_analytics_on_snowflake/img/a2adb3f9c152831d.png)
 * [Access Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/lakehouse_analytics/LAKEHOUSE_ANALYTICS_DEMO.ipynb)
 * 

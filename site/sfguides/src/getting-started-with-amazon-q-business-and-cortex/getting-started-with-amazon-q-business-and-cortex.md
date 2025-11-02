@@ -37,7 +37,7 @@ The end-to-end workflow will look like this:
 6. Along with the Cortex Plugin users can access other AWS data and services through Amazon Q Business
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account with Cortex Search.
+- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
 - Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account.
 
 ### What You'll Learn
@@ -346,4 +346,4 @@ There are some great blogs on Medium regarding Snowflake Cortex and Amazon Servi
 
 - [Amazon Bedrock and Snowflake Cortex](https://catalog.us-east-1.prod.workshops.aws/workshops/2d4e5ea4-78c8-496f-8246-50d8971414c9/en-US/01-overview)
 
-- [Using Snowflake, Streamlit and External Access with amazon Bedrcok](https://quickstarts.snowflake.com/guide/getting_started_with_bedrock_streamlit_and_snowflake/index.html?index=..%2F..index#0)
+- [Using Snowflake, Streamlit and External Access with amazon Bedrcok](https://www.snowflake.com/en/developers/guides/getting-started-with-bedrock-streamlit-and-snowflake/)

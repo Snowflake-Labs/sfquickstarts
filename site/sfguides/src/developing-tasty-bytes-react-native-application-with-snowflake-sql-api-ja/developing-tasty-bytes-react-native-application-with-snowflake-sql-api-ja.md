@@ -293,4 +293,4 @@ DROP ROLE tasty_bytes_data_app_demo;
 
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なTasty Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html)
+- ### [Powered by Tasty Bytes - クイックスタート目次](https://www.snowflake.com/ja/developers/guides/tasty-bytes-introduction-ja/)

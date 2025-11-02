@@ -313,9 +313,9 @@ We hope this hands-on lab has provided you with the confidence and skills to app
 
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
-- [Using Cortex and Streamlit With Geospatial Data](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
+- [Using Cortex and Streamlit With Geospatial Data](https://www.snowflake.com/en/developers/guides/using-snowflake-cortex-and-streamlit-with-geospatial-data/)
 
 - [Route Plan Optimisation Simulator](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
 
-- [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
+- [Getting started with Geospatial AI and ML using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/geo-for-machine-learning/)
 

@@ -771,10 +771,10 @@ DATEADD(DAY, -60, CURRENT_DATE()) -- start date
 You just walked through a guided experience building and deploying a complete end-to-end machine learning workflow within Snowflake ML for a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model logging and management with Snowflake Model Registry, and model performance tracking and drift detection via ML Observability. 
 
 Ready for more? After you complete this quickstart, you can try one of the following additional examples:
-- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#3)
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
 
 Related Resources
 - [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)

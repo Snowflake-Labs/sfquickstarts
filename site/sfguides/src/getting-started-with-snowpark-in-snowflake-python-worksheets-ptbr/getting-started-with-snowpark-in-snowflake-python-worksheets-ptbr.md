@@ -259,7 +259,7 @@ Adoraríamos saber sua opinião sobre este quickstart guide! Preencha este [form
 
 ### Próximas etapas
 
-Para aprender a processar dados de maneira incremental, orquestrar pipelines de dados com o Snowflake Tasks, implementá-los via pipelines de integração e entrega contínuas (continuous integration and continuous delivery, CI/CD), bem como usar a nova ferramenta de interface de linha de comando (command-line interface, CLI) do desenvolvedor Snowflake, além da extensão Visual Studio Code, continue a sua jornada e aprofunde os seus conhecimentos no quickstart [Pipelines de engenharia de dados com Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html).
+Para aprender a processar dados de maneira incremental, orquestrar pipelines de dados com o Snowflake Tasks, implementá-los via pipelines de integração e entrega contínuas (continuous integration and continuous delivery, CI/CD), bem como usar a nova ferramenta de interface de linha de comando (command-line interface, CLI) do desenvolvedor Snowflake, além da extensão Visual Studio Code, continue a sua jornada e aprofunde os seus conhecimentos no quickstart [Pipelines de engenharia de dados com Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/).
 
 ### Recursos relacionados
 

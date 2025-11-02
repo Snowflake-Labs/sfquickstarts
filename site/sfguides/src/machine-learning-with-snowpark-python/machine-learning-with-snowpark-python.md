@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-**Note: if this is your first time experimenting with Snowpark Python, we recommend completing the [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0) Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.**
+**Note: if this is your first time experimenting with Snowpark Python, we recommend completing the [Getting Started with Snowpark for Python](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python/) Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.**
 
 *This quickstart was initially built as a Hands-on-Lab at Snowflake Summit 2022*
 
@@ -26,7 +26,7 @@ Throughout this quickstart, we will specifically explore the power of the Snowpa
 The source code for this quickstart is available on [GitHub](https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main).
 
 ### Prerequisites
-- Completion of the [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0) Quickstart
+- Completion of the [Getting Started with Snowpark for Python](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python/) Quickstart
 - Working knowledge of Python
 - Familiarity with Snowflake
 - Familiarity with Docker, Apache AirFlow, Streamlit a +

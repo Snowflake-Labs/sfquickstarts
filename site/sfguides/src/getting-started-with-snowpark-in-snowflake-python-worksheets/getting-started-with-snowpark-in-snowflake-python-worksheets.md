@@ -265,13 +265,13 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 
 ### Next Steps
 
-To learn how to process data incrementally, orchestrate data pipelines with Snowflake tasks, deploy them via a CI/CD pipeline and how to use Snowflake's new developer CLI tool as well as Visual Studio Code extension, continue your journey and deep dive into [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html).
+To learn how to process data incrementally, orchestrate data pipelines with Snowflake tasks, deploy them via a CI/CD pipeline and how to use Snowflake's new developer CLI tool as well as Visual Studio Code extension, continue your journey and deep dive into [Data Engineering Pipelines with Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/).
 
 ### Related Resources
 
 - [Snowflake Notebooks Developer Guide](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
 - [Python Worksheets Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets)
 - [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-- [Getting Started with Data Engineering and ML using Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Getting Started with Data Engineering and ML using Snowpark for Python](https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
+- [Advanced: Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)

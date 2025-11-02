@@ -19,7 +19,7 @@ Welcome to the Tasty Bytes - Zero to Snowflake Quickstart focused on Collaborati
 
 
 ### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - How to Access the Snowflake Marketplace
@@ -402,6 +402,6 @@ If you would like to re-run this Quickstart please leverage the Reset scripts in
 ### Next Steps
 To continue your journey in the Snowflake AI Data Cloud, please now visit the link below to see all other Powered by Tasty Bytes - Quickstarts available to you.
 
-- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
+- ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/)
 
 

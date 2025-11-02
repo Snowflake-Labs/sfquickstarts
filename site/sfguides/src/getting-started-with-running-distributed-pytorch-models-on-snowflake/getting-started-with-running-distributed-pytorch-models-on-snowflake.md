@@ -37,7 +37,7 @@ In addition, this end-to-end ML solution using [Snowflake ML](https://www.snowfl
 ### Prerequisites
 - Privileges necessary to create a user, database, and warehouse in Snowflake
 - A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
-- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
 
 ### What You Will Learn
 - How to extract features from customer, menu, and purchase history.
@@ -158,11 +158,11 @@ When you click the **Get Recommendations** button, the application filters the d
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 
 ### Related Quickstarts
-- [Getting Started with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/#0)
-- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/#0)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/#0)
-- [Getting Started with Snowflake MLeg](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- [Getting Started with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
+- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Snowflake MLeg](https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
 - [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/tree/main)
 - [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/End-to-End-ML-Workflows-with-Snowflake-ML-Architecture.png)
 - [Read the Blog](https://medium.com/snowflake/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution-452d16a39553)

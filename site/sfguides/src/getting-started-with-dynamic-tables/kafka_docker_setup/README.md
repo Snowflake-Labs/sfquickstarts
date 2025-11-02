@@ -10,7 +10,7 @@ status: Hidden
 
 # Use this README file for Streaming data into Snowflake using Kafka connect
 
-## Alternatively you can use the instruction to simulate streaming with the Python UDF functions defined in the setup step of this [Quickstart guide](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html?index=..%2F..index#1).
+## Alternatively you can use the instruction to simulate streaming with the Python UDF functions defined in the setup step of this [Quickstart guide](https://www.snowflake.com/en/developers/guides/getting-started-with-dynamic-tables/).
 
 ## OR
 

@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for unstructured data and Snowpark. Although this guide is specific to processing DICOM files, you can apply this pattern of processing natively in Snowflake to many types of unstructured data. All source code for this guide can be found on [Github](https://github.com/Snowflake-Labs/sfquickstarts).
 
 ### Prerequisites
-- Completion of [Getting Started with Unstructured Data](http://quickstarts.snowflake.com/guide/getting_started_with_unstructured_data/index.html?index=..%2F..index)
+- Completion of [Getting Started with Unstructured Data](https://www.snowflake.com/en/developers/guides/getting-started-with-unstructured-data/)
 
 ### What You'll Need
 - Snowflake account
