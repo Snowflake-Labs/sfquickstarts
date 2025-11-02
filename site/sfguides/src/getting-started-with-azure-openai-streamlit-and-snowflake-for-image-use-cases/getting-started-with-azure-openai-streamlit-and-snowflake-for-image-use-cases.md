@@ -1,4 +1,4 @@
-id: getting_started_with_azure_openai_streamlit_and_snowflake_for_image_use_cases
+id: getting-started-with-azure-openai-streamlit-and-snowflake-for-image-use-cases
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Getting Started with Azure OpenAI Streamlit and Snowflake using Snowpark External Access for image use cases

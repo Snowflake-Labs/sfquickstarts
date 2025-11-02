@@ -1,5 +1,5 @@
 author: 
-id: data_apps_summit_lab_kr
+id: data-apps-summit-lab-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: This is a sample Snowflake Guide

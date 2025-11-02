@@ -1,5 +1,5 @@
 author: sfc-gh-drichert
-id: servicenow_to_snowflake_connector
+id: servicenow-to-snowflake-connector
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
 language: en
 summary: Step-by-step to set up Servicenow connector

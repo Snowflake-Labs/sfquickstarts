@@ -1,5 +1,5 @@
 summary: Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning with SQL
-id: machine_learning_with_aws_autopilot 
+id: machine-learning-with-aws-autopilot
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 environments: web

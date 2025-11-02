@@ -1,5 +1,5 @@
 author: James Cha-Earley
-id: getting_started_with_snowflake_agents_api_and_react
+id: getting-started-with-snowflake-agents-api-and-react
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: Getting Started with Snowflake Agents API and React

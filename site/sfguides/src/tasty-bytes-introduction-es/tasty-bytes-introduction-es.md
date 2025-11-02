@@ -1,5 +1,5 @@
 author: Jacob Kranzler
-id: tasty_bytes_introduction_es
+id: tasty-bytes-introduction-es
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: es
 summary: Esta es la introducción a la quickstart guide de base de datos de Tasty Bytes

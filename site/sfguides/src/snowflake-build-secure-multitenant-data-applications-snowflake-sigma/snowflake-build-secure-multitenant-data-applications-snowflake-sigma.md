@@ -1,5 +1,5 @@
 author: Kelsey Hammock
-id: snowflake_build_secure_multitenant_data_applications_snowflake_sigma
+id: snowflake-build-secure-multitenant-data-applications-snowflake-sigma
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Snowflake Summit 2023 HoL with Sigma

@@ -1,5 +1,5 @@
 author: hope-wat
-id: leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python
+id: leverage-dbt-cloud-to-generate-ml-ready-pipelines-using-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a sample Snowflake Guide

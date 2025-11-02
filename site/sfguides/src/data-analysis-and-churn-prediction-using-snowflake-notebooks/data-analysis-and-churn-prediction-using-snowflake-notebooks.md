@@ -1,5 +1,5 @@
 author: Joviane Bellegarde
-id: data_analysis_and_churn_prediction_using_snowflake_notebooks
+id: data-analysis-and-churn-prediction-using-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
 summary: Data Analysis and Churn Prediction Using Snowflake Notebooks

@@ -1,5 +1,5 @@
 author: Tomasz Urbaszek
-id: connectors_github_python
+id: connectors-github-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/commercialize
 language: en
 summary: Overview of building Snowflake native connectors using Python, Snowpark and Native Apps. Example connector connects to GitHub issues API. 

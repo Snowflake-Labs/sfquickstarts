@@ -1,5 +1,5 @@
 author: Carlos Suarez
-id: data_engineering_snowpark_streamlit_inegi
+id: data-engineering-snowpark-streamlit-inegi
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: End-to-End from local to cloud using Snowapark Python Streamlit

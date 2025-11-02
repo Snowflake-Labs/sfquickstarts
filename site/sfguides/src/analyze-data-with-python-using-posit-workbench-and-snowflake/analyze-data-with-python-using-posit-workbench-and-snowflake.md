@@ -1,5 +1,5 @@
 author: Sara Altman, Daniel Chen
-id: analyze_data_with_python_using_posit_workbench_and_snowflake
+id: analyze-data-with-python-using-posit-workbench-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
 summary: Analyze Data with Python using Posit Workbench and Snowflake

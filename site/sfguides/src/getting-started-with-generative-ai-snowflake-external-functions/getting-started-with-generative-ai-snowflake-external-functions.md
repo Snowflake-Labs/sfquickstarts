@@ -1,4 +1,4 @@
-id: getting_started_with_generative_ai_snowflake_external_functions
+id: getting-started-with-generative-ai-snowflake-external-functions
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: Getting Started with Generative AI in Snowflake and Streamlit

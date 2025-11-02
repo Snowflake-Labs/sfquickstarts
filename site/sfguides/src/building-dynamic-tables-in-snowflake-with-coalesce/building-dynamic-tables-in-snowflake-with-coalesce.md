@@ -1,5 +1,5 @@
 author: Christina Jimenez
-id: building_dynamic_tables_in_snowflake_with_coalesce
+id: building-dynamic-tables-in-snowflake-with-coalesce
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Building Dynamic Tables in SNowflake with Coalesce

@@ -1,5 +1,5 @@
 author: Dan Lee, Alix Thoi
-id: how_to_resolve_data_with_fullcontact_and_snowflake
+id: how-to-resolve-data-with-fullcontact-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a sample Snowflake Guide

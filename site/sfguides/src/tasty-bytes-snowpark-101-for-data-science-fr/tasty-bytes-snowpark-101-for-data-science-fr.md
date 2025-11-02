@@ -1,5 +1,5 @@
 author: Marie Coolsaet
-id: tasty_bytes_snowpark_101_for_data_science_fr
+id: tasty-bytes-snowpark-101-for-data-science-fr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: fr
 summary: Tasty Bytes – Snowpark 101 pour la Data Science

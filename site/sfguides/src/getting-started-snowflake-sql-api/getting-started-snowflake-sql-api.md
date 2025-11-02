@@ -1,5 +1,5 @@
 summary: Getting Started With Snowflake SQL API
-id: getting_started_snowflake_sql_api
+id: getting-started-snowflake-sql-api
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 environments: web

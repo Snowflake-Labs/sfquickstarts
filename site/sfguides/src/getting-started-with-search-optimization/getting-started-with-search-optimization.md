@@ -1,5 +1,5 @@
 author: Shreya Agrawal
-id: getting_started_with_search_optimization
+id: getting-started-with-search-optimization
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: Quickstart guide for using Search Optimization

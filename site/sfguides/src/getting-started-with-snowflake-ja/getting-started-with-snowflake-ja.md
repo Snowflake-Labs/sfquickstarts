@@ -1,5 +1,5 @@
 summary: これはSnowflakeの大まかな紹介であり、ログイン、クエリの実行、データのロード方法について説明しています。
-id: getting_started_with_snowflake_ja
+id: getting-started-with-snowflake-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: ja
 environments: web

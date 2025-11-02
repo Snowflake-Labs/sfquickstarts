@@ -1,4 +1,4 @@
-id: integrate_snowflake_cortex_agents_with_microsoft_teams
+id: integrate-snowflake-cortex-agents-with-microsoft-teams
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en
 summary: This guide outlines the process for integrating Snowflake Cortex Agents with Microsoft Teams.

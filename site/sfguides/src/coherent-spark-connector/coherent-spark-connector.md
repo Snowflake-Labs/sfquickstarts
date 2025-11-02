@@ -1,5 +1,5 @@
 authors: Dustin Smith, Alan Hung
-id: coherent_spark_connector
+id: coherent-spark-connector
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
 summary: Use business logic from Excel in Snowflake with Coherent Spark

@@ -1,5 +1,5 @@
 summary: Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake
-id: hightouch_cdp
+id: hightouch-cdp
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 environments: web

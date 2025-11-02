@@ -1,5 +1,5 @@
 summary: Getting Started With External Functions on AWS
-id: getting_started_external_functions_aws
+id: getting-started-external-functions-aws
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 status: Published

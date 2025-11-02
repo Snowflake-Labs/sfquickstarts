@@ -1,5 +1,5 @@
 author: Michael Gorkow
-id: getting_started_snowpark_machine_learning
+id: getting-started-snowpark-machine-learning
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/financial-operations
 language: en
 summary: Machine Learning with Snowpark Python for Credit Card Approval Prediction

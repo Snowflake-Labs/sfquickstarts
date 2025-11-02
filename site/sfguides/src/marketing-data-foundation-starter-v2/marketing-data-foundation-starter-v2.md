@@ -1,5 +1,5 @@
 author: Manuel Figueroa
-id: marketing_data_foundation_starter_v2
+id: marketing-data-foundation-starter-v2
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Marketing Data Foundation V2

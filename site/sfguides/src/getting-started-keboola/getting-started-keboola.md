@@ -1,5 +1,5 @@
 author: Anthony Alteirac
-id: getting_started_keboola
+id: getting-started-keboola
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/platform
 language: en
 summary: Getting Started With Keboola

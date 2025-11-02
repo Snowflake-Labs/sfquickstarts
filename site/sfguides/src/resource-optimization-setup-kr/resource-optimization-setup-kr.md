@@ -1,5 +1,5 @@
 summary: 이 가이드는 고객이 쿼리는 과도한 소비를 초래할 수도 있는 특정 설정 및 구성 항목과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.
-id: resource_optimization_setup_kr
+id: resource-optimization-setup-kr
 language: ko
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, 
 environments: web

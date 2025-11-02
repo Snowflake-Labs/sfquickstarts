@@ -1,5 +1,5 @@
 summary: This is a sample Snowflake Guide
-id: get-started-with-guides 
+id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web

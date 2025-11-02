@@ -1,5 +1,5 @@
 author: Jacob Kranzler
-id: tasty_bytes_zero_to_snowflake_collaboration_it
+id: tasty-bytes-zero-to-snowflake-collaboration-it
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: it
 summary: Quickstart Tasty Bytes - Da zero a Snowflake - Collaborazione

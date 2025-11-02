@@ -1,5 +1,5 @@
 author: Christina Jimenez
-id: parsing_semi_structured_data_with_coalesce
+id: parsing-semi-structured-data-with-coalesce
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Parsing Semi-Structured Data (JSON / XML) with Coalesce

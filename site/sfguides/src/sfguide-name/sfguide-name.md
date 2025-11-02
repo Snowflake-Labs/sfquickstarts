@@ -1,5 +1,5 @@
 author: 
-id: SFGUIDE-NAME
+id: sfguide-name
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

@@ -1,5 +1,5 @@
 summary: Building a Single-Page Data Application on Snowflake
-id: data_app
+id: data-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 environments: web

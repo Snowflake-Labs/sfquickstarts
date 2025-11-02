@@ -1,5 +1,5 @@
 author: Kala Govindarajan
-id: Enhancing_Customer_Experiences_using_Cortex_FineTuning
+id: enhancing-customer-experiences-using-cortex-finetuning
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en
 summary: Build an automated customer support agent that showcases the power of Cortex Fine-Tuning and helps the Tasty Bytes team to respond with a highly accurate automated email to customer tickets

@@ -1,5 +1,5 @@
 author: Paul Myres, Kevin Crawford
-id: simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake
+id: simplify-and-accelerate-data-access-provisioning-with-immuta-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is a sample Snowflake Guide

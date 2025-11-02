@@ -1,5 +1,5 @@
 summary: Learn how to get started with Data Quality Monitoring Framework in Snowflake 
-id: getting_started_with_data_quality_in_snowflake
+id: getting-started-with-data-quality-in-snowflake
 categories: getting-started
 environments: web
 status: Published

@@ -1,5 +1,5 @@
 author: Allan Campopiano
-id: exploratory_data_analysis_with_snowflake_and_deepnote
+id: exploratory-data-analysis-with-snowflake-and-deepnote
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Deepnote's SQL + Python notebook, along with their suite of low-code tools, allow for rapid data exploration of the Snowflake warehouse.

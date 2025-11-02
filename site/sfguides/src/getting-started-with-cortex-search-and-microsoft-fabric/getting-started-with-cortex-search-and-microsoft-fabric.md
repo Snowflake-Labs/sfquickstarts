@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: getting_started_with_cortex_search_and_microsoft_fabric
+id: getting-started-with-cortex-search-and-microsoft-fabric
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a quickstart for using Cortex Search with Microsoft Fabric

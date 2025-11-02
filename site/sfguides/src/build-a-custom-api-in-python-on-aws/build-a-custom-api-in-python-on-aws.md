@@ -1,5 +1,5 @@
 author: Brad Culberson
-id: build_a_custom_api_in_python_on_aws
+id: build-a-custom-api-in-python-on-aws
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: A guide to building and running a custom API (in Python) Powered by Snowflake and AWS

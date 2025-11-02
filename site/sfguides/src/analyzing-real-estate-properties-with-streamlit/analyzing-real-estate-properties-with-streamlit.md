@@ -1,5 +1,5 @@
 summary: Analyzing real estate properties with Streamlit 
-id: analyzing_real_estate_properties_with_streamlit
+id: analyzing-real-estate-properties-with-streamlit
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 environments: web

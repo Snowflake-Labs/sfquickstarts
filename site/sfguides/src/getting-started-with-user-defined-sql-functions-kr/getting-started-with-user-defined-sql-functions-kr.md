@@ -1,4 +1,4 @@
-id: getting_started_with_user_defined_sql_functions_kr
+id: getting-started-with-user-defined-sql-functions-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: ko
 summary: 사용자 정의 SQL 함수 시작하기 가이드

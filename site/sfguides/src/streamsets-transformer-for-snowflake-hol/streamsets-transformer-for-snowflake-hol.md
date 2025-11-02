@@ -1,5 +1,5 @@
 author: Kate Guttridge, StreamSets
-id: streamsets_transformer_for_snowflake_hol
+id: streamsets-transformer-for-snowflake-hol
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Hands on Lab for Transformer for Snowflake

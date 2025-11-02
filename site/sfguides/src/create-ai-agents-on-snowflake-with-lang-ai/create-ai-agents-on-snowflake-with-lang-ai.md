@@ -1,5 +1,5 @@
 author: Lang.ai
-id: create_ai_agents_on_snowflake_with_lang_ai
+id: create-ai-agents-on-snowflake-with-lang-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
 summary: Through this quickstart guide, you will set up an AI Agent running on Snowflake to set up recurring data analysis for your business teams.

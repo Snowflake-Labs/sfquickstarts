@@ -1,5 +1,5 @@
 author: Hanbing Yan and Rahul Reddy
-id: snowpark_python_top_tips_for_optimal_performance
+id: snowpark-python-top-tips-for-optimal-performance
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
 summary: Snowpark Python: Key Tips for Optimal Performance

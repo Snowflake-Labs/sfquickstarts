@@ -1,5 +1,5 @@
 author: Meher Garda
-id: a_guide_to_implementing_a_pipeline_for_database_change_management
+id: a-guide-to-implementing-a-pipeline-for-database-change-management
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Implementing a Pipeline for Database Change Management

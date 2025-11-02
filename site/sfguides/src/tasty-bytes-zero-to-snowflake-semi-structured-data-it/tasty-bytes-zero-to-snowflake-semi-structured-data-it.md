@@ -1,5 +1,5 @@
 author: Jacob Kranzler
-id: tasty_bytes_zero_to_snowflake_semi_structured_data_it
+id: tasty-bytes-zero-to-snowflake-semi-structured-data-it
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: it
 summary: Quickstart Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati categorie: Tasty-Bytes, Guida-introduttiva, In-evidenza

@@ -1,5 +1,5 @@
 author: Jim Warner
-id: build_an_ad_tag_in_python_on_aws
+id: build-an-ad-tag-in-python-on-aws
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: A guide to building and running a simple ad tag (in Python) Powered by Snowflake and AWS

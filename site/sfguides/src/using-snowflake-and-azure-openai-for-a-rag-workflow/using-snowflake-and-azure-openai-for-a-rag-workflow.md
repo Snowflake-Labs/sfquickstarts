@@ -1,4 +1,4 @@
-id: using_snowflake_and_azure_openai_for_a_rag_workflow
+id: using-snowflake-and-azure-openai-for-a-rag-workflow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: Using Snowflake with Azure OpenAI to build a RAG workflow

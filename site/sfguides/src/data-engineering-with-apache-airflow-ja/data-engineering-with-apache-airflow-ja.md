@@ -1,5 +1,5 @@
 author: Adrian Lee
-id: data_engineering_with_apache_airflow_ja
+id: data-engineering-with-apache-airflow-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This guide shows you how to build a Data Pipeline with Apache Airflow that manages DBT model transformations and conducts data analysis with Snowpark, all in a single DAG

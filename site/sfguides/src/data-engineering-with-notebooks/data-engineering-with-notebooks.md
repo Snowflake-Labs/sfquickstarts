@@ -1,5 +1,5 @@
 authors: Jeremiah Hansen
-id: data_engineering_with_notebooks
+id: data-engineering-with-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowflake Notebooks

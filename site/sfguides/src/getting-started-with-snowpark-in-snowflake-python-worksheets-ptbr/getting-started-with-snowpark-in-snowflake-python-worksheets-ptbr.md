@@ -1,4 +1,4 @@
-id: getting_started_with_snowpark_in_snowflake_python_worksheets_ptbr
+id: getting-started-with-snowpark-in-snowflake-python-worksheets-ptbr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform
 language: pt_br
 summary: Introdução ao Snowpark em planilhas Python para Snowflake

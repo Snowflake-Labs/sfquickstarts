@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: getting_started_with_amazon_q_business and_cortex
+id: getting-started-with-amazon-q-business-and-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: This is a quickstart for using Amazon Q Business with Cortex

@@ -1,5 +1,5 @@
 author: NaveenAlanThomas
-id: marketing_data_foundation_starter
+id: marketing-data-foundation-starter
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: Marketing Data Foundation Starter Guide

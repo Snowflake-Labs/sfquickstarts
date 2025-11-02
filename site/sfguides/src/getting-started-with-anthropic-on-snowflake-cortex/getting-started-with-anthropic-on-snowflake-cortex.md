@@ -1,5 +1,5 @@
 summary: Getting Started with Anthropic on Snowflake Cortex
-id: getting_started_with_anthropic_on_snowflake_cortex
+id: getting-started-with-anthropic-on-snowflake-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 environments: web

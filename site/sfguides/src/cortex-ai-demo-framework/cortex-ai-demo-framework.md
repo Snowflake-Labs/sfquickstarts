@@ -1,5 +1,5 @@
 author: Joviane Bellegarde
-id: cortex_ai_demo_framework
+id: cortex-ai-demo-framework
 summary: Cortex AI Demo Framework - Build sophisticated Cortex-powered demos in ~5 minutes
 categories: Cortex, AI, Demo Development, Getting-Started
 environments: web

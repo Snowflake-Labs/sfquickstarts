@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: setting_up_snowflake_environments_in_vertex_ai
+id: setting-up-snowflake-environments-in-vertex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a quickstart for Setting up Snowflake Environments in Vertex AI

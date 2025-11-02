@@ -1,5 +1,5 @@
 author: Chandra Nayak & Madeline Lee
-id: visual_analytics_powered_by_snowflake_and_tableau
+id: visual-analytics-powered-by-snowflake-and-tableau
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
 summary: Visual Analytics Powered by Snowflake and Tableau

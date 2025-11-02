@@ -1,4 +1,4 @@
-id: ai-video-search-with-snowflake-and-twelveLabs
+id: ai-video-search-with-snowflake-and-twelvelabs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: This guide outlines the process for creating a video search and summarization workflow in Snowflake Notebook on Container Runtime.

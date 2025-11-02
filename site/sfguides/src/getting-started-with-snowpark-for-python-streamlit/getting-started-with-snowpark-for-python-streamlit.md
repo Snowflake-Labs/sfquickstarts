@@ -1,4 +1,4 @@
-id: getting_started_with_snowpark_for_python_streamlit
+id: getting-started-with-snowpark-for-python-streamlit
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from the Snowflake Marketplace.

@@ -1,5 +1,5 @@
 author: Luke Ambrosetti (special thanks: Aric Wang, Brian Hess, Brad Culberson)
-id: snowflake_recommendation_engine
+id: snowflake-recommendation-engine
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: A guide to building and running a recommendation engine in Snowflake

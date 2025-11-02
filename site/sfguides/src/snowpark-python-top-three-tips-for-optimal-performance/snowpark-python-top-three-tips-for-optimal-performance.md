@@ -1,5 +1,5 @@
 author: Jonathan Tao and Hanbing Yan
-id: snowpark_python_top_three_tips_for_optimal_performance
+id: snowpark-python-top-three-tips-for-optimal-performance
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
 summary: Snowpark Python: Top Three Tips for Optimal Performance

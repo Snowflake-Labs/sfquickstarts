@@ -1,5 +1,5 @@
 summary: Getting Started with Event Tables and Alerts
-id: alert_on_events 
+id: alert-on-events
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 environments: web

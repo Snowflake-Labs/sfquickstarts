@@ -1,5 +1,5 @@
 author: Stephen Franks
-id: a_dataiku_and_snowflake_guide_to_data_science
+id: a-dataiku-and-snowflake-guide-to-data-science
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is an introduction to Dataiku and Snowflake

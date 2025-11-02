@@ -1,5 +1,5 @@
 author: Sigma Computing -- Shawn Namdar, Partner Engineer
-id: getting_started_with_sigma
+id: getting-started-with-sigma
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a guide to setting up Sigma on top of Snowflake and visualizing some sample data.

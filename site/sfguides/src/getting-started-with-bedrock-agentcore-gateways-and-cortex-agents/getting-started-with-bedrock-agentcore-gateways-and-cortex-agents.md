@@ -1,5 +1,5 @@
 author: marzillo-snow, quilpie
-id: getting_started_with_bedrock_agentcore_gateways_and_cortex_agents
+id: getting-started-with-bedrock-agentcore-gateways-and-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: This is a quickstart for using Cortex Agents and Amazon Q

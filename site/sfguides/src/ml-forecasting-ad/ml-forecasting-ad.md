@@ -1,5 +1,5 @@
 author: Harsh Patel
-id: ml_forecasting_ad
+id: ml-forecasting-ad
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 summary: Getting started with Anomaly Detection & Forecasting ML Functions

@@ -1,5 +1,5 @@
 author: Prash Medirattaa
-id: end_to_end_machine_learning_with_dataiku
+id: end-to-end-machine-learning-with-dataiku
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a sample Snowflake Guide

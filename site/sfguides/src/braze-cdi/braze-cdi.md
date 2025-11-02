@@ -1,5 +1,5 @@
 author: Luke Ambrosetti 
-id: braze_cdi
+id: braze-cdi
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
 summary: Braze Cloud Data Ingestion

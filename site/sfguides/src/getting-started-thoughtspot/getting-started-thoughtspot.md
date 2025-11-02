@@ -1,5 +1,5 @@
 author: Thoughtspot
-id: getting_started_thoughtspot
+id: getting-started-thoughtspot
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: Build an interactive react app with ThoughtSpot and Snowflake

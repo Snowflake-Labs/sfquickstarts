@@ -1,4 +1,4 @@
-id: getting_started_with_time_travel_kr
+id: getting-started-with-time-travel-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: ko
 summary: Time Travel을 사용하여 이전 데이터베이스 상태를 쿼리하고 데이터를 복구합니다.
