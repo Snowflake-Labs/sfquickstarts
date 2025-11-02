@@ -3,7 +3,7 @@ name: Validate abusive words and Stage
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [master]
+    branches: [master, github-actions]
     paths:
       - 'site/sfguides/src/**'
       - '!site/sfguides/src/_*/**'
@@ -11,7 +11,7 @@ on:
 jobs:
   validate_and_stage:
     # Only run for PRs from branches in this repo (not forks) into master
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.base.ref == 'github-actions'
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     environment:
       name: staging
