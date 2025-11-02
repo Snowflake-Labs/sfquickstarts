@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This guide will provide step-by-step details for building a data mapping requirement in Snowflake Native Apps and Streamlit
 environments: web
-status: draft
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Data Mapping in Snowflake Native Apps using Streamlit

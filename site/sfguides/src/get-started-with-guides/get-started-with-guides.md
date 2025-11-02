@@ -3,15 +3,15 @@ id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
-status: Hidden 
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+status: Published 
+
 authors: Guide Author Name (Github User Name)
 
 # Snowflake Guide Template
 
 
 <!-- ------------------------ -->
-## Components of a Quickstart
+## Components of a Guide
 
 <!-- ------------------------ -->
 ### Overview 
@@ -20,23 +20,33 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).
 
+Previously, we had Quickstarts and Solutions which are now combined into a single "Guide" at www.snowflake.com/en/developers/guides page.  Going forward, we encourage users to think along creating **logged out experiences**  or **topic pages.** A few examples of these pages are:
+
+* **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
+* **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+
+
+
 
 ### Prerequisites
 - Familiarity with Markdown syntax
 
 ### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+- Components of a Guide
+- Metadata configuration
+- Formatting considerations (including headers, subheaders, code, buttons, links, images and videos)
+- Tags to include (Language and category)
+- Converting content to markdown 
+- Submitting your guide for approval
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
+- [VSCode](https://code.visualstudio.com/download) installed
+- [Submit a Repository Request](https://docs.google.com/forms/d/1AQ0SOMi0-kAHHluEx9HJDDUctwisHqrSVWo-wvfDMwU/edit#responses) to obtain a repo  in Snowflake Labs GitHub.
 
 
 ### What You’ll Build 
-- A Snowflake Guide
+- Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
 
 
@@ -46,7 +56,7 @@ The Conclusion and Next Steps section is one of the most important parts of a gu
 
 There are three main sub-headers in a Conclusion step:
 
-1. a general conclusion paragraph (what you are reading now!)
+1. a general conclusion paragraph 
 2. "What We've Covered" section with a bulleted list of things
 3. "Related Resources" with links to various other resources, other guides, docs, videos, GitHub source code, etc.
 
@@ -55,7 +65,7 @@ It's also important to remember that by the time a reader has completed a Guide,
 ### What We've Covered
 - creating steps and setting duration
 - adding code snippets
-- embedding images, videos, and surveys
+- embedding images and videos
 - importing other markdown files
 
 ### Related Resources
@@ -70,24 +80,31 @@ It's also important to remember that by the time a reader has completed a Guide,
 
 It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
 
+```diff
+- REQUIRED
+```
 
-
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
 - **id**: sample-separated-by-hyphens-not-underscores 
   - make sure to match the id here with the name of the file, all one word.
 - **language**: pick from list 
   - pick the appropriate language from the lsit provided.  
 - **categories**: Pick from the list
   - select from the complete list of categories 1, 2 and 3 prrovided.  Please DO NOT create new categories.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **authors**: Author Full Name (author GitHub account)
+- **status**: (`Published`, `Archived`, `Hidden`)<br>
+  `Published` - implies the guide is active<br>
+  `Hidden` - implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.<br>
+  `Archived` - imlplies the sfguide is out of date and deprecated and no longer available.
+- **authors**: Author Full Name (+ author GitHub account)
   - Indicate the author(s) of this specific sfguide.  Including the GitHub Account login helps us notify you of any changes requested in the future.
 
+```diff
+- OPTIONAL
+```
+  - **summary**: This is a sample Snowflake Guide 
+  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
+  - **environments**: web 
+  - `web` is default. If this will be published for a specific event or  conference, include it here.
+  - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
 ---
 
 You can see the source metadata for this guide you are reading now, on [the github repo](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template).
@@ -117,7 +134,7 @@ All the content for the step goes here.
 
 
 
-NOTE:  Please add images in Markdown format - not HTML.
+> NOTE:  Please add images in Markdown format - not HTML.
 ```
 
 
@@ -185,37 +202,58 @@ for (statement 1; statement 2; statement 3) {
 
 #### Info Boxes
 
-> aside positive
-> 
-> This will appear in a positive info box.
+> [!NOTE]
+> This is an informational aside.
+
+> [!TIP]
+> A positive or helpful note.
+
+> [!IMPORTANT]
+> Something you shouldn’t overlook.
+
+> [!WARNING]
+> A cautionary message.
+
+> [!CAUTION]
+> A serious negative or danger message.
+
+```
+CODE:
+> Adding an Info Box:
+> Pick the messages above and use this code.  This will appear as an info box.
+```
 
 
-
-> aside negative
-> 
-> This will appear in a negative info box.
 
 #### Buttons
 
 <button>[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)</button>
 
+```
+CODE:
+<button>[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)</button>
+```
+
 ### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
+| Column 1 | Column 2 | Column 3 |
+|-----------|-----------|-----------|
+| Row 1     | Data      | More data |
+| Row 2     | More      | Still more |
+
+```
+CODE:
+| Column 1 | Column 2 | Column 3 |
+|-----------|-----------|-----------|
+| Row 1     | Data      | More data |
+| Row 2     | More      | Still more |
+```
 
 #### Hyperlinking
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+```
+CODE:
+[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+```
 
 
 #### Images
@@ -224,6 +262,7 @@ for (statement 1; statement 2; statement 3) {
 Please DO NOT use HTML code for adding images.  
 Use this markdown format for images: 
 ```
+CODE:
 ![Alt text](path/to/image.jpg "Optional Title")
 ```
 
@@ -232,11 +271,14 @@ Use this markdown format for images:
 - cannot have $ signs or special characters
 - should have the same correct image file name in the .md file (this is case sensitive)
 - All images should be in the "Assets" folder.  Please DO NOT create subfolders inside this folder. 
+- Be sized appropriately (no full res images), and optimized for web (recommend tinypng)
+- Sizes should be 150kb max file size, gifs are an exception but they should also be optimized - large images will slow down the page load
 
 
 #### Videos
-Videos from youtube can be linked to the text like a normal link
+Videos from youtube can be linked to the text like a normal link like [this video](https://www.youtube.com/watch?v=KmeiFXrZucE).
 ```
+CODE:
 [this video](https://www.youtube.com/watch?v=KmeiFXrZucE)>
 
 ```
@@ -247,26 +289,18 @@ use HTML tags in the markdown file since that will cause errors!
 ```
 
 
-
-
-#### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-#### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
-
+<p>
 
 
 <!-- ------------------------ -->
 ## Language and Category tags
 
-### Please pick tags from the 3 categories below.  
-####  DO NOT create new tags if you don't see them in the list.  
+>NOTE:
+>**Please pick tags from the 3 categories below.** <br>
+```diff
+- DO NOT -
+create new tags if you don't see them in the list. 
+ ``` 
 
 
 <table style="width:83%;">
@@ -312,9 +346,13 @@ use HTML tags in the markdown file since that will cause errors!
 </table>
 
 
-<p> |
+<p> 
+
 ## Please pick tags from the 3 categories below.  
-###  DO NOT create new tags if you don't see them in the list.  
+```diff
+- DO NOT -
+create new tags if you don't see them in the list. 
+ ```
  <p>
 
 <table style="width:83%;">
@@ -586,6 +624,7 @@ brew install pandoc
 pandoc -f docx -t markdown -o output.md input.docx
 ```
 
+Once the document is converted, please review the markdown file to ensure it uses the appropriate formatting mentioned in this guide.  
 
 
 
@@ -597,15 +636,44 @@ pandoc -f docx -t markdown -o output.md input.docx
 
 The process to submit your Guide has been simplified. 
 
-- Create a Branch for the main repo and begin writing and formatting your guide.
+- Create a Fork for the main repo and begin writing and formatting your guide.
 
 - Once you are done with the content creation process for your guide, create a Pull Request in GitHub and submit.
 
-- The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them before submitting the PR.
+- The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them **before** submitting the PR.
 
-- Please correct any errors and try submitting the PR again.  If all looks ok, the PR comes to DevRel team for approval.  At this point, a staging URL is generated in GitHub that can be reviewed.
+- Please correct any errors and try submitting the PR again.  If all looks ok, the PR comes to DevRel team for approval.  
+ At this point, a staging URL is generated in GitHub that can be reviewed.
 
 - The DevRel team will approve the PR to publish it to www.snowflake.com/en/developers/guides page.
 
-NOTE: Any updates or edits after submission must be made in GitHub and a new PR needs to be generated and will go through this same process of approval(s).
+> NOTE: Any updates or edits after submission must be made in GitHub and a new PR needs to be generated and will go through this same process of approval(s).
+
+
+
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+
+Congratulations!  You should now be able to create, format and submit a guide. 
+
+### What We've Covered
+- The basic components of a Guide
+- Metadata configuration to include 
+- Various formatting options available (including headers, subheaders, code, buttons, links, images and videos)
+- List of language and category tags for reference.
+- How to convert content to markdown 
+- The new easier process to submit your guide for approval
+
+### Related Resources
+- [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
+- [Learn the GitHub Flow](https://guides.github.com/introduction/flow/)
+- [Learn How to Fork a project on GitHub](https://guides.github.com/activities/forking/)
+- [Markdown template that can be used](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template).
+- [Submit a Repository Request](https://docs.google.com/forms/d/1AQ0SOMi0-kAHHluEx9HJDDUctwisHqrSVWo-wvfDMwU/edit#responses) to obtain a repo  in Snowflake Labs GitHub.
+
+### EXAMPLES:
+* **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
+* **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+
 

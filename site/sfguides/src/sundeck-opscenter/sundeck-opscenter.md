@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This Guide shows you how to quickly get started with Sundeck OpsCenter on Snowflake, a free Native App which providing a range of tools to better understand, manage, and alert on Snowflake activity and spend.
 environments: web
-status: Draft 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Sundeck OpsCenter

@@ -69,9 +69,9 @@ After registering, you will receive an email with an activation link and your Sn
 Resize your browser window, so that you can view this guide and your web browser side-by-side and follow the lab instructions. If possible, use a secondary display dedicated to the lab guide.
 
 <!-- ------------------------ -->
-## Create the IDMC Organization
+### Create the IDMC Organization
 
-### Step 1 
+#### Step 1 
 1. Login to **Snowflake Snowsight**.
 2. Switch role to **ACCOUNTADMIN**.
 3. Click **Admin > Partner Connect**.
@@ -79,16 +79,16 @@ Resize your browser window, so that you can view this guide and your web browser
 5. Click **Informatica** tile.
 ![PartnerConnect](assets/Lab1_Picture1.png)
 
-### Step 2
+#### Step 2
 1. Note the objects that will be created in Snowflake.
 2. Click **Connect**.<BR>
 ![Connect](assets/Lab1_Picture2.png)
 
-### Step 3
+#### Step 3
 1. Click **Activate**.<BR>
 ![Activate](assets/Lab1_Picture3.png)
 
-### Step 4
+#### Step 4
 1. Fill in the Informatica registration form.
 2. Select a **Data Center** in your region.
 3. Click **Submit**.<BR>
@@ -98,17 +98,17 @@ Resize your browser window, so that you can view this guide and your web browser
 ![Email](assets/Lab1_Picture4.1.png)
 
 
-### Step 5
+#### Step 5
 1. This [page](https://marketplace.informatica.com/thank-you/snowflake.html) will automatically open up in your browser.  Bookmark this page for future reference. Please also read through Knowledge Base materials and demo recording for more information.
 2. Click the **region** you selected in step 4 to go to the **Login** page.
 ![Workshop](assets/Lab1_Picture5.png)
 
-### Step 6
+#### Step 6
 1. Enter your **username** and **password**.
 2. Click **Log In**.<BR>
 ![Login](assets/Lab1_Picture6.png)
 
-### Step 7
+#### Step 7
 1. The first time logging in, you will be prompted to enter a security **question** and **answer**.  Fill them in.
 2. Click **Log In**.<BR>
 ![SecurityQ](assets/Lab1_Picture7.png)
@@ -242,13 +242,13 @@ Let's create a project to store our mapping or assets.
 5. Click **Hands-on Lab** project.
 ![HandsonLab](assets/Lab2_Picture27.png)
 
-## Load Data from AWS S3 into Snowflake using Pushdown Optimization (ELT)
+### Load Data from AWS S3 into Snowflake using Pushdown Optimization (ELT)
 
 IDMC Data Integration allows you to load source data from databases, applications, and data files in the cloud or on-premises into Snowflake.  Data Integration supports many transformations that can be used to transform and enrich the source data.  In addition, pushdown optimization (PDO) can be utilized for some transformations and functions to take advantage of Snowflake compute resources for data processing.
 
 In this lab, you will create a mapping to read two delimited files (Orders and Lineitem) from S3, join the files, perform an aggregation to create a count and total, and write the results into a new table in Snowflake.  Then in the mapping task, you will turn on pushdown optimization to enable the processing to occur in Snowflake.
 
-### Step 1
+#### Step 1
 Create a new mapping
 1. Click **New...**
 2. Click **Mappings**
@@ -259,7 +259,7 @@ Create a new mapping
 6. Ensure that Location is **Hands-on Lab**. If not, click **Browse** and select it.
 ![Mapping](assets/Lab2_Picture29.png)
 
-### Step 2
+#### Step 2
 Let's configure the Orders data source from S3.
 1.	Click the **Source** transform in the mapping canvas to assign its properties.
 2.	In the General tab, enter **src_S3_Orders** in the Name field.<BR>
@@ -292,7 +292,7 @@ Let's configure the Orders data source from S3.
 ![srcS3OrdersEditFields](assets/Lab2_Picture37.png)
 22.	Click **Save** to save work in progress.
 
-### Step 3
+#### Step 3
 Now we will add the Lineitem file as another data source.  The steps are the same as the above Orders data source.
 
 1.	From the transformation palette, drag **Source** transform and drop in the mapping canvas.
@@ -315,7 +315,7 @@ Now we will add the Lineitem file as another data source.  The steps are the sam
 ![srcS3newProperties](assets/Lab2_Picture39.png)
 17.	Click **Save** to save work in progress.
 
-### Step 4
+#### Step 4
 Let’s join the two data sources.
 
 1.	From the transformation palette, drag the **Joiner** transform and drop it over the line between the src_S3_Orders source and target transforms.  The Joiner should now be linked to the Orders and target.  If not, manually link them.
@@ -333,7 +333,7 @@ Let’s join the two data sources.
 ![joinersorted](assets/Lab2_Picture43.png)
 10.	Click **Save** to save work in progress.
 
-### Step 5
+#### Step 5
 Now we will add an Aggregator transformation in the mapping to calculate the number of items for an order and the total of all items.
 
 1.	From the transformation palette, select **Aggregator** transformation, drag and drop between the exp_itemtotal and Target in mapping canvas window.
@@ -380,7 +380,7 @@ sum(to_decimal(l_extendedprice) * (1-to_decimal(l_discount)) * (1+to_decimal(l_t
 ![groupbycomplete](assets/Lab2_Picture53.png)
 29.	Click **Save** to save work in progress.
 
-### Step 6 (Optional)
+#### Step 6 (Optional)
 Now we will add another expression to rename the fields so that they look better and are in the order we want in the Snowflake table.  This is an optional transformation.
 
 1.	From the transformation palette, drag **Expression** transform and drop it over the line between the agg_item_count_and_order_total and target transforms.  The expression should now be linked to the aggregator and Target transforms.  If not, manually link them.
@@ -403,7 +403,7 @@ Now we will add another expression to rename the fields so that they look better
 ![exprcomplete](assets/Lab2_Picture55.png)
 7.	Click **Save** to save work in progress.
 
-### Step 7
+#### Step 7
 Lastly the target table is going to be in Snowflake.
 
 1.	Click **Target** to set a target properties.
@@ -435,7 +435,7 @@ Lastly the target table is going to be in Snowflake.
 14.	The Field Mapping tab should look like this:
 ![targetcomplete](assets/Lab2_Picture61.png)
 
-## Configure Pushdown Optimization and Execute the Mapping Task
+## Pushdown Optimization and Mapping
 
 Let’s configure Pushdown Optimization (PDO) in the Mapping Task and execute it.
 
@@ -689,7 +689,7 @@ Finally, let’s configure the Target.
 13.	Click **Save**.
 
 
-## Create and Execute a Mapping Task
+## Create a Mapping Task
 
 ### Step 1
 
@@ -717,7 +717,7 @@ Validate job execution result.
 ![864rowsinSF](assets/Lab3_Picture31.png)
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 
 **Congratulations! You have successfully created a free IDMC organization, completed an ELT workload to load S3 files into Snowflake, and transformed JSON using the IDMC Data Integration service.**
 

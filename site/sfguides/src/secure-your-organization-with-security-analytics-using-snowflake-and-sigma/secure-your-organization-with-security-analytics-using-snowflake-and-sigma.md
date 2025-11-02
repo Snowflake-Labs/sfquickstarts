@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Learn how to monitor your Snowflake security posture using Sigma
 environments: web
-status: Draft
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Secure Your Organization with Security Analytics Using Snowflake and Sigma

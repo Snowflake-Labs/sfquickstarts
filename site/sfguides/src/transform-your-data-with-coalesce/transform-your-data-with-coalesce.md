@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Accelerate Transformations with Coalesce and Snowflake
 environments: web
-status: final
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Alex Engelmann
 # Accelerate Transformations with Coalesce and Snowflake

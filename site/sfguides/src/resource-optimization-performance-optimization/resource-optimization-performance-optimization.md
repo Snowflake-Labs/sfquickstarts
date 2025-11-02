@@ -44,8 +44,9 @@ Tier 2 queries, while still playing a vital role in the process, offer an extra 
 ### Tier 3 Queries
 Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake.  While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 & 2.
 
-## Data Ingest with Snowpipe and "Copy" (T1)
-###### Tier 1
+## Tier 1
+### Data Ingest with Snowpipe and "Copy" (T1)
+
 #### Description:
 This query returns an aggregated daily summary of all loads for each table in Snowflake showing average file size, total rows, total volume and the ingest method (copy or snowpipe)
 #### How to Interpret Results:
@@ -77,8 +78,9 @@ ORDER BY 3,4,5,1,2
 #### Screenshot
 ![alt-text-here](assets/dataingestwithsnowpipe2.png)
 
-## Scale Up vs. Out (Size vs. Multi-cluster) (T2)
-###### Tier 2
+##Tier 2
+### Scale Up vs. Out (Size vs. Multi-cluster) (T2)
+
 #### Description:
 Two separate queries that list out the warehouses and times that could benefit from either a MCW setting OR scaling up to a larger size
 #### How to Interpret Results:
@@ -114,8 +116,8 @@ ORDER BY SPILLING_READ_RATIO DESC
 #### Screenshot
 ![alt-text-here](assets/scaleupvsout1.png)
 
-## Warehouse Cache Usage (T3)
-###### Tier 3
+##Tier 3
+### Warehouse Cache Usage (T3)
 #### Description:
 Aggregate across all queries broken out by warehouses showing the percentage of data scanned from the warehouse cache.
 #### How to Interpret Results:
@@ -139,8 +141,8 @@ ORDER BY 5
 #### Screenshot
 ![alt-text-here](assets/warehousecacheusage.png)
 
-## Heavy Scanners (T3)
-###### Tier 3
+### Heavy Scanners (T3)
+
 #### Description:
 Ordered list of users that run queries that scan a lot of data.
 #### How to Interpret Results:
@@ -160,8 +162,7 @@ order by 3 desc
 ;
 ```
 
-## Full Table Scans by User (T3)
-###### Tier 3
+### Full Table Scans by User (T3)
 #### Description:
 These queries are the list of users that run the most queries with near full table scans and then the list of the queries themselves.
 #### How to Interpret Results:
@@ -192,8 +193,8 @@ LIMIT 50  -- Configurable threshold that defines "TOP N=50"
 ```
 
 
-## Top 10 Spillers Remote (T3)
-###### Tier 3
+### Top 10 Spillers Remote (T3)
+
 #### Description:
 Identifies the top 10 worst offending queries in terms of bytes spilled to remote storage.
 #### How to Interpret Results:
@@ -212,8 +213,8 @@ limit 10
 ;
 ```
 
-## AutoClustering History & 7-Day Average (T3)
-###### Tier 3
+### AutoClustering History & 7-Day Average (T3)
+
 #### Description:
 Average daily credits consumed by Auto-Clustering grouped by week over the last year.
 #### How to Interpret Results:
@@ -242,8 +243,8 @@ ORDER BY 1
 ;
 ```
 
-## Materialized Views History & 7-Day Average (T3)
-###### Tier 3 
+### Materialized Views History & 7-Day Average (T3)
+ 
 #### Description:
 Average daily credits consumed by Materialized Views grouped by week over the last year.
 #### How to Interpret Results:
@@ -272,8 +273,7 @@ ORDER BY 1
 ;
 ```
 
-## Search Optimization History & 7-Day Average (T3)
-###### Tier 3
+### Search Optimization History & 7-Day Average (T3)
 #### Description:
 Average daily credits consumed by Search Optimization grouped by week over the last year.
 #### How to Interpret Results:
@@ -302,8 +302,7 @@ ORDER BY 1
 ;
 ```
 
-## Snowpipe History & 7-Day Average (T3)
-###### Tier 3
+### Snowpipe History & 7-Day Average (T3)
 #### Description:
 Average daily credits consumed by Snowpipe grouped by week over the last year.
 #### How to Interpret Results:
@@ -332,8 +331,7 @@ ORDER BY 1
 ;
 ```
 
-## Replication History & 7-Day Average (T3)
-###### Tier 3
+### Replication History & 7-Day Average (T3)
 #### Description:
 Average daily credits consumed by Replication grouped by week over the last year.
 #### How to Interpret Results:
@@ -361,3 +359,8 @@ GROUP BY 1
 ORDER BY 1
 ;
 ```
+
+
+## Conclusion and Resources:
+
+[Account Usage Data Share](https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles)

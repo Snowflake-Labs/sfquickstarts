@@ -50,8 +50,10 @@ Tier 2 queries, while still playing a vital role in the process, offer an extra 
 ### Tier 3 Queries
 Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake.  While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 & 2.
 
-## Warehouses without Auto-Resume (T1)
-###### Tier 1
+
+## Tier 1
+### Warehouses without Auto-Resume (T1)
+
 #### Description:
 Identifies all warehouses that do not have auto-resume enabled.  Enabling this feature will automatically resume a warehouse any time a query is submitted against that specific warehouse. By default, all warehouses have auto-resume enabled.
 #### How to Interpret Results:
@@ -68,8 +70,8 @@ SELECT "name" AS WAREHOUSE_NAME
 ;
 ```
 
-## Warehouses without Auto-Suspend (T1)
-###### Tier 1
+### Warehouses without Auto-Suspend (T1)
+
 #### Description:
 Identifies all warehouses that do not have auto-suspend enabled.  Enabling this feature will ensure that warehouses become suspended after a specific amount of inactive time in order to prevent runaway costs.  By default, all warehouses have auto-suspend enabled.
 #### How to Interpret Results:
@@ -87,8 +89,8 @@ SELECT "name" AS WAREHOUSE_NAME
 ```
 
 
-## Warehouses with Long Suspension (T1)
-###### Tier 1
+### Warehouses with Long Suspension (T1)
+
 #### Description:
 Identifies warehouses that have the longest setting for automatic suspension after a period of no activity on that warehouse.  
 #### How to Interpret Results:
@@ -111,8 +113,7 @@ SELECT "name" AS WAREHOUSE_NAME
 ;
 ```
 
-## Warehouses without Resource Monitors (T1)
-###### Tier 1
+### Warehouses without Resource Monitors (T1)
 #### Description:
 Identifies all warehouses without resource monitors in place.  Resource monitors provide the ability to set limits on credits consumed against a warehouse during a specific time interval or date range.  This can help prevent certain warehouses from unintentionally consuming more credits than typically expected.
 #### How to Interpret Results:
@@ -129,8 +130,7 @@ SELECT "name" AS WAREHOUSE_NAME
 ;
 ```
 
-## User Segmentation (T1)
-###### Tier 1
+### User Segmentation (T1)
 #### Description:
 Lists out all warehouses that are used by multiple ROLEs in Snowflake and returns the average execution time  and count of all queries executed by each ROLE in each warehouse.
 #### How to Interpret Results:
@@ -163,8 +163,9 @@ order by 5 DESC,1,2
 #### Screenshot
 ![alt-text-here](assets/usersegmentation.png)
 
-## Idle Users (T2)
-###### Tier 2
+## Tier 2
+### Idle Users (T2)
+
 #### Description:
 Users in the Snowflake platform that have not logged in in the last 30 days
 #### How to Interpret Results:
@@ -180,8 +181,7 @@ WHERE LAST_SUCCESS_LOGIN < DATEADD(month, -1, CURRENT_TIMESTAMP())
 AND DELETED_ON IS NULL;
 ```
 
-## Users Never Logged In (T2)
-###### Tier 2
+### Users Never Logged In (T2)
 #### Description:
 Users that have never logged in to Snowflake
 #### How to Interpret Results:
@@ -196,8 +196,7 @@ FROM SNOWFLAKE.ACCOUNT_USAGE.USERS
 WHERE LAST_SUCCESS_LOGIN IS NULL;
 ```
 
-## Idle Roles (T2)
-###### Tier 2
+### Idle Roles (T2)
 #### Description:
 Roles that have not been used in the last 30 days
 #### How to Interpret Results:
@@ -220,8 +219,7 @@ WHERE Q.ROLE_NAME IS NULL
 and DELETED_ON IS NULL;
 ```
 
-## Idle Warehouses (T2)
-###### Tier 2
+### Idle Warehouses (T2)
 #### Description:
 Warehouses that have not been used in the last 30 days
 #### How to Interpret Results:
@@ -240,8 +238,7 @@ left join (select distinct WAREHOUSE_NAME from SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE
 where b.WAREHOUSE_NAME is null;
 ```
 
-## Set Statement Timeouts (T2)
-###### Tier 2
+### Set Statement Timeouts (T2)
 #### Description:
 Statement timeouts provide additional controls around how long a query is able to run before cancelling it. Using this feature will ensure that any queries that get hung up for extended periods of time will not cause excessive consumption of credits.
 
@@ -255,8 +252,7 @@ SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' IN USER <username>;
 #### How to Interpret Results:
 This parameter is set at the account level by default.  When the parameter is also set for both a warehouse and a user session, the lowest non-zero value is enforced.
 
-## Stale Table Streams (T2)
-###### Tier 2
+### Stale Table Streams (T2)
 #### Description:
 Indicates whether the offset for the stream is positioned at a point earlier than the data retention period for the table (or 14 days, whichever period is longer). Change data capture (CDC) activity cannot be returned for the table. 
 #### How to Interpret Results:
@@ -271,8 +267,7 @@ from table(result_scan(last_query_id()))
 where "stale" = true;
 ```
 
-## Failed Tasks (T2)
-###### Tier 2
+### Failed Tasks (T2)
 #### Description:
 Returns a list of task executions that failed.
 #### How to Interpret Results:
@@ -289,8 +284,7 @@ select *
   ;
 ```
 
-## Long Running Tasks (T2)
-###### Tier 2
+### Long Running Tasks (T2)
 #### Description:
 Returns an ordered list of the longest running tasks
 #### How to Interpret Results:
@@ -307,3 +301,8 @@ and query_start_time >= DATEADD (day, -7, CURRENT_TIMESTAMP())
 order by DURATION_SECONDS desc
   ;
 ```
+
+
+## Conclusion and Resources
+
+[Account Usage Data Share](https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles)

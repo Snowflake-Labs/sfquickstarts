@@ -3,7 +3,7 @@ id: getting-started-snowflake-sql-api
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 environments: web
-status: Draft
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started With Snowflake SQL API

@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This is a sample Snowflake Guide
 environments: web
-status: Development 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 

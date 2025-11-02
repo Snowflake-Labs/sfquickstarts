@@ -1,20 +1,28 @@
 author: AUTHOR_NAME
 id: SFGUIDE-NAME
 language: 
-summary: This is a sample Snowflake Guide
-categories: Getting-Started
+summary: This is a sample Snowflake Template
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
+author:  Kanwal Komail (github: kanwalzs)
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [Snowflake Guide](#) as a guiding document for writing your own Snowflake Guide. <br>
+This example guide has elements that you will use when writing your own guides, including: formatting, code snippet highlighting, video links, inserting photos, and more. 
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
+It is important to include on the first page of your guide the following sections: 
+- Prerequisites, 
+- What you'll learn, 
+- What you'll need, and 
+- What you'll build. 
+
+Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
 The rest of this Snowflake Guide explains the steps of writing your own guide. 
 
@@ -22,11 +30,10 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - Familiarity with Markdown syntax
 
 ### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
+-  The format for a guide (the sections, the metadata and basic markdown)
 - how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+- how to hyperlink items
+- ways to include images and videos
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
@@ -39,451 +46,136 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 <!-- ------------------------ -->
 ## Metadata Configuration
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+It is important to set the correct metadata for your Snowflake Guide. This is the first thing that goes on top of your guide. 
+The metadata contains all the information required for listing and publishing your guide and includes some required and some optional information.
 
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
+```diff
+- REQUIRED
+```
+
+- **id**: sample-separated-by-hyphens-not-underscores 
   - make sure to match the id here with the name of the file, all one word.
-- **language**: 
-  - pick from the languages list 
-- **categories**: 
-  - Pick from the 3 category lists provided.  DO NOT create a new category please.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Published`, `Archived`, `Hidden`) to indicate the progress and whether the guide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **authors**: John Doe (email address)
-  - Indicate the author(s) of this guide and include their email address in parenthesis.
+- **language**: pick from list 
+  - pick the appropriate language from the lsit provided.  
+- **categories**: Pick from the list
+  - select from the complete list of categories 1, 2 and 3 prrovided.  Please DO NOT create new categories.
+- **status**: (`Published`, `Archived`, `Hidden`)<br>
+  `Published` - implies the guide is active<br>
+  `Hidden` - implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.<br>
+  `Archived` - imlplies the sfguide is out of date and deprecated and no longer available.
+- **authors**: Author Full Name (+ author GitHub account)
+  - Indicate the author(s) of this specific sfguide.  Including the GitHub Account login helps us notify you of any changes requested in the future.
 
----
+```diff
+- OPTIONAL
+```
+  - **summary**: This is a sample Snowflake Guide 
+  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
+  - **environments**: web 
+  - `web` is default. If this will be published for a specific event or  conference, include it here.
+  - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
 
 
 <!-- ------------------------ -->
-## Creating a Step
+## Creating Sections
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+A single sfguide consists of multiple steps or sections. These sections are defined in Markdown using Header tags.  Header 2 tag is `##`, Header 3 tag is `###` and so forth. 
 
 ```markdown
-## Step 1 Title
+## Step 1 Title as H2 tag
 
 All the content for the step goes here.
 
-## Step 2 Title
+## Step 2 Title as H2 tag
 
-All the content for the step goes here.
+### Subheader goes here as H3 tag.
 ```
 
 
 The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
 
 <!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
+## Headers and Subheaders
 
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
+Keep the headers to a minimum as a best practice.
+These show up as your menu on the right.  Keeping them short (3-4 words) helps keep the guide precise and easy to follow.
 
 
-> aside negative
-> 
->  This will appear in a negative info box.
 
-### Buttons
-<button>
+### Formatting Operations
 
-  [This is a download button](link.com)
-</button>
+You can format various elements in markdown format in your guide.
+Details of that are available at: 
 
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
+[Get Started with Guides](##) to refresh markdown to add formatting, generate code snippets, info boxes, and download buttons etc. 
 
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+
+The guide linked above explains how you can use various formatting elements and the tag categories etc. to keep in mind when drafting your guide.<br>
+Please use the guide to add elements to your markdown within this template.  <p>
+
+
+> NOTE:
+> This template is an example of the layout/flow to use.
+
 
 
 <!-- ------------------------ -->
 ## Languages and Category Tags 
 
+- Languages
+Guides are available in various languages for the regions.
+specific language tags must be added to the document to ensure the regional pages can see your guide.
+
+**Please pick from the list of languages** 
+- These are the supported exact acronyms used on the main page.  
+- Deviating from the accronyms means your pages will not show up on the regional pages.
 
 
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<th colspan="2" style="text-align: center; color: yellow" ><strong>Language Tags</strong></th>
-</tr>
-<tr>
-<th>en</th>
-<th>english</th>
-</tr>
-<tr>
-<th>es</th>
-<th>Spanish</th>
-</tr>
-<tr>
-<th>it</th>
-<th>Italian</th>
-</tr>
-<tr>
-<th>fr</th>
-<th>French</th>
-</tr>
-<tr>
-<th>ja</th>
-<th>Japanese</th>
-</tr>
-<tr>
-<th>ko</th>
-<th>Korean</th>
-</tr>
-<tr>
-<th>pt_br</th>
-<th>Portuguese/Brazil</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+**Please pick tags from the list of 3 types of categories** 
+- DO NOT create new tags if you don't see them in the list.  
 
 
-
-
-
-## Please pick tags from the 3 categories below.  
-###  DO NOT create new tags if you don't see them in the list.  
-
-<p> |
-
-
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<th colspan="2" style="text-align: center; color: yellow" ><strong>Category 1: Product
-Category</strong></th>
-</tr>
-<tr>
-<th>AI</th>
-<th>snowflake-site:taxonomy/product/ai</th>
-</tr>
-<tr>
-<th>Analytics</th>
-<th>snowflake-site:taxonomy/product/analytics</th>
-</tr>
-<tr>
-<th>Applications &amp; Collaboration</th>
-<th>snowflake-site:taxonomy/product/applications-and-collaboration</th>
-</tr>
-<tr>
-<th>Data Engineering</th>
-<th>snowflake-site:taxonomy/product/data-engineering</th>
-</tr>
-<tr>
-<th>Platform</th>
-<th>snowflake-site:taxonomy/product/platform</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
- <p></p> | <p></p> |
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<p> </p>
-
-<th colspan="2" style="text-align: center; color: orange"><strong>Category 2:
-Technical Use-Case</strong></th>
-</tr>
-<tr>
-<th>Ingestion</th>
-<th>snowflake-site:taxonomy/snowflake-feature/ingestion</th>
-</tr>
-<tr>
-<th>Transformation</th>
-<th>snowflake-site:taxonomy/snowflake-feature/transformation</th>
-</tr>
-<tr>
-<th>Interoperable Storage</th>
-<th>snowflake-site:taxonomy/snowflake-feature/interoperable-storage</th>
-</tr>
-<tr>
-<th>Business Intelligence</th>
-<th>snowflake-site:taxonomy/snowflake-feature/business-intelligence</th>
-</tr>
-<tr>
-<th>Lakehouse Analytics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics</th>
-</tr>
-<tr>
-<th>Interactive Analytics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/interactive-analytics</th>
-</tr>
-<tr>
-<th>Applied Analytics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/applied-analytics</th>
-</tr>
-<tr>
-<th>Migrations</th>
-<th>snowflake-site:taxonomy/snowflake-feature/migrations</th>
-</tr>
-<tr>
-<th>Conversational Assistants</th>
-<th>snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants</th>
-</tr>
-<tr>
-<th>Unstructured Data Insights</th>
-<th>snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis</th>
-</tr>
-<tr>
-<th>Model Development</th>
-<th>snowflake-site:taxonomy/snowflake-feature/model-development</th>
-</tr>
-<tr>
-<th>Internal Collaboration</th>
-<th>snowflake-site:taxonomy/snowflake-feature/internal-collaboration</th>
-</tr>
-<tr>
-<th>External Collaboration</th>
-<th>snowflake-site:taxonomy/snowflake-feature/external-collaboration</th>
-</tr>
-<tr>
-<th>Build</th>
-<th>snowflake-site:taxonomy/snowflake-feature/build</th>
-</tr>
-<tr>
-<th>Commercialize</th>
-<th>snowflake-site:taxonomy/snowflake-feature/commercialize</th>
-</tr>
-<tr>
-<th>Compliance, Security, Discovery &amp; Governance</th>
-<th>snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance</th>
-</tr>
-<tr>
-<th>Financial Operations</th>
-<th>snowflake-site:taxonomy/snowflake-feature/financial-operations</th>
-</tr>
-<tr>
-<th>Observability</th>
-<th>snowflake-site:taxonomy/snowflake-feature/observability</th>
-</tr>
-<tr>
-<th>Storage</th>
-<th>snowflake-site:taxonomy/snowflake-feature/storage</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
- <p></p> | <p></p> |
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<th colspan="2" style="text-align: center; color: lime"><strong>Category 3:
-Prioritized Features</strong></th>
-</tr>
-<tr>
-<th>Account Replication</th>
-<th>snowflake-site:taxonomy/snowflake-feature/account-replication</th>
-</tr>
-<tr>
-<th>Diagnostics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/diagnostics</th>
-</tr>
-<tr>
-<th>Monitoring</th>
-<th>snowflake-site:taxonomy/snowflake-feature/monitoring</th>
-</tr>
-<tr>
-<th>Geospatial</th>
-<th>snowflake-site:taxonomy/snowflake-feature/geospatial</th>
-</tr>
-<tr>
-<th>Time Series Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/time-series-functions</th>
-</tr>
-<tr>
-<th>Cortex Analyst</th>
-<th>snowflake-site:taxonomy/snowflake-feature/cortex-analyst</th>
-</tr>
-<tr>
-<th>Cortex LLM Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions</th>
-</tr>
-<tr>
-<th>Cortex Search</th>
-<th>snowflake-site:taxonomy/snowflake-feature/cortex-search</th>
-</tr>
-<tr>
-<th>Document AI</th>
-<th>snowflake-site:taxonomy/snowflake-feature/document-ai</th>
-</tr>
-<tr>
-<th>ML Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/ml-functions</th>
-</tr>
-<tr>
-<th>Snowflake ML Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions</th>
-</tr>
-<tr>
-<th>Snowpark Container Services</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowpark-container-services</th>
-</tr>
-<tr>
-<th>Data Clean Rooms</th>
-<th>snowflake-site:taxonomy/snowflake-feature/data-clean-rooms</th>
-</tr>
-<tr>
-<th>Marketplace and Integrations</th>
-<th>snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations</th>
-</tr>
-<tr>
-<th>Native Apps</th>
-<th>snowflake-site:taxonomy/snowflake-feature/native-apps</th>
-</tr>
-<tr>
-<th>Unistore</th>
-<th>snowflake-site:taxonomy/snowflake-feature/unistore</th>
-</tr>
-<tr>
-<th>Internal Marketplace</th>
-<th>snowflake-site:taxonomy/snowflake-feature/internal-marketplace</th>
-</tr>
-<tr>
-<th>Prescriptive Selling</th>
-<th>snowflake-site:taxonomy/snowflake-feature/prescriptive-selling</th>
-</tr>
-<tr>
-<th>Salesforce Zero Copy Integration</th>
-<th>snowflake-site:taxonomy/snowflake-feature/salesforce-zero-copy-integration</th>
-</tr>
-<tr>
-<th>Spark Attack</th>
-<th>snowflake-site:taxonomy/snowflake-feature/spark-attack</th>
-</tr>
-<tr>
-<th>Connectors</th>
-<th>snowflake-site:taxonomy/snowflake-feature/connectors</th>
-</tr>
-<tr>
-<th>Dynamic Tables</th>
-<th>snowflake-site:taxonomy/snowflake-feature/dynamic-tables</th>
-</tr>
-<tr>
-<th>Apache Iceberg</th>
-<th>snowflake-site:taxonomy/snowflake-feature/apache-iceberg</th>
-</tr>
-<tr>
-<th>Openflow</th>
-<th>snowflake-site:taxonomy/snowflake-feature/openflow</th>
-</tr>
-<tr>
-<th>Serverless Tasks</th>
-<th>snowflake-site:taxonomy/snowflake-feature/serverless-tasks</th>
-</tr>
-<tr>
-<th>Snowpark</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowpark</th>
-</tr>
-<tr>
-<th>Snowpipe Streaming</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
+A complete list of the language and category tags is available in [Get Started with Guides](#)
 
 
 
 <!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
+## Images and Videos
+
+Ensure your videos are uploaded to the YouTube Channel (Snowflake Developer) before you start working on your guide.
+
+You have the option to submit videos to Snowflake Corporate channel, Developers Channel or International Channel.
+Use this link to [submit your videos](https://www.wrike.com/frontend/requestforms/index.html?token=eyJhY2NvdW50SWQiOjE5ODk1MzYsInRhc2tGb3JtSWQiOjExNDYyNzB9CTQ4NDU3Mjk1MjcxNjYJMTk3ZmNhNWQ1ODM5NTc1OGI2OWY5Mjc4Mzk4M2YwOGQ1Y2RiNGVlMGUzZDg3OTk3NzI3N2JkMTIyOGViZTdjMQ==)
+
 
 Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
 
 ### Images
-![Puppy](assets/SAMPLE.jpg)
-DO NOT use HTML tags to author.  Those will not show up on the page.
+Ensure your images are not too large.
+Recommended sizes, naming convention and folder location details are covered in the guide. 
 
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Snowflake Guide](#)
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- Basics of creating sections
+- adding formatting and code snippets
+- Adding images and videos with considerations to keep in mind
 
 ### Related Resources
 - <link to github code repo>
-- <link to documentation>
+- <link to related documentation>
+
+### EXAMPLES:
+* **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
+* **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)

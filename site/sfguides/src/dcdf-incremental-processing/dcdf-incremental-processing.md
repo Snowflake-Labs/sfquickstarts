@@ -46,7 +46,7 @@ An extensible ELT data pipeline, using logical partitions, that employs repeatab
 
 
 <!-- ------------------------ -->
-## DCDF Data Architecture Review
+## DCDF Data Architecture
 
 Let's review the DCDF Data Architecture processing layers and the purpose of each layer.  This was discussed in detail in the [DCDF Webinar Series Episode 1](/webinar/for-customers/data-cloud-deployment-framework-series/).
 
@@ -92,37 +92,37 @@ A Workspace is a sandbox environment where individual teams can persist data for
 - Compute isolation to mitigate contention and facilitate cost governance.
 
 <!-- ------------------------ -->
-## Incremental Processing Concepts
+### Incremental Processing Concepts
 >aside positive
 >
 >"The best way to process big data, is to turn it into small data"
 
-### Three steps for Incremental Processing
-#### Step 1 - Define Logical Partitions
+#### Three steps for Incremental Processing
+##### Step 1 - Define Logical Partitions
 The volume of data being processed from the source system will drive the need to create logical partitions. Logical partitions are commonly defined as logical periods of time, or time series data, such as day, week, or month based on a business event represented in the data.
 
 >aside positive
 >
 > In this quickstart order date will be used as the logical partition. The order date will define how to identify new or changed data.
 
-#### Step 2 - Identify Impacted Partitions
+##### Step 2 - Identify Impacted Partitions
 Next we want to identify the impacted logical partitions that are represented in the delta feed from the sources system. As the delta data is ingested into our staging tables in the raw layer, the impacted logical partitions (orderdate) can be identified.  
  
-#### Step 3 - Incrementally Process those Partitions
+##### Step 3 - Incrementally Process those Partitions
 We will utilize the logical partitions identified in Step 2, to incrementally process the partitions. 
 
 ![img](assets/overview_diagram.png)
 
 In our example above we implement the aforementioned three steps.
-#### Define Logical Partitions
+##### Define Logical Partitions
 - We will use order date from the LINE_ITEM table.  
 - This identifies the business event in our data that represents lifecycle changes over time for a given period.
 
-#### Identify Impacted Partitions
+##### Identify Impacted Partitions
 - We will query the LINE_ITEM_STG table in the Raw Layer for distinct order dates.  
 - We will insert these dates into the Common Database table DELTA_DATE because this table will be utilized across the different layers.
 
-#### Incrementally Process those Partitions
+##### Incrementally Process those Partitions
 - We will utilize the impacted partitions and process those dates of data through the raw, integration and presentation layers.  
 
 Let's see how this works!
@@ -260,12 +260,12 @@ select
 ![img](assets/sample_initial_query.png)
 
 <!-- ------------------------ -->
-## Data Acquistion
+### Data Acquistion
 
 During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set for tables lineitem, orders, part, and partsupp to generate the data files to load into our raw layer.  
 
-### Step 1 - Explain code snippets
-#### LINE_ITEM_ACQ.SQL
+#### Step 1 - Explain code snippets
+##### LINE_ITEM_ACQ.SQL
 1. Using the Snowsight UI, select Worksheets from the left hand menu.
 2. Click the ellipsis next to the blue +Worksheets button.
 3. Select *"create worksheet from SQL file"* and load the 100_acquisition/line_item_acq.sql.
@@ -359,10 +359,10 @@ max_file_size    = 16000000
 ;
 ```
 
-### Step 2 - Execute the code and Verify results
+#### Step 2 - Execute the code and Verify results
 In this step we will unload data for the LINE_ITEM, PART and ORDERS tables.
 
-#### LINE_ITEM_ACQ.SQL
+##### LINE_ITEM_ACQ.SQL
 
 1. If you haven't done so already, click the ellipsis next to the blue +Worksheets button.
 2. Select *"create worksheet from SQL file"* and load the 100_acquisition/line_item_acq.sql.
@@ -399,7 +399,7 @@ list @~/line_item;
 ```
 ![img](assets/acq_list_files.png)
 
-#### PART_ACQ.SQL
+##### PART_ACQ.SQL
 1. Click the ellipsis next to the blue +Worksheets button.
 2. Select to *"create worksheet from SQL file"* and load the 100_acquisition/part_acq.sql.
 3. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
@@ -413,7 +413,7 @@ use warehouse dev_webinar_wh;
 4. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
 ![img](assets/acq_part_results.png)
 
-#### ORDERS_ACQ.SQL
+##### ORDERS_ACQ.SQL
 1. Click the ellipsis next to the blue +Worksheets button.
 2. Select to *"create worksheet from SQL file"* and load the 100_acquisition/orders_acq.sql.
 3. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
@@ -427,7 +427,7 @@ use warehouse dev_webinar_wh;
 4. Set your cursor on the *"copy into"* command and run it.  This might take a few minutes.  The output should be similar to this.
 ![img](assets/acq_orders_results.png)
 
-#### PARTSUPP_ACQ.SQL
+##### PARTSUPP_ACQ.SQL
 1. Click the ellipsis next to the blue +Worksheets button.
 2. Select to *"create worksheet from SQL file"* and load the 100_acquisition/partsupp_acq.sql.
 3. Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.
@@ -442,7 +442,8 @@ use warehouse dev_webinar_wh;
 ![img](assets/acq_partsupp_results.png)
 
 <!-- ------------------------ -->
-## Raw Layer - Staging the data
+## Raw Layer 
+### Staging the data
 
 In this section, we will take the acquired data from the Internal Table Stage mentioned in the previous section and load it into the staging tables in the Raw layer.  We will load LINE_ITEM_STG, ORDER_STG, PART_STG, and PARTSUPP_STG tables.
 
@@ -456,9 +457,9 @@ In this section, we will take the acquired data from the Internal Table Stage me
 > - A Truncate/Reload pattern is used here to load the LINE_ITEM_STG table.
 > - First we truncate the prior data, and then load the new data into the LINE_ITEM_STG table.
  
-### Step 1 - Explain code snippets
+#### Step 1 - Explain code snippets
 
-#### LINE_ITEM_STG_LD.SQL
+##### LINE_ITEM_STG_LD.SQL
 
 1. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/line_item_stg_ld.sql
 2. In the code, after setting the context, the next step is to truncate the line_item_stg table to remove any old ddata from the previous run.
@@ -555,7 +556,7 @@ and l_partkey in ( 105237594, 128236374); -- 2 lines
 
 ![img](assets/raw_layer_verify_stg_ld.png)
 
-#### PART_STG_LD.SQL
+##### PART_STG_LD.SQL
 
 1. Next, we will load the Part data into the PART_STG table. 
 2. Select *"create worksheet from SQL file"* and load the 200_raw/part_stg_ld.sql.  
@@ -577,7 +578,7 @@ truncate table part_stg;
 5. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
 ![img](assets/raw_layer_part_stg_results.png)
 
-#### ORDERS_STG_LD.SQL
+##### ORDERS_STG_LD.SQL
 
 1. Finally, we will load the Orders data into the ORDERS_STG table. 
 2. Select to *"create worksheet from SQL file"* and load the 200_raw/orders_stg_ld.sql.  
@@ -599,7 +600,7 @@ truncate table orders_stg;
 5. Set your cursor on the *"copy into"* command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this.
 ![img](assets/raw_layer_orders_stg_results.png)
 
-#### PARTSUPP_STG_LD.SQL
+##### PARTSUPP_STG_LD.SQL
 
 1. Finally, we will load the Orders data into the PARTSUPP_STG table. 
 2. Select to *"create worksheet from SQL file"* and load the 200_raw/partsupp_stg_ld.sql.  
@@ -622,13 +623,13 @@ truncate table partsupp_stg;
 ![img](assets/raw_layer_partsupp_stg_results.png)
 
 <!-- ------------------------ -->
-## Raw Layer - Identify Impacted Partitions
+### Identify Impacted Partitions
 
 In this section we will identify the impacted partitions that were loaded into the staging tables in the Raw Layer and persist those identified partitions in a table for use in subsequent steps.
 
 ![img](assets/raw_layer_impacted_partitions.png)
 
->aside positive
+
 >
 >In this diagram illustrates the concept of identifying the impacted partitions, persisting them to be utilized in all the layers of the data architecture to incrementally process the data.
 >
@@ -636,9 +637,9 @@ In this section we will identify the impacted partitions that were loaded into t
 > - In this diagram, we select all the distinct orderdates from the LINE_ITEM_STG table that are impacted by the new data that was loaded.  
 > - Then we persist those dates into a table called *"dw_delta_date"* so that we can utilize those impacted partitions to do our incremental processing at each layer (Raw, Integration and Presentation).
 
-### Step 1 - Explain code snippets
+#### Step 1 - Explain code snippets
 
-#### DW_DELTA_DATE_LD.SQL
+##### DW_DELTA_DATE_LD.SQL
 1. In Snowsight, *"create worksheet from SQL file"*, select the 200_raw/dw_delta_date_ld.sql
 2. After setting the context there is an *"insert"* statement.  As part of the *"insert"* statement, there is a [CTE (Common Table Expression)](https://docs.snowflake.com/en/user-guide/queries-cte.html) identified by the *"with"* statement inside the *"insert"* statement. This *"select"* identifies all the orderdates that were impacted with the load into the _STG table.
 ``` sql
@@ -738,7 +739,7 @@ order by 1;
 
 
 <!-- ------------------------ -->
-## Raw Layer - Incrementally Process
+### Incrementally Process
 
 In this section we will incrementally process the data and load it into the persistent tables in the Raw layer by utilizing the impacted partitions that were identified in the prior step.  We will load LINE_ITEM, LINE_ITEM_HIST, PART, ORDERS, and PARTSUPP tables.
 
@@ -1149,7 +1150,7 @@ where ps_partkey in ( 105237594, 128236374);
 ![img](assets/raw_layer_partsupp_verify.png)
 
 <!-- ------------------------ -->
-## Integration Layer
+### Integration Layer
 
 In this step we will incrementally process an isolated unit of work, deriving certain business rules from the impacted partitions that we previously identified. 
 
@@ -1163,8 +1164,8 @@ In this step we will incrementally process an isolated unit of work, deriving ce
 > - Extensible, ease of maintenance for that unit of work.  As rules change to derive the margin, then they can be added/changed here in one place.
 > - The impacted logical partitions have been identified and will be incrementally processed.  
 
-### Step 1 - Explain code snippets
-#### LINE_ITEM_MARGIN_LD.SQL
+#### Step 1 - Explain code snippets
+##### LINE_ITEM_MARGIN_LD.SQL
 1. In Snowsight, *"create worksheet from SQL file"*, select the 310_derivation/line_item_margin_ld.sql
 2. This script is also using the anonymous block in SQL Scripting. 
 ``` sql
@@ -1249,8 +1250,8 @@ merge into line_item_margin t using
     )
 ```
 
-### Step 2 - Execute code and Verify Results
-#### LINE_ITEM_MARGIN_LD.SQL
+#### Step 2 - Execute code and Verify Results
+##### LINE_ITEM_MARGIN_LD.SQL
 1. In Snowsight, *"create worksheet from SQL file"* and open the line_item_margin_ld.sql file. 
 2. Highlight the following SQL statements in your worksheet and run them to set the context.
 ``` sql
@@ -1276,7 +1277,7 @@ and m.dw_line_item_shk = l.dw_line_item_shk;
 ```
 ![img](assets/integration_line_item_margin_results.png)
 <!-- ------------------------ -->
-## Presentation Layer
+### Presentation Layer
 
 In this step we will incrementally process the data that was loaded in the previous section, and re-organizing the data for consumption from the Presentation layer, utilizing the identified impacted partitions.
 
@@ -1289,8 +1290,8 @@ In this step we will incrementally process the data that was loaded in the previ
 > - Dimensional model as an example to provide a solution around the orders lines and consumption at that atomic level of data.
 > - The impacted logical partitions have been identified and will be incrementally processed in the presentation layer.
 
-### Step 1 - Explain code snippets
-#### ORDER_LINE_FACT_LD.SQL
+#### Step 1 - Explain code snippets
+##### ORDER_LINE_FACT_LD.SQL
 1. In Snowsight, *"create worksheet from SQL file"*, select the 410_fact_atomic/order_line_fact_ld.sql
 2. This script uses the anonymous block in SQL Scripting. 
 ``` sql
@@ -1398,8 +1399,8 @@ insert overwrite into part_dm
          on d.dw_part_shk = p.dw_part_shk;
 ```
 
-### Step 2 - Execute code and Verify Results
-#### ORDER_LINE_FACT_LD.SQL
+#### Step 2 - Execute code and Verify Results
+##### ORDER_LINE_FACT_LD.SQL
 
 1. In Snowsight, *"create worksheet from SQL file"* and open the worksheet for the 410_fact_atomic/order_line_fact_ld.sql.
 2. Highlight the following SQL statements in your worksheet and run them to set the context.
@@ -1446,7 +1447,7 @@ where p_partkey in ( 105237594, 128236374);
 
 
 <!-- ------------------------ -->
-## BONUS - Type 2 Slowly Changing Dimension
+## BONUS -Slowly Changing Dimension
 
 >aside positive
 >Slowly changing dimension type 2 changes add a new row in the dimension with the updated attribute values. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row. -  Kimball Group.

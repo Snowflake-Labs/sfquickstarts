@@ -393,7 +393,7 @@ In Snowflake, you can also monitor the progress through Query History
 
 ```sh
 $ cd ~/
-````
+```
 1. Within the above directory, run the following command to clone the project from github:
 ```sh
 $ git clone https://github.com/Snowflake-Labs/sf-samples.git                       
@@ -572,7 +572,7 @@ Visualize your Days of Sales Outstanding (DSO) by geography and customer through
 
 
 1. Launch Tableau Desktop. 
-2. Navigate to `~/sf-samples/samples/sap_accounts_receivable_dbt/tableau` and open `Account_Receivables.twbx_v1``
+2. Navigate to `~/sf-samples/samples/sap_accounts_receivable_dbt/tableau` and open `Account_Receivables.twbx_v1`
 
 Alternatively you can launch from a command line:
 /Applications/Tableau\ Desktop\ 2021.3.app/Contents/MacOS/Tableau -f ~/sf-samples/samples/sap_accounts_receivable_dbt/tableau/Account_Receivables_v1.twbx

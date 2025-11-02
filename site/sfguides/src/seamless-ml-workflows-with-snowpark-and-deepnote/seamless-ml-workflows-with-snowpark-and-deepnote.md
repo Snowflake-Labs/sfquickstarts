@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Prototype your ML models in Deepnote's collaborative, multi-language notebook. Then, use Snowpark to productionize models without moving your data out of the warehouse or changing your code.
 environments: web
-status: Draft
+status: Hidden
 feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://github.com/Snowflake-Labs/sfguides/issues)
 
 # Seamless Machine Learning Workflows with Snowpark & Deepnote

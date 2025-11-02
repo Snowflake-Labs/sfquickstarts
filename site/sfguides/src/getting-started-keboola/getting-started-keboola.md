@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Getting Started With Keboola
 environments: web
-status: Draft 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 
 # Getting Started with Keboola 
