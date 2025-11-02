@@ -66,10 +66,10 @@ The button above will take you to a page in the trial titled **Getting Started w
 ![Deploy](assets/setup_lab.png)
 
 <!-- ------------------------ -->
-## Load Data from Snowflake Tables into Snowpark DataFrames
+## Load Data into Snowpark DataFrames
 
+### Load Data from Snowflake Tables into Snowpark DataFrames
 
-> aside positive
 > Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-in-worksheets-notebooks/blob/main/notebooks/0_start_here.ipynb) and import it to your Snowflake account as shown below.
 
 ![notebook_callout](assets/notebook.png)
@@ -231,7 +231,7 @@ Here's what the **Results** tab looks like after running the worksheet.
 ![Worksheet](assets/run_python_worksheet.gif)
 
 <!-- ------------------------ -->
-## Deploy As A Stored Procedure
+## Deploy As Stored Procedure
 
 
 Optionally you can also deploy this worksheet as a Python Stored Procedure so that you can schedule it using [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro), for example. To deploy this worksheet, click on the **Deploy** button on the top right and follow the instructions as shown below.
@@ -249,7 +249,7 @@ Once it's deployed, the stored procedure details can be viewed under **Data >> D
 ![Deploy](assets/deploy3.png)
 
 <!-- ------------------------ -->
-## Conclusion And Resources
+## Conclusion and Resources
 
 Congratulations! You've successfully performed data engineering tasks using Snowpark in Snowflake Python Worksheets.
 

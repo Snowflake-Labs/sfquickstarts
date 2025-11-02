@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Building Dynamic Tables in SNowflake with Coalesce
 environments: web
-status: final
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Building Dynamic Tables in Snowflake with Coalesce

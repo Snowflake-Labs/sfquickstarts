@@ -29,7 +29,8 @@ capabilities, for example, ensure consistent performance by dynamically
 allocating resources as concurrency increases, while also providing cost
 efficiency by scaling down during lower demand.
 
-## Principles
+## Principles and recommendations
+### Principles
 
 ### Establish and validate performance objectives
 
@@ -55,7 +56,7 @@ efficiency by scaling down during lower demand.
 > bottlenecks. Proactively optimize the system over time, adapting to
 > evolving requirements.
 
-## Recommendations
+### Recommendations
 
 The following key recommendations are covered within the principles of
 Performance:
@@ -112,7 +113,8 @@ Performance:
 
  
 
-## Establish and validate performance objectives
+## Set performance objectives
+### Establish and validate performance objectives
 
 ### Overview
 
@@ -365,7 +367,8 @@ This often leads to emergency fixes, missed deadlines, and the
 brute-force solution of running workloads on oversized warehouses. This
 obscures underlying design flaws at a significant ongoing cost.
 
-## Foundational First Steps
+## Build for performance
+### Foundational First Steps
 
 ### Performance in the cloud
 
@@ -799,7 +802,7 @@ warehouse utilization, using these elasticity tools to tune your
 environment and maintain the optimal balance between performance and
 cost.
 
-## Test-first design: Building performance into every stage
+### Test-first design: Building performance into every stage
 
 A high-performing Snowflake environment stems from a deliberate
 strategy. Performance validation is integrated into every development
@@ -1087,7 +1090,8 @@ This proactive, data-driven approach ensures that the investment in
 Snowflake delivers maximum value while avoiding the common pitfalls of
 deferred performance management.
 
-## Optimize data architecture and access
+## Data design and access
+### Optimize data architecture and access
 
 ### Overview
 
@@ -1273,7 +1277,7 @@ reducing data processing overhead.
 
 
 
-## Data quality for better performance
+### Data quality for better performance
 
 Maintaining high data quality is crucial for optimal query performance
 within your application workflow. Snowflake offers built-in features for
@@ -1460,7 +1464,7 @@ operations, leading to faster, more predictable query execution.
   JOIN. Use OUTER JOIN only for inconsistent data where foreign key
   constraints are not strictly enforced.
 
-## Data modeling for performance
+### Data modeling for performance
 
 Optimizing data models can significantly enhance Snowflake's already
 impressive performance. Most industry-standard data modeling techniques
@@ -1558,7 +1562,7 @@ denormalization; each data model and dataset is unique. Therefore,
 extensive testing is crucial to determine the most effective approach
 for your specific business needs.
 
-## Data type for performance
+### Data type for performance
 
 Optimizing query performance depends on the data type choices made
 during schema design. The physical data type of a column can
@@ -1652,7 +1656,7 @@ Snowflake, but not always in expected ways. Pay special attention to the
 data types for join keys, temporal data types, and avoid the use of
 collations where possible.
 
-## Data access
+### Data access
 
 ### Pruning
 
@@ -1838,7 +1842,8 @@ periodic reordering may be unnecessary. You can choose manual data
 clustering by sorting records in each batch to reduce ongoing automatic
 clustering costs.
 
-## Architect for scalability and workload partitioning
+## Scale and workload management
+### Architect for scalability and workload partitioning
 
 ### Overview
 
@@ -1937,7 +1942,7 @@ queries. This declarative approach simplifies pipeline development and
 monitoring, leading to enhanced data engineering productivity and a more
 streamlined architecture.
 
-## Optimize virtual warehouses for cost and performance
+### Optimize virtual warehouses for cost and performance
 
 ### Isolate workloads
 
@@ -2057,7 +2062,7 @@ supplemental compute available. While the default is eight, begin with a
 lower value (even one) to validate its benefits before increasing it to
 optimize price-performance.
 
-## Implement strategies for handling concurrent queries
+### Implement strategies for handling concurrent queries
 
 ### Tune max concurrency level
 
@@ -2173,7 +2178,8 @@ effectively avoids deadlocks in high stored procedure concurrency.
 Additionally, using two warehouses allows each to be optimally
 configured for its specific purpose.
 
-## Utilize Snowflake's serverless features
+## Platform features
+### Utilize Snowflake's serverless features
 
 ### Automatic Clustering Service
 
@@ -2344,7 +2350,7 @@ past performance. This eliminates the need for manual warehouse sizing,
 automates cost management, and ensures that your data pipelines run
 efficiently without consuming credits when idle.
 
-## Leverage Dynamic Tables for data engineering pipelines
+### Leverage Dynamic Tables for data engineering pipelines
 
 ### Improve downstream query performance
 
@@ -2471,7 +2477,8 @@ provides insights into the refresh performance, latency, and costs,
 allowing you to fine-tune your definitions and warehouse sizes for
 continuous optimization.
 
-## Implement continuous performance monitoring and optimization
+## Monitor and optimize
+### Implement continuous performance monitoring and optimization
 
 ### Overview
 
@@ -2644,7 +2651,8 @@ a starting point for consideration.
 This list is not exhaustive, and some of these things are much more
 likely than others.
 
-## Measuring performance
+## Measure performance
+### Measuring performance
 
 ### Overview
 
@@ -2707,7 +2715,7 @@ helps avoid over-reacting to perceived performance problems. The goal is
 to provide a valid comparison point and understand the impact of various
 factors on performance.
 
-## Clarify reasons for measuring performance
+### Clarify reasons for measuring performance
 
 ### Overview
 
@@ -2764,7 +2772,7 @@ include:
   component is essential for overall performance improvement and for
   assessing the severity of any performance issues.
 
-## Define measurement scope
+### Define measurement scope
 
 ### Overview
 
@@ -2880,7 +2888,7 @@ concurrency testing. Here are several to avoid:
   affect only a few rows, tends to be more cost-efficient and perform
   better.
 
-## Identify priority workloads and queries
+### Identify priority workloads and queries
 
 ### Overview
 
@@ -2967,7 +2975,7 @@ purpose of cost reduction or for improving metrics that are not directly
 related to concurrency. Concurrency testing usually involves the use of
 third-party tools, such as JMeter, to simulate specific query patterns.
 
-## Select metrics
+### Select metrics
 
 ### Overview
 
@@ -3058,7 +3066,7 @@ that can lead to inaccurate conclusions.
   analysis should be the total elapsed time for the query, not the
   duration of its individual phases.
 
-## Define your measurement cadence
+### Define your measurement cadence
 
 ### Overview
 
@@ -3109,7 +3117,7 @@ catalysts and cadences are recommended:
   data, such as that found in QUERY_HISTORY, for longer than the
   standard retention period to allow for year-over-year comparisons.
 
-## Identifying bottlenecks
+### Identifying bottlenecks
 
 ### Overview
 
@@ -3207,7 +3215,8 @@ identifying trends and high-impact queries.
     views</u>](https://medium.com/snowflake/supercharging-snowflake-pruning-using-new-account-usage-views-52530b24bf2e)
     for more information.
 
-## Meticulously validating AI suggestions
+## Responsible AI usage
+### Meticulously validating AI suggestions
 
 ### Overview
 

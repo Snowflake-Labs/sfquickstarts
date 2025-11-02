@@ -244,7 +244,9 @@ These shortcuts can help you navigate around your notebook more quickly.
 | **Add cell ABOVE** | a |
 | **Delete this cell** | d+d |
 
-\
+
+
+
 You can view the full list of shortcuts by clicking the `?` button on the bottom right on your Snowsight UI.
 
 <!-- ------------------------ -->
