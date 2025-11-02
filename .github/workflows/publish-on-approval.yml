@@ -9,8 +9,7 @@ jobs:
     # Only on approvals for PRs into master from branches in this repo
     if: >-
       github.event.review.state == 'approved' &&
-      (github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'github-actions') &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      (github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'github-actions')
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -66,9 +65,9 @@ jobs:
           echo "has_relevant_changes=$has_relevant_changes" >> $GITHUB_OUTPUT
 
       - name: Call Workato production webhook
-        env:
-          WORKATO_PROD_WEBHOOK_URL: ${{ secrets.WORKATO_PROD_WEBHOOK_URL }}
         if: steps.detect.outputs.has_relevant_changes == 'true'
+        env:
+          WORKATO_PROD_WEBHOOK_URL: ${{ vars.WORKATO_PROD_URL }}
         run: |
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
