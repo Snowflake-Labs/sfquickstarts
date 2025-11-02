@@ -1,5 +1,5 @@
 author: Ritika Sharma
-id: a_guide_to_kipi_marketing_mix_modelling_analytics_app
+id: a-guide-to-kipi-marketing-mix-modelling-analytics-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
 summary: This is a sample Snowflake Guide

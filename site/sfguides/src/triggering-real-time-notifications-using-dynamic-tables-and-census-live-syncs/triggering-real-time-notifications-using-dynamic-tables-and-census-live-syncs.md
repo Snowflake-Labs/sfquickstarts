@@ -1,5 +1,5 @@
 author: Census
-id: triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs
+id: triggering-real-time-notifications-using-dynamic-tables-and-census-live-syncs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: In this guide, you will learn how to set up a live sync between Census and Snowflake to move data to your activation platforms in real time.

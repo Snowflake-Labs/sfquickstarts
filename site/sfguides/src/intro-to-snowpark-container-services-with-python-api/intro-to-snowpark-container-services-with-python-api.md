@@ -1,5 +1,5 @@
 author: ilesh Garish
-id: intro_to_snowpark_container_services_with_python_api
+id: intro-to-snowpark-container-services-with-python-api
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 language: en
 summary: Through this quickstart guide, you will explore Snowpark Container Services using Python API

@@ -1,5 +1,5 @@
 author: 
-id: data_apps_summit_lab_ja
+id: data-apps-summit-lab-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: これはサンプルのSnowflakeガイドのカテゴリーです

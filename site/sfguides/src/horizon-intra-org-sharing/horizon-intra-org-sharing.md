@@ -1,5 +1,5 @@
 authors: Matthias Nicola, Vinay Srihari
-id: horizon_intra_org_sharing
+id: horizon-intra-org-sharing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: explore Horizon Collaboration pillar features for sharing of data and apps

@@ -1,5 +1,5 @@
 authors: Dash Desai
-id: getting_started_with_dataengineering_ml_using_snowpark_python_kr
+id: getting-started-with-dataengineering-ml-using-snowpark-python-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 summary: Getting Started with Data Engineering and ML using Snowpark for Python

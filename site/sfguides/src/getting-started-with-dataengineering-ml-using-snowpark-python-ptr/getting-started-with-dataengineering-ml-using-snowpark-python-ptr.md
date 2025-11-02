@@ -1,4 +1,4 @@
-id: getting_started_with_dataengineering_ml_using_snowpark_python_ptr
+id: getting-started-with-dataengineering-ml-using-snowpark-python-ptr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 summary: Introdução à engenharia de dados e ML com Snowpark para Python

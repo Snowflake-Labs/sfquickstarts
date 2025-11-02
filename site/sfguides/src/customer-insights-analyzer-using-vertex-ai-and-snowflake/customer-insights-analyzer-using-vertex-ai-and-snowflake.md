@@ -1,5 +1,5 @@
 author: Matt Marzillo
-id: customer_insights_analyzer_using_vertex_ai_and_snowflake
+id: customer-insights-analyzer-using-vertex-ai-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
 summary: This is a quickstart for using Snowflake with Google for Generative AI

@@ -1,5 +1,5 @@
 author: Jacob Kranzler
-id: tasty_bytes_zero_to_snowflake_geospatial
+id: tasty-bytes-zero-to-snowflake-geospatial
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
 summary: Tasty Bytes - Zero to Snowflake - Geospatial Quickstart

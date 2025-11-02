@@ -1,5 +1,5 @@
 author: Scott Teal, Saurin Shah, Mauricio Rojas Fernandez
-id: extract_attributes_dicom_files_java_udf
+id: extract-attributes-dicom-files-java-udf
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
 summary: This is a guide to get familiar with Snowflake's support for unstructured data

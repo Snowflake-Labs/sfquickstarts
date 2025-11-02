@@ -1,5 +1,5 @@
 summary: 이 가이드는 Snowpipe를 시작하는 데 도움이 됩니다. 
-id: getting_started_with_snowpipe_kr
+id: getting-started-with-snowpipe-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: ko
 environments: web

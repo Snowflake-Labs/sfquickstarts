@@ -1,4 +1,4 @@
-id: getting_started_snowflake_sql_api_kr
+id: getting-started-snowflake-sql-api-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: ko
 summary: Snowflake SQL API 시작하기

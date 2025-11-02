@@ -1,4 +1,4 @@
-id: getting_started_external_functions_azure
+id: getting-started-external-functions-azure
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Getting Started With External Functions on Azure

@@ -1,5 +1,5 @@
 author: Chanin Nantasenamat, Liam Sosinsky, Federico Zoufaly
-id: how_to_accelerate_data_warehouse_migrations_with_snowconvert_ai
+id: how-to-accelerate-data-warehouse-migrations-with-snowconvert-ai
 summary: A comprehensive guide covering SnowConvert AI installation, configuration, and end-to-end database migration from legacy platforms to Snowflake.  
 categories: featured, data-engineering, migrations, snowflake  
 environments: web  

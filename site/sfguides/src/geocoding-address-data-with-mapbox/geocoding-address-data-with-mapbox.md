@@ -1,5 +1,5 @@
 author: chriswhong
-id: geocoding_address_data_with_mapbox
+id: geocoding-address-data-with-mapbox
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: Forward and Reverse Geocoding with the Mapbox App

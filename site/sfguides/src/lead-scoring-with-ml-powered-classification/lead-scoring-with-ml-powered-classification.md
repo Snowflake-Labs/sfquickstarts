@@ -1,5 +1,5 @@
 author: Jim Warner
-id: lead_scoring_with_ml_powered_classification
+id: lead-scoring-with-ml-powered-classification
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Shows how marketers can predict the value of leads and new

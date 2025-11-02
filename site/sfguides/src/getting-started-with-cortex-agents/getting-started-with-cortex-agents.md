@@ -1,5 +1,5 @@
 author: James Cha-Earley, Mubashir Masood, Daniel Silva
-id: getting_started_with_cortex_agents
+id: getting-started-with-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Get started with Cortex Agents

@@ -1,5 +1,5 @@
 author: Armin Efendic
-id: analyzing_customer_reviews_using_hex_and_snowflake_cortex
+id: analyzing-customer-reviews-using-hex-and-snowflake-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This lab will walk you through how to use Hex with Snowflake Cortex to analyze and understand sentiment on customer reviews.

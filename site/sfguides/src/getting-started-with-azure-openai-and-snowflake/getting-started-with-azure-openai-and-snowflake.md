@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: getting_started_with_azure_openai_and_snowflake
+id: getting-started-with-azure-openai-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a quickstart for using Snowflake with Azure OpenAI and AzureML

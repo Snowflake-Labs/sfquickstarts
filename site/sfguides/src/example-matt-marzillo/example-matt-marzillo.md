@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: example_matt_marzillo
+id: example-matt-marzillo
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a quickstart for using Snowpark for ML on AzureML

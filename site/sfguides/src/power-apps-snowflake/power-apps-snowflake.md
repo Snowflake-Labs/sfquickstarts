@@ -1,5 +1,5 @@
 author: chandra-snow
-id: power_apps_snowflake
+id: power-apps-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake

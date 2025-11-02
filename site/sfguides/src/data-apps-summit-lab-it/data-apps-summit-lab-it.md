@@ -1,5 +1,5 @@
 author: 
-id: data_apps_summit_lab_it
+id: data-apps-summit-lab-it
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: questo è un esempio di guida di Snowflake

@@ -1,5 +1,5 @@
 author: Emily
-id: validate_your_customer_identity_model_with_identityqa
+id: validate-your-customer-identity-model-with-identityqa
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Use IdentityQA to validate your customer identity model

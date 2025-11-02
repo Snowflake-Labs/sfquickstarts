@@ -1,4 +1,4 @@
-id: getting_started_with_snowpark_dataframe_api_kr
+id: getting-started-with-snowpark-dataframe-api-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 language: ko
 summary: Snowpark에서 Jupyter Notebook을 시작하고 DataFrame API를 사용하는 방법을 알아보십시오.

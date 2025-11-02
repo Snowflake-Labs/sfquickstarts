@@ -1,5 +1,5 @@
 author: Oleksii Bielov
-id: geo_performance
+id: geo-performance
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: Performance optimization techniques for Geo

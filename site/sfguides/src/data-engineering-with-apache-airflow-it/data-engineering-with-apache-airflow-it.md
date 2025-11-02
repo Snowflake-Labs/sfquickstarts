@@ -1,5 +1,5 @@
 autors: Adrian Lee
-id: data_engineering_with_apache_airflow_it
+id: data-engineering-with-apache-airflow-it
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: questo è un esempio di guida di Snowflake

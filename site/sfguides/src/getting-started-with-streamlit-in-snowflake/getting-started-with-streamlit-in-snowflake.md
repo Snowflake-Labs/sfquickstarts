@@ -1,5 +1,5 @@
 author: ashleynagaki, vskarine
-id: getting_started_with_streamlit_in_snowflake
+id: getting-started-with-streamlit-in-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: How to run custom Streamlit app in Snowflake 

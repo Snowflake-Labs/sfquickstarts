@@ -1,5 +1,5 @@
 author: Michael Gregory, George Yates
-id: ml_with_snowpark_and_apache_airflow
+id: ml-with-snowpark-and-apache-airflow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is a sample Snowflake Guide

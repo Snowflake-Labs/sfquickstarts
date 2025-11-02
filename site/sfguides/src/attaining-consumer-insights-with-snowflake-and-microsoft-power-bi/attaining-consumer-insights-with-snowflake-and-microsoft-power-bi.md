@@ -1,5 +1,5 @@
 summary: In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration.
-id: attaining_consumer_insights_with_snowflake_and_microsoft_power_bi
+id: attaining-consumer-insights-with-snowflake-and-microsoft-power-bi
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
 environments: web

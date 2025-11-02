@@ -1,5 +1,5 @@
 author: Adrian Lee
-id: data_engineering_with_apache_airflow_kr
+id: data-engineering-with-apache-airflow-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is a sample Snowflake Guide

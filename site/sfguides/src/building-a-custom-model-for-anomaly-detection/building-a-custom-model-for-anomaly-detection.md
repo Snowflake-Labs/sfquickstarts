@@ -1,5 +1,5 @@
 author: James Cha-Earley
-id: building_a_custom_model_for_anomaly_detection
+id: building-a-custom-model-for-anomaly-detection
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
 language: en
 summary: Build a Custom Model to Detect Anomalies on the Production Floor

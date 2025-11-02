@@ -1,5 +1,5 @@
 author: Shreya Sisodia
-id: data_engineering_with_datastage
+id: data-engineering-with-datastage
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
 language: en
 summary: Lab to demonstrate ease of loading enterprise data into Snowflake through DataStage.

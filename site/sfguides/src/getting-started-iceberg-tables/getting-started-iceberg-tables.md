@@ -1,5 +1,5 @@
 author: Scott Teal, Brad Culberson, Vino Duraisamy
-id: getting_started_iceberg_tables
+id: getting-started-iceberg-tables
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
 summary: This is a sample Snowflake Guide

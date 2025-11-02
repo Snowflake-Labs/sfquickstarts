@@ -1,5 +1,5 @@
 author: Jon Tiritilli
-id: domo_marketing_attribution_quickstart
+id: domo-marketing-attribution-quickstart
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Build powerful marketing attribution and media mix models

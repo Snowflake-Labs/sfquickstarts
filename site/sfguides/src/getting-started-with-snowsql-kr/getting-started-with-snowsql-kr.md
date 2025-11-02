@@ -1,4 +1,4 @@
-id:getting_started_with_snowsql_kr
+id:getting-started-with-snowsql-kr
 summary: SnowSQL 시작하기
 categories: undefined
 environments: web

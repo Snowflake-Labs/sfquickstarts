@@ -1,5 +1,5 @@
 author: Vinay Srihari, Prateek Parashar
-id: cross_cloud_business_continuity
+id: cross-cloud-business-continuity
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This guide demonstrates Snowflake replication, failover and client redirect features for business continuity

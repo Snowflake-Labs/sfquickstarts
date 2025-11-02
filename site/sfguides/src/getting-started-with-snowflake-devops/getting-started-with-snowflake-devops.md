@@ -1,5 +1,5 @@
 author: Vincent Raudszus
-id: getting_started_with_snowflake_devops
+id: getting-started-with-snowflake-devops
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Getting Started with Snowflake DevOps

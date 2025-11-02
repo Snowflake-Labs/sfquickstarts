@@ -1,5 +1,5 @@
 summary: Data modeling your Snowflake database with SqlDBM 
-id: data_modeling_with_sqldbm
+id: data-modeling-with-sqldbm
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 environments: web

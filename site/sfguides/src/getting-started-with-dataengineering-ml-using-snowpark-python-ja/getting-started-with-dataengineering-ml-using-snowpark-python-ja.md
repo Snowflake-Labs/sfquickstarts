@@ -1,4 +1,4 @@
-id: getting_started_with_dataengineering_ml_using_snowpark_python_ja
+id: getting-started-with-dataengineering-ml-using-snowpark-python-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: ja
 summary: Snowpark for Pythonを使用したデータエンジニアリングとMLの入門

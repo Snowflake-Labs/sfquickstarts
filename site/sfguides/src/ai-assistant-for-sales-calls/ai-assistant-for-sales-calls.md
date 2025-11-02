@@ -1,5 +1,5 @@
 author: Sikha Das
-id: ai_assistant_for_sales_calls
+id: ai-assistant-for-sales-calls
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: This application provides a centralized, AI-driven approach to analyze sales calls to gain actionable insights, enhance decision-making, and drive better alignment between product and GTM strategies.

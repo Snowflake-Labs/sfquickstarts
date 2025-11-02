@@ -1,5 +1,5 @@
 author: Brad Culberson
-id: getting_started_with_traces
+id: getting-started-with-traces
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Getting Started with Traces

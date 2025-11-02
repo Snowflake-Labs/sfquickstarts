@@ -1,5 +1,5 @@
 author: Parag Jain
-id: getting_started_with_dynamic_tables
+id: getting-started-with-dynamic-tables
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
 summary: Getting Started with Snowflake Dynamic Tables

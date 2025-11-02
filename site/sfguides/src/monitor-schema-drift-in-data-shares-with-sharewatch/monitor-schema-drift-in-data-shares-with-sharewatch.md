@@ -1,5 +1,5 @@
 author: Fady Heiba, Amit Gupta
-id: monitor_schema_drift_in_data_shares_with_sharewatch
+id: monitor-schema-drift-in-data-shares-with-sharewatch
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Step-by-step to set up Sharewatch ( a schema drift monitor for data shares)

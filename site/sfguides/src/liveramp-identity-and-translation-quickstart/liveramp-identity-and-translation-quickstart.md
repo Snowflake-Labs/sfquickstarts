@@ -1,4 +1,4 @@
-id: liveramp_identity_and_translation_quickstart
+id: liveramp-identity-and-translation-quickstart
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Identity Resolution and Transcoding with LiveRamp and Snowflake

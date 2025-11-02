@@ -1,5 +1,5 @@
 summary: 이 가이드는 고객이 과도한 소비가 발생하는 영역을 확인하는 데 도움이 될 수 있는 청구 메트릭을 모니터링하는 것과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.
-id: resource_optimization_billing_metrics_kr
+id: resource-optimization-billing-metrics-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 environments: web
 status: Hidden

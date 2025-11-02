@@ -1,5 +1,5 @@
 summary: ThoughtSpot 및 Snowflake로 대화형 React 앱 구축 
-id: getting_started_thoughtspot_kr
+id: getting-started-thoughtspot-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: ko
 environments: 웹

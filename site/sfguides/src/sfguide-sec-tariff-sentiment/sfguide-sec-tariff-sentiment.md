@@ -1,5 +1,5 @@
 author: Hartland Brown
-id: SFGUIDE-SEC-TARIFF-SENTIMENT
+id: sfguide-sec-tariff-sentiment
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics, 
 language: en
 summary: This is a sample Snowflake Guide

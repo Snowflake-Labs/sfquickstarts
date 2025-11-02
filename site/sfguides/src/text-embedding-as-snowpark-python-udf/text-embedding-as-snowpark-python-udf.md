@@ -1,5 +1,5 @@
 author: Luke Merrick (lukemerrick.com)
-id: text_embedding_as_snowpark_python_udf
+id: text-embedding-as-snowpark-python-udf
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: Text Embedding As A Snowpark Python UDF

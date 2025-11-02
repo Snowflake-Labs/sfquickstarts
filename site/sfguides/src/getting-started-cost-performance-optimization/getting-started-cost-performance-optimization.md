@@ -1,5 +1,5 @@
 author: Praveen Purushothaman
-id: getting_started_cost_performance_optimization
+id: getting-started-cost-performance-optimization
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: This is a Snowflake Guide that walks through optimization features and options on the platform

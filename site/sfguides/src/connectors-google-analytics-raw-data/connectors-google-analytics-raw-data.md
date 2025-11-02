@@ -1,5 +1,5 @@
 author: Joviane Bellegarde
-id: connectors_google_analytics_raw_data
+id: connectors-google-analytics-raw-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
 language: en
 summary: Getting Started with the Snowflake Connector for Google Analytics

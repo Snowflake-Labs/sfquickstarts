@@ -1,5 +1,5 @@
 summary: This guide will help you get started with Snowpipe.
-id: getting_started_with_snowpipe
+id: getting-started-with-snowpipe
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 environments: web

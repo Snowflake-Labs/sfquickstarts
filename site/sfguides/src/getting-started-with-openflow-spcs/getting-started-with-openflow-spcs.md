@@ -1,4 +1,4 @@
-id: getting_started_with_Openflow_spcs
+id: getting-started-with-openflow-spcs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 language: en
 summary: Getting Started with Snowflake Openflow using Snowpark Container Services (SPCS)

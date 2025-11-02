@@ -1,5 +1,5 @@
 summary: Snowflake 및 Dataiku로 데이터 과학 가속화
-id: data_science_with_dataiku_kr
+id: data-science-with-dataiku-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: ko
 environments: web

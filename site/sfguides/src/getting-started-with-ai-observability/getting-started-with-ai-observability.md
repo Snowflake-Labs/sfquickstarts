@@ -1,5 +1,5 @@
 author: Josh Reini
-id: getting_started_with_ai_observability
+id: getting-started-with-ai-observability
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: This is a guide for getting started with Snowflake AI Observability.

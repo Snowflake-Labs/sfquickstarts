@@ -1,5 +1,5 @@
 author: Tim Buchhorn
-id: data_collaboration_two_way
+id: data-collaboration-two-way
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: This is a Snowflake Guide on how to use Snowflake's Data Collaboration features to share an enrich data. 

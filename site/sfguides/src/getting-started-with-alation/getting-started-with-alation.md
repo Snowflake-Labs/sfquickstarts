@@ -1,5 +1,5 @@
 author: Michael Meyer
-id: getting_started_with_alation
+id: getting-started-with-alation
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/platform
 language: en
 summary: This guide is used to help with the installation of the Alation Data Intelligence Platform. The walk-through consists of being able to find & trust data in your organization, how to actively govern data, and how Alation can help with when migrating data to Snowflake.

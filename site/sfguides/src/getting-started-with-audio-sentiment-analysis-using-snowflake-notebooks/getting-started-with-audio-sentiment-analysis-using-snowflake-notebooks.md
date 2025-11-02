@@ -1,4 +1,4 @@
-id: getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks
+id: getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks

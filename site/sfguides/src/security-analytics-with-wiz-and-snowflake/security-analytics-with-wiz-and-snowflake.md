@@ -1,5 +1,5 @@
 author: Guy Mast 
-id: security_analytics_with_wiz_and_snowflake
+id: security-analytics-with-wiz-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
 language: en
 summary: learn about the Wiz and Snowflake integration for analyzing Wiz data in Snowflake

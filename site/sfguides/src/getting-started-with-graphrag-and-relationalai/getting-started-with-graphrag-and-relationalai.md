@@ -1,5 +1,5 @@
 author: RelationalAI
-id: getting_started_with_graphrag_and_relationalai
+id: getting-started-with-graphrag-and-relationalai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
 language: en
 summary: This is a sample Snowflake Guide

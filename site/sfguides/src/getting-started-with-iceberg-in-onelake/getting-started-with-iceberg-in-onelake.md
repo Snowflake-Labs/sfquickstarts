@@ -1,5 +1,5 @@
 author: tolotti-snow
-id: getting_started_with_iceberg_in_oneLake
+id: getting-started-with-iceberg-in-onelake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
 summary: This is a quickstart for creating Iceberg tables usable by both Snowflake and Microsoft Fabric

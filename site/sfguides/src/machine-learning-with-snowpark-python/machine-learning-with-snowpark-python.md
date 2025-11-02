@@ -1,5 +1,5 @@
 author: Caleb Baechtold
-id: machine_learning_with_snowpark_python
+id: machine-learning-with-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is a sample Snowflake Guide

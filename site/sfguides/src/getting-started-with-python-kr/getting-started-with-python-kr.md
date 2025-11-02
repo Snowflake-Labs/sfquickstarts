@@ -1,5 +1,5 @@
 summary: Python 시작하기
-id: getting_started_with_python_kr
+id: getting-started-with-python-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: ko
 environments: web

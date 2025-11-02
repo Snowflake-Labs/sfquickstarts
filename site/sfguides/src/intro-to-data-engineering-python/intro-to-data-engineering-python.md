@@ -1,5 +1,5 @@
 author: Vino Duraisamy
-id: intro_to_data_engineering_python
+id: intro-to-data-engineering-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Through this quickstart guide, you will explore Data engineering in Snowflake using Python
