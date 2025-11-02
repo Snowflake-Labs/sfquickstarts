@@ -680,6 +680,6 @@ For more information, check out the resources below:
 - [Building Advanced ML with Snowpark Container Services - Summit 2023](https://www.youtube.com/watch?v=DelaJBm0UgI)
 - [Snowpark Container Services with NVIDIA](https://www.youtube.com/watch?v=u98YTgCelYg)
 - [Quickstart GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services)
-- [Snowflake Announces Snowpark Container Services](https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
+- [Snowflake Announces Snowpark Container Services](/blog/snowpark-container-services-deploy-genai-full-stack-apps/)
 
 <!-- ------------------------ -->

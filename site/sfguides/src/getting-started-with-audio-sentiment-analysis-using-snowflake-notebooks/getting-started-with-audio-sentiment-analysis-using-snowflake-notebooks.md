@@ -40,10 +40,10 @@ Learn more about [Whisper](https://openai.com/research/whisper).
 
 ### What You'll Learn
 
-- Setting up audio processing in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) using PyTorch and Hugging Face  
+- Setting up audio processing in [Snowflake ML](/en/data-cloud/snowflake-ml/) using PyTorch and Hugging Face  
 - Extracting emotional tone from audio using wav2vec2
 - Transcribing audio with Whisper model
-- Performing sentiment analysis using [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
+- Performing sentiment analysis using [Snowflake Cortex AI](/en/data-cloud/cortex/)
 - Comparing emotional tone with sentiment scores
 
 ### What You'll Build
@@ -225,16 +225,16 @@ Congratulations! You've successfully built an end-to-end audio analysis applicat
 
 ### What You Learned
 - How to set up Container Runtime in Snowflake Notebooks
-- How to implement audio processing using PyTorch and Hugging Face with [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- How to implement audio processing using PyTorch and Hugging Face with [Snowflake ML](/en/data-cloud/snowflake-ml/)
 - How to use pre-trained models for emotion recognition and speech-to-text
-- How to perform sentiment analysis using [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
+- How to perform sentiment analysis using [Snowflake Cortex](/en/data-cloud/cortex/)
 - How to compare and analyze multiple aspects of audio communication
 
 ### Related Resources
 
 Webpages:
-- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
-- [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
+- [Snowflake ML](/en/data-cloud/snowflake-ml/)
+- [Snowflake Cortex AI](/en/data-cloud/cortex/)
 
 Documentation:
 - [Snowflake Notebooks on Container Runtime Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
@@ -248,8 +248,8 @@ Sample Code & Guides:
 - [Snowpark Python Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 
 Related Quickstarts:
-- [Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
-- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+- [Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
+- [Train an XGBoost Model with GPUs using Snowflake Notebooks](/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)

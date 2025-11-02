@@ -24,7 +24,7 @@ Enter dbt. dbt is one of the most popular data transformation tools today. And u
 >dbt Python ("dbt-py") models will help you solve use cases that can't be solved with SQL. You can perform analyses using tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics. Before, you would have needed separate infrastructure and orchestration to run Python transformations in production. By defining your Python transformations in dbt, they're just models in your project, with all the same capabilities around testing, documentation, and lineage. ([dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models))
 
 ### Snowflake
-Python based dbt models are made possible by [Snowflake's new native Python support and Snowpark API for Python](https://www.snowflake.com/blog/snowpark-python-innovation-available-all-snowflake-customers/) (Snowpark Python for short). Snowpark Python includes the following exciting capabilities:
+Python based dbt models are made possible by [Snowflake's new native Python support and Snowpark API for Python](/blog/snowpark-python-innovation-available-all-snowflake-customers/) (Snowpark Python for short). Snowpark Python includes the following exciting capabilities:
 
 * Python (DataFrame) API
 * Python Scalar User Defined Functions (UDFs)

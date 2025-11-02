@@ -19,7 +19,7 @@ Ti diamo il benvenuto in Snowflake! Questa guida introduttiva, concepita per amm
 
 ### Hands-On Lab virtuale gratuito
 
-Questa guida a Snowflake è disponibile come Hands-On Lab virtuale gratuito tenuto da un istruttore. [Iscriviti oggi stesso al Virtual Hands-On Lab](https://www.snowflake.com/virtual-hands-on-lab/).
+Questa guida a Snowflake è disponibile come Hands-On Lab virtuale gratuito tenuto da un istruttore. [Iscriviti oggi stesso al Virtual Hands-On Lab](/virtual-hands-on-lab/).
 
 ### Prerequisiti:
 
@@ -1059,7 +1059,7 @@ Con Secure Data Sharing:
 
 > aside positive
 > 
->  **Condivisione dei dati tra regioni e cloud diversi** Per condividere dati tra regioni o piattaforme cloud diverse, devi configurare la replica. Questo non rientra nell’ambito di questo workshop, ma puoi trovare ulteriori informazioni in [questo articolo Snowflake](https://www.snowflake.com/trending/what-is-data-replication).
+>  **Condivisione dei dati tra regioni e cloud diversi** Per condividere dati tra regioni o piattaforme cloud diverse, devi configurare la replica. Questo non rientra nell’ambito di questo workshop, ma puoi trovare ulteriori informazioni in [questo articolo Snowflake](/trending/what-is-data-replication).
 
 Snowflake utilizza Secure Data Sharing per fornire dati sull’utilizzo dell’account e data set campione a tutti gli account Snowflake. In questo contesto, Snowflake funge da provider di dati per i dati e tutti gli altri account.
 
@@ -1194,11 +1194,11 @@ Ti invitiamo a continuare la tua prova gratuita caricando i tuoi dati di esempio
 ### Risorse aggiuntive:
 
 - Scopri di più sulla documentazione di [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight).
-- Leggi il documento [Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/).
-- Partecipa a un [evento Snowflake online o in presenza](https://www.snowflake.com/about/events/) e scopri di più sulle nostre funzionalità e sui nostri clienti.
+- Leggi il documento [Definitive Guide to Maximizing Your Free Trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/).
+- Partecipa a un [evento Snowflake online o in presenza](/about/events/) e scopri di più sulle nostre funzionalità e sui nostri clienti.
 - Entra a far parte della [community Snowflake](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
 - Iscriviti alla [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
-- Contatta il nostro [team di vendita](https://www.snowflake.com/free-trial-contact-sales/) per maggiori informazioni.
+- Contatta il nostro [team di vendita](/free-trial-contact-sales/) per maggiori informazioni.
 
 ### Cosa abbiamo visto:
 

@@ -209,10 +209,10 @@ By doing so you have learned how to:
 
 ### Resources
 
-- #### [Customer Reviews Analytics using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/customer-reviews-analytics-using-snowflake-cortex/)
+- #### [Customer Reviews Analytics using Snowflake Cortex](/en/developers/guides/customer-reviews-analytics-using-snowflake-cortex/)
 
-- #### [Tasty Bytes - Customer Support Streamlit Application Powered by Cortex](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-support-email-app/)
+- #### [Tasty Bytes - Customer Support Streamlit Application Powered by Cortex](/en/developers/guides/tasty-bytes-customer-support-email-app/)
 
-- #### [Tasty Bytes - Enhance Customer Experience Streamlit App](https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-experience-app/)
+- #### [Tasty Bytes - Enhance Customer Experience Streamlit App](/en/developers/guides/tasty-bytes-customer-experience-app/)
 
-- #### [Build Rag Based Equipment Maintenance App Using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/build-rag-based-equipment-maintenance-app-using-snowflake-cortex/)
+- #### [Build Rag Based Equipment Maintenance App Using Snowflake Cortex](/en/developers/guides/build-rag-based-equipment-maintenance-app-using-snowflake-cortex/)

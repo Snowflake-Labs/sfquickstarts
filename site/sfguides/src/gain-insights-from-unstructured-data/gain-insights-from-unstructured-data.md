@@ -335,6 +335,6 @@ Want to learn more about the tools and technologies used in this quickstart? Che
 
 * [Cortex LLM](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-* [Intelligent document field extraction and analytics with Document AI](https://www.snowflake.com/en/developers/guides/automating-document-processing-workflows-with-document-ai/)
-* [Build a RAG-based knowledge assistant with Cortex Search and Streamlit](https://www.snowflake.com/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/)
-* [Build conversational analytics app (text-to-SQL) with Cortex Analyst](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
+* [Intelligent document field extraction and analytics with Document AI](/en/developers/guides/automating-document-processing-workflows-with-document-ai/)
+* [Build a RAG-based knowledge assistant with Cortex Search and Streamlit](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/)
+* [Build conversational analytics app (text-to-SQL) with Cortex Analyst](/en/developers/guides/getting-started-with-cortex-analyst/)

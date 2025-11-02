@@ -18,7 +18,7 @@ Bienvenue dans le guide Quickstart Powered by Tasty Bytes Débuter avec Snowflak
 Ce guide présente un large éventail de fonctionnalités Snowflake clés (clonage zéro copie et Time Travel, par exemple) qui permettent de répondre aux besoins de Tasty Bytes.
 
 ### Conditions préalables
-- Avant de commencer, assurez-vous de suivre l’intégralité du guide Quickstart [**Présentation de Tasty Bytes**](/guide/tasty_bytes_introduction_fr/#3), qui explique comment configurer un compte d’essai et déployer les éléments de base de Tasty Bytes requis pour suivre ce guide Quickstart.
+- Avant de commencer, assurez-vous de suivre l’intégralité du guide Quickstart [**Présentation de Tasty Bytes**](/fr/developers/guides/tasty-bytes-introduction-fr/), qui explique comment configurer un compte d’essai et déployer les éléments de base de Tasty Bytes requis pour suivre ce guide Quickstart.
 
 ### Vous allez apprendre :
 - Comment cloner une table
@@ -380,4 +380,4 @@ Si vous voulez recommencer ce guide Quickstart, utilisez les scripts de réiniti
 ### Prochaines étapes
 Pour continuer à découvrir le Data Cloud Snowflake, cliquez sur le lien ci-dessous pour voir tous les autres guides Quickstart Powered by Tasty Bytes à votre disposition.
 
-- ### [Table des matières des guides Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_fr/index.html#3)
+- ### [Table des matières des guides Quickstart Powered by Tasty Bytes](/fr/developers/guides/tasty-bytes-introduction-fr/)

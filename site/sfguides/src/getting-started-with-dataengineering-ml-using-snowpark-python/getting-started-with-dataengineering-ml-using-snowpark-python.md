@@ -32,7 +32,7 @@ Snowpark is the set of libraries and code execution environments that run Python
 
 **Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtime options include: Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+Learn more about [Snowpark](/snowpark/).
 
 ### What is Snowflake ML?
 
@@ -63,7 +63,7 @@ Using these features, you can build and operationalize a complete ML workflow, t
 
 Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
-Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
+Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What You Will Learn
 
@@ -476,6 +476,6 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Snowpark ML Modeling](https://docs.snowflake.com/developer-guide/snowpark-ml/modeling)
 - [Snowpark ML Model Registry](https://docs.snowflake.com/developer-guide/snowpark-ml/model-registry/overview)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/01/FCTO-Polaris-Causal-inference-for-Ad-Measurement-reference-architecture.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/01/FCTO-Polaris-Causal-inference-for-Ad-Measurement-reference-architecture.pdf)
 - [Read the Blog](https://medium.com/snowflake/advertising-campaign-measurement-with-causal-inference-and-snowflake-data-clean-rooms-313121d8d76a)
 - [Watch the Demo](https://youtu.be/Lva9klc3zu0?list=TLGGkDfQ83vJ4M4yMDA5MjAyNQ)

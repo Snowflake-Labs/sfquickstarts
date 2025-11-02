@@ -17,7 +17,7 @@ Snowflake에 오신 것을 환영합니다! 데이터베이스와 데이터웨�
 
 ### 무료 가상 실습 랩
 
-이 Snowflake 가이드는 무료로 이용하실 수 있으며, 강사 주도형 가상 실습 랩입니다.  [가상 실습 랩에 지금 등록하세요](https://www.snowflake.com/virtual-hands-on-lab/).
+이 Snowflake 가이드는 무료로 이용하실 수 있으며, 강사 주도형 가상 실습 랩입니다.  [가상 실습 랩에 지금 등록하세요](/virtual-hands-on-lab/).
 
 ### 사전 필요 조건 및 지식
 
@@ -1045,7 +1045,7 @@ Snowflake는 공유를 통해 계정 간 데이터 액세스를 가능하게 합
 > aside positive
 > 
 >  **Cross-region & cross-cloud data sharing** 
-지역 또는 클라우드 공급자 간에 데이터를 공유하려면 복제(replication) 를 반드시 설정해야 합니다. 이는 이 랩의 범위를 벗어나는 것이지만, 더 상세한 정보를  [이 Snowflake 문서](https://www.snowflake.com/trending/what-is-data-replication)에서 확인하실 수 있습니다.
+지역 또는 클라우드 공급자 간에 데이터를 공유하려면 복제(replication) 를 반드시 설정해야 합니다. 이는 이 랩의 범위를 벗어나는 것이지만, 더 상세한 정보를  [이 Snowflake 문서](/trending/what-is-data-replication)에서 확인하실 수 있습니다.
 
 Snowflake는 보안 데이터 공유를 사용하여 모든 Snowflake 계정에 계정 사용량 데이터 및 샘플 데이터 세트를 제공합니다. 이러한 기능으로 보면, Snowflake는 데이터 제공자 역할을 하고 다른 모든 계정은 소비자 역할을 합니다.
 
@@ -1181,11 +1181,11 @@ drop role if exists junior_dba;
 ### 추가 리소스:
 
 -   새로운 Snowsight 사용자 인터페이스인  [Snowsight Docs](https://docs.snowflake.com/ko/user-guide/ui-snowsight.html#using-snowsight)를 자세히 알아보십시오
--   [무료 평가판 극대화를 위한 가이드](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)  문서를 확인하십시오
--   [Snowflake 가상 또는 현장 이벤트](https://www.snowflake.com/about/events/)에 참석하여 Snowflake의 기능 및 고객에 관해 자세히 알아보십시오.
+-   [무료 평가판 극대화를 위한 가이드](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)  문서를 확인하십시오
+-   [Snowflake 가상 또는 현장 이벤트](/about/events/)에 참석하여 Snowflake의 기능 및 고객에 관해 자세히 알아보십시오.
 -   [Snowflake 커뮤니티에 참여하세요](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake)
 -   [Snowflake University에 등록하세요](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University)
--   더 자세한 내용은  [Snowflake 영업팀에 문의](https://www.snowflake.com/free-trial-contact-sales/)하시기 바랍니다
+-   더 자세한 내용은  [Snowflake 영업팀에 문의](/free-trial-contact-sales/)하시기 바랍니다
 
 ### 다룬 내용:
 

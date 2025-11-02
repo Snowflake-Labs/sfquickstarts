@@ -317,7 +317,7 @@ By following this quickstart, you learned how to:
 - Use the Microsoft Teams and M365 App with Cortex Agents
 
 ### Resources
-- Learn more about the complete [Snowflake Cortex set of features](https://www.snowflake.com/en/product/features/cortex/)
+- Learn more about the complete [Snowflake Cortex set of features](/en/product/features/cortex/)
 - Learn more about using [Agents in Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - Learn more about using [M365](https://www.microsoft.com/en-us/microsoft-365/products-apps-services)
 - Learn more about using [M365 Copilot](https://www.microsoft.com/en-us/microsoft-copilot/organizations)

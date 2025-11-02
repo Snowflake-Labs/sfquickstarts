@@ -472,4 +472,4 @@ For more resources, check out the following:
 
 * You can build the objects we used in the pipeline using Snowpark for Python as well. The code to do this is provided in the [**hamburg_sales_snowpark.ipynb** Notebook file in the repo](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/hamburg_sales_snowpark.ipynb).
 
-* Learn more at [Snowflake Northstar](https://www.snowflake.com/en/developers/northstar/) for developers.
+* Learn more at [Snowflake Northstar](/en/developers/northstar/) for developers.

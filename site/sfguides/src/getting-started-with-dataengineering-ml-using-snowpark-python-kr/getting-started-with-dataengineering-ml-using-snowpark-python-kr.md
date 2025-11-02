@@ -33,7 +33,7 @@ Python, Java 및 Scala를 비롯한 비 SQL 코드를 안전하게 배포하고 
 
 **유연한 런타임 구조** - Snowpark는 사용자가 사용자 정의 로직을 가져와 실행할 수 있도록 하는 유연한 런타임 구조를 제공합니다. 개발자는 사용자 정의 함수 및 저장 프로시저를 사용하여 원활하게 데이터 파이프라인, ML 모델 및 데이터 애플리케이션을 구축할 수 있습니다.
 
-[Snowpark](https://www.snowflake.com/snowpark/)에 대해 자세히 알아보십시오.
+[Snowpark](/snowpark/)에 대해 자세히 알아보십시오.
 
 ![Snowpark](assets/snowpark.png)
 
@@ -602,8 +602,8 @@ alter task monthly_revenue_data_pipeline_task suspend;
 ### 관련 리소스
 
 - [GitHub의 소스 코드](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Advanced:  Snowpark for Python Data Engineering Guide](/guide/data_engineering_pipelines_with_snowpark_python_kr/index.html)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Advanced:  Snowpark for Python Data Engineering Guide](/en/developers/guides/data-engineering-pipelines-with-snowpark-python-kr/)
+- [Advanced: Snowpark for Python Machine Learning Guide](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python 데모](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python 개발자 가이드](https://docs.snowflake.com/ko/developer-guide/snowpark/python/index.html)
 - [Streamlit 설명서](https://docs.streamlit.io/)

@@ -550,7 +550,7 @@ For the purpose of this lab, we will now explore the portal as a member of the S
 ## Conclusion & Helpful Resources
 
 ### Conclusion
-Thank you for your participation in this hands-on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](https://www.snowflake.com/build/agenda/?agendaPath=session/1031449)
+Thank you for your participation in this hands-on lab. To learn more about how real businesses are leveraging Snowflake & Sigma for embedded use cases, check out our webinar here : [How iPipeline Leverages Snowflake and Sigma](/build/agenda/?agendaPath=session/1031449)
 
 
 ### What We Have Covered

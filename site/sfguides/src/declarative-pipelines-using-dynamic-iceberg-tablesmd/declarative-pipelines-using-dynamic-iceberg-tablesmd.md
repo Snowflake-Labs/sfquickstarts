@@ -806,5 +806,5 @@ So far, you learned to work with:
 ### Relevant Resources
 
 * [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
-* [Make your lakehouse AI-ready](https://www.snowflake.com/en/developers/solutions-center/modern-lakehouse-analytics-blueprint/)
+* [Make your lakehouse AI-ready](/en/developers/solutions-center/modern-lakehouse-analytics-blueprint/)
 * [Catalog Linked Databases](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)

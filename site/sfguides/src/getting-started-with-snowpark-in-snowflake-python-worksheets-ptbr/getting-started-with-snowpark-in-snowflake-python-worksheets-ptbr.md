@@ -22,7 +22,7 @@ Trata-se do conjunto de bibliotecas e sistemas de runtime (tempo de execução) 
 
 **Estrutura de runtime flexível**: o Snowpark oferece estruturas de runtime flexíveis que permitem aos usuários inserir e executar uma lógica personalizada. Os desenvolvedores podem criar pipelines de dados, modelos de ML e aplicações de dados com facilidade, utilizando funções definidas pelo usuário e procedimentos armazenados.
 
-Saiba mais sobre o [Snowpark](https://www.snowflake.com/snowpark/).
+Saiba mais sobre o [Snowpark](/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -259,12 +259,12 @@ Adoraríamos saber sua opinião sobre este quickstart guide! Preencha este [form
 
 ### Próximas etapas
 
-Para aprender a processar dados de maneira incremental, orquestrar pipelines de dados com o Snowflake Tasks, implementá-los via pipelines de integração e entrega contínuas (continuous integration and continuous delivery, CI/CD), bem como usar a nova ferramenta de interface de linha de comando (command-line interface, CLI) do desenvolvedor Snowflake, além da extensão Visual Studio Code, continue a sua jornada e aprofunde os seus conhecimentos no quickstart [Pipelines de engenharia de dados com Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/).
+Para aprender a processar dados de maneira incremental, orquestrar pipelines de dados com o Snowflake Tasks, implementá-los via pipelines de integração e entrega contínuas (continuous integration and continuous delivery, CI/CD), bem como usar a nova ferramenta de interface de linha de comando (command-line interface, CLI) do desenvolvedor Snowflake, além da extensão Visual Studio Code, continue a sua jornada e aprofunde os seus conhecimentos no quickstart [Pipelines de engenharia de dados com Snowpark Python](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/).
 
 ### Recursos relacionados
 
 - [Guia de desenvolvedor de planilhas Python](https://docs.snowflake.com/pt/developer-guide/snowpark/python/python-worksheets)
 - [Introdução à engenharia de dados e ML com Snowpark para Python](/guide/getting_started_with_dataengineering_ml_using_snowpark_python_ptbr/index.html)
-- [Avançado: guia de aprendizado de máquina com Snowpark para Python](/guide/getting_started_snowpark_machine_learning/index.html)
+- [Avançado: guia de aprendizado de máquina com Snowpark para Python](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Demonstrações do Snowpark para Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guia do desenvolvedor de Snowpark para Python](https://docs.snowflake.com/pt/developer-guide/snowpark/python/index)

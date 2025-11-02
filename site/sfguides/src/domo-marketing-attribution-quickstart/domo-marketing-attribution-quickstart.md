@@ -295,7 +295,7 @@ advanced attribution and media mix models to make smarter, data-driven marketing
 For further learning, explore the following resources:
 - [Marketing App Blog post](https: //medium. com/snowflake/introducing-domos-marketing-app-enriching-marketing-analytics-with-snowflake-integration-11d48e7b8ad4)
 - [Domo Knowledge Base](https://domo-support.domo.com/s/knowledge-base?language=en_US)
-- [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
+- [Snowflake Marketplace](/en/data-cloud/marketplace/)
 - [Domo Community](https://www.domo.com/domo-central/community)
 - [Domo Community Forum](https://community-forums.domo.com/main)
 - [How to Join the Domo Community](https://www.domo.com/blog/how-to-join-the-community-forums-step-by-step/)

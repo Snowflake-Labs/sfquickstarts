@@ -32,7 +32,7 @@ Trata-se do conjunto de bibliotecas e sistemas de runtime (tempo de execução) 
 
 **Estrutura de runtime flexível**: o Snowpark oferece estruturas de runtime flexíveis que permitem aos usuários inserir e executar uma lógica personalizada. Os desenvolvedores podem criar pipelines de dados, modelos de ML e aplicações de dados com facilidade, utilizando funções definidas pelo usuário e procedimentos armazenados.
 
-Saiba mais sobre o [Snowpark](https://www.snowflake.com/snowpark/).
+Saiba mais sobre o [Snowpark](/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -604,8 +604,8 @@ Adoraríamos saber sua opinião sobre este quickstart guide! Preencha este [form
 ### Recursos relacionados
 
 - [Código fonte no GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Avançado: guia de engenharia de dados com Snowpark para Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Avançado: guia de aprendizado de máquina com Snowpark para Python](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Avançado: guia de engenharia de dados com Snowpark para Python](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Avançado: guia de aprendizado de máquina com Snowpark para Python](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Demonstrações do Snowpark para Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guia do desenvolvedor de Snowpark para Python](https://docs.snowflake.com/pt/developer-guide/snowpark/python/index)
 - [Documentação Streamlit](https://docs.streamlit.io/)

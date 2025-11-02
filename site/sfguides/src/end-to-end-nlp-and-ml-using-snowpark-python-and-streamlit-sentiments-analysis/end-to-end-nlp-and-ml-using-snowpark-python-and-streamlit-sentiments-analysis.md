@@ -394,4 +394,4 @@ In this quickstart we demonstrated how Snowpark Python enables rapid, end-to-end
 - [NLP and ML within Snowpark Python and Streamlit - Blog](https://medium.com/snowflake/natural-language-processing-nlp-and-ml-within-100-snowflake-using-snowpark-python-43e654111319) 
 - [PySpark vs Snowpark for ML in terms of Mindset and Approach - Blog](https://medium.com/snowflake/pyspark-versus-snowpark-for-ml-in-terms-of-mindset-and-approach-8be4bdafa547)
 - [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-- [Snowpark Guide for Data Engineers'](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
+- [Snowpark Guide for Data Engineers'](/resource/the-data-engineers-guide-to-python-for-snowflake/)

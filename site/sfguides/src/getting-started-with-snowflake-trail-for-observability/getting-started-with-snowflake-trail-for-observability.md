@@ -157,7 +157,7 @@ You can now click on any trace to view its spans in detail.
 >
 > Note that simple DML/DQL SQL commands executed directly in a worksheet or workspace **do not generate traces**. Traces are only generated when SQL is executed within supported handler code.
 >
-> For a complete walkthrough with examples, see: [Getting Started with Traces](https://www.snowflake.com/en/developers/guides/getting-started-with-traces/).
+> For a complete walkthrough with examples, see: [Getting Started with Traces](/en/developers/guides/getting-started-with-traces/).
 
 ### Viewing Trace Details
 
@@ -204,8 +204,8 @@ This detailed information helps you understand exactly what happened during each
 
 ### Additional Resources
 
-- [Getting Started with Traces | Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-traces/)
-- [Using trace events in Java | Quickstart](https://www.snowflake.com/en/developers/guides/java-trace-events/)
+- [Getting Started with Traces | Quickstart](/en/developers/guides/getting-started-with-traces/)
+- [Using trace events in Java | Quickstart](/en/developers/guides/java-trace-events/)
 - [Viewing trace data | Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-accessing-events)
 - [Trace events for functions and procedures | Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing)
 - [Adding custom spans to a trace | Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-custom-spans)
@@ -395,8 +395,8 @@ Click on any operation to see detailed information about that operation/target t
 >
 > For a complete walkthrough with examples, see ONE of the following:
 >
-> - [Getting Started with Snowpipe](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/)
-> - [Getting Started with Snowpipe Streaming and Azure Event Hubs](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
+> - [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/)
+> - [Getting Started with Snowpipe Streaming and Azure Event Hubs](/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
 
 ### Additional Resources
 
@@ -458,13 +458,13 @@ Clicking into any task run will bring you to the Run History for that task.
 >
 > For a step-by-step guide with examples, try one of these quickstarts:
 >
-> - [Getting Started with Streams & Tasks](https://www.snowflake.com/en/developers/guides/getting-started-with-streams-and-tasks/)
-> - [Getting Started with Snowflake Task Graphs](https://www.snowflake.com/en/developers/guides/getting-started-with-task-graphs/)
+> - [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
+> - [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 
 ### Additional Resources
 
-- [Getting Started with Streams & Tasks](https://www.snowflake.com/en/developers/guides/getting-started-with-streams-and-tasks/)
-- [Getting Started with Snowflake Task Graphs](https://www.snowflake.com/en/developers/guides/getting-started-with-task-graphs/)
+- [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
+- [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 - [Introduction to tasks | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-intro)
 - [Task graphs | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-graphs)
 - [Monitoring task Runs | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-monitor)
@@ -507,7 +507,7 @@ Clicking on any table will bring you to the graph view for that table.
 >
 > If you don't see any Dynamic Tables, you'll need to create one first.
 >
-> For a step-by-step guide, try this quickstart: [Getting Started with Snowflake Dynamic Tables](https://www.snowflake.com/en/developers/guides/getting-started-with-dynamic-tables/).
+> For a step-by-step guide, try this quickstart: [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/).
 
 ### Additional Resources
 
@@ -529,8 +529,8 @@ AI Observability has the following features:
 
 ### Additional Resources
 
-- [Getting Started with AI Observability | Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-ai-observability/)
-- [Getting Started with ML Observability in Snowflake | Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-ml-observability-in-snowflake/)
+- [Getting Started with AI Observability | Quickstart](/en/developers/guides/getting-started-with-ai-observability/)
+- [Getting Started with ML Observability in Snowflake | Quickstart](/en/developers/guides/getting-started-with-ml-observability-in-snowflake/)
 - [AI Observability in Snowflake Cortex | Snowflake Cortex](https://docs.snowflake.com/user-guide/snowflake-cortex/ai-observability)
 
 <!-- ------------------------ -->
@@ -575,14 +575,14 @@ Now that you have explored the basics of Snowflake Trail, consider these possibl
 
 #### Quickstart Guides
 
-- [Observability Quickstarts Category](https://www.snowflake.com/en/developers/guides/)
+- [Observability Quickstarts Category](/en/developers/guides/)
 
-- [Getting Started with AI Observability](https://www.snowflake.com/en/developers/guides/getting-started-with-ai-observability/)
-- [Getting Started with Event Tables and Alerts](https://www.snowflake.com/en/developers/guides/alert-on-events/)
+- [Getting Started with AI Observability](/en/developers/guides/getting-started-with-ai-observability/)
+- [Getting Started with Event Tables and Alerts](/en/developers/guides/alert-on-events/)
 - [Getting Started with Logging](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-log-messages)
-- [Getting Started with Snowflake Dynamic Tables](https://www.snowflake.com/en/developers/guides/getting-started-with-dynamic-tables/)
-- [Getting Started with Snowflake Task Graphs](https://www.snowflake.com/en/developers/guides/getting-started-with-task-graphs/)
-- [Getting Started with Snowpipe Streaming and Azure Event Hubs](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
-- [Getting Started with Snowpipe](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/)
-- [Getting Started with Streams & Tasks](https://www.snowflake.com/en/developers/guides/getting-started-with-streams-and-tasks/)
-- [Getting Started with Traces](https://www.snowflake.com/en/developers/guides/getting-started-with-traces/)
+- [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/)
+- [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
+- [Getting Started with Snowpipe Streaming and Azure Event Hubs](/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
+- [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/)
+- [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
+- [Getting Started with Traces](/en/developers/guides/getting-started-with-traces/)

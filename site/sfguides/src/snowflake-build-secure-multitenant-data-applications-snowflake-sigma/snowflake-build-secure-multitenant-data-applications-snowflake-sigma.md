@@ -29,7 +29,7 @@ Data Analysts, Business Analysts, or others who are doing next level analysis on
 
 [Snowflake Free Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
-Once you have created your Snowflake trial environment, you will need to complete the data loading and object creation steps found in the Snowflake Tasty Bytes Quickstart, which you can access here: [An Introduction to Tasty Bytes.](https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/)
+Once you have created your Snowflake trial environment, you will need to complete the data loading and object creation steps found in the Snowflake Tasty Bytes Quickstart, which you can access here: [An Introduction to Tasty Bytes.](/en/developers/guides/tasty-bytes-introduction/)
 
 <aside class="postive">
 <strong>NOTE:</strong><br> You do not need a Sigma instance prior to starting this lab as one will be provisioned during the course of this lab.

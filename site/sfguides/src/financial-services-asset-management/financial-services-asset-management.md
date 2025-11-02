@@ -715,5 +715,5 @@ Documentation:
 - [Snowsight Filters](https://docs.snowflake.com/en/user-guide/ui-snowsight-filters)
 
 Additional Reading:
-- [Snowflake for Asset Management](https://www.snowflake.com/en/solutions/industries/financial-services/asset-management/)
+- [Snowflake for Asset Management](/en/solutions/industries/financial-services/asset-management/)
 - [Asset Management With Snowflake: Real-Time Cash & PnL On 3 Billion Trades](https://youtu.be/HkrRXMHDd-E?si=nf0lAupIKK8HVMuM)

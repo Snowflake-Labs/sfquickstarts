@@ -12,7 +12,7 @@ author: James Cha-Earley
 ## Overview
 
 
-In this quickstart, you'll learn how to build an RAG-based (Retrieval Augmented Generation)  application that creates an intelligent assistant for documents and other text-based knowledge. The application uses Anthropic's Claude Large Language Model (LLM),  in [Snowflake's Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/) alongside Cortex Search and Streamlit. The application addresses end-to-end RAG development to show how to do PDF processing, vector embeddings, retrieval and generation all inside Snowflake to enable natural language interactions with your documents through Claude's advanced language understanding capabilities all with unified governance across the application full-stack.
+In this quickstart, you'll learn how to build an RAG-based (Retrieval Augmented Generation)  application that creates an intelligent assistant for documents and other text-based knowledge. The application uses Anthropic's Claude Large Language Model (LLM),  in [Snowflake's Cortex AI](/en/data-cloud/cortex/) alongside Cortex Search and Streamlit. The application addresses end-to-end RAG development to show how to do PDF processing, vector embeddings, retrieval and generation all inside Snowflake to enable natural language interactions with your documents through Claude's advanced language understanding capabilities all with unified governance across the application full-stack.
 
 ### What You'll Learn
 
@@ -633,5 +633,5 @@ Congratulations\! You've built a sophisticated document Q\&A system using Snowfl
 
 ### Related Resources
 
-* [Intelligent document field extraction and analytics with Document AI](https://www.snowflake.com/en/developers/guides/automating-document-processing-workflows-with-document-ai/)  
-* [Build conversational analytics app (text-to-SQL) with Cortex Analyst](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
+* [Intelligent document field extraction and analytics with Document AI](/en/developers/guides/automating-document-processing-workflows-with-document-ai/)  
+* [Build conversational analytics app (text-to-SQL) with Cortex Analyst](/en/developers/guides/getting-started-with-cortex-analyst/)

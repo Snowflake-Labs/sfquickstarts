@@ -18,7 +18,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Tasty Bytesの組織について学んだ後、Tasty Bytes基盤のデータモデル、ワークロード固有のロールとウェアハウス、必要なすべてのロールベースのアクセス制御（RBAC）を設定するプロセスを完了します。
 
-このクイックスタートを終了すると、「[Powered by Tasty Bytes - クイックスタート](/guide/tasty_bytes_introduction_ja/index.html#3)」セクションにあるクイックスタートを実行するために必要な基盤が展開されます。
+このクイックスタートを終了すると、「[Powered by Tasty Bytes - クイックスタート](/ja/developers/guides/tasty-bytes-introduction-ja/)」セクションにあるクイックスタートを実行するために必要な基盤が展開されます。
 
 ### Tasty Bytesとは
 ![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
@@ -167,22 +167,22 @@ WHERE m.truck_brand_name = 'Plant Palace';
 
 ### ゼロからのSnowflake
 
-- #### [コスト管理](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-cost-management/)
+- #### [コスト管理](/en/developers/guides/tasty-bytes-zero-to-snowflake-cost-management/)
   
   - Snowflake仮想ウェアハウスとその構成、リソースモニター、アカウントおよびウェアハウスレベルのタイムアウトパラメータ、そしてコスト調査について学びます。
-- #### [変換](/guide/tasty_bytes_zero_to_snowflake_transformation_ja/)
+- #### [変換](/ja/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ja/)
   
   - Snowflakeのゼロコピークローン、結果セットキャッシュ、テーブル操作、タイムトラベル、テーブルレベルのスワップ、ドロップ、アンドロップ機能について学びます。
-- #### [半構造化データ](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ja/)
+- #### [半構造化データ](/ja/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ja/)
   
   - SnowflakeのVARIANTデータ型、ドット表記による半構造化データ処理、ラテラルフラット化、ビュー作成、Snowsightチャートについて学びます。
-- #### [Snowflake Horizonを用いたガバナンス](/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index)
+- #### [Snowflake Horizonを用いたガバナンス](/en/developers/guides/tasty-bytes-zero-to-snowflake-governance-with-horizon/)
   
   - Snowflakeのシステム定義ロール、ロール・ベースのアクセス制御、タグベースのマスキング、ポリシー（行アクセス、集約、投影）、データ分類、アクセス履歴、Universal Searchにについて学びます。
-- #### [コラボレーション](/guide/tasty_bytes_zero_to_snowflake_collaboration_ja/)
+- #### [コラボレーション](/ja/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-ja/)
   
   - Weathersourceから無料ですぐに利用できるライブデータを活用して、ファーストパーティとサードパーティのソースを調和させたデータドリブンな分析を行うことで、Snowflakeマーケットプレイスに関する理解を深めます。
-- #### [地理空間](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
+- #### [地理空間](/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
   
   - SafeGraphから無料ですぐに利用できるライブデータの取得から、地理点の構築（ST_POINT）、距離の計算（ST_DISTANCE）、座標の収集（ST_COLLECT）、最小境界ポリゴンの描画（ST_ENVELOPE）、面積の計算（ST_AREA）、中心点の検出（ST_CENTROID）まで、Snowflakeの地理空間サポートについて学びます。
 

@@ -19,7 +19,7 @@ The set of libraries and runtimes in Snowflake that securely deploy and process 
 
 **Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+Learn more about [Snowpark](/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -33,7 +33,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 
 ### Prerequisites
 - Working knowledge of [Python](https://www.udemy.com/course/data-analysis-with-python-and-pandas/)
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/)
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/)
 
 ### What You’ll Learn 
 - Loading and transforming data via Snowpark

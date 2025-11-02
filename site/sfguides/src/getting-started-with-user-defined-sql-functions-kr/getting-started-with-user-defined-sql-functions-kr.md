@@ -233,7 +233,7 @@ drop database if exists udf_db;
 
 스칼라와 테이블 함수를 모두 연습했기에 이제 SQL UDF를 잘 다룰 수 있을 것입니다. 데이터베이스 오브젝트를 끝냈으니 앞으로의 단계를 살펴볼 시간입니다.
 
-공유 가능하고 [안전한](https://docs.snowflake.com/ko/sql-reference/udf-secure.html#secure-udfs) 사용자 정의 함수의 잠재력을 고려하십시오. [안전한 UDF의 위력](https://www.snowflake.com/blog/the-power-of-secure-user-defined-functions-for-protecting-shared-data/)에 대한 이 게시물에서 시장바구니 분석 테이블과 같은 사용자 정의 함수를 공유하는 방법을 배울 수 있습니다.
+공유 가능하고 [안전한](https://docs.snowflake.com/ko/sql-reference/udf-secure.html#secure-udfs) 사용자 정의 함수의 잠재력을 고려하십시오. [안전한 UDF의 위력](/blog/the-power-of-secure-user-defined-functions-for-protecting-shared-data/)에 대한 이 게시물에서 시장바구니 분석 테이블과 같은 사용자 정의 함수를 공유하는 방법을 배울 수 있습니다.
 
 ### 다룬 내용
 

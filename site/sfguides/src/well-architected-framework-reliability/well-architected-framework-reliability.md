@@ -188,7 +188,7 @@ most critical LoBs, while using more cost-effective approaches for less
 critical workloads. Adherence across all levels is critical to avoid
 significant financial penalties, operational disruption, and
 reputational damage. We recommend you review
-the([<u>https://www.snowflake.com/en/legal/</u>](https://www.snowflake.com/en/legal/)),
+the([<u>/en/legal/</u>](/en/legal/)),
 identify all applicable regulations, and map these requirements to
 specific Snowflake features and operational procedures to create an
 auditable compliance trail that reflects the unique needs of each
@@ -243,7 +243,7 @@ clear audit trail for regulatory bodies.
 **Implement the Shared Responsibility Model:**
 
 1.  Download and review the
-    [<u>whitepaper</u>](https://www.snowflake.com/en/resources/report/snowflake-shared-responsibility-model/).
+    [<u>whitepaper</u>](/en/resources/report/snowflake-shared-responsibility-model/).
 
 2.  Create a RACI (Responsible, Accountable, Consulted, Informed) chart
     that maps your internal teams (e.g., Data Engineering, Security,

@@ -20,7 +20,7 @@ Additionally, Canvas now has native integrations with AWS Generative AI services
 This quickstart is designed to serve as an introduction for using Snowflake with Canvas and Generative AI services.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with SageMaker and an AWS account
 - Familiarity with Canvas and a Canvas Service available in Sagemaker
 - Active Bedrock service

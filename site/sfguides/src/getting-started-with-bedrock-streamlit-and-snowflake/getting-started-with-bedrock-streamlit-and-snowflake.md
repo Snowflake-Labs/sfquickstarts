@@ -32,7 +32,7 @@ Snowflake is a cloud-based data warehousing solution that allows businesses to s
 Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.
 
 ### Pre-requisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 with Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
 - [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/).
 - The AWS account should be a sandbox account with open network policies or you you should [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the same region as the Snowflake account.Additionally, users should have access to Bedrock models in their AWS account.
@@ -723,7 +723,7 @@ After setting up our AWS and Snowflake and envrionments we built two primary thi
 
 - [IAM Role with Snowpark External Access Documentation](https://docs.snowflake.com/en/LIMITEDACCESS/external-network-access/external-network-access-examples#accessing-amazon-s3-with-aws-iam)
 
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/AWS-Bedrock-and-Streamlit-Reference-Architecture.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/04/AWS-Bedrock-and-Streamlit-Reference-Architecture.pdf)
 
 - [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-streamlit-and-snowflake/tree/main)
 

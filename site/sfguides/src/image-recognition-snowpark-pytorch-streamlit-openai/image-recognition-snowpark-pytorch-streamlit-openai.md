@@ -24,7 +24,7 @@ The set of libraries and runtimes in Snowflake that securely deploy and process 
 
 **Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+Learn more about [Snowpark](/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -32,7 +32,7 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
-Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
+Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What is PyTorch?
 
@@ -344,7 +344,7 @@ Congratulations! You've successfully created image recognition applications in S
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Image-Recognition-App-in-Snowflake-using-Snowpark-Python-PyTorch-Streamlit-and-OpenAI.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/03/Image-Recognition-App-in-Snowflake-using-Snowpark-Python-PyTorch-Streamlit-and-OpenAI.pdf)
 - [Read the Blog](https://medium.com/snowflake/image-recognition-in-snowflake-using-snowpark-python-pytorch-streamlit-and-openai-1a8167b82449)
 - [Watch Demo](https://youtu.be/UX6hBV5c0T0?list=TLGGKLQ968siKR8xOTA5MjAyNQ)
 

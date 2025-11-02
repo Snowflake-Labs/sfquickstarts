@@ -41,7 +41,7 @@ In our case, we will utilize RelationalAI’s Native App to construct an executa
 
 
 ### What You will Need
-- A [Snowflake](https://www.snowflake.com/) Account
+- A [Snowflake](/) Account
 - An IDE (such as [Visual Studio Code](https://code.visualstudio.com/))
 - A [Snowflake account](https://trial.snowflake.com/) with `ACCOUNTADMIN` and `KGQA_PUBLIC` access
     - Role "kgqa_public" in their snowflake account, which has ownership and usage access similar to "accountadmin". Follows ths steps mentioned [here](https://docs.snowflake.com/en/user-guide/security-access-control-configure#create-a-role) to create a new role. 
@@ -340,7 +340,7 @@ Congratulations on completing the our Question and Answering on Knowledge Graphs
 - To learn about more about RelationalAI and view full documentation, visit [https://relational.ai](https://relational.ai)
 - [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 - More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/KGQA-Reference-Architecture.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/KGQA-Reference-Architecture.pdf)
 - [Fork Repo on GitHub](https://github.com/RelationalAI/QuestionAnsweringKG/tree/main)
 - [Read the Blog](https://medium.com/snowflake/question-answering-on-knowledge-graphs-using-relationalai-and-snowflake-cortex-ai-27ba9bfc8d13)
 - [Watch the Demo](https://youtu.be/VQYERJBe31I?list=TLGGc2HxZ8lhv6YyNDA5MjAyNQ)

@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Many Snowflake customers use Snowflake as their centralized platform for their advertising data. In some cases, this can come directly through Snowflake, as with [The Trade Desk](https://www.snowflake.com/datasets/the-trade-desk-raw-event-data-stream-reds/). In other cases, though, it might be easiest to place a tag in the media, and ingest that data into Snowflake.
+Many Snowflake customers use Snowflake as their centralized platform for their advertising data. In some cases, this can come directly through Snowflake, as with [The Trade Desk](/datasets/the-trade-desk-raw-event-data-stream-reds/). In other cases, though, it might be easiest to place a tag in the media, and ingest that data into Snowflake.
 
 This Ad Tag takes information from the HTTP request and stores it in Snowflake. [Serverless Framework](https://www.serverless.com/) was used to build and deploy the application for simplicity of operation and ease of scaling.
 

@@ -399,5 +399,5 @@ For more resources, check out the following:
 
 - [Time Series Forecasting Guide](https://docs.snowflake.com/en/user-guide/ml-functions-time-series-forecasting)
 
-* Learn more at [Snowflake Northstar](https://www.snowflake.com/en/developers/northstar/) for developers.
+* Learn more at [Snowflake Northstar](/en/developers/northstar/) for developers.
 

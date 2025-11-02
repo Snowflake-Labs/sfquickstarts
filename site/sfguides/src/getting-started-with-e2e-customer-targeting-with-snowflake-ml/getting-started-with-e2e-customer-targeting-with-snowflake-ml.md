@@ -682,6 +682,6 @@ Congratulations! You’ve successfully built an end-to-end customer targeting mo
 ### Related Resources
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/tree/main)
 - [Snowflake Logging Custom Models](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types)
-- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML](/en/data-cloud/snowflake-ml/)
 - [classification Model](https://en.wikipedia.org/wiki/Category:Classification_algorithms)
 

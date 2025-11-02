@@ -264,7 +264,7 @@ You will now load the docker images to the snowflake repository
 - Navigate to the provider_setup > spcs_setup.sh and openn the file.
 - Amend where it says **YOUR_CONNECTION** with your **snowcli** connection.  
 
-> **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cli/) before proceeding which will explain how these are created.
+> **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](/en/developers/guides/getting-started-with-snowflake-cli/) before proceeding which will explain how these are created.
 
 - Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal from the **/native_app** directory within vscode and run the following:
 
@@ -1516,7 +1516,7 @@ You will have learned the following:
 
 - [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
-- [Building Geospatial Multi-Layer Apps with Snowflake and Streamlit](https://www.snowflake.com/en/developers/guides/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/)
+- [Building Geospatial Multi-Layer Apps with Snowflake and Streamlit](/en/developers/guides/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/)
 
 - [H3 Indexing](https://h3geo.org/docs/)
 
@@ -1524,8 +1524,8 @@ You will have learned the following:
 
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
-- [Using Cortex and Streamlit With Geospatial Data](https://www.snowflake.com/en/developers/guides/using-snowflake-cortex-and-streamlit-with-geospatial-data/)
+- [Using Cortex and Streamlit With Geospatial Data](/en/developers/guides/using-snowflake-cortex-and-streamlit-with-geospatial-data/)
 
-- [Getting started with Geospatial AI and ML using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/geo-for-machine-learning/)
+- [Getting started with Geospatial AI and ML using Snowflake Cortex](/en/developers/guides/geo-for-machine-learning/)
 
 

@@ -19,7 +19,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### 사전 필요 조건 및 지식
 
-- 시작하기 전에 평가판 계정 설정과 이 Quickstart를 완료하기 위해 필요한 Tasty Bytes 기초를 배포하는 것을 안내하는 [**Tasty Bytes 소개 Quickstart**](/guide/tasty_bytes_introduction_kr/index.html)를 완료하십시오.
+- 시작하기 전에 평가판 계정 설정과 이 Quickstart를 완료하기 위해 필요한 Tasty Bytes 기초를 배포하는 것을 안내하는 [**Tasty Bytes 소개 Quickstart**](/en/developers/guides/tasty-bytes-introduction-kr/)를 완료하십시오.
 
 ### 알아볼 내용
 
@@ -130,7 +130,7 @@ ORDER BY o.date ASC;
 
 이전 섹션을 보면 2월 16일부터 2월 21일까지의 독일 함부르크에서 발생한 매출이 누락된 것 같습니다.  자사 데이터 내에서는 이 부분을 조사하기 위해 사용할 수 있는 것이 거의 없습니다. 하지만 더 큰 요인이 여기에 영향을 줬을 것입니다.
 
-[Snowflake 마켓플레이스](https://www.snowflake.com/ko/data-cloud/marketplace/)를 활용하여 바로 탐색할 수 있는 하나의 아이디어는 기상 이변과 Weather Source에서 제공한 무료 공개 목록입니다.
+[Snowflake 마켓플레이스](/ko/data-cloud/marketplace/)를 활용하여 바로 탐색할 수 있는 하나의 아이디어는 기상 이변과 Weather Source에서 제공한 무료 공개 목록입니다.
 
 ### 1단계 - Weather Source LLC: frostbyte Snowflake 마켓플레이스 목록 획득
 
@@ -406,4 +406,4 @@ ORDER BY date DESC;
 
 Snowflake 데이터 클라우드에서의 여정을 계속하려면 이제 아래 링크를 방문하여 사용 가능한 모든 Tasty Bytes 활용 - Quickstart를 확인하십시오.
 
-- ### [Tasty Bytes 사용 - Quickstarts 목차](/guide/tasty_bytes_introduction_kr/index.html#3)
+- ### [Tasty Bytes 사용 - Quickstarts 목차](/en/developers/guides/tasty-bytes-introduction-kr/)

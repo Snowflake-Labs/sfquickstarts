@@ -735,7 +735,7 @@ Congratulations! You have successfully created an end-to-end automated ML pipeli
 
 From a business point of view, this architecture could satisfy several use cases. Examples include:
 - This SnowBank and Zamboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this example, Zamboni required access to SnowBank's data to risk score their data. A specific example of this could be a [Lenders Mortgage Insurance](https://insurancecouncil.com.au/articles/lenders-mortgage-insurance/) company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has, without the data leaving the security and governance controls of Snowflake.
-- Superannuation and Life Insurance Companies. Another example of sharing data securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a [streamlined customer claims process](https://www.snowflake.com/trending/insurance-analytics/). With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.
+- Superannuation and Life Insurance Companies. Another example of sharing data securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a [streamlined customer claims process](/trending/insurance-analytics/). With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.
 - White label Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analogous to this use case.
 
 ### What You Learned
@@ -750,8 +750,8 @@ The next Quickstart in this series extends on this idea by leveraging our Native
 ### Related Resources
 
 - Source code on GitHub is found [here](https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration/tree/main)
-- More information on Snowflake’s Collaboration features [here](https://www.snowflake.com/en/data-cloud/workloads/collaboration/)
+- More information on Snowflake’s Collaboration features [here](/en/data-cloud/workloads/collaboration/)
 - Snowflake Documentation on data sharing and collaboration [here](https://docs.snowflake.com/guides-overview-sharing)
-- More information on Snowpark / Machine Learning in Snowflake can be found [here](https://www.snowflake.com/en/data-cloud/workloads/ai-ml/)
+- More information on Snowpark / Machine Learning in Snowflake can be found [here](/en/data-cloud/workloads/ai-ml/)
 - Developer Guide on End-to-End Machine Learning in Snowflake [here](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- More information on Native Apps can be found [here](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/)
+- More information on Native Apps can be found [here](/en/data-cloud/workloads/applications/native-apps/)

@@ -11,14 +11,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-In this quickstart, we'll explore how to easily harness the power of containers to build models at scale in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) using GPUs from [Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) in the Container Runtime (Public Preview). Specifically, we'll train an XGBoost model and walk through a workflow that involves inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling. In the notebook, we will train two XGBoost models—one trained with open source xgboost (single GPU) and one distributing across the full GPU cluster. Finally, we'll log the model to Snowflake's model registry then test out built-in inference and explainability capabilities on the model object.
+In this quickstart, we'll explore how to easily harness the power of containers to build models at scale in [Snowflake ML](/en/data-cloud/snowflake-ml/) using GPUs from [Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) in the Container Runtime (Public Preview). Specifically, we'll train an XGBoost model and walk through a workflow that involves inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling. In the notebook, we will train two XGBoost models—one trained with open source xgboost (single GPU) and one distributing across the full GPU cluster. Finally, we'll log the model to Snowflake's model registry then test out built-in inference and explainability capabilities on the model object.
 
 This exercise will illustrate how Snowflake Notebooks lets you quickly tap into the GPU compute power you need to scalably build ML models using any open-source Python framework of choice. 
 
 ### Prerequisites
 - A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
 - Foundational knowledge of Data Science workflows
-- For an intro to Snowflake Notebooks on Container Runtime, try this [quickstart](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/) first
+- For an intro to Snowflake Notebooks on Container Runtime, try this [quickstart](/en/developers/guides/notebook-container-runtime/) first
 
 ### What You Will Learn 
 - Use Snowflake Notebooks with GPUs to speed up model training jobs with distributed processing
@@ -144,7 +144,7 @@ GRANT ALL ON TABLE "XGB_GPU_DATABASE"."XGB_GPU_SCHEMA"."VEHICLES_TABLE" TO ROLE 
 
 In this quickstart, we demonstrated how to use Snowflake Notebooks in the Container Runtime to efficiently train an XGBoost model with GPUs. By walking through the process of inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling, we successfully trained and compared two XGBoost models—one using a single GPU and the other on a GPU cluster. The results underscored the significant efficiency gains GPUs can offer, along with the flexibility Container Runtime provides by enabling containerized notebook execution and the ability to integrate third-party Python libraries seamlessly. We also took a look at Snowflake's Model Registry and how that can be leveraged in machine learning workflows. 
 
-Ready to accelerate your ML workflows in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)? Dive deeper into Container Runtime and start leveraging GPUs for faster, more flexible model training!
+Ready to accelerate your ML workflows in [Snowflake ML](/en/data-cloud/snowflake-ml/)? Dive deeper into Container Runtime and start leveraging GPUs for faster, more flexible model training!
 
 ### What You Learned
 - How to use Container Runtime to run ML workloads directly from Snowflake Notebooks
@@ -153,16 +153,16 @@ Ready to accelerate your ML workflows in [Snowflake ML](https://www.snowflake.co
 
 ### Related Resources
 - [Snowflake Notebooks on Container Runtime Docs](https://docs.snowflake.com/en/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 
 ### Related Quickstarts
   - Intro:
-    - [Getting Started with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
+    - [Getting Started with Snowflake Notebooks on Container Runtime](/en/developers/guides/notebook-container-runtime/)
   - Advanced:
-    - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
-    - [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
-    - [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+    - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+    - [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+    - [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
     - [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb?_fsi=EwgOAmF4&_fsi=EwgOAmF4&_fsi=EwgOAmF4)
-    - [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/harness-gpus-in-snowflake-notebooks-to-train-an-xgboost-model.pdf)
-    - [Read Engineering Blog](https://www.snowflake.com/en/engineering-blog/machine-learning-container-runtime/)
+    - [Download Reference Architecture](/content/dam/snowflake-site/developers/2025/harness-gpus-in-snowflake-notebooks-to-train-an-xgboost-model.pdf)
+    - [Read Engineering Blog](/en/engineering-blog/machine-learning-container-runtime/)
     - [Watch the Demo](https://youtu.be/MD5aP0uEAps?list=TLGGjL9LjRsTO-AyNDA5MjAyNQ)

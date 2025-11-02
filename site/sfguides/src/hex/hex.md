@@ -178,7 +178,7 @@ In order to train our forecasting model, we'll need to show it historical data s
 
 ![](assets/vhol_datagen.png)
 
-<!-- Ask chase what exactly the holiday table is for, also maybe check out the presentation that he sent. https://www.Snowflake.com/blog/Snowpark-python-feature-engineering-machine-learning/ -->
+<!-- Ask chase what exactly the holiday table is for, also maybe check out the presentation that he sent. /blog/Snowpark-python-feature-engineering-machine-learning/ -->
 
 ## Write the data back to Snowflake
 

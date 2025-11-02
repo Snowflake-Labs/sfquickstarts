@@ -149,7 +149,7 @@ Before creating a deployment, you need to configure core Snowflake components in
 
 > NOTE
 > 
-> For a detailed, step-by-step guide on these prerequisite configurations, please complete **Steps 2** of the following Snowflake Quickstart guide: [Snowflake Configuration for Openflow](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/).
+> For a detailed, step-by-step guide on these prerequisite configurations, please complete **Steps 2** of the following Snowflake Quickstart guide: [Snowflake Configuration for Openflow](/en/developers/guides/getting-started-with-openflow-spcs/).
 
 ### Create Deployment
 
@@ -331,9 +331,9 @@ You've successfully built a real-time Change Tracking pipeline to stream data fr
 
 ### Related Resources
 
-* Openflow for SPCS Quickstart: [Getting Started with Openflow in Snowpark Container Services](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/)
+* Openflow for SPCS Quickstart: [Getting Started with Openflow in Snowpark Container Services](/en/developers/guides/getting-started-with-openflow-spcs/)
 
-* Unstructured Data Pipelines: [Getting Started with Openflow for Unstructured Data](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-unstructured-data-pipeline/)
+* Unstructured Data Pipelines: [Getting Started with Openflow for Unstructured Data](/en/developers/guides/getting-started-with-openflow-unstructured-data-pipeline/)
 
 * Official Connector Documentation:[About the SQL Server Connector](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/sql-server/about) and [SQL Server Connector Setup](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/sql-server/setup)
 

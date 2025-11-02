@@ -20,7 +20,7 @@ Nel corso del quickstart impareremo come elaborare i dati semi-strutturati in Sn
 Per maggiori dettagli sui dati semi-strutturati in Snowflake, consulta la [documentazione introduttiva sui dati semi-strutturati](https://docs.snowflake.com/en/user-guide/semistructured-concepts)
 
 ### Prerequisiti
-- Prima di iniziare, assicurati di avere completato il [**quickstart Introduzione a Tasty Bytes**](/guide/tasty_bytes_introduction_it/index.html), che spiega nei dettagli come configurare un account di prova e implementare l’ambiente base di Tasty Bytes necessario per completare questo quickstart.
+- Prima di iniziare, assicurati di avere completato il [**quickstart Introduzione a Tasty Bytes**](/it/developers/guides/tasty-bytes-introduction-it/), che spiega nei dettagli come configurare un account di prova e implementare l’ambiente base di Tasty Bytes necessario per completare questo quickstart.
 
 ### Cosa imparerai
 - Che cos’è il tipo di dati VARIANT
@@ -362,4 +362,4 @@ Se desideri ripetere questo quickstart, usa gli script di ripristino alla fine d
 ### Fasi successive
 Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
 
-- ### [Quickstart Powered by Tasty Bytes - Sommario](/guide/tasty_bytes_introduction_it/index.html#3)
+- ### [Quickstart Powered by Tasty Bytes - Sommario](/it/developers/guides/tasty-bytes-introduction-it/)

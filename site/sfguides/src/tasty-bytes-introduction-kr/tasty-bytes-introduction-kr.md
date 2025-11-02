@@ -19,7 +19,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 모델, 워크로드 전용 역할 및 웨어하우스, 모든 필수 역할 기반 액세스 제어(RBAC) 설정 프로세스를 완료하겠습니다.
 
-이 Quickstart를 완료한 시점에는 [Tasty Bytes 사용 - Quickstart](/guide/tasty_bytes_introduction_kr/index.html#3) 섹션에서 확인할 수 있는 Quickstart를 실행하는 데 필요한 상태일 것입니다.
+이 Quickstart를 완료한 시점에는 [Tasty Bytes 사용 - Quickstart](/en/developers/guides/tasty-bytes-introduction-kr/) 섹션에서 확인할 수 있는 Quickstart를 실행하는 데 필요한 상태일 것입니다.
 
 ### Tasty Bytes란 무엇일까요?
 
@@ -208,18 +208,18 @@ WHERE m.truck_brand_name = 'Plant Palace';
 
 - #### [금융 거버넌스](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
   - Snowflake 가상 웨어하우스 및 구성 가능성, 리소스 모니터 그리고 계정 및 웨어하우스 수준 시간 초과 매개변수를 알아보십시오.
-- #### [변환](/guide/tasty_bytes_zero_to_snowflake_transformation_kr/)
+- #### [변환](/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-kr/)
     - 제로 카피 클론, 결과 세트 캐시, 테이블 조작, Time Travel 및 테이블 수준 교체 그리고 드롭 및 드롭 취소 기능을 알아보십시오.
-- #### [반정형 데이터](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_kr/)
+- #### [반정형 데이터](/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-kr/)
   
   - Snowflake VARIANT 데이터 유형, 점표기법 및 래터럴 평면화를 통한 반정형 데이터 처리, 뷰 생성 그리고 Snowsight 그래프 생성을 알아보십시오.
 - #### [데이터 거버넌스](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
   
   - Snowflake 시스템 정의 역할, 사용자 정의 역할 생성 및 허가 적용 그리고 태그 기반 동적 데이터 마스킹 및 행 액세스 정책 배포를 알아보십시오.
-- #### [협업](/guide/tasty_bytes_zero_to_snowflake_collaboration_kr/)
+- #### [협업](/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-kr/)
   
   - 자사 및 서드 파티 소스를 조정하여 데이터 기반 분석을 수행하기 위해 Weathersource에서 제공하는 즉각적으로 사용 가능한 무료 라이브 데이터를 활용하여 Snowflake 마켓플레이스를 알아보십시오.
-- #### [지리 공간](https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
+- #### [지리 공간](/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/)
   
   - SafeGraph에서 제공하는 즉각적으로 사용 가능한 무료 라이브 데이터를 습득하는 것부터 시작하여 지리 공간 지점을 만들고(ST_POINT), 거리를 계산하고(ST_DISTANCE), 좌표를 수집하고(ST_COLLECT), 최소 바운딩 폴리곤을 그리고(ST_ENVELOPE), 면적을 계산하고(ST_AREA), 중심점을 찾아(ST_CENTROID) Snowflake 지리 공간 지원을 알아보십시오.
 

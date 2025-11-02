@@ -68,7 +68,7 @@ This notebook executes as a [Snowflake Container Notebook](https://docs.snowflak
 
 ## Running the Notebook
 
-If you are not familiar with Snowflake Container Notebooks, [this](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/) quickstart provides a great starting point.
+If you are not familiar with Snowflake Container Notebooks, [this](/en/developers/guides/notebook-container-runtime/) quickstart provides a great starting point.
 
 Our notebook will need External Access Integration, and this does require AccountAdmin to set up, so that the OpenFE package can be downloaded.
 

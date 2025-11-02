@@ -12,7 +12,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 ## Overview
 
 
-**Note:** We recommend checking out our [Building Cortex AISQL Powered Call Centre Analytics Solution](https://www.snowflake.com/en/developers/guides/building-cortex-aisql-powered-call-centre-analytics/) quickstart, which uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion. This original version is useful if Cortex cannot be used or if further model tuning is desirable.
+**Note:** We recommend checking out our [Building Cortex AISQL Powered Call Centre Analytics Solution](/en/developers/guides/building-cortex-aisql-powered-call-centre-analytics/) quickstart, which uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion. This original version is useful if Cortex cannot be used or if further model tuning is desirable.
 
 Audio files in call centers offer rich insights beyond text. With Snowflake Cortex Functions and running open source LLM models in Snowpark Container Services, you can extract summary of the call, sentiment, and patterns which can eventually help in enhancing customer experiences. By transcribing audio to text and developing custom analytics, call centres and supervisor gain actionable insights on agent responses and proactive issue resolution, ultimately driving better customer satisfaction. These insights can inform strategic decision-making, improve operational efficiency, and drive revenue growth. From optimizing agent performance to predicting customer behavior, the possibilities are endless.
 
@@ -196,7 +196,7 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 * [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-* [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
-* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Call-Center-Analytics-with-Snowflake-Cortex-Functions-and-Snowpark-Container-Services.pdf)
+* [Snowpark Guide for Data Engineers](/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/04/Call-Center-Analytics-with-Snowflake-Cortex-Functions-and-Snowpark-Container-Services.pdf)
 * [Read the Blog](https://medium.com/snowflake/call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services-5e06b4baef46)
 * [Watch the Demo](https://youtu.be/-3ThRxoZjcE?list=TLGG31-1X25lRtoxOTA5MjAyNQ)

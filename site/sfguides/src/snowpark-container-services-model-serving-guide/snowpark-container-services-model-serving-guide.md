@@ -532,7 +532,7 @@ If all is well you should get a response like below
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You have successfully built, deployed, and accessed a machine learning model using Snowpark Container Services. You've seen how [Snowflake ML](https://www.snowflake.com/en/product/use-cases/end-to-end-ml-workflows/) can manage the entire MLOps lifecycle within a single, unified platform, from data engineering to production deployment.
+Congratulations! You have successfully built, deployed, and accessed a machine learning model using Snowpark Container Services. You've seen how [Snowflake ML](/en/product/use-cases/end-to-end-ml-workflows/) can manage the entire MLOps lifecycle within a single, unified platform, from data engineering to production deployment.
 
 This powerful combination of Snowpark, the Model Registry, and SPCS enables data teams to build and scale AI/ML applications securely and efficiently.
 
@@ -543,7 +543,7 @@ This powerful combination of Snowpark, the Model Registry, and SPCS enables data
 - Authenticating and consuming model predictions from a secure endpoint.
 
 ### Related Resources
-- [Snowflake ML homepage](https://www.snowflake.com/en/product/use-cases/end-to-end-ml-workflows/)
+- [Snowflake ML homepage](/en/product/use-cases/end-to-end-ml-workflows/)
 - [More ML Quickstart](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 - [Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs)

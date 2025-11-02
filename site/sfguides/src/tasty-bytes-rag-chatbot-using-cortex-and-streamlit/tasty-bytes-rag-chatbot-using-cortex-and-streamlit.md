@@ -360,7 +360,7 @@ def get_prompt(chat, context):
 
 Congratulations, you've created a RAG chatbot using Cortex and Streamlit! In this tutorial, we talked through all of the pieces required to build the Streamlit in Snowflake application, including Cortex LLMs and RAG fundamentals. 
 
-If you want to learn more about RAG and Cortex from Snowflake, check out this incredible blog post - [Easy and Secure LLM Inference and Retrieval Augmented Generation (RAG) Using Snowflake Cortex](https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/).
+If you want to learn more about RAG and Cortex from Snowflake, check out this incredible blog post - [Easy and Secure LLM Inference and Retrieval Augmented Generation (RAG) Using Snowflake Cortex](/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/).
 
 ### What You Learned
 - How to build a chatbot using Cortex LLMs 
@@ -368,6 +368,6 @@ If you want to learn more about RAG and Cortex from Snowflake, check out this in
 - Basics of retrieval augmented generation (RAG) 
 
 ### Related Resources
-- [Easy and Secure LLM Inference and Retrieval Augmented Generation (RAG) Using Snowflake Cortex](https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)
+- [Easy and Secure LLM Inference and Retrieval Augmented Generation (RAG) Using Snowflake Cortex](/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)
 - [Streamlit in Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)

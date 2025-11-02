@@ -21,7 +21,7 @@ Vertex AI is Google's unified artificial intelligence platform designed to strea
 This quickstart is designed to service as an introduction to using Vertex AI with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Vertex AI workloads.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with Vertex AI and a Google Cloud account
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 
@@ -47,7 +47,7 @@ The end-to-end workflow will look like this:
 <!-- ------------------------ -->
 ## Use Case
 
-In this use case you will build a binary model based on the 'Machine Predictive Maintenance Classification' dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](https://www.snowflake.com/en/data-cloud/marketplace/).
+In this use case you will build a binary model based on the 'Machine Predictive Maintenance Classification' dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](/en/data-cloud/marketplace/).
 
 The use case uses information related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.
 

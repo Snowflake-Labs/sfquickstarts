@@ -470,4 +470,4 @@ With this notebook, you've learned how to do the following steps in Snowflake fo
 ### Related Resources
 - [Braze CDI Documentation](https://www.braze.com/docs/user_guide/data_and_analytics/cloud_ingestion)
 - [Snowflake Pipeline Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/braze-cdi-pipeline/braze_cdi_customer.ipynb)
-- [Snowflake for Marketing](https://www.snowflake.com/en/solutions/departments/marketing/)
+- [Snowflake for Marketing](/en/solutions/departments/marketing/)

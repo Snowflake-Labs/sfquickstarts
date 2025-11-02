@@ -22,7 +22,7 @@ Microsoft Fabric is a unified analytics platform that integrates various data se
 [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-search-and-microsoft-fabric)
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with [Microsoft](https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview) Fabric and a Fabric workspace.
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 
@@ -292,7 +292,7 @@ This quickstart is just that, a quick way to get you started with using Fabric a
 ### Resources
 - There are some great blogs on Medium regarding Snowflake Cortex, Microsoft Fabric and how Snowflake and Fabric work together
 
-- [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
+- [Snowflake Cortex](/en/data-cloud/cortex/)
 
 - [Microsoft Fabric and Power BI](https://learn.microsoft.com/en-us/power-bi/fundamentals/fabric-get-started)
 

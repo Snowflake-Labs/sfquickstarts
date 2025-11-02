@@ -23,7 +23,7 @@ Python、Java、Scalaなどの非SQLコードを安全にデプロイして処�
 
 **柔軟なランタイムコンストラクト** - Snowparkは、ユーザーがカスタムロジックを取り込んで実行できるようにする柔軟なランタイムコンストラクトを提供します。開発者は、ユーザー定義関数とストアドプロシージャを使用して、データパイプライン、MLモデル、データアプリケーションをシームレスに構築できます。
 
-詳しくは、[Snowpark](https://www.snowflake.com/snowpark/)をご覧ください。
+詳しくは、[Snowpark](/snowpark/)をご覧ください。
 
 ![Snowpark](assets/snowpark.png)
 
@@ -260,12 +260,12 @@ return snow_df_spend_and_revenue_per_month
 
 ### 次のステップ
 
-データを段階的に処理する方法、Snowflakeタスクでデータパイプラインをオーケストレーションする方法、これらをCI/CDパイプラインで展開する方法、Snowflakeの新しい開発者CLIツールとVisual Studio Code拡張機能を使用する方法を学ぶには、引き続き[Snowpark Pythonを使用してデータエンジニアリングパイプライン](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)を深く掘り下げてください。
+データを段階的に処理する方法、Snowflakeタスクでデータパイプラインをオーケストレーションする方法、これらをCI/CDパイプラインで展開する方法、Snowflakeの新しい開発者CLIツールとVisual Studio Code拡張機能を使用する方法を学ぶには、引き続き[Snowpark Pythonを使用してデータエンジニアリングパイプライン](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)を深く掘り下げてください。
 
 ### 関連リソース
 
 - [Pythonワークシート開発者ガイド](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets)
-- [Snowpark for Pythonを使用したデータエンジニアリングとMLの入門](https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
-- [上級：Snowpark for Python機械学習ガイド](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Snowpark for Pythonを使用したデータエンジニアリングとMLの入門](/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
+- [上級：Snowpark for Python機械学習ガイド](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Pythonデモ](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python開発者ガイド](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)

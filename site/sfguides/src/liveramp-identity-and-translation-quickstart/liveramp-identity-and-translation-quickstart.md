@@ -433,7 +433,7 @@ Want to learn more about LiveRamp and Identity? Check out the following resource
 
 * [LiveRamp and Snowflake Video](https://www.youtube.com/watch?v=RN7k4TNyfaQ)
 * [Watch the Demo](https://youtu.be/uL7hh4A_ggI?list=TLGG2L1hs9hxONQyNDA5MjAyNQ)
-* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/LiveRamp-Snowflake-Reference-Architecture.pptx.pdf)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/LiveRamp-Snowflake-Reference-Architecture.pptx.pdf)
 * [Read the Blog](https://medium.com/snowflake/liveramp-embedded-identity-and-deconfliction-a-powerful-solution-for-marketers-on-snowflake-7cdbec33d8ba)
 
 

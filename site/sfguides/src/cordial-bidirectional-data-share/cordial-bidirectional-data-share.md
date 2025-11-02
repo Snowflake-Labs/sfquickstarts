@@ -530,6 +530,6 @@ Want to learn more about Cordial and Snowflake? Check out the following resource
 - [Cordial’s Snowflake Secure Data Sharing Knowledge Base article](https://support.cordial.com/hc/en-us/articles/9615168271629-Snowflake-Secure-Data-Sharing)
 
 - [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/cordial_data_share/cordial.ipynb)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Cordial-_-Snowflake-Architecture-Slide.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/Cordial-_-Snowflake-Architecture-Slide.pdf)
 - [Read the Blog](https://medium.com/snowflake/bidirectional-data-integration-between-cordial-and-snowflake-for-real-time-customer-data-377f893f68ed)
 - [Watch the Demo](https://youtu.be/iEgHHkl1ga8?list=TLGGEbh0a1Siqg8yMDA5MjAyNQ)

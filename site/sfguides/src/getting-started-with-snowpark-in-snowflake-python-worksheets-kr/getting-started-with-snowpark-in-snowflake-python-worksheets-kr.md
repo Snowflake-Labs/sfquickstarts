@@ -23,7 +23,7 @@ Python, Java 및 Scala를 비롯한 비 SQL 코드를 안전하게 배포하고 
 
 **유연한 런타임 구조** - Snowpark는 사용자가 사용자 정의 로직을 가져와 실행할 수 있도록 하는 유연한 런타임 구조를 제공합니다. 개발자는 사용자 정의 함수 및 저장 프로시저를 사용하여 원활하게 데이터 파이프라인, ML 모델 및 데이터 애플리케이션을 구축할 수 있습니다.
 
-[Snowpark](https://www.snowflake.com/snowpark/)에 대해 자세히 알아보십시오.
+[Snowpark](/snowpark/)에 대해 자세히 알아보십시오.
 
 ![Snowpark](assets/snowpark.png)
 
@@ -260,12 +260,12 @@ return snow_df_spend_and_revenue_per_month
 
 ### 다음 단계
 
-증분적으로 데이터를 처리하고, Snowpark 작업과 데이터 파이프라인을 조정하고, CI/CD 파이프라인을 통해 이를 배포하고, Snowflake의 새로운 개발자 CLI 도구 및 Visual Studio Code 확장 프로그램을 사용하는 방법을 알아보려면 여정을 계속하고 [Snowpark Python을 사용한 데이터 엔지니어링 파이프라인](/guide/data_engineering_pipelines_with_snowpark_python_kr/index.html)을 심층적으로 알아보십시오.
+증분적으로 데이터를 처리하고, Snowpark 작업과 데이터 파이프라인을 조정하고, CI/CD 파이프라인을 통해 이를 배포하고, Snowflake의 새로운 개발자 CLI 도구 및 Visual Studio Code 확장 프로그램을 사용하는 방법을 알아보려면 여정을 계속하고 [Snowpark Python을 사용한 데이터 엔지니어링 파이프라인](/en/developers/guides/data-engineering-pipelines-with-snowpark-python-kr/)을 심층적으로 알아보십시오.
 
 ### 관련 리소스
 
 - [Python 워크시트 개발자 가이드](https://docs.snowflake.com/ko/developer-guide/snowpark/python/python-worksheets)
-- [Snowpark for Python를 사용하여 데이터 엔지니어링 및 ML 시작하기](/guide/getting_started_with_dataengineering_ml_using_snowpark_python_kr/index.html)
-- [Advanced:　Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Snowpark for Python를 사용하여 데이터 엔지니어링 및 ML 시작하기](/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-kr/)
+- [Advanced:　Snowpark for Python Machine Learning Guide](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python 데모](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python 개발자 가이드](https://docs.snowflake.com/ko/developer-guide/snowpark/python/index.html)

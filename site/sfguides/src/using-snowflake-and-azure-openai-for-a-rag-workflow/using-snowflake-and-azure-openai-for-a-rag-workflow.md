@@ -36,7 +36,7 @@ Snowflake is a cloud-based data warehousing solution that allows businesses to s
 Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.
 
 ### Pre-requisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 with Access to [Streamlit](https://streamlit.io/) in your Snowflake account.
 - [Azure Account](https://azure.microsoft.com) with Azure OpenAI or a stand alone OpenAI service.
 - Familiarity with the Python programming language.

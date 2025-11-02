@@ -176,6 +176,6 @@ By following this workflow, a user is now equipped with the knowledge to build, 
 
 
 ### Related Resources
-- [A Getting Started Guide with Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
-- [Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
-- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)
+- [A Getting Started Guide with Snowflake Notebooks](/en/developers/guides/getting-started-with-snowflake-notebooks/)
+- [Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
+- [Train an XGBoost Model with GPUs using Snowflake Notebooks](/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)

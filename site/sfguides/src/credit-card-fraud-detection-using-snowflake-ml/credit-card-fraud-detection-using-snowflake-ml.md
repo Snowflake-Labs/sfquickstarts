@@ -170,11 +170,11 @@ If you want to learn more about Snowflake ML Functions, check out the quickstart
 
 - #### [Getting Started with Snowflake Feature Store](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_feature_store/index.html?index=..%2F..index#0)
 
-- #### [Getting Started with Snowflake ML Forecasting and Classification](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cortex-ml-forecasting-and-classification/)
+- #### [Getting Started with Snowflake ML Forecasting and Classification](/en/developers/guides/getting-started-with-snowflake-cortex-ml-forecasting-and-classification/)
   
-- #### [Lead Scoring with ML-Powered Classification](https://www.snowflake.com/en/developers/guides/lead-scoring-with-ml-powered-classification/)
+- #### [Lead Scoring with ML-Powered Classification](/en/developers/guides/lead-scoring-with-ml-powered-classification/)
 
 - [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-credit-card-fraud-detection-using-snowflakeml/tree/main)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/09/Fraud-Detection-Reference-Architecture.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/09/Fraud-Detection-Reference-Architecture.pdf)
 - [Read the Blog](https://medium.com/@kala.govindarajan/unveiling-fraud-in-digital-payments-with-snowflake-ml-functions-9bedb66132dd)
 - [Watch the Demo](https://youtu.be/whrKbadNTXw?list=TLGGtKppesFpkucyMjA5MjAyNQ)

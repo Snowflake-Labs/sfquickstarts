@@ -285,7 +285,7 @@ You’ve now successfully set up your Dataiku trial account via Snowflake’s Pa
 > aside positive
 > 
 >  **Snowflake's Data Sharing** <br> The Snowflake Marketplace is Snowflake's hosted data exchange, where any Snowflake customer can seamlessly access third-party data, and where companies can publish data and offer data services to be discovered and purchased by other Snowflake customers.
-Today it contains data from over 100+ Data Providers with over 220+ data listings. Review [this webpage](https://www.snowflake.com/data-marketplace/) for more information. <br> You can also build out your own Snowflake Data Exchange and remove the need for FTP, file shares, ETL processes to create the files for your customers and standardize on Snowflake Data Exchange. This will break down data silos and allows you to frictionlessly share data in a highly governed way within your company, as well as with suppliers, partners or customers. Your Data Exchange governs live access to a single copy of the data, allows you to securely control access to data, and eliminates the cost and headaches of traditional data sharing methods like copying files or building ETL pipelines.
+Today it contains data from over 100+ Data Providers with over 220+ data listings. Review [this webpage](/data-marketplace/) for more information. <br> You can also build out your own Snowflake Data Exchange and remove the need for FTP, file shares, ETL processes to create the files for your customers and standardize on Snowflake Data Exchange. This will break down data silos and allows you to frictionlessly share data in a highly governed way within your company, as well as with suppliers, partners or customers. Your Data Exchange governs live access to a single copy of the data, allows you to securely control access to data, and eliminates the cost and headaches of traditional data sharing methods like copying files or building ETL pipelines.
 
 
 ### Getting COVID-19 Data from the Snowflake Marketplace
@@ -1334,6 +1334,6 @@ This tutorial was designed as a hands-on introduction to Snowflake and Dataiku t
 We encourage you to continue with your free trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:
 
 - At the very top of the UI click on the “Partner Connect” icon to get access to trial/free ETL and BI tools to help you get more data into Snowflake and then analyze it
-- Read the “[Definitive Guide to Maximizing Your Free Trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-download-maximizing-your-free-trial-guide)”
-- Attend a Snowflake virtual or in-person [event](https://www.snowflake.com/about/webinars/) to learn more about our capabilities and how customers use us
-- Contact [Sales](https://www.snowflake.com/free-trial-contact-sales/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-contact-sales-from-lab-guide) to learn more
+- Read the “[Definitive Guide to Maximizing Your Free Trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-download-maximizing-your-free-trial-guide)”
+- Attend a Snowflake virtual or in-person [event](/about/webinars/) to learn more about our capabilities and how customers use us
+- Contact [Sales](/free-trial-contact-sales/?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-contact-sales-from-lab-guide) to learn more

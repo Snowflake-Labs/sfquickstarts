@@ -453,13 +453,13 @@ A fantastic reference for downloading the snowflake-python connector .zip file  
 
 
 
-To learn more about Snowflake Marketplace visit the official website here: [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/)
+To learn more about Snowflake Marketplace visit the official website here: [Snowflake Marketplace](/data-marketplace/)
 
-To learn more about Building Data Aapplications isit the official  website here: ([Building Data Aapplications](https://www.snowflake.com/workloads/data-applications/)
+To learn more about Building Data Aapplications isit the official  website here: ([Building Data Aapplications](/workloads/data-applications/)
 
 
 
- [Register for Snowflake Summit 2021](https://www.snowflake.com/summit/?utm_source=paidsearch&utm_medium=ppc&utm_campaign=NA-Branded&_bt=513345067347&_bk=%2Bsnowflake%20%2Bsummit&_bm=b&_bn=g&_bg=111755576146&gclid=CjwKCAjw7J6EBhBDEiwA5UUM2iW-7BWtxKYf9hV5qno24Wvie0GWuaqoHyToZvEC0xRjga0Z5N_Y0BoCr9MQAvD_BwE&gclsrc=aw.ds) 
+ [Register for Snowflake Summit 2021](/summit/?utm_source=paidsearch&utm_medium=ppc&utm_campaign=NA-Branded&_bt=513345067347&_bk=%2Bsnowflake%20%2Bsummit&_bm=b&_bn=g&_bg=111755576146&gclid=CjwKCAjw7J6EBhBDEiwA5UUM2iW-7BWtxKYf9hV5qno24Wvie0GWuaqoHyToZvEC0xRjga0Z5N_Y0BoCr9MQAvD_BwE&gclsrc=aw.ds) 
 
 
 ### What we've covered

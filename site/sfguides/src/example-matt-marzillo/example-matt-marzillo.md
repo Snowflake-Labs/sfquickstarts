@@ -26,7 +26,7 @@ This quickstart is designed to service as an introduction to using AzureML with 
 [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml)
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account
 - Familiarity with AzureML, an Azure account with an AzureML workspace
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 
@@ -54,7 +54,7 @@ The end-to-end workflow will look like this:
 <!-- ------------------------ -->
 ## Use Case
 
-In this use case you will build a binary model based on the 'Machine Predictive Maintenance Classification' dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](https://www.snowflake.com/en/data-cloud/marketplace/).
+In this use case you will build a binary model based on the 'Machine Predictive Maintenance Classification' dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](/en/data-cloud/marketplace/).
 
 The use case uses information related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.
 
@@ -180,7 +180,7 @@ Specifically, you may want to consider the additional details:
 - [Operationalizing Snowpark](https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1)
 
 - [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Snowflake_Snowpark-and-Azure-with-MLFlow-.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/03/Snowflake_Snowpark-and-Azure-with-MLFlow-.pdf)
 - [Read the Blog](https://medium.com/snowflake/using-azureml-with-snowflake-snowpark-for-machine-learning-9f254cdc30bf)
 - [Watch the Demo](https://youtu.be/p8QUMiND7Ig?list=TLGG0JJck_UYXMoyNDA5MjAyNQ)
 

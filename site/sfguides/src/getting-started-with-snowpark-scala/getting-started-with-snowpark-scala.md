@@ -32,7 +32,7 @@ don't need to move the data to a separate system for processing.
 ### Prerequisites
 
 - Familiarity with Scala
-- A [Snowflake](https://www.snowflake.com/) account hosted on Amazon Web Services
+- A [Snowflake](/) account hosted on Amazon Web Services
   (AWS) or Microsoft Azure. 
 - [git](https://git-scm.com/downloads)
 - [SBT](https://www.scala-sbt.org/)

@@ -31,7 +31,7 @@ Snowpark is the set of libraries and code execution environments that run Python
 
 **Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. These server-side capabilities allow users to bring in and run custom logic in Python with user-defined functions and stored procedures. 
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+Learn more about [Snowpark](/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -694,8 +694,8 @@ Here is the overview of what we built:
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro)
-- [Advanced: Data Engineering Pipelines with Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Advanced: Getting Started with Data Engineering and ML using Snowpark for Python](https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
+- [Advanced: Data Engineering Pipelines with Snowpark Python](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Advanced: Getting Started with Data Engineering and ML using Snowpark for Python](/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
   - [Writing Stored Procedures in Snowpark (Python)](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html)
   - [Working with DataFrame in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)

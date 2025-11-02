@@ -34,11 +34,11 @@ Snowpark is the set of libraries and runtimes that securely enable developers to
 
 **Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+Learn more about [Snowpark](/snowpark/).
 
 ### What is Snowflake CORTEX ?
 
-[Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/) Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
+[Snowflake Cortex](/en/data-cloud/cortex/) Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
 
 LLM Functions: SQL and Python functions that leverage large language models (LLMs) for understanding, querying, translating, summarizing, and generating free-form text.
 
@@ -65,7 +65,7 @@ This quickstart will focus on
 
 Streamlit enables data engineers and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
-Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
+Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What You Will Learn
 
@@ -751,7 +751,7 @@ You have built an Ai guided equipment maintenance chat bot.  This chat bot base 
 - [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-based-Equipment-Maintenance-using-Snowflake-Cortex.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-based-Equipment-Maintenance-using-Snowflake-Cortex.pdf)
 - [Read the Blog](https://medium.com/snowflake/reduce-your-equipment-downtime-with-snowflake-cortex-and-streamlit-a-rag-based-approach-071ff4f3347e)
 - [Watch the Demo](https://youtu.be/RLCJrM8v76o?list=TLGGDooT-1mt5mUyNDA5MjAyNQ)
   

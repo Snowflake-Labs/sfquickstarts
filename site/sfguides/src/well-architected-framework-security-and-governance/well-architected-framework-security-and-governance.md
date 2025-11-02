@@ -73,7 +73,7 @@ Security & Governance:
     these specific responsibilities to prevent gaps in security
     ownership. You can find more information about this model in the
     Snowflake documentation:
-    [<u>https://www.snowflake.com/en/resources/report/snowflake-shared-responsibility-model/</u>](https://www.snowflake.com/en/resources/report/snowflake-shared-responsibility-model/).
+    [<u>/en/resources/report/snowflake-shared-responsibility-model/</u>](/en/resources/report/snowflake-shared-responsibility-model/).
 
 - **Network Security**
 
@@ -411,7 +411,7 @@ risks, uphold trust, and maintain compliance, ensuring that your
 organization is prepared for the security and ethical challenges that
 arise from using AI. For a detailed overview of Snowflake's commitment
 to Responsible AI, refer to [<u>this
-statement</u>](https://www.snowflake.com/en/company/responsible-ai/).
+statement</u>](/en/company/responsible-ai/).
 
 ### Desired outcome
 
@@ -520,7 +520,7 @@ Cycle</u>](https://www.sans.org/media/score/504-incident-response-cycle.pdf),
 [<u>SaaS
 Matrix</u>](https://attack.mitre.org/matrices/enterprise/cloud/saas/),
 [<u>Snowflake’s Security & Trust
-Center</u>](https://www.snowflake.com/product/security-and-trust-center/)
+Center</u>](/product/security-and-trust-center/)
 & [<u>Snowflake CIS
 Benchmarks</u>](https://www.cisecurity.org/benchmark/snowflake)).
 

@@ -19,7 +19,7 @@ Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。
 
 
 ### 前提条件
-- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://www.snowflake.com/ja/developers/guides/tasty-bytes-introduction-ja/)を完了しておくようにしてください。
+- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](/ja/developers/guides/tasty-bytes-introduction-ja/)を完了しておくようにしてください。
 
 ### 学習する内容
 - Snowflakeマーケットプレイスへのアクセス方法
@@ -110,7 +110,7 @@ ORDER BY o.date ASC;
 ### 概要
 前のセクションで見た内容から、ハンブルグでは2月16日から2月21日までの売上がないように見えます。  ファーストパーティデータの中には、これを調査するために利用できるものは他にあまりありませんが、何か大きなことがここで起こっていたはずです。
 
-[Snowflakeマーケットプレイス](https://www.snowflake.com/ja/data-cloud/marketplace/)を活用してすぐに調査できるアイデアの1つは、異常気象と、Weather Sourceが提供している無料の公開リストです。
+[Snowflakeマーケットプレイス](/ja/data-cloud/marketplace/)を活用してすぐに調査できるアイデアの1つは、異常気象と、Weather Sourceが提供している無料の公開リストです。
 
 ### ステップ1 - Weather Source LLC: frostbyte Snowflakeマーケットプレイスのリスティングを取得する
 Snowflakeマーケットプレイスは、革新的なビジネスソリューションを推進するために必要なデータやアプリケーションを検索、試用、購入できるすばらしい場所です。このステップでは、[Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte)リスティングにアクセスし、ハンブルグの売上不振に関する追加の分析に役立てていきます。
@@ -378,4 +378,4 @@ ORDER BY date DESC;
 ### 次のステップ
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://www.snowflake.com/ja/developers/guides/tasty-bytes-introduction-ja/)
+- ### [Powered by Tasty Bytes - クイックスタート目次](/ja/developers/guides/tasty-bytes-introduction-ja/)

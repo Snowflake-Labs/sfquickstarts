@@ -13,7 +13,7 @@ authors: Praveen Purushothaman
 
 ## Overview
 
-This [blog post](https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/) can provide you with a better understanding of Snowflake's Resource Optimization capabilities.
+This [blog post](/blog/understanding-snowflakes-resource-optimization-capabilities/) can provide you with a better understanding of Snowflake's Resource Optimization capabilities.
 
 ### Performance
 The queries provided in this guide are intended to help you setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
@@ -24,7 +24,7 @@ The queries provided in this guide are intended to help you setup and run querie
 - how to identify warehouses that would benefit from scaling up or out
   
 ### What You’ll Need 
-- A [Snowflake](https://www.snowflake.com/) Account 
+- A [Snowflake](/) Account 
 - Access to view [Account Usage Data Share](https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles)
 
 ### Related Materials

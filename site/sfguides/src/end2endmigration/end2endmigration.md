@@ -26,8 +26,8 @@ Want to migrate to Snowflake in less than 90 minutes? Come to this hands-on lab.
 
 ### What You'll Need
 
-- [SnowConvert](https://www.snowflake.com/en/migrate-to-the-cloud/snowconvert-ai/) Installed
-- [Snowpark Migration Accelerator (SMA)](https://www.snowflake.com/en/migrate-to-the-cloud/migration-accelerator/) Installed
+- [SnowConvert](/en/migrate-to-the-cloud/snowconvert-ai/) Installed
+- [Snowpark Migration Accelerator (SMA)](/en/migrate-to-the-cloud/migration-accelerator/) Installed
 - [VSCode](https://code.visualstudio.com/download) and [Snowflake Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) Installed
 - *[Preferred, but not required]* Python and PySpark Installed
 
@@ -138,7 +138,7 @@ The SQL Server is in an Azure environment that we have in Snowflake, but can mak
 
 How do we connect to it? Through SnowConvert. Let’s do that now.
 
-Open SnowConvert. Currently, [it can be downloaded from here](https://www.snowflake.com/en/migrate-to-the-cloud/snowconvert-ai/). An installation package file will be created. You can then open this file and install the application on your machine.
+Open SnowConvert. Currently, [it can be downloaded from here](/en/migrate-to-the-cloud/snowconvert-ai/). An installation package file will be created. You can then open this file and install the application on your machine.
 
 Agree to the Terms of Use by selecting “Agree”.
 > aside positive
@@ -795,11 +795,11 @@ Note that in general, if you are extracting files that are being orchestrated by
 
 Now that we have our source files in an accessible directory, it is time to run the SMA.
 
-If you have not already downloaded it, the SMA is accessible from [the Snowflake website](https://www.snowflake.com/en/migrate-to-the-cloud/migration-accelerator/). It is also accessible from the Migrations page in SnowSight in your Snowflake account:
+If you have not already downloaded it, the SMA is accessible from [the Snowflake website](/en/migrate-to-the-cloud/migration-accelerator/). It is also accessible from the Migrations page in SnowSight in your Snowflake account:
 
 ![sma1](./assets/sma1.png)
 
-Once you download the tool, install it! There is more information on [installing the SMA](https://www.snowflake.com/en/migrate-to-the-cloud/migration-accelerator/) in the SMA documentation.
+Once you download the tool, install it! There is more information on [installing the SMA](/en/migrate-to-the-cloud/migration-accelerator/) in the SMA documentation.
 
 **Using the Snowpark Migration Accelerator**
 

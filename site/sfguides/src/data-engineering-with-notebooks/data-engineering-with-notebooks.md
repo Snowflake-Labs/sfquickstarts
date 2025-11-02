@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Notebooks are a very popular tool that are used to do everything from ad-hoc exploration of data to productionalized data engineering pipelines. While Notebooks can contain a mix of both Python and SQL, most of the time they're used for Python coding. In my previous Quickstart I detailed [how to build Python data engineering pipelines in Snowflake](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/) using Visual Studio Code, from a lower-level developer perspective.
+Notebooks are a very popular tool that are used to do everything from ad-hoc exploration of data to productionalized data engineering pipelines. While Notebooks can contain a mix of both Python and SQL, most of the time they're used for Python coding. In my previous Quickstart I detailed [how to build Python data engineering pipelines in Snowflake](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/) using Visual Studio Code, from a lower-level developer perspective.
 
 This Quickstart will focus on how to build Python data engineering pipelines using Snowflake native Notebooks! Additionally, it will provide all the details needed to manage and deploy those Notebooks through an automated CI/CD pipeline from development to production! Here's a quick visual overview of what we'll accomplish in this Quickstart:
 
@@ -571,9 +571,9 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 
 ### Related Resources
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks)
-* [Data Engineering Pipelines with Snowpark Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/) (Advanced Quickstart)
+* [Data Engineering Pipelines with Snowpark Python](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/) (Advanced Quickstart)
 * [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 * [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
-* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/07/Getting-Started-with-Data-Engineering-using-Snowflake-Notebooks.pdf)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/07/Getting-Started-with-Data-Engineering-using-Snowflake-Notebooks.pdf)
 * [Read Medium Blog](https://medium.com/snowflake/building-data-engineering-pipelines-with-snowpark-python-e14f2b525510)
 * [Watch the Demo](https://youtu.be/1zdciOSf8mA?list=TLGGrn_7WMr68zAyNDA5MjAyNQ)

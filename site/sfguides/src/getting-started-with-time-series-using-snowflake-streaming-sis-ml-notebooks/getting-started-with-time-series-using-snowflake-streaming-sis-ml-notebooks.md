@@ -2658,8 +2658,8 @@ DROP USER USER_HOL_TIMESERIES;
 
 
 #### Snowflake Blog
-- [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](https://www.snowflake.com/blog/time-series-analytics-asof-join-generally-available/)
-- [Snowflake Blog](https://www.snowflake.com/blog/)
+- [Accelerate Your Time Series Analytics with Snowflake’s ASOF JOIN, Now Generally Available](/blog/time-series-analytics-asof-join-generally-available/)
+- [Snowflake Blog](/blog/)
 
 
 #### Snowflake Community

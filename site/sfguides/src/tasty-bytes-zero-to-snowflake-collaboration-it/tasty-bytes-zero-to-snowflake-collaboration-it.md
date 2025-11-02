@@ -17,7 +17,7 @@ Questo quickstart Tasty Bytes - Da zero a Snowflake è dedicato alla collaborazi
 
 
 ### Prerequisiti
-- Prima di iniziare, assicurati di avere completato il [**quickstart Introduzione a Tasty Bytes**](/guide/tasty_bytes_introduction_it/index.html), che spiega nei dettagli come configurare un account di prova e implementare l’ambiente base di Tasty Bytes necessario per completare questo quickstart.
+- Prima di iniziare, assicurati di avere completato il [**quickstart Introduzione a Tasty Bytes**](/it/developers/guides/tasty-bytes-introduction-it/), che spiega nei dettagli come configurare un account di prova e implementare l’ambiente base di Tasty Bytes necessario per completare questo quickstart.
 
 ### Cosa imparerai
 - Come accedere al Marketplace Snowflake
@@ -109,7 +109,7 @@ Osservando questa schermata vediamo che effettivamente non sono registrate vendi
 ### Panoramica
 Come abbiamo visto nella sezione precedente, sembra che ad Amburgo non siano state effettuate vendite dal 16 al 21 febbraio. I nostri dati di prima parte non contengono molte altre informazioni utili, ma deve esserci stato qualche motivo di più ampia portata. 
         
-Un’idea che possiamo immediatamente esplorare utilizzando il [Marketplace Snowflake](https://www.snowflake.com/it/data-cloud/marketplace/) sono le condizioni meteorologiche estreme, con un data product pubblico e gratuito fornito da Weather Source.
+Un’idea che possiamo immediatamente esplorare utilizzando il [Marketplace Snowflake](/it/data-cloud/marketplace/) sono le condizioni meteorologiche estreme, con un data product pubblico e gratuito fornito da Weather Source.
 
 ### Passaggio 1 - Acquisire Weather Source LLC: frostbyte dal Marketplace Snowflake
 Il Marketplace Snowflake è il luogo migliore per trovare, provare e acquistare i dati e le applicazioni che ti servono per le tue soluzioni aziendali innovative. In questo passaggio accederemo al data product [Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte) per indagare ulteriormente sul calo delle vendite ad Amburgo.
@@ -377,6 +377,6 @@ Se desideri ripetere questo quickstart, usa gli script di ripristino alla fine d
 ### Fasi successive
 Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.
 
-- ### [Quickstart Powered by Tasty Bytes](/guide/tasty_bytes_introduction_it/index.html#3)
+- ### [Quickstart Powered by Tasty Bytes](/it/developers/guides/tasty-bytes-introduction-it/)
 
 

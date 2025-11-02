@@ -12,7 +12,7 @@ authors: James Sun, Snowflake
 ## Overview
 
 ### Overview
-In a healthcare claims processing system, [Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) can serve as an effective front-end database due to its high scalability, low-latency performance, and schema flexibility. It allows real-time ingestion and access to diverse, evolving claim event data such as status changes, user interactions, or system-generated events without the constraints of a rigid relational schema. This is especially valuable in front-end applications where speed and adaptability are critical. On the back end, Snowflake complements DynamoDB by handling complex analytics, aggregations, data sharing and reporting. Claim data can be streamed in near real-time from DynamoDB into Snowflake via [Openflow](https://www.snowflake.com/en/product/features/openflow/) seamlessly, where advanced SQL queries, joins, and business intelligence tools can be applied to support audits, compliance checks, long-term trends and securely shared with teams across the globe. Together, this architecture balances speed and flexibility at the front with powerful analytics and data integrity at the back.
+In a healthcare claims processing system, [Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) can serve as an effective front-end database due to its high scalability, low-latency performance, and schema flexibility. It allows real-time ingestion and access to diverse, evolving claim event data such as status changes, user interactions, or system-generated events without the constraints of a rigid relational schema. This is especially valuable in front-end applications where speed and adaptability are critical. On the back end, Snowflake complements DynamoDB by handling complex analytics, aggregations, data sharing and reporting. Claim data can be streamed in near real-time from DynamoDB into Snowflake via [Openflow](/en/product/features/openflow/) seamlessly, where advanced SQL queries, joins, and business intelligence tools can be applied to support audits, compliance checks, long-term trends and securely shared with teams across the globe. Together, this architecture balances speed and flexibility at the front with powerful analytics and data integrity at the back.
 
 This guickstart will walk you through how to build CDC pipelines to synchronize the front-end DynamoDB and back-end Snowflake tables for processing real-time insurance claims
 
@@ -44,7 +44,7 @@ Before proceeding with the quickstart, ensure you have:
    - A Snowflake account in one of the AWS commercial [regions](https://docs.snowflake.com/en/user-guide/intro-regions#label-na-general-regions). If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstart-insurance-claims-dynamodb-openflow-cdc).
    - An AWS account with permissions to create the required resources using [Cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
    - Access to the AWS Management Console and [AWS CLI](https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-configure.html) configured with required credentials.
-   - A Snowflake account with permissions to run queries and create [Openflow](https://www.snowflake.com/en/product/features/openflow/) objects
+   - A Snowflake account with permissions to run queries and create [Openflow](/en/product/features/openflow/) objects
 
 2. **Network Infrastructure**
    - An AWS VPC with at least one subnet that has internet access
@@ -56,7 +56,7 @@ Before proceeding with the quickstart, ensure you have:
 
 4. **An Openflow deployment either on AWS BYOC or Snowflake VPC with Snowpark Container Services (SPCS) versions**
    - Refer to this [blog](https://medium.com/@rahul.reddy.ai/your-step-by-step-practical-guide-to-setting-up-snowflake-openflow-on-aws-byoc-07e5b7be5056) to deploy Openflow on AWS BYOC.
-   - Openflow - Snowflake Deployment, using Snowpark Container Services (SPCS), provides a streamlined and integrated solution for connectivity. Because SPCS is a self-contained service within Snowflake, it’s easy to deploy and manage and offers a convenient and cost-effective environment for running your data flows. Refer to this [quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/) to get started.
+   - Openflow - Snowflake Deployment, using Snowpark Container Services (SPCS), provides a streamlined and integrated solution for connectivity. Because SPCS is a self-contained service within Snowflake, it’s easy to deploy and manage and offers a convenient and cost-effective environment for running your data flows. Refer to this [quickstart](/en/developers/guides/getting-started-with-openflow-spcs/) to get started.
 
 5. **A Snowflake role that can access or create Openflow runtimes**
    - Refer to this [doc](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow) for more details.

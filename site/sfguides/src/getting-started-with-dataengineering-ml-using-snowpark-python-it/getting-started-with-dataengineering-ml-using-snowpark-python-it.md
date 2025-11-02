@@ -32,7 +32,7 @@ Il set di librerie e runtime in Snowflake che consente di distribuire ed elabora
 
 **Costrutti runtime flessibili**: Snowpark fornisce costrutti runtime flessibili che consentono agli utenti di inserire ed eseguire logica personalizzata. Gli sviluppatori possono creare in modo fluido pipeline di dati, modelli ML e applicazioni basate sui dati utilizzando User Defined Function e stored procedure.
 
-Scopri di più su [Snowpark](https://www.snowflake.com/it/data-cloud/snowpark/).
+Scopri di più su [Snowpark](/it/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -613,8 +613,8 @@ Vogliamo conoscere la tua opinione su questo quickstart! Inviaci i tuoi commenti
 ### Risorse correlate
 
 - [Codice sorgente su GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Avanzato: Snowpark per Python - Guida al data engineering](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Avanzato: Snowpark per Python - Guida al machine learning](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Avanzato: Snowpark per Python - Guida al data engineering](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Avanzato: Snowpark per Python - Guida al machine learning](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark per Python - Demo](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark per Python - Guida allo sviluppo](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Documentazione Streamlit](https://docs.streamlit.io/)

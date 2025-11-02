@@ -20,7 +20,7 @@ The Processing and User Interface Layers will be built using Node.js. The datase
 
 The application itself will be built using containers and deployed to Snowflake. Snowpark Container Services (SPCS) allows the running of containerized workloads directly within Snowflake, ensuring that data doesn’t need to be moved out of the Snowflake environment for processing. 
 
-This lab builds directly on the same code and solution as the [Build a Data App with Snowflake](https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/) quickstart, for in depth walk-through of the use case and the data, and how the application is built using Node Express and React you can review each step in that guide as well. 
+This lab builds directly on the same code and solution as the [Build a Data App with Snowflake](/en/developers/guides/build-a-data-app-with-snowflake/) quickstart, for in depth walk-through of the use case and the data, and how the application is built using Node Express and React you can review each step in that guide as well. 
 
 ### Prerequisites
 - A Snowflake account, and familiarity with the Snowsight interface
@@ -204,7 +204,7 @@ order by month(order_ts);
 ```
 ### Step 2.4 Further explore the Data
 
-To understand and explore the data even more, you can look through the [Quickstart for Building a Data Application - Lab 2: Queries](https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/) that offers a number of steps to explore it.
+To understand and explore the data even more, you can look through the [Quickstart for Building a Data Application - Lab 2: Queries](/en/developers/guides/build-a-data-app-with-snowflake/) that offers a number of steps to explore it.
 
 If you already have done that, you can move directly to the next step in this guide. If not, you can continue below and explore the data further.
 
@@ -451,7 +451,7 @@ CREATE STAGE tasty_app_stage DIRECTORY = ( ENABLE = true );
 
 ### Step 3.4 Create external users role and users for the external access
 
-In order to allow the application users to access the application we can create dedicated `USERS` for each user. In the guide [Build a Data App with Snowflake](https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/) users were actually stored in a `USERS` table that was created, where hashed passwords were stored and could be used to check the login from the frontend. Create that table by running the following SQL:
+In order to allow the application users to access the application we can create dedicated `USERS` for each user. In the guide [Build a Data App with Snowflake](/en/developers/guides/build-a-data-app-with-snowflake/) users were actually stored in a `USERS` table that was created, where hashed passwords were stored and could be used to check the login from the frontend. Create that table by running the following SQL:
 
 ```sql
 -- Create Users table for the Website
@@ -618,7 +618,7 @@ This should return the following JSON response:
 
 Currently there is no authentication of the user calling this endpoint. We will change that to take advantage of the mechanism built into Snowflake Container Services.
 
-In the earlier guide [Build a Data App with Snowflake](https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/) authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provided user name and password, and the service looked that up in the database (the `USERS` table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client's browser, even if the code is served from the frontend service, so calls to the API are coming from the end users' browsers, not from the internal service hosting the frontend.
+In the earlier guide [Build a Data App with Snowflake](/en/developers/guides/build-a-data-app-with-snowflake/) authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provided user name and password, and the service looked that up in the database (the `USERS` table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client's browser, even if the code is served from the frontend service, so calls to the API are coming from the end users' browsers, not from the internal service hosting the frontend.
 
 > aside positive
 >
@@ -783,7 +783,7 @@ docker image rm backend-backend_service
 
 ### Step 4.3 Connecting to Snowflake data
 
-With this update, we can now look at how the backend service can access the data in the Snowflake tables and views. In the self hosted version of the code (as in the [Build a Data App with Snowflake](https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/)) we use a key pair authentication schema to connect the service to Snowflake. For a service running on Snowpark Container Services, we can benefit from the service already running on Snowflake and we can use a provided and pre-loaded authentication model based on OAuth. This is available for every service running on SPCS.
+With this update, we can now look at how the backend service can access the data in the Snowflake tables and views. In the self hosted version of the code (as in the [Build a Data App with Snowflake](/en/developers/guides/build-a-data-app-with-snowflake/)) we use a key pair authentication schema to connect the service to Snowflake. For a service running on Snowpark Container Services, we can benefit from the service already running on Snowflake and we can use a provided and pre-loaded authentication model based on OAuth. This is available for every service running on SPCS.
 
 Open the file `connect.js` and look at how the code is sending the options for the connection to Snowflake:
 
@@ -1518,6 +1518,6 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs)
 - [Snowpark Container Services documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - [Snowpark Container Services tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials)
-- [Quickstart: Build a Data App with Snowflake](https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/)
+- [Quickstart: Build a Data App with Snowflake](/en/developers/guides/build-a-data-app-with-snowflake/)
 
 <!-- ------------------------ -->

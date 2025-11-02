@@ -36,7 +36,7 @@ Ingest data into structured and unstructured data stores then:
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
 - Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account.
 
 ### What You'll Learn
@@ -730,7 +730,7 @@ This quickstart is just that, a quick way to get you started with using Amazon Q
 ### Resources
 There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together:
 
-- [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
+- [Snowflake Cortex](/en/data-cloud/cortex/)
 
 - [Amazon Q](https://aws.amazon.com/q/?trk=c570e8a2-ec3c-4968-baa4-f8537e37dd1d&sc_channel=ps&s_kwcid=AL!4422!10!71949557907688!71950102400240&ef_id=07cc246a6d4218358de8430ee23fc18e:G:s&msclkid=07cc246a6d4218358de8430ee23fc18e)
 

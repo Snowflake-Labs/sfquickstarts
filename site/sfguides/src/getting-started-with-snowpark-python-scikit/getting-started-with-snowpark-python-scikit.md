@@ -29,7 +29,7 @@ Snowflake currently provides Snowpark libraries for three languages: Java, Pytho
 
 ![Snowpark](assets/snowpark_python0.png)
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+Learn more about [Snowpark](/snowpark/).
 
 ### What is scikit-learn?
 
@@ -214,12 +214,12 @@ Congratulations! You've successfully completed the lab using Snowpark for Python
 
 - [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/predict-home-prices-using-machine-learning/)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn)
-- [Advanced: Snowpark for Python Data Engineering Guide](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Advanced: Snowpark for Python Data Engineering Guide](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Advanced: Snowpark for Python Machine Learning Guide](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Industry-Solutions-Use-Predict-Home-Prices-using-ML.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/03/Industry-Solutions-Use-Predict-Home-Prices-using-ML.pdf)
 - [Read the Blog](https://medium.com/snowflake/building-ml-workflows-with-scikit-learn-and-snowflake-e879234edb0d)
 - [Watch the Demo](https://youtu.be/zbKLOw66LQk?list=TLGGlDtv7VvSbXUyNDA5MjAyNQ)
 

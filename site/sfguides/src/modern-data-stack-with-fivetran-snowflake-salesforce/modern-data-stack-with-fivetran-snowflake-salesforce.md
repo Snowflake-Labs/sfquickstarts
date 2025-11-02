@@ -217,9 +217,9 @@ Here's what we did:
 - But don't stop here.  Take this lab to the next level by adding more tiles and building more insights on your own!
 
 ### Snowflake
-See what other customers are [doing with Snowflake](https://www.snowflake.com/en/why-snowflake/customers/) and how Snowflake is the cloud data platform for your [data workloads](https://snowflake.com)!
+See what other customers are [doing with Snowflake](/en/why-snowflake/customers/) and how Snowflake is the cloud data platform for your [data workloads](https://snowflake.com)!
 
 ### Fivetran
-See why [Fivetran](https://fivetran.com) is the ultimate automated data movement platform for any [data source](https://www.fivetran.com/connectors) and why Fivetran is a [Snowflake Elite Partner](https://www.snowflake.com/partners/technology-partners/) and Snowflake Data Integration Partner of the year!
+See why [Fivetran](https://fivetran.com) is the ultimate automated data movement platform for any [data source](https://www.fivetran.com/connectors) and why Fivetran is a [Snowflake Elite Partner](/partners/technology-partners/) and Snowflake Data Integration Partner of the year!
 
 Fivetran's mission is to "Make data as accessible and reliable as electricity!"  [Let us show you how we do it!](https://go.fivetran.com/demo)

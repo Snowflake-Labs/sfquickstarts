@@ -436,7 +436,7 @@ Last but not least, please check your email for continued guidance and tips thro
 
 ### Related Resources
 
-- [Information on Snowflake Horizon](https://www.snowflake.com/en/data-cloud/horizon/)
+- [Information on Snowflake Horizon](/en/data-cloud/horizon/)
 - [Introduction to Data Quality and Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
 - [Using Dynamic Data Masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-use)
 - [Alation Data Intelligence Platform](https://www.alation.com/product/data-intelligence-platform/)

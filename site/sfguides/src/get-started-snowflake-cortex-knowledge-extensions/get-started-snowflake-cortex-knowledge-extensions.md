@@ -68,7 +68,7 @@ We'll build the application's front-end using Streamlit in Snowflake.
 
 Cortex Knowledge Extensions (CKEs) allow publishers to bring their documents (e.g. news articles, market research reports, books, articles, etc.) to customers in their generative AI applications (e.g. chat interfaces, agentic platforms, etc.).
 
-CKEs are shared Cortex Search Services on the Snowflake Marketplace that integrate with Cortex generative AI applications following the [retrieval augmented generation (RAG) pattern](https://www.snowflake.com/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/). 
+CKEs are shared Cortex Search Services on the Snowflake Marketplace that integrate with Cortex generative AI applications following the [retrieval augmented generation (RAG) pattern](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/). 
 
 Here is how it works:
 

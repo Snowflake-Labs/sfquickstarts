@@ -24,11 +24,11 @@ DevOps is concerned with automating the development, release and maintenance of 
 - Test management (CI/CD)
 - Release management (CI/CD)
 
-This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub for the CI/CD and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
+This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub for the CI/CD and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
 > aside positive
 > 
->  **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](https://www.snowflake.com/en/developers/guides/terraforming-snowflake/).
+>  **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](/en/developers/guides/terraforming-snowflake/).
 
 Let’s begin with a brief overview of GitHub and Terraform.
 
@@ -447,5 +447,5 @@ With that you should now have a working CI/CD pipeline in GitHub Actions and som
 
 * [Terraform](https://www.terraform.io/)
 * [Chan Zuckerberg Terraform Provider for Snowflake](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest)
-* [Terraforming Snowflake Quickstart](https://www.snowflake.com/en/developers/guides/terraforming-snowflake/)
+* [Terraforming Snowflake Quickstart](/en/developers/guides/terraforming-snowflake/)
 * [GitHub Actions](https://github.com/features/actions)

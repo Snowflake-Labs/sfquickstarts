@@ -32,7 +32,7 @@ El conjunto de bibliotecas y tiempos de ejecución de Snowflake para implementar
 
 **Estructuras de tiempo de ejecución flexibles**: Snowpark proporciona constructos de tiempo de ejecución flexibles que permiten a los usuarios introducir y ejecutar la lógica personalizada. Los desarrolladores pueden crear flujos de datos, modelos de ML y aplicaciones de datos sin problemas gracias a las UDF y mediante procedimientos almacenados.
 
-Obtén más información sobre [Snowpark](https://www.snowflake.com/es/data-cloud/snowpark/).
+Obtén más información sobre [Snowpark](/es/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -600,8 +600,8 @@ Nos encantaría conocer tu opinión sobre esta quickstart guide. Puedes enviárn
 ### Recursos relacionados
 
 - [Código fuente en GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Avanzado: Guía de ingeniería de datos de Snowpark para Python](https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
-- [Avanzado: Guía de ML de Snowpark para Python](https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/)
+- [Avanzado: Guía de ingeniería de datos de Snowpark para Python](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
+- [Avanzado: Guía de ML de Snowpark para Python](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Demos de Snowpark para Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guía de Snowpark para Python para desarrolladores](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)

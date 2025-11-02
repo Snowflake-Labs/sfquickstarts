@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ## Overview 
 
 Many customers use Snowflake as the basis of their [Customer
-360](https://www.snowflake.com/enable-customer-360-with-snowflake/) -
+360](/enable-customer-360-with-snowflake/) -
 a single source of truth for all data about customers - to power
 marketing use cases. Often, it is valuable to use data about existing
 customers to make predictions about new customers. When a new customer
@@ -95,7 +95,7 @@ For the purposes of this Quickstart, we will generate an example table
 containing mock customer data. In a real-world system, aggregating
 together the data needed to build the model would be an important
 step. The data might include information from disparate systems in the
-enterprise, as well as 2nd- and 3rd-party data from the [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/).
+enterprise, as well as 2nd- and 3rd-party data from the [Snowflake Marketplace](/en/data-cloud/marketplace/).
 
 For this demo, however, we will directly generate mock customer
 data. In addition, we will generate the data such that there is an

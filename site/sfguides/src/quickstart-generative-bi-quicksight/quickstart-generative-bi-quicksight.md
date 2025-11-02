@@ -10,7 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Generative BI Dashboard with Amazon QuickSight and Amazon Q
 
 ## Overview
-In this guide, We will build an end-to-end Generative BI dashboard using [Amazon Q in QuickSight](https://aws.amazon.com/quicksight/q/), with [Snowflake AI & Data Cloud](https://www.snowflake.com/en/) as the data source. We will use the  Sales dataset to explore sales trends, regional performance, and customer insights with the power of Natural Language Q&A and Executive Summaries.
+In this guide, We will build an end-to-end Generative BI dashboard using [Amazon Q in QuickSight](https://aws.amazon.com/quicksight/q/), with [Snowflake AI & Data Cloud](/en/) as the data source. We will use the  Sales dataset to explore sales trends, regional performance, and customer insights with the power of Natural Language Q&A and Executive Summaries.
 
 This guide walks through:
 

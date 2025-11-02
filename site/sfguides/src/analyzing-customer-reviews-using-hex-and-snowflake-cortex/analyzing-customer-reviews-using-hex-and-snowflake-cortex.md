@@ -12,7 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-This quickstart guide has been slightly modified from the original quickstart guide titled [Customer Reviews Analytics using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/customer-reviews-analytics-using-snowflake-cortex/).
+This quickstart guide has been slightly modified from the original quickstart guide titled [Customer Reviews Analytics using Snowflake Cortex](/en/developers/guides/customer-reviews-analytics-using-snowflake-cortex/).
 
 We will be exploring customer review data using Snowflake Cortex and Hex. Specifically, we will create a data app that leverages Snowflake's Cortex LLM functions to better understand our customer feedback. As a result we will then be able to provide recommendations and improvements to our stakeholders. 
 
@@ -528,5 +528,5 @@ Congratulations on completing this lab! You’ve successfully leveraged Hex and 
 * [The Future of Analytics is Multi-Modal](https://hex.tech/blog/multi-modal-analytics/)
 * [Customer Behavior Analysis and New Product Sales Forecasting](https://hex.tech/templates/snowpark/analysis-of-customer-purchasing-behavior/)
 * [Snowflake Cortex Documentaion](https://docs.snowflake.com/en/guides-overview-ai-features)
-* [Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation](https://www.snowflake.com/en/developers/guides/getting-started-with-synthetic-data-and-distillation-for-llms/)
+* [Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation](/en/developers/guides/getting-started-with-synthetic-data-and-distillation-for-llms/)
 

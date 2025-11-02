@@ -409,4 +409,4 @@ Congratulations, you have completed this Quickstart for a quick overview of writ
 - How to query for incremental reach.
 
 ### Related Resources
-- [Quickstart: Build an Ad Tag in Python on AWS](https://www.snowflake.com/en/developers/guides/build-an-ad-tag-in-python-on-aws/)
+- [Quickstart: Build an Ad Tag in Python on AWS](/en/developers/guides/build-an-ad-tag-in-python-on-aws/)

@@ -906,10 +906,10 @@ Related Resources
 
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/404.html/)
-- [Getting started with Snowflake](https://www.snowflake.com/en/developers/guides/)
+- [Getting started with Snowflake](/en/developers/guides/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
-- [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
-- [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
+- [Snowflake for Data Sharing](/Workloads/data-sharing/)
+- [Snowflake Marketplace](/en/data-cloud/marketplace/)
 - [Amazon Managed Streaming for Apache Kafka (MSK)](https://aws.amazon.com/msk/)
 
 

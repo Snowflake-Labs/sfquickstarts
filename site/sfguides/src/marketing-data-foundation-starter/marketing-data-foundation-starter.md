@@ -215,5 +215,5 @@ Want to learn more about the tools and technologies used by your app? Check out 
 
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-* [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
-* [Getting Started with Snow CLI](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cli/)
+* [Snowpark Guide for Data Engineers](/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Getting Started with Snow CLI](/en/developers/guides/getting-started-with-snowflake-cli/)

@@ -22,7 +22,7 @@ SnowConvert AI is an AI-powered solution for migrating entire data ecosystems, i
 
 ![](assets/image_02.png)
 
-In contrast, the [Snowpark Migration Accelerator](https://www.snowflake.com/en/data-cloud/snowpark/migration-accelerator/) is a specialized, free tool for migrations from Databricks or another Spark platform. Briefly, it converts existing Apache Spark codebases (in Python or Scala) to leverage the Snowpark API.
+In contrast, the [Snowpark Migration Accelerator](/en/data-cloud/snowpark/migration-accelerator/) is a specialized, free tool for migrations from Databricks or another Spark platform. Briefly, it converts existing Apache Spark codebases (in Python or Scala) to leverage the Snowpark API.
 
 ![](assets/image_03.png)
 
@@ -86,7 +86,7 @@ By the end of this quickstart guide, you will have a complete understanding of t
 
 ### System Requirements
 
-Before installing [SnowConvert AI](https://www.snowflake.com/en/migrate-to-the-cloud/snowconvert-ai/), ensure your system meets the minimum requirements:
+Before installing [SnowConvert AI](/en/migrate-to-the-cloud/snowconvert-ai/), ensure your system meets the minimum requirements:
 
 **Windows:**
 
@@ -105,13 +105,13 @@ Before installing [SnowConvert AI](https://www.snowflake.com/en/migrate-to-the-c
 
 ### Obtaining SnowConvert AI
 
-SnowConvert AI can be downloaded from this [link.](https://www.snowflake.com/en/migrate-to-the-cloud/snowconvert-ai/) It's highly recommended to complete the free course "[SnowConvert AI for Conversion](https://training.snowflake.com/lmt/clmsCatalogDetails.prMain?site=sf&in_offeringId=130596852)" available at Snowflake Training, which provides both overview and hands-on technical training.
+SnowConvert AI can be downloaded from this [link.](/en/migrate-to-the-cloud/snowconvert-ai/) It's highly recommended to complete the free course "[SnowConvert AI for Conversion](https://training.snowflake.com/lmt/clmsCatalogDetails.prMain?site=sf&in_offeringId=130596852)" available at Snowflake Training, which provides both overview and hands-on technical training.
 
 > aside positive
 > IMPORTANT:
 > - SnowConvert AI is free for all users  
 > - Download Snowconvert AI from any Snowflake account via Snowsight by navigating to Ingestion/Migrations in the left-hand menu.   
-> - Professional services are available for additional migration support. Learn more and contact a representative [here](https://www.snowflake.com/en/solutions/professional-services/). 
+> - Professional services are available for additional migration support. Learn more and contact a representative [here](/en/solutions/professional-services/). 
 
 ### Installing SnowConvert AI
 
@@ -512,7 +512,7 @@ SnowConvert AI facilitates the direct deployment of converted code objects and s
 > 
 > **Handling EWI Errors:**   
 > SnowConvert AI is designed to flag these high-impact errors, but cannot always fix them. To resolve an EWI, you must:  
-> 1. **Examine the code snippet** in the SnowConvert AI interface that triggered the EWI or better yet in your preferred Source Code IDE. [Learn more](https://www.snowflake.com/en/developers/guides/end2endmigration/)  
+> 1. **Examine the code snippet** in the SnowConvert AI interface that triggered the EWI or better yet in your preferred Source Code IDE. [Learn more](/en/developers/guides/end2endmigration/)  
 > 2. **Manually modify the converted source code** to fix the issue..  
 > 3. **Unit test** on the corrected file.  
 >
@@ -595,7 +595,7 @@ $$;
 
 SnowConvert AI provides automated data migration capabilities to transfer actual data from Teradata, Oracle, SQL Server, Amazon Redshift, Synapse, Sybase, BigQuery, Netezza, Postgres, Greenplum and Databricks SQL source tables to deployed Snowflake structures, with platform-specific optimization strategies.
 
-For migrations from Databricks or another Spark platform, you’ll use [Snowpark Migration Accelerator](https://www.snowflake.com/en/data-cloud/snowpark/migration-accelerator/).
+For migrations from Databricks or another Spark platform, you’ll use [Snowpark Migration Accelerator](/en/data-cloud/snowpark/migration-accelerator/).
 
 ### Amazon Redshift Data Migration
 
@@ -1042,9 +1042,9 @@ This guide has walked you through the complete lifecycle of data warehouse migra
 **Articles:**
 
 * [SnowConvert AI for Conversion Training Course](https://training.snowflake.com/lmt/!clmsLink.dt?site=sf&region=us&lang=en-us&type=O&id=130596852) - Comprehensive hands-on training  
-* [What is Data Migration? Types, Strategy & Best Practices](https://www.snowflake.com/en/fundamentals/what-is-data-migration/) - Learn what data migration is, including types, strategies, best practices and data migration solutions for smooth data transfer and management.  
-* [Best Practices for Migrating Historical Data to Snowflake](https://www.snowflake.com/en/blog/best-practices-for-migrating-historical-data-to-snowflake/) - Best practices for extracting, transferring, uploading, and validating data when migrating to Snowflake.  
-* [9 Best Practices for Transitioning From On-Premises to Cloud with Snowflake](https://www.snowflake.com/en/blog/best-practices-transitioning-on-premises-to-cloud/) - This article provides nine best practices for a smooth and efficient transition from on-premises data systems to Snowflake's cloud data platform.
+* [What is Data Migration? Types, Strategy & Best Practices](/en/fundamentals/what-is-data-migration/) - Learn what data migration is, including types, strategies, best practices and data migration solutions for smooth data transfer and management.  
+* [Best Practices for Migrating Historical Data to Snowflake](/en/blog/best-practices-for-migrating-historical-data-to-snowflake/) - Best practices for extracting, transferring, uploading, and validating data when migrating to Snowflake.  
+* [9 Best Practices for Transitioning From On-Premises to Cloud with Snowflake](/en/blog/best-practices-transitioning-on-premises-to-cloud/) - This article provides nine best practices for a smooth and efficient transition from on-premises data systems to Snowflake's cloud data platform.
 
 **Documentation:**
 
@@ -1056,11 +1056,11 @@ This guide has walked you through the complete lifecycle of data warehouse migra
 
 Now that you have successfully migrated your data warehouse to Snowflake using SnowConvert AI, consider these next steps to fully leverage the power of the Snowflake Data Cloud:
 
-* **Explore Advanced Snowflake Features:** Dive deeper into Snowflake's capabilities, such as advanced analytics with [Snowpark](https://www.snowflake.com/en/product/features/snowpark/), data sharing with other organizations, and building data applications directly on Snowflake.  
+* **Explore Advanced Snowflake Features:** Dive deeper into Snowflake's capabilities, such as advanced analytics with [Snowpark](/en/product/features/snowpark/), data sharing with other organizations, and building data applications directly on Snowflake.  
 * **Integrate with BI Tools:** Connect your newly migrated Snowflake data to your existing or new [Business Intelligence (BI) tools](https://docs.snowflake.com/en/user-guide/ecosystem-bi) (e.g., Power BI, Tableau, Looker) to create insightful dashboards and reports.  
 * **Optimize Performance and Cost:** Continuously monitor your Snowflake usage to [optimize performance and costs](https://docs.snowflake.com/en/guides-overview-performance).  
 * **Implement Data Governance and Security:** Establish robust [data governance](https://docs.snowflake.com/en/guides-overview-govern) policies and enhance security measures within Snowflake using features like row-access policies, column-level security, and data masking.  
-* **Automate Data Pipelines:** Transition to automated data ingestion and transformation pipelines using Snowflake features like [Openflow](https://www.snowflake.com/en/product/features/openflow/) and [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro).  
+* **Automate Data Pipelines:** Transition to automated data ingestion and transformation pipelines using Snowflake features like [Openflow](/en/product/features/openflow/) and [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro).  
 * **Leverage AI/ML Capabilities:** Integrate Snowflake with other cloud services and tools for [machine learning](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview) and data science.   
-* **Application development:** [Native Apps](https://www.snowflake.com/en/product/features/native-apps/) and [Streamlit](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) Apps for building interactive data apps.   
+* **Application development:** [Native Apps](/en/product/features/native-apps/) and [Streamlit](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) Apps for building interactive data apps.   
 * **Stay Updated with Snowflake Innovations:** Regularly check Snowflake's release notes, documentation, and community forums to stay informed about new features and best practices.

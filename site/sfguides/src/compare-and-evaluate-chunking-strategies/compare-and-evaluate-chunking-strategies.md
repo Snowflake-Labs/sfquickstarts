@@ -620,4 +620,4 @@ This methodology can be applied to optimize any RAG application, helping you mak
 Read more:
 
 - [AI Observability in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability)
-- [Long Context Isn't All You Need: Impact of Retrieval and Chunking on Finance RAG](https://www.snowflake.com/en/engineering-blog/impact-retrieval-chunking-finance-rag/)
+- [Long Context Isn't All You Need: Impact of Retrieval and Chunking on Finance RAG](/en/engineering-blog/impact-retrieval-chunking-finance-rag/)
