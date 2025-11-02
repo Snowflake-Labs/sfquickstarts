@@ -11,7 +11,7 @@ on:
 jobs:
   validate_and_stage:
     # Only run for PRs from branches in this repo (not forks) into master
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.base.ref == 'master'
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.base.ref == 'github-actions'
     runs-on: ubuntu-latest
     environment:
       name: staging

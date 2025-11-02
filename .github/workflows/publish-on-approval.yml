@@ -9,7 +9,7 @@ jobs:
     # Only on approvals for PRs into master from branches in this repo
     if: >-
       github.event.review.state == 'approved' &&
-      github.event.pull_request.base.ref == 'master' &&
+      github.event.pull_request.base.ref == 'github-actions' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     environment:
