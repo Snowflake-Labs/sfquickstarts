@@ -6,10 +6,6 @@ on:
     branches: [master, github-actions]
     paths:
       - 'site/sfguides/src/**'
-    paths-ignore:
-      - 'site/sfguides/src/_*/**'
-    paths:
-      - 'site/sfguides/src/**'
       - '!site/sfguides/src/_*/**'
 
 jobs:
