@@ -211,7 +211,7 @@ outcomes are strengthened by a sound governance baseline here.
 
 ### Desired outcome
 
-### A well‑architected governance posture lets organizations demonstrate that sensitive data is consistently classified and protected across environments, access is role‑based and least‑privilege, row‑level and projection rules limit exposure to the minimal necessary surface, AI/LLM interactions are scoped and logged, and regulatory obligations are mapped to Snowflake‑native controls with reproducible evidence. When governance operates in this manner, audit readiness becomes routine and does not hinder delivery.
+A well‑architected governance posture lets organizations demonstrate that sensitive data is consistently classified and protected across environments, access is role‑based and least‑privilege, row‑level and projection rules limit exposure to the minimal necessary surface, AI/LLM interactions are scoped and logged, and regulatory obligations are mapped to Snowflake‑native controls with reproducible evidence. When governance operates in this manner, audit readiness becomes routine and does not hinder delivery.
 
 ### Common anti-patterns
 
@@ -621,7 +621,7 @@ Time Objective (RTO) and Recovery Point Objective (RPO) requirements.
 
 ## Identify and assess threat
 
-### Identification phase - audit**
+### Identification phase - audit
 
 1.  Access your **Account Usage** database, which provides 365 days of
     "tamper proof" audit logs.
