@@ -1,5 +1,5 @@
 author: Well Architected Framework Team
-id: well-architected-framework-cost-optimization
+id: well-architected-framework-cost-optimization-and-finops
 categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
 language: en
 summary: The Cost Optimization Pillar focuses on integrating financial accountability and cost awareness throughout the cloud platform lifecycle. 
@@ -242,7 +242,7 @@ within acceptable cost-performance boundaries. All design decisions have
 trade-offs, and explicitly calling out the expected outcomes leads to
 streamlined decision-making in the future when outcomes are reviewed.
 
-#### ![Trade-off Analysis](media/image1.png)
+#### ![Trade-off Analysis](assets/image1.png)
 
 #### Measure business value KPIs baseline
 
@@ -443,7 +443,7 @@ into three large buckets:
   that identifies the team or cost center of the user for whom the query
   is being made.
 
-![Tagging Models](media/image4.png)
+![Tagging Models](assets/image4.png)
 
 Each model has its pros and cons, including how to handle concepts such
 as idle time or whether to show/charge back attributed or billed
@@ -702,7 +702,7 @@ Some common examples include:
   user on the platform. This helps in understanding the cost
   implications of user growth and identifying expensive usage patterns.
 
-> ![Efficiency Metrics](media/image3.png)
+![Efficiency Metrics](assets/image3.png)
 >
 > Customers can track credits (warehouse) per thousand queries within a
 > use case to see how efficiency has evolved over time and determine if
@@ -734,7 +734,7 @@ business value are we getting for our cloud spend?" Examples include:
   Impression. Creating these tailored metrics ensures the most accurate
   alignment between cloud spend and core business value.
 
-![Business Metrics](media/image5.png)  
+![Business Metrics](assets/image5.png)
 If Snowflake is in the value chain for orders, the cost per order can be
 a good metric to tie Snowflake consumption to Business Demand Drivers.
 
@@ -2021,7 +2021,7 @@ reducing the percentage of partitions in each table pruned to the
 percentage of rows returned in a query will lead to the most optimized
 cost and performance for any given workload.
 
-![Table Pruning Optimization](media/image2.png)
+![Table Pruning Optimization](assets/image2.png)
 
 A table’s Ideal pruning state is scanning the same % of rows matched as
 partitions read, minimizing unused read rows.

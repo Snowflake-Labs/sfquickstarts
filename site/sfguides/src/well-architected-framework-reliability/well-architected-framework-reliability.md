@@ -188,7 +188,7 @@ most critical LoBs, while using more cost-effective approaches for less
 critical workloads. Adherence across all levels is critical to avoid
 significant financial penalties, operational disruption, and
 reputational damage. We recommend you review
-the([<u>/en/legal/</u>](/en/legal/)),
+(the[/en/legal/](/en/legal/)),
 identify all applicable regulations, and map these requirements to
 specific Snowflake features and operational procedures to create an
 auditable compliance trail that reflects the unique needs of each
@@ -202,8 +202,7 @@ compliance and audit processes. This is a powerful advantage, as it
 significantly reduces the time, cost, and effort required to demonstrate
 that your data platform meets stringent security and reliability
 standards. We recommend you engage your compliance and security teams to
-review the reports available on the(
-[<u>https://trust.snowflake.com/</u>](https://trust.snowflake.com/)).
+review the reports available on the [https://trust.snowflake.com/](https://trust.snowflake.com/)
 You should use the HITRUST Shared Responsibility Matrix to formally
 document which controls you inherit from Snowflake, streamlining your
 audit preparations and demonstrating due diligence.
@@ -243,7 +242,7 @@ clear audit trail for regulatory bodies.
 **Implement the Shared Responsibility Model:**
 
 1.  Download and review the
-    [<u>whitepaper</u>](/en/resources/report/snowflake-shared-responsibility-model/).
+    [whitepaper](/en/resources/report/snowflake-shared-responsibility-model/).
 
 2.  Create a RACI (Responsible, Accountable, Consulted, Informed) chart
     that maps your internal teams (e.g., Data Engineering, Security,
@@ -346,8 +345,8 @@ customer-managed maintenance windows that would otherwise interrupt
 service. We recommend you leverage Snowflake's zero-downtime upgrades
 for your production accounts to ensure continuous operations. For
 customers with Enterprise Edition or higher, we advise designating
-non-production accounts for [<u>early access to new
-releases</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/intro-releases%23early-access-to-full-releases)
+non-production accounts for [early access to new
+releases](https://docs.snowflake.com/en/user-guide/intro-releases#early-access-to-full-releases)
 to test for potential impacts on critical workloads before the
 production rollout.
 
@@ -474,8 +473,8 @@ Streams, Tasks, and UDFs - to ensure that your data automation and
 governance logic is synchronized with your data, providing a complete
 and functional replica that can be activated quickly.
 
-**Account [<u>object
-resiliency</u>](https://docs.snowflake.com/en/user-guide/data-time-travel)
+**Account [object
+resiliency](https://docs.snowflake.com/en/user-guide/data-time-travel)
 (roles & users replication)**
 
 Use **failover groups** to replicate databases **and** account objects
@@ -490,8 +489,8 @@ and security gaps during a recovery event.
 
 **Time Travel**
 
-Snowflake [<u>Time
-Travel</u>](https://docs.snowflake.com/en/user-guide/data-time-travel)
+Snowflake [Time
+Travel](https://docs.snowflake.com/en/user-guide/data-time-travel)
 allows you to access historical versions of table data at any point
 within a defined retention period, which can be configured for up to 90
 days. This feature is your first and fastest line of defense against
@@ -540,8 +539,8 @@ regularly test these procedures.
 **Restore a Dropped Object:**
 
 1.  To restore a recently dropped table, simply execute the
-    [<u>UNDROP</u>
-    <u>command</u>](https://docs.snowflake.com/en/sql-reference/sql/undrop-table):
+    [UNDROP
+    command](https://docs.snowflake.com/en/sql-reference/sql/undrop-table):
     UNDROP TABLE my_table;
 
 2.  This command also works for schemas and databases.
@@ -651,8 +650,8 @@ duplication, which is non-negotiable for financial reporting, regulatory
 compliance, and other sensitive use cases. We recommend you combine
 idempotent DML logic, transactional controls, and robust error handling
 to architect pipelines that achieve exactly-once semantics. For
-real-time ingestion, we advise using [<u>Snowpipe
-Streaming</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/snowpipe-streaming-overview),
+real-time ingestion, we advise using [Snowpipe
+Streaming](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-overview),
 which is designed to provide these guarantees out of the box.
 
 ### How-To’s
@@ -667,7 +666,7 @@ which is designed to provide these guarantees out of the box.
     my_db.my_schema.my_pipe TO REPLICATION_SCHEDULE;
 
 **Write an Idempotent
-[<u>MERGE</u>](https://docs.snowflake.com/en/sql-reference/sql/merge)
+[MERGE](https://docs.snowflake.com/en/sql-reference/sql/merge)
 statement:**
 
 1.  Use a MERGE statement to either insert new rows or update existing
@@ -681,7 +680,7 @@ statement:**
 
 1.  To validate that files have been loaded and to check for errors,
     query the
-    [<u>COPY_HISTORY</u>](https://docs.snowflake.com/en/sql-reference/functions/copy_history)
+    [COPY_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/copy_history)
     function.
 
 2.  Example: SELECT \* FROM
@@ -747,8 +746,8 @@ happening, enabling rapid root-cause analysis. This is critical for
 proactively detecting anomalies, performance degradation, or data
 pipeline failures. We recommend you leverage the SNOWFLAKE.ACCOUNT_USAGE
 schema for historical analysis of query performance and credit
-consumption, and implement [<u>Snowflake
-Alerts</u>](https://docs.snowflake.com/en/guides-overview-alerts) to
+consumption, and implement [Snowflake
+Alerts](https://docs.snowflake.com/en/guides-overview-alerts) to
 trigger timely, automated notifications for specific conditions,
 ensuring your operations team is alerted to potential issues promptly.
 
@@ -760,7 +759,7 @@ whole. Their importance lies in preventing unexpected cost overruns from
 runaway queries or misconfigured workloads and ensuring that compute
 resources are available for your most critical business processes. We
 recommend you assign a
-[<u>resource-monitor</u>](https://docs.snowflake.com/en/user-guide/resource-monitors)
+[resource-monitor](https://docs.snowflake.com/en/user-guide/resource-monitors)
 to all production virtual warehouses with clearly defined credit quotas
 that align with your FinOps budgets. You should configure these monitors
 to send notifications at various consumption thresholds and to
@@ -769,8 +768,8 @@ providing a crucial safety net for cost control and resource management.
 
 **Business Continuity planning & testing**
 
-A [<u>Business
-Continuity</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/business-continuity-disaster-recovery)
+A [Business
+Continuity](https://docs.snowflake.com/en/user-guide/business-continuity-disaster-recovery)
 plan is a documented strategy outlining how your organization will
 maintain critical functions during and after a disruption. However, a
 plan is only reliable if it is regularly tested. This practice is
@@ -856,9 +855,9 @@ different cloud provider for the highest level of resilience. A
 well-architected DR plan leverages these capabilities to minimize data
 loss and downtime, ensuring business continuity for your most critical
 workloads. For a detailed overview of the concepts and features
-involved, refer to Snowflake’s documentation on [<u>business continuity
+involved, refer to Snowflake’s documentation on [business continuity
 and disaster
-recovery</u>](https://docs.snowflake.com/en/user-guide/replication-intro).
+recovery](https://docs.snowflake.com/en/user-guide/replication-intro).
 
 ### Desired outcome
 
@@ -892,8 +891,8 @@ your business requirements, to minimize your RPO.
 
 **Client Redirect**
 
-[<u>Client
-Redirect</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/business-continuity-client-redirect)
+[Client
+Redirect](https://docs.snowflake.com/en/user-guide/business-continuity-client-redirect)
 is a feature that provides seamless, automated failover for your
 applications and users. It works via a connection object that
 automatically reroutes client application traffic from a primary account
@@ -927,8 +926,8 @@ ensure they can execute them efficiently under pressure.
 
 **Backup & replication**
 
-A comprehensive [<u>data
-protection</u>](https://docs.snowflake.com/en/user-guide/data-cdp)
+A comprehensive [data
+protection](https://docs.snowflake.com/en/user-guide/data-cdp)
 strategy must address both large-scale disasters and more common
 operational failures. This is achieved by combining physical replication
 for disaster recovery with logical backups for operational recovery.

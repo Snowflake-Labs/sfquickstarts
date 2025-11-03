@@ -3,7 +3,7 @@ name: Validate abusive words and Stage
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [master]
+    branches: [master, github-actions]
     paths:
       - 'site/sfguides/src/**'
       - '!site/sfguides/src/_*/**'
@@ -11,7 +11,6 @@ on:
 jobs:
   validate_and_stage:
     # Only run for PRs from branches in this repo (not forks) into master
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.base.ref == 'master'
     runs-on: ubuntu-latest
     environment:
       name: staging
@@ -102,7 +101,6 @@ jobs:
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
-          BLOCKLIST_SECRET_STRING: ${{ secrets.PROFANITY_BLOCKLIST_SECRET }}
         run: |
           node scripts/validate-profanity.js || {
             echo "Abusive words detected. See 'profanity-report.json' for details." >&2
@@ -179,7 +177,7 @@ jobs:
 
       - name: Call Workato staging webhook
         env:
-          WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
+          WORKATO_STAGING_WEBHOOK_URL: ${{ vars.WORKATO_STAGING_URL }}
         run: |
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \

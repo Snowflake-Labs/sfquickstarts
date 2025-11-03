@@ -44,7 +44,7 @@ iterative approach:
 #### Automate infrastructure & maintenance
 
 > Eliminate manual operational tasks by codifying all infrastructure,
-> configuration, and data pipelines, leveraging Snowflake’s built-in
+> configuration, and data pipelines, leveraging Snowflake's built-in
 > automation for scaling and maintenance.
 
 #### Enhance observability & issue resolution
@@ -125,7 +125,7 @@ concentrate on four key areas that directly impact your workloads.
 - **Business Continuity & Disaster Recovery (BCDR):** This ensures your
   data and operations are resilient. It involves defining Recovery Time
   Objectives (RTO) and Recovery Point Objectives (RPO) for critical
-  workloads. Key practices include leveraging Snowflake’s cross-region
+  workloads. Key practices include leveraging Snowflake's cross-region
   data replication and failover/failback features to protect against
   regional outages and implementing regular testing of your BCDR plan to
   ensure its effectiveness.
@@ -256,9 +256,9 @@ needs without interference.
   USAGE permission *only* on the INGESTION_WH. This simple step makes it
   impossible for an ingestion process to impact analytics performance.
 
-For additional information, review the best practices in [<u>Virtual
+For additional information, review the best practices in [Virtual
 Warehouse
-Considerations</u>](https://docs.snowflake.com/en/user-guide/warehouses-considerations).
+Considerations](https://docs.snowflake.com/en/user-guide/warehouses-considerations).
 
 #### Continuously tune warehouse size for optimal performance
 
@@ -280,10 +280,10 @@ spot.
   with high AVG_RUNNING and AVG_QUEUED_LOAD times. This data points you
   directly to overloaded warehouses that are creating bottlenecks.
 
-Learn to diagnose bottlenecks using the [<u>Query
-Profile</u>](https://docs.snowflake.com/en/user-guide/ui-query-profile)
-and monitor load with the views in [<u>Monitoring Warehouse
-Load</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/warehouses-monitor-load).
+Learn to diagnose bottlenecks using the [Query
+Profile](https://docs.snowflake.com/en/user-guide/ui-query-profile)
+and monitor load with the views in [Monitoring Warehouse
+Load](https://docs.snowflake.com/en/user-guide/warehouses-monitor-load).
 
 #### Automate monitoring and alerting
 
@@ -309,9 +309,8 @@ users report them.
       send a notification directly to your team's incident management
       tool, like PagerDuty or Slack.
 
-Build your automated alert system by following the guide
-[<u>Introduction to
-Tasks</u>](https://docs.snowflake.com/en/user-guide/tasks-intro).
+Build your automated alert system by following the guide [Introduction to
+Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
 
 #### Validate your recovery plan with regular drills
 
@@ -332,9 +331,9 @@ after a major incident.
   process. This "muscle memory" ensures your team can execute flawlessly
   during a real emergency.
 
-Find the specific commands and procedures in the guide for [<u>Database
+Find the specific commands and procedures in the guide for [Database
 Replication and
-Failover/Failback</u>](https://docs.snowflake.com/en/user-guide/account-replication-intro).
+Failover/Failback](https://docs.snowflake.com/en/user-guide/account-replication-intro).
 
 ### Persona responsibilities (RACI chart)
 
@@ -344,15 +343,15 @@ operational readiness and performance.
 **Legend:** **R** - Responsible, **A** - Accountable, **C** - Consulted,
 **I** - Informed
 
-||
-||
-||
-||
-||
-||
-||
-||
-||
+| Activity | C-Level (CIO/CDO/CFO) | Chief Enterprise Architect | Engineering | Data Science | Security | SRE |
+|---|---|---|---|---|---|---|
+| Define business SLOs & budgets | A | R | I | I | I | I |
+| Design warehouse strategy | I | A | R | C | I | R |
+| Implement & configure warehouses | I | C | A | I | I | R |
+| Monitor cost & performance | I | I | R | I | I | A |
+| Optimize queries & pipelines | I | C | A | R | I | C |
+| Define & test BCDR plan | A | R | R | C | C | R |
+| Respond to performance incidents | I | I | R | I | I | A |
 
 ## Automate infrastructure & maintenance
 
@@ -1314,7 +1313,7 @@ resolved to build a more resilient system and process.
   for a permanent engineering **fix** to address the underlying issue.
 
 - **Root Cause Analysis (RCA):** Conduct a blameless post-mortem with
-  all involved parties. Perform a deep-dive analysis using Snowflake’s
+  all involved parties. Perform a deep-dive analysis using Snowflake's
   Query Profile to find the true root cause and assign owners to
   actionable follow-up items.
 
@@ -1352,8 +1351,8 @@ Centralize incident detection with ACCOUNT_USAGE views
   - LOGIN_HISTORY: To investigate potential access or security-related
     incidents.
 
-- **Snowflake Tooling**: [<u>ACCOUNT_USAGE</u>
-  <u>schema</u>](https://docs.snowflake.com/en/sql-reference/account-usage),
+- **Snowflake Tooling**: [ACCOUNT_USAGE
+  schema](https://docs.snowflake.com/en/sql-reference/account-usage),
   Snowsight Dashboards, Snowflake Alerts.
 
 #### Isolate and mitigate performance incidents immediately 
@@ -1373,7 +1372,7 @@ adjusting compute resources dynamically.
   other running queries unaffected.
 
 - **Snowflake Tooling:**
-  [<u>SYSTEM\$CANCEL_QUERY(\<query_id\>)</u>](https://docs.snowflake.com/en/sql-reference/functions/system_cancel_query)
+  [SYSTEM$CANCEL_QUERY(<query_id>)](https://docs.snowflake.com/en/sql-reference/functions/system_cancel_query)
 
 **Dynamically scale compute to resolve resource contention**
 
@@ -1385,8 +1384,8 @@ adjusting compute resources dynamically.
   resolves queuing and provides immediate relief, a unique advantage of
   Snowflake's elastic architecture.
 
-- **Snowflake Tooling:** [<u>ALTER
-  WAREHOUSE</u>](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse)
+- **Snowflake Tooling:** [ALTER
+  WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse)
   ... SET WAREHOUSE_SIZE = ..., Multi-cluster Warehouse configuration.
 
 #### Automate disaster recovery and high-availability responses 
@@ -1405,13 +1404,13 @@ Snowflake's built-in business continuity features.
   be configured for all critical databases. Applications can then be
   seamlessly rerouted using **Client Redirect**.
 
-- **Snowflake Tooling:** [**<u>Database
-  Replication</u>**](https://docs.snowflake.com/en/user-guide/account-replication-intro),
+- **Snowflake Tooling:** [Database
+  Replication](https://docs.snowflake.com/en/user-guide/account-replication-intro),
   **Failover Groups**, **Client Redirect**
 
 #### Perform data-driven post-mortems for continuous improvement
 
-Every incident is a learning opportunity. Use Snowflake’s detailed query
+Every incident is a learning opportunity. Use Snowflake's detailed query
 execution data to move beyond symptoms and identify the precise root
 cause, leading to permanent fixes.
 
@@ -1425,8 +1424,8 @@ cause, leading to permanent fixes.
   or full table scans on poorly clustered data. This turns a generic
   "slow query" incident into an actionable finding.
 
-- **Snowflake Tooling:** [**<u>Query
-  Profile</u>**](https://docs.snowflake.com/en/user-guide/ui-query-profile)
+- **Snowflake Tooling:** [Query
+  Profile](https://docs.snowflake.com/en/user-guide/ui-query-profile)
   interface in Snowsight.
 
 ### Persona responsibilities (RACI chart)
@@ -1560,8 +1559,8 @@ detail.
 
 #### Mandate the use of secure views for all shares
 
-Instead of sharing raw tables, always use [<u>SECURE
-VIEWS</u>](https://docs.snowflake.com/en/user-guide/views-secure) as the
+Instead of sharing raw tables, always use [SECURE
+VIEWS](https://docs.snowflake.com/en/user-guide/views-secure) as the
 interface for your data consumers. This creates a durable, controlled
 contract that decouples consumers from your underlying physical data
 model and embeds fine-grained security logic directly into the shared
@@ -1602,7 +1601,7 @@ documentation alongside the data itself.
     columns.
 
 2.  During development, the Data Engineer adds descriptive
-    [<u>COMMENT</u>](https://docs.snowflake.com/en/sql-reference/sql/comment)
+    [COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment)
     metadata to every object and column using COMMENT = '...' in their
     DDL or COMMENT ON ... IS '...' statements.
 
@@ -1619,9 +1618,9 @@ documentation alongside the data itself.
 #### Automate governance at scale with tag-based policies
 
 Manually applying security policies to hundreds of tables is not
-scalable and is prone to error. Instead, implement a [<u>tag-based
+scalable and is prone to error. Instead, implement a [tag-based
 governance
-framework</u>](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies)
+framework](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies)
 where security policies (like masking) automatically attach to data
 based on its classification.
 
@@ -1653,8 +1652,8 @@ based on its classification.
 
 When you need to share more than just data—such as a proprietary
 algorithm, a machine learning model, or a complete interactive
-application—use the [<u>Snowflake Native App
-Framework</u>](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about).
+application—use the [Snowflake Native App
+Framework](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about).
 This allows consumers to run your logic on their own data without the
 code or data ever leaving their secure Snowflake environment.
 
@@ -1760,7 +1759,7 @@ development process on Snowflake.
 ### Phase-based activities
 
 Managing the SDLC in a well-architected way can be broken down into four
-distinct phases. Here’s how the focus areas apply to each phase.
+distinct phases. Here's how the focus areas apply to each phase.
 
 #### Prepare
 
@@ -1786,7 +1785,7 @@ for your project.
 - **Observability:** Define key performance indicators (KPIs) for the
   workload. Set up logging standards and choose monitoring tools to
   capture query history, credit usage, and performance metrics from
-  Snowflake’s ACCOUNT_USAGE views.
+  Snowflake's ACCOUNT_USAGE views.
 
 #### Implement
 
@@ -1899,10 +1898,10 @@ ensures consistency.
   code is merged. This streamlines onboarding and enforces best
   practices automatically.
 
-These CI/CD pipelines will use tools like the [<u>SnowSQL
-CLI</u>](https://docs.snowflake.com/en/user-guide/snowsql) or the
-[<u>Snowflake Connector for
-Python</u>](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector)
+These CI/CD pipelines will use tools like the [SnowSQL
+CLI](https://docs.snowflake.com/en/user-guide/snowsql) or the
+[Snowflake Connector for
+Python](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector)
 to execute scripts and deploy objects against Snowflake environments.
 
 #### Adopt GitOps for all Snowflake object management
@@ -1914,7 +1913,7 @@ be prohibited.
 
 - The SRE and Engineering teams should consider implementing an
   open-source schema migration tool like
-  [<u>schemachange</u>](https://github.com/Snowflake-Labs/schemachange)
+  [schemachange](https://github.com/Snowflake-Labs/schemachange)
   within the standard CD pipeline. This tool compares the state of a
   target database with the state defined in Git and applies only the
   necessary changes in a versioned, ordered manner.
@@ -1961,16 +1960,16 @@ incurring storage costs or performance impact.
 #### Isolate workflows with on-demand cloned environments
 
 **Action:** Empower your development teams with self-service, isolated
-environments using Snowflake's [<u>Zero-Copy
-Cloning</u>](https://docs.snowflake.com/en/user-guide/object-clone)
+environments using Snowflake's [Zero-Copy
+Cloning](https://docs.snowflake.com/en/user-guide/object-clone)
 feature. This eliminates development bottlenecks and ensures
 high-fidelity testing.
 
 - SRE and DevOps teams should create an automated job or script (e.g.,
   in the CI/CD tool or a chatbot) that allows any developer to instantly
-  provision a new environment. This script should execute the [<u>CREATE
-  TRANSIENT DATABASE \<dev_db_name\> CLONE
-  \<prod_db_name\>;</u>](https://docs.snowflake.com/en/sql-reference/sql/create-clone)
+  provision a new environment. This script should execute the
+  [CREATE TRANSIENT DATABASE <dev_db_name> CLONE
+  <prod_db_name>;](https://docs.snowflake.com/en/sql-reference/sql/create-clone)
   command and apply the appropriate role-based access controls.
 
 - Developers and Data Scientists should trigger this job at the start of
@@ -1981,7 +1980,7 @@ high-fidelity testing.
 - A nightly job should be created to automatically tear down cloned
   environments older than a few days to maintain hygiene.
 
-This directly leverages one of Snowflake’s most powerful features.
+This directly leverages one of Snowflake's most powerful features.
 Cloning is an instantaneous metadata operation, meaning environments are
 ready in seconds, not hours, and consume no additional storage until
 changes are made.
@@ -2007,7 +2006,7 @@ monitoring directly into the SDLC.
   profile for new, complex queries to identify performance bottlenecks
   before the code is merged into production.
 
-This leverages Snowflake’s rich metadata and governance features. Using
+This leverages Snowflake's rich metadata and governance features. Using
 QUERY_TAG allows you to precisely attribute credit consumption to
 specific features or changes, enabling true cost visibility.
 
@@ -2230,14 +2229,14 @@ enhance your existing solutions and practices.
 #### Proactively manage workload performance with observability tools
 
 Don't wait for performance issues to arise. Empower your teams to use
-Snowflake’s built-in observability tools to find and fix inefficiencies
+Snowflake's built-in observability tools to find and fix inefficiencies
 before they impact the business.
 
 **Action for Engineering & Data Science**:
 
 - **Analyze before you deploy:** During development, every complex or
-  long-running query must be analyzed using the [**<u>Query
-  Profile</u>**](https://docs.snowflake.com/en/user-guide/ui-query-profile).
+  long-running query must be analyzed using the [**Query
+  Profile**](https://docs.snowflake.com/en/user-guide/ui-query-profile).
   Use this tool to visually identify performance bottlenecks, such as
   inefficient joins, excessive data spillage to storage, or full table
   scans that could be avoided with better pruning.
@@ -2269,8 +2268,8 @@ are always perfectly matched to your workloads.
 
 **Action for Engineering Leads & SREs**:
 
-- Establish a quarterly [<u>warehouse
-  review</u>](https://docs.snowflake.com/en/user-guide/warehouses-considerations).
+- Establish a quarterly [warehouse
+  review](https://docs.snowflake.com/en/user-guide/warehouses-considerations).
   Schedule a recurring meeting to review the performance and utilization
   of every production warehouse. Use the WAREHOUSE_LOAD_HISTORY view to
   answer key questions:
@@ -2288,8 +2287,8 @@ are always perfectly matched to your workloads.
 
 **Action for Engineering & Finance (FinOps)**:
 
-- Use [<u>Resource
-  Monitors</u>](https://docs.snowflake.com/en/user-guide/resource-monitors)
+- Use [Resource
+  Monitors](https://docs.snowflake.com/en/user-guide/resource-monitors)
   for governance. For each major workload or department, apply a
   Resource Monitor to its set of warehouses. This acts as a performance
   and cost circuit breaker, automatically notifying stakeholders or
@@ -2305,8 +2304,8 @@ and data pipelines. ⚙️
 **Action for SREs & DevOps Engineers**:
 
 - **Automate performance regression testing:** As part of your CI/CD
-  pipeline, use Snowflake’s [<u>Zero-Copy
-  Cloning</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/object-cloning)
+  pipeline, use Snowflake's [Zero-Copy
+  Cloning](https://docs.snowflake.com/en/user-guide/object-clone)
   feature to create an instantaneous, full-scale clone of your
   production data for testing. Before merging code, automatically run a
   suite of benchmark queries against this clone to ensure the changes do
@@ -2320,7 +2319,7 @@ and data pipelines. ⚙️
 **Action for Data Engineers**:
 
 - **Automate data pipelines with
-  [<u>Tasks</u>](https://docs.snowflake.com/en/user-guide/tasks-intro)**:
+  [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro)**:
   For any recurring data processing logic (e.g., merging data from a
   staging table, refreshing a materialized view), use Snowflake Tasks.
   This serverless tool removes the need for external orchestrators for
@@ -2329,7 +2328,7 @@ and data pipelines. ⚙️
 
 #### Foster a culture of continuous learning and excellence
 
-Your team’s expertise is the most critical factor in achieving sustained
+Your team's expertise is the most critical factor in achieving sustained
 performance. Invest in a structured program to keep skills sharp and
 align everyone on best practices.
 
@@ -2338,8 +2337,8 @@ align everyone on best practices.
 - **Charter and fund a Center of Excellence (CoE):** The CoE is
   accountable for platform-wide best practices. Its members must
   regularly evaluate new Snowflake features announced in the monthly
-  [<u>Release
-  Notes</u>](https://docs.snowflake.com/release-notes/all-release-notes?bundle=true)
+  [Release
+  Notes](https://docs.snowflake.com/release-notes/all-release-notes?bundle=true)
   and create actionable guidance on how teams can use them to improve
   performance (e.g., adopting Query Acceleration Service, using
   Snowpark-optimized warehouses).
@@ -2354,8 +2353,8 @@ align everyone on best practices.
 - **Share knowledge actively:** Create an internal channel (e.g., Slack,
   Teams) dedicated to Snowflake performance. Encourage engineers to
   share their Query Profile screenshots, optimization successes, and
-  tough performance challenges to foster [<u>collaborative
-  problem-solving.</u>](https://community.snowflake.com/s/)
+  tough performance challenges to foster [collaborative
+  problem-solving.](https://community.snowflake.com/s/)
 
 ### Persona responsibilities (RACI chart)
 
