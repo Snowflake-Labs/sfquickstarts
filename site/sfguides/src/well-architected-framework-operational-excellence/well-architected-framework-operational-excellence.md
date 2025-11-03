@@ -78,7 +78,7 @@ iterative approach:
 
 ## Ensure operational readiness & performance
 
-#### Overview
+### Overview
 
 Ensuring operational readiness and performance in the Snowflake AI Data
 Cloud is about creating a stable, efficient, and scalable environment
@@ -92,7 +92,7 @@ schedule, analytical queries return quickly, AI models are trained and
 deployed efficiently, and data applications deliver a seamless user
 experience.
 
-#### Focus areas
+### Focus areas
 
 To achieve peak performance and operational excellence in Snowflake,
 concentrate on four key areas that directly impact your workloads.
@@ -130,7 +130,7 @@ concentrate on four key areas that directly impact your workloads.
   regional outages and implementing regular testing of your BCDR plan to
   ensure its effectiveness.
 
-#### Phase-based activities
+### Phase-based activities
 
 #### Prepare
 
@@ -231,7 +231,7 @@ and refinement.
 - **Update BCDR Plan:** Incorporate lessons learned from BCDR drills and
   evolving business requirements into the disaster recovery plan.
 
-#### Recommendations
+### Recommendations
 
 Here are the key recommendations focused specifically on ensuring
 operational readiness and performance for your Snowflake environment.
@@ -336,7 +336,7 @@ Find the specific commands and procedures in the guide for [<u>Database
 Replication and
 Failover/Failback</u>](https://docs.snowflake.com/en/user-guide/account-replication-intro).
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 The table below outlines the roles and responsibilities for ensuring
 operational readiness and performance.
@@ -356,7 +356,7 @@ operational readiness and performance.
 
 ## Automate infrastructure & maintenance
 
-#### Overview
+### Overview
 
 Automating infrastructure and maintenance is crucial for achieving
 efficiency, consistency, and scalability in the Snowflake AI Data Cloud.
@@ -368,7 +368,7 @@ setup, deployment, and operation of your Snowflake environment to
 support data engineering, analytics, AI, and application workloads
 reliably and at scale.
 
-#### Focus areas
+### Focus areas
 
 To effectively automate your Snowflake environment, concentrate on four
 key areas. These areas provide a structured approach to managing your
@@ -405,7 +405,7 @@ human error.
   Automation ensures that security is consistently applied and auditable
   across the platform.
 
-#### Phase-based activities
+### Phase-based activities
 
 Adopting automation is a journey. The following activities are organized
 by phase to provide a clear roadmap from initial preparation to
@@ -610,7 +610,7 @@ sensitive data, ensuring continuous compliance.</p></th>
 </tbody>
 </table>
 
-#### Recommendations
+### Recommendations
 
 - **Start small and iterate:** Don't try to automate everything at once.
   Begin with a single, high-impact area, such as role management via IaC
@@ -639,7 +639,7 @@ sensitive data, ensuring continuous compliance.</p></th>
   grants, and ensuring compliance with organizational policies before
   deployment.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 This RACI (Responsible, Accountable, Consulted, Informed) matrix
 clarifies the roles and responsibilities for automation activities
@@ -661,7 +661,7 @@ across different personas.
 
 ## Enhance Observability & Issue Resolution
 
-#### Overview
+### Overview
 
 Observability in the Snowflake AI Data Cloud is about gaining deep,
 actionable insights into your platform's health, performance, cost, and
@@ -675,7 +675,7 @@ to building a comprehensive observability strategy that delivers trust
 and maximizes the value of your Snowflake investment for all
 stakeholders, from engineers to the C-suite.
 
-#### Focus areas
+### Focus areas
 
 We'll organize our observability strategy around four key focus areas.
 These pillars ensure a holistic view of your Snowflake environment,
@@ -702,7 +702,7 @@ covering everything from cost efficiency to data integrity.
   metrics, tracking data lineage from source to consumption, and quickly
   identifying the root cause of data-related issues.
 
-#### Phase-based activities
+### Phase-based activities
 
 A successful observability strategy is implemented incrementally. The
 following phases provide a roadmap from initial preparation to
@@ -962,7 +962,7 @@ the platform.</p></th>
 </tbody>
 </table>
 
-#### Recommendations
+### Recommendations
 
 The following recommendations provide actionable steps for implementing
 a robust observability and issue resolution strategy on Snowflake. They
@@ -1109,7 +1109,7 @@ the right people and, where appropriate, trigger corrective actions.
       example, an alert for a long-running, non-critical query could
       call a procedure that cancels it using SYSTEM\$CANCEL_QUERY.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 This RACI (Responsible, Accountable, Consulted, Informed) matrix
 clarifies the roles and responsibilities for key observability
@@ -1131,7 +1131,7 @@ activities across different teams.
 
 ## Manage incidents & problems
 
-#### Overview
+### Overview
 
 Effective incident and problem management is the cornerstone of a
 reliable data platform. In the Snowflake AI Data Cloud, where critical
@@ -1164,7 +1164,7 @@ these practices builds confidence in your data platform, ensuring it
 remains a dependable foundation for critical business decisions and
 innovation.
 
-#### **Focus areas**
+### **Focus areas**
 
 **Detection & alerting**
 
@@ -1210,7 +1210,7 @@ ensuring roles and communication plans are clearly defined. A
 well-prepared team can significantly reduce the time it takes to resolve
 future incidents.
 
-#### Phase-based activities
+### Phase-based activities
 
 #### Prepare
 
@@ -1323,7 +1323,7 @@ resolved to build a more resilient system and process.
   and the accuracy of your documentation by conducting "Game Days" that
   simulate real-world incidents.
 
-#### Recommendations
+### Recommendations
 
 Effective incident management in Snowflake relies on leveraging its
 unique architectural strengths—separating compute from storage and
@@ -1429,7 +1429,7 @@ cause, leading to permanent fixes.
   Profile</u>**](https://docs.snowflake.com/en/user-guide/ui-query-profile)
   interface in Snowsight.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 A RACI (Responsible, Accountable, Consulted, Informed) matrix defines
 the roles and responsibilities for incident and governance management:
@@ -1446,7 +1446,7 @@ the roles and responsibilities for incident and governance management:
 
 ## Enable collaboration & Secure Sharing
 
-#### Overview
+### Overview
 
 Enabling secure, real-time collaboration across your organization, with
 customers, and with business partners is a foundational pillar of the
@@ -1463,7 +1463,7 @@ guidelines, you can break down data silos, accelerate innovation, and
 create new value streams, all while ensuring your data remains
 protected.
 
-#### Focus areas
+### Focus areas
 
 To effectively enable collaboration and secure sharing in Snowflake,
 concentrate on four key areas. These areas provide a structured approach
@@ -1495,7 +1495,7 @@ to designing, implementing, and managing your data sharing ecosystem.
   auditing access patterns using views like ACCESS_HISTORY, and setting
   up alerts to detect and respond to anomalous activity.
 
-#### Phase-based activities
+### Phase-based activities
 
 A successful data sharing strategy is implemented progressively. The
 following phases outline the journey from initial planning to continuous
@@ -1550,7 +1550,7 @@ requirements.
 | **Unified collaboration for workloads** | Enhance Snowflake Native Apps with new features based on consumer feedback. Explore new collaboration patterns using emerging Snowflake features. |
 | **Comprehensive auditing and Monitoring** | Fine-tune monitoring alerts to reduce false positives. Develop more sophisticated usage analytics to better understand the value derived from shared data and identify new sharing opportunities. |
 
-#### Recommendations
+### Recommendations
 
 To activate your data sharing and collaboration strategy, your teams
 should take specific, coordinated actions. The following recommendations
@@ -1679,7 +1679,7 @@ code or data ever leaving their secure Snowflake environment.
     provider's proprietary model against their own private customer
     table, with the provider having zero access to the consumer's data.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 Clarifying roles and responsibilities is crucial for a well-governed
 data sharing program. The following RACI (Responsible, Accountable,
@@ -1702,7 +1702,7 @@ persona.
 
 ## Manage the Software Development Lifecycle (SDLC)
 
-#### Overview
+### Overview
 
 A well-defined Software Development Lifecycle (SDLC) in Snowflake
 enables teams to innovate faster while maintaining stability and
@@ -1715,7 +1715,7 @@ assets. This is essential for all key workloads, whether you are
 building scalable data pipelines, developing complex machine learning
 models with Snowpark, or deploying native applications.
 
-#### Focus areas
+### Focus areas
 
 To build a robust SDLC, we recommend concentrating on five key focus
 areas. These areas provide the foundation for a mature and scalable
@@ -1757,7 +1757,7 @@ development process on Snowflake.
   observability helps you detect issues proactively, troubleshoot
   failures, and optimize resource usage.
 
-#### Phase-based activities
+### Phase-based activities
 
 Managing the SDLC in a well-architected way can be broken down into four
 distinct phases. Here’s how the focus areas apply to each phase.
@@ -1870,7 +1870,7 @@ itself based on operational feedback.
   post-mortems on incidents to identify root causes and implement
   preventative measures.
 
-#### Recommendations
+### Recommendations
 
 To implement a mature SDLC for the Snowflake AI Data Cloud, your teams
 should adopt specific practices and tools. These recommendations provide
@@ -2011,7 +2011,7 @@ This leverages Snowflake’s rich metadata and governance features. Using
 QUERY_TAG allows you to precisely attribute credit consumption to
 specific features or changes, enabling true cost visibility.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 This RACI (Responsible, Accountable, Consulted, Informed) matrix
 outlines the typical roles and responsibilities across the SDLC
@@ -2037,7 +2037,7 @@ lifecycle.
 
 ## Continuously improve performance & practices
 
-#### Overview
+### Overview
 
 Continuously improving performance and operational practices is
 essential for maximizing the value, efficiency, and innovation you get
@@ -2047,7 +2047,7 @@ your platform evolves with your business needs. This approach helps you
 control costs, enhance user experience, and maintain a robust, scalable
 data environment.
 
-#### Focus areas
+### Focus areas
 
 To structure your improvement efforts, concentrate on these four key
 areas. They provide a comprehensive framework for optimizing every
@@ -2078,7 +2078,7 @@ aspect of your Snowflake usage, from query execution to team expertise.
   Snowflake requires continuous learning to leverage new features and
   capabilities effectively.
 
-#### Phase-based activities
+### Phase-based activities
 
 Continuous improvement is a journey. By breaking it down into the four
 distinct iterative phases of the Operational Excellence pillar, you can
@@ -2225,7 +2225,7 @@ enhance your existing solutions and practices.
   - Invest in official Snowflake certifications to validate and deepen
     team expertise.
 
-#### Recommendations
+### Recommendations
 
 #### Proactively manage workload performance with observability tools
 
@@ -2357,7 +2357,7 @@ align everyone on best practices.
   tough performance challenges to foster [<u>collaborative
   problem-solving.</u>](https://community.snowflake.com/s/)
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 Clarifying roles ensures that everyone understands their part in the
 continuous improvement process. The matrix below outlines typical
