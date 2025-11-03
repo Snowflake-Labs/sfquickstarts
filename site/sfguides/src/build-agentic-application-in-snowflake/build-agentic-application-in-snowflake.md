@@ -278,7 +278,7 @@ Notice that all 3 tables are used to answer this question.
 
 #### - *Q. What are the top 5 customers buying the carvers?*
 
-> aside positive
+
 > Feel free to explore the semantic model to ask other questions.
 
 ## Conclusion And Resources
