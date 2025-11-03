@@ -73,7 +73,7 @@ Security & Governance:
     these specific responsibilities to prevent gaps in security
     ownership. You can find more information about this model in the
     Snowflake documentation:
-    [<u>/en/resources/report/snowflake-shared-responsibility-model/</u>](/en/resources/report/snowflake-shared-responsibility-model/).
+    [/en/resources/report/snowflake-shared-responsibility-model/](/en/resources/report/snowflake-shared-responsibility-model/)
 
 - **Network Security**
 
@@ -107,12 +107,12 @@ Security & Governance:
     Additionally, features such as **Time Travel** and **Fail-safe**
     provide data protection and recovery from logical errors by allowing
     you to restore data to a previous state. For more details, see the
-    documentation on [<u>Time
-    Travel</u>](https://docs.snowflake.com/en/user-guide/data-time-travel).
+    documentation on [Time
+    Travel](https://docs.snowflake.com/en/user-guide/data-time-travel).
 
 - **Data Governance**
 
-  - Data governance ensures that data access, privacy, and compliance
+  Data governance ensures that data access, privacy, and compliance
     controls are enforced, auditable, and monitored. This includes the
     use of **Dynamic Data Masking** and **Row Access Policies** to
     control who can see what data under what conditions.
@@ -122,7 +122,7 @@ Security & Governance:
 
 - **Incident Response**
 
-  - Having a well-defined **Cyber Security Incident Response Plan
+  Having a well-defined **Cyber Security Incident Response Plan
     (CSIRP)** is vital for preparing for security events. The plan
     should include playbooks with actionable tasks and should be
     regularly tested through tabletop exercises to ensure effectiveness.
@@ -186,7 +186,7 @@ DUO, the only method with a "Push" notification option. It's recommended
 to avoid SMS as a fallback to prevent SIM swapping attacks by selecting
 the "Tablet" option in DUO instead of "Phone". Additionally, you should
 implement **Workload Identity Federation (WIF)**, allows
-<span class="mark"></span>for service-to-service authentication method
+for service-to-service authentication method
 that lets workloads, such as applications, services, or containers,
 authenticate with Snowflake using their cloud provider’s native identity
 system, such as AWS Identity and Access Management (AWS IAM) roles,
@@ -211,7 +211,7 @@ outcomes are strengthened by a sound governance baseline here.
 
 ### Desired outcome
 
-### A well‑architected governance posture lets organizations demonstrate that sensitive data is consistently classified and protected across environments, access is role‑based and least‑privilege, row‑level and projection rules limit exposure to the minimal necessary surface, AI/LLM interactions are scoped and logged, and regulatory obligations are mapped to Snowflake‑native controls with reproducible evidence. When governance operates in this manner, audit readiness becomes routine and does not hinder delivery.
+A well‑architected governance posture lets organizations demonstrate that sensitive data is consistently classified and protected across environments, access is role‑based and least‑privilege, row‑level and projection rules limit exposure to the minimal necessary surface, AI/LLM interactions are scoped and logged, and regulatory obligations are mapped to Snowflake‑native controls with reproducible evidence. When governance operates in this manner, audit readiness becomes routine and does not hinder delivery.
 
 ### Common anti-patterns
 
@@ -240,7 +240,7 @@ ownership.
 
 ### Recommendations
 
-<span class="mark">Start by defining a policy model in business terms:
+Start by defining a policy model in business terms:
 what constitutes sensitive information, who requires access, and what
 contextual factors must be considered (role, location, purpose). Express
 those rules as tags and policies in Snowflake. Classify sensitive
@@ -252,36 +252,36 @@ utilize Account Usage to create governance dashboards. Schedule drift
 detection to flag untagged columns, unused or over‑privileged roles, and
 detached policies. Finally, connect obligations (GDPR, HIPAA, PCI, SOX)
 to the specific Snowflake controls and the queries that produce
-evidence.</span>
+evidence.
 
 **Recommendation checklist**
 
-1.  <span class="mark">Define RBAC hierarchy</span>
+1.  Define RBAC hierarchy
 
-2.  <span class="mark">Classify/tag sensitive datasets, bind masking &
-    RAP policies</span>
+2.  Classify/tag sensitive datasets, bind masking &
+    RAP policies
 
-3.  <span class="mark">Enable **Access History** and build audit
-    dashboards</span>
+3.  Enable **Access History** and build audit
+    dashboards
 
-4.  <span class="mark">Automate drift detection (orphan roles, untagged
-    columns, policy detachment)</span>
+4.  Automate drift detection (orphan roles, untagged
+    columns, policy detachment)
 
-5.  <span class="mark">Configure **Cortex AI governance** (prompt
-    logging, redaction, agent scope)</span>
+5.  Configure **Cortex AI governance** (prompt
+    logging, redaction, agent scope)
 
-6.  <span class="mark">Build control-to-query library for regulatory
-    evidence</span>
+6.  Build control-to-query library for regulatory
+    evidence
 
-7.  <span class="mark">Review governance scorecard quarterly (coverage,
-    exceptions, audit readiness)</span>
+7.  Review governance scorecard quarterly (coverage,
+    exceptions, audit readiness)
 
 ### Data privacy & protection
 
 #### CLS (column‑level security)
 
-[<u>Column‑level
-security</u>](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro)
+[Column‑level
+security](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro)
 protects sensitive attributes with masking policies that adapt to
 context. In practice, tags like SENSITIVITY and REGULATORY_SCOPE travel
 with columns and trigger masking automatically, while session attributes
@@ -303,13 +303,13 @@ exceptions time‑boxed, tracked, and reviewed?
 
 #### RAP (row access policies)
 
-<span class="mark">[<u>Row access
-policies</u>](https://docs.snowflake.com/en/user-guide/security-row-intro)
+[Row access
+policies](https://docs.snowflake.com/en/user-guide/security-row-intro)
 constrain visibility at the record level based on attributes like
 geography or line of business. Centralizing rules in secure UDFs and
 driving entitlements from reference tables makes policies explainable
 and maintainable. Performance should be validated against real
-workloads, and pruning/clustering strategies used where helpful.</span>
+workloads, and pruning/clustering strategies used where helpful.
 
 **Design Approach  **
 Adopt a hub‑and‑spoke model: one policy per domain, so all child tables
@@ -322,14 +322,14 @@ under load?
 
 #### Projection policy
 
-[<u>Projection
-controls</u>](https://docs.snowflake.com/en/user-guide/projection-policies)
+[Projection
+controls](https://docs.snowflake.com/en/user-guide/projection-policies)
 define which columns (or combinations of columns) may be selected
 together, preventing risky joins (e.g., date of birth with ZIP and
 gender). Express these rules in curated secure views and verify them in
 CI so prohibited projections never reach production. Pair projection
 constraints with
-[<u>masking</u>](https://docs.snowflake.com/en/user-guide/security-access-control-overview)
+[masking](https://docs.snowflake.com/en/user-guide/security-access-control-overview)
 and row access for layered protection.
 
 **Design Approach  **
@@ -345,7 +345,7 @@ projection constraints tested and reported in CI pipelines?
 Regulatory alignment translates legal obligations into concrete
 Snowflake controls and reproducible evidence. A practical way to manage
 this is to maintain a control catalog that maps each clause (for GDPR,
-[<u>HIPAA</u>](https://medium.com/snowflake/how-snowflake-helps-with-hipaa-compliance-8e578f353b1a),
+[HIPAA](https://medium.com/snowflake/how-snowflake-helps-with-hipaa-compliance-8e578f353b1a),
 PCI, SOX, and others) to the tags, policies, and queries that
 demonstrate enforcement. Evidence should be generated from Access
 History and Account Usage on a schedule, producing consistent,
@@ -370,7 +370,7 @@ columns, policy detachments, anomalous access, and changes to external
 shares. For AI/LLM, track prompt volumes, redactions, tool usage, and
 violations. Behind the scenes, a metrics lake pulls data from Account
 Usage, Information Schema, and Access History. Tasks and
-[<u>notifications</u>](https://docs.snowflake.com/en/sql-reference/account-usage)
+[notifications](https://docs.snowflake.com/en/sql-reference/account-usage)
 drive alerts, and exception workflows integrate with ticketing, ensuring
 each alert has an assigned owner, runbook, and SLA.
 
@@ -410,8 +410,8 @@ well-architected Responsible AI plan leverages key principles to manage
 risks, uphold trust, and maintain compliance, ensuring that your
 organization is prepared for the security and ethical challenges that
 arise from using AI. For a detailed overview of Snowflake's commitment
-to Responsible AI, refer to [<u>this
-statement</u>](/en/company/responsible-ai/).
+to Responsible AI, refer to [this
+statement](/en/company/responsible-ai/).
 
 ### Desired outcome
 
@@ -428,8 +428,8 @@ adoption.
 
 **Alignment to OWASP Top 10 for LLM Applications**
 
-Aligning with the [<u>OWASP Top 10 for Large Language Model (LLM)
-Applications</u>](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
+Aligning with the [OWASP Top 10 for Large Language Model (LLM)
+Applications](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 is a fundamental best practice for a robust AI security posture. This
 framework provides a comprehensive list of the most critical security
 risks associated with LLMs, such as Prompt Injection, Insecure Output
@@ -512,17 +512,17 @@ following recommendations based on industry best practices. These
 recommendations are important to assess security posture, minimize
 damage and downtime, prevent future threats, and protect reputational
 brands. The following recommendations are aligned to industry standards
-(eg. [<u>NIST 800-61, Rev. 2- Computer Security Incident Handling
-Guide</u>](https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final),
-[<u>SANS 504-B Incident Response
-Cycle</u>](https://www.sans.org/media/score/504-incident-response-cycle.pdf),
-[<u>MITRE ATT&CK Framework</u>](https://attack.mitre.org/), MITRE
-[<u>SaaS
-Matrix</u>](https://attack.mitre.org/matrices/enterprise/cloud/saas/),
-[<u>Snowflake’s Security & Trust
-Center</u>](/product/security-and-trust-center/)
-& [<u>Snowflake CIS
-Benchmarks</u>](https://www.cisecurity.org/benchmark/snowflake)).
+(eg. [NIST 800-61, Rev. 2- Computer Security Incident Handling
+Guide](https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final),
+[SANS 504-B Incident Response
+Cycle](https://www.sans.org/media/score/504-incident-response-cycle.pdf),
+[MITRE ATT&CK Framework](https://attack.mitre.org/), MITRE
+[SaaS
+Matrix](https://attack.mitre.org/matrices/enterprise/cloud/saas/),
+[Snowflake’s Security & Trust
+Center](/product/security-and-trust-center/)
+& [Snowflake CIS
+Benchmarks](https://www.cisecurity.org/benchmark/snowflake)).
 
 **Cybersecurity Incident Response Planning**
 
@@ -540,8 +540,8 @@ with their specific program requirements.
 
 **SANS Incident Response Phases**
 
-The [<u>SANS Incident Response
-Phases</u>](https://www.sans.org/security-resources/glossary-of-terms/incident-response)
+The [SANS Incident Response
+Phases](https://www.sans.org/security-resources/glossary-of-terms/incident-response)
 are a structured, six-step cycle for handling cybersecurity incidents.
 This framework provides a standardized and repeatable process for
 incident handling, which is crucial for a swift and effective response.
@@ -604,8 +604,8 @@ integration object for stage creation and operations. It is a best
 practice to enable these preventative controls to limit data movement
 and supplement them with continuous monitoring of privileged objects to
 detect suspicious activity. For more information, please see the
-Snowflake documentation on [<u>preventing data
-exfiltration</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/security-encryption-exfiltration-prevention).
+Snowflake documentation on [preventing data
+exfiltration](https://docs.snowflake.com/en/user-guide/security-encryption-exfiltration-prevention).
 
 **Tri-Secret Secure & Data Replication**
 
@@ -621,7 +621,7 @@ Time Objective (RTO) and Recovery Point Objective (RPO) requirements.
 
 ## Identify and assess threat
 
-### Identification phase - audit**
+### **Identification phase - audit**
 
 1.  Access your **Account Usage** database, which provides 365 days of
     "tamper proof" audit logs.
