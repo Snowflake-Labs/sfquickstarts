@@ -160,7 +160,6 @@ GRANT ROLE looker_role TO USER looker_service_account;
 
 OAuth allows each Looker user to authenticate with their own Snowflake credentials.
 
-> aside positive
 > **Note on OAuth Limitations**
 > *   **Persistent Derived Tables (PDTs):** Not supported with Snowflake OAuth.
 > *   **Token Expiration:** Users may need to re-authenticate periodically.

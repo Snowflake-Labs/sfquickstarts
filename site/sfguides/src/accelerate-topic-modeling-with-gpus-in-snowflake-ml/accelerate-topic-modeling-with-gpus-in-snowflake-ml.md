@@ -54,7 +54,6 @@ import cudf; cudf.pandas.install()
 import cuml; cuml.accel.install()
 ```
 
-> aside positive
 > IMPORTANT:
 > - These two lines of code are the only changes needed to enable GPU acceleration for your existing pandas and scikit-learn code.
 > - This "flips the switch," allowing the libraries to automatically handle the execution on GPUs.

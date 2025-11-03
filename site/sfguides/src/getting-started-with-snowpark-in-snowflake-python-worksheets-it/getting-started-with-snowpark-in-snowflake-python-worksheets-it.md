@@ -54,7 +54,7 @@ Richiedi la prova gratuita di 30 giorni seguendo questo [link](https://signup.sn
 
 Accedi al tuo account Snowflake. Per accedere a questo workshop e configurare il codice e i dati di esempio, fai clic sul seguente link.
 
-> aside positive 
+> 
 IMPORTANTE: per procedere con la configurazione del workshop descritta sotto, devi avere il ruolo ACCOUNTADMIN. Nota: se hai creato un nuovo account di prova, avrai automaticamente il ruolo ACCOUNTADMIN.
 
 <button>[Configura l’ambiente del workshop](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>

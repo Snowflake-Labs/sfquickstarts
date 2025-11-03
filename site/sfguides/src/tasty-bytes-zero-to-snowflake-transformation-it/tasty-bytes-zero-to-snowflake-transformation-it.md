@@ -93,7 +93,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ``` 
 ![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
-> aside positive
 **Zero-Copy Cloning**: crea una copia di un database, di uno schema o di una tabella. Al momento della creazione del clone viene creato uno snapshot dei dati contenuti nell’oggetto sorgente, che viene messo a disposizione dell’oggetto clonato. L’oggetto clonato è scrivibile ed è indipendente dalla sorgente del clone. In altri termini, le modifiche apportate all’oggetto sorgente non si riflettono sull’oggetto clone e viceversa. 
 >
 

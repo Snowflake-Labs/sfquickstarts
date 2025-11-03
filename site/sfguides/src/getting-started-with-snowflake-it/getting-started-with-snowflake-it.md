@@ -55,7 +55,6 @@ Al termine della registrazione, riceverai un’email con un link per l’attivaz
 ## L’interfaccia utente di Snowflakee la storia del workshop
 
 
-> aside negative
 > 
 >  **Informazioni sulle schermate, il codice di esempio e l’ambiente** Gli esempi e i risultati presentati nelle schermate possono differire leggermente da ciò che vedrai quando avrai completato gli esercizi.
 
@@ -108,7 +107,6 @@ Il riquadro inferiore visualizza i risultati delle query e delle altre operazion
 I vari riquadri di questa pagina possono essere ridimensionati spostandone i cursori. Se ti serve più spazio nel foglio di lavoro, comprimi il browser degli oggetti di database nel riquadro sinistro. Questo riquadro è chiuso in molte delle schermate illustrate in questa guida.
 
 
-> aside negative
 > 
 >  **Fogli di lavoro o interfaccia utente** Per risparmiare tempo, la maggior parte degli esercizi di questo workshop viene eseguita utilizzando codice SQL pronto all’uso in questo foglio di lavoro. Queste operazioni possono essere eseguite anche tramite l’interfaccia utente, ma richiederebbero numerosi spostamenti tra le diverse schede dell’interfaccia.
 
@@ -183,7 +181,6 @@ Sempre sotto **Admin**, la sottoscheda **Users** della scheda **Users and Roles*
 
 Facendo clic sul tuo nome utente in alto a destra nell’interfaccia puoi modificare la password, i ruoli e le preferenze. Snowflake dispone di vari ruoli definiti dal sistema. In questo momento hai il ruolo predefinito di `SYSADMIN`, che manterrai per la maggior parte del workshop.
 
-> aside negative
 > 
 >  **SYSADMIN** Il ruolo `SYSADMIN` (o amministratore di sistema) ha i privilegi necessari per creare warehouse, database e altri oggetti in un account. In un ambiente reale, utilizzeresti ruoli diversi per le attività di questo workshop e assegneresti ruoli ai tuoi utenti. Parleremo ancora dei ruoli e del modello di controllo degli accessi di Snowflake nella Sezione 9; inoltre puoi trovare ulteriori informazioni nella [documentazione di Snowflake](https://docs.snowflake.com/user-guide/security-access-control-overview).
 
@@ -207,7 +204,6 @@ Questa sezione illustra nei dettagli i passaggi necessari per:
 - Creare uno stage esterno.
 - Creare un formato di file per i dati.
 
-> aside negative
 > 
 >  **Inserire dati in Snowflake** Vi sono molti modi per inserire dati in Snowflake da molte origini, tra cui il comando COPY, l’ingestion automatica di Snowpipe, connettori esterni e soluzioni ETL/ELT di terze parti. Per maggiori informazioni sull’inserimento di dati in Snowflake, consulta la [documentazione di Snowflake](https://docs.snowflake.com/guides-overview-loading-data). In questo workshop useremo il comando COPY e lo storage AWS S3 per caricare i dati manualmente. In una situazione reale, solitamente si utilizza un processo automatizzato o una soluzione ETL.
 
@@ -248,7 +244,6 @@ Database: `CITIBIKE` Schema = `PUBLIC`
 
 ![impostazioni del database del contesto](assets/4PreLoad_4b.png)
 
-> aside negative
 > 
 >  **Le operazioni DDL (Data Definition Language) sono gratuite!** Tutte le operazioni DDL che abbiamo eseguito finora non richiedono risorse di calcolo, quindi possiamo creare tutti gli oggetti gratuitamente.
 
@@ -276,7 +271,6 @@ birth_year integer,
 gender integer);
 ```
 
-> aside negative
 > 
 >  **Molte opzioni per eseguire i comandi.** I comandi SQL possono essere eseguiti utilizzando l’interfaccia utente, la scheda **Worksheets**, lo strumento della riga di comando SnowSQL, il tuo editor SQL preferito tramite ODBC/JDBC oppure altri connettori Snowflake (Python, Spark ecc.). Come già detto, per risparmiare tempo svolgeremo la maggior parte delle operazioni di questo workshop eseguendo codice SQL pronto per l’uso nel foglio di lavoro, invece di utilizzare l’interfaccia utente.
 
@@ -298,7 +292,6 @@ Fai clic su `TRIPS` e sulla scheda **Columns** per vedere la struttura della tab
 
 Stiamo lavorando con dati strutturati delimitati da virgole che sono già stati preparati per l’uso in un bucket S3 pubblico esterno. Prima di poterli utilizzare, dobbiamo creare uno stage che specifichi la posizione del bucket esterno.
 
-> aside positive
 > 
 >  Per questo workshop utilizziamo un bucket AWS-East. Per evitare costi di uscita/trasferimento dati in futuro, seleziona una posizione per lo stage nello stesso cloud provider e nella stessa regione del tuo account Snowflake.
 
@@ -314,7 +307,6 @@ Nella finestra di dialogo “Create Securable Object” che viene visualizzata, 
 
 **Nota:** assicurati di includere la barra (`/`) alla fine dell’URL; in caso contrario si verificheranno errori al momento di caricare i dati dal bucket. Assicurati inoltre di rimuovere l’istruzione 'credentials = (…)', che non è necessaria. Puoi anche impostarla come commento usando '--', come illustrato nell’immagine seguente. Il comando “create stage” dovrebbe essere uguale a quello illustrato, ma potrebbe non includere la terza riga.
 
-> aside positive
 > 
 >  Il bucket S3 per questo workshop è pubblico, quindi puoi lasciare vuote le opzioni relative alle credenziali nell’istruzione. In una situazione reale, il bucket utilizzato per uno stage esterno probabilmente richiederebbe informazioni sulle chiavi.
 
@@ -383,7 +375,6 @@ Fai clic sulla riga del warehouse `COMPUTE_WH`. Quindi fai clic sui tre puntini 
 
 Fai clic su **Edit** per esaminare le opzioni di questo warehouse e scoprire alcune delle funzionalità uniche di Snowflake.
 
-> aside positive
 > 
 >  Se questo account non utilizza Snowflake Enterprise Edition (o versione superiore), non vedrai le opzioni **Mode** o **Clusters** illustrate nella schermata qui sotto. La funzionalità dei warehouse multi-cluster non viene utilizzata in questo workshop, ma ne parleremo poiché si tratta di una funzionalità chiave di Snowflake.
 
@@ -397,7 +388,6 @@ Fai clic su **Edit** per esaminare le opzioni di questo warehouse e scoprire alc
 
 - Le opzioni sotto **Advanced Warehouse Options** consentono di sospendere automaticamente il warehouse quando non è in uso per evitare di consumare inutilmente crediti. Un’altra opzione consente di riavviare automaticamente un warehouse sospeso, in modo che si riattivi automaticamente quando riceve un nuovo workload. Questa funzionalità rende possibile l’efficiente modello di fatturazione “pay-per-use” di Snowflake, che consente di scalare le risorse quando servono e ridurle o disattivarle automaticamente quando non sono più necessarie, eliminando quasi completamente le risorse inattive. Inoltre, è disponibile un’opzione per cambiare il tipo di warehouse da standard a ottimizzato per Snowpark. I warehouse ottimizzati per Snowpark forniscono una quantità di memoria per nodo 16 volte superiore e sono consigliati per i workload con requisiti di memoria elevati, come i casi d’uso di addestramento ML che utilizzano una stored procedure su un unico nodo virtual warehouse. Lascia questa opzione impostata su Standard
 
-> aside negative
 > 
 >  **Capacità di calcolo di Snowflake e di altri data warehouse** Molte delle funzionalità di virtual warehouse e di calcolo di cui abbiamo appena parlato, come la capacità di creare, scalare orizzontalmente e verticalmente e sospendere o riavviare automaticamente i virtual warehouse, sono facili da utilizzare in Snowflake e richiedono solo pochi secondi. Per i data warehouse on-premise, utilizzare queste funzionalità è molto più difficile, se non impossibile, poiché richiedono notevoli risorse hardware fisiche, over-provisioning dell’hardware per i picchi dei workload e notevole lavoro di configurazione, oltre a presentare sfide di altro tipo. Anche altri cloud data warehouse non sono in grado di scalare orizzontalmente e verticalmente come Snowflake o richiedono molto più tempo e lavoro per la configurazione.
 
@@ -509,7 +499,6 @@ Fai clic sul pulsante **Create Warehouse** per creare il warehouse.
 
 Negli esercizi precedenti abbiamo caricato dati in due tabelle utilizzando il comando per il caricamento in blocco COPY e il virtual warehouse `COMPUTE_WH`. Ora assumeremo il ruolo degli utenti di Citi Bike che eseguono le analisi e hanno bisogno di interrogare i dati in quelle tabelle utilizzando il foglio di lavoro e il secondo warehouse `ANALYTICS_WH`.
 
-> aside negative
 > 
 >  **Ruoli e query in situazioni reali** In un’azienda reale, gli utenti che eseguono le analisi probabilmente avranno un ruolo diverso da SYSADMIN. Per semplificare le cose in questo workshop, continueremo a utilizzare il ruolo SYSADMIN in questa sezione. Inoltre, le query vengono tipicamente eseguite utilizzando un prodotto di business intelligence come Tableau, Looker, PowerBI, ecc. Per analisi più avanzate, strumenti di data science come Datarobot, Dataiku, AWS Sagemaker e molti altri possono inviare query a Snowflake. Qualsiasi tecnologia che utilizza JDBC/ODBC, Spark, Python o un’altra delle interfacce di programmazione supportate può eseguire analisi sui dati contenuti in Snowflake. Per semplificare le cose in questo workshop, tutte le query verranno eseguite tramite il foglio di lavoro Snowflake.
 
@@ -581,7 +570,6 @@ Snowflake consente di creare in pochi secondi cloni, detti anche cloni “zero-c
 
 Un caso d’uso comune per Zero-Copy Cloning è clonare un ambiente di produzione perché i team di sviluppo e test possano utilizzarlo per eseguire test ed esperimenti senza incidere sull’ambiente di produzione, eliminando la necessità di configurare e gestire due ambienti separati.
 
-> aside negative
 > 
 >  **Zero-Copy Cloning** Un enorme vantaggio della clonazione zero-copy è che i dati sottostanti non vengono copiati. Cambiano solo i metadati e i riferimenti ai dati sottostanti. Di conseguenza evitando la copia dei dati, i requisiti di storage non raddoppiano quando i dati vengono clonati. La maggior parte dei data warehouse non è in grado di farlo, ma con Snowflake è semplicissimo!
 
@@ -601,7 +589,6 @@ Fai clic sui tre puntini (**…**) nel riquadro a sinistra e seleziona **Refresh
 ## Lavorare con dati semi-strutturati, viste e join
 
 
-> aside positive
 > 
 >  Questa sezione richiede il caricamento di dati aggiuntivi e quindi offre una revisione dell’argomento, oltre a introdurre il caricamento dei dati semi-strutturati.
 
@@ -616,7 +603,6 @@ I dati JSON sono informazioni meteorologiche fornite da *MeteoStat* riferite all
 
 ![campione di dati JSON grezzi](assets/7SemiStruct_1_1.png)
 
-> aside negative
 > 
 >  **DATI SEMI-STRUTTURATI** Snowflake consente di caricare e interrogare facilmente i dati semi-strutturati come JSON, Parquet o Avro senza trasformazioni. Questa è una caratteristica chiave di Snowflake, poiché oggi sempre più dati importanti per le aziende sono semi-strutturati e molti data warehouse tradizionali non sono in grado di caricare e interrogare facilmente tali dati. Snowflake rende tutto facile.
 
@@ -640,7 +626,6 @@ use database weather;
 use schema public; 
 ```
 
-> aside positive
 > 
 >  **Eseguire più comandi** Ricorda che devi eseguire ciascun comando separatamente. Tuttavia puoi eseguirli insieme in sequenza selezionando tutti i comandi e poi facendo clic sul pulsante **Play/Run** (o utilizzando i tasti di scelta rapida).
 
@@ -652,7 +637,6 @@ create table json_weather_data (v variant);
 
 Nota che Snowflake dispone di un tipo di colonna speciale chiamato `VARIANT` che consente di memorizzare l’intero oggetto come un’unica riga e, quando richiesto, interrogare direttamente l’oggetto.
 
-> aside negative
 > 
 >  **Un grande aiuto per i dati semi-strutturati** Il tipo di dati VARIANT consente a Snowflake di acquisire dati semi-strutturati senza bisogno di predefinire lo schema.
 
@@ -714,7 +698,6 @@ Per chiudere la visualizzazione nel riquadro e vedere nuovamente i dettagli dell
 
 Ora vediamo come Snowflake ci consente di creare una vista e di interrogare direttamente i dati JSON utilizzando SQL.
 
-> aside negative
 > 
 >  **Viste e viste materializzate** Una vista consente di accedere al risultato di una query come se fosse una tabella. Le viste possono essere utili per presentare i dati agli utenti finali in modo più ordinato, limitare ciò che gli utenti finali possono vedere in una tabella sorgente e scrivere codice SQL più modulare. Snowflake supporta anche le viste materializzate, in cui i risultati delle query vengono memorizzati come se fossero una tabella. Questo consente un accesso più rapido, ma richiede spazio di archiviazione. È possibile creare e interrogare le viste materializzate se si utilizza Snowflake Enterprise Edition (o versione superiore).
 
@@ -770,7 +753,6 @@ Ora uniremo dati meteorologici JSON con i dati `CITIBIKE.PUBLIC.TRIPS` per rispo
 
 Esegui la seguente query per mettere in join `WEATHER` a `TRIPS` e contare il numero di spostamenti associati a determinate condizioni meteorologiche:
 
-> aside positive
 > 
 >  Poiché ci troviamo ancora nel foglio di lavoro, il database `WEATHER` è ancora in uso. Di conseguenza, devi specificare completamente il riferimento alla tabella `TRIPS` fornendo il nome del database e dello schema.
 
@@ -916,7 +898,6 @@ In questa sezione esploreremo alcuni aspetti del modello di sicurezza per il con
 
 Per continuare con la nostra storia, supponiamo che un nuovo DBA sia entrato a far parte del team di Citi Bike e di volergli assegnare un nuovo ruolo con meno privilegi del ruolo SYSADMIN predefinito del sistema.
 
-> aside negative
 > 
 >  **Controllo degli accessi basato sui ruoli** Snowflake offre un controllo degli accessi molto potente e granulare che definisce gli oggetti e le funzionalità a cui può accedere un utente e il livello di accesso di cui dispone. Per maggiori dettagli, consulta la [documentazione di Snowflake](https://docs.snowflake.com/user-guide/security-access-control-overview).
 
@@ -944,7 +925,6 @@ create role junior_dba;
 grant role junior_dba to user YOUR_USERNAME_GOES_HERE; 
 ```
 
-> aside positive
 > 
 >  Se provassi a eseguire questa operazione con un ruolo come SYSADMIN, non riusciresti per mancanza di privilegi. Di default (e intenzionalmente), il ruolo SYSADMIN non può creare nuovi ruoli o utenti.
 
@@ -1004,7 +984,6 @@ Per prima cosa fai clic sull’icona **Home** nell’angolo superiore sinistro d
 
 ![cambiare ruolo tramite UI](assets/9Role_4.png)
 
-> aside negative
 > 
 >  **Ruoli nelle preferenze utente e nel foglio di lavoro** Perché abbiamo utilizzato il menu delle preferenze per cambiare ruolo invece del foglio di lavoro? La sessione UI e ciascun foglio di lavoro hanno ruoli separati. Il ruolo della sessione UI controlla gli elementi che puoi visualizzare e utilizzare nell’interfaccia utente, mentre il ruolo del foglio di lavoro controlla solo gli oggetti e le azioni a cui puoi accedere all’interno del ruolo.
 
@@ -1057,7 +1036,6 @@ Con Secure Data Sharing:
 - I provider possono stabilire criteri di accesso dettagliati e revocabili alle condivisioni.
 - La condivisione dei dati è semplice e sicura, soprattutto in confronto ai vecchi metodi di condivisione, che spesso erano manuali e poco sicuri, come il trasferimento di file `.csv` di grandi dimensioni tramite internet.
 
-> aside positive
 > 
 >  **Condivisione dei dati tra regioni e cloud diversi** Per condividere dati tra regioni o piattaforme cloud diverse, devi configurare la replica. Questo non rientra nell’ambito di questo workshop, ma puoi trovare ulteriori informazioni in [questo articolo Snowflake](/trending/what-is-data-replication).
 

@@ -107,7 +107,6 @@ Before installing [SnowConvert AI](/en/migrate-to-the-cloud/snowconvert-ai/), en
 
 SnowConvert AI can be downloaded from this [link.](/en/migrate-to-the-cloud/snowconvert-ai/) It's highly recommended to complete the free course "[SnowConvert AI for Conversion](https://training.snowflake.com/lmt/clmsCatalogDetails.prMain?site=sf&in_offeringId=130596852)" available at Snowflake Training, which provides both overview and hands-on technical training.
 
-> aside positive
 > IMPORTANT:
 > - SnowConvert AI is free for all users  
 > - Download Snowconvert AI from any Snowflake account via Snowsight by navigating to Ingestion/Migrations in the left-hand menu.   
@@ -139,7 +138,6 @@ To ensure quality, access codes are required to use SnowConvert AI and are valid
 
 1. Open SnowConvert AI  
 2. Click "Get an Access Code" link on the Project Creation page ![](assets/image_04.png)![](assets/image_05.png)  
-> aside positive
 > Note:
 > If you face connectivity issues due to restrictive firewall settings, please refer to this [document](https://docs.snowflake.com/en/migrations/snowconvert-docs/general/frequently-asked-questions-faq#why-i-am-not-receiving-an-access-code) for troubleshooting guidance 
 4. Fill out the required information form  
@@ -506,7 +504,6 @@ SnowConvert AI facilitates the direct deployment of converted code objects and s
 * Review FDM (Further Development Mandatory) warnings and decide if deployment is acceptable.  
 * Use "Refresh Tree" to update status after code changes  
 
-> aside positive
 > MANDATORY:
 > Resolve any EWI (Error with Impact) errors before deployment. These errors represent logic that could not be reliably converted and will cause deployment failure or runtime errors if not corrected.
 > 
@@ -913,7 +910,6 @@ GRANT INSERT, SELECT ON ALL TABLES IN SCHEMA target_db.public TO ROLE migration_
 - Track user adoption and satisfaction  
 - Plan for ongoing maintenance and optimization
 
-> aside positive
 > IMPORTANT:
 > - Always test conversions in development environments first  
 > - Maintain detailed migration documentation for future reference  
@@ -961,7 +957,6 @@ SELECT
     COUNT(*) as row_count 
 FROM target_database.schema.table_name;
 ```
-> aside positive
 > NOTE:
 > Should you require additional help resolving errors and ensuring data integrity, please email [snowconvert-info@snowflake.com](mailto:snowconvert-info@snowflake.com)
 

@@ -75,7 +75,6 @@ os.environ["TRULENS_OTEL_TRACING"] = "1"
 
 Download the PDF documents from the [data folder in the GitHub repository](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies/tree/main/data) and upload them to the stage `@CHUNKING_EVALUATION.CHUNKING_EVALUATION.PDF_10KS`.
 
-> aside positive
 > IMPORTANT:
 > - Make sure to upload the PDF files to the correct stage
 > - The PDFs contain SEC 10-K filings which will be used throughout this tutorial

@@ -54,7 +54,7 @@ Clique no [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPytho
 
 Acesse sua conta Snowflake. Para acessar este laboratório e configurar as amostras de dados e o código, clique no link a seguir.
 
-> aside positive IMPORTANTE: é preciso ter a função ACCOUNTADMIN para prosseguir com a configuração do laboratório descrita abaixo. Observação: caso tenha criado uma nova conta de avaliação, você terá a função ACCOUNTADMIN automaticamente.
+> IMPORTANTE: é preciso ter a função ACCOUNTADMIN para prosseguir com a configuração do laboratório descrita abaixo. Observação: caso tenha criado uma nova conta de avaliação, você terá a função ACCOUNTADMIN automaticamente.
 
 <button>[Configurar o ambiente de laboratório](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 
