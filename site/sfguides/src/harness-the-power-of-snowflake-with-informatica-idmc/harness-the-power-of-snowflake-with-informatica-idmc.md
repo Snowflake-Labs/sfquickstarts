@@ -390,14 +390,14 @@ Now we will add another expression to rename the fields so that they look better
 4.	In the General tab, enter **exp_rename_fields** in the Name field.
 5.	In the Expression tab, click the plus icon to add the following fields:
 
-| **Field Name** | **Type** | **Precision**	| **Scale**	| **Expression** |
+| **Field Name** | **Type** | **Precision** | **Scale** | **Expression** |
 | --- | --- | --- | --- | --- |
-| orderkey | string	| 255 | 0 | o_orderkey |
-| custkey	| string | 255 | 0 | o_custkey | 
-| orderdate	| string | 255 | 0 | o_orderdate | 
-| orderpriority	| string	| 255	| 0	| o_orderpriority| 
-| orderstatus| 	string| 	255| 	0| 	o_orderstatus| 
-| totalprice| 	decimal| 	38| 	2| 	o_totalprice|
+| orderkey | string | 255 | 0 | o_orderkey |
+| custkey | string | 255 | 0 | o_custkey |
+| orderdate | string | 255 | 0 | o_orderdate |
+| orderpriority | string | 255 | 0 | o_orderpriority |
+| orderstatus | string | 255 | 0 | o_orderstatus |
+| totalprice | decimal | 38 | 2 | o_totalprice |
 
 6.	When completed, your Expression tab properties should look like this:
 ![exprcomplete](assets/Lab2_Picture55.png)
@@ -658,13 +658,13 @@ Add Expression transform to create an ordered fields in the target and convert t
 
 | **Field Name** | **Type; Precision; Scale** | **Expression** |
 | --- | --- | --- |
-| Date | Date/time; 29; 9 | Add_To_Date(To_Date( '1970-01-01', 'YYYY-MM-DD'),'SS',dt) |
+| Date | Date/time; 29; 9 | Add_To_Date(To_Date('1970-01-01','YYYY-MM-DD'),'SS',dt) |
 | City | String; 255; 0 | name |
-| Country_Name | String; 255; 0 | country | 
+| Country_Name | String; 255; 0 | country |
 | Min_Temp | Decimal; 10; 1 | (min - 273.15) * 9/5 + 32 |
 | Max_Temp | Decimal; 10; 1 | (max - 273.15) * 9/5 + 32 |
 | Condition | String; 100; 0 | description |
-| Humidity_Level | Double; 15; 0 | humidity |
+| Humidity_Level | Double; 15 | humidity |
 
 ![expressions](assets/Lab3_Picture24.png)
 
