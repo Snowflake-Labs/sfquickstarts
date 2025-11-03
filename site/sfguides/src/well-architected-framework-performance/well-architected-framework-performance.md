@@ -2984,7 +2984,7 @@ ensure that the measurement methodology is valid.
 
 #### What to measure
 
-- **Query execution tTime:** The most common metric for analyzing the
+- **Query execution time:** The most common metric for analyzing the
   performance of a single query or a workload is its execution time. In
   Snowflake, it is generally not beneficial to focus on individual
   components of the execution time, such as compilation time, as a
