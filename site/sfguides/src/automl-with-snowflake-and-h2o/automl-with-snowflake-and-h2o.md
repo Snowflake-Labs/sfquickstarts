@@ -106,25 +106,25 @@ To be able to continue test out partner applications, in our case H2O, we need t
 Once you have completed this step, go ahead and click on the H2O application. This will present you with a screen to connect to H2O. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press "Connect" .
 
 
-![](assets/01_startup_01.png)
+![](images/01_startup_01.png)
 
 This creates a partner account which you can immediately `Activate`
 
-![](assets/01_startup_02.png)
+![](images/01_startup_02.png)
 
 You next need to accept the H2O Terms and Conditions for the Trial Agreement
 
-![](assets/01_startup_03.png)
+![](images/01_startup_03.png)
 
 and wait while your H2O Driverless AI instance is configured and launched.
 
-![](assets/01_startup_04.png)
+![](images/01_startup_04.png)
 
 ### Driverless AI Interface
 
 Your brand new Driverless AI instance looks like
 
-![](assets/01_intro_0.png)
+![](images/01_intro_0.png)
 
 A summary of the information and views we will cover in this tutorial include:
 
@@ -150,7 +150,7 @@ To execute the entire .sql code, which contains 9 different statements, all we n
 
 From the empty Datasets view, click the `Add Dataset` button and select the `SNOWFLAKE` connector:
 
-![](assets/02_data_1.png)
+![](images/02_data_1.png)
 
 This launches the `Make Snowflake Query` form.
 
@@ -168,36 +168,36 @@ Enter into the form:
 
 Then click the `CLICK TO MAKE QUERY` button. This imports the data into the Driverless AI system.
 
-![](assets/02_import_5.png)
+![](images/02_import_5.png)
 
 The dataset is now available for next steps in Driverless AI
 
-![](assets/02_import_3.png)
+![](images/02_import_3.png)
 
 <!-- ------------------------ -->
 ## Dataset Details
 
 Right click the `loans` dataset to get details.
 
-![](assets/03_details_0.png)
+![](images/03_details_0.png)
 
 The `Dataset Details` view is a quick way to inspect the dataset columns, see their storage type (integer, string, etc.), get summary statistics and distribution plots for each column.
 
-![](assets/03_details_1.png)
+![](images/03_details_1.png)
 
 In more advanced usage, you can edit the data type interactively
 
-![](assets/03_details_4.png)
+![](images/03_details_4.png)
 
 Scrolling to the right, inspect the `bad_loans` column, our target variable.
 
-![](assets/03_details_2.png)
+![](images/03_details_2.png)
 
 The target `bad_loans` is Boolean with 38,980 observations and has a mean value of 0.1592. This means that 15.92% of the customers (rows) in this dataset have a loan that was not paid off.
 
 Clicking the `DATASET ROWS` button on the upper right yields a spreadsheet format.
 
-![](assets/03_details_3.png)
+![](images/03_details_3.png)
 
 This is helpful in understanding the layout of the data. A quick inspection of your dataset using `Details` is a good practice that we always recommended.
 
@@ -208,25 +208,25 @@ This is helpful in understanding the layout of the data. A quick inspection of y
 
 Right click the dataset name and select `VISUALIZE` to launch AutoViz
 
-![](assets/04_autoviz_00.png)
+![](images/04_autoviz_00.png)
 
 The available visualizations for the `loans` data are shown below.
 
-![](assets/04_autoviz_02.png)
+![](images/04_autoviz_02.png)
 
 Selecting the `SKEWED HISTOGRAMS` section, for example, yields a series of histograms on only the columns that are sufficiently skewed. We show one below for the `credit_length` column.
 
-![](assets/04_autoviz_03.png)
+![](images/04_autoviz_03.png)
 
 Clicking the left and right navigation arrows allows you to inspect additional variables, ordered by their skewness.
 
 Close the `SKEWED HISTOGRAMS` display and scroll down to see `RECOMMENDATIONS`.
 
-![](assets/04_autoviz_01.png)
+![](images/04_autoviz_01.png)
 
 Selecting `RECOMMENDATIONS` produces
 
-![](assets/04_autoviz_05.png)
+![](images/04_autoviz_05.png)
 
 The philosophy underlying automatic visualizations is to make it easy for the data scientist to quickly understand their data fields, but it does not make decisions for the data scientist.
 
@@ -237,20 +237,20 @@ There are a number of additional useful graphs that can be navigated to fully un
 
 Splitting data into train and test sets allows models to be built with the train set and evaluated on the test data. This protects against overfit and yields more accurate error estimates. To use the Dataset Splitter utility, right click the dataset and select `SPLIT`
 
-![](assets/05_split_01.png)
+![](images/05_split_01.png)
 
 Name your `train` and `test` splits, then select a split ratio (here we use 0.8).
 
-![](assets/05_split_02.png)
+![](images/05_split_02.png)
 For a time series use case, enter the time column. If your data have predefined folds for k-fold cross validation, enter the fold column. A seed is available for reproducibility. Select the target column `bad_loan`
 
-![](assets/05_split_03.png)
+![](images/05_split_03.png)
 
 The data type of the target column determines the splitting algorithm. For classification problems, stratefied random sampling is used. For numeric target columns, simple random sampling is used.
 
 Click `SAVE` to create the datasets.
 
-![](assets/05_split_04.png)
+![](images/05_split_04.png)
 
 The `train` dataset has around 31,000 rows and the `test` dataset around 8000 rows.
 
@@ -263,11 +263,11 @@ We use the term _Experiment_ in Driverless AI to refer to the entire feature eng
 
 We start an experiment from the `Datasets` view by clicking on the line corresponding to the `train` dataset and selecting `PREDICT` from the dropdown menu
 
-![](assets/06_intro_1.png)
+![](images/06_intro_1.png)
 
 This opens the following form for configuring an experiment.
 
-![](assets/06_setup_01.png)
+![](images/06_setup_01.png)
 
 The fields are
 
@@ -283,15 +283,15 @@ The fields are
 
 For our experiment, enter "Baseline" as the display name (#1). Next select the `TEST DATASET` file `test` (#5). The `desc` column contains a written explanation from the customer describing the reason for requesting a loan. Although Driverless AI has extensive NLP (natural language processing) capabilities, we omit them in this baseline model. Thus using `DROPPED COLUMNS` (#3), select `desc`:
 
-![](assets/06_setup_30.png)
+![](images/06_setup_30.png)
 
 Next select `bad_loan` as the `TARGET COLUMN` (#6). You will have to scroll down, since `bad_loan` is the next-to-last variable in the dataset
 
-![](assets/06_setup_31.png)
+![](images/06_setup_31.png)
 
 After selecting the target variable, Driverless AI analyzes the data and experimental settings and prefills additional options:
 
-![](assets/06_setup_32.png)
+![](images/06_setup_32.png)
 
 These include
 
@@ -314,11 +314,11 @@ For our experiment,
 
 Click on the `REPRODUCIBLE` button to enable reproducibility. This may be important for regulatory reasons or, as in our case, for educational purposes. Also select AUC as the scorer (#4)
 
-![](assets/06_setup_04.png)
+![](images/06_setup_04.png)
 
 Clicking on `EXPERT SETTINGS` (#5) exposes an immense array of options and settings
 
-![](assets/06_setup_06.png)
+![](images/06_setup_06.png)
 
 This gives the expert data scientist complete control over the Driverless AI experience, including the ability to customize models, feature transformers, scorers, and data using `CUSTOM RECIPES`. Select `CANCEL` to exit out of the expert settings screen.
 
@@ -326,24 +326,24 @@ This gives the expert data scientist complete control over the Driverless AI exp
 
 Before launching the experiment, your settings should look like the following.
 
-![](assets/06_run_10.png)
+![](images/06_run_10.png)
 
 Click `LAUNCH EXPERIMENT` to commence.
 The Driverless AI UI now includes a descriptive rotating dial in the center with live monitoring displays for model evolution, variable importance, resource usage, and model evaluation.
 
-![](assets/06_run_11.png)
+![](images/06_run_11.png)
 
 To get more detailed resource monitoring, go to `RESOURCES` in the menu and select `SYSTEM INFO`.
 
-![](assets/06_run_12.png)
+![](images/06_run_12.png)
 
 The `System Info` view shows hardware usage and live activity monitoring of individual CPU cores.
 
-![](assets/06_run_13.png)
+![](images/06_run_13.png)
 
 Clicking `CLOSE` sends us back to the running `Experiment Baseline` view.
 
-![](assets/06_run_14.png)
+![](images/06_run_14.png)
 
 Note that
 
@@ -357,7 +357,7 @@ Note that
 
 Selecting `Notifications` in the `CPU/MEMORY` section (2) opens important information and discoveries from Driverless AI.
 
-![](assets/06_run_16.png)
+![](images/06_run_16.png)
 
 Ours reports that
 
@@ -372,11 +372,11 @@ Notification are important to read and understand. The advice in notifications o
 
 The technical data scientist might consider selecting `Log` in the `CPU/MEMORY` section. Driverless AI logs its entire process in great detail. Clicking `Log` opens a system logging window for monitoring live. Logs can be downloaded during or after the experiment.
 
-![](assets/06_run_15.png)
+![](images/06_run_15.png)
 
 Nearing the conclusion of the experiment
 
-![](assets/06_run_20.png)
+![](images/06_run_20.png)
 
 we see that the dial is at 100% complete, the elapsed time is approximately 6:30 (while results are reproducible, times are not themselves exactly reproducible), and the experiment is stopping early, needing only 33 of 56 iterations.
 
@@ -384,13 +384,13 @@ we see that the dial is at 100% complete, the elapsed time is approximately 6:30
 
 Upon completion, the `Experiment Baseline` view replaces the spinning dial in the center with a stack of clickable bars
 
-![](assets/06_complete_01.png)
+![](images/06_complete_01.png)
 
 #### Summary
 
 The lower right panel includes an experiment summary, zoomed in below:
 
-![](assets/06_complete_00.png)
+![](images/06_complete_00.png)
 
 The summary contains information about the experiment settings, its seed, the train, validation, and test data, system (hardware) specifications, features created, models created, timing, and scores. In particular, note that
 
@@ -405,31 +405,31 @@ Importantly, the MOJO latency timing of 0.13 milliseconds indicates the speed of
 
 Selecting ROC in the lower right replaces the summary with the ROC curve.
 
-![](assets/06_complete_02.png)
+![](images/06_complete_02.png)
 
 You can toggle between `VALIDATION METRICS` and `TEST SET METRICS` for this display.
 
-![](assets/06_complete_03.png)
+![](images/06_complete_03.png)
 
 Selecting any point along the curve produces a confusion matrix with additional peformance metrics
 
-![](assets/06_complete_04.png)
+![](images/06_complete_04.png)
 
 You can view other model performance metrics, including Precision-Recall
 
-![](assets/06_complete_05.png)
+![](images/06_complete_05.png)
 
 Lift chart
 
-![](assets/06_complete_06.png)
+![](images/06_complete_06.png)
 
 Gains chart
 
-![](assets/06_complete_07.png)
+![](images/06_complete_07.png)
 
 and Kolmogorov-Smirnov
 
-![](assets/06_complete_08.png)
+![](images/06_complete_08.png)
 
 <!-- ------------------------ -->
 ## Experiment Inspection
@@ -440,41 +440,41 @@ Once an experiment is completed, it is important to understand the final model's
 
 The `DIAGNOSE MODEL ON NEW DATASET ...` button is used to create extensive diagnostics for a model built in Driverless AI. After clicking the button,
 
-![](assets/07_diagnostics_0.png)
+![](images/07_diagnostics_0.png)
 
 select the dataset used for diagnostics, we will use the `test` dataset.
 
-![](assets/07_diagnostics_7.png)
+![](images/07_diagnostics_7.png)
 
 The `Diagnostics` view that is returned is very complete. You can choose from a plethora of `Scores` on the left. And each of the `Metric Plots` on the right is interactive.
 
-![](assets/07_diagnostics_2.png)
+![](images/07_diagnostics_2.png)
 
 Selecting the confusion matrix plot yields
 
-![](assets/07_diagnostics_3.png)
+![](images/07_diagnostics_3.png)
 
 Likewise, the interactive ROC curve produces
 
-![](assets/07_diagnostics_4.png)
+![](images/07_diagnostics_4.png)
 
 ### AutoReport
 
 By default, an automated report is created for each experiment that is run. Download the `AutoReport` by
 
-![](assets/07_autodoc_0.png)
+![](images/07_autodoc_0.png)
 
 The document that is created is a very thorough summary of the experiment in the form of a white paper, documenting in detail the data, settings, and methodologies used to create the final pipeline.
 
-![](assets/07_autodoc_1.png)
+![](images/07_autodoc_1.png)
 
 This includes detailed information on the features that were engineered and the process for engineering them.
 
-![](assets/07_autodoc_2.png)
+![](images/07_autodoc_2.png)
 
 It also contains validation and test metrics and plots.
 
-![](assets/07_autodoc_3.png)
+![](images/07_autodoc_3.png)
 
 For this particular experiment, the AutoReport is a 36-page technically detailed document.
 
@@ -482,11 +482,11 @@ For this particular experiment, the AutoReport is a 36-page technically detailed
 
 Selecting the `VISUALIZE SCORING PIPELINE` button
 
-![](assets/07_pipeline_1.png)
+![](images/07_pipeline_1.png)
 
 returns a visual representation of the pipeline
 
-![](assets/07_pipeline_2.png)
+![](images/07_pipeline_2.png)
 
 This pipeline is also available in the AutoReport, along with explanatory notes copied below. The pipeline consists of
 
@@ -503,17 +503,17 @@ One of Driverless AI's most important features is the implementation of a host o
 
 To launch MLI from a completed experiment, select the `INTERPRET THIS MODEL` button
 
-![](assets/08_mli_00.png)
+![](images/08_mli_00.png)
 
 The MLI view allows easy navigation through the various interactive plots.
 
-![](assets/08_mli_01.png)
+![](images/08_mli_01.png)
 
 ### Dashboard
 
 The `Dashboard` view displays four useful summary plots
 
-![](assets/08_mli_02.png)
+![](images/08_mli_02.png)
 
 1. A K-LIME (Local Interpretable Model-agnostic Explanations) surrogate model.
 2. A Decision Tree surrogate model.
@@ -526,23 +526,23 @@ Each of these plots are available in a larger format from the main MLI view.
 
 Other plots include Feature importance on the transformed features
 
-![](assets/08_mli_04.png)
+![](images/08_mli_04.png)
 
 and on the original features
 
-![](assets/08_mli_05.png)
+![](images/08_mli_05.png)
 
 ### Shapley
 
 Shapley values are also available for the transformed and original features
 
-![](assets/08_mli_06.png)
+![](images/08_mli_06.png)
 
 ### Additional Capabilities
 
 The MLI view provides tools for disparate impact analysis and sensitivity analysis, also called "What If" analysis.
 
-![](assets/08_mli_01.png)
+![](images/08_mli_01.png)
 
 <!-- ------------------------ -->
 ## Deploy the model using Java UDFs
@@ -563,11 +563,11 @@ We need to collect the following components from Driverless AI:
 
 The first two files we will download from Driverless AI directly. Select `DOWNLOAD MOJO SCORING PIPELINE` from the `STATUS: COMPLETE` buttons
 
-![](assets/09_deploy_01.png)
+![](images/09_deploy_01.png)
 
 and then `DOWNLOAD MOJO SCORING PIPELINE` again from the `MOJO Scoring Pipeline instructions` screen
 
-![](assets/09_deploy_02.png)
+![](images/09_deploy_02.png)
 
 This downloads a file `mojo.zip` which contains the `pipeline.mojo` and `mojo2-runtime.jar` files, along with a number of other files we will not be needing.
 

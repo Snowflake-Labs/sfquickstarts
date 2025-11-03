@@ -17,7 +17,7 @@ In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing
 
 During the lab, you’ll kickstart your 14-day free trial of Alation — to which you can connect to your own Snowflake environment and continue to explore the data catalog. 
 
-###  What You’ll Learn 
+### - What You’ll Learn 
 - How to create and manage Snowflake access policies directly from Alation
 - How to link a data policy to related data assets
 - How to protect sensitive data using Snowflake's role-based masking policies
@@ -25,7 +25,7 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 - How to visualize column-level lineage for impact analysis
 - How to explore data quality metrics against critical data assets
 
-###  What You’ll Need 
+### - What You’ll Need 
 - A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account with ACCOUNTADMIN access (optional) or an existing Snowflake accoount (with ACCOUNTADMIN access)
 - Alation free trial through Snowflake Partner Connect 
 
