@@ -231,7 +231,7 @@ and refinement.
 - **Update BCDR Plan:** Incorporate lessons learned from BCDR drills and
   evolving business requirements into the disaster recovery plan.
 
-#### Recommendations
+### Recommendations
 
 Here are the key recommendations focused specifically on ensuring
 operational readiness and performance for your Snowflake environment.
@@ -610,8 +610,6 @@ your observability strategy.
 | Security & access analytics | **Automate access reviews:** Develop automated workflows to periodically require business owners to certify who has access to their data, reducing manual toil for security teams.<br> **Enhance threat detection models:** Use historical access data to build simple anomaly detection models (e.g., using Snowpark) to identify suspicious behavior that deviates from a user's normal baseline. |
 | Data integrity & lineage | **Implement automated lineage:** Adopt tools that automatically parse SQL from QUERY_HISTORY to generate column-level lineage, dramatically speeding up impact analysis and root cause identification.<br>**Expand data quality coverage:** Use insights from data incidents to expand data quality monitoring to more datasets across the platform. |
 
-
-
 ### Recommendations
 
 The following recommendations provide actionable steps for implementing
@@ -861,7 +859,7 @@ ensuring roles and communication plans are clearly defined. A
 well-prepared team can significantly reduce the time it takes to resolve
 future incidents.
 
-## Phase-based activities
+### Phase-based activities
 
 ### Prepare
 
@@ -1662,7 +1660,7 @@ This leverages Snowflake's rich metadata and governance features. Using
 QUERY_TAG allows you to precisely attribute credit consumption to
 specific features or changes, enabling true cost visibility.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 This RACI (Responsible, Accountable, Consulted, Informed) matrix
 outlines the typical roles and responsibilities across the SDLC
