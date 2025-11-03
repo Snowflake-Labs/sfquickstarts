@@ -71,7 +71,7 @@ This query merges the `query_history` with `metering_history` to obtain detailed
 
 The returned output looks like the following:
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 ### Convert Table to a DataFrame
 
@@ -164,7 +164,7 @@ with st.expander("See Heatmap DataFrame", expanded=expand_value):
 
 The above code snippet, yields the following data app:
 
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 <!-- ------------------------ -->
 ## Add Data Visualizations
@@ -199,7 +199,7 @@ st.altair_chart(heatmap, use_container_width=True)
 
 The generated heatmap is shown below:
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 ### Stacked Bar Chart
 Next, on to creating the stacked bar chart:
@@ -221,7 +221,7 @@ st.altair_chart(bar_time, use_container_width=True)
 
 The generated stacked bar chart is shown below:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 ### Bubble plot
 Finally, we'll create the bubble plot and sizes are representing the metric magnitude:
@@ -244,7 +244,7 @@ st.altair_chart(bubble, use_container_width=True)
 
 The generated bubble plot is shown below:
 
-![image](assets/img05.PNG)
+![image](assets/img05.png)
 
 
 <!-- ------------------------ -->
