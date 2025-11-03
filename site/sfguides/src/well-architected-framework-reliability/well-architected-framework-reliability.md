@@ -529,7 +529,7 @@ process for these actions is essential to executing them quickly and
 correctly during a high-stress incident. We recommend you develop and
 document specific operational runbooks for common data recovery
 scenarios, such as restoring a dropped table using `UNDROP` or correcting
-a faulty data load using Time Travel's `AT \| BEFORE` clause, and
+a faulty data load using Time Travel's `AT | BEFORE` clause, and
 regularly test these procedures.
 
 ### How-To’s
@@ -545,9 +545,9 @@ regularly test these procedures.
     INSERT INTO
         my_table
     SELECT
-        \*
+        *
     FROM
-        my_table BEFORE(STATEMENT =\> '\<query_id_of_bad_dml\>');
+        my_table BEFORE(STATEMENT => '<query_id_of_bad_dml>');
     ```
 
 **Restore a Dropped Object:**
@@ -712,8 +712,8 @@ statement:**
     SELECT
       *
     FROM TABLE(INFORMATION_SCHEMA.COPY_HISTORY(
-                  TABLE_NAME=\>'my_table',
-                  START_TIME=\>DATEADD(hours, -1, CURRENT_TIMESTAMP())
+                  TABLE_NAME=>'my_table',
+                  START_TIME=>DATEADD(hours, -1, CURRENT_TIMESTAMP())
               ));
     ```
 
@@ -850,9 +850,9 @@ ensure your operations team is prepared to respond effectively.
                   SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
               WHERE
                   EXECUTION_STATUS = 'RUNNING'
-                  AND START_TIME \< DATEADD(hour, -1, CURRENT_TIMESTAMP())
+                  AND START_TIME < DATEADD(hour, -1, CURRENT_TIMESTAMP())
           )
-      ) THEN CALL SYSTEM \ $SEND_EMAIL(...)
+      ) THEN CALL SYSTEM $SEND_EMAIL(...)
     ```
 
 3.  Resume the alert to activate it: `ALTER ALERT long_running_query_alert RESUME;`
@@ -866,8 +866,8 @@ ensure your operations team is prepared to respond effectively.
    SELECT
     *
    FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
-                    SCHEDULED_TIME_RANGE_START=\>DATEADD('hour',-1,CURRENT_TIMESTAMP()),
-                    RESULT_LIMIT =\> 100
+                    SCHEDULED_TIME_RANGE_START=>DATEADD('hour',-1,CURRENT_TIMESTAMP()),
+                    RESULT_LIMIT => 100
               )
             )
    WHERE STATE = 'FAILED';
@@ -1021,7 +1021,7 @@ security and compliance are maintained post-recovery.
 
 3.  Update all client application connection strings to use the new
     connection URL (e.g.,
-    \<organization_name\>-\<connection_name\>.snowflakecomputing.com).
+    `<organization_name>-<connection_name>.snowflakecomputing.com`).
 
 **Establish logical backup procedures:**
 
