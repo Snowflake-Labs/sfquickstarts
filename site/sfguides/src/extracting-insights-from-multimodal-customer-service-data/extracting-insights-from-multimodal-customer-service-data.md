@@ -1,10 +1,10 @@
 id: extracting-insights-from-multimodal-customer-service-data
 summary: Snowflake Cortex AI SQL: Extracting Insights from Multimodal Customer Service Data
-categories: featured,getting-started,data-science-&-ml,app-development
+categories: snowfalke-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Cortex, Snowflake Notebooks, AI Functions
 author: James Cha-Earley
 
 # Snowflake Cortex AI SQL: Extracting Insights from Multimodal Customer Service Data
