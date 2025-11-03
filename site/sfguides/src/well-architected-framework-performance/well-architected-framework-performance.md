@@ -32,25 +32,25 @@ efficiency by scaling down during lower demand.
 ## Principles and recommendations
 ### Principles
 
-### Establish and validate performance objectives
+#### Establish and validate performance objectives
 
 > Define clear, measurable, and achievable performance targets within
 > technical and budgetary limits before application design. Consider key
 > workload characteristics.
 
-### Optimize data architecture and access
+#### Optimize data architecture and access
 
 > Design efficient data models and access patterns to minimize data
 > scanned. Leverage appropriate data types, clustering, indexing, and
 > performance features.
 
-### Architect for scalability and workload partitioning
+#### Architect for scalability and workload partitioning
 
 > Utilize Snowflake’s elastic warehouse features and application design
 > to strategically partition workloads, optimizing resource utilization,
 > concurrency, and latency.
 
-### Implement continuous performance monitoring and optimization
+#### Implement continuous performance monitoring and optimization
 
 > Establish comprehensive monitoring and logging to identify performance
 > bottlenecks. Proactively optimize the system over time, adapting to
@@ -61,49 +61,49 @@ efficiency by scaling down during lower demand.
 The following key recommendations are covered within the principles of
 Performance:
 
-- **Leveraging Elasticity  **
+- **Leveraging Elasticity**
   Dynamically adjust resources based on workload. Utilize horizontal
   scaling (multi-cluster warehouses) and vertical sizing to match query
   complexity. Employ manual scaling for predictable peaks and
   auto-scaling for real-time fluctuations.
 
-- **Peak Load Planning  **
+- **Peak Load Planning**
   Proactively plan for high-demand periods. Use manual scaling for
   predictable surges; enable auto-scaling and predictive scaling for
   less predictable demand.
 
-- **Continuous Performance Improvement  **
+- **Continuous Performance Improvement**
   Monitor key performance indicators like latency, throughput, and
   utilization. Foster continuous tuning through training, feedback, and
   metric review.
 
-- **Test-First Design  **
+- **Test-First Design**
   Integrate performance testing into the design phase. Define KPIs,
   establish baselines, and simulate workloads early. Use load,
   scalability, and stress testing throughout development to prevent
   bottlenecks.
 
-- **Effective Data Shaping  **
+- **Effective Data Shaping**
   Leverage Snowflake micro-partition clustering. Define clustering keys
   for frequently filtered/joined columns to enable efficient pruning and
   reduce I/O. Regularly monitor clustering depth.
 
-- **Well-Designed SQL  **
-  Write efficient queries by avoiding SELECT \*, specifying needed
+- **Well-Designed SQL**
+  Write efficient queries by avoiding `SELECT \*`, specifying needed
   columns, and using efficient joins. Use query profiling tools to
   refine performance and minimize resource consumption.
 
-- **Optimizing Warehouses  **
+- **Optimizing Warehouses**
   Reduce queues and spillage, scale appropriately, and use query
   acceleration. Right-size warehouses and manage concurrency to reduce
   contention and optimize resource use.
 
-- **Optimizing Storage  **
+- **Optimizing Storage**
   Use automatic clustering, Search Optimization Service, and
   materialized views strategically. Match the technique to your
   workload.
 
-- **High-Level Practices  **
+- **High-Level Practices**
   To optimize query performance, select fewer columns, leverage query
   pruning with clustered columns, and use pre-aggregated tables.
   Simplify SQL by reducing unnecessary sorts, preferring window
@@ -113,8 +113,7 @@ Performance:
 
  
 
-## Set performance objectives
-### Establish and validate performance objectives
+## Establish and validate performance objectives
 
 ### Overview
 
@@ -124,7 +123,7 @@ This approach links business objectives with efficient resource
 management, leveraging key principles, careful configurations, and
 Snowflake's elasticity for scalability and cost-efficiency.
 
-### Desired outcome
+#### Desired outcome
 
 By implementing these best practices, you can achieve a highly
 responsive and cost-optimized Snowflake environment. Expect predictable
@@ -134,7 +133,7 @@ operational expenses by aligning compute resources with workload
 demands. Ultimately, businesses can claim a well-architected data
 platform that supports their needs without unnecessary expenditure.
 
-### Recommendations
+#### Recommendations
 
 Performance is a core, cost-driven feature. Prioritize "as fast as
 necessary" over "as fast as possible" to prevent over-provisioning.
@@ -192,14 +191,14 @@ expensive re-engineering projects. To avoid these issues, establish
 clear project plans and formalize performance metrics from the outset,
 ensuring optimal system health and cost efficiency.
 
-### The Core Process: The Design Document
+#### The Core Process: The Design Document
 
 To translate principle into practice, any significant data project
 should begin with a design document. This is not just a technical
 document, but a formal agreement that forces critical trade-off
 conversations to happen at the project's inception.
 
-#### Assembling the Stakeholders: A Cross-Functional Responsibility
+**Assembling the Stakeholders: A Cross-Functional Responsibility**
 
 Creating a design document is a collaborative effort. It ensures that
 business goals are accurately translated into technical and financial
@@ -254,7 +253,7 @@ quality, enhanced user satisfaction, and better business outcomes.
 Regular review and adjustment of SLOs are crucial to adapt to evolving
 business needs and technological advancements.
 
-### Defining the four pillars of workload requirements
+#### Defining the four pillars of workload requirements
 
 Define a workload’s performance profile using these four key pillars:
 
@@ -327,7 +326,7 @@ exploding joins (join with a missing or incorrect condition, causing a
 massive, unintended multiplication of rows) or full table scans, which
 indicate ineffective query pruning.
 
-### Mandatory pre-release benchmarking
+#### Mandatory pre-release benchmarking
 
 Before deploying a new workload to production, benchmark it as a formal
 quality gate. This involves running it on a production-sized data clone
@@ -367,10 +366,9 @@ This often leads to emergency fixes, missed deadlines, and the
 brute-force solution of running workloads on oversized warehouses. This
 obscures underlying design flaws at a significant ongoing cost.
 
-## Build for performance
-### Foundational First Steps
+## Foundational First Steps
 
-### Performance in the cloud
+#### Performance in the cloud
 
 In an on-premises environment, performance is often a sunk cost. The
 cloud, particularly Snowflake, links performance and cost optimization.
@@ -382,7 +380,7 @@ cost-effective environment. Make conscious performance and cost
 decisions before significant development to establish a solid
 architectural foundation, preventing costly re-engineering.
 
-### Establish and validate performance objectives
+#### Establish and validate performance objectives
 
 Effective performance objectives are specific, measurable, and
 realistic. They serve as the benchmark against which you can measure the
@@ -442,8 +440,6 @@ unexpected costs.
   parameter on your warehouses to a sensible maximum, such as 15 minutes
   for a dashboard warehouse or 8 hours for a complex ETL warehouse.
 
-<!-- -->
-
 - **Configuring Resource Monitors** provides a safety net for budget
   control. These monitors track warehouse credit consumption and can
   trigger actions like notifications or automatic suspension when
@@ -452,8 +448,6 @@ unexpected costs.
   resource monitors in the Snowflake
   documentation</u>](https://docs.snowflake.com/en/user-guide/resource-monitors)
   for more information.
-
-<!-- -->
 
 - **Budgets** offer a flexible way to monitor and control spending
   across your Snowflake account. They track credit usage for
@@ -518,7 +512,7 @@ and manageable than a single, complex one. For more information, see
 [<u>Dynamic tables in the Snowflake
 documentation</u>](https://docs.snowflake.com/en/user-guide/dynamic-tables-about).
 
-#### Conclusion
+### Conclusion
 
 A high-performing Snowflake environment starts on day one. By moving
 from strategic planning to tactical configurations, you establish a
@@ -527,7 +521,7 @@ guardrails, and using the right tools—are essential for building a
 performant, scalable, and cost-effective architecture in the Snowflake
 Data Cloud.
 
-### Leveraging elasticity for performance
+## Leveraging elasticity for performance
 
 #### The power of elastic compute
 
@@ -585,7 +579,7 @@ By isolating workloads, you can observe the specific performance profile
 of each and apply the most appropriate and cost-effective scaling
 strategy described below.
 
-#### Vertical scaling: sizing up for complexity and scale
+### Vertical scaling: sizing up for complexity and scale
 
 Vertical scaling, or resizing, modifies a warehouse's compute power.
 Snowflake warehouses, offered in "t-shirt sizes" (X-Small, Small,
@@ -598,12 +592,12 @@ A larger warehouse can accelerate complex queries by parallelizing work
 across more nodes. However, increasing warehouse size is not a universal
 solution for slow queries; diagnose the performance bottleneck first.
 
-### When to scale up: A diagnostic checklist
+#### When to scale up: A diagnostic checklist
 
 Before increasing a warehouse’s size, use the following checklist to
 validate that it is the appropriate solution.
 
-#### Symptom 1: Disk spilling
+**Symptom 1: Disk spilling**
 
 Spilling occurs when a query’s intermediate results exceed a warehouse’s
 available memory and must be written to disk. This is a primary
@@ -624,7 +618,7 @@ level of severity:
   severely degrades performance. Queries exhibiting significant remote
   spilling are strong candidates for a larger warehouse.
 
-#### Symptom 2: Slow, CPU-bound queries (non-spilling)
+**Symptom 2: Slow, CPU-bound queries (non-spilling)**
 
 Sometimes a query is slow even without spilling significant data. This
 often indicates that the query is CPU-bound and could benefit from the
@@ -663,18 +657,18 @@ Use the following table to determine the minimum number of
 micro-partitions a query should scan to effectively utilize a given
 warehouse size.
 
-| **Warehouse Size** | **Minimum Micro-partitions Scanned** |<br>
-|--------------------|--------------------------------------|<br>
-| X-Small -----------| 40 ----------------------------------|<br>
-| Small   -------------| 80  ----------------------------------|<br>
-| Medium  -----------| 160   ---------------------------------|<br>
-| Large   -------------| 320  ---------------------------------|<br>
-| X-Large -----------| 640  ---------------------------------|<br>
-| 2X-Large ----------| 1,280 -------------------------------|<br>
-| 3X-Large ----------| 2,560  -------------------------------|<br>
-| 4X-Large ----------| 5,120  -------------------------------| <br>
-| 5X-Large ----------| 10,240   ------------------------------| <br>
-|--------------------|---------------------------------------|<br>
+| **Warehouse Size** | **Minimum Micro-partitions Scanned** |
+|---|---|
+| X-Small | 40 |
+| Small | 80 |
+| Medium | 160 |
+| Large | 320 |
+| X-Large | 640 |
+| 2X-Large | 1,280 |
+| 3X-Large | 2,560 |
+| 4X-Large | 5,120 | 
+| 5X-Large | 10,240 |
+
 
 ### Horizontal scaling: scaling out for concurrency
 
@@ -726,7 +720,7 @@ See [<u>Multi-cluster warehouses in the Snowflake
 documentation</u>](https://docs.snowflake.com/en/user-guide/warehouses-multicluster)
 for more information.
 
-#### Query Acceleration Service (QAS): Handling workload volatility
+### Query Acceleration Service (QAS): Handling workload volatility
 
 The Query Acceleration Service (QAS) enhances warehouse performance by
 providing serverless compute resources to accelerate specific, eligible
@@ -764,7 +758,7 @@ See [<u>Using the Query Acceleration Service (QAS) in the Snowflake
 documentation</u>](https://docs.snowflake.com/en/user-guide/query-acceleration-service)
 for more information on QAS
 
-#### Summary: A strategic decision framework
+### Summary: A strategic decision framework
 
 Choosing the right elasticity tool begins with understanding your
 workload and identifying the specific performance problem you are
@@ -802,7 +796,7 @@ warehouse utilization, using these elasticity tools to tune your
 environment and maintain the optimal balance between performance and
 cost.
 
-### Test-first design: Building performance into every stage
+## Test-first design: Building performance into every stage
 
 A high-performing Snowflake environment stems from a deliberate
 strategy. Performance validation is integrated into every development
@@ -842,7 +836,7 @@ Proactive performance validation addresses these challenges head-on by:
 - **Reducing Risk:** Preventing performance problems before production
   deployment.
 
-### Formalizing performance: KPIs, SLOs, and baselines
+#### Formalizing performance: KPIs, SLOs, and baselines
 
 Successful performance validation starts with clearly defined
 expectations. Vague expectations cannot be tested, measured, or
@@ -981,7 +975,7 @@ and tools to self-diagnose and optimize their code.
   realistic performance tests without impacting production or incurring
   high costs for duplicate data storage.
 
-### Comprehensive performance validation: load, scale, and stress testing
+#### Comprehensive performance validation: load, scale, and stress testing
 
 Before promoting any significant change or new workload to production, a
 structured approach to load, scalability, and stress testing is
@@ -1090,8 +1084,7 @@ This proactive, data-driven approach ensures that the investment in
 Snowflake delivers maximum value while avoiding the common pitfalls of
 deferred performance management.
 
-## Data design and access
-### Optimize data architecture and access
+## Optimize data architecture and access
 
 ### Overview
 
@@ -1303,7 +1296,7 @@ reliable business insights.
   join algorithms, speeding query execution for complex analytical
   workloads.
 
-### Using data types for data quality enforcement
+#### Using data types for data quality enforcement
 
 Proper datatype selection is a fundamental aspect of robust data quality
 practices. While often overlooked, correct datatype assignment provides
@@ -1382,7 +1375,7 @@ improves join performance.
   adjustments and allowing the optimizer to utilize Min/Max statistics
   effectively.
 
-### NOT NULL constraints for data quality enforcement
+#### NOT NULL constraints for data quality enforcement
 
 Snowflake's NOT NULL constraints ensure data quality by requiring
 specified columns to always contain a value, preventing incomplete or
@@ -1409,7 +1402,7 @@ This allows for more streamlined equality predicates.
   resulting in performance overhead that you can avoid by using NOT NULL
   constraints.
 
-### The role of primary key and unique constraints
+#### The role of primary key and unique constraints
 
 Snowflake supports PRIMARY KEY and UNIQUE constraints for SQL
 compatibility, but these are not enforced. Maintaining data integrity is
@@ -1444,7 +1437,7 @@ promotes cleaner query code, reducing complexity.
   minimizes defensive SQL coding in downstream applications,
   streamlining development and enhancing application robustness.
 
-### Foreign key constraints
+#### Foreign key constraints
 
 Snowflake supports foreign key constraints for SQL compatibility but
 does not enforce them. Maintaining referential integrity is your
@@ -1471,7 +1464,7 @@ impressive performance. Most industry-standard data modeling techniques
 are applicable when designing a schema in Snowflake. The following
 sections explore common and model-specific considerations.
 
-### Star Schema
+#### Star Schema
 
 The Star Schema model works well with Snowflake, favoring right-deep
 query execution plans. This positions the largest fact table on the far
@@ -1490,7 +1483,7 @@ not part of the final projections.
   columns involved in equality joins is strongly recommended for optimal
   performance.
 
-### Data Vault 2.0
+#### Data Vault 2.0
 
 **Considerations:**
 
@@ -1570,7 +1563,7 @@ significantly impact the query optimizer's choices and introduce
 computational overhead. This is especially true when the column is used
 in filter predicates, join key predicates, or as an aggregation key.
 
-### Data type recommendations
+#### Data type recommendations
 
 Consider the following data type recommendations when designing a
 schema:
@@ -1586,7 +1579,7 @@ schema:
 - **Collation considerations:** Use collation only when essential due to
   its performance impact. Avoid using collation for join keys.
 
-### Data types and join performance
+#### Data types and join performance
 
 For optimal performance, use identical data types for common join keys
 across tables in the same schema. Type casting of join keys, whether
@@ -1611,7 +1604,7 @@ See ​​[<u>Data Type Considerations for Join Keys in
 Snowflake</u>](https://medium.com/snowflake/data-type-considerations-for-join-keys-in-snowflake-304d515d2b91)
 for further exploration of this topic.
 
-### Temporal data type choices and performance 
+#### Temporal data type choices and performance 
 
 Snowflake offers various temporal data types, all stored numerically.
 For optimal **filtering** performance, DATE and TIMESTAMP_NTZ are
@@ -1630,7 +1623,7 @@ timezones is needed, use two columns: one without a timezone (DATE or
 TIMESTAMP_NTZ) for pruning, and another with a timezone for accurate
 representation.
 
-### Collation
+#### Collation
 
 Collation introduces measurable performance overhead, especially for
 join keys. Numerical join keys are faster, regardless of collation. You
@@ -1656,7 +1649,7 @@ Snowflake, but not always in expected ways. Pay special attention to the
 data types for join keys, temporal data types, and avoid the use of
 collations where possible.
 
-### Data access
+## Data access
 
 ### Pruning
 
@@ -1667,7 +1660,7 @@ micro-partitions yields 99% pruning efficiency. Pruning decisions are
 based on the minimum and maximum values stored as metadata for columns
 involved in filters or join keys.
 
-### Static vs dynamic pruning
+#### Static vs dynamic pruning
 
 Snowflake utilizes both static and dynamic pruning. Static pruning,
 which occurs during query compilation in the Cloud Services Layer, uses
@@ -1842,8 +1835,7 @@ periodic reordering may be unnecessary. You can choose manual data
 clustering by sorting records in each batch to reduce ongoing automatic
 clustering costs.
 
-## Scale and workload management
-### Architect for scalability and workload partitioning
+## Architect for scalability and workload partitioning
 
 ### Overview
 
