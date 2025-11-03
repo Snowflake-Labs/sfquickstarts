@@ -1,8 +1,8 @@
 name: Publish to AEM on PR Approval (Prod)
 
 on:
-  pull_request_review:
-    types: [submitted]
+  push:
+    branches: [master, github-actions]
 
 jobs:
   publish:
