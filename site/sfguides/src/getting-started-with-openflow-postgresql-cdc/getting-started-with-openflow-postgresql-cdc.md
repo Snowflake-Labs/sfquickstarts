@@ -26,7 +26,6 @@ You'll work with a realistic **Healthcare Appointment Management** system that i
 - **120 visit records** with diagnoses and charges
 - **Real-time CDC events** demonstrating INSERT, UPDATE operations
 
-> aside positive
 > **IMPORTANT - Demo Data Disclaimer:** All patient data, doctor information, and healthcare records in this demo are **entirely fictitious** and created for demonstration purposes only. No real PHI (Protected Health Information) is used.
 
 By completing this guide, you will build an end-to-end CDC pipeline that captures changes from PostgreSQL in real-time and enables analytics in Snowflake.
@@ -113,7 +112,6 @@ Before starting, ensure you have:
 - **PostgreSQL Instance**: PostgreSQL 11+ with logical replication enabled (AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database, or self-hosted)
 - **Network Connectivity**: Ability to configure network access from Snowflake to PostgreSQL
 
-> aside positive
 > **Openflow Deployment**: This quickstart uses **Snowflake Openflow SPCS deployment** (Snowflake-managed). If you're using [Openflow BYOC deployment](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about-byoc), the connector setup and concepts are the same, but runtime deployment steps will differ.
 
 <!-- ------------------------ -->
@@ -145,7 +143,6 @@ In this section, we'll configure PostgreSQL for CDC and load the healthcare demo
 
 This guide assumes you have a PostgreSQL instance already created and available. Before proceeding, ensure your instance meets these requirements:
 
-> aside positive
 > **Required PostgreSQL Configuration**:
 >
 > - **PostgreSQL instance available**: You have a running PostgreSQL instance (GCP Cloud SQL, AWS RDS, Azure Database, or self-hosted) with network accessibility
@@ -173,7 +170,6 @@ ALTER USER postgres WITH REPLICATION;
 - **Azure Database**: Set `wal_level = logical` via the Azure portal or Azure CLI
 - **Self-hosted PostgreSQL**: Edit `postgresql.conf` to set `wal_level = logical` (or run `ALTER SYSTEM SET wal_level = logical;`), then restart PostgreSQL
 
-> aside positive
 > **Important**: For detailed configuration instructions specific to your PostgreSQL service, see [Snowflake's PostgreSQL CDC Setup Guide - Configure wal_level](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/setup#configure-wal-level).
 
 After enabling logical replication and restarting your PostgreSQL instance if needed, you'll verify the `wal_level` setting in the next section after setting up your PostgreSQL client.
@@ -199,7 +195,6 @@ Before configuring your PostgreSQL environment, note these setup considerations:
 
 This section shows how to install and configure the `psql` command-line tool, which is used throughout this guide.
 
-> aside positive
 > **Don't have psql installed?** The `psql` client is part of the PostgreSQL installation:
 >
 > - **macOS**: `brew install postgresql` (via Homebrew)
@@ -234,7 +229,6 @@ echo "$PGHOST:$PGPORT:$PGDATABASE:$PGUSER:YOUR-PASSWORD" >> ~/.pgpass
 chmod 0600 ~/.pgpass
 ```
 
-> aside positive
 > **Password File Format**: The `.pgpass` file format is `hostname:port:database:username:password`. You can use `*` as a wildcard for any field. Learn more about [PostgreSQL password files](https://www.postgresql.org/docs/current/libpq-pgpass.html).
 
 ### Test PostgreSQL Connection
@@ -305,7 +299,6 @@ Expected result (version number may vary):
 (1 row)
 ```
 
-> aside negative
 > **Connection Failed?** If you cannot connect to PostgreSQL, resolve this before proceeding. Common fixes:
 >
 > - **Check firewall**: Ensure port 5432 is open
@@ -375,7 +368,6 @@ The `sql/0.init_healthcare.sql` script will:
 psql -f sql/0.init_healthcare.sql
 ```
 
-> aside positive
 > **Using a different PostgreSQL client?** If you're using pgAdmin, DBeaver, or another GUI client instead of `psql`, simply open `sql/0.init_healthcare.sql`, copy the entire contents, and execute it in your client's query window. The script contains standard PostgreSQL SQL and will work with any client.
 >
 > **Script Duration**: Approximately 10-15 seconds to complete.
@@ -384,7 +376,6 @@ psql -f sql/0.init_healthcare.sql
 
 Before connecting Openflow, let's verify the entire PostgreSQL CDC configuration is correct.
 
-> aside positive
 > **Using a different PostgreSQL client?** All verification queries below use `psql` for consistency. If you're using a GUI client (pgAdmin, DBeaver, etc.), simply run the SQL portion of each command. For example, for `psql -c "SELECT ..."`, just run `SELECT ...` in your client.
 
 #### Check Tables Exist
@@ -425,7 +416,6 @@ Expected output:
 (1 row)
 ```
 
-> aside positive
 > **What's a Publication?** A PostgreSQL publication defines which tables are tracked for CDC. The Openflow connector subscribes to this publication to receive change events (INSERT, UPDATE, DELETE) in real-time.
 
 #### Verify CDC Publication
@@ -481,7 +471,6 @@ Expected output:
 (1 row)
 ```
 
-> aside positive
 > **What to check:**
 >
 > - `wal_level` should be `logical`
@@ -505,7 +494,6 @@ Expected output:
 (1 row)
 ```
 
-> aside positive
 > **Note:** The `rolsuper` value depends on your PostgreSQL setup. For managed services (GCP Cloud SQL, AWS RDS, Azure), it's typically `f` (false). For self-hosted installations where you're using the superuser account, it may be `t` (true). The critical column to verify is `rolreplication` which must be `t` (true).
 
 The `rolreplication` column should be `t` (true). If it's `f` (false), grant replication privileges:
@@ -514,7 +502,6 @@ The `rolreplication` column should be `t` (true). If it's `f` (false), grant rep
 psql -c "ALTER USER $PGUSER WITH REPLICATION;"
 ```
 
-> aside positive
 > **Setup Complete!** Your PostgreSQL database is now fully configured for CDC with:
 >
 > - ✅ Logical replication enabled
@@ -548,7 +535,6 @@ Now we'll set up all required Snowflake objects for the CDC pipeline. This inclu
 
 Open Workspaces in Snowsight (**Projects** → **Workspaces**), copy paste the `sql/1.snowflake_setup.sql` script and execute it.
 
-> aside positive
 > **IMPORTANT:** Before running the script, update line 64 with your PostgreSQL endpoint:
 >
 > ```sql
@@ -616,7 +602,6 @@ Expected output:
 
 Verify that Snowflake's network rule is correctly configured to allow connections to your PostgreSQL instance.
 
-> aside negative
 > **⚠️ IMPORTANT - Snowflake Network Connectivity**
 >
 > For Openflow to connect to your PostgreSQL instance, two things must be true:
@@ -640,7 +625,6 @@ Expected output should show your actual PostgreSQL host:
 | postgres_network_rule    | HOST_PORT  | EGRESS | ['your-actual-host.com:5432']  |         |
 ```
 
-> aside negative
 > **⚠️ Host Mismatch?** If the `value_list` doesn't match your PostgreSQL host, you **must** recreate the network rule and external access integration with the correct host:
 >
 > ```sql
@@ -677,7 +661,6 @@ Expected output should show your actual PostgreSQL host:
 
 You've verified that the Snowflake network rule matches your PostgreSQL host and port.
 
-> aside positive
 > **Note**: Full end-to-end connectivity (Snowflake → PostgreSQL) will be tested when the Openflow connector starts. If you encounter connection errors during connector startup, verify:
 >
 > 1. PostgreSQL firewall/security groups allow inbound connections from Snowflake SPCS
@@ -740,7 +723,6 @@ Expected output for `SHOW INTEGRATIONS`:
 | quickstart_pgcdc_access  | EXTERNAL_ACCESS   | SECURITY | true    | OpenFlow SPCS runtime access for PostgreSQL CDC      | 2025-10-07 10:00:00 |
 ```
 
-> aside positive
 > **What's an External Access Integration?** This allows your Openflow runtime to communicate with external services (your PostgreSQL database) from within Snowpark Container Services. The `postgres_network_rule` you created earlier defines which PostgreSQL endpoints are accessible.
 
 #### Create Runtime via Snowsight
@@ -760,7 +742,6 @@ Follow these steps to create your runtime:
 
 ![Create Openflow Runtime](assets/openflow_spcs_runtime_create.gif)
 
-> aside positive
 > **Runtime Creation Time**: Runtime creation typically takes 3-5 minutes. The status will progress from `CREATING` → `ACTIVE`.
 
 #### Verify Runtime Status
@@ -774,7 +755,6 @@ Check that your runtime is active:
 
 Expected status: **ACTIVE**
 
-> aside positive
 > **Troubleshooting**: If the runtime status shows `ERROR` or stays in `CREATING` for more than 10 minutes:
 >
 > - Verify the external access integration exists: `SHOW INTEGRATIONS LIKE 'quickstart_pgcdc_access';`
@@ -787,12 +767,10 @@ Once your runtime is active, you can access the Openflow canvas to add and confi
 
 **Click on the runtime name** (`QUICKSTART_PGCDC_RUNTIME`) to open the canvas. This will open in a new browser tab where you'll configure connectors and build your data pipeline.
 
-> aside positive
 > **Authentication**: When opening the runtime canvas for the first time, you may be prompted to authenticate/authorize access. Accept these prompts to allow the canvas to access the runtime and required resources.
 
 ![Openflow Runtime Empty Canvas](assets/openflow_runtime_empty_canvas.png)
 
-> aside positive
 > **REFERENCE DOCUMENTATION:**
 >
 > For detailed information, see [Create runtime](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs-create-runtime) in the official documentation.
@@ -823,7 +801,6 @@ Navigate to **Work with data** → **Ingestion** → **Openflow** → **Overview
 
 ![Add PostgreSQL Connector](assets/pgcdc_install_on_runtime.gif)
 
-> aside positive
 > **New Tab & Authentication**: Adding the connector to your runtime will open a new runtime tab in your browser with the canvas showing the **PostgreSQL** processor group. If prompted, authenticate/authorize access to allow the canvas to access the runtime. You'll configure this connector in the next section.
 
 The **PostgreSQL** connector is now on your canvas. It includes all the processors and services needed for snapshot load and incremental CDC from PostgreSQL to Snowflake.
@@ -842,7 +819,6 @@ To access parameter contexts:
 
 ![Access Parameter Contexts](assets/access_parameter_contexts.gif)
 
-> aside positive
 > **Production Tip:** For production deployments, use a SecretManagerParameterProvider (like `AwsSecretsManagerParameterProvider`) to store credentials in a secrets manager rather than directly in the connector configuration.
 
 ### Configure PostgreSQL Source Parameters
@@ -876,7 +852,6 @@ Click on the **Parameters** tab and configure the following values:
 | **Publication Name** | `healthcare_cdc_publication` | Name of the PostgreSQL publication created in [0.init_healthcare.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc/blob/main/sql/0.init_healthcare.sql#L348) |
 | **Replication Slot Name** | Leave empty for auto-generation | Optional. If specified, this exact name will be used for the replication slot. If left empty, Openflow automatically generates a unique name following the pattern `snowflake_connector_<unique_id>`. |
 
-> aside positive
 > **Connection URL Format**: The PostgreSQL JDBC URL format is `jdbc:postgresql://HOST:PORT/DATABASE`.
 >
 > - For GCP Cloud SQL: Use the public IP address (e.g., `jdbc:postgresql://34.123.45.67:5432/postgres`)
@@ -899,7 +874,6 @@ Click **Apply** to save your PostgreSQL source parameters configuration.
 
 Configure the Snowflake destination connection where PostgreSQL data will be replicated.
 
-> aside negative
 > **IMPORTANT**: Ensure you have completed the [Create Snowflake Objects](#create-snowflake-objects) section before proceeding. The PostgreSQL connector requires the database, warehouse, and role to be created in advance.
 
 #### Access PostgreSQL Destination Parameters
@@ -926,7 +900,6 @@ Your completed configuration should look like this:
 
 ![Set PostgreSQL Destination Parameters](assets/set_pg_destination_params.png)
 
-> aside positive
 > **Session Token Authentication**: When using `SNOWFLAKE_SESSION_TOKEN`, the connector authenticates using the Openflow runtime's Snowflake session. This is the recommended approach for SPCS deployments as it eliminates the need to manage separate credentials.
 
 Click **Apply** to save your PostgreSQL destination parameters configuration.
@@ -977,7 +950,6 @@ Your completed configuration with inherited parameters should look like this:
 
 ![Set PostgreSQL Ingestion Parameters](assets/set_pg_ingestion_parmeters_with_inheritance.png)
 
-> aside positive
 > **Configuration Notes**:
 >
 > - **Table Regex Pattern**: The regex `healthcare\..*` matches all tables in the `healthcare` schema. The backslash escapes the dot to match a literal period (e.g., `healthcare.patients`, `healthcare.doctors`, `healthcare.appointments`, `healthcare.visits`).
@@ -1006,10 +978,8 @@ Follow these steps to enable services and start the connector:
 
 ![Enable Services and Start Connector](assets/enable_service_and_start.gif)
 
-> aside positive
 > **Note**: You may see an error message about "Snowflake Private Key Service" failing to enable. This error can be safely ignored since this quickstart uses `SNOWFLAKE_SESSION_TOKEN` authentication instead of private key authentication. The connector will function normally with session token authentication.
 
-> aside positive
 > **What's Happening?** The connector performs two main operations:
 >
 > 1. **Snapshot Load**: Captures all existing data from PostgreSQL tables and loads it into Snowflake
@@ -1025,7 +995,6 @@ Once the services are running, your connector status should show all components 
 
 After the snapshot completes, verify that the data was loaded successfully in Snowflake.
 
-> aside negative
 > **IMPORTANT: Identifier Quoting Rule**
 >
 > PostgreSQL creates lowercase unquoted identifiers (e.g., `healthcare`, `appointments`, `patient_id`). When Openflow replicates these to Snowflake, they are preserved as **case-sensitive lowercase** names.
@@ -1071,7 +1040,6 @@ Expected output:
 +----------------+--------------+
 ```
 
-> aside positive
 > Note: The initial snapshot loads 100 rows in `"visits"`. Additional visit records are generated during the Live CDC demo, so this count will increase after running the steps in "Generate Live CDC Events".
 
 #### Verify CDC Metadata
@@ -1099,7 +1067,6 @@ Expected output (timestamps will vary):
 
 This confirms that all 170 appointments were successfully loaded during the snapshot phase.
 
-> aside positive
 > **CDC Metadata Columns**: Openflow automatically adds the following metadata columns to track changes:
 >
 > - `_SNOWFLAKE_INSERTED_AT` (TIMESTAMP): When the row was first inserted into Snowflake during the snapshot or initial CDC event
@@ -1136,7 +1103,6 @@ Expected output (approximate - actual counts will vary):
 +-----------+-------+------------+
 ```
 
-> aside positive
 > **Note on Data Variability**: The exact counts and percentages will vary each time you run the initialization script because the appointment status is assigned using `RANDOM()` in PostgreSQL. Your actual output might show `completed: 102, cancelled: 44, no_show: 4` or other values, which is completely normal. The important thing is that you see a mix of different statuses with `completed` being the most common (~60%), followed by `cancelled` (~25%).
 >
 > **Save Baseline Results**: These snapshot results serve as your baseline for comparison. After running the CDC demo, you'll re-run this same query to see how the status distribution changed. Consider saving these results or taking a screenshot for easy side-by-side comparison later.
@@ -1178,7 +1144,6 @@ The full script includes additional checks for:
 
 You can run this script directly in Snowsight by copying and pasting the SQL.
 
-> aside positive
 > **Snapshot Load Complete!** If all queries return expected results, your PostgreSQL tables are successfully replicated to Snowflake. The connector is now listening for changes and will automatically capture any INSERT, UPDATE, or DELETE operations in real-time.
 
 <!-- ------------------------ -->
@@ -1187,7 +1152,6 @@ You can run this script directly in Snowsight by copying and pasting the SQL.
 
 Now that the snapshot is loaded, let's set up Snowflake Intelligence before generating CDC events. This allows you to establish a baseline understanding of your data, then observe changes in real-time after running the CDC demo.
 
-> aside positive
 > **Why Set Up Intelligence First?** By asking baseline questions about your snapshot data now, you'll be able to compare results after the CDC demo and see exactly how the data changed. This creates a powerful before/after experience for understanding CDC!
 
 ### What You'll Build
@@ -1213,7 +1177,6 @@ Before setting up Snowflake Intelligence, ensure you have:
 
 The semantic model defines your healthcare schema for the AI agent. It includes table definitions, relationships, and CDC metadata columns.
 
-> aside positive
 > **NOTE:** The `semantic_models` stage and `snowflake_intelligence` database were already created when you ran `1.snowflake_setup.sql`. You just need to upload the semantic model file!
 
 Upload the semantic model to the stage using Snowsight:
@@ -1242,7 +1205,6 @@ Verify the upload via [Database Explorer](https://app.snowflake.com/_deeplink/#/
 
 ### Create the Agent
 
-> aside positive
 > **IMPORTANT:** Before creating the agent, ensure you are using the `QUICKSTART_ROLE` role in Snowsight. This ensures the agent is owned by the correct role and has proper access to resources. You can switch roles using the role selector in the top-right corner of Snowsight.
 
 #### Access Agent Creation Interface
@@ -1275,7 +1237,6 @@ After creating the agent, configure its details:
 
    ![Agent Edit Button](assets/si_agent_edit.png)
 
-> aside positive
 > **IMPORTANT:** As you configure each section below (About, Tools, Orchestration, Access), remember to click **"SAVE"** after completing all configurations to ensure your changes are preserved.
 
 Now configure the agent basics in the "About" section:
@@ -1323,7 +1284,6 @@ Now configure the agent basics in the "About" section:
 - **File:** `healthcare_cdc_semantic_model.yaml`
 - **Description:** `Healthcare appointment management with real-time snapshot and CDC data tracking`
 
-> aside positive
 > **TIP:** The semantic model includes definitions for all four tables (patients, doctors, appointments, visits) plus their relationships and CDC metadata columns (_Snowflake_INSERTED_AT,_Snowflake_UPDATED_AT, _Snowflake_DELETED).
 
 ### Configure Orchestration
@@ -1349,7 +1309,6 @@ When showing CDC-related data, explain what the metadata columns mean (e.g., _SN
 Focus on actionable insights for healthcare operations.
 ```
 
-> aside positive
 > **TIP:** Use `auto` (default) to let Snowflake automatically select the best available model for your region and query type. Supported models include Claude 4.0, Claude 3.7, Claude 3.5, and GPT 4.1.
 
 ### Set Access Controls
@@ -1365,7 +1324,6 @@ Focus on actionable insights for healthcare operations.
 - **Role:** `QUICKSTART_ROLE`
 - **Permission:** `OWNERSHIP`
 
-> aside positive
 > **NOTE:** All queries use the user's credentials. Ensure users have appropriate access to the `QUICKSTART_PGCDC_DB."healthcare"` schema and underlying tables.
 
 ### Ask Baseline Questions (Snapshot Data)
@@ -1385,8 +1343,7 @@ Now that your agent is configured, let's ask baseline questions about the snapsh
 
    ![Set Role and Warehouse](assets/si_pgcdc_chat_choose_role.gif)
 
-   > aside positive
-   > **IMPORTANT:** The agent will use these credentials to query your data. Make sure the role has access to the `QUICKSTART_PGCDC_DB."healthcare"` schema and all tables.
+      > **IMPORTANT:** The agent will use these credentials to query your data. Make sure the role has access to the `QUICKSTART_PGCDC_DB."healthcare"` schema and all tables.
 
 4. Start with these baseline questions:
 
@@ -1430,7 +1387,6 @@ Now that your agent is configured, let's ask baseline questions about the snapsh
 
 ![Agent Queries](assets/si_queries.gif)
 
-> aside positive
 > **Baseline Established!** You now have a clear picture of your snapshot data. Keep these numbers in mind - after running the CDC demo in the next section, you'll ask follow-up questions to see exactly what changed!
 
 <!-- ------------------------ -->
@@ -1459,7 +1415,6 @@ The demo script simulates a busy morning at DemoClinic Healthcare (8:00 AM - 12:
 - **2** soft-deleted records (visible with `_SNOWFLAKE_DELETED = TRUE`)
 - **1** doctor record update
 
-> aside positive
 > **Real CDC Patterns**: This script demonstrates all major CDC event types you'll encounter in production: customer records being created (INSERT), order statuses changing (UPDATE), and old data being archived (DELETE). The timing is designed to align with Openflow's 1-minute sync interval!
 
 ### Run CDC Demo Script
@@ -1498,7 +1453,6 @@ The script will:
 - Wait 60 seconds after major operations to align with CDC sync intervals
 - Show a summary of changes at the end
 
-> aside positive
 > **Perfect Timing for CDC**: The script includes 60-second pauses after key operations to align with Openflow's 1-minute CDC sync interval. This lets you:
 >
 > - Switch to Snowflake between operations to observe changes appearing
@@ -1541,7 +1495,6 @@ You should see output like this:
 
 While the script is running (or immediately after), switch to Snowflake to see the changes appear in real-time.
 
-> aside positive
 > **Tip - Refresh Openflow Canvas**: You can also monitor CDC activity in the Openflow UI. Right-click on the canvas and select **Refresh** to see updated statistics (records processed, events captured, etc.) on the connector flows in real-time.
 
 #### Check Updated Row Counts
@@ -1633,10 +1586,8 @@ Based on the CDC events generated by the live appointments script, you'll see th
 2. **Second**: `visits_JOURNAL_1759908563_1` - Created when new visit records are added  
 3. **Third**: `doctors_JOURNAL_1759908563_1` - Created when doctor availability is updated
 
-> aside positive
 > **Journal Table Naming**: The timestamp portion (e.g., `1759908563`) will be different in your environment based on when tables are added to replication. The schema generation number starts at `1` and increments if the source table schema changes. For more details, see [Track data changes in tables](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/setup#track-data-changes-in-tables) in the Snowflake documentation.
 
-> aside positive
 > **Find Your Journal Tables**: You can see which journal tables have been created by running:
 >
 > ```sql
@@ -1665,7 +1616,6 @@ ORDER BY SEEN_AT DESC
 LIMIT 20;
 ```
 
-> aside positive
 > **Journal Table Structure**: Journal tables track all CDC events with:
 >
 > - `EVENT_TYPE`: The operation type - `IncrementalInsertRows`, `IncrementalUpdateRows`, or `IncrementalDeleteRows`
@@ -1711,10 +1661,8 @@ Expected output (the exact `appointment_id` and `patient_id` values will be cons
 +-----------------+------------+------------+------------------+-----------------------------+---------------------------+---------------------------+----------------------+
 ```
 
-> aside positive
 > **Note on Deleted Record IDs**: The specific appointment IDs deleted will be consistent across multiple runs of the demo because the DELETE query uses `ORDER BY appointment_id` to select the 2 oldest cancelled appointments deterministically. The actual IDs depend on which appointments were randomly assigned `cancelled` status during your PostgreSQL initialization.
 
-> aside positive
 > **Soft Deletes**: Notice that deleted records are still queryable in Snowflake! The `_SNOWFLAKE_DELETED` flag marks them as deleted, but the data is preserved. This is crucial for:
 >
 > - Audit trails and compliance
@@ -1751,7 +1699,6 @@ The CDC script will create these changes:
 
 The exact counts and percentages will vary based on your baseline snapshot data (which uses `RANDOM()` for initial status assignment), but you should see the relative changes described above.
 
-> aside positive
 > **Real-time CDC in Action!** The changes you made in PostgreSQL appeared in Snowflake within seconds. This demonstrates the power of CDC for real-time data integration and analytics.
 
 ---
@@ -1787,7 +1734,6 @@ Table with appointment details and `_SNOWFLAKE_UPDATED_AT` timestamps
 
 2 cancelled appointments that were removed (where `_SNOWFLAKE_DELETED = TRUE`)
 
-> aside positive
 > **Note on Counts**: The exact numbers you see may vary based on when you run the CDC script, how long it runs, and the timing of CDC sync intervals. For example, you might see "12 appointments were updated" or "30 appointments were updated" - both are correct depending on which CDC events have been synced at query time. The key is to verify that CDC events are being captured, not to match exact counts.
 
 #### Compare Before and After
@@ -1900,7 +1846,6 @@ Table with appointment details and `_SNOWFLAKE_UPDATED_AT` timestamps
 
 **Expected:** Count from visits where `follow_up_required = TRUE`
 
-> aside positive
 > **Pro Tip:** Snowflake Intelligence understands the CDC metadata columns and can differentiate between snapshot data and real-time changes. Try asking comparative questions like "Show me only the appointments that changed today" to see CDC-specific insights!
 
 ### Alternative: SQL Queries
@@ -1953,7 +1898,6 @@ GROUP BY d."doctor_id", d."first_name", d."last_name", d."specialization"
 ORDER BY completed DESC;
 ```
 
-> aside positive
 > **Best of Both Worlds:** Use Snowflake Intelligence for ad-hoc exploration and business user queries, and SQL for repeatable reporting and dashboards!
 
 <!-- ------------------------ -->
@@ -1962,7 +1906,6 @@ ORDER BY completed DESC;
 
 When you're done with the quickstart, follow these steps to clean up all resources. This prevents unnecessary compute costs and removes test data from your environment.
 
-> aside negative
 > **⚠️ DESTRUCTIVE OPERATIONS**: Some cleanup steps below will permanently delete databases, schemas, tables, and all data created during this quickstart. Make sure you've captured any queries or insights you want to keep before proceeding!
 
 ### Step 1: Stop the PostgreSQL Connector (Optional)
@@ -1974,7 +1917,6 @@ If you want to temporarily pause CDC replication without deleting any configurat
 3. Select **Stop** to halt CDC replication
 4. Wait for the connector to fully stop (status indicator turns red)
 
-> aside positive
 > **TIP:** Stopping the connector preserves your configuration while preventing further CDC processing and associated compute costs. You can restart it later by right-clicking and selecting **Start**. Use this option if you want to keep your runtime and connector configuration intact.
 
 ### Step 2: Delete Openflow Runtime (Permanent)
@@ -1994,12 +1936,10 @@ If you created a dedicated Openflow runtime for this quickstart:
 5. Confirm deletion
 6. Wait for the runtime to be fully removed (this may take a few minutes)
 
-> aside positive
 > **What Gets Deleted**: Deleting the runtime removes all connectors, services (NiFi, Registry), and the SPCS infrastructure. This automatically closes all database connections, including PostgreSQL replication slots.
 
 #### For Shared Runtime (From Companion Quickstart)
 
-> aside negative
 > **⚠️ IMPORTANT**: If you're using the Openflow runtime from the companion quickstart "[Getting Started with Openflow on SPCS](https://quickstarts.snowflake.com/guide/getting-started-openflow-spcs)", DO NOT delete the runtime! It may be used by other connectors or projects.
 
 Instead, stop the PostgreSQL connector and its related services:
@@ -2014,7 +1954,6 @@ Instead, stop the PostgreSQL connector and its related services:
 
 ![Stop Openflow PostgreSQL Services](assets/openflow_pgcdc_stop_all.gif)
 
-> aside positive
 > **Keep the Runtime**: The shared runtime can be reused for future Openflow projects, including other CDC connectors, API integrations, or file ingestion pipelines. Stopping services preserves all configuration while eliminating compute costs.
 
 ### Step 3: Clean Up PostgreSQL
@@ -2042,7 +1981,6 @@ WHERE database = 'postgres'
   AND NOT active;
 ```
 
-> aside positive
 > **Replication Slot Naming**: The replication slot name is automatically generated by Openflow following the pattern `snowflake_connector_<unique_id>`. The query above will show you the exact name.
 >
 > **If Slot is Active**: If the slot still shows `active = true` (connector not fully stopped), first terminate the backend connection:
@@ -2082,7 +2020,6 @@ WHERE schema_name = 'healthcare';
 
 Expected output: Empty result set (0 rows), confirming the healthcare schema has been removed.
 
-> aside positive
 > **Keep PostgreSQL?** If you're using a shared PostgreSQL instance, you may want to keep the schema and just drop the publication. If this was a dedicated test instance, you can safely drop everything.
 
 ### Step 4: Drop Snowflake Intelligence Agent
@@ -2156,7 +2093,6 @@ All resources have been removed. You can verify by:
 - ✅ Confirming no active PostgreSQL replication slots
 - ✅ Verifying no Openflow services consuming compute credits
 
-> aside positive
 > **Cost Savings**: By cleaning up unused resources, you avoid unnecessary compute costs. Warehouses, services, and replication slots all consume credits when active!
 
 <!-- ------------------------ -->

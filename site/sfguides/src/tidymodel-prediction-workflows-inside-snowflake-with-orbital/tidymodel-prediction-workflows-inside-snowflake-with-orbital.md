@@ -311,7 +311,6 @@ column). To prepare our data for modeling, we'll first select a few columns of i
 (loan term, credit utilization, credit open-to-buy, and all utilization),
 convert `INT_RATE` to a numeric variable, and remove missing values.
 
-> aside positive
 > Typically, we'd find our columns of interest with exploratory data analysis techniques,
 > but for the purposes of this Quickstart, we've skipped this step.
 
@@ -637,7 +636,6 @@ preds <-
 
 Another is to write our model prediction function as a [view](https://docs.snowflake.com/en/user-guide/views-introduction).
 
-> aside positive
 >
 > A view allows query results to be accessed like a table. The query will execute
 > anytime the view is called, and will run on any new data that has been added to the table.

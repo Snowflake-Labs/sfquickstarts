@@ -71,7 +71,7 @@ Tasty Bytes는 전 세계 도시에서 푸드 트럭을 운영합니다. 각 트
 
 ![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
-> aside positive SafeGraph는 전 세계 모든 장소에 대한 모든 데이터를 제공하는 전 세계적인 지리 공간 데이터 회사입니다. Esri, Tripadvisor, Mapbox 및 Sysco와 같은 고객은 SafeGraph 데이터를 사용하여 고객을 더 잘 이해하고, 신제품을 만들고, 비즈니스를 위한 더 나은 결정을 내립니다.
+> SafeGraph는 전 세계 모든 장소에 대한 모든 데이터를 제공하는 전 세계적인 지리 공간 데이터 회사입니다. Esri, Tripadvisor, Mapbox 및 Sysco와 같은 고객은 SafeGraph 데이터를 사용하여 고객을 더 잘 이해하고, 신제품을 만들고, 비즈니스를 위한 더 나은 결정을 내립니다.
 
 ### 2단계 - 객체 생성, 데이터 로드 및 데이터 결합
 
