@@ -1,4 +1,4 @@
-name: Validate abusive words and Stage
+name: Validate markdown and stage
 
 on:
   pull_request:
@@ -16,6 +16,7 @@ jobs:
       name: staging
     permissions:
       contents: read
+      issues: write
       pull-requests: write
     steps:
       - name: Checkout repository
@@ -58,8 +59,31 @@ jobs:
             names_arr='[]'
             while IFS= read -r name; do
               [ -z "$name" ] && continue
-              md_file=$(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
               lang=""
+              md_file=""
+              # Prefer a markdown file that matches the folder name
+              candidate="site/sfguides/src/$name/$name.md"
+              if [ -f "$candidate" ]; then
+                md_file="$candidate"
+              else
+                # Otherwise, pick the first .md containing a language: field in the first 50 lines
+                for f in $(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
+                  if sed -n '1,50p' "$f" | grep -qi -E '^[[:space:]]*language[[:space:]]*:'; then
+                    md_file="$f"; break
+                  fi
+                done
+                # As a fallback, choose the first non-README.md file
+                if [ -z "$md_file" ]; then
+                  for f in $(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
+                    [ "$(basename "$f")" = "README.md" ] && continue
+                    md_file="$f"; break
+                  done
+                fi
+                # Final fallback: any .md file if still empty
+                if [ -z "$md_file" ]; then
+                  md_file=$(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
+                fi
+              fi
               if [ -n "$md_file" ] && [ -f "$md_file" ]; then
                 lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
                 lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
@@ -128,7 +152,7 @@ jobs:
           }
 
       - name: Comment PR with validation findings (on failure)
-        if: failure()
+        if: failure() && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |

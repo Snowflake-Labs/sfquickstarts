@@ -5,6 +5,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 environments: web
 status: Published
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
