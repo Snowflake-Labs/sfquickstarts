@@ -6,7 +6,7 @@ summary: This guide will provide step-by-step details for building data engineer
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-Open in snowflake link: https://app.snowflake.com/templates?template=data_engineering_pipelines_snowpark_python
+Open in snowflake link: https://app.snowflake.com/templates?template=data_engineering_pipelines_snowpark_python?utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
 # Data Engineering Pipelines with Snowpark Python
