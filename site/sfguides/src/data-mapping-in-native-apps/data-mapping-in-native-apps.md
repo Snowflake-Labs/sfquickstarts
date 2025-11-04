@@ -208,8 +208,6 @@ We now have the referenced database setup in the provider account so we are read
 <!-- ------------------------ -->
 ## Provider Setup
 
-> aside positive
-> 
 > **Note** - You will need to replace the content in the **setup_package_script.sql** file with the following code. The **{{ package_name }}** directive, allows the application to use whatever name the app package has, according to the user's system username, as a code variable.
 
 ```sql
