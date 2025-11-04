@@ -138,8 +138,6 @@ To do the enhancement of the IP addresses we will use a dataset called DB11 from
 
 The first thing you need to do is create a new database which will serve as the lookup database for the application, following that, it is necessary to create a table, a file format, and a stage. That way we can upload our files to the **stage**, using the **file format** and after that loading that staged data into the **table**.
 
-> aside positive
-> 
 > **Note** - This setup SQL commands are performed by the **prepare_data.sh** file created previously, you can complete it with the code below:
 
 ```sh
