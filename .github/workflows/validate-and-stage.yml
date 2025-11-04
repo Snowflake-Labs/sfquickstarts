@@ -237,7 +237,7 @@ jobs:
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
             --arg pr "${{ github.event.pull_request.number }}" \
-            --arg sha "$GITHUB_SHA" \
+            --arg sha "${{github.sha}}" \
             --arg env "staging" \
             --arg qname "${{ steps.detect.outputs.quickstart_name }}" \
             --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
