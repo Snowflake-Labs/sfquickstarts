@@ -311,7 +311,7 @@ driving entitlements from reference tables makes policies explainable
 and maintainable. Performance should be validated against real
 workloads, and pruning/clustering strategies used where helpful.
 
-**Design Approach  **
+**Design Approach**
 Adopt a hub‑and‑spoke model: one policy per domain, so all child tables
 and views inherit the same semantics through tags.
 
