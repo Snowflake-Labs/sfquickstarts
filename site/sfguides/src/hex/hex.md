@@ -10,7 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Building and deploying a time series forecast with Hex + Snowflake
 
 <!-- ------------------------ -->
-## Lab Overview 
+## Overview 
 
 In this demo, we will play the role of a data scientist at a large restaurant chain tasked with helping the restaurant operators optimize their staffing schedule. To do this, we would like to forecast the hourly foot traffic for each of the restaurants stores in 200 different locations. Let's see how we can use Hex in collaboration with Snowflake/Snowpark to build an XGBoost forecasting model to help with the task at hand. 
 
@@ -123,7 +123,9 @@ Once downloaded, head over to Hex and you'll see a button to import a project in
 
 ![](assets/vhol_import.gif)
 
-Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we'll need to:
+Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project. 
+
+Before we dive into the code, we'll need to:
 1. Change our compute profile to run Python 3.8
 2. Import our Snowflake data connection
 
