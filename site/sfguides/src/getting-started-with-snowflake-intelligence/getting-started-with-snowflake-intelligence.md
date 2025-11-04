@@ -212,19 +212,19 @@ Now, let's ask the following questions.
 
 ### Q1. *Show me the trend of sales by product category between June and August.*
 
-![Q1](assets/q&a_1.png)
+![Q1](assets/qa_1.png)
 
 ___
 
 ### Q2. *What issues are reported with jackets recently in customer support tickets?*
 
-![Q2](assets/q&a_2.png)
+![Q2](assets/qa_2.png)
 
 ___
 
 ### Q3. *Why did sales of Fitness Wear grow so much in July?*
 
-![Q3](assets/q&a_3.png)
+![Q3](assets/qa_3.png)
 
 ### Q4. *Send a summary email*
 
