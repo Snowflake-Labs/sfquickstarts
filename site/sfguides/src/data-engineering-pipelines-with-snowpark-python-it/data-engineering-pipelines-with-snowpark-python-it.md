@@ -393,8 +393,6 @@ Per questo quickstart ci concentreremo sui primi due. Nel caso delle UDF e delle
 
 Questo ti consente anche di sviluppare e testare l’applicazione Python senza preoccuparti di incapsularla in un oggetto di database Snowflake corrispondente.
 
-> aside negative
-> 
 > **Nota**: al 1 febbraio 2023 lo strumento SnowCLI è ancora in preview.
 
 ### Altre informazioni sulle UDF di Snowpark Python
