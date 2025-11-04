@@ -19,19 +19,19 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - name: Checkout base repository (trusted)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          ref: ${{ github.event.pull_request.head.sha }}
+      #- name: Checkout base repository (trusted)
+      #  uses: actions/checkout@v4
+      #  with:
+      #    fetch-depth: 1
+      #    ref: ${{ github.event.pull_request.base.sha }}
 
-      - name: Checkout PR head (untrusted) into ./pr
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          path: pr
+      #- name: Checkout PR head (untrusted) into ./pr
+      #  uses: actions/checkout@v4
+      #  with:
+      #    fetch-depth: 1
+      #    repository: ${{ github.event.pull_request.head.repo.full_name }}
+      #    ref: ${{ github.event.pull_request.head.ref }}
+      #    path: pr
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -235,7 +235,7 @@ jobs:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
         run: |
           payload=$(jq -n \
-            --arg repo "$GITHUB_REPOSITORY" \
+            --arg repo "${{ github.repository }}" \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg sha "${{ github.event.pull_request.head.sha }}" \
             --arg env "staging" \
