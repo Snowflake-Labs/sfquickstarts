@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # End-to-End Data Harmonization with Snowflake Cortex AI
-<!-- ------------------------ -->
+
 ## Overview 
 
 ### The Business Problem
@@ -58,26 +58,20 @@ The solution processes 1,000+ product records from two different retailers and p
 
 ### Download the Source Files
 
-> aside positive The 3 source files (2 streamlit apps and 1 notebook) can be found [here](https://github.com/sfc-gh-jrauh/sfdataharmonization).
+> The 3 source files (2 streamlit apps and 1 notebook) can be found [here](https://github.com/sfc-gh-jrauh/sfdataharmonization).
 
 ### Note on the Datasets Used
 
-> aside positive
-> 
 > The datasets used in this quickstart are commonly used data harmonization test datasets. These datasets are made available by the database group of Prof. Erhard Rahm under the [Creative Commons license](https://creativecommons.org/licenses/by/4.0/). Column titles are changed at the table level from the original CSV files.
 
-> aside positive
->
 > **Citation:** Hanna Köpcke, Andreas Thor, and Erhard Rahm. 2010. Evaluation of data harmonization approaches on real-world match problems. Proc. VLDB Endow. 3, 1–2 (September 2010), 484–493. [https://doi.org/10.14778/1920841.1920904](https://doi.org/10.14778/1920841.1920904)
 
 
-
-<!-- ------------------------ -->
 ## Set-up
 
 In this section, you'll prepare your Snowflake environment by creating the necessary database objects and loading the sample datasets. We'll be working with three CSV files containing product data from ABT and Best Buy, plus a ground truth mapping file for validation.
 
-> aside positive If you didn't download the source files from the previous step, plese do so [here](https://github.com/sfc-gh-jrauh/sfentityresolution).
+> If you didn't download the source files from the previous step, plese do so [here](https://github.com/sfc-gh-jrauh/sfentityresolution).
 
 ### Step 1: Create Database and Schema
 
@@ -146,9 +140,9 @@ CREATE OR REPLACE STAGE ABT_BEST_BUY.STRUCTURED.ABT_BEST_BUY_DATA_STAGE
 -- Verify stage contents (which will be empty initially)
 LIST @ABT_BEST_BUY.STRUCTURED.ABT_BEST_BUY_DATA_STAGE;
 ```
+
 ### Step 5: Add Datasets to Internal Stage
-> aside positive
-> 
+
 > **Note:** The ABT/Best Buy CSV files themselves are from common datasets used for data harmonization evalutions and can be downloaded from the Universität Leipzig website for [Benchmark datasets for data harmonization](https://dbs.uni-leipzig.de/research/projects/benchmark-datasets-for-entity-resolution).
 
 <br/><br/>
@@ -270,13 +264,11 @@ SELECT 'Mapping Sample' AS SOURCE, * FROM ABT_BEST_BUY.STRUCTURED.ABT_BEST_BUY_P
 <br/><br/>
 ![](assets/results_test.png)
 <br/><br/>
-> aside positive
-> 
-> **Expected Results:** You should see approximately 1,081 ABT records, 1,092 Best Buy records, and 1,097 mapping records. The ABT table contains product identifiers (SKU, PRODUCT_LABEL, & ITEM_DETAILS), while the BEST_BUY table uses different field names (PRODUCTID, NAME, & DESCRIPTION) for similar data.
+
+**Expected Results:** You should see approximately 1,081 ABT records, 1,092 Best Buy records, and 1,097 mapping records. The ABT table contains product identifiers (SKU, PRODUCT_LABEL, & ITEM_DETAILS), while the BEST_BUY table uses different field names (PRODUCTID, NAME, & DESCRIPTION) for similar data.
 
 Your Snowflake environment is now ready! In the next section, we'll use the Data Harmonization Streamlit app to create unified datasets from these disparate schemas.
 
-<!-- ------------------------ -->
 ## Data Harmonization
 
 ### Understanding the Challenge
@@ -351,7 +343,6 @@ In the app interface:
    - `ABT.ITEM_DETAILS` → `product_description` ← `BEST_BUY.DESCRIPTION`
    - (The Manufacturer field should be 'None' for ABT because it doesn't have a corresponding match.)
 
-> aside positive 
 ****Key Features and Capabilities****:
 
 >The Cortex AI model analyzes your data to identify:
@@ -417,14 +408,10 @@ By harmonizing the data:
 3. **Audit Trail**: Complete lineage from source to harmonized tables
 4. **Ready for Matching**: Data is now in the perfect format for the hybrid entity matching algorithm
 
-> aside positive
 We will use this audit table in our upcoming notebook to ensure we're matching like-for-like from a column-matching perspective.
-
-> 
 
 In the next section, we'll use these harmonized tables to perform intelligent entity matching using a hybrid approach that combines vector similarity with AI classification.
 
-<!-- ------------------------ -->
 ## Data Harmonization - Hybrid Matching
 
 Now that we have harmonized datasets, it's time to tackle the core challenge: **determining which ABT products correspond to which Best Buy products**. This is where the magic of hybrid entity matching comes in.
@@ -476,8 +463,8 @@ This interactive cell discovers your harmonization output tables and lets you se
 
 **Why It Matters:**
 This dynamic configuration means the notebook adapts to your specific harmonization output – no hardcoded table names or column names. You can run this workflow on any pair of harmonized datasets.
-> aside positive **Run the cell `r_Harmonization_Table_Configuration`**
-                    - This will run an in-notebook Streamlit app
+
+**Run the cell `r_Harmonization_Table_Configuration`** - This will run an in-notebook Streamlit app. 
 
     
 1. Select your database (ABT_BEST_BUY) and schema (STRUCTURED)
@@ -513,7 +500,7 @@ Creates the foundational features for hybrid matching by generating vector embed
 - **Pre-computed similarities**: Storing these scores enables fast filtering in subsequent steps
 - **Reduced search space**: Filtering at 0.2 threshold eliminates obviously non-matching pairs
 
-> aside positive **Run the cell `r_Vector_Feature_Engineering`**
+**Run the cell `r_Vector_Feature_Engineering`**
 
 **Expected Output:**
 The cell displays a summary showing:
@@ -554,7 +541,7 @@ Implements the two-stage matching logic that combines vector similarity with AI 
 - **Speed**: High-confidence matches are resolved with simple vector comparison
 - **Accuracy**: AI_CLASSIFY handles nuanced cases where vector similarity alone is insufficient (e.g., similar product names for different models)
 
-> aside positive **Run the cell `r_Hybrid_Matching`**
+**Run the cell `r_Hybrid_Matching`**
 
 **Expected Output:**
 The cell creates the `hybrid_final_results` table and displays metrics:
@@ -577,7 +564,7 @@ Different use cases require different confidence thresholds:
 - **Exploratory analysis**: Use 70%+ threshold, accept more false positives
 - **Iterative improvement**: Start at 80%, review unmatched, improve matching logic
 
-> aside positive **Run the cell `r_Record_Management`**
+**Run the cell `r_Record_Management`**
 
 **Expected Interaction:**
 - Review the confidence distribution chart
@@ -613,7 +600,7 @@ Evaluates the hybrid matching approach against our golden dataset mapping table 
 - **Identifies Improvements**: Highlights which types of products are harder to match
 - **Benchmarking**: Provides a baseline for comparing alternative approaches
 
-> aside positive **Run the cell `r_Performance_Evaluation`**
+**Run the cell `r_Performance_Evaluation`**
 
 **As you can see, using our methods against this test dataset we achieve a >90% accuracy when compared to our golden dataset!**
 
@@ -623,14 +610,10 @@ Evaluates the hybrid matching approach against our golden dataset mapping table 
 
 ---
 
-
-> aside positive
-> 
 > **Pro Tip**: The hybrid approach shines when you have a mix of easy and hard matching cases. Pure vector similarity handles the easy 70-80%, while AI_CLASSIFY intelligently resolves the remaining ambiguous cases.
 
 In the next section, we'll build an interactive Streamlit app to review and correct the unmatched records, creating a human-in-the-loop validation workflow.
 
-<!-- ------------------------ -->
 ## Unmatched Record Reconciliation
 
 After running the hybrid matching algorithm, you'll have two sets of records:
@@ -710,8 +693,7 @@ For each unmatched record, the reviewer displays:
 2. From the dropdown, select your unmatched table (e.g., `AUDIT_HARMONIZATION_2025_10_04_HYBRID_UNMATCHED`)
 3. Click **Process** to load the records
 
-> aside positive
-> 
+
 > **Note**: The app automatically identifies the corresponding matched table from the audit table, ensuring records are moved to the correct destination.
 
 #### Step 3: Review Records
@@ -745,8 +727,6 @@ The dropdown shows candidates with similarity scores:
 - Use the search box to filter records by specific text
 - The page indicator shows your progress (e.g., "Page 5 of 25")
 
-> aside positive
-> 
 > **Workflow Tip**: Focus on records with high similarity scores (>0.75) first, as these are more likely to be correct matches. Records with very low scores (<0.50) may genuinely have no match in the dataset.
 
 #### Step 5: Submit Reviews
@@ -801,8 +781,6 @@ This review workflow exemplifies the **human-in-the-loop** approach to AI:
 3. **Continuous Improvement**: Insights from manual review can inform future matching logic improvements
 4. **Quality Assurance**: Human validation provides confidence in match quality for downstream analytics
 
-> aside positive
-> 
 > **Real-World Impact**: In production environments, this workflow reduces data harmonization time from weeks of manual work to hours of focused review, while maintaining high match quality.
 
 By the end of this section, you'll have:
@@ -814,7 +792,6 @@ By the end of this section, you'll have:
 
 You now have a complete, production-ready data harmonization pipeline with matched records ready for competitive pricing analysis!
 
-<!-- ------------------------ -->
 ## Conclusion and Resources
 
 Congratulations! You've successfully built an end-to-end data harmonization solution using Snowflake's native AI capabilities, combining automated matching with human-in-the-loop validation.
