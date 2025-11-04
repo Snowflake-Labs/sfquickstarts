@@ -10,9 +10,8 @@ authors: James Cha Earley
 # From Dev to Production: Why ML team are migrating to Snowflake
 
 ## Overview
-Duration: 5
 
-In this quickstart, you'll learn how to build a complete machine learning lifecycle in Snowflake, from model development to production deployment. You'll deploy HuggingFace models, train custom ML models, track experiments, deploy for inference, and enable real-time feature serving.
+In this quickstart, you'll learn how to build a complete machine learning lifecycle in Snowflake, from model development to  deployment. You'll deploy HuggingFace models, train custom ML models, track experiments, deploy for inference, and enable real-time feature serving.
 
 ### What You'll Learn
 - Using HuggingFace models for feature generation
@@ -38,7 +37,7 @@ A production-ready ML system that:
 - [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) enabled
 
 ## Setup Environment and Import Model
-Duration: 15
+
 
 ### Run Setup Script
 
@@ -53,7 +52,7 @@ Duration: 15
 
 The setup script will create all the necessary infrastructure for this quickstart.
 
-> aside positive
+
 > NOTE: The setup script includes proper permissions and configurations needed for the entire ML workflow.
 
 ### Import Sentiment Analysis Model from HuggingFace
@@ -80,7 +79,7 @@ Before extracting features, you need to import the sentiment analysis model into
 
 The model will be imported into your Model Registry and will be available for use in the notebook.
 
-> aside positive
+
 > NOTE: The Model Registry enables you to manage model versions, track lineage, and ensure consistent model usage across your ML workflows.
 
 ### Verify Model Import
@@ -88,7 +87,7 @@ The model will be imported into your Model Registry and will be available for us
 After import completes, you should see the model `MULTILINGUAL_SENTIMENT_ANALYSIS` listed in your Models under BUILD25_DEV_TO_PRODUCTION.DATA schema.
 
 ## Open Notebook and Extract Features
-Duration: 35
+
 
 ### Import the Notebook
 
@@ -108,7 +107,7 @@ Duration: 35
 
 The notebook will run on container runtime, which provides the necessary environment for running ML workloads with GPU support. The notebook will guide you through installing required packages including PyTorch, Transformers, Librosa, Whisper, and other ML libraries needed for audio processing and model training.
 
-> aside positive
+
 > NOTE: Container runtime is required for this notebook as it provides GPU support and the necessary ML libraries for feature extraction and model training.
 
 ### Prepare Audio Files
@@ -167,11 +166,11 @@ This process leverages multiple state-of-the-art models to create a comprehensiv
 
 After extraction completes, you can review the results in the `call_acoustic_features` table. The notebook includes queries to examine transcripts, emotions, stress levels, and other extracted features.
 
-> aside positive
+
 > TROUBLESHOOTING: The container runtime provides the necessary compute resources for processing. If feature extraction is slow, the notebook cells may need additional time to complete due to the complexity of the ML operations.
 
 ## Generate Labels and Train Models
-Duration: 35
+
 
 ### AI-Powered Label Generation
 
@@ -228,7 +227,7 @@ The notebook trains four different models for comparison:
 All experiments log model parameters, performance metrics (accuracy, precision, recall, F1, AUC), optimal prediction threshold, and trained model artifacts. You can compare experiments in Snowflake to determine which approach works best.
 
 ## Deploy Model and Setup Monitoring
-Duration: 25
+
 
 ### Load and Deploy Best Model
 
@@ -267,11 +266,11 @@ Set up automated monitoring that:
 - Tracks feature distributions
 - Alerts on drift or degradation
 
-> aside positive
+
 > BEST PRACTICE: Set up monitoring alerts to notify your team when model performance drops below acceptable thresholds.
 
 ## Enable Feature Store and Build Dashboard
-Duration: 35
+
 
 ### Understanding Feature Stores
 
@@ -346,11 +345,11 @@ The real-time dashboard provides supervisors with instant visibility into call q
 
 The dashboard uses the online feature store for low-latency retrieval (under 30 seconds) and provides supervisors with actionable insights for coaching agents in real-time.
 
-> aside positive
+
 > TIP: The dashboard auto-refreshes every 5 seconds when enabled, perfect for monitoring live calls. You can also manually refresh or select specific calls to examine in detail.
 
 ## Conclusion and Resources
-Duration: 5
+
 
 Congratulations! You've successfully built a complete ML lifecycle in Snowflake that transforms call center audio into actionable insights. You imported a HuggingFace model into the Model Registry, extracted comprehensive features, trained multiple ML models with experiment tracking, deployed models as services, set up monitoring, and enabled real-time feature serving with a Streamlit dashboard - all within Snowflake's unified platform.
 

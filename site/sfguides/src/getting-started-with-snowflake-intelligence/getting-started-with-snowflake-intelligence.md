@@ -174,8 +174,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
         - Title column: TITLE
         - Name: Support_Cases
 
-    > aside negative
-    ***NOTE: If you optionally created AGGREGATED_SUPPORT_CASES Cortex Search service, you may add it here as well.***
+    >  ***NOTE: If you optionally created AGGREGATED_SUPPORT_CASES Cortex Search service, you may add it here as well.***
 
   - **Custom tools**
     - Click on **+ Add**
@@ -197,14 +196,14 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
-> aside positive
+
 > NOTE: On the top right corner, click on **Save** to save the newly updated **Sales_AI** agent.
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
 
 
-> aside negative
+
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
 Open [Snowflake Intelligence](https://ai.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, the warehouse should be set to **DASH_WH_SI** , and your agent should be set to Sales//AI.
