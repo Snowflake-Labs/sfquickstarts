@@ -1,7 +1,7 @@
 author: Joshua Rauh and Ben Marzec
 id: abt-bestbuy-entity-resolution
 summary: Build an end-to-end entity resolution solution using Snowflake Cortex AI, Streamlit, and hybrid matching techniques to reconcile product data between competing retailers
-categories: snowfalke-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 environments: web
 status: Published 
