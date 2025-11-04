@@ -19,7 +19,7 @@ Imagine you're a merchandising manager at ABT, a consumer electronics retailer. 
 
 This is a classic **entity resolution** problem – determining which records in different datasets refer to the same real-world entity. Traditional solutions would require extensive manual mapping, brittle rule-based systems, or complex ML model training. 
 
-In this quickstart, you'll build a modern, AI-powered entity resolution pipeline that leverages Snowflake's native capabilities to automatically harmonize and match product data with minimal manual effort.
+In this **quickstart**, you'll build a modern, AI-powered entity resolution pipeline that leverages Snowflake's native capabilities to automatically harmonize and match product data with minimal manual effort.
 
 ### The Solution Architecture
 

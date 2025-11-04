@@ -1,6 +1,5 @@
 # Snowflake QuickStart Guides
 
-https://github.com/Snowflake-Labs/sfquickstarts/assets/2223194/a9f57881-ccf0-4549-89d6-d2fe2569012a
 
 ## What are Snowflake Guides?
 Snowflake Guides serves as a collection of what previously were "Snowflake Quickstarts" and "Snowflake Solutions Center" along with some new additional types of content.  
