@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 Cortex AISQL reimagines SQL into an AI query language for multimodal data, bringing powerful AI capabilities directly into Snowflake's SQL engine. It enables users to build scalable AI pipelines across text, images, and audio using familiar SQL commands. 
 With native support for multimodal data through a new FILE datatype, Cortex AISQL seamlessly integrates AI operators with traditional SQL primitives like AI_FILTER and AGGREGATE, allowing analysts to process diverse data types more efficiently and cost-effectively while maintaining enterprise-grade security and governance.
@@ -66,7 +65,6 @@ Snowflake Notebook that helps you get started with using Cortex AISQL with multi
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10 
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -102,7 +100,6 @@ Duration: 10
 <!-- ------------------------ -->
 ## Run Notebook
 
-Duration: 15
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
@@ -181,7 +178,6 @@ If you'd like to see images displayed in the Notebook as part of the consolidate
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created a Snowflake Notebook that helps you get started with using Cortex AISQL with multimodal data.
 
@@ -200,5 +196,5 @@ You've learned how to use powerful operators of Cortex AISQL to analyze multimod
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql)
 - [Cortex AISQL Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
 - [Download Reference Architecture](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-aisql/img/f65e99c9c8dbf752.png?_ga=2.50488033.970314110.1758562613-1806211272.1741193538&_gac=1.112796406.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
-- [Read the Blog](https://www.snowflake.com/en/blog/ai-sql-query-language/)
+- [Read the Blog](/en/blog/ai-sql-query-language/)
 

@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 The Snowflake MCP Server allows AI agents to securely retrieve data from Snowflake accounts without needing to deploy separate infrastructure. MCP clients discover and invoke tools, and retrieve data required for the application. The Snowflake MCP Server includes Cortex Analyst and Cortex Search as tools on the standards-based interface. It is now available with Model Context Protocol (MCP) so that AI Agents can discover and invoke tools (Cortex Analyst, Cortex Search) via a unified and standard based interface.
 
@@ -47,7 +46,6 @@ A Snowflake MCP Server that intelligently responds to questions by reasoning ove
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10
 
 ### Create Objects
 
@@ -77,7 +75,6 @@ This tool allows the agent to search and retrieve information from unstructured 
 <!-- ------------------------ -->
 ## Snowflake MCP Server
 
-Duration: 5
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
@@ -274,7 +271,6 @@ Multi-step verification processes
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created a Snowflake MCP Server that intelligently responds to questions by reasoning over data from within Cursor.
 

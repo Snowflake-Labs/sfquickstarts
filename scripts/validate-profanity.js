@@ -7,8 +7,6 @@
     - FILE_LIST_JSON: JSON array of file paths to scan
     - BLOCKLIST_STRING: optional newline- or comma-delimited words from repo variable
     - BLOCKLIST_SECRET_STRING: optional newline- or comma-delimited words from repo secret
-    - BLOCKLIST_JSON: optional JSON array of words
-    - BLOCKLIST_SECRET_JSON: optional JSON array of words from secret
 */
 
 const fs = require('fs');
@@ -38,39 +36,17 @@ function readJsonEnvArray(envName) {
 }
 
 function readBlocklistFromEnv() {
-  const strSources = [
+  const sources = [
     process.env.BLOCKLIST_STRING || '',
     process.env.BLOCKLIST_SECRET_STRING || '',
   ].filter(Boolean);
-
-  const stringItems = strSources.length
-    ? strSources
-        .join('\n')
-        .split(/\r?\n|,/)
-        .map((l) => l.trim())
-        .filter((l) => l.length > 0 && !l.startsWith('#'))
-    : [];
-
-  const jsonEnvNames = ['BLOCKLIST_JSON', 'BLOCKLIST_SECRET_JSON'];
-  const jsonItems = [];
-  for (const name of jsonEnvNames) {
-    const raw = process.env[name];
-    if (!raw) continue;
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        for (const w of parsed) {
-          if (typeof w === 'string' && w.trim().length > 0) {
-            jsonItems.push(w.trim());
-          }
-        }
-      }
-    } catch (_) {
-      // ignore invalid JSON
-    }
-  }
-
-  return [...stringItems, ...jsonItems];
+  if (sources.length === 0) return [];
+  const combined = sources.join('\n');
+  // Support newline- or comma-delimited lists, ignore comments starting with '#'
+  return combined
+    .split(/\r?\n|,/)
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0 && !l.startsWith('#'));
 }
 
 function tokenize(text) {

@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 1
 
 In this guide, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 
@@ -43,11 +42,10 @@ A Data Agent that can intelligently respond to questions by reasoning over both 
 
 ### What You Will Need
 
-* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](https://quickstarts.snowflake.com/guide/build-agentic-application-in-snowflake/index.html?index=..%2F..index#1).
+* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](/en/developers/guides/build-agentic-application-in-snowflake/).
 
 <!-- ------------------------ -->
 ## Snowflake Trial Account
-Duration: 5
 
 To complete this lab, you'll need to create a Snowflake account.
 
@@ -68,7 +66,6 @@ To complete this lab, you'll need to create a Snowflake account.
 ## Setup 
 <!-- ------------------------ -->
 
-Duration: 3
 
 * Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai).
 
@@ -116,7 +113,6 @@ Stored Procedure:
 ## Create Tools
 <!-- ------------------------ -->
 
-Duration: 30
 
 We will use Snowflake Notebook to setup the Cortex Analyst and Cortex Search tools that will be used by the data agent in Snowflake Intelligence.
 
@@ -176,7 +172,6 @@ Notice that Cortex Analyst is now able to provide the right answer because of th
 ## Snowflake Intelligence
 <!-- ------------------------ -->
 
-Duration: 20
 
 Now that we have the tools ready, we can create a Data Agent for Snowflake Intelligence.
 
@@ -289,7 +284,6 @@ Notice that all 3 tables are used to answer this question.
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
 
 Congratulations! You've learned how to securely build data agents and agentic application in Snowflake.
 

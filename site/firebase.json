@@ -6,298 +6,2883 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "redirects": [ {
-      "source": "/guide/resourceoptimization-billingmetrics{,/**}",
-      "destination": "/guide/resource_optimization_billing_metrics",
-      "type": 301
-    },{
-      "source": "/guide/resourceoptimization-performanceoptimization{,/**}",
-      "destination": "/guide/resource_optimization_performance_optimization",
-      "type": 301
-    },{
-      "source": "/guide/resourceoptimization-setupconfiguration{,/**}",
-      "destination": "/guide/resource_optimization_setup",
-      "type": 301
-    },{
-      "source": "/guide/resourceoptimization-usagemonitoring{,/**}",
-      "destination": "/guide/resource_optimization_usage_monitoring",
-      "type": 301
-    },{
-      "source": "/guide/Auto-Ingest_Twitter_Data_into_Snowflake{,/**}",
-      "destination": "/guide/auto_ingest_twitter_data",
-      "type": 301
-    }, 
-    {
-      "source": "/guide/getting_started_dbt{,/**}",
-      "destination": "/guide/data_teams_with_dbt_cloud",
-      "type": 301
-    }, 
-    {
-      "source": "/guide/data_engineering_with_dbt{,/**}",
-      "destination": "/guide/data_teams_with_dbt_cloud",
-      "type": 301
-    }, 
-    {
-      "source": "/guide/getting_started_snowpark{,/**}",
-      "destination": "/guide/getting_started_with_snowpark",
-      "type": 301
-    }, 
-    {
-      "source": "/guide/getting-started-snowpark{,/**}",
-      "destination": "/guide/getting_started_with_snowpark",
-      "type": 301
-    }, 
-    {
-      "source": "/guide/getting_started_with_snowpark_python{,/**}",
-      "destination": "/guide/getting_started_snowpark_machine_learning",
-      "type": 301
-    },
-    {
-      "source": "/guide/getting_started_with_user_defined_functions{,/**}",
-      "destination": "/guide/getting_started_with_user_defined_sql_functions",
-      "type": 301
-    },
-    {
-      "source": "/guide/build_a_data_clean_room_in_snowflake{,/**}",
-      "destination": "/guide/build_a_data_clean_room_in_snowflake_advanced",
-      "type": 301
-    },
-    {
-      "source": "/guide/snowflake_native_apps{,/**}",
-      "destination": "/guide/getting_started_with_native_apps",
-      "type": 301
-    },
-    {
-      "source": "/guide/prompt_engineering_and_llm_evaluation/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "/guide/end_to_end_machine_learning_with_dataiku/{,/**}",
-      "destination": "/guide/a_dataiku_and_snowflake_guide_to_data_science",
-      "type": 301
-    },
-    {
-      "source": "guide/machine_learning_with_aws_autopilot/{,/**}",
-      "destination": "/guide/getting_started_with_snowpark_for_machine_learning_on_sagemaker",
-      "type": 301
-    },
-    {
-      "source": "guide/tour_of_ingest/{,/**}",
-      "destination": "/guide/a_comprehensive_guide_to_ingesting_data_into_snowflake",
-      "type": 301
-    },
-    {
-      "source": "guide/getting-started-snowflake-python-api/{,/**}",
-      "destination": "https://docs.snowflake.com/en/developer-guide/snowflake-python-api/overview-tutorials",
-      "type": 301
-    },
-    {
-      "source": "guide/snowpark_python_top_three_tips_for_optimal_performance/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
-      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
-      "type": 301
-    },
-    {
-      "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
-      "destination": "/guide/getting_started_with_cortex_analyst",
-      "type": 301
-    },
-    {
-      "source": "guide/connectors_native_sdk_java_example/{,/**}",
-      "destination": "https://docs.snowflake.com/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_example_connector_tutorial",
-      "type": 301
-    },
-    {
-      "source": "guide/vhol_data_lake/{,/**}",
-      "destination": "https://docs.snowflake.com/en/user-guide/tables-iceberg-load",
-      "type": 301
-    },
-    {
-      "source": "guide/getting_started_with_streamlit_in_snowflake/{,/**}",
-      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
-      "type": 301  
-    },
-    {
-      "source": "guide/getting_started_with_cybersyn_financial_and_economic_essentials_app/{,/**}",
-      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
-      "type": 301
-    },
-    {
-      "source": "guide/getting_started_with_cortex_analyst_in_snowflake/{,/**}",
-      "destination": "/guide/getting_started_with_cortex_analyst/",
-      "type": 301
-    },
-    {
-      "source": "guide/getting_started_with_llmops_using_snowflake_cortex_and_trulens/{,/**}",
-      "destination": "/guide/getting_started_with_ai_observability/",
-      "type": 301
-    },
-    {
-      "source": "guide/semantic_file_generation_for_cortex_analyst/{,/**}",
-      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
-      "type": 301
-    },
-    {
-      "source": "guide/semantic_file_translation_from_dbt_to_cortex_analyst/{,/**}",
-      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
-      "type": 301
-    },
-    {
-      "source": "guide/recommendation_engine_aws_sagemaker/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/data_science_with_dataiku/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/machine_learning_with_saturncloud/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/dota2_game_replay_parser/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/getting_started_external_functions_gcc/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/determining_warehouse_size/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/streamsets_transformer_for_snowflake_hol/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/getting_started_with_feast_snowflake/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/create_eureka_moments_with_data_world/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/operationalizing_ai_with_snowflake_and_datarobot/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/improvado/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "/guide/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/autogen-faqs-for-customer-support-snowflake-cortex/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/kepler_gl_maps_inside_snowflake/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/setting-up-leads-notifications-in-slack/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/analyze_pdf_invoices_snowpark_python_java/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/tasty_bytes_native_app/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/financial-services-asset-management-snowflake/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/sec_10k_decoder_without_rag/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/build_llm_app_nvidia_scs/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/machine_learning_with_snowpark_python/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/getting_started_with_snowpark_dataframe_api/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/vhol_snowflake_salesforce_tcrm/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/snowpark_python_top_tips_for_optimal_performance/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/fine-tune-an-llm-in-snowpark-container-services-with-autotrain/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/vhol_snowflake_data_wrangler/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    }
+    "redirects": [
+      {
+        "source": "https://quickstarts.snowflake.com {,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides",
+        "type": 301
+      },
+      {
+        "source": "/guide/a_comprehensive_guide_creating_graphql_api_on_top_of_snowflake_using_propel{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-comprehensive-guide-creating-graphql-api-on-top-of-snowflake-using-propel/",
+        "type": 301
+      },
+      {
+        "source": "/guide/a_comprehensive_guide_to_ingesting_data_into_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-comprehensive-guide-to-ingesting-data-into-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/a_dataiku_and_snowflake_guide_to_data_science{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-dataiku-and-snowflake-guide-to-data-science/",
+        "type": 301
+      },
+      {
+        "source": "/guide/A Faster Path to Operational AI with Continual and Snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-faster-path-to-operational-ai-with-continual-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/a_guide_to_implementing_a_pipeline_for_database_change_management{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-guide-to-implementing-a-pipeline-for-database-change-management/",
+        "type": 301
+      },
+      {
+        "source": "/guide/a_guide_to_kipi_marketing_mix_modelling_analytics_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-guide-to-kipi-marketing-mix-modelling-analytics-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-no-code-approach-to-machine-learning-with-snowflake-and-dataiku/",
+        "type": 301
+      },
+      {
+        "source": "/guide/a_postman_tutorial_for_snowflake_sql_api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-postman-tutorial-for-snowflake-sql-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/abt-bestbuy-entity-resolution{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/abt-bestbuy-entity-resolution/",
+        "type": 301
+      },
+      {
+        "source": "/guide/Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/accelerate-data-transformation-with-the-telecom-data-cloud/",
+        "type": 301
+      },
+      {
+        "source": "/guide/accelerate-topic-modeling-with-gpus-in-snowflake-ml{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/accelerate-topic-modeling-with-gpus-in-snowflake-ml/",
+        "type": 301
+      },
+      {
+        "source": "/guide/accelerate_your_graphql_development_on_snowflake_with_hasura{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/accelerate-your-graphql-development-on-snowflake-with-hasura/",
+        "type": 301
+      },
+      {
+        "source": "/guide/accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/accelerating-data-teams-with-snowflake-and-dbt-cloud-hands-on-lab/",
+        "type": 301
+      },
+      {
+        "source": "/guide/advanced_guide_to_snowflake_feature_store{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/advanced-guide-to-snowflake-feature-store/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ai_agent_health_payers_cc{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ai-agent-health-payers-cc/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ai_assistant_for_sales_calls{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ai-assistant-for-sales-calls/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ai_powered_embedded_analytics_using_thoughtspot{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ai-powered-embedded-analytics-using-thoughtspot/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ai-video-search-with-snowflake-and-twelveLabs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ai-video-search-with-snowflake-and-twelvelabs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/airflow-spcs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/airflow-spcs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/alert_on_events{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/alert-on-events/",
+        "type": 301
+      },
+      {
+        "source": "/guide/altr_get_started{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/altr-get-started/",
+        "type": 301
+      },
+      {
+        "source": "/guide/analyze_data_with_python_using_posit_workbench_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/analyze-data-with-python-using-posit-workbench-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/analyze_data_with_r_using_posit_workbench_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/analyze-data-with-r-using-posit-workbench-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/analyzing_customer_reviews_using_hex_and_snowflake_cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/analyzing-customer-reviews-using-hex-and-snowflake-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/analyzing_real_estate_properties_with_streamlit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/analyzing-real-estate-properties-with-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/apache-iceberg-snowflake-open-catalog-snowpipe-streaming{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/apache-iceberg-snowflake-open-catalog-snowpipe-streaming/",
+        "type": 301
+      },
+      {
+        "source": "/guide/application-control-framework{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/application-control-framework/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/",
+        "type": 301
+      },
+      {
+        "source": "/guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/attaining-consumer-insights-with-snowflake-and-microsoft-power-bi/",
+        "type": 301
+      },
+      {
+        "source": "/guide/automated-query-performance-insights{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/automated-query-performance-insights/",
+        "type": 301
+      },
+      {
+        "source": "/guide/automated-query-performance-insights-with-streamlit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/automated-query-performance-insights-with-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/automating_document_processing_workflows_with_document_ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/automating-document-processing-workflows-with-document-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/automl_with_snowflake_and_datarobot{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/automl-with-snowflake-and-datarobot/",
+        "type": 301
+      },
+      {
+        "source": "/guide/automl_with_snowflake_and_h2o{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/automl-with-snowflake-and-h2o/",
+        "type": 301
+      },
+      {
+        "source": "/guide/avalanche-customer-review-data-analytics{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/avalanche-customer-review-data-analytics/",
+        "type": 301
+      },
+      {
+        "source": "/guide/bioinformatics-dashboard{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/bioinformatics-dashboard/",
+        "type": 301
+      },
+      {
+        "source": "/guide/braze_cdi{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/braze-cdi/",
+        "type": 301
+      },
+      {
+        "source": "/guide/braze-email-engagement-analytics-cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/braze-email-engagement-analytics-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-a-cinebot-with-snowflake-native-apps-and-cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-cinebot-with-snowflake-native-apps-and-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_custom_api_in_java_on_aws{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-custom-api-in-java-on-aws/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_custom_api_in_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-custom-api-in-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_custom_api_in_python_on_aws{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-custom-api-in-python-on-aws/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_data_app_and_run_it_on_Snowpark_container_services{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-data-app-and-run-it-on-snowpark-container-services/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_data_app_with_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_data_application_with_hybrid_tables{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-data-application-with-hybrid-tables/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-a-native-app-with-spcs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-native-app-with-spcs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_private_custom_api_in_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-private-custom-api-in-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_streaming_data_pipeline_in_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-streaming-data-pipeline-in-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-a-visual-idea-generator-with-text-to-image-models{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-a-visual-idea-generator-with-text-to-image-models/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-agentic-application-in-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-agentic-application-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-agentic-workflows-with-huggingface-smolagents-in-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-agentic-workflows-with-huggingface-smolagents-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_an_ad_tag_in_python_on_aws{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-an-ad-tag-in-python-on-aws/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_collaborative_filtering_recommender_system_with_relationalai_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-collaborative-filtering-recommender-system-with-relationalai-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_collaborative_large_language_vision_models_to_detect_pnemonia_with_landingai_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-collaborative-large-language-vision-models-to-detect-pnemonia-with-landingai-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_customer_facing_applications_using_sigma_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-customer-facing-applications-using-sigma-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-evaluate-rag-langchain-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-evaluate-rag-langchain-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-genai-inpainting-and-hybridtable-app-in-snowpark-container-services/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-ml-models-for-customer-conversions{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-ml-models-for-customer-conversions/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_rag_based_equipment_maintenance_app_using_snowflake_cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-rag-based-equipment-maintenance-app-using-snowflake-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build-unified-customer-360-using-amperity{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-unified-customer-360-using-amperity/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_visual_ai_model_to_detect_manufacturing_defects_with_landingai_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/build-visual-ai-model-to-detect-manufacturing-defects-with-landingai-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building_a_custom_model_for_anomaly_detection{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-a-custom-model-for-anomaly-detection/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building_a_sports_prediction_model_with_snowpark_ml{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-a-sports-prediction-model-with-snowpark-ml/",
+        "type": 301
+      },
+      {
+        "source": "/guide/Building_An_Automated_ELT_Workflow_On_Snowflake_With_Openflow{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-an-automated-elt-workflow-on-snowflake-with-openflow/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building-cortex-aisql-powered-call-centre-analytics{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-cortex-aisql-powered-call-centre-analytics/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building_dynamic_tables_in_snowflake_with_coalesce{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-dynamic-tables-in-snowflake-with-coalesce/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building_ml_models_in_minutes_with_hex_and_snowflake_ml_functions{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-ml-models-in-minutes-with-hex-and-snowflake-ml-functions/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building-retail-analytics-de-pipeline{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-retail-analytics-de-pipeline/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building_scalable_time_series_forecasting_models_on_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-scalable-time-series-forecasting-models-on-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/building-snowflake-llm-based-functions-using-coalesce-and-iceberg{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/building-snowflake-llm-based-functions-using-coalesce-and-iceberg/",
+        "type": 301
+      },
+      {
+        "source": "/guide/call_center_analytics_with_ai_transcribe_and_cortex_agents{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/call-center-analytics-with-ai-transcribe-and-cortex-agents/",
+        "type": 301
+      },
+      {
+        "source": "/guide/call_centre_analytics_with_snowflake_cortex_and_spcs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/call-centre-analytics-with-snowflake-cortex-and-spcs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/cdc_data_from_oracle_to_snowflake_in_streamsets{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/cdc-data-from-oracle-to-snowflake-in-streamsets/",
+        "type": 301
+      },
+      {
+        "source": "/guide/CDC_SnowpipeStreaming_DynamicTables{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/cdc-snowpipestreaming-dynamictables/",
+        "type": 301
+      },
+      {
+        "source": "/guide/cloudtrail_log_ingestion{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/cloudtrail-log-ingestion/",
+        "type": 301
+      },
+      {
+        "source": "/guide/coherent_spark_connector{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/coherent-spark-connector/",
+        "type": 301
+      },
+      {
+        "source": "/guide/collibra{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/collibra/",
+        "type": 301
+      },
+      {
+        "source": "/guide/community_detection_using_relationalai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/community-detection-using-relationalai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/compare-and-evaluate-chunking-strategies{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/compare-and-evaluate-chunking-strategies/",
+        "type": 301
+      },
+      {
+        "source": "/guide/connectors_example_push_based_java{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/connectors-example-push-based-java/",
+        "type": 301
+      },
+      {
+        "source": "/guide/connectors_github_java{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/connectors-github-java/",
+        "type": 301
+      },
+      {
+        "source": "/guide/connectors_github_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/connectors-github-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/connectors_google_analytics_raw_data{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/connectors-google-analytics-raw-data/",
+        "type": 301
+      },
+      {
+        "source": "/guide/connectors_postgres_cdc{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/connectors-postgres-cdc/",
+        "type": 301
+      },
+      {
+        "source": "/guide/connectors_postgresql_cdc{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/connectors-postgresql-cdc/",
+        "type": 301
+      },
+      {
+        "source": "/guide/cordial_bidirectional_data_share{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/cordial-bidirectional-data-share/",
+        "type": 301
+      },
+      {
+        "source": "/guide/cortex_ai_demo_framework{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/cortex-ai-demo-framework/",
+        "type": 301
+      },
+      {
+        "source": "/guide/cortex_ai_sentiment_iceberg{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/cortex-ai-sentiment-iceberg/",
+        "type": 301
+      },
+      {
+        "source": "/guide/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/create-a-route-optimisation-and-vehicle-route-plan-simulator/",
+        "type": 301
+      },
+      {
+        "source": "/guide/create_ai_agents_on_snowflake_with_lang_ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/create-ai-agents-on-snowflake-with-lang-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/credit-card-fraud-detection-using-snowflake-ml{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/credit-card-fraud-detection-using-snowflake-ml/",
+        "type": 301
+      },
+      {
+        "source": "/guide/cross_cloud_business_continuity{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/cross-cloud-business-continuity/",
+        "type": 301
+      },
+      {
+        "source": "/guide/customer_insights_analyzer_using_vertex_ai_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/customer-insights-analyzer-using-vertex-ai-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/customer_reviews_analytics_using_snowflake_cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/customer-reviews-analytics-using-snowflake-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_analysis_and_churn_prediction_using_snowflake_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-analysis-and-churn-prediction-using-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_apps_summit_lab{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-apps-summit-lab/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_apps_summit_lab_it{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-apps-summit-lab-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_apps_summit_lab_ja{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-apps-summit-lab-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_apps_summit_lab_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-apps-summit-lab-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_collaboration_native_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-collaboration-native-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_collaboration_two_way{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-collaboration-two-way/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_deploying_pipelines_with_snowflake_and_dbt_labs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-deploying-pipelines-with-snowflake-and-dbt-labs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_pipelines_with_snowpark_pandas{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-pandas/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_pipelines_with_snowpark_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_pipelines_with_snowpark_python_it{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_pipelines_with_snowpark_python_ja{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_pipelines_with_snowpark_python_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_snowpark_streamlit_inegi{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-snowpark-streamlit-inegi/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_streaming_integration{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-streaming-integration/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_apache_airflow{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-apache-airflow/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_apache_airflow_it{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-apache-airflow-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_apache_airflow_ja{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-apache-airflow-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_apache_airflow_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-apache-airflow-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_datastage{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-datastage/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_snowpark_python_and_dbt{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-snowpark-python-and-dbt/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_snowpark_python_intro{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-engineering-with-snowpark-python-intro/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data-harmonization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-harmonization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/abt-bestbuy-entity-resolution{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-harmonization/",
+        "type": 301
+      },
+
+      {
+        "source": "/guide/data_lake_using_apache_iceberg_with_snowflake_and_aws_glue{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_mapping_in_native_apps{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-mapping-in-native-apps/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_modeling_with_sqldbm{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-modeling-with-sqldbm/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data-products-data-mesh-dbt-cloud{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-products-data-mesh-dbt-cloud/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_teams_with_dbt_cloud{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-teams-with-dbt-cloud/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_teams_with_dbt_core{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-teams-with-dbt-core/",
+        "type": 301
+      },
+      {
+        "source": "/guide/database_modeling_with_sqldbm{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/database-modeling-with-sqldbm/",
+        "type": 301
+      },
+      {
+        "source": "/guide/dbt-projects-on-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/dbt-projects-on-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/dcdf_incremental_processing{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/dcdf-incremental-processing/",
+        "type": 301
+      },
+      {
+        "source": "/guide/declarative_pipelines_using_dynamic_iceberg_tables.md{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/declarative-pipelines-using-dynamic-iceberg-tablesmd/",
+        "type": 301
+      },
+      {
+        "source": "/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/deploy_finetune_os_llama2_in_snowpark_container_services{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/deploy-finetune-os-llama2-in-snowpark-container-services/",
+        "type": 301
+      },
+      {
+        "source": "/guide/deploying_custom_models_to_snowflake_model_registry{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/deploying-custom-models-to-snowflake-model-registry/",
+        "type": 301
+      },
+      {
+        "source": "/guide/deploying_models_from_azureml_and_sagemaker_to_snowparkml{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/deploying-models-from-azureml-and-sagemaker-to-snowparkml/",
+        "type": 301
+      },
+      {
+        "source": "/guide/develop-and-manage-ml-models-with-feature-store-and-model-registry{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/develop-and-manage-ml-models-with-feature-store-and-model-registry/",
+        "type": 301
+      },
+      {
+        "source": "/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/developing-tasty-bytes-react-native-application-with-snowflake-sql-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api_it{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/developing-tasty-bytes-react-native-application-with-snowflake-sql-api-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/devops_dcm_dlsync_github{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/devops-dcm-dlsync-github/",
+        "type": 301
+      },
+      {
+        "source": "/guide/devops_dcm_schemachange_azure_devops{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/devops-dcm-schemachange-azure-devops/",
+        "type": 301
+      },
+      {
+        "source": "/guide/devops_dcm_schemachange_github{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/devops-dcm-schemachange-github/",
+        "type": 301
+      },
+      {
+        "source": "/guide/devops_dcm_schemachange_jenkins{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/devops-dcm-schemachange-jenkins/",
+        "type": 301
+      },
+      {
+        "source": "/guide/devops_dcm_terraform_github{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/devops-dcm-terraform-github/",
+        "type": 301
+      },
+      {
+        "source": "/guide/doc-ai-invoice-reconciliation{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/doc-ai-invoice-reconciliation/",
+        "type": 301
+      },
+      {
+        "source": "/guide/doc-ai-pipeline-automation{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/doc-ai-pipeline-automation/",
+        "type": 301
+      },
+      {
+        "source": "/guide/domo_marketing_attribution_quickstart{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/domo-marketing-attribution-quickstart/",
+        "type": 301
+      },
+      {
+        "source": "/guide/e2e-task-graph{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/e2e-task-graph/",
+        "type": 301
+      },
+      {
+        "source": "/guide/e2emigration_sql_and_data{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/e2emigration-sql-and-data/",
+        "type": 301
+      },
+      {
+        "source": "/guide/end-to-end-analytics-with-snowflake-and-power-bi{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/end-to-end-analytics-with-snowflake-and-power-bi/",
+        "type": 301
+      },
+      {
+        "source": "/guide/end_to_end_machine_learning_with_dataiku{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/end-to-end-machine-learning-with-dataiku/",
+        "type": 301
+      },
+      {
+        "source": "/guide/end-to-end-ml-workflow{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/end-to-end-ml-workflow/",
+        "type": 301
+      },
+      {
+        "source": "/guide/end_to_end_model_development_with_snowpark_and_hex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/end-to-end-model-development-with-snowpark-and-hex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/end-to-end-nlp-and-ml-using-snowpark-python-and-streamlit-sentiments-analysis/",
+        "type": 301
+      },
+      {
+        "source": "/guide/end2endmigration{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/end2endmigration/",
+        "type": 301
+      },
+      {
+        "source": "/guide/Enhancing_Customer_Experiences_using_Cortex_FineTuning{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/enhancing-customer-experiences-using-cortex-finetuning/",
+        "type": 301
+      },
+      {
+        "source": "/guide/example_matt_marzillo{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/example-matt-marzillo/",
+        "type": 301
+      },
+      {
+        "source": "/guide/exploratory_data_analysis_with_snowflake_and_deepnote{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/",
+        "type": 301
+      },
+      {
+        "source": "/guide/extract_attributes_dicom_files_java_udf{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/extract-attributes-dicom-files-java-udf/",
+        "type": 301
+      },
+      {
+        "source": "/guide/extracting-insights-from-video-with-multimodal-ai-analysis{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/extracting-insights-from-video-with-multimodal-ai-analysis/",
+        "type": 301
+      },
+      {
+        "source": "/guide/financial-services-asset-management{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/financial-services-asset-management/",
+        "type": 301
+      },
+      {
+        "source": "/guide/finding-fraudulent-communities-with-neo4j{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/finding-fraudulent-communities-with-neo4j/",
+        "type": 301
+      },
+      {
+        "source": "/guide/finding-similar-patients{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/finding-similar-patients/",
+        "type": 301
+      },
+      {
+        "source": "/guide/fine-tune-an-llm-in-snowpark-container-services-with-autotrain{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/fine-tune-an-llm-in-snowpark-container-services-with-autotrain/",
+        "type": 301
+      },
+      {
+        "source": "/guide/finetuning_llm_using_snowflake_cortex_ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/finetuning-llm-using-snowflake-cortex-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/fivetran_vineyard_assistant_chatbot{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/fivetran-vineyard-assistant-chatbot/",
+        "type": 301
+      },
+      {
+        "source": "/guide/from-clicks-to-cortex-build-ai-ready-data-pipelines-with-coalesce-on-snowflake-in-a-snap{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/from-clicks-to-cortex-build-ai-ready-data-pipelines-with-coalesce-on-snowflake-in-a-snap/",
+        "type": 301
+      },
+      {
+        "source": "/guide/frosty_llm_chatbot_on_streamlit_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/frosty-llm-chatbot-on-streamlit-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/gain_insights_from_unstructured_data{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/gain-insights-from-unstructured-data/",
+        "type": 301
+      },
+      {
+        "source": "/guide/geo_analysis_geometry{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/geo-analysis-geometry/",
+        "type": 301
+      },
+      {
+        "source": "/guide/geo_analysis_telecom{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/geo-analysis-telecom/",
+        "type": 301
+      },
+      {
+        "source": "/guide/geo-for-machine-learning{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/geo-for-machine-learning/",
+        "type": 301
+      },
+      {
+        "source": "/guide/geo_performance{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/geo-performance/",
+        "type": 301
+      },
+      {
+        "source": "/guide/geocoding_address_data_with_mapbox{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/geocoding-address-data-with-mapbox/",
+        "type": 301
+      },
+      {
+        "source": "/guide/geospatial_analytics_with_snowflake_and_carto_ny{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/geospatial-analytics-with-snowflake-and-carto-ny/",
+        "type": 301
+      },
+      {
+        "source": "/guide/get-started-snowflake-cortex-knowledge-extensions{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/get-started-snowflake-cortex-knowledge-extensions/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_cost_performance_optimization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-cost-performance-optimization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_datameer{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-datameer/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-django-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-django-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_external_functions_aws{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-external-functions-aws/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_external_functions_azure{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-external-functions-azure/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_iceberg_tables{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-iceberg-tables/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_keboola{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-keboola/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-snowflake-python-api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-snowflake-python-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_snowflake_sql_api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-snowflake-sql-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_snowpark_machine_learning{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_thoughtspot{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-thoughtspot/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_ai_observability{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-ai-observability/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_alation{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-alation/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_amazon_q_business and_cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-amazon-q-business-and-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_anthropic_on_snowflake_cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-anthropic-on-snowflake-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-automl-openfe-and-autogluon{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-automl-openfe-and-autogluon/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_azure_data_factory_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-azure-data-factory-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_azure_openai_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-azure-openai-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_azure_openai_streamlit_and_snowflake_for_image_use_cases{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-azure-openai-streamlit-and-snowflake-for-image-use-cases/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_bedrock_agentcore_gateways_and_cortex_agents{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-bedrock-agentcore-gateways-and-cortex-agents/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_bedrock_streamlit_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-bedrock-streamlit-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_cortex_agents{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agents/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_cortex_agents_and_amazon_q{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agents-and-amazon-q/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-cortex-aisql{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-aisql/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_cortex_analyst{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_cortex_analyst_in_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_cortex_search_and_microsoft_fabric{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-search-and-microsoft-fabric/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_cybersyn_financial_and_economic_essentials_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cybersyn-financial-and-economic-essentials-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_data_quality_in_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-data-quality-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dataengineering_ml_using_snowpark_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dataengineering_ml_using_snowpark_python_es{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-es/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dataengineering_ml_using_snowpark_python_fr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-fr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dataengineering_ml_using_snowpark_python_it{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dataengineering_ml_using_snowpark_python_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dataengineering_ml_using_snowpark_python_ptr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-ptr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_distributed_multi_node_multi_gpu_audio_transcription_with_snowflake_ml_container_runtime{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dynamic_tables{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-dynamic-tables/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-e2e-customer-targeting-with-snowflake-ml{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-e2e-customer-targeting-with-snowflake-ml/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-entity-resolution-retail-product-classification-for-aggregated-insights{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-entity-resolution-retail-product-classification-for-aggregated-insights/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-feature-store-and-dbt{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-feature-store-and-dbt/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_generative_ai_snowflake_external_functions{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-generative-ai-snowflake-external-functions/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_geospatial_geography{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-geospatial-geography/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_graphrag_and_relationalai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-graphrag-and-relationalai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_horizon_for_data_governance_in_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-horizon-for-data-governance-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_hybrid_tables{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_iceberg_in_oneLake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-iceberg-in-onelake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-llamaparse-and-cortex-search{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-llamaparse-and-cortex-search/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_llmops_using_snowflake_cortex_and_trulens{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-llmops-using-snowflake-cortex-and-trulens/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-mediawallah-enrichment-native-app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-mediawallah-enrichment-native-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_microsoft_copilot_studio_and_cortex_agents{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-microsoft-copilot-studio-and-cortex-agents/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_microsoft_purview_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-microsoft-purview-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-ml-observability-in-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-ml-observability-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_multimodal_analysis_on_snowflake_cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-multimodal-analysis-on-snowflake-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_native_apps{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-native-apps/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_ocr_and_rag_with_snowflake_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-ocr-and-rag-with-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_openflow_for_cdc_on_sql_server{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-for-cdc-on-sql-server/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-openflow-kafka-connector{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-kafka-connector/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-openflow-postgresql-cdc{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-postgresql-cdc/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_Openflow_spcs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-spcs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_Openflow_unstructured_data_pipeline{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-openflow-unstructured-data-pipeline/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_pandas_on_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-pandas-on-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_pii{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-pii/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-predicting-insurance-claims-regression-model{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-predicting-insurance-claims-regression-model/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-prophet-using-snowflake-ml{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-prophet-using-snowflake-ml/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_sagemaker_canvas_with_snowflake_for_genai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-sagemaker-canvas-with-snowflake-for-genai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_search_optimization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-search-optimization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_sigma{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-sigma/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_agents_api_and_react{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-agents-api-and-react/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_and_aws_kdf{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-and-aws-kdf/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_and_bigquery_via_iceberg{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-and-bigquery-via-iceberg/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-cli{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cli/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_cluster_key_selection{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cluster-key-selection/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-cortex-ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cortex-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-cortex-ml-forecasting-and-classification{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cortex-ml-forecasting-and-classification/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_devops{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-devops/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-intelligence{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-intelligence-and-cke{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-mcp-server{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-mcp-server/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-ml-lineage{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-ml-lineage/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-snowflake-trail-for-observability{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-trail-for-observability/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_connect_for_apache_spark{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-connect-for-apache-spark/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_dataframe_api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-dataframe-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_for_machine_learning_on_sagemaker{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-machine-learning-on-sagemaker/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_for_machine_learning_on_vertexai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-machine-learning-on-vertexai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_for_python_streamlit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-python-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_in_snowflake_python_worksheets{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_in_snowflake_python_worksheets_es{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-es/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_in_snowflake_python_worksheets_fr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-fr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_python_scikit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python-scikit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_scala{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-scala/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpipe{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpipe_streaming_aws_msk{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpipe_streaming_azure_eventhubs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowsql{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowsql/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_streamlit_in_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-streamlit-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_streams_and_tasks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-streams-and-tasks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_synthetic_data_and_distillation_for_llms{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-synthetic-data-and-distillation-for-llms/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-task-graphs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-task-graphs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_tempo_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-tempo-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-the-microsoft-teams-and-365-copilot-cortex-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-time-series-analytics-with-pricing-data-on-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_time_travel{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-time-travel/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-with-tool-use-on-cortex-and-anthropic-claude{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-tool-use-on-cortex-and-anthropic-claude/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_traces{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-traces/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_unstructured_data{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-unstructured-data/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_user_defined_sql_functions{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-user-defined-sql-functions/",
+        "type": 301
+      },
+      {
+        "source": "/guide/google_analytics_4_template_setup{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/google-analytics-4-template-setup/",
+        "type": 301
+      },
+      {
+        "source": "/guide/hands-on_with_apache_iceberg_and_snowflake_open_catalog{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/hands-on-with-apache-iceberg-and-snowflake-open-catalog/",
+        "type": 301
+      },
+      {
+        "source": "/guide/harness_the_power_of_snowflake_with_informatica_idmc{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/harness-the-power-of-snowflake-with-informatica-idmc/",
+        "type": 301
+      },
+      {
+        "source": "/guide/hex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/hex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/hex-churn-model{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/hex-churn-model/",
+        "type": 301
+      },
+      {
+        "source": "/guide/hightouch_cdp{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/hightouch-cdp/",
+        "type": 301
+      },
+      {
+        "source": "/guide/horizon_intra_org_sharing{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/horizon-intra-org-sharing/",
+        "type": 301
+      },
+      {
+        "source": "/guide/how_to_accelerate_data_warehouse_migrations_with_snowconvert_ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/how-to-accelerate-data-warehouse-migrations-with-snowconvert-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/how_to_resolve_data_with_fullcontact_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/how-to-resolve-data-with-fullcontact-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/hybrid-tables-jmeter-performance-testing{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/hybrid-tables-jmeter-performance-testing/",
+        "type": 301
+      },
+      {
+        "source": "/guide/hybrid_tables_performance_optimization_primer{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/hybrid-tables-performance-optimization-primer/",
+        "type": 301
+      },
+      {
+        "source": "/guide/image_recognition_snowpark_pytorch_streamlit_openai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/image-recognition-snowpark-pytorch-streamlit-openai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/improving_ad_performance_capi_hightouch{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/improving-ad-performance-capi-hightouch/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ingest_data_from_pubsub_to_snowflake_with_apache_beam{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ingest-data-from-pubsub-to-snowflake-with-apache-beam/",
+        "type": 301
+      },
+      {
+        "source": "/guide/insights-to-action-with-snowflake-and-servicenow{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/insights-to-action-with-snowflake-and-servicenow/",
+        "type": 301
+      },
+      {
+        "source": "/guide/integrate_snowflake_cortex_agents_with_microsoft_teams{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-microsoft-teams/",
+        "type": 301
+      },
+      {
+        "source": "/guide/integrate_snowflake_cortex_agents_with_slack{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-slack/",
+        "type": 301
+      },
+      {
+        "source": "/guide/integrate-snowflake-cortex-agents-with-zoom{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-zoom/",
+        "type": 301
+      },
+      {
+        "source": "/guide/integrating_fluentd_with_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/integrating-fluentd-with-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/internal_marketplace_intra_org_sharing{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/internal-marketplace-intra-org-sharing/",
+        "type": 301
+      },
+      {
+        "source": "/guide/intro_to_data_engineering_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/intro-to-data-engineering-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/intro-to-feature-store{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/intro-to-feature-store/",
+        "type": 301
+      },
+      {
+        "source": "/guide/intro_to_machine_learning_with_snowpark_ml_for_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/intro_to_snowpark_container_services{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/intro-to-snowpark-container-services/",
+        "type": 301
+      },
+      {
+        "source": "/guide/intro_to_snowpark_container_services_with_python_api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/intro-to-snowpark-container-services-with-python-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/java_trace_events{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/java-trace-events/",
+        "type": 301
+      },
+      {
+        "source": "/guide/kafka_working_with_iceberg_tables{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/kafka-working-with-iceberg-tables/",
+        "type": 301
+      },
+      {
+        "source": "/guide/kafka-docker-setup{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/kafka-docker-setup/",
+        "type": 301
+      },
+      {
+        "source": "/guide/kgqa_using_relationalai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/kgqa-using-relationalai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/lead_scoring_with_ml_powered_classification{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/lead-scoring-with-ml-powered-classification/",
+        "type": 301
+      },
+      {
+        "source": "/guide/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/leverage-dbt-cloud-to-generate-ml-ready-pipelines-using-snowpark-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/leveraging_kumo_for_smarter_recommendations{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/leveraging-kumo-for-smarter-recommendations/",
+        "type": 301
+      },
+      {
+        "source": "/guide/liveramp_identity_and_translation_quickstart{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/liveramp-identity-and-translation-quickstart/",
+        "type": 301
+      },
+      {
+        "source": "/guide/llm_assisted_medical_coding_extraction_for_healthcare{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/llm-assisted-medical-coding-extraction-for-healthcare/",
+        "type": 301
+      },
+      {
+        "source": "/guide/load-integrate-data-matillion-data-productivity-cloud{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/load-integrate-data-matillion-data-productivity-cloud/",
+        "type": 301
+      },
+      {
+        "source": "/guide/machine_learning_with_aws_autopilot{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/machine-learning-with-aws-autopilot/",
+        "type": 301
+      },
+      {
+        "source": "/guide/machine_learning_with_snowpark_python{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/machine-learning-with-snowpark-python/",
+        "type": 301
+      },
+      {
+        "source": "/guide/managing-risk-in-manufacturing{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/managing-risk-in-manufacturing/",
+        "type": 301
+      },
+      {
+        "source": "/guide/many-model-inference-in-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/many-model-inference-in-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/marketing_data_foundation_starter{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/marketing-data-foundation-starter/",
+        "type": 301
+      },
+      {
+        "source": "/guide/marketing_data_foundation_starter_v2{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/marketing-data-foundation-starter-v2/",
+        "type": 301
+      },
+      {
+        "source": "/guide/marketing_data_foundation_starter_v3{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/marketing-data-foundation-starter-v3/",
+        "type": 301
+      },
+      {
+        "source": "/guide/mcp-server-for-cortex-agents{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/mcp-server-for-cortex-agents/",
+        "type": 301
+      },
+      {
+        "source": "/guide/medical_images_classification_using_pytorch{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/medical-images-classification-using-pytorch/",
+        "type": 301
+      },
+      {
+        "source": "/guide/mendix_data_loader{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/mendix-data-loader/",
+        "type": 301
+      },
+      {
+        "source": "/guide/mfa-audit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/mfa-audit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ml_forecasting_ad{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ml-forecasting-ad/",
+        "type": 301
+      },
+      {
+        "source": "/guide/ml_with_snowpark_and_apache_airflow{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/ml-with-snowpark-and-apache-airflow/",
+        "type": 301
+      },
+      {
+        "source": "/guide/modeling-subway-disruptions-with-neo4j{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/modeling-subway-disruptions-with-neo4j/",
+        "type": 301
+      },
+      {
+        "source": "/guide/modern_data_stack_with_fivetran_snowflake_salesforce{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/modern-data-stack-with-fivetran-snowflake-salesforce/",
+        "type": 301
+      },
+      {
+        "source": "/guide/modern_lakehouse_analytics_on_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/modern-lakehouse-analytics-on-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/mongodb_to_snowflake_cdc_data_replication_with_rivery{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/mongodb-to-snowflake-cdc-data-replication-with-rivery/",
+        "type": 301
+      },
+      {
+        "source": "/guide/monitor_schema_drift_in_data_shares_with_sharewatch{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/monitor-schema-drift-in-data-shares-with-sharewatch/",
+        "type": 301
+      },
+      {
+        "source": "/guide/movie_recommendation_chatbot_powered_by_kumo{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/movie-recommendation-chatbot-powered-by-kumo/",
+        "type": 301
+      },
+      {
+        "source": "/guide/native-app-chairlift{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/native-app-chairlift/",
+        "type": 301
+      },
+      {
+        "source": "/guide/notebook-container-runtime{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/notebook-container-runtime/",
+        "type": 301
+      },
+      {
+        "source": "/guide/notebook-llama32v{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/notebook-llama32v/",
+        "type": 301
+      },
+      {
+        "source": "/guide/optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/",
+        "type": 301
+      },
+      {
+        "source": "/guide/orchestrate-llm-evaluations-with-evalanche{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/orchestrate-llm-evaluations-with-evalanche/",
+        "type": 301
+      },
+      {
+        "source": "/guide/orchestration-framework-running-multiple-containerized-jobs-parallel{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/orchestration-framework-running-multiple-containerized-jobs-parallel/",
+        "type": 301
+      },
+      {
+        "source": "/guide/overview-of-feature-store-api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/overview-of-feature-store-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/parsing_semi_structured_data_with_coalesce{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/parsing-semi-structured-data-with-coalesce/",
+        "type": 301
+      },
+      {
+        "source": "/guide/partitioned-ml-model{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/partitioned-ml-model/",
+        "type": 301
+      },
+      {
+        "source": "/guide/partner_snowflake_predictive_model_using_sigma{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/partner-snowflake-predictive-model-using-sigma/",
+        "type": 301
+      },
+      {
+        "source": "/guide/power_apps_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/power-apps-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/predict_ad_impressions_with_ml_powered_analysis{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/predict-ad-impressions-with-ml-powered-analysis/",
+        "type": 301
+      },
+      {
+        "source": "/guide/process-modin-dataframe-with-cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/process-modin-dataframe-with-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/processing_hl7_fhir_messages_with_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/processing-hl7-fhir-messages-with-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/processing_hl7_v2_messages_with_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/processing-hl7-v2-messages-with-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/prompt_engineering_and_llm_evaluation{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/prompt-engineering-and-llm-evaluation/",
+        "type": 301
+      },
+      {
+        "source": "/guide/python-camouflage{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/python-camouflage/",
+        "type": 301
+      },
+      {
+        "source": "/guide/query-cost-monitoring{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/query-cost-monitoring/",
+        "type": 301
+      },
+      {
+        "source": "/guide/quickstart-generative-bi-quicksight{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/quickstart-generative-bi-quicksight/",
+        "type": 301
+      },
+      {
+        "source": "/guide/reach_and_frequency_queries{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/reach-and-frequency-queries/",
+        "type": 301
+      },
+      {
+        "source": "/guide/redpanda-connect-ingestion-with-snowpipe-streaming{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/redpanda-connect-ingestion-with-snowpipe-streaming/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_billing_metrics{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-billing-metrics/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_billing_metrics_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-billing-metrics-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_performance_optimization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-performance-optimization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_performance_optimization_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-performance-optimization-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_setup{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-setup/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_usage_monitoring{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-usage-monitoring/",
+        "type": 301
+      },
+      {
+        "source": "/guide/retail_snowflake_intelligence{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/retail-snowflake-intelligence/",
+        "type": 301
+      },
+      {
+        "source": "/guide/role-based-access-auditing{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/role-based-access-auditing/",
+        "type": 301
+      },
+      {
+        "source": "/guide/root-cause-analysis-for-vehicle-product-quality-with-snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/root-cause-analysis-for-vehicle-product-quality-with-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/rudderstack_predictions{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/rudderstack-predictions/",
+        "type": 301
+      },
+      {
+        "source": "/guide/s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/s3_access_log_ingestion{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/s3-access-log-ingestion/",
+        "type": 301
+      },
+      {
+        "source": "/guide/sap_accounts_receivable_to_snowflake_using_adf{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/sap-accounts-receivable-to-snowflake-using-adf/",
+        "type": 301
+      },
+      {
+        "source": "/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/",
+        "type": 301
+      },
+      {
+        "source": "/guide/scheduled-query-report{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/scheduled-query-report/",
+        "type": 301
+      },
+      {
+        "source": "/guide/schema_lineage_auto_propagation_llm{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/schema-lineage-auto-propagation-llm/",
+        "type": 301
+      },
+      {
+        "source": "/guide/seamless_ML_workflows_with_snowpark_and_deepnote{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/seamless-ml-workflows-with-snowpark-and-deepnote/",
+        "type": 301
+      },
+      {
+        "source": "/guide/secure_your_organization_with_security_analytics_using_snowflake_and_sigma{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/secure-your-organization-with-security-analytics-using-snowflake-and-sigma/",
+        "type": 301
+      },
+      {
+        "source": "/guide/security_analytics_with_wiz_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/security-analytics-with-wiz-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/security_dashboards_for_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/security-dashboards-for-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/segment-retl-salesforce{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/segment-retl-salesforce/",
+        "type": 301
+      },
+      {
+        "source": "/guide/servicenow_to_snowflake_connector{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/servicenow-to-snowflake-connector/",
+        "type": 301
+      },
+      {
+        "source": "/guide/setting_up_snowflake_environments_in_vertex_ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/setting-up-snowflake-environments-in-vertex-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/sf_esri_arcgis_locationservice{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/sf-esri-arcgis-locationservice/",
+        "type": 301
+      },
+      {
+        "source": "/guide/SFGUIDE-SEC-TARIFF-SENTIMENT{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/sfguide-sec-tariff-sentiment/",
+        "type": 301
+      },
+      {
+        "source": "/guide/simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/simplify-and-accelerate-data-access-provisioning-with-immuta-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snow_bear_leveraging_cortex_for_advanced_analytics{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snow-bear-leveraging-cortex-for-advanced-analytics/",
+        "type": 301
+      },
+            {
+        "source": "/guide/snow-bear-fan-experience-analytics{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snow-bear-leveraging-cortex-for-advanced-analytics/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake-auto-grader{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-auto-grader/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake_build_secure_multitenant_data_applications_snowflake_sigma{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-build-secure-multitenant-data-applications-snowflake-sigma/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake-confluent-tableflow-iceberg{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-confluent-tableflow-iceberg/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake-looker-quickstart{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-looker-quickstart/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake-northstar-data-engineering{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-northstar-data-engineering/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake_personalization_api{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-personalization-api/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake_recommendation_engine{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-recommendation-engine/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake-semantic-view{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowpark-container-services-model-serving-guide{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowpark-container-services-model-serving-guide/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowpark_python_top_three_tips_for_optimal_performance{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowpark_python_top_tips_for_optimal_performance{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowpark-python-top-tips-for-optimal-performance/",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowplow-web-analytics{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/snowplow-web-analytics/",
+        "type": 301
+      },
+      {
+        "source": "/guide/soda{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/soda/",
+        "type": 301
+      },
+      {
+        "source": "/guide/Streamline_Healthcare_CDC_DDB_And_Openflow{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/streamline-healthcare-cdc-ddb-and-openflow/",
+        "type": 301
+      },
+      {
+        "source": "/guide/streamlining-support-case-analysis-with-snowflake-cortex{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/streamlining-support-case-analysis-with-snowflake-cortex/",
+        "type": 301
+      },
+      {
+        "source": "/guide/streamlit-dashboard{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/streamlit-dashboard/",
+        "type": 301
+      },
+      {
+        "source": "/guide/streamnative_snowflake_open_catalog_integration{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/streamnative-snowflake-open-catalog-integration/",
+        "type": 301
+      },
+      {
+        "source": "/guide/streamsets_transformer_for_snowflake_hol{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/streamsets-transformer-for-snowflake-hol/",
+        "type": 301
+      },
+      {
+        "source": "/guide/sundeck_opscenter{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/sundeck-opscenter/",
+        "type": 301
+      },
+      {
+        "source": "/guide/suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/suppress-existing-customers-from-youtube-campaign-with-hightouch-and-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/table-size-growth{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/table-size-growth/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_customer_experience_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-experience-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_customer_support_email_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-customer-support-email-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_extracting_insights_with_docai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-extracting-insights-with-docai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_introduction{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_introduction_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_price_optimization_using_snowflake_notebooks_and_streamlit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-price-optimization-using-snowflake-notebooks-and-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_rag_chatbot_using_cortex_and_streamlit{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-rag-chatbot-using-cortex-and-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_snowpark_101_for_data_science{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_snowpark_101_for_data_science_it{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_snowpark_101_for_data_science_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_working_with_iceberg_tables{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-working-with-iceberg-tables/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_collaboration{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_collaboration_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_cost_management{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-cost-management/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_geospatial{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-governance-with-horizon/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_semi_structured_data{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ptbr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ptbr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_transformation{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_transformation_kr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_transformation_ptbr{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ptbr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tealium-snowflake-integration{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tealium-snowflake-integration/",
+        "type": 301
+      },
+      {
+        "source": "/guide/terraforming_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/terraforming-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/text_embedding_as_snowpark_python_udf{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/text-embedding-as-snowpark-python-udf/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tidymodel-prediction-workflows-inside-snowflake-with-orbital{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/tidymodel-prediction-workflows-inside-snowflake-with-orbital/",
+        "type": 301
+      },
+      {
+        "source": "/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/transform_your_data_with_coalesce{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/transform-your-data-with-coalesce/",
+        "type": 301
+      },
+      {
+        "source": "/guide/triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/triggering-real-time-notifications-using-dynamic-tables-and-census-live-syncs/",
+        "type": 301
+      },
+      {
+        "source": "/guide/unlock_insights_from_unstructured_data_with_snowflake_cortex_ai{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/unlock-insights-from-unstructured-data-with-snowflake-cortex-ai/",
+        "type": 301
+      },
+      {
+        "source": "/guide/using_precisely_enrich_data{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/using-precisely-enrich-data/",
+        "type": 301
+      },
+      {
+        "source": "/guide/using_snowflake_and_azure_openai_for_a_rag_workflow{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/using-snowflake-and-azure-openai-for-a-rag-workflow/",
+        "type": 301
+      },
+      {
+        "source": "/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/using-snowflake-cortex-and-streamlit-with-geospatial-data/",
+        "type": 301
+      },
+      {
+        "source": "/guide/validate_your_customer_identity_model_with_identityqa{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/validate-your-customer-identity-model-with-identityqa/",
+        "type": 301
+      },
+      {
+        "source": "/guide/vhol_data_marketplace_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vhol-data-marketplace-app/",
+        "type": 301
+      },
+      {
+        "source": "/guide/vhol_data_vault{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vhol-data-vault/",
+        "type": 301
+      },
+      {
+        "source": "/guide/vhol_fivetran{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vhol-fivetran/",
+        "type": 301
+      },
+      {
+        "source": "/guide/vhol_snowflake_data_wrangler{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vhol-snowflake-data-wrangler/",
+        "type": 301
+      },
+      {
+        "source": "/guide/vhol_snowflake_salesforce_tcrm{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vhol-snowflake-salesforce-tcrm/",
+        "type": 301
+      },
+      {
+        "source": "/guide/vhol_snowpipe_streaming_msk{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vhol-snowpipe-streaming-msk/",
+        "type": 301
+      },
+      {
+        "source": "/guide/viewing-location-data-on-an-interactive-map{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/viewing-location-data-on-an-interactive-map/",
+        "type": 301
+      },
+      {
+        "source": "/guide/visual_analytics_powered_by_snowflake_and_tableau{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/visual-analytics-powered-by-snowflake-and-tableau/",
+        "type": 301
+      },
+      {
+        "source": "/guide/visual_data_stories_with_snowflake_notebooks{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/visual-data-stories-with-snowflake-notebooks/",
+        "type": 301
+      },
+      {
+        "source": "/guide/vpc_flow_log_ingestion{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vpc-flow-log-ingestion/",
+        "type": 301
+      },
+      {
+        "source": "/guide/Vulnerability Intelligence on Snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/vulnerability-intelligence-on-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/warehouse-utilization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/warehouse-utilization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/well-architected-framework-cost-optimization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-cost-optimization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/well-architected-framework-operational-excellence{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-operational-excellence/",
+        "type": 301
+      },
+      {
+        "source": "/guide/well-architected-framework-performance{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-performance/",
+        "type": 301
+      },
+      {
+        "source": "/guide/well-architected-framework-reliability{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-reliability/",
+        "type": 301
+      },
+      {
+        "source": "/guide/well-architected-framework-security-and-governance{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/well-architected-framework-security-and-governance/",
+        "type": 301
+      },
+      {
+        "source": "/guide/xml-processing-snowpark{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/xml-processing-snowpark/",
+        "type": 301
+      },
+      {
+        "source": "/guide/xml-processing-sql{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/xml-processing-sql/",
+        "type": 301
+      },
+      {
+        "source": "/guide/zero_to_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/zero-to-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_introduction_es{,/**}",
+        "destination": "https://www.snowflake.com/es/developers/guides/tasty-bytes-introduction-es/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_collaboration_es{,/**}",
+        "destination": "https://www.snowflake.com/es/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-es/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_es{,/**}",
+        "destination": "https://www.snowflake.com/es/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-es/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_transformation_es{,/**}",
+        "destination": "https://www.snowflake.com/es/developers/guides/tasty-bytes-zero-to-snowflake-transformation-es/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_introduction_fr{,/**}",
+        "destination": "https://www.snowflake.com/fr/developers/guides/tasty-bytes-introduction-fr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_snowpark_101_for_data_science_fr{,/**}",
+        "destination": "https://www.snowflake.com/fr/developers/guides/tasty-bytes-snowpark-101-for-data-science-fr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_collaboration_fr{,/**}",
+        "destination": "https://www.snowflake.com/fr/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-fr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_fr{,/**}",
+        "destination": "https://www.snowflake.com/fr/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-fr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_transformation_fr{,/**}",
+        "destination": "https://www.snowflake.com/fr/developers/guides/tasty-bytes-zero-to-snowflake-transformation-fr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_it{,/**}",
+        "destination": "https://www.snowflake.com/it/developers/guides/getting-started-with-snowflake-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_in_snowflake_python_worksheets_it{,/**}",
+        "destination": "https://www.snowflake.com/it/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_it{,/**}",
+        "destination": "https://www.snowflake.com/it/developers/guides/integrating-tasty-bytes-location-recommendation-ml-model-into-the-react-native-data-app-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_introduction_it{,/**}",
+        "destination": "https://www.snowflake.com/it/developers/guides/tasty-bytes-introduction-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_collaboration_it{,/**}",
+        "destination": "https://www.snowflake.com/it/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_it{,/**}",
+        "destination": "https://www.snowflake.com/it/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_transformation_it{,/**}",
+        "destination": "https://www.snowflake.com/it/developers/guides/tasty-bytes-zero-to-snowflake-transformation-it/",
+        "type": 301
+      },
+      {
+        "source": "/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/developing-tasty-bytes-react-native-application-with-snowflake-sql-api-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_dataengineering_ml_using_snowpark_python_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowflake_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/getting-started-with-snowflake-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_in_snowflake_python_worksheets_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/integrating-tasty-bytes-location-recommendation-ml-model-into-the-react-native-data-app-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_introduction_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/tasty-bytes-introduction-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_snowpark_101_for_data_science_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/tasty-bytes-snowpark-101-for-data-science-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_collaboration_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_transformation_ja{,/**}",
+        "destination": "https://www.snowflake.com/ja/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ja/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_science_with_dataiku_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/data-science-with-dataiku-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/developing-tasty-bytes-react-native-application-with-snowflake-sql-api-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_snowflake_sql_api_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-snowflake-sql-api-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_thoughtspot_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-thoughtspot-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_geospatial_geography_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-geospatial-geography-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_python_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-python-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_dataframe_api_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-snowpark-dataframe-api-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_in_snowflake_python_worksheets_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-snowpark-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpipe_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-snowpipe-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowsql_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-snowsql-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_time_travel_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-time-travel-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_user_defined_sql_functions_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/getting-started-with-user-defined-sql-functions-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/integrating-tasty-bytes-location-recommendation-ml-model-into-the-react-native-data-app-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_setup_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/resource-optimization-setup-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resource_optimization_usage_monitoring_kr{,/**}",
+        "destination": "https://www.snowflake.com/ko/developers/guides/resource-optimization-usage-monitoring-kr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_snowpark_in_snowflake_python_worksheets_ptbr{,/**}",
+        "destination": "https://www.snowflake.com/pt_br/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-ptbr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_introduction_ptbr{,/**}",
+        "destination": "https://www.snowflake.com/pt_br/developers/guides/tasty-bytes-introduction-ptbr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_snowpark_101_for_data_science_ptbr{,/**}",
+        "destination": "https://www.snowflake.com/pt_br/developers/guides/tasty-bytes-snowpark-101-for-data-science-ptbr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/tasty_bytes_zero_to_snowflake_collaboration_ptbr{,/**}",
+        "destination": "https://www.snowflake.com/pt_br/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-ptbr/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resourceoptimization-billingmetrics{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-billing-metrics/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resourceoptimization-performanceoptimization{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-performance-optimization/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resourceoptimization-setupconfiguration{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-setup/",
+        "type": 301
+      },
+      {
+        "source": "/guide/resourceoptimization-usagemonitoring{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/resource-optimization-usage-monitoring/",
+        "type": 301
+      },
+      {
+        "source": "/guide/Auto-Ingest_Twitter_Data_into_Snowflake{,/**}",
+        "destination": "/guide/auto_ingest_twitter_data",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_dbt{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-teams-with-dbt-cloud/",
+        "type": 301
+      },
+      {
+        "source": "/guide/data_engineering_with_dbt{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/data-teams-with-dbt-cloud/",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_snowpark{,/**}",
+        "destination": "/guide/getting_started_with_snowpark",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting-started-snowpark{,/**}",
+        "destination": "/guide/getting_started_with_snowpark",
+        "type": 301
+      },
+      {
+        "source": "/guide/getting_started_with_user_defined_functions{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-user-defined-sql-functions/",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_a_data_clean_room_in_snowflake{,/**}",
+        "destination": "/guide/build_a_data_clean_room_in_snowflake_advanced",
+        "type": 301
+      },
+      {
+        "source": "/guide/snowflake_native_apps{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-native-apps/",
+        "type": 301
+      },
+      {
+        "source": "/guide/prompt_engineering_and_llm_evaluation{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "/guide/end_to_end_machine_learning_with_dataiku{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-dataiku-and-snowflake-guide-to-data-science/",
+        "type": 301
+      },
+      {
+        "source": "guide/machine_learning_with_aws_autopilot{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-machine-learning-on-sagemaker/",
+        "type": 301
+      },
+      {
+        "source": "guide/tour_of_ingest{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/a-comprehensive-guide-to-ingesting-data-into-snowflake/",
+        "type": 301
+      },
+      {
+        "source": "guide/getting-started-snowflake-python-api{,/**}",
+        "destination": "https://docs.snowflake.com/en/developer-guide/snowflake-python-api/overview-tutorials",
+        "type": 301
+      },
+      {
+        "source": "guide/snowpark_python_top_three_tips_for_optimal_performance{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/end-to-end-analytics-with-snowflake-and-power-bi/",
+        "type": 301
+      },
+      {
+        "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/",
+        "type": 301
+      },
+      {
+        "source": "guide/connectors_native_sdk_java_example{,/**}",
+        "destination": "https://docs.snowflake.com/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_example_connector_tutorial",
+        "type": 301
+      },
+      {
+        "source": "guide/vhol_data_lake{,/**}",
+        "destination": "https://docs.snowflake.com/en/user-guide/tables-iceberg-load",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_with_streamlit_in_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-python-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_with_cybersyn_financial_and_economic_essentials_app{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-for-python-streamlit/",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_with_cortex_analyst_in_snowflake{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_with_llmops_using_snowflake_cortex_and_trulens{,/**}",
+        "destination": "https://www.snowflake.com/en/developers/guides/getting-started-with-ai-observability/",
+        "type": 301
+      },
+      {
+        "source": "guide/semantic_file_generation_for_cortex_analyst{,/**}",
+        "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+        "type": 301
+      },
+      {
+        "source": "guide/semantic_file_translation_from_dbt_to_cortex_analyst{,/**}",
+        "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+        "type": 301
+      },
+      {
+        "source": "guide/recommendation_engine_aws_sagemaker{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/data_science_with_dataiku{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/machine_learning_with_saturncloud{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/dota2_game_replay_parser{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_external_functions_gcc{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/determining_warehouse_size{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/streamsets_transformer_for_snowflake_hol{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_with_feast_snowflake{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/create_eureka_moments_with_data_world{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/operationalizing_ai_with_snowflake_and_datarobot{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/improvado{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "/guide/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/autogen-faqs-for-customer-support-snowflake-cortex{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/kepler_gl_maps_inside_snowflake{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/setting-up-leads-notifications-in-slack{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/analyze_pdf_invoices_snowpark_python_java{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/tasty_bytes_native_app{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/financial-services-asset-management-snowflake{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/sec_10k_decoder_without_rag{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/build_llm_app_nvidia_scs{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/machine_learning_with_snowpark_python{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/getting_started_with_snowpark_dataframe_api{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/vhol_snowflake_salesforce_tcrm{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/snowpark_python_top_tips_for_optimal_performance{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/fine-tune-an-llm-in-snowpark-container-services-with-autotrain{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "guide/vhol_snowflake_data_wrangler{,/**}",
+        "destination": "https://quickstarts.snowflake.com/guide/404.html",
+        "type": 301
+      },
+      {
+        "source": "/guide/**",
+        "destination": "https://www.snowflake.com/en/developers/guides/",
+        "type": 301
+      }
     ]
   }
 }
-

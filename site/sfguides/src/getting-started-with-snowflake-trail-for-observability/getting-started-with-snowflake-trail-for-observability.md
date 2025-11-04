@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 3
 
 Snowflake Trail is Snowflake's suite of observability capabilities that enable its users to better monitor, troubleshoot, debug and take actions on pipelines, apps, user code and compute utilizations.
 
@@ -48,7 +47,6 @@ This quickstart is intended to help tie together all the components of Snowflake
 <!-- ------------------------ -->
 ## Data Source Overview
 
-Duration: 2
 
 Observability in Snowflake comes in two main categories: System Views and Telemetry.
 
@@ -68,7 +66,6 @@ This distinction is important because of the default behavior of each:
 <!-- ------------------------ -->
 ## Enabling Telemetry
 
-Duration: 5
 
 By default, Snowflake includes a [predefined event table](https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up#label-logging-event-table-default) (`SNOWFLAKE.TELEMETRY.EVENTS`) that is used if you don't specify an active event table. You can also [create your own event tables](https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up#label-logging-event-table-custom) for specific uses.
 
@@ -128,7 +125,6 @@ Note that valid and default values are as follows:
 <!-- ------------------------ -->
 ## Traces
 
-Duration: 5
 
 A **trace** represents the complete execution path of a request through your Snowflake workloads. It provides a detailed view of how operations flow through different components, helping you understand performance bottlenecks, dependencies, and execution patterns. Each trace is made up of one or more **spans**, where each span represents a single operation within the trace (like a SQL query, UDF execution, or procedure call).
 
@@ -161,7 +157,7 @@ You can now click on any trace to view its spans in detail.
 >
 > Note that simple DML/DQL SQL commands executed directly in a worksheet or workspace **do not generate traces**. Traces are only generated when SQL is executed within supported handler code.
 >
-> For a complete walkthrough with examples, see: [Getting Started with Traces](https://quickstarts.snowflake.com/guide/getting_started_with_traces/index.html).
+> For a complete walkthrough with examples, see: [Getting Started with Traces](/en/developers/guides/getting-started-with-traces/).
 
 ### Viewing Trace Details
 
@@ -208,8 +204,8 @@ This detailed information helps you understand exactly what happened during each
 
 ### Additional Resources
 
-- [Getting Started with Traces | Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_traces/index.html)
-- [Using trace events in Java | Quickstart](https://quickstarts.snowflake.com/guide/java_trace_events/index.html)
+- [Getting Started with Traces | Quickstart](/en/developers/guides/getting-started-with-traces/)
+- [Using trace events in Java | Quickstart](/en/developers/guides/java-trace-events/)
 - [Viewing trace data | Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-accessing-events)
 - [Trace events for functions and procedures | Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing)
 - [Adding custom spans to a trace | Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-custom-spans)
@@ -218,7 +214,6 @@ This detailed information helps you understand exactly what happened during each
 
 ## Logs
 
-Duration: 5
 
 **Logs** are structured records of events that occur during the execution of your Snowflake workloads. They provide detailed information about what happened during code execution, including informational messages, warnings, errors, and debug information. Logs are essential for troubleshooting issues, understanding application behavior, and monitoring the health of your systems.
 
@@ -269,7 +264,6 @@ You can also click on any log entry to bring up a sidebar with more details, inc
 <!-- ------------------------ -->
 ## Query History
 
-Duration: 7
 
 **Query History** provides a comprehensive view of all SQL queries executed in your Snowflake account. It's one of the most important tools for monitoring, troubleshooting, and optimizing database performance. Query History shows detailed information about query execution, performance metrics, and resource usage patterns.
 
@@ -364,7 +358,6 @@ By clicking into a single grouped query, you can see detailed information about 
 <!-- ------------------------ -->
 ## Copy History
 
-Duration: 5
 
 **Copy History** provides comprehensive monitoring for all data loading activities in your Snowflake account. It tracks operations from COPY INTO commands, Snowpipe, and Snowpipe Streaming, giving you visibility into data ingestion performance, errors, and throughput patterns.
 
@@ -402,8 +395,8 @@ Click on any operation to see detailed information about that operation/target t
 >
 > For a complete walkthrough with examples, see ONE of the following:
 >
-> - [Getting Started with Snowpipe](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html)
-> - [Getting Started with Snowpipe Streaming and Azure Event Hubs](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_azure_eventhubs/index.html)
+> - [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/)
+> - [Getting Started with Snowpipe Streaming and Azure Event Hubs](/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
 
 ### Additional Resources
 
@@ -413,7 +406,6 @@ Click on any operation to see detailed information about that operation/target t
 <!-- ------------------------ -->
 ## Task History
 
-Duration: 5
 
 **Task History** provides monitoring and observability for Snowflake Tasks, which are scheduled SQL statements or procedures that run automatically. Tasks are essential for building data pipelines, ETL processes, and automated maintenance operations. Task History helps you monitor task execution, troubleshoot failures, and optimize task performance.
 
@@ -466,13 +458,13 @@ Clicking into any task run will bring you to the Run History for that task.
 >
 > For a step-by-step guide with examples, try one of these quickstarts:
 >
-> - [Getting Started with Streams & Tasks](https://quickstarts.snowflake.com/guide/getting_started_with_streams_and_tasks/index.html)
-> - [Getting Started with Snowflake Task Graphs](https://quickstarts.snowflake.com/guide/getting-started-with-task-graphs/index.html)
+> - [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
+> - [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 
 ### Additional Resources
 
-- [Getting Started with Streams & Tasks](https://quickstarts.snowflake.com/guide/getting_started_with_streams_and_tasks/index.html)
-- [Getting Started with Snowflake Task Graphs](https://quickstarts.snowflake.com/guide/getting-started-with-task-graphs/index.html)
+- [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
+- [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 - [Introduction to tasks | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-intro)
 - [Task graphs | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-graphs)
 - [Monitoring task Runs | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-monitor)
@@ -480,7 +472,6 @@ Clicking into any task run will bring you to the Run History for that task.
 <!-- ------------------------ -->
 ## Dynamic Tables
 
-Duration: 4
 
 **Dynamic Tables** are a table type that automatically materializes the results of a query and keeps them updated as the underlying data changes. They combine the simplicity of views with the performance of materialized data, automatically managing refresh operations. Dynamic Tables monitoring helps you track refresh performance, data freshness, and resource usage.
 
@@ -516,7 +507,7 @@ Clicking on any table will bring you to the graph view for that table.
 >
 > If you don't see any Dynamic Tables, you'll need to create one first.
 >
-> For a step-by-step guide, try this quickstart: [Getting Started with Snowflake Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html).
+> For a step-by-step guide, try this quickstart: [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/).
 
 ### Additional Resources
 
@@ -527,7 +518,6 @@ Clicking on any table will bring you to the graph view for that table.
 <!-- ------------------------ -->
 ## AI Observability
 
-Duration: 2
 
 **AI Observability** in Snowflake provides monitoring and insights for AI/ML workloads, including Cortex AI functions and model inference operations. As AI becomes increasingly integrated into data workflows, observability helps ensure AI operations are performing reliably and cost-effectively.
 
@@ -539,14 +529,13 @@ AI Observability has the following features:
 
 ### Additional Resources
 
-- [Getting Started with AI Observability | Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_ai_observability/index.html)
-- [Getting Started with ML Observability in Snowflake | Quickstart](https://quickstarts.snowflake.com/guide/getting-started-with-ml-observability-in-snowflake/index.html)
+- [Getting Started with AI Observability | Quickstart](/en/developers/guides/getting-started-with-ai-observability/)
+- [Getting Started with ML Observability in Snowflake | Quickstart](/en/developers/guides/getting-started-with-ml-observability-in-snowflake/)
 - [AI Observability in Snowflake Cortex | Snowflake Cortex](https://docs.snowflake.com/user-guide/snowflake-cortex/ai-observability)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 2
 
 Congratulations! You have successfully explored the comprehensive observability capabilities available in Snowflake Trail. By following this quickstart, you've gained hands-on experience with the key components that make up Snowflake's observability platform.
 
@@ -586,14 +575,14 @@ Now that you have explored the basics of Snowflake Trail, consider these possibl
 
 #### Quickstart Guides
 
-- [Observability Quickstarts Category](https://quickstarts.snowflake.com/?cat=observability)
+- [Observability Quickstarts Category](/en/developers/guides/)
 
-- [Getting Started with AI Observability](https://quickstarts.snowflake.com/guide/getting_started_with_ai_observability/index.html)
-- [Getting Started with Event Tables and Alerts](https://quickstarts.snowflake.com/guide/alert_on_events/index.html)
+- [Getting Started with AI Observability](/en/developers/guides/getting-started-with-ai-observability/)
+- [Getting Started with Event Tables and Alerts](/en/developers/guides/alert-on-events/)
 - [Getting Started with Logging](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-log-messages)
-- [Getting Started with Snowflake Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html)
-- [Getting Started with Snowflake Task Graphs](https://quickstarts.snowflake.com/guide/getting-started-with-task-graphs/index.html)
-- [Getting Started with Snowpipe Streaming and Azure Event Hubs](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_azure_eventhubs/index.html)
-- [Getting Started with Snowpipe](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html)
-- [Getting Started with Streams & Tasks](https://quickstarts.snowflake.com/guide/getting_started_with_streams_and_tasks/index.html)
-- [Getting Started with Traces](https://quickstarts.snowflake.com/guide/getting_started_with_traces/index.html)
+- [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/)
+- [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
+- [Getting Started with Snowpipe Streaming and Azure Event Hubs](/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
+- [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/)
+- [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
+- [Getting Started with Traces](/en/developers/guides/getting-started-with-traces/)

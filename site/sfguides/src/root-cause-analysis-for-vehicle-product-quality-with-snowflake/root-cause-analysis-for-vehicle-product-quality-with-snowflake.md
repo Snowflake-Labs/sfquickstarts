@@ -1,11 +1,11 @@
 author: Kala Govindarajan
 id: root-cause-analysis-for-vehicle-product-quality-with-snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
-language: en
 summary: 
+categories: Getting-Started,data-science-&-ml, solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Cortex, Data Science & Ai
 
 # Root Cause Analysis for Vehicle Product Quality with Snowflake
 <!-- ------------------------ -->

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 #  Tidymodel Prediction Workflows Inside Snowflake with Orbital
 
 ## Overview
-Duration: 1
 
 This Quickstart will demonstrate how to run model predictions inside Snowflake
 using the [orbital R package](https://orbital.tidymodels.org/) and the [Snowflake Native Posit Workbench App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc).
@@ -53,7 +52,6 @@ or look at the materials provided in the accompanying repository:
 - Access to [Posit Connect](https://posit.co/products/enterprise/connect/)
 
 ## Setup
-Duration: 5
 
 Before we begin there are a few components we need to prepare. We need to:
 
@@ -120,13 +118,13 @@ Posit Workbench provides several IDEs, such as RStudio Pro, JupyterLab, and VS C
 
 Within Posit Workbench, click `New Session` to launch a new session.
 
-<img src="assets/posit_workbench/01-start_new_session.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/01-start_new_session.png](assets/posit_workbench/01-start_new_session.png)
 
 #### Step 2: Select an IDE
 
 When prompted, select RStudio Pro.
 
-<img src="assets/posit_workbench/02-create_new_session_snowflake.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/02-create_new_session_snowflake.png](assets/posit_workbench/02-create_new_session_snowflake.png)
 
 #### Step 3: Log into your Snowflake account
 
@@ -134,12 +132,12 @@ Next, connect to your Snowflake account from within Posit Workbench.
 Under `Session Credentials`, click the button with the Snowflake icon to sign in to Snowflake.
 Follow the sign in prompts.
 
-<img src="assets/posit_workbench/03-snowflake_login.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/03-snowflake_login.png](assets/posit_workbench/03-snowflake_login.png)
 
 When you're successfully signed in to Snowflake, the Snowflake button will turn blue
 and there will be a check mark in the upper-left corner.
 
-<img src="assets/posit_workbench/04-snowflake_login_success.png" style="width: 400px; height: auto;" />
+![assets/posit_workbench/04-snowflake_login_success.png](assets/posit_workbench/04-snowflake_login_success.png)
 
 #### Step 4: Launch the RStudio Pro IDE
 
@@ -162,19 +160,19 @@ open the file in your RStudio Pro IDE. There are two ways to do this:
 
     1.  Go to `File` > `New Project` in the RStudio IDE menu bar.
 
-    <img src="assets/rstudio/03-new-project.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/03-new-project.png](assets/rstudio/03-new-project.png)
 
     2.  Select Version Control in the New Project Wizard
 
-    <img src="assets/rstudio/04-project-wizard.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/04-project-wizard.png](assets/rstudio/04-project-wizard.png)
 
     3.  Select Git
 
-    <img src="assets/rstudio/05-git.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/05-git.png](assets/rstudio/05-git.png)
 
     4.  Paste the [URL](https://github.com/posit-dev/snowflake-posit-quickstart-orbital) of the GitHub repo and click Create Project
 
-    <img src="assets/rstudio/06-create-project.png" style="width: 400px; height: auto;" />
+    ![assets/rstudio/06-create-project.png](assets/rstudio/06-create-project.png)
 
     RStudio will clone a local copy of the materials on GitHub. You can use the Files pane in the bottom right-hand corner of the IDE to navigate to `quarto.qmd`. Click on the file to open it.
 
@@ -229,12 +227,11 @@ library(ggplot2)
 ```
 
 ## Access and Prepare Data with R
-Duration: 5
 
 Before starting the modeling process, we need to connect to our database and load
 the loan data.
 
-We'll use the DBI and odbc R packages to connect to the database. We'll then use dplyr and dbplyr to query the data with R without having to write raw SQL. To learn more, see [Analyze Data with R using Posit Workbench and Snowflake](https://quickstarts.snowflake.com/guide/analyze_data_with_r_using_posit_workbench_and_snowflake/#0).
+We'll use the DBI and odbc R packages to connect to the database. We'll then use dplyr and dbplyr to query the data with R without having to write raw SQL. To learn more, see [Analyze Data with R using Posit Workbench and Snowflake](/en/developers/guides/analyze-data-with-r-using-posit-workbench-and-snowflake/).
 
 ### Connect with DBI
 
@@ -258,7 +255,7 @@ con <- dbConnect(
 
 Once connected, we can view available databases, schemas, and tables in the RStudio IDE Connections pane. Click on the database icon to the right of a database to see its schemas. Click on the schema icon to the right of a schema to see its tables. Click the table icon to preview the table.
 
-<img src="assets/rstudio/02-connections.png" style="width: 400px; height: auto;" />
+![assets/rstudio/02-connections.png](assets/rstudio/02-connections.png)
 
 ### Create and Manipulate a `tbl`
 
@@ -330,7 +327,6 @@ lendingclub_prep <-
 `collect()` executes a query and returns the _entire_ result as a tibble, so `lendingclub_prep` now contains our entire filtered sample.
 
 ## Create Model with tidymodels
-Duration: 10
 
 ### Create a Workflow
 
@@ -507,7 +503,6 @@ At this point, we've:
 Now, we're ready to deploy the model with orbital and Snowflake.
 
 ## Create predictions
-Duration: 10
 
 The [orbital package](https://orbital.tidymodels.org/) allows you to run tidymodels workflow predictions inside
 databases, including Snowflake, substantially speeding up the prediction process.
@@ -628,7 +623,6 @@ Time difference of 3.027164 secs
 2,260,702 predictions in just 3.02 seconds—thanks to Snowflake and orbital!
 
 ## Deploy Model
-Duration: 5
 
 Next, we'll deploy our model so others can use it. We have a couple of options.
 
@@ -821,7 +815,6 @@ with Snowflake, including Snowsight, as shown below.
 ![](assets/snowflake/snowsight-view.png)
 
 ## Refitting Models with Posit Connect
-Duration: 1
 
 As new data comes in over time, it is useful to refit our model.
 We can refit periodically, monitor performance, and store the best-performing
@@ -831,7 +824,6 @@ but we've put together sample code for the process in [this Quarto document](htt
 [This blog post](https://posit.co/blog/running-tidymodel-prediction-workflows-inside-databases/) also covers the process.
 
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 
