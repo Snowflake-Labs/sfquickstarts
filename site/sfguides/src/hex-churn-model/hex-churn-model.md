@@ -299,7 +299,7 @@ accuracy = round(accuracy_score(actual, predictions), 3)
 recall = round(recall_score(actual, predictions), 3)
 ```
 
-This will calculate an accuracy and recall score for us which we'll display in a [single value cell](https://learn.hex.tech/docs/logic-cell-types/display-cells/single-value-cells#single-value-cell-configuration).
+This will calculate an accuracy and recall score for us which we'll display in a [single value cell](https://learn.hex.tech/docs/explore-data/cells/visualization-cells/single-value-cells#single-value-cell-configuration).
 
 ![](assets/scores.png)
 
