@@ -80,7 +80,7 @@ We want to maintain a standard and consistency across all QS guides and it's ver
 
 - Once you submit your PR, it comes to DevRel for approval.  
 - A staging link is generated for your preview.  Please remember, this is not live yet and your final URL WILL BE different.
-- When the PR is reviewed and merged, your Guide is live and visible on [www.snowflake.com/en/developers/guides](www.snowflake.com/en/developers/guides.).
+- When the PR is reviewed and merged, your Guide is live and visible on [www.snowflake.com/en/developers/guides](https://www.snowflake.com/en/developers/guides).
 
 
 #### Important Tips
