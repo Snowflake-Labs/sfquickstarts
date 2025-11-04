@@ -188,7 +188,7 @@ most critical LoBs, while using more cost-effective approaches for less
 critical workloads. Adherence across all levels is critical to avoid
 significant financial penalties, operational disruption, and
 reputational damage. We recommend you review
-(the[/en/legal/](/en/legal/)),
+the([<u>/en/legal/</u>](/en/legal/)),
 identify all applicable regulations, and map these requirements to
 specific Snowflake features and operational procedures to create an
 auditable compliance trail that reflects the unique needs of each
@@ -202,7 +202,8 @@ compliance and audit processes. This is a powerful advantage, as it
 significantly reduces the time, cost, and effort required to demonstrate
 that your data platform meets stringent security and reliability
 standards. We recommend you engage your compliance and security teams to
-review the reports available on the [https://trust.snowflake.com/](https://trust.snowflake.com/)
+review the reports available on the(
+[<u>https://trust.snowflake.com/</u>](https://trust.snowflake.com/)).
 You should use the HITRUST Shared Responsibility Matrix to formally
 document which controls you inherit from Snowflake, streamlining your
 audit preparations and demonstrating due diligence.
@@ -242,7 +243,7 @@ clear audit trail for regulatory bodies.
 **Implement the Shared Responsibility Model:**
 
 1.  Download and review the
-    [whitepaper](/en/resources/report/snowflake-shared-responsibility-model/).
+    [<u>whitepaper</u>](/en/resources/report/snowflake-shared-responsibility-model/).
 
 2.  Create a RACI (Responsible, Accountable, Consulted, Informed) chart
     that maps your internal teams (e.g., Data Engineering, Security,
@@ -254,23 +255,23 @@ clear audit trail for regulatory bodies.
 
 **Set up Demand Management Controls:**
 
-1.  Use the CREATE RESOURCE MONITOR command to establish credit quotas
+1.  Use the `CREATE RESOURCE MONITOR` command to establish credit quotas
     for warehouses or the entire account.
 
 2.  Configure the monitor to trigger notifications or suspend warehouses
-    at specific consumption thresholds (e.g., NOTIFY AT 75 PERCENT,
-    SUSPEND_IMMEDIATE AT 95 PERCENT).
+    at specific consumption thresholds (e.g., `NOTIFY AT 75 PERCENT`,
+    `SUSPEND_IMMEDIATE AT 95 PERCENT`).
 
 **Perform Basic Capacity Planning:**
 
 1.  Execute queries against the
-    SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY view to analyze
+    `SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY` view to analyze
     credit consumption over time.
 
 2.  Identify daily, weekly, or monthly peak usage patterns to inform
     warehouse sizing and scaling policy decisions.
 
-## Tradeoffs & Considerations
+### Tradeoffs & Considerations
 
 Use the following checklist to assess your organization's readiness for
 implementing a comprehensive reliability strategy and governance model:
@@ -345,8 +346,8 @@ customer-managed maintenance windows that would otherwise interrupt
 service. We recommend you leverage Snowflake's zero-downtime upgrades
 for your production accounts to ensure continuous operations. For
 customers with Enterprise Edition or higher, we advise designating
-non-production accounts for [early access to new
-releases](https://docs.snowflake.com/en/user-guide/intro-releases#early-access-to-full-releases)
+non-production accounts for [<u>early access to new
+releases</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/intro-releases%23early-access-to-full-releases)
 to test for potential impacts on critical workloads before the
 production rollout.
 
@@ -391,15 +392,21 @@ audit trail for root-cause analysis and remediation.
 **Implement Centralized Error Handling:**
 
 1.  Create a standardized event table to log errors from various
-    sources: CREATE OR REPLACE TABLE my_event_table (event_timestamp
-    TIMESTAMP_LTZ, error_source VARCHAR, error_code VARCHAR,
-    error_message VARCHAR);
+    sources:
+    ```
+    CREATE OR REPLACE TABLE my_event_table (
+      event_timestamp TIMESTAMP_LTZ,
+      error_source VARCHAR,
+      error_code VARCHAR,
+      error_message VARCHAR
+    );
+    ```
 
-2.  Within your custom procedures or data pipelines, use a TRY...CATCH
+3.  Within your custom procedures or data pipelines, use a `TRY...CATCH`
     block to log exceptions to this central table before re-throwing the
     error.
 
-3.  Set up a Snowflake Alert to monitor the event table for new entries
+4.  Set up a Snowflake Alert to monitor the event table for new entries
     and trigger a notification, enabling proactive response to any
     failure in your system.
 
@@ -409,10 +416,10 @@ audit trail for root-cause analysis and remediation.
     from the point of failure.
 
 2.  Execute the following command, which will only re-run the failed
-    task and any of its downstream children: EXECUTE TASK my_root_task
-    RETRY LAST;
+    task and any of its downstream children: `EXECUTE TASK my_root_task
+    RETRY LAST;`
 
-## Tradeoffs & Considerations
+### Tradeoffs & Considerations
 
 Use the following checklist to assess your organization's readiness for
 High Availability and Fault Tolerance:
@@ -473,8 +480,8 @@ Streams, Tasks, and UDFs - to ensure that your data automation and
 governance logic is synchronized with your data, providing a complete
 and functional replica that can be activated quickly.
 
-**Account [object
-resiliency](https://docs.snowflake.com/en/user-guide/data-time-travel)
+**Account [<u>object
+resiliency</u>](https://docs.snowflake.com/en/user-guide/data-time-travel)
 (roles & users replication)**
 
 Use **failover groups** to replicate databases **and** account objects
@@ -489,15 +496,15 @@ and security gaps during a recovery event.
 
 **Time Travel**
 
-Snowflake [Time
-Travel](https://docs.snowflake.com/en/user-guide/data-time-travel)
+Snowflake [<u>Time
+Travel</u>](https://docs.snowflake.com/en/user-guide/data-time-travel)
 allows you to access historical versions of table data at any point
 within a defined retention period, which can be configured for up to 90
 days. This feature is your first and fastest line of defense against
-logical data corruption, such as accidental UPDATE or DELETE statements,
+logical data corruption, such as accidental `UPDATE` or `DELETE` statements,
 as it enables instant, surgical recovery without restoring from
 traditional backups. We recommend you configure an appropriate
-DATA_RETENTION_TIME_IN_DAYS for all critical production tables,
+`DATA_RETENTION_TIME_IN_DAYS` for all critical production tables,
 balancing your recovery needs with storage costs, and leverage the
 extended 90-day retention available in Enterprise Edition for your most
 critical data assets.
@@ -516,13 +523,13 @@ immediate recovery tool should always be Time Travel.
 **Data recovery**
 
 Data recovery is the practice of restoring data after an incident, which
-in Snowflake primarily involves using UNDROP commands or querying
+in Snowflake primarily involves using `UNDROP` commands or querying
 historical data via Time Travel. Having a clear, documented, and tested
 process for these actions is essential to executing them quickly and
 correctly during a high-stress incident. We recommend you develop and
 document specific operational runbooks for common data recovery
-scenarios, such as restoring a dropped table using UNDROP or correcting
-a faulty data load using Time Travel's AT \| BEFORE clause, and
+scenarios, such as restoring a dropped table using `UNDROP` or correcting
+a faulty data load using Time Travel's `AT | BEFORE` clause, and
 regularly test these procedures.
 
 ### How-To’s
@@ -533,15 +540,21 @@ regularly test these procedures.
     history.
 
 2.  Re-insert the correct data by querying the table from a point in
-    time before the error occurred: INSERT INTO my_table SELECT \* FROM
-    my_table BEFORE(STATEMENT =\> '\<query_id_of_bad_dml\>');
+    time before the error occurred:
+    ```
+    INSERT INTO
+        my_table
+    SELECT
+        *
+    FROM
+        my_table BEFORE(STATEMENT => '<query_id_of_bad_dml>');
+    ```
 
 **Restore a Dropped Object:**
 
 1.  To restore a recently dropped table, simply execute the
-    [UNDROP
-    command](https://docs.snowflake.com/en/sql-reference/sql/undrop-table):
-    UNDROP TABLE my_table;
+    [<u>`UNDROP`</u> command](https://docs.snowflake.com/en/sql-reference/sql/undrop-table):
+    `UNDROP TABLE my_table`;
 
 2.  This command also works for schemas and databases.
 
@@ -550,10 +563,13 @@ regularly test these procedures.
 1.  For critical production databases, set the Time Travel window to its
     maximum value (requires Enterprise Edition or higher).
 
-2.  Execute the command: ALTER DATABASE my_prod_db SET
-    DATA_RETENTION_TIME_IN_DAYS = 90;
+    Execute the command:
+    ```
+    ALTER DATABASE my_prod_db
+    SET DATA_RETENTION_TIME_IN_DAYS = 90;
+    ```
 
-## Tradeoffs & Considerations
+### Tradeoffs & Considerations
 
 Use the following checklist to assess your organization's readiness for
 Data and Object Resiliency:
@@ -567,12 +583,12 @@ Data and Object Resiliency:
   that need to be included in replication groups?
 
 - **Recovery runbooks:** Are your operational runbooks for common
-  recovery scenarios (e.g., UNDROP, Time Travel query) documented,
+  recovery scenarios (e.g., `UNDROP`, Time Travel query) documented,
   accessible, and regularly tested?
 
-- **Table type strategy:** Have you evaluated the use of TRANSIENT
+- **Table type strategy:** Have you evaluated the use of `TRANSIENT`
   tables for staging data to optimize storage costs by opting out of
-  Fail-safe protection? Furthermore, have you considered using TEMPORARY
+  Fail-safe protection? Furthermore, have you considered using `TEMPORARY`
   tables for session-specific, intermediate data that requires no
   recovery whatsoever, providing an additional layer of cost and
   performance optimization?
@@ -624,8 +640,8 @@ duplication or corruption. This architectural principle is paramount for
 building reliable, self-healing pipelines, as it allows you to safely
 retry failed jobs without introducing data integrity issues. We
 recommend you design all data loading and transformation logic to be
-idempotent, for example by using MERGE statements instead of simple
-INSERT statements. For streaming data, you should leverage features that
+idempotent, for example by using `MERGE` statements instead of simple
+`INSERT` statements. For streaming data, you should leverage features that
 provide exactly-once semantics to ensure each event is processed
 precisely one time.
 
@@ -650,8 +666,8 @@ duplication, which is non-negotiable for financial reporting, regulatory
 compliance, and other sensitive use cases. We recommend you combine
 idempotent DML logic, transactional controls, and robust error handling
 to architect pipelines that achieve exactly-once semantics. For
-real-time ingestion, we advise using [Snowpipe
-Streaming](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-overview),
+real-time ingestion, we advise using [<u>Snowpipe
+Streaming</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/snowpipe-streaming-overview),
 which is designed to provide these guarantees out of the box.
 
 ### How-To’s
@@ -661,33 +677,47 @@ which is designed to provide these guarantees out of the box.
 1.  Identify the database and schema containing the pipe you wish to
     replicate.
 
-2.  Use the ALTER FAILOVER GROUP command to add the pipe's parent
-    objects to the group: ALTER FAILOVER GROUP my_fg ADD
-    my_db.my_schema.my_pipe TO REPLICATION_SCHEDULE;
+2.  Use the `ALTER FAILOVER GROUP` command to add the pipe's parent
+    objects to the group:
+    ```
+    ALTER FAILOVER GROUP my_fg
+    ADD my_db.my_schema.my_pipe TO REPLICATION_SCHEDULE;
+    ```
 
 **Write an Idempotent
-[MERGE](https://docs.snowflake.com/en/sql-reference/sql/merge)
+[<u>MERGE</u>](https://docs.snowflake.com/en/sql-reference/sql/merge)
 statement:**
 
-1.  Use a MERGE statement to either insert new rows or update existing
+1.  Use a `MERGE` statement to either insert new rows or update existing
     rows based on a unique key, preventing duplicates on re-run.
 
-2.  Example: MERGE INTO target t USING source s ON t.id = s.id WHEN
-    MATCHED THEN UPDATE SET t.value = s.value WHEN NOT MATCHED THEN
-    INSERT (id, value) VALUES (s.id, s.value);
+    Example:
+    ```
+    MERGE INTO target t
+      USING source s
+      ON t.id = s.id
+      WHEN MATCHED THEN UPDATE SET t.value = s.value
+      WHEN NOT MATCHED THEN INSERT (id, value) VALUES (s.id, s.value);
+    ```
 
 **Check Snowpipe load history:**
 
 1.  To validate that files have been loaded and to check for errors,
-    query the
-    [COPY_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/copy_history)
+    use the
+    [<u>`COPY_HISTORY`</u>](https://docs.snowflake.com/en/sql-reference/functions/copy_history)
     function.
 
-2.  Example: SELECT \* FROM
-    TABLE(INFORMATION_SCHEMA.COPY_HISTORY(TABLE_NAME=\>'my_table',
-    START_TIME=\>DATEADD(hours, -1, CURRENT_TIMESTAMP())));
+    Example:
+    ```
+    SELECT
+      *
+    FROM TABLE(INFORMATION_SCHEMA.COPY_HISTORY(
+                  TABLE_NAME=>'my_table',
+                  START_TIME=>DATEADD(hours, -1, CURRENT_TIMESTAMP())
+              ));
+    ```
 
-## Tradeoffs & Considerations
+### Tradeoffs & Considerations
 
 Use the following checklist to assess your organization's readiness for
 building resilient data pipelines:
@@ -746,8 +776,8 @@ happening, enabling rapid root-cause analysis. This is critical for
 proactively detecting anomalies, performance degradation, or data
 pipeline failures. We recommend you leverage the SNOWFLAKE.ACCOUNT_USAGE
 schema for historical analysis of query performance and credit
-consumption, and implement [Snowflake
-Alerts](https://docs.snowflake.com/en/guides-overview-alerts) to
+consumption, and implement [<u>Snowflake
+Alerts</u>](https://docs.snowflake.com/en/guides-overview-alerts) to
 trigger timely, automated notifications for specific conditions,
 ensuring your operations team is alerted to potential issues promptly.
 
@@ -759,7 +789,7 @@ whole. Their importance lies in preventing unexpected cost overruns from
 runaway queries or misconfigured workloads and ensuring that compute
 resources are available for your most critical business processes. We
 recommend you assign a
-[resource-monitor](https://docs.snowflake.com/en/user-guide/resource-monitors)
+[<u>resource-monitor</u>](https://docs.snowflake.com/en/user-guide/resource-monitors)
 to all production virtual warehouses with clearly defined credit quotas
 that align with your FinOps budgets. You should configure these monitors
 to send notifications at various consumption thresholds and to
@@ -768,8 +798,8 @@ providing a crucial safety net for cost control and resource management.
 
 **Business Continuity planning & testing**
 
-A [Business
-Continuity](https://docs.snowflake.com/en/user-guide/business-continuity-disaster-recovery)
+A [<u>Business
+Continuity</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/business-continuity-disaster-recovery)
 plan is a documented strategy outlining how your organization will
 maintain critical functions during and after a disruption. However, a
 plan is only reliable if it is regularly tested. This practice is
@@ -786,39 +816,64 @@ ensure your operations team is prepared to respond effectively.
 
 **Create a resource monitor:**
 
-1.  Use the CREATE RESOURCE MONITOR command to define a credit quota and
+1.  Use the `CREATE RESOURCE MONITOR` command to define a credit quota and
     notification thresholds.
 
-2.  Example: CREATE RESOURCE MONITOR my_monitor WITH CREDIT_QUOTA = 1000
-    TRIGGERS ON 75 PERCENT DO NOTIFY ON 90 PERCENT DO SUSPEND ON 100
-    PERCENT DO SUSPEND_IMMEDIATE;
+    Example:
+    ```
+    CREATE RESOURCE MONITOR my_monitor 
+      WITH CREDIT_QUOTA = 1000 
+      TRIGGERS ON 75 PERCENT DO NOTIFY 
+               ON 90 PERCENT DO SUSPEND 
+               ON 100 PERCENT DO SUSPEND_IMMEDIATE;
+    ```
 
-3.  Assign the monitor to a warehouse: ALTER WAREHOUSE my_wh SET
-    RESOURCE_MONITOR = my_monitor;
+2.  Assign the monitor to a warehouse:
+    ```
+    ALTER WAREHOUSE my_wh
+      SET RESOURCE_MONITOR = my_monitor;
+    ```
 
 **Set up a Snowflake Alert:**
 
 1.  Create an alert that checks for a specific condition on a schedule.
 
-2.  Example: CREATE OR REPLACE ALERT long_running_query_alert WAREHOUSE
-    = my_ops_wh SCHEDULE = '5 MINUTE' IF (EXISTS (SELECT 1 FROM
-    SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY WHERE EXECUTION_STATUS =
-    'RUNNING' AND START_TIME \< DATEADD(hour, -1, CURRENT_TIMESTAMP())))
-    THEN CALL SYSTEM\$SEND_EMAIL(...)
+    Example:
+    
+    ```
+    CREATE OR REPLACE ALERT long_running_query_alert WAREHOUSE = my_ops_wh SCHEDULE = '5 MINUTE'
+      IF (
+          EXISTS (
+              SELECT
+                  1
+              FROM
+                  SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+              WHERE
+                  EXECUTION_STATUS = 'RUNNING'
+                  AND START_TIME < DATEADD(hour, -1, CURRENT_TIMESTAMP())
+          )
+      ) THEN CALL SYSTEM $SEND_EMAIL(...)
+    ```
 
-3.  Resume the alert to activate it: ALTER ALERT
-    long_running_query_alert RESUME;
+3.  Resume the alert to activate it: `ALTER ALERT long_running_query_alert RESUME;`
 
 **Check for failed Tasks:**
 
-1.  To monitor the operational health of your data pipelines, query the
-    TASK_HISTORY function.
+1. To monitor the operational health of your data pipelines, use the [`TASK_HISTORY`](https://docs.snowflake.com/en/sql-reference/functions/task_history) function.
 
-2.  Example: SELECT \* FROM
-    TABLE(INFORMATION_SCHEMA.TASK_HISTORY(SCHEDULED_TIME_RANGE_START=\>DATEADD('hour',-1,CURRENT_TIMESTAMP()),
-    RESULT_LIMIT =\> 100)) WHERE STATE = 'FAILED';
+   Example: 
+   ```
+   SELECT
+    *
+   FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+                    SCHEDULED_TIME_RANGE_START=>DATEADD('hour',-1,CURRENT_TIMESTAMP()),
+                    RESULT_LIMIT => 100
+              )
+            )
+   WHERE STATE = 'FAILED';
+   ```    
 
-## Tradeoffs & Considerations
+### Tradeoffs & Considerations
 
 Use the following checklist to assess your organization's readiness for
 implementing a mature Monitoring and Operations practice:
@@ -855,9 +910,9 @@ different cloud provider for the highest level of resilience. A
 well-architected DR plan leverages these capabilities to minimize data
 loss and downtime, ensuring business continuity for your most critical
 workloads. For a detailed overview of the concepts and features
-involved, refer to Snowflake’s documentation on [business continuity
+involved, refer to Snowflake’s documentation on [<u>business continuity
 and disaster
-recovery](https://docs.snowflake.com/en/user-guide/replication-intro).
+recovery</u>](https://docs.snowflake.com/en/user-guide/replication-intro).
 
 ### Desired outcome
 
@@ -891,8 +946,8 @@ your business requirements, to minimize your RPO.
 
 **Client Redirect**
 
-[Client
-Redirect](https://docs.snowflake.com/en/user-guide/business-continuity-client-redirect)
+[<u>Client
+Redirect</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/business-continuity-client-redirect)
 is a feature that provides seamless, automated failover for your
 applications and users. It works via a connection object that
 automatically reroutes client application traffic from a primary account
@@ -917,7 +972,7 @@ become the primary, thereby formally initiating the failover process.
 Having a clear, well-understood, and tested procedure for using these
 commands is critical for a swift and successful recovery during a
 high-stress incident. We recommend you document the exact SQL failover
-commands (e.g., ALTER FAILover GROUP... PRIMARY) in your operational
+commands (e.g., `ALTER FAILOVER GROUP... PRIMARY`) in your operational
 runbooks and grant the necessary privileges to a limited set of
 authorized personnel to prevent accidental activation. Additionally,
 your operations team should be familiarized with both the UI-based and
@@ -926,8 +981,8 @@ ensure they can execute them efficiently under pressure.
 
 **Backup & replication**
 
-A comprehensive [data
-protection](https://docs.snowflake.com/en/user-guide/data-cdp)
+A comprehensive [<u>data
+protection</u>](https://docs.snowflake.com/en/user-guide/data-cdp)
 strategy must address both large-scale disasters and more common
 operational failures. This is achieved by combining physical replication
 for disaster recovery with logical backups for operational recovery.
@@ -952,35 +1007,34 @@ security and compliance are maintained post-recovery.
 1.  Identify critical databases and account objects (users, roles,
     warehouses, etc.) required for business continuity.
 
-2.  Create a FAILOVER GROUP in your primary account that includes these
+2.  Create a [`FAILOVER GROUP`](https://docs.snowflake.com/en/sql-reference/sql/create-failover-group) in your primary account that includes these
     objects.
 
-3.  Create a secondary FAILOVER GROUP in your DR account as a replica
-    and set a refresh schedule (e.g., REPLICATION_SCHEDULE = '10
-    MINUTE').
+3.  Create a secondary `FAILOVER GROUP` in your DR account as a replica
+    and set a refresh schedule (e.g., `REPLICATION_SCHEDULE = '10 MININUTE'`).
 
 **Configure Client Redirect:**
 
-1.  Create a CONNECTION object in your primary account.
+1.  Create a [`CONNECTION`](https://docs.snowflake.com/en/sql-reference/sql/create-connection) object in your primary account.
 
-2.  Enable CLIENT_REDIRECT for that connection object.
+2.  Enable [`CLIENT_REDIRECT`](https://docs.snowflake.com/en/user-guide/client-redirect) for that connection object.
 
 3.  Update all client application connection strings to use the new
     connection URL (e.g.,
-    \<organization_name\>-\<connection_name\>.snowflakecomputing.com).
+    `<organization_name>-<connection_name>.snowflakecomputing.com`).
 
 **Establish logical backup procedures:**
 
 1.  Identify critical tables or databases that require frequent,
     point-in-time backups for operational recovery.
 
-2.  Create a Snowflake Task to automatically execute a CREATE TABLE...
-    CLONE statement on a defined schedule (e.g., daily).
+2.  Create a Snowflake Task to automatically execute a `CREATE TABLE...
+    CLONE` statement on a defined schedule (e.g., daily).
 
 3.  Implement a data retention policy for these clones to manage storage
     costs.
 
-## Tradeoffs & Considerations
+### Tradeoffs & Considerations
 
 Use the following checklist to assess your organization's readiness for
 implementing a disaster recovery strategy:

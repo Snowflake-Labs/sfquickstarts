@@ -55,7 +55,7 @@ Python 워크시트는 Snowpark를 더 빨리 시작할 수 있도록 돕는 Sno
 
 Snowflake 계정에 로그인합니다. 이 랩에 액세스하고 샘플 데이터 및 코드를 설정하려면 다음 링크를 클릭해야 합니다.
 
-> aside positive 중요: 아래에서 설명하는 랩 설정을 계속하려면 ACCOUNTADMIN 역할을 보유하고 있어야 합니다. 참고: 새로운 평가판 계정을 생성한 경우, 자동으로 ACCOUNTADMIN 역할을 보유하게 됩니다.
+> 중요: 아래에서 설명하는 랩 설정을 계속하려면 ACCOUNTADMIN 역할을 보유하고 있어야 합니다. 참고: 새로운 평가판 계정을 생성한 경우, 자동으로 ACCOUNTADMIN 역할을 보유하게 됩니다.
 
 <button>[랩 환경 설정](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 

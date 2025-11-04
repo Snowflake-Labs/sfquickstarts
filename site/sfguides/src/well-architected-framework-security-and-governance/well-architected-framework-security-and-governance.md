@@ -292,12 +292,12 @@ secure UDF patterns when justified. In regulated scenarios, tokenization
 may be necessary; it should be paired with strict stewardship and
 evidence of necessity.
 
-**Design approach  **
+**Design approach**
 Keep base tables secured and expose consumers to policy‑protected views.
 Separate administrative personas from analytical personas to avoid
 privilege creep and ensure least privilege.
 
-**Assessment prompts  **
+**Assessment prompts**
 Which roles can view clear PII, and under what context? How are
 exceptions time‑boxed, tracked, and reviewed?
 
@@ -311,11 +311,11 @@ driving entitlements from reference tables makes policies explainable
 and maintainable. Performance should be validated against real
 workloads, and pruning/clustering strategies used where helpful.
 
-**Design Approach  **
+**Design Approach**
 Adopt a hub‑and‑spoke model: one policy per domain, so all child tables
 and views inherit the same semantics through tags.
 
-**Assessment Prompts  **
+**Assessment Prompts**
 Are RAP rules managed from a single source of truth rather than embedded
 in views? What are the policy evaluation latency and cache hit rates
 under load?
@@ -332,11 +332,11 @@ constraints with
 [masking](https://docs.snowflake.com/en/user-guide/security-access-control-overview)
 and row access for layered protection.
 
-**Design Approach  **
+**Design Approach**
 Publish approved column bundles per persona and provide redaction views
 for common but risky analytics patterns.
 
-**Assessment Prompts  **
+**Assessment Prompts**
 Which disallowed column combinations are blocked today? How are
 projection constraints tested and reported in CI pipelines?
 
@@ -354,7 +354,7 @@ schemas and apply stricter RAP and masking baselines. This keeps audits
 predictable and allows quick re‑generation of a full evidence set -
 ideally in hours rather than weeks.
 
-**Assessment Prompts  **
+**Assessment Prompts**
 For each regulation, which Snowflake controls satisfy which clauses? How
 quickly can a complete evidence pack be re‑built, and how is its
 freshness tracked?
@@ -374,7 +374,7 @@ Usage, Information Schema, and Access History. Tasks and
 drive alerts, and exception workflows integrate with ticketing, ensuring
 each alert has an assigned owner, runbook, and SLA.
 
-**Assessment Prompts  **
+**Assessment Prompts**
 Which risks are trending, which alerts produce action, and what is the
 false‑positive rate? Are owners and remediation steps clearly defined in
 every alert type?
@@ -621,7 +621,7 @@ Time Objective (RTO) and Recovery Point Objective (RPO) requirements.
 
 ## Identify and assess threat
 
-### **Identification phase - audit**
+### Identification phase - audit
 
 1.  Access your **Account Usage** database, which provides 365 days of
     "tamper proof" audit logs.

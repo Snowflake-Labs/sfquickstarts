@@ -1,7 +1,8 @@
 author: Ali Khosro
 id: snowflake-looker-quickstart
 summary: A guide on how to connect Looker to Snowflake using Key-Pair and OAuth authentication, and build a simple dashboard.
-categories: Getting-Started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -160,7 +161,6 @@ GRANT ROLE looker_role TO USER looker_service_account;
 
 OAuth allows each Looker user to authenticate with their own Snowflake credentials.
 
-> aside positive
 > **Note on OAuth Limitations**
 > *   **Persistent Derived Tables (PDTs):** Not supported with Snowflake OAuth.
 > *   **Token Expiration:** Users may need to re-authenticate periodically.

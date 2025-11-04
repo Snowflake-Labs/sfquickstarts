@@ -69,7 +69,6 @@ The [Openflow Connector for Kafka](https://docs.snowflake.com/en/user-guide/data
 - **Schema Evolution**: Tables adapt when new fields are added
 - **Simple Configuration**: Easy to get started
 
-> aside positive
 > **Advanced Option**: For production scenarios requiring Kafka metadata (partition, offset), dead letter queues, or Iceberg table support, see the [DLQ and metadata connector](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/kafka/kafka-dlq-metadata).
 
 ### What You Will Learn
@@ -95,10 +94,8 @@ Before we dive in, here's what you'll need:
 - Ability to create topics and produce messages (we'll create one called `application-logs`)
 - Network connectivity from Snowflake to your Kafka brokers (we'll walk you through the network rule setup—it's easier than it sounds!)
 
-> aside positive
 > **Don't have Kafka yet?** We tested this with **Confluent Cloud**, which has a free tier perfect for this quickstart. You can spin up a cluster in about 5 minutes. Other managed options like AWS MSK or GCP Managed Kafka work great too.
 
-> aside positive
 > **Using Openflow BYOC?** This quickstart focuses on **SPCS deployment** (Snowflake-managed), but the connector setup and concepts are identical for [BYOC deployments](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about-byoc)—only the runtime deployment steps differ.
 
 <!-- ------------------------ -->
@@ -140,10 +137,8 @@ The `QUICK_START_REPO` environment variable will help us reference files easily 
 - `.env.template` - Template for your Kafka connection settings
 - `RPK_CLI_README.md` - Detailed rpk CLI setup guide
 
-> aside positive
 > **Prefer Notebooks?** If you're more comfortable with Jupyter notebooks, you can follow along using our [interactive notebook version](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-kafka-connector/blob/main/notebooks/OPENFLOW_KAFKA_CONNECTOR_QS.ipynb) instead. It contains the same content in a notebook-friendly format.
 
-> aside positive
 > **Quick Tip**: The `generate_logs.py` script has a `--test-connection` flag that's super helpful for verifying your Kafka setup works before we start. We'll use this later!
 
 <!-- ------------------------ -->
@@ -157,7 +152,6 @@ Time to get Kafka ready! We'll install the Kafka CLI tools (rpk), create our top
 
 This guide assumes you have a Kafka cluster already created and available. Before proceeding, ensure your cluster meets these requirements:
 
-> aside positive
 > **Required Kafka Configuration**:
 >
 > - **Kafka cluster available**: You have a running Kafka cluster (GCP Managed Kafka, AWS MSK, Confluent Cloud, or self-hosted) with network accessibility from Snowflake.
@@ -210,7 +204,6 @@ sudo yum install redpanda -y
 rpk version
 ```
 
-> aside positive
 > **Alternative**: If you prefer traditional Kafka CLI tools, they work too. Just replace `rpk` commands with equivalent `kafka-topics.sh` commands. However, we recommend `rpk` for its improved usability.
 
 ### Configure rpk Profile
@@ -219,7 +212,6 @@ Let's create an rpk **profile**—think of it as a saved connection shortcut. In
 
 **What's a profile?** It's like saving a WiFi password—you configure it once, and it just works from then on. No more typing `--brokers`, `--username`, `--password` over and over!
 
-> aside negative
 > **Important - Kafka Credentials Required**: Before proceeding, ensure you have obtained the following from your Kafka cluster administrator or cloud console:
 >
 > - **Kafka Broker Address(es)**: Public endpoint(s) of your Kafka brokers (e.g., `broker-1.example.com:9092`)
@@ -246,7 +238,6 @@ rpk profile set user="YOUR-USER-NAME"
 rpk profile set pass="YOUR-PASSWORD"
 ```
 
-> aside positive
 > **Confluent Cloud Users**: Use your Confluent Cloud **API Key** as the username and **API Secret** as the password. These can be created in the Confluent Cloud Console under "Data Integration" → "API Keys".
 
 **Verify profile configuration**:
@@ -261,7 +252,6 @@ rpk cluster info
 
 You should see your cluster information displayed, confirming connectivity.
 
-> aside positive
 > **Profile Benefits**: With a configured profile, you don't need to specify `--brokers` or authentication details in subsequent rpk commands. The profile stores all connection settings securely.
 
 ### Kafka Service Options
@@ -281,7 +271,6 @@ This quickstart works with any Kafka service. Ensure you have:
 - **Azure Event Hubs**: With Kafka protocol support
 - **Self-Hosted Kafka**: Your own Kafka cluster
 
-> aside positive
 > **Tested Environment**: This quickstart was tested with **Confluent Cloud** using SASL_SSL security protocol and PLAIN authentication mechanism.
 
 ### Create Kafka Topic
@@ -302,7 +291,6 @@ TOPIC            STATUS
 application-logs  OK
 ```
 
-> aside positive
 > **Topic Naming**: You can use any topic name you prefer. If you use a different name, make sure to update the connector configuration accordingly. The default setup assumes `application-logs`.
 
 ### Verify Kafka Cluster and Topic
@@ -398,7 +386,6 @@ cp $QUICK_START_REPO/.env.template .env
 #   KAFKA_SASL_PASSWORD - Your API Secret/password
 ```
 
-> aside negative
 > **Required Configuration**: The `.env` file is required for the `generate_logs.py` script to work. Update `KAFKA_BOOTSTRAP_SERVERS`, `KAFKA_SASL_USERNAME`, and `KAFKA_SASL_PASSWORD` with your actual Kafka credentials from the rpk profile setup. The template already has `KAFKA_SECURITY_PROTOCOL=SASL_SSL` and `KAFKA_SASL_MECHANISM=PLAIN` set correctly.
 
 **Test connection**:
@@ -443,7 +430,6 @@ You can now produce logs with:
   python generate_logs.py --count 100
 ```
 
-> aside positive
 > **Troubleshooting**: If the connection test fails, verify:
 >
 > - Your `.env` file has correct values matching your rpk profile
@@ -476,7 +462,6 @@ The script will create:
 
 ### Customize Network Rule
 
-> aside negative
 > **IMPORTANT - Get Your Kafka Broker List**: Before customizing the network rule, extract your broker endpoints from the Kafka cluster info you recorded earlier.
 >
 > **Quick Extract Command** (if you have jq installed):
@@ -566,7 +551,6 @@ You should see all objects created successfully.
 
 Before you can use the Kafka connector, you need an active Openflow SPCS runtime. If you've already set up Openflow SPCS for another quickstart, you can skip this section and reuse your existing runtime.
 
-> aside positive
 > **New to Openflow SPCS?** For more comprehensive coverage, see the dedicated [Getting Started with Openflow SPCS](https://quickstarts.snowflake.com/guide/getting_started_with_openflow_spcs/index.html) quickstart. The steps below provide everything you need to get started quickly.
 
 ### Create Openflow Deployment
@@ -594,7 +578,6 @@ Once your deployment is active:
 
 ![Creating Openflow SPCS Runtime](assets/openflow_qs_kafka_runtime_create.gif)
 
-> aside negative
 > **Important**: Make sure to attach the `quickstart_kafka_connector_access` external access integration when creating the runtime. This allows the runtime to connect to your Kafka brokers through Snowflake's network rules.
 
 You're now ready to configure the Kafka connector!
@@ -607,7 +590,6 @@ Perfect! Both Kafka and Snowflake are set up. Now comes the fun part—connectin
 
 ![Adding Kafka Connector to Openflow Runtime](assets/openflow_qs_kafka_add_connector_to_runtime.gif)
 
-> aside positive
 > **New Tab & Authentication**: Adding the connector to your runtime will open a new runtime tab in your browser with the canvas showing the **Openflow Kafka; JSON + SASL + Schema evolution** (abbreviated as **Kafka JSON SASL SCHEMAEV**) processor group. If prompted, authenticate/authorize access to allow the canvas to access the runtime. You'll configure this connector in the next section.
 
 The **Openflow Kafka; JSON + SASL + Schema evolution** connector is now on your canvas. It includes all the processors and services needed to stream data from Kafka to Snowflake.
@@ -622,7 +604,6 @@ The **Openflow Kafka; JSON + SASL + Schema evolution** connector uses three para
 2. **Kafka JSON SASL SCHEMAEV Destination Parameters** - Snowflake target database and schema configuration
 3. **Kafka JSON SASL SCHEMAEV Ingestion Parameters** - Kafka-specific settings like topic names, consumer group, and auto-offset reset
 
-> aside positive
 > **About the Connector Name**: "Kafka JSON SASL SCHEMAEV" is the abbreviated form of **Openflow Kafka; JSON + SASL + Schema evolution**. This name indicates the connector supports JSON data format, SASL authentication, and automatic schema evolution.
 
 To access parameter contexts:
@@ -649,7 +630,6 @@ Click on the **Parameters** tab and configure the following values:
 | **Kafka SASL Username** | `<YOUR-API-KEY>` | Your Kafka SASL username (called "API Key" in Confluent Cloud). |
 | **Kafka Security Protocol** | `SASL_SSL` | Security protocol for Kafka connection. `SASL_SSL` provides encrypted connection with authentication. |
 
-> aside positive
 > **Connection Details**: These values should match the credentials you configured in the `rpk profile` during the [Setup Kafka Environment](#setup-kafka-environment) section. If you're using Confluent Cloud, these are your API Key (username) and API Secret (password).
 
 Your completed configuration should look like this:
@@ -662,7 +642,6 @@ Click **Apply** to save your Kafka source parameters configuration.
 
 Configure the Snowflake destination connection where Kafka data will be streamed.
 
-> aside negative
 > **IMPORTANT**: Ensure you have completed the [Setup Snowflake Environment](#setup-snowflake-environment) section before proceeding. The Kafka connector requires the database, warehouse, and role to be created in advance.
 
 #### Access Kafka Destination Parameters
@@ -689,7 +668,6 @@ Your completed configuration should look like this:
 
 ![Set Kafka Destination Parameters](assets/openflow_qs_kafka_set_dest_params.png)
 
-> aside positive
 > **Session Token Authentication**: When using `SNOWFLAKE_SESSION_TOKEN`, the connector authenticates using the Openflow runtime's Snowflake session. This is the recommended approach for SPCS deployments as it eliminates the need to manage separate credentials.
 
 Click **Apply** to save your Kafka destination parameters configuration.
@@ -741,7 +719,6 @@ Your completed configuration should look like this:
 
 ![Set Kafka Ingestion Parameters](assets/openflow_qs_kafka_set_ingestion_params.png)
 
-> aside positive
 > **Configuration Notes**:
 >
 > - **Auto Offset Reset**: Use `latest` for real-time streaming (only new messages), or `earliest` to replay all existing messages in the topic.
@@ -775,10 +752,8 @@ To start the Kafka connector:
 
 ![Kafka Connector Running and Streaming Data](assets/openflow_qs_kafka_connector_running.gif)
 
-> aside positive
 > **Note**: You may see an error message about "Snowflake Private Key Service" failing to enable. This error can be safely ignored since this quickstart uses `SNOWFLAKE_SESSION_TOKEN` authentication instead of private key authentication. The connector will function normally with session token authentication.
 
-> aside positive
 > **What's Happening?** The connector:
 >
 > 1. **Connects to Kafka**: Establishes a connection to your Kafka brokers using the configured credentials
@@ -815,7 +790,6 @@ The Openflow Kafka JSON/AVRO connector uses [automatic schema detection](https:/
 - **Schema evolves automatically** - New fields in messages add new columns transparently
 - **No manual DDL required** - The connector handles all schema changes
 
-> aside positive
 > **Key Benefit**: As your application evolves and adds new fields to log messages, corresponding columns are added automatically—no pipeline reconfiguration or manual ALTER TABLE statements needed!
 
 ---
@@ -857,7 +831,6 @@ Producing 50 log events (base schema) to topic 'application-logs'...
 ✓ Successfully produced 50 log events (base schema)
 ```
 
-> aside positive
 > **About Record Counts**: Both methods (Python generator and sample file) produce exactly **50 base schema records** for consistency.
 >
 > - If you ran `--test-connection` earlier, you'll have 51 total records
@@ -937,7 +910,6 @@ USER_ID         TEXT
 
 That's **11 base columns** in Phase 1.
 
-> aside positive
 > **Remember These 11 Columns**: We'll run this query again in Phase 2 and see many NEW columns appear automatically!
 >
 > **Note**: Some columns like `AMOUNT`, `USER_ID`, and `ERROR` may contain NULL values for records where those fields don't apply. For example, only payment-related logs will have `AMOUNT` values, and only ERROR-level logs will have the `ERROR` field populated.
@@ -991,7 +963,6 @@ GROUP BY SERVICE
 ORDER BY ERROR_COUNT DESC;
 ```
 
-> aside positive
 > **Full Verification Script**: Run `sql/2a.verify_base_schema.sql` for comprehensive Phase 1 verification queries including performance analysis, error summaries, and payment transactions.
 
 ---
@@ -1076,7 +1047,6 @@ VERSION               TEXT
 
 **That's 26 new columns automatically added!** (from 11 → 37 total columns)
 
-> aside positive
 > **🎉 WOW!** These columns were added **automatically** without any DDL changes, pipeline reconfiguration, or downtime! This is automatic schema evolution in action!
 
 ### Query Evolved Schema Fields
@@ -1162,7 +1132,6 @@ WHERE MEMORY_PERCENT IS NOT NULL
 ORDER BY TIMESTAMP DESC;
 ```
 
-> aside positive
 > **Note**: System metrics only appear in WARN level logs with messages like "Memory usage above 80%" or "Disk space running low". If this query returns no results, produce more evolved logs to generate system metrics:
 >
 > ```bash
@@ -1170,7 +1139,6 @@ ORDER BY TIMESTAMP DESC;
 > python $QUICK_START_REPO/sample-data/generate_logs.py --count 100 --evolved
 > ```
 
-> aside positive
 > **Full Schema Evolution Queries**: Run `sql/2b.verify_schema_evolution.sql` for comprehensive queries exploring all evolved fields including API parameters, error retries, email delivery, analytics metrics, and more!
 
 ### Understanding What Just Happened
@@ -1183,7 +1151,6 @@ ORDER BY TIMESTAMP DESC;
 ✅ **No Pipeline Changes** - Same connector configuration handles both schemas  
 ✅ **Type Inference** - New columns got appropriate data types automatically  
 
-> aside positive
 > **Real-World Benefits**: This schema evolution capability is ideal for:
 >
 > - Microservices with evolving log formats
@@ -1206,7 +1173,6 @@ If you don't see data in Snowflake after producing logs:
 
 3. **Check Offset Reset** - If using `latest`, only new messages after connector start are consumed
 
-> aside positive
 > **Tip**: See the [Monitoring the Pipeline](#monitoring-the-pipeline) chapter for detailed monitoring guidance.
 
 <!-- ------------------------ -->
@@ -1242,7 +1208,6 @@ WARN      | 100         | 20.00
 ERROR     | 50          | 10.00
 ```
 
-> aside positive
 > **Note**: The actual counts and percentages will vary depending on how many log events you've produced and the random distribution of log levels generated by the script.
 
 #### Top Error Messages
@@ -1314,7 +1279,6 @@ ORDER BY HOUR_OF_DAY;
 
 Identify peak usage hours for capacity planning.
 
-> aside positive
 > **Note**: The `TIMESTAMP` column is stored as TEXT. We use `TO_TIMESTAMP()` to convert it to TIMESTAMP type for time-based analysis. If your quickstart was just completed, you may see limited data in the last hour/day time windows.
 
 ### Performance Analytics
@@ -1443,7 +1407,6 @@ ORDER BY
 
 Discover when errors in one service correlate with errors in another—great for finding cascading failures!
 
-> aside positive
 > **Why This Matters**: Traditional log platforms charge premium prices for long retention and complex queries. With Snowflake, you can keep years of logs at low storage costs and run sophisticated SQL analytics without specialized query languages or expensive log indexing.
 
 <!-- ------------------------ -->
@@ -1491,7 +1454,6 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE application_logs_search
   );
 ```
 
-> aside positive
 > **What This Does**:
 >
 > - **ON MESSAGE**: Indexes the MESSAGE field for semantic search
@@ -1519,7 +1481,6 @@ Snowflake Intelligence will automatically use your Cortex Search service to find
 
 You can also query the search service using SQL with the [`SNOWFLAKE.CORTEX.SEARCH_PREVIEW` function](https://docs.snowflake.com/en/sql-reference/functions/search_preview-snowflake-cortex):
 
-> aside negative
 > **Note**: `SEARCH_PREVIEW` is designed for testing and validation. For production applications requiring low latency, use the Python API or the service's native REST endpoint.
 
 ```sql
@@ -1618,7 +1579,6 @@ SELECT
   ) AS search_results;
 ```
 
-> aside positive
 > **Benefits of Cortex Search**:
 >
 > - **Natural Language**: Query logs in plain English, not complex regex
@@ -1648,7 +1608,6 @@ The canvas displays real-time metrics for the connector process group:
 - **Out**: FlowFiles leaving the process group
 - **Timing**: All metrics show data for the last "5 min" window
 
-> aside negative
 > **Statistics Reset**: The statistics displayed on the canvas reset every **5 minutes**. If you see zeros, it means no data has flowed in the current 5-minute window. This is normal between data generation runs or during idle periods.
 
 #### Drill Down for Detailed Statistics
@@ -1672,7 +1631,6 @@ You can click on individual processors or connections to see detailed statistics
    - FlowFiles Queued (should be minimal)
    - Queue Size (indicates backpressure if large)
 
-> aside positive
 > **Healthy Pipeline Indicators**:
 >
 > - Minimal queue buildup (< 100 FlowFiles queued)
@@ -1736,7 +1694,6 @@ CREATE OR REPLACE ALERT PUBLIC.CRITICAL_SERVICE_ALERT
   );
 ```
 
-> aside positive
 > **Customize Alerts**: Adjust thresholds, services, and notification methods based on your operational needs. You can also integrate with [Snowflake notifications](https://docs.snowflake.com/en/user-guide/alerts) for Slack, PagerDuty, or webhook integrations.
 
 <!-- ------------------------ -->
@@ -1786,7 +1743,6 @@ DROP EXTERNAL ACCESS INTEGRATION IF EXISTS quickstart_kafka_connector_access;
 -- Note: We don't drop QUICKSTART_ROLE as it may be used by other quickstarts
 ```
 
-> aside negative
 > **Warning**: This will permanently delete all log data and configuration. Make sure you've exported anything you need before dropping objects.
 
 ### Clean Up Openflow Runtime (Optional)
@@ -1798,7 +1754,6 @@ If you won't be using Openflow for other connectors:
 3. Delete the runtime (click ⋮ menu → Delete Runtime)
 4. Optionally, delete the deployment
 
-> aside positive
 > **Keep Runtime for Other Connectors**: If you plan to use other Openflow connectors (PostgreSQL CDC, Google Drive, etc.), keep your runtime and deployment—they can be reused across multiple connectors!
 
 ### Clean Up Kafka Resources (Optional)
@@ -1810,7 +1765,6 @@ If you created a Kafka topic specifically for this demo:
 rpk topic delete application-logs
 ```
 
-> aside positive
 > **Managed Kafka Services**: For Confluent Cloud and other managed Kafka platforms, you can also delete topics through the service console or web UI.
 
 <!-- ------------------------ -->

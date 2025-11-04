@@ -76,7 +76,6 @@ This tool allows the agent to search and retrieve information from unstructured 
 ## Snowflake MCP Server
 
 
-> aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
 #### Create Snowflake MCP Server
@@ -265,7 +264,6 @@ Legal compliance requirements
 Multi-step verification processes
 ```
 
-> aside positive
 > NOTE: Feel free to explore the transcripts in FACT_SUPPORT_TICKETS table and try out other prompts.
 
 <!-- ------------------------ -->

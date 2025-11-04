@@ -11,12 +11,12 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: identify trends, identify abnormalities within their data, and classify users or entities into one of many groups. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach.
+One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: identify trends, identify abnormalities within their data, and classify users or entities into one of many groups. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, Python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach.
 For these use cases, Snowflake has developed a set of SQL based ML Functions that implement machine learning models on the user's behalf. As of June 2024, four ML Functions are available:
 
 ### Time series functions
-1. Forecasting: which enables users to forecast a metric based on past values. Common use-cases for forecasting include predicting future sales, demand for particular sku's of an item, or volume of traffic into a website over a period of time.
-2. Anomaly Detection: which flags anomalous values using both unsupervised and supervised learning methods. This may be useful in use-cases where you want to identify spikes in your cloud spend, identifying abnormal data points in logs, and more.
+1. Forecasting: which enables users to forecast a metric based on past values. Common use cases for forecasting include predicting future sales, demand for particular SKUs of an item, or volume of traffic into a website over a period of time.
+2. Anomaly Detection: which flags anomalous values using both unsupervised and supervised learning methods. This may be useful in use cases where you want to identify spikes in your cloud spend, identifying abnormal data points in logs, and more.
 3. Contribution Explorer: which enables users to perform root cause analysis to determine the most significant drivers to a particular metric of interest.
 
 ### Other analytical functions
@@ -25,7 +25,7 @@ For these use cases, Snowflake has developed a set of SQL based ML Functions tha
 For further details on ML Functions, please refer to the [Snowflake documentation](https://docs.snowflake.com/guides-overview-analysis).
 
 ### Prerequisites
-- A Snowflake account login with an `ACCOUNTADMIN` role. If not, you will need to use a different role- Access to Snowsight and working knowledge of SQL.
+- A Snowflake account login with an `ACCOUNTADMIN` role. If not, you will need to use a different role - Access to Snowsight and working knowledge of SQL.
 
 ### What You’ll Learn 
 
@@ -54,10 +54,10 @@ Let's get started!
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), the Snowflake web interface, to:
 - Create Snowflake objects (i.e warehouse, database, schema, etc..)
-- Ingest data from S3 and load it into a snowflake table
+- Ingest data from S3 and load it into a Snowflake table
 
 Creating Objects, Loading Data, & Set Up Tables: 
-- Create a new SQL worksheet by clicking on the ‘Worksheets' tab on the left hand side.
+- Create a new SQL worksheet by clicking on the 'Worksheets' tab on the left hand side.
 - Paste and run the following SQL commands in the worksheet to create the required Snowflake objects, ingest data from S3, and create the tables we will use for this lab.
 
 ```sql
@@ -482,7 +482,7 @@ To do this, we’ll inspect the model’s accuracy metrics by calling the below 
 CALL forecast_subscriptions_model!SHOW_EVALUATION_METRICS();
 ```
 
-The results include separate evaluation metrics for _both_ age bins we provided to the model. The results also list out various metrics we can use to understand our model’s performance. We’ll look at MAPE, Mean Absolute Error, which represents the average absolute error between actual and predicted values. At a high level, we can interpret this as a representation of how accurate the model’s predictions will be. The lower the better.  
+The results include separate evaluation metrics for _both_ age bins we provided to the model. The results also list out various metrics we can use to understand our model’s performance. We’ll look at MAPE and Mean Absolute Error, which represents the average absolute error between actual and predicted values. At a high level, we can interpret this as a representation of how accurate the model’s predictions will be. The lower the better.  
 
 The results we get indicate that, on average, our forecasts are off by 3 to six daily sales. 
 
@@ -537,7 +537,7 @@ AS
     END; 
 ```
 
-If you’d like to test your task, you can run EXECUTE TASK. To suspend or drop your task, run the ALTER and DROP commands below. 
+If you’d like to test your task, you can run `EXECUTE TASK`. To suspend or drop your task, run the `ALTER` and `DROP` commands below. 
 
 ```sql
 -- Execute your task immediately to confirm it is working. 
@@ -563,7 +563,7 @@ As a review, in this guide we covered how you are able to:
 * How to build your own classification model 
 * How to build your own forecasting model 
 * How to evaluate those models and use them for prediction 
-* How to apply abstract concepts like classification and forecasting to real world problems 
+* How to apply abstract concepts like classification and forecasting to real-world problems 
 
 ### Resources
 - Classification [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/classification), alongside the [classification syntax](https://docs.snowflake.com/sql-reference/classes/classification)
