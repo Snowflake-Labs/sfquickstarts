@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake Interactive Tables
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
+
 
 When it comes to near real-time (or sub-second) analytics, the ideal scenario involves achieving consistent, rapid query performance and managing costs effectively, even with large datasets and high user demand. 
 
@@ -40,7 +40,7 @@ You will build a complete, functioning interactive data environment in Snowflake
 
 <!-- ------------------------ -->
 ## Understand Interactive Warehouses and Interactive Tables
-Duration: 5
+
 
 To boost query performance for interactive, sub-second analytics, Snowflake introduces two new, specialized objects that work together: interactive warehouses and interactive tables.
 
@@ -76,7 +76,6 @@ Here are some limitations of interactive warehouses and interactive tables:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Data operations
 
@@ -162,7 +161,7 @@ This essentially retrieves data from the `MY_DEMO_DB` database, `BENCHMARK_FDN` 
 
 <!-- ------------------------ -->
 ## Performance Demo of Snowflake's Interactive Warehouses/Tables
-Duration: 15
+
 
 To proceed with carrying out this performance comparison of interactive warehouses/tables with standard ones, you can download notebook file [Getting_Started_with_Interactive_Tables.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/Getting_Started_with_Interactive_Tables.ipynb) provided in the repo.
 
@@ -507,7 +506,7 @@ plt.show()
 ![](assets/py_run_queries.png)
 
 ## Conclusion And Resources
-Duration: 5
+
 
 In this guide, we explored how to address the challenge of low-latency, near real-time analytics using Snowflake's interactive warehouses and tables. We walked through the complete setup process, from creating the necessary database objects and loading data to configuring and attaching an interactive table to an interactive warehouse. The subsequent performance benchmark clearly demonstrated the substantial latency improvements these specialized features provide over standard configurations, especially under concurrent query loads. This confirms their value as a powerful solution for demanding use cases like live dashboards and high-throughput data APIs, where sub-second performance is critical.
 
