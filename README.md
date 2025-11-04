@@ -70,9 +70,9 @@ You now have the setup to work on your Snowflake Guide.
 
 Here are three QS Guides you can take a look as references:
 
-- https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/
-- https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_arctic/index.html#0
-- https://www.snowflake.com/en/developers/guides/build-genai-inpainting-and-hybridtable-app-in-snowpark-container-services/
+* **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
+* **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+
 
 We want to maintain a standard and consistency across all QS guides and it's very imp that we all follow these guidelines. Really appreciate your help and support. 
 
