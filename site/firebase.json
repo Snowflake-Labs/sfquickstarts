@@ -8,7 +8,7 @@
     ],
     "redirects": [
       {
-        "source": "https://quickstarts.snowflake.com {,/**}",
+        "source": "https://quickstarts.snowflake.com{,/**}",
         "destination": "https://www.snowflake.com/en/developers/guides",
         "type": 301
       },

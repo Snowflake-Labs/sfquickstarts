@@ -7,7 +7,7 @@ status: Hidden
 
 authors: Guide Author Name (Github User Name)
 
-# Snowflake Guide Template
+# Snowflake Guide Basics
 
 
 <!-- ------------------------ -->
