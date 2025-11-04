@@ -1,15 +1,15 @@
 name: Publish to AEM on PR Approval (Prod)
 
 on:
-  pull_request_review:
-    types: [submitted]
+  push:
+    branches: [master, github-actions]
 
 jobs:
   publish:
     # Only on approvals for PRs into master from branches in this repo
     if: >-
       github.event.review.state == 'approved' &&
-      (github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'github-actions')
+      (github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'jacob/github-actions-2')
     runs-on: ubuntu-latest
     environment:
       name: production
