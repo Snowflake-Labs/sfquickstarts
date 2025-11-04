@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Operationalizing AI with Snowflake and DataRobot
 
 ## Overview 
-Duration: 5
 
 This guide will take you through the process of developing, deploying, and monitoring machine learning models within your Snowflake environment using DataRobot and Snowpark.
 
@@ -54,7 +53,6 @@ Here is a description of the features:
 - Monitor the model with DataRobot AI Production
 
 ## Setting up Snowflake
-Duration: 5
 
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
@@ -97,7 +95,6 @@ Each step throughout the guide has an associated SQL command to perform the work
 
 <!-- 
 ## Creating a Snowflake Database
-Duration: 2
 
 To get started, we are going to create our first Snowflake object and `CREATE` a database called `SANDBOX` that will be used for loading the structured data for our current example. To get back to our main navigation menu, simply click on the `HOME` button at the top left hand side of the worksheet.
 
@@ -132,7 +129,6 @@ Continuing, trial accounts automatically come with `DEMO_WH` created for you. If
 -->
 
 ## Creating a Snowflake Table
-Duration: 2
 
 As part of the lab, we are going to create 2 tables:
  - `TRAIN_DATA` -- The dataset that we will use to train our machine learning model 
@@ -143,7 +139,6 @@ As part of the lab, we are going to create 2 tables:
 
 
 ## Connecting Snowflake with DataRobot
-Duration: 5
 
 At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer machine learning capabilities, and therefore, happily partners with the leading data science and machine learning partners in the industry. We are on a mission to help us figure out which transactions are most likely to be fraud and DataRobot can help us build a machine learning model to answer that question.
 
@@ -162,7 +157,6 @@ And activate our account, so press "Activate".
 
 <!-- ------------------------ -->
 ## Getting Started with DataRobot
-Duration: 2
 
 Go ahead and set up a password, and then click "Sign up" for us to proceed.
 
@@ -177,7 +171,6 @@ Click "Get started" for us to proceed.
 <br/><br/>
 <!-- ------------------------ -->
 ## Setting up a DataRobot Use Case
-Duration: 5
 
 This is Workbench, and is the next user interface and a logical update from DataRobot Classic. All new features will be built in the new Workbench.
 
@@ -202,7 +195,6 @@ Now we can bring our Notebook: click on the 'Notebooks' tab and import the noteb
 
 <!-- ------------------------ -->
 ## DataRobot Notebook
-Duration: 2
 
 These notebooks support Python and R, letting data scientists easily run code with all essential tools on the platform. They offer built-in revision history for simple checkpointing and version reverting. 
 
@@ -212,7 +204,6 @@ Integration with OpenAI offers superior Generative AI assistance, automated code
 
 <!-- ------------------------ -->
 ## DataRobot Notebook SetUp
-Duration: 5
 
 Before running the notebook or executing any cells, ensure the following environment variable:
 
@@ -226,13 +217,11 @@ Most of this workflow is executed by the notebook, but you will create a deploym
 
 <!-- ------------------------ -->
 ## DataRobot Notebook Experimentation
-Duration: 15
 
 Let's move to run cells and the instructions in the notebook. We will come back to the guide before moving to the 'Model Deployment' stage.
 
 <!-- ------------------------ -->
 ## Create a Snowflake Prediction Environment
-Duration: 5
 
 First, we need to change to 'DataRobot Classic'. 'Deployments' and our AI production capabilities are in 'Classic' and will be part of the new experience 11/7, and all functionality available in Classic will eventually migrate into the new experience.
 
@@ -260,7 +249,6 @@ Press on the 'Deployment' Tab >> 'Prediction Environments' tab >>Add prediction 
 
 <!-- ------------------------ -->
 ## Register the Model and Create a Snowflake Demployment
-Duration: 5
 
 To keep a version of the model we are going to deploy, we will add it to the registry.
 
@@ -287,7 +275,6 @@ We are ready to deploy our model to Snowflake. Create the deployment by clicking
 
 <!-- ------------------------ -->
 ## Check Deployment Status
-Duration: 5
 
 To ensure the deployment process was successful, you can go to the 'Deployment' tab and look for the deployment. We can see that the management agent is now running, and we have a health indicator in the GUI.
 
@@ -305,7 +292,6 @@ Now we can go back to the notebook to score our prediction data with Snowpark, s
 
 <!-- ------------------------ -->
 ## Create a Monitoring job
-Duration: 5
 
 To make sure business decisions are aligned with external and internal factors, you need to monitor the model performance and understand if you need to replace or retrain it. 
 
@@ -331,7 +317,6 @@ We see that the job is being executed and right after that the job has been comp
 
 <!-- ------------------------ -->
 ## Track Model Performance
-Duration: 2
 
 DataRobot will monitor the predictions and the actual values and organize them over time in our Monitoring Engine to track data drift and accuracy for the model.
 
@@ -342,7 +327,6 @@ These out-of-the-box graphs will change over time and can help determine the mod
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 3
 
 Together with Snowflake and DataRobot you can:
 
@@ -352,4 +336,4 @@ Together with Snowflake and DataRobot you can:
 
 3. Efficient Deployment & Seamless Monitoring: Simplify and streamline your deployment journey in the Snowflake environment. With the amalgamation of DataRobot AI Production capabilities and Snowpark, ensure not just the deployment but also the scoring and proactive monitoring of your models, ensuring maximum uptime and efficiency.
 
-For more, check our [partnership page](https://www.snowflake.com/en/why-snowflake/partners/technology-partners/DataRobot/)
+For more, check our [partnership page](/en/why-snowflake/partners/technology-partners/DataRobot/)

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this guide, you'll learn how to build and deploy a complete machine learning workflow entirely within Snowflake ML. You'll work through a mortgage lending prediction use case, implementing each stage of the ML lifecycle from feature engineering to model deployment and monitoring.
 
@@ -40,7 +39,6 @@ You'll build a complete mortgage lending prediction system that:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 Firstly, run this SQL setup script to create the notebook:
 ```sql
@@ -189,7 +187,6 @@ except:
 
 <!-- ------------------------ -->
 ## Feature Engineering
-Duration: 15
 
 In this section, we'll create features from our raw mortgage lending data using Snowpark APIs.
 
@@ -305,7 +302,6 @@ loan_fv = fs.register_feature_view(loan_fv, version=VERSION_NUM, overwrite=True)
 
 <!-- ------------------------ -->
 ## Dataset Generation and Preprocessing
-Duration: 10
 
 ### Generate Dataset from Feature View
 
@@ -359,7 +355,6 @@ test_pd = test.to_pandas()
 
 <!-- ------------------------ -->
 ## Baseline Model Training
-Duration: 10
 
 ### Train a Baseline XGBoost Model
 
@@ -398,7 +393,6 @@ print(f'F1: {f1_base_train} \nPrecision {precision_base_train} \nRecall: {recall
 
 <!-- ------------------------ -->
 ## Model Registry and Evaluation
-Duration: 15
 
 ### Create a Model Registry
 
@@ -481,7 +475,6 @@ print(f'F1: {f1_base_test} \nPrecision {precision_base_test} \nRecall: {recall_b
 
 <!-- ------------------------ -->
 ## Hyperparameter Optimization
-Duration: 20
 
 Our baseline model shows signs of overfitting, with performance dropping significantly from training to test data. Let's use Snowflake's distributed hyperparameter optimization to improve our model.
 
@@ -613,7 +606,6 @@ m.set_tag("PROD", optimized_version_name)
 
 <!-- ------------------------ -->
 ## Model Explainability
-Duration: 15
 
 Snowflake offers built-in explainability capabilities for models logged in the Model Registry. Let's generate SHAP values to understand how input features impact our models' predictions.
 
@@ -673,7 +665,6 @@ plt.show()
 
 <!-- ------------------------ -->
 ## Model Monitoring Setup
-Duration: 15
 
 Let's set up model monitoring to track our models' performance over time.
 
@@ -776,19 +767,18 @@ DATEADD(DAY, -60, CURRENT_DATE()) -- start date
 ```
 
 ## Conclusion And Resources
-Duration: 5
 
 You just walked through a guided experience building and deploying a complete end-to-end machine learning workflow within Snowflake ML for a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model logging and management with Snowflake Model Registry, and model performance tracking and drift detection via ML Observability. 
 
 Ready for more? After you complete this quickstart, you can try one of the following additional examples:
-- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#3)
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
 
 Related Resources
 - [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 - [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ml-workflow-in-snowflake/blob/main/train_deploy_monitor_ML_in_snowflake.ipynb?_fsi=hnlih63N&_fsi=hnlih63N)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/quickstart-reference-architecture.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2025/quickstart-reference-architecture.pdf)
 - [Watch Demo](https://www.youtube.com/live/T_YQ8pYaPxU?si=zgjFTIPlHRhU8vPl)

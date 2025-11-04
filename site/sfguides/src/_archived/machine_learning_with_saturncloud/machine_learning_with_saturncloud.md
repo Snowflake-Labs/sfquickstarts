@@ -10,23 +10,22 @@ feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 
 ## Image Classification Problems 
 
-Duration: 0:04:00
 
-<img src="assets/saturncloud_logo.png" alt="Saturn Cloud" width="200"/>
+![assets/saturncloud_logo.png](assets/saturncloud_logo.png)
 
 Welcome! While many machine learning tasks work well with tabular data, data scientists in many industries and sectors need to model other types of data, such as images and videos, to achieve business goals. 
 
 Snowflake offers data structures that allow you to use these kinds of data and interact with them seamlessly, and in this guide you'll learn how to integrate this Snowflake offering with Saturn Cloud, a data science and machine learning platform for scalable Python. Through Saturn Cloud, you can get one-click access to compute resources for machine learning, including GPUs. Saturn Cloud also supports Dask, the Python framework for distributed computing which lets you run machine learning at scale.
 
-<img src="assets/SnowflakeGuideDiagram.png" alt="Process Diagram" width="700"/>
+![assets/SnowflakeGuideDiagram.png](assets/SnowflakeGuideDiagram.png)
 
 
 We'll approach this guide from the perspective of a data scientist tasked with creating a model to identify images from a set of 10 classes. Our data here will be showing garments of 10 different kinds. The technique can be easily adapted to other kinds of image classification problem, which is increasingly useful in business.
 
 
-<img src="assets/shirt1.jpg" alt="Shirt" width="200"/>
-<img src="assets/shoe.jpg" alt="Shoe" width="300"/>
-<img src="assets/dress1.jpg" alt="Dress" width="200"/>
+![assets/shirt1.jpg](assets/shirt1.jpg)
+![assets/shoe.jpg](assets/shoe.jpg)
+![assets/dress1.jpg](assets/dress1.jpg)
 
 
 Review the material below and start with the essentials in the following section.
@@ -66,7 +65,6 @@ This guide assumes you have:
 
 ## Create Accounts
 
-Duration: 0:05:00
 
 First, we'll go over how to create your Snowflake and Saturn Cloud accounts.
 
@@ -83,7 +81,6 @@ If you need more resources, [upgrade to pay-per-use with our Hosted Pro accounts
 
 ## Snowflake Setup
 
-Duration: 0:05:00
 
 Snowflake's unstructured file storage allows you to add an organizing layer on top of your files stored in a storage option like AWS S3 or Google Cloud Storage - options that offer minimal or no convenient way to organize and structure the files. **By integrating with Snowflake, you can make these files easy to find, query, and access!** Furthermore, this technique improves the security of these files by only requiring the Snowflake credentials to be shared - as you'll see, you can control access on the Snowflake side and keep your Google or AWS credentials private.
 
@@ -97,17 +94,16 @@ We will create a Snowflake database where the information about these files, inc
 
 Open your Snowflake account, and navigate to the Databases tab. 
 
-<img src="assets/database_tab.png" alt="database tab" width="800"/>
+![assets/database_tab.png](assets/database_tab.png)
 
 Click Create, name the database `Clothing`, then click Finish.
 
-<img src="assets/create_db.png" alt="create panel" width="500"/>
+![assets/create_db.png](assets/create_db.png)
 
 Now you have created the database that we'll be using to house the unstructured data. It will contain tables that your machine learning workflow can access to get training and test images!
 <!-- ------------------------ -->
 
 ## Saturn Cloud Setup 
-Duration: 0:04:00
 
 Next, we need to [go in to Saturn Cloud](https://app.community.saturnenterprise.io/) and set up our working environment. Visit Saturn Cloud and log in with your account created previously. You'll start on the Resources page.
 
@@ -146,7 +142,7 @@ Inside Saturn Cloud, you can choose from several templates for resources, which 
 
 Once the resource is created, click the green arrow buttons to start your Jupyter server and your Dask cluster. These may take a moment to start running, so feel free to read on.
 
-<img src="assets/jupyter.png" alt="Jupyter Cards" width="700"/>
+![assets/jupyter.png](assets/jupyter.png)
 
 ### Add Snowflake Credentials to Saturn Cloud
 
@@ -154,26 +150,25 @@ On the menu at the left, click the **Credentials** button. We need to make sure 
 
 Take your Snowflake account username and password, and create two entries here: `SNOWFLAKE_USER` and `SNOWFLAKE_PASSWORD` as Environment Variables. 
 
-<img src="assets/add_snowflake_cred.png" alt="Snowflake credentials" width="700"/>
+![assets/add_snowflake_cred.png](assets/add_snowflake_cred.png)
 
 ### Open JupyterLab
 
 Once the resource is created and started, and your credentials are loaded into Saturn Cloud, you are ready to open the JupyterLab of the resource and look at the code. On the resource page click the **JupyterLab** button
 
-<img src="assets/jupyterlab.png" alt="Start JupyterLab button" width="700"/>
+![assets/jupyterlab.png](assets/jupyterlab.png)
 
 <!-- ------------------------ -->
 
 ## Load Image Files into Database
 
-Duration: 0:08:00
 
 In the following steps, we will load image files of garments from S3 into the Snowflake database you already created, so your machine learning model can access them.
 
 All of the commands listed here should be run in **your Snowflake UI, from Worksheets**. Click the Worksheets tab at the top menu of the page, and make sure you are in the Clothing database you just created.
 
 
-<img src="assets/worksheets.png" alt="worksheets button" width="700"/>
+![assets/worksheets.png](assets/worksheets.png)
 
 
 ### Staging 
@@ -274,7 +269,6 @@ Now we have all of our setup in Snowflake done, and we're ready to work on model
 
 ## Train Model
 
-Duration: 00:10:00
 
 ### Task Overview
 
@@ -359,7 +353,6 @@ As the model trains, it will write out the trained model state dictionary every 
 
 ## Run Inference
 
-Duration: 0:07:00
 
 The next task is to use our trained model object to infer the correct class for new images. Open the `inference.ipynb` notebook in your Jupyter instance to see the code and run it. (You can either use your own trained model from the previous step or use the model provided to you in the repository.)
 
@@ -382,7 +375,7 @@ We will be using Dask to parallelize our inference task. This allows you to acce
 
 A Dask Cluster is a group of remote machines set up to communicate together and parallelize work. Your Jupyter server is the Client, as shown below, and you can use it to send commands and tasks to all the workers. They will then complete work and return results to you. 
 
-<img src="assets/dask-cluster.png" alt="Dask cluster diagram" width="700"/>
+![assets/dask-cluster.png](assets/dask-cluster.png)
 
 If you are new to parallelization or Dask and would like to learn more, we have [documents about it on our website!](https://saturncloud.io/docs/reference/dask_concepts/)
 
@@ -395,7 +388,7 @@ client.wait_for_workers(2)
 client
 ```
 
-<img src="assets/cluster_ready.png" alt="Cluster Settings" width="700"/>
+![assets/cluster_ready.png](assets/cluster_ready.png)
 
 
 ### Preprocess Data
@@ -443,19 +436,18 @@ futures_computed = client.compute(futures_gathered, sync=False)
 
 ## Skim Results
 
-Duration: 0:05:00
 
 You can examine the results of the model in the inference notebook- here are some examples from different early versions of the model!
 
-<img src="assets/results2.png" alt="Long Sleeve" width="700"/>
+![assets/results2.png](assets/results2.png)
 
 Models may struggle to determine what "long" really means on the sleeves of garments.
 
-<img src="assets/result-shoes.png" alt="Long Sleeve" width="700"/>
+![assets/result-shoes.png](assets/result-shoes.png)
 
 Notice above, the model is confused by logos that normally correspond to shoes appearing on t-shirts.
 
-<img src="assets/results-hat.png" alt="Long Sleeve" width="700"/>
+![assets/results-hat.png](assets/results-hat.png)
 
 Here a round shape might be making the model think it's seeing a collar instead of a hat.
 
@@ -465,7 +457,6 @@ In a neural network, we can't really be sure what is driving the model's choices
 
 ## Save Inference Results to Snowflake
 
-Duration: 0:05:00
 
 After the inference is done (it should take only five to ten seconds), we are ready to save the results back to Snowflake, attaching the predictions to the original image files in our `clothing_test` data table. We will do all of this from Python programmatically.
 
@@ -527,11 +518,10 @@ with snowflake.connector.connect(**conn_kwargs) as conn:
 
 ## Cleanup
 
-Duration: 0:03:00
 
 When your job is complete, you can shut down the Saturn Cloud resources by clicking the red squares on each card. 
 
-<img src="assets/shutdown_resources.png" alt="shutdown buttons" width="700"/>
+![assets/shutdown_resources.png](assets/shutdown_resources.png)
 
 In Snowflake, you can delete the stages and tables we created if you'd like.
 
@@ -547,16 +537,15 @@ drop table if exists clothing_test;
 
 ## Conclusion and Next Steps
 
-Duration: 0:03:00
 
 We hope that this guide has given you insight into how you can use Snowflake and Saturn Cloud together to manage your machine learning pipelines! 
 
 By following these steps, you've gone from a set of labeled images to a fully trained classification model, and applied it to new images to determine what kind of garment each shows. You used Snowflake unstructured data to store the images in a helpful way, then trained and ran machine learning models with Saturn Cloud, PyTorch, and Dask. If you were using this for business, you could deploy this trained model as an API, where users or services could submit an image and retrieve a label, for example to serve the correct choice of garment to a user viewing your retail website. You can also combine models like this with others to build AI-generated outfits!
 
 
-<img src="assets/shirt2.jpg" alt="Shirt" width="220"/>
-<img src="assets/shoes2.jpg" alt="Shoes" width="200"/>
-<img src="assets/skirt.jpg" alt="Skirt" width="200"/>
+![assets/shirt2.jpg](assets/shirt2.jpg)
+![assets/shoes2.jpg](assets/shoes2.jpg)
+![assets/skirt.jpg](assets/skirt.jpg)
 
 
 

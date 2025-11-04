@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Bioinformatics Solubility Dashboard in Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this tutorial, you'll build a complete bioinformatics project from scratch in Snowflake. You'll work with the Delaney solubility dataset to analyze molecular properties that are crucial for successful drug discovery efforts.
 
@@ -36,7 +35,6 @@ Here's an illustration of the overview of this bioinformatics project that you'l
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Prepare Your Environment
 
@@ -46,7 +44,6 @@ Snowflake Notebooks come pre-installed with common Python libraries for data sci
 
 <!-- ------------------------ -->
 ## Load and Explore the Data
-Duration: 10
 
 ### Create a database
 
@@ -109,7 +106,6 @@ This provides statistical summaries for each numerical column, including count, 
 
 <!-- ------------------------ -->
 ## Data Preparation and Aggregation
-Duration: 12
 
 ### Classify Molecules by Size
 
@@ -147,7 +143,6 @@ These insights will form the basis of our visualization dashboard.
 
 <!-- ------------------------ -->
 ## Build the Interactive Dashboard
-Duration: 15
 
 ### Create a Streamlit Dashboard
 
@@ -275,7 +270,6 @@ By understanding and optimizing solubility early in the drug discovery process, 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built a bioinformatics dashboard that analyzes molecular properties crucial for drug discovery. Using Snowflake, Python, and Streamlit, you've created an interactive tool that helps visualize and understand the relationships between molecular weight, rotatable bonds, LogP values, and aromatic proportions - all key factors in determining a molecule's solubility and potential as a drug candidate.
 

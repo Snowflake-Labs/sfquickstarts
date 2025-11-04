@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This quickstart will cover the basics of Retrieval Augmented Generation (RAG) and how to build an LLM assistant using Streamlit, OpenAI and LlamaIndex. The AI assistant will be trained on Snowpark data engineering quickstarts and can answer questions related to those blogs.
 
@@ -94,17 +93,16 @@ Great, we installed all the dependancies needed to work through this demo.
 
 ## Data Pipeline to Download Blogs
 
-Duration: 5
 
 During this step, we will identify the blog or list of blogs that we want to query using the AI chatbot. In this example, the bot will answer questions about Snowpark Data Engineering quickstarts. The list of blogs the bot is capable of answering is defined in `data_pipeline.py` file in `PAGES` list.
 
 ```python
 PAGES = [
-    "https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python",
+    "/en/developers/guides/data-engineering-pipelines-with-snowpark-python/",
     "https://quickstarts.snowflake.com/guide/cloud_native_data_engineering_with_matillion_and_snowflake",
-    "https://quickstarts.snowflake.com/guide/data_engineering_with_apache_airflow",
-    "https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python",
-    "https://quickstarts.snowflake.com/guide/data_engineering_with_snowpark_python_and_dbt"
+    "/en/developers/guides/data-engineering-with-apache-airflow/",
+    "/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/",
+    "/en/developers/guides/data-engineering-with-snowpark-python-and-dbt/"
 ]
 ```
 
@@ -125,7 +123,6 @@ This will iteratively download all the blogs in `PAGES` list into  `.content` di
 
 ## Chunk the Blog Contents and Build Index
 
-Duration: 10
 
 In this step, we will build a vector index for the markdown files. It involves chunking the blogs in the `.content` directory, storing them as a [TreeIndex](https://gpt-index.readthedocs.io/en/latest/api_reference/indices/tree.html) using LlamaIndex.
 
@@ -229,7 +226,6 @@ Here is how the app looks:
 
 ## Conclusion and next steps
 
-Duration: 1
 
 Congratulations – you've just built an LLM-powered chatbot capable of answering questions based on the blog(s) you built it on.
 

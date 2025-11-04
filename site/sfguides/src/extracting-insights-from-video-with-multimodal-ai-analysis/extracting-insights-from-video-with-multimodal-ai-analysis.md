@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 10
 
 Troves of enterprise data exists as video and audio, but its utility has been limited due to the difficulty of processing it to extract insights. That barrier to entry has rapidly crumbled in the last few years, with the advances of AI models that enable cheap and fast Optical Character Recognition (OCR) and Automatic Speech Recognition (ASR), as well as powerful Vision Language Models (VLMs), able to extract meaning and grounding data from video. 
 
@@ -30,7 +29,7 @@ In this Quickstart, we will employ all three techniques to analyze meeting video
 
 ### What You Will Build
 
-You will build a multi-step pipeline that uses [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/) for OCR and ASR, and VLM deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/) to extract structured data from meeting video. You’ll store the output from all three models into structured Snowflake tables and build a simple chatbot allowing you to use language to generate rich analytical queries. You will be able to assess meeting effectiveness, identify decision points, and extract action items—directly within the AI Data Cloud. 
+You will build a multi-step pipeline that uses [Snowflake Cortex AI](/en/product/features/cortex/) for OCR and ASR, and VLM deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/) to extract structured data from meeting video. You’ll store the output from all three models into structured Snowflake tables and build a simple chatbot allowing you to use language to generate rich analytical queries. You will be able to assess meeting effectiveness, identify decision points, and extract action items—directly within the AI Data Cloud. 
 
 ![1](assets/1_arch_diagram.png)
 
@@ -44,7 +43,6 @@ You will gain hands-on experience with:
 
 ## Component Overview
 
-Duration: 3
 
 Snowpark Container Services and Snowflake Cortex AI are two of the major components that are utilized within this Quickstart. Below is an overview of them.
 
@@ -56,14 +54,13 @@ Snowpark Container Services and Snowflake Cortex AI are two of the major compone
 
 ### Overview of Cortex AI
 
-[Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/) enables you to quickly analyze unstructured data and build generative AI applications using fully managed LLMs, RAG and text-to-SQL services. Enable multiple users to use AI services with no-code, SQL and REST API interfaces.
+[Snowflake Cortex AI](/en/product/features/cortex/) enables you to quickly analyze unstructured data and build generative AI applications using fully managed LLMs, RAG and text-to-SQL services. Enable multiple users to use AI services with no-code, SQL and REST API interfaces.
 
 ![Cortex_AI](assets/platform-cortex-2025.jpeg)
 
 <!-- ------------------------ -->
 ## Prepare Your Environment
 
-Duration: 15
 
 ### Create Snowflake Account
 
@@ -189,7 +186,6 @@ Execute the two lines in `run.sql` that set the `meeting_id` and `meeting_part` 
 <!-- ------------------------ -->
 ## Video Analysis
 
-Duration: 20
 
 ### Build Docker Container
 
@@ -295,7 +291,6 @@ Follow these steps in the `VIDEO ANALYSIS` section of `run.sql`:
 ## Slides Analysis with OCR
 <!-- ------------------------ -->
 
-Duration: 10
 
 Next, we will utilize [Snowflake Cortex AI's `PARSE_DOCUMENT`](https://docs.snowflake.com/en/sql-reference/functions/parse_document-snowflake-cortex) to carry out Optical Character Recognition (OCR) of the slide content presented in the meeting. The function can extract full-text and table content from slides. We will employ *layout mode* to maintain document structure via semantic chunking.
 
@@ -322,7 +317,6 @@ In your Snowsight `run.sql` file, go to the section labeled `OCR`:
 ## Speech Recognition
 <!-- ------------------------ -->
 
-Duration: 10
 
 In this section we will use Snowflake Cortex AI's `AI_TRANSCRIBE` to carry out Automatic Speech Recognition (ASR) and transcribe the meeting audio. Cortex AI Transcribe provides high-quality transcription of audio files using the latest AI models, allowing us to easily integrate transcription into our application.  We will use Cortex to transcribe the audio into text and then add it into our database.
 
@@ -346,7 +340,6 @@ In your Snowsight `run.sql` file, go to the section labeled `SPEECH RECOGNITION`
 ## Chatbot using Semantic Model
 <!-- ------------------------ -->
 
-Duration: 20
 
 By completing the previous steps, we now have 3 distinct data sources about the meeting (semantic analysis of video, audio transcription, OCR of slides), all extracted from a single video file. Lets now turn to the analysis part, where we leverage all three to gain insights into the meeting. We will construct a conversational bot that lets us use language to query the table data generated by the previous steps.
 
@@ -388,7 +381,6 @@ If a question you ask is not understood by Cortex Analyst, the chatbot will retu
 
 ## Clean up
 
-Duration: 2
 
 In the `run.sql` file, run the steps in the `CLEANUP` section. Ensure the following are removed in order to not incur charges:
 - `meeting_chat` Streamlit app
@@ -398,7 +390,6 @@ In the `run.sql` file, run the steps in the `CLEANUP` section. Ensure the follow
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Overview
 In this quickstart, you used Optical Character Recognition (OCR),  Automatic Speech Recognition (ASR), as well as powerful Vision Language Models (VLMs) to extract meeting insights from video files.  
@@ -414,6 +405,6 @@ In this quickstart, you used Optical Character Recognition (OCR),  Automatic Spe
 - Github repo [Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis)
 - Snowpark Container Services [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - Snowflake Cortex AI [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Getting Started with Cortex Analyst Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/)
+- [Getting Started with Cortex Analyst Quickstart](/en/developers/guides/getting-started-with-cortex-analyst/)
 
 

@@ -12,7 +12,6 @@ authors: Josh Reini
 
 ## Overview
 
-Duration: 5
 
 This guide walks through how to build your own Cortex Agents MCP Server.
 
@@ -38,7 +37,7 @@ Then we’ll connect the server to an MCP host (Claude for Desktop):
 ### Prerequisites
 
 * A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/))
-* Cortex Analyst semantic model and Cortex Search service created, such as via this [quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0)
+* Cortex Analyst semantic model and Cortex Search service created, such as via this [quickstart](/en/developers/guides/getting-started-with-cortex-agents/)
 * A [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
 * Python **3.10+**  
 * Python MCP SDK **1.2.0+**  
@@ -56,7 +55,6 @@ An MCP Server for Cortex Agents.
 ## Setup
 <!-- ------------------------ -->
 
-Duration: 5
 
 First install the MCP CLI (`uv`) and bootstrap your project:
 
@@ -100,7 +98,6 @@ Set the keys and services needed to run Cortex Agents by creating a `.env` follo
 ## Run the MCP Server
 <!-- ------------------------ -->
 
-Duration: 2
 
 Run:
 
@@ -113,7 +110,6 @@ uv run cortex_agents.py
 ## Add to the MCP Client
 <!-- ------------------------ -->
 
-Duration: 5
 
 Install or update Claude for Desktop.
 
@@ -197,7 +193,6 @@ Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found:
 ## (Optional) Customize Cortex Agents
 <!-- ------------------------ -->
 
-Duration: 5
 
 In `cortex_agents.py`, update the `payload` included in the function `run_cortex_agents` to include more tools or different configurations (such as LLMs).
 
@@ -206,7 +201,6 @@ In `cortex_agents.py`, update the `payload` included in the function `run_cortex
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
 
 Congratulations! You've sucessfully built an MCP server for Cortex Agents. I hope you are inspired to use this MCP server you've built in interesting MCP clients!
 

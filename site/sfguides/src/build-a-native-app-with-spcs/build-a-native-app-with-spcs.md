@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Snowflake Native App with Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace. In this example you will learn how to incorporate Snowpark Container Services into a Snowflake Native App allowing you to deploy a variety of new capabilities to a consumers Snowflake account.  
 
@@ -51,7 +50,6 @@ TPC-H 100 data set and returns the top sales clerks. The frontend provides date 
 
 <!-- ------------------------ -->
 ## Snowflake Application Code
-Duration: 5
 ### Overview
 In preparation for building our Snowflake Native App we need to download the code artifacts for the Native App along with the files to create our Container images from Github.  
 
@@ -63,7 +61,6 @@ git clone https://github.com/Snowflake-Labs/sfguide-build-a-native-app-with-spcs
 
 <!-- ------------------------ -->
 ## Native App Provider Setup 
-Duration: 5
 ### Overview
 To simulate a Native App provider experience we will create a role called 'naspcs_role' and grant it the necessary privileges required to create an [Application Package](https://docs.snowflake.com/en/developer-guide/native-apps/creating-app-package) as well as create a database that will store both our app code and Snowpark Container Service Images.  
 
@@ -94,7 +91,6 @@ create warehouse if not exists wh_nap with warehouse_size='xsmall';
 
 <!-- ------------------------ -->
 ## Consumer Privilege Setup 
-Duration: 5
 ### Overview
 To simulate the app consumer experience we will create a role called 'nac' and grant it the necessary privileges required to create Applications as well as set up a database to house the data we'll be querying with our Snowflake Native App.  
 
@@ -124,7 +120,6 @@ create view if not exists orders as select * from snowflake_sample_data.tpch_sf1
 
 <!-- ------------------------ -->
 ## Build and Upload Images
-Duration: 10
 ### Overview
 Now that we have a place in our Snowflake account to house our application code and images we need to build the images and push them to our Image Repository.  We'll then upload our app files that detail how to install, setup and configure the Snowflake Native App.  
 
@@ -196,7 +191,6 @@ When this is done succesfully your SPCS_APP.NAPP.APP_STAGE should look like the 
 
 <!-- ------------------------ -->
 ## Create Application Package
-Duration: 10 
 ### Overview
 With all of our Snowflake Native App assets uploaded to our Snowflake account we can now create our Application Package using our Provider role.  Since we're doing this in a single Snowflake account we will also grant the Consumer role privileges to install it. 
 
@@ -211,7 +205,6 @@ grant install, develop on application package spcs_app_pkg to role nac;
 
 <!-- ------------------------ -->
 ## Install and Run Application 
-Duration: 10 
 ### Overview
 We can now use the Consumer role to install our Snowflake Native App - but to get it fully deployed we will also need to create a Compute Pool for our Snowpark Containers to run on as well as start the Service.  
 
@@ -249,12 +242,11 @@ call spcs_app_instance.app_public.app_url();
 ```
 
 When up and running you should see a screen like this at your service endpoint. 
-![CLERKS](assets/CLERKS.png)
+![CLERKS](assets/clerks.png)
 
 
 <!-- ------------------------ -->
 ## Cleanup 
-Duration: 5
 ### Overview
 
 To clean up your environment you can run the following series of commands.
@@ -282,7 +274,6 @@ drop role nac;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations!  You've now deployed a Snowflake Native App that includes Snowpark Container Service hosting a customer Frontend and Backend for a web application.  
 
@@ -296,6 +287,6 @@ In this Quickstart we covered the following:
 This Quickstart can provide a template for you to accomplish the basic steps of building a Snowflake Native App that includes a Snowpark Container Service to deploy & monetize whatever unique code to your Snowflake consumers accounts.  
 
 ### Related Resources
-- [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)
+- [Snowflake Native Apps](/en/data-cloud/workloads/applications/native-apps/?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)
 - [Snowflake Native Apps Documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)

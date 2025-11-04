@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Orchestrate ML Pipelines with ML Jobs and Task Graphs
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this guide, you'll learn how to build a complete machine learning pipeline using [Snowflake ML](http://www.snowflake.com/ml) Jobs and Task Graphs. This end-to-end solution demonstrates how to orchestrate the entire ML lifecycle - from data preparation to model deployment - all within Snowflake's ecosystem.
 
@@ -39,7 +38,6 @@ You'll build a complete, production-ready ML pipeline that:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Firstly, to follow along with this quickstart, you can use the code in the [e2e_task_graph](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml/ml_jobs/e2e_task_graph) GitHub repo to download the code used in this article.
 
@@ -258,7 +256,6 @@ promote_model(session, mv)  # Sets as default version
 ```
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an end-to-end machine learning pipeline using Snowflake Task Graphs and ML Jobs. This production-ready solution demonstrates how to orchestrate the entire ML lifecycle within Snowflake's ecosystem, from data preparation to model deployment with conditional promotion logic.
 
@@ -286,7 +283,7 @@ Documentation:
 - [Snowflake Notifications](https://docs.snowflake.com/en/user-guide/notifications/snowflake-notifications)
 
 More ML quickstart: 
-- [Build an End-to-End ML Workflow in Snowflake](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/index.html?index=..%2F..index#1)
-- [Building ML Models to Crack the Code of Customer Conversions](https://quickstarts.snowflake.com/guide/build-ml-models-for-customer-conversions/index.html?index=..%2F..index#0)
+- [Build an End-to-End ML Workflow in Snowflake](/en/developers/guides/end-to-end-ml-workflow/)
+- [Building ML Models to Crack the Code of Customer Conversions](/en/developers/guides/build-ml-models-for-customer-conversions/)
 
 Happy building with Snowflake ML!
