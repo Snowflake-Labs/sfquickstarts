@@ -241,8 +241,6 @@ Every Snowflake Native App is required to have a manifest file.  The manifest fi
 
 The named stage in this example is going to be created when we execute the **snow app run** command.
 
-> aside positive
->
 > **Note** - The **manifest.yml** file you created should be replaced with this code:
 
 ```yaml
