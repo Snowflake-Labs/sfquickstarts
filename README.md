@@ -1,10 +1,10 @@
-# Snowflake QuickStart Guides
+# Snowflake Guides
 
 
 ## What are Snowflake Guides?
 Snowflake Guides serves as a collection of what previously were "Snowflake Quickstarts" and "Snowflake Solutions Center" along with some new additional types of content.  
 
-Guides are interactive tutorials and self-serve demos written in markdown syntax. Quickstarts provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at: [https://www.snowflake.com/en/developers/guides/](https://www.snowflake.com/en/developers/guides/)
+Guides are interactive tutorials and self-serve demos written in markdown syntax. Guides provide a unique step-by-step reading experience and automatically saves tutorial progress for readers. These tutorials are published at: [https://www.snowflake.com/en/developers/guides/](https://www.snowflake.com/en/developers/guides/)
 
 You can submit your own Guides to be published on Snowflake's website by submitting a pull request to this repo. This repository contains all the tools and documentation you’ll need for building, writing, and submitting your own Guide
 
@@ -54,7 +54,7 @@ You now have the setup to work on your Snowflake Guide.
 
 
 
-## Write Your First QuickStart
+## Write Your First Guide
 
   
   ### Formatting your Guide:
@@ -80,7 +80,7 @@ We want to maintain a standard and consistency across all QS guides and it's ver
 
 - Once you submit your PR, it comes to DevRel for approval.  
 - A staging link is generated for your preview.  Please remember, this is not live yet and your final URL WILL BE different.
-- When the PR is reviewed and merged, your Guide is live and visible on [www.snowflake.com/en/developers/guides](www.snowflake.com/en/developers/guides.).
+- When the PR is reviewed and merged, your Guide is live and visible on [www.snowflake.com/en/developers/guides](ttps://www.snowflake.com/en/developers/guides).
 
 
 #### Important Tips
@@ -92,9 +92,9 @@ We want to maintain a standard and consistency across all QS guides and it's ver
 
 
 
-## Reporting issues or errata in Quickstarts
+## Reporting issues in Guides
 
-Guides are not in the scope of Snowflake Global Support. Please do not file support cases for issues or errata in a QGuide. <p>If you encounter an issue in a Quickstart (outdated copy or data, typos, broken links, etc.), please create an issue and tag the author!  Author names are displayed on the page.
+Guides are not in the scope of Snowflake Global Support. Please do not file support cases for issues or errata in a Guide. <p>If you encounter an issue in a Guide (outdated copy or data, typos, broken links, etc.), please create an issue and tag the author!  Author names are displayed on the page.
 
 Be sure to include the following information:
 
