@@ -68,6 +68,14 @@ jobs:
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "has_relevant_changes=$has_relevant_changes" >> $GITHUB_OUTPUT
 
+      - name: Get PR number from commit
+        id: pr
+        run: |
+          pr_number=$(gh pr list --search "${{ github.sha }}" --state merged --json number --jq '.[0].number // ""')
+          echo "number=$pr_number" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Call Workato production webhook
         if: steps.detect.outputs.has_relevant_changes == 'true'
         env:
@@ -78,10 +86,11 @@ jobs:
             --arg sha "$GITHUB_SHA" \
             --arg ref "$GITHUB_REF" \
             --arg env "prod" \
+            --arg pr_num "${{ steps.pr.outputs.number }}" \
             --arg qname "${{ steps.detect.outputs.quickstart_name }}" \
             --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
-            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
           response=$(curl -sS -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
           echo "$response" | cat
