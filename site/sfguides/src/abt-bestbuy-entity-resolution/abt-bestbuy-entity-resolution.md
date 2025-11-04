@@ -15,11 +15,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### The Business Problem
 
-**Imagine you're a merchandising manager** at ABT, a consumer electronics retailer. You need to perform a competitive pricing analysis against Best Buy to ensure your prices remain competitive in the market. You've successfully scraped product data from Best Buy's website, but now face a critical challenge: **how do you match Best Buy's product descriptions to your own catalog when the data formats, naming conventions, and product identifiers are completely different?**
+Imagine you're a merchandising manager at ABT, a consumer electronics retailer. You need to perform a competitive pricing analysis against Best Buy to ensure your prices remain competitive in the market. You've successfully scraped product data from Best Buy's website, but now face a critical challenge: **how do you match Best Buy's product descriptions to your own catalog when the data formats, naming conventions, and product identifiers are completely different?**
 
 This is a classic **entity resolution** problem – determining which records in different datasets refer to the same real-world entity. Traditional solutions would require extensive manual mapping, brittle rule-based systems, or complex ML model training. 
 
-In this **quickstart**, you'll build a modern, AI-powered entity resolution pipeline that leverages Snowflake's native capabilities to automatically harmonize and match product data with minimal manual effort.
+In this quickstart, you'll build a modern, AI-powered entity resolution pipeline that leverages Snowflake's native capabilities to automatically harmonize and match product data with minimal manual effort.
 
 ### The Solution Architecture
 
