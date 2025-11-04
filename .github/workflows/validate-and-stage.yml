@@ -1,4 +1,4 @@
-name: Validate abusive words and Stage
+name: Validate markdown and stage
 
 on:
   pull_request:
@@ -16,6 +16,7 @@ jobs:
       name: staging
     permissions:
       contents: read
+      issues: write
       pull-requests: write
     steps:
       - name: Checkout repository
@@ -128,7 +129,7 @@ jobs:
           }
 
       - name: Comment PR with validation findings (on failure)
-        if: failure()
+        if: failure() && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |
