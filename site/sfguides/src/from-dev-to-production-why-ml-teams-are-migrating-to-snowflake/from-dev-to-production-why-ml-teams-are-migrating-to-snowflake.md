@@ -1,6 +1,6 @@
-id: from_dev_to_production_why_ml_teams_are_migrating_to_snowflake
+id: from-dev-to-production-why-ml-teams-are-migrating-to-snowflake
 summary: Build a complete ML lifecycle in Snowflake from development to production with call center quality analysis
-categories: snowfalke-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/ml-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 environments: web
 status: Hidden
