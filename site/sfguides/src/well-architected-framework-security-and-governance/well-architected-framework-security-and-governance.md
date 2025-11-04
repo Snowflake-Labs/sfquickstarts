@@ -315,7 +315,7 @@ workloads, and pruning/clustering strategies used where helpful.
 Adopt a hub‑and‑spoke model: one policy per domain, so all child tables
 and views inherit the same semantics through tags.
 
-**Assessment Prompts  **
+**Assessment Prompts**
 Are RAP rules managed from a single source of truth rather than embedded
 in views? What are the policy evaluation latency and cache hit rates
 under load?
