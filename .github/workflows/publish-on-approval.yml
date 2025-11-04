@@ -6,32 +6,36 @@ on:
 
 jobs:
   publish:
-    # Only on approvals for PRs into master from branches in this repo
-    if: >-
-      github.event.review.state == 'approved' &&
-      (github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'github-actions')
     runs-on: ubuntu-latest
     environment:
       name: production
     permissions:
       contents: read
-      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 2
 
       - name: Determine changed quickstart folders
         id: detect
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          pr_number=${{ github.event.pull_request.number }}
-          repo=${{ github.repository }}
-          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+          # Get changed files from the push
+          # For push events, compare the before and after commits
+          before_commit="${{ github.event.before }}"
+          after_commit="${{ github.sha }}"
+          
+          # Handle first push to branch (no before commit)
+          if [ "$before_commit" = "0000000000000000000000000000000000000000" ]; then
+            # First push - check HEAD against previous commit
+            changed_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
+          else
+            changed_files=$(git diff --name-only "$before_commit" "$after_commit")
+          fi
+          
           # Filter to quickstart folders under site/sfguides/src whose names do not start with an underscore
-          quickstart_names=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | grep -v '^_' | sort -u)
+          quickstart_names=$(echo "$changed_files" | grep '^site/sfguides/src/' | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          
           has_relevant_changes=false
           if [ -z "$quickstart_names" ]; then
             quickstart_names_json="[]"
@@ -71,27 +75,13 @@ jobs:
         run: |
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
-            --arg pr "${{ github.event.pull_request.number }}" \
             --arg sha "$GITHUB_SHA" \
+            --arg ref "$GITHUB_REF" \
             --arg env "prod" \
             --arg qname "${{ steps.detect.outputs.quickstart_name }}" \
             --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
-            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
           response=$(curl -sS -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
           echo "$response" | cat
-
-      - name: Comment PR with publish notice
-        if: steps.detect.outputs.has_relevant_changes == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: 'Production publish triggered via PR approval.'
-            });
-
-
