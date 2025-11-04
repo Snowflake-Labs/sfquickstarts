@@ -1,7 +1,7 @@
 author: Joshua Rauh and Ben Marzec
 id: abt-bestbuy-entity-resolution
 summary: Build an end-to-end entity resolution solution using Snowflake Cortex AI, Streamlit, and hybrid matching techniques to reconcile product data between competing retailers
-categories: snowfalke-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 environments: web
 status: Published 
@@ -18,7 +18,7 @@ Imagine you're a merchandising manager at ABT, a consumer electronics retailer. 
 
 This is a classic **entity resolution** problem – determining which records in different datasets refer to the same real-world entity. Traditional solutions would require extensive manual mapping, brittle rule-based systems, or complex ML model training. 
 
-In this quickstart, you'll build a modern, AI-powered entity resolution pipeline that leverages Snowflake's native capabilities to automatically harmonize and match product data with minimal manual effort.
+In this **quickstart**, you'll build a modern, AI-powered entity resolution pipeline that leverages Snowflake's native capabilities to automatically harmonize and match product data with minimal manual effort.
 
 ### The Solution Architecture
 
