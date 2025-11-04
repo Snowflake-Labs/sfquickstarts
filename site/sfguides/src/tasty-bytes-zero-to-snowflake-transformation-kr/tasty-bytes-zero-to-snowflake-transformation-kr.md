@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty-bytes-zero-to-snowflake-transformation-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
-language: en
+language: ko
 summary: Tasty Bytes - Zero to Snowflake - Transformation Quickstart
 environments: web
 status: Published 
