@@ -6,7 +6,7 @@ environments: web
 status: Hidden
 author:  Snowflake DevRel Team
 
-authors: Guide Author Name (Github User Name)
+
 
 # Snowflake Guide Basics
 
