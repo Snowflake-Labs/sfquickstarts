@@ -1,8 +1,8 @@
 name: Validate markdown and stage
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
     branches: [master, github-actions]
     paths:
       - 'site/sfguides/src/**'
@@ -19,10 +19,19 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - name: Checkout repository
+      - name: Checkout base repository (trusted)
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          ref: ${{ github.event.pull_request.base.sha }}
+
+      - name: Checkout PR head (untrusted) into ./pr
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: pr
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -37,7 +46,7 @@ jobs:
           node -e "require('badwords-list'); console.log('badwords-list installed')"
           node -e "require('gray-matter'); console.log('gray-matter installed')"
 
-      - name: Determine changed markdown files in quickstarts
+      - name: Determine changed markdown files in quickstarts (from PR)
         id: detect
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -46,7 +55,7 @@ jobs:
           repo=${{ github.repository }}
           files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
           md_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(endswith(".md"))' | sort -u)
-          if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
+          if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
 
           # Build quickstart names and languages like the legacy workflow
           quickstart_names=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
@@ -61,27 +70,27 @@ jobs:
               [ -z "$name" ] && continue
               lang=""
               md_file=""
-              # Prefer a markdown file that matches the folder name
-              candidate="site/sfguides/src/$name/$name.md"
+              # Prefer a markdown file that matches the folder name (from PR checkout)
+              candidate="pr/site/sfguides/src/$name/$name.md"
               if [ -f "$candidate" ]; then
                 md_file="$candidate"
               else
                 # Otherwise, pick the first .md containing a language: field in the first 50 lines
-                for f in $(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
+                for f in $(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
                   if sed -n '1,50p' "$f" | grep -qi -E '^[[:space:]]*language[[:space:]]*:'; then
                     md_file="$f"; break
                   fi
                 done
                 # As a fallback, choose the first non-README.md file
                 if [ -z "$md_file" ]; then
-                  for f in $(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
+                  for f in $(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
                     [ "$(basename "$f")" = "README.md" ] && continue
                     md_file="$f"; break
                   done
                 fi
                 # Final fallback: any .md file if still empty
                 if [ -z "$md_file" ]; then
-                  md_file=$(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
+                  md_file=$(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
                 fi
               fi
               if [ -n "$md_file" ] && [ -f "$md_file" ]; then
@@ -223,7 +232,7 @@ jobs:
 
       - name: Call Workato staging webhook
         env:
-          WORKATO_STAGING_WEBHOOK_URL: ${{ vars.WORKATO_STAGING_URL }}
+          WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
         run: |
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \

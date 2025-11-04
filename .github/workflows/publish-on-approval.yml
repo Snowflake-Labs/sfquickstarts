@@ -1,15 +1,14 @@
-name: Publish to AEM on PR Approval (Prod)
+name: Publish to AEM on merge (Prod)
 
 on:
-  pull_request_review:
-    types: [submitted]
+  push:
+    branches: [master, github-actions]
+    paths:
+      - 'site/sfguides/src/**'
+      - '!site/sfguides/src/_*/**'
 
 jobs:
   publish:
-    # Only on approvals for PRs into master from branches in this repo
-    if: >-
-      github.event.review.state == 'approved' &&
-      (github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'github-actions')
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -20,18 +19,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
-      - name: Determine changed quickstart folders
+      - name: Determine changed quickstart folders (from merge)
         id: detect
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          pr_number=${{ github.event.pull_request.number }}
-          repo=${{ github.repository }}
-          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
-          # Filter to quickstart folders under site/sfguides/src whose names do not start with an underscore
-          quickstart_names=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | grep -v '^_' | sort -u)
+          BEFORE="${{ github.event.before }}"
+          AFTER="$GITHUB_SHA"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            changed=$(git diff-tree --no-commit-id --name-only -r "$AFTER")
+          else
+            changed=$(git diff --name-only "$BEFORE" "$AFTER")
+          fi
+          quickstart_names=$(printf '%s\n' "$changed" | grep -E '^site/sfguides/src/' | grep -v '^site/sfguides/src/_' | sed -n 's#^site/sfguides/src/\([^/]*\)/.*#\1#p' | sort -u)
           has_relevant_changes=false
           if [ -z "$quickstart_names" ]; then
             quickstart_names_json="[]"
@@ -86,7 +86,7 @@ jobs:
       - name: Call Workato production webhook
         if: steps.detect.outputs.has_relevant_changes == 'true'
         env:
-          WORKATO_PROD_WEBHOOK_URL: ${{ vars.WORKATO_PROD_URL }}
+          WORKATO_PROD_WEBHOOK_URL: ${{ secrets.WORKATO_PROD_WEBHOOK_URL }}
         run: |
           if [ -z "$WORKATO_PROD_WEBHOOK_URL" ]; then
             echo "WORKATO_PROD_URL is not set. Cannot call production webhook." >&2
@@ -94,7 +94,7 @@ jobs:
           fi
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
-            --arg pr "${{ github.event.pull_request.number }}" \
+            --arg pr "0" \
             --arg sha "$GITHUB_SHA" \
             --arg env "prod" \
             --arg qname "${{ steps.detect.outputs.quickstart_name }}" \
@@ -104,17 +104,5 @@ jobs:
           echo "$payload" | jq .
           response=$(curl -sS -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
           echo "$response" | cat
-
-      - name: Comment PR with publish notice
-        if: steps.detect.outputs.has_relevant_changes == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: 'Production publish triggered via PR approval.'
-            });
 
 
