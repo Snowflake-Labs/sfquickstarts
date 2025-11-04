@@ -292,7 +292,7 @@ secure UDF patterns when justified. In regulated scenarios, tokenization
 may be necessary; it should be paired with strict stewardship and
 evidence of necessity.
 
-**Design approach  **
+**Design approach**
 Keep base tables secured and expose consumers to policy‑protected views.
 Separate administrative personas from analytical personas to avoid
 privilege creep and ensure least privilege.
