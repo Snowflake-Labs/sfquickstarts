@@ -1,11 +1,12 @@
 author: Chanin Nantasenamat
 id: getting-started-with-interactive-tables
 summary: This guide demonstrates how to set up and use Snowflake's Interactive Warehouses and Tables to achieve sub-second query performance.
-categories: featured, getting-started, data-engineering
+categories: snowfalke-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
-status: Hidden
+status: Published
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: snowflake, interactive-tables, performance-optimization, data-warehousing, analytics
+
 
 # Getting Started with Snowflake Interactive Tables
 <!-- ------------------------ -->
