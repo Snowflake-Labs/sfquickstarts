@@ -6,7 +6,7 @@ language: en
 environments: web
 status: Published
 language: en
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 
 # Getting Started with Snowflake Interactive Tables
@@ -61,6 +61,7 @@ Snowflake interactive tables are optimized for fast, simple queries when you req
 ![](assets/use-cases.png)
 
 Furthermore, this pairing of interactive warehouses and tables is ideal for a range of specific, demanding use cases where sub-second query performance is paramount. In industries like ad-tech, IoT, and video analytics, it can power near real-time decisioning on massive event streams. For application development, it enables highly responsive data-powered APIs and in-app user behavior analytics. It's also perfectly suited for internal analytics, providing the speed needed for live dashboards, BI acceleration, and critical observability/APM systems that require high-throughput alerting.
+
 
 ### Limitations
 
