@@ -332,7 +332,7 @@ constraints with
 [masking](https://docs.snowflake.com/en/user-guide/security-access-control-overview)
 and row access for layered protection.
 
-**Design Approach  **
+**Design Approach**
 Publish approved column bundles per persona and provide redaction views
 for common but risky analytics patterns.
 
