@@ -107,13 +107,23 @@ jobs:
             exit 1
           }
 
-      - name: Validate tags syntax in markdown
-        id: validate_tags
+      - name: Validate categories syntax in markdown
+        id: validate_categories
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
         run: |
-          node scripts/validate-tags.js || {
-            echo "Tag syntax validation failed. See 'tags-error.json' for details." >&2
+          node scripts/validate-categories.js || {
+            echo "Category syntax validation failed. See 'categories-error.json' for details." >&2
+            exit 1
+          }
+
+      - name: Validate frontmatter id and path
+        id: validate_frontmatter
+        env:
+          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+        run: |
+          node scripts/validate-frontmatter.js || {
+            echo "Frontmatter validation failed. See 'frontmatter-error.json' for details." >&2
             exit 1
           }
 
@@ -132,15 +142,26 @@ jobs:
                   body = `${v.message || 'Language validation failed.'}\n\n${items}`;
                 }
               } catch {}
-            } else if (fs.existsSync('tags-error.json')) {
+            } else if (fs.existsSync('categories-error.json')) {
               try {
-                const data = JSON.parse(fs.readFileSync('tags-error.json','utf8'));
+                const data = JSON.parse(fs.readFileSync('categories-error.json','utf8'));
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
                   const lines = issues.map(issue => `- ${issue.file}: ${(issue.invalid || []).join(', ')}`);
-                  body = `Validation failed: tag syntax is invalid. Expected tags like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`;
+                  body = `Validation failed: category syntax is invalid. Expected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`;
                 } else {
-                  body = 'Validation failed: tag syntax is invalid.';
+                  body = 'Validation failed: category syntax is invalid.';
+                }
+              } catch {}
+            } else if (fs.existsSync('frontmatter-error.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('frontmatter-error.json','utf8'));
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                if (issues.length) {
+                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.errors || []).join('; ')}`);
+                  body = `Validation failed: frontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`;
+                } else {
+                  body = 'Validation failed: frontmatter id check failed.';
                 }
               } catch {}
             } else if (fs.existsSync('profanity-report.json')) {
@@ -172,7 +193,8 @@ jobs:
           path: |
             profanity-report.json
             validation-error.json
-            tags-error.json
+            categories-error.json
+            frontmatter-error.json
           if-no-files-found: ignore
 
       - name: Call Workato staging webhook
