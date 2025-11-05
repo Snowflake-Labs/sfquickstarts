@@ -5,7 +5,7 @@ categories: Cortex, AI, Intelligence Agents, Sports Marketing, Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cortex, AI, Intelligence Agents, Sports Marketing, Fan Engagement
+tags: Getting Started, Cortex, AI, Intelligence Agents, Streamlit, Sports Marketing, Fan Engagement
 
 # Exploring Fan Engagement Data with Snowflake Intelligence
 <!-- ------------------------ -->
