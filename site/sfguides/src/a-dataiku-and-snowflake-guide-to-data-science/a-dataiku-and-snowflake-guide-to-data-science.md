@@ -51,8 +51,6 @@ We will build a project that uses input datasets from Snowflake. We’ll build a
 
 - If you haven’t already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com/) The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
 
-> aside negative
-> 
 >  **Note**: Please ensure that you use the **same email address** for both your Snowflake and Dataiku sign up
 
 
