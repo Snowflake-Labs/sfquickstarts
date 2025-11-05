@@ -7,9 +7,6 @@ environments: web
 status: Published 
 
 
-
-
-
 # Cost Optimization
 
 ## Overview
@@ -221,8 +218,6 @@ organizations can move the conversation with leadership from cost
 oversight to demonstrable value realization, positioning Snowflake as a
 clear enabler of enterprise growth and innovation.
 
-#### 
-
 #### Trade-off analysis
 
 Defining SLAs or explicit business needs ensures that Snowflake
@@ -242,7 +237,7 @@ within acceptable cost-performance boundaries. All design decisions have
 trade-offs, and explicitly calling out the expected outcomes leads to
 streamlined decision-making in the future when outcomes are reviewed.
 
-#### ![Trade-off Analysis](assets/image1.png)
+![Trade-off Analysis](assets/image1.png)
 
 #### Measure business value KPIs baseline
 
@@ -364,7 +359,6 @@ parameters. High-level categories are below.
   Snowflake accounts. See the latest terms and more details
   [<u>here</u>](/en/legal/).
 
-#### 
 
 #### Establish a consistent and granular cost attribution strategy
 
@@ -599,8 +593,6 @@ Some common examples include:
 > Customers can track credits (warehouse) per thousand queries within a
 > use case to see how efficiency has evolved over time and determine if
 > they are achieving economies of scale.
-
-#### 
 
 **Business metrics (business KPIs)**
 
@@ -969,8 +961,6 @@ usage and prevent excessive costs.
     queries you want to cancel, as you have full control over defining
     the stored procedure logic.
 
-<!-- -->
-
 - **Auto-suspend policies**: Auto-suspend policies are a foundational
   cost control for virtual warehouses, automatically suspending a
   warehouse after a defined period of inactivity. By default, all
@@ -1160,7 +1150,7 @@ effective governance:
 
 #### Overview
 
-#### The Optimization principle of the Cost Optimization framework focuses on continuously improving the efficiency of your Snowflake resources. This includes optimizing compute, storage, data transfer, and managed services by understanding their usage and identifying areas for improvement. The frequency of optimization efforts should be guided by the metrics established in the Visibility principle and monitored through the Control principle. All recommendations within this Optimize principle are to be reviewed on a regular cadence and balanced with business and performance needs.
+The Optimization principle of the Cost Optimization framework focuses on continuously improving the efficiency of your Snowflake resources. This includes optimizing compute, storage, data transfer, and managed services by understanding their usage and identifying areas for improvement. The frequency of optimization efforts should be guided by the metrics established in the Visibility principle and monitored through the Control principle. All recommendations within this Optimize principle are to be reviewed on a regular cadence and balanced with business and performance needs.
 
 #### Recommendations
 
