@@ -26,11 +26,11 @@ This guide provides a high-level overview of the 5-part series, which is availab
 
 ### What You'll Build
 You will build a comprehensive end-to-end machine learning project for bear species classification, broken into five parts:
-1.  **Data Operations**: Ingest data, perform data wrangling, and use Cortex AI for feature extraction.
-2.  **Exploratory Data Analysis (EDA)**: Explore data, summary statistics, and data visualization.
-3.  **Machine Learning (ML)**: Prepare data and features to build models using different ML algorithms.
-4.  **Experiment Tracking**: Initiate experiment tracking when building and trying out different hyperparameters.
-5.  **Data App**: Build a shareable Streamlit application for model deployment.
+1. **Data Operations**: Ingest data, perform data wrangling, and use Cortex AI for feature extraction.
+2. **Exploratory Data Analysis (EDA)**: Explore data, summary statistics, and data visualization.
+3. **Machine Learning (ML)**: Prepare data and features to build models using different ML algorithms.
+4. **Experiment Tracking**: Initiate experiment tracking when building and trying out different hyperparameters.
+5. **Data App**: Build a shareable Streamlit application for model deployment.
 
 ### Prerequisites
 - **Snowflake Account**: Access to a Snowflake account. Sign up for a [30-day free trial account](https://signup.snowflake.com/)
@@ -51,9 +51,9 @@ To follow this tutorial, you will use the files from the following GitHub reposi
 
 ### Notebook Configuration
 Before running the notebooks, ensure you configure your Snowflake Notebook environment:
-1.  **Compute Pool**: In "Notebook settings," under "Run on container," select a CPU compute pool.
-2.  **External Access**: In the "External access" tab, select a policy that allows the notebook to access external data from GitHub.
-3.  **Packages**: Add the following packages via the "Packages" dropdown: `modin`, `scikit-learn`, and `snowflake-ml-python`.
+1. **Compute Pool**: In "Notebook settings," under "Run on container," select a CPU compute pool.
+2. **External Access**: In the "External access" tab, select a policy that allows the notebook to access external data from GitHub.
+3. **Packages**: Add the following packages via the "Packages" dropdown: `modin`, `scikit-learn`, and `snowflake-ml-python`.
 
 ## The Bear Data Set
 
@@ -75,34 +75,10 @@ The bear dataset is composed of two main parts:
 
 2. Image Data (`images/` folder): The second portion is a collection of images, where each image corresponds to a unique ID from the tabular data (*e.g.* `ABB_01`, `EUR_01`, `GRZ_01` and `KDK_01`). This allows for visual analysis and the extraction of image-based features.
 
-<table>
-  <tr>
-    <td align="center" valign="top" width="25%">
-      <img src="assets/ABB_01.png" alt="American Black Bear" width="200">
-      <b>
-        American Black Bear
-      </b>
-    </td>
-    <td align="center" valign="top" width="25%">
-      <img src="assets/EUR_01.png" alt="Eurasian Brown Bear" width="200">
-      <b>
-        Eurasian Brown Bear
-      </b>
-    </td>
-    <td align="center" valign="top" width="25%">
-      <img src="assets/GRZ_01.png" alt="Grizzly Bear" width="200">
-      <b>
-        Grizzly Bear
-      </b>
-    </td>
-    <td align="center" valign="top" width="25%">
-      <img src="assets/KDK_01.png" alt="Kodiak Bear" width="200">
-      <b>
-        Kodiak Bear
-      </b>
-    </td>
-  </tr>
-</table>
+
+| ![American Black Bear](assets/ABB_01.png) <br> **American Black Bear** | ![Eurasian Brown Bear](assets/EUR_01.png) <br> **Eurasian Brown Bear** | ![Grizzly Bear](assets/GRZ_01.png) <br> **Grizzly Bear** | ![Kodiak Bear](assets/KDK_01.png) <br> **Kodiak Bear** |
+|:---------------------------------------------------------------------:|:---------------------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
+
 
 ### Identifying Bear Species
 
