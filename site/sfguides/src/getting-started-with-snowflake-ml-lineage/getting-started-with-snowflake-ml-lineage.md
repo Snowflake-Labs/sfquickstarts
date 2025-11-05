@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: getting-started-with-snowflake-ml-lineage
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started, Data-Science, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with Snowflake ML Lineage
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 [ML Lineage](https://docs.snowflake.com/en/developer-guide/snowflake-ml/ml-lineage) provides comprehensive tracing of data as it flows through your machine learning pipeline. This feature enables you to track the lineage between various data artifacts, including source tables/views/stages, feature views, datasets, registered models, and deployed model services. Additionally, ML Lineage captures the relationships between cloned artifacts and artifacts of similar types, ensuring a complete view of data transformations and dependencies within your pipeline. A possible pipeline is illustrated below:
 
@@ -33,7 +32,6 @@ This quickstart will introduce ML Lineage by building an ML pipeline containing 
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 5
 
 ### Account Setup
 
@@ -84,7 +82,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE ML_LINEAGE_DATABASE TO ROLE ML_LINEAG
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ML Lineage provides a powerful tool for tracking and understanding data flow throughout your machine learning pipeline. By capturing relationships between data artifacts—such as source tables, feature views, datasets, models, and services—ML Lineage ensures full visibility into data transformations and dependencies. In this quickstart you saw how many different objects within Snowflake ML are connected via lineage.
 

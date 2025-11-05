@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: query-cost-monitoring
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Learn how to build a Query Cost Monitoring tool using Snowflake, Streamlit, Pandas and Altair to analyze and visualize compute costs by individual queries.
-categories: getting-started, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Streamlit, Pandas, Data Visualization, Altair, Notebooks
 
 # Build a Query Cost Monitoring Tool with Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
-Duration: 10
 
 Managing compute costs is crucial for optimizing database performance and budgeting effectively. In this tutorial, you'll build a Query Cost Monitoring tool that breaks down compute costs by individual queries using Snowflake's account usage data. This tool will help your team identify high-cost operations and gain valuable insights through interactive visualizations.
 
@@ -31,7 +30,6 @@ You'll create an interactive dashboard that displays compute costs per query, al
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 Firstly, to follow along with this quickstart, you can click on [query_cost_monitoring.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Query_Cost_Monitoring/Query_Cost_Monitoring.ipynb) to download the Notebook from GitHub.
 
@@ -39,7 +37,6 @@ Ensure that your notebook environment has access to the necessary Python librari
 
 <!-- ------------------------ -->
 ## Retrieve Query Cost Data
-Duration: 10
 
 ### Write the SQL Query
 
@@ -74,7 +71,7 @@ This query merges the `query_history` with `metering_history` to obtain detailed
 
 The returned output looks like the following:
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 ### Convert Table to a DataFrame
 
@@ -86,7 +83,6 @@ sql_data.to_pandas()
 
 <!-- ------------------------ -->
 ## Create App & Data Preparation
-Duration: 10
 
 Here, we'll create an interactive slider using Streamlit to dynamically select the number of days to analyze. 
 
@@ -168,11 +164,10 @@ with st.expander("See Heatmap DataFrame", expanded=expand_value):
 
 The above code snippet, yields the following data app:
 
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 <!-- ------------------------ -->
 ## Add Data Visualizations
-Duration: 15
 
 Here, we'll generate a heatmap using Altair to visualize query activity by hour and the selected variable. Additional visualizations include a stacked bar chart and a bubble plot to provide multiple perspectives on the data.
 
@@ -204,7 +199,7 @@ st.altair_chart(heatmap, use_container_width=True)
 
 The generated heatmap is shown below:
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 ### Stacked Bar Chart
 Next, on to creating the stacked bar chart:
@@ -226,7 +221,7 @@ st.altair_chart(bar_time, use_container_width=True)
 
 The generated stacked bar chart is shown below:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 ### Bubble plot
 Finally, we'll create the bubble plot and sizes are representing the metric magnitude:
@@ -249,12 +244,11 @@ st.altair_chart(bubble, use_container_width=True)
 
 The generated bubble plot is shown below:
 
-![image](assets/img05.PNG)
+![image](assets/img05.png)
 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built a Query Cost Monitoring tool that allows you to analyze and visualize compute costs by individual queries. This dashboard empowers your team to identify high-cost operations and optimize database performance effectively.
 

@@ -1,18 +1,17 @@
 author: Charles Yorek
 id: build-a-native-app-with-spcs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Native Apps, Snowpark Container Services, SPCS 
 
 # Build a Snowflake Native App with Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
-The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace.  In this example you will learn how to incorporate Snowpark Container Services into a Snowflake Native App allowing you to deploy a variety of new capabilities to a consumers Snowflake account.  
+The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace. In this example you will learn how to incorporate Snowpark Container Services into a Snowflake Native App allowing you to deploy a variety of new capabilities to a consumers Snowflake account.  
 
 
 ### Prerequisites
@@ -24,7 +23,7 @@ The Snowflake Native App Framework is a powerful way for application providers t
 
 > aside positive
 >
-> Snowpark Container Services is currently in a Public Preview and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
+> Snowpark Container Services is available across a [range of cloud providers and regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
 
 
 ### What You’ll Learn 
@@ -46,12 +45,11 @@ In this quickstart we'll create a Snowflake Native App that uses Snowpark Contai
 - Flask-based Python middle tier 
 - nginx as a router
 
-Once deployed, the application can be access via a [Service Endpoint](https://docs.snowflake.com/en/sql-reference/sql/show-endpoints) which then queries the 
+Once deployed, the application can be accessed via a [Service Endpoint](https://docs.snowflake.com/en/sql-reference/sql/show-endpoints) which then queries the 
 TPC-H 100 data set and returns the top sales clerks. The frontend provides date pickers to restrict the range of the sales data and a slider to determine how many top clerks to display. The data is presented in a table sorted by highest seller to lowest.
 
 <!-- ------------------------ -->
 ## Snowflake Application Code
-Duration: 5
 ### Overview
 In preparation for building our Snowflake Native App we need to download the code artifacts for the Native App along with the files to create our Container images from Github.  
 
@@ -63,7 +61,6 @@ git clone https://github.com/Snowflake-Labs/sfguide-build-a-native-app-with-spcs
 
 <!-- ------------------------ -->
 ## Native App Provider Setup 
-Duration: 5
 ### Overview
 To simulate a Native App provider experience we will create a role called 'naspcs_role' and grant it the necessary privileges required to create an [Application Package](https://docs.snowflake.com/en/developer-guide/native-apps/creating-app-package) as well as create a database that will store both our app code and Snowpark Container Service Images.  
 
@@ -94,7 +91,6 @@ create warehouse if not exists wh_nap with warehouse_size='xsmall';
 
 <!-- ------------------------ -->
 ## Consumer Privilege Setup 
-Duration: 5
 ### Overview
 To simulate the app consumer experience we will create a role called 'nac' and grant it the necessary privileges required to create Applications as well as set up a database to house the data we'll be querying with our Snowflake Native App.  
 
@@ -105,6 +101,7 @@ create role if not exists nac;
 grant role nac to role accountadmin;
 create warehouse if not exists wh_nac with warehouse_size='xsmall';
 grant usage on warehouse wh_nac to role nac with grant option;
+create database if not exists snowflake_sample_data from share sfc_samples.sample_data;
 grant imported privileges on database snowflake_sample_data to role nac;
 grant create database on account to role nac;
 grant bind service endpoint on account to role nac with grant option;
@@ -122,8 +119,7 @@ create view if not exists orders as select * from snowflake_sample_data.tpch_sf1
 ```
 
 <!-- ------------------------ -->
-## Build and Upload Container Images
-Duration: 10
+## Build and Upload Images
 ### Overview
 Now that we have a place in our Snowflake account to house our application code and images we need to build the images and push them to our Image Repository.  We'll then upload our app files that detail how to install, setup and configure the Snowflake Native App.  
 
@@ -195,7 +191,6 @@ When this is done succesfully your SPCS_APP.NAPP.APP_STAGE should look like the 
 
 <!-- ------------------------ -->
 ## Create Application Package
-Duration: 10 
 ### Overview
 With all of our Snowflake Native App assets uploaded to our Snowflake account we can now create our Application Package using our Provider role.  Since we're doing this in a single Snowflake account we will also grant the Consumer role privileges to install it. 
 
@@ -203,13 +198,13 @@ With all of our Snowflake Native App assets uploaded to our Snowflake account we
 ```sql
 use role naspcs_role;
 create application package spcs_app_pkg;
-alter application package spcs_app_pkg add version v1 using @spcs_app.napp.app_stage;
+alter application package spcs_app_pkg register version v1 using @spcs_app.napp.app_stage; 
+alter application package spcs_app_pkg modify release channel default add version v1;
 grant install, develop on application package spcs_app_pkg to role nac;
 ```
 
 <!-- ------------------------ -->
-## Install & Run Application 
-Duration: 10 
+## Install and Run Application 
 ### Overview
 We can now use the Consumer role to install our Snowflake Native App - but to get it fully deployed we will also need to create a Compute Pool for our Snowpark Containers to run on as well as start the Service.  
 
@@ -247,12 +242,11 @@ call spcs_app_instance.app_public.app_url();
 ```
 
 When up and running you should see a screen like this at your service endpoint. 
-![CLERKS](assets/CLERKS.png)
+![CLERKS](assets/clerks.png)
 
 
 <!-- ------------------------ -->
 ## Cleanup 
-Duration: 5
 ### Overview
 
 To clean up your environment you can run the following series of commands.
@@ -279,8 +273,7 @@ drop role nac;
 
 
 <!-- ------------------------ -->
-## Conclusion and Resources
-Duration: 5
+## Conclusion And Resources
 
 Congratulations!  You've now deployed a Snowflake Native App that includes Snowpark Container Service hosting a customer Frontend and Backend for a web application.  
 
@@ -294,6 +287,6 @@ In this Quickstart we covered the following:
 This Quickstart can provide a template for you to accomplish the basic steps of building a Snowflake Native App that includes a Snowpark Container Service to deploy & monetize whatever unique code to your Snowflake consumers accounts.  
 
 ### Related Resources
-- [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)
+- [Snowflake Native Apps](/en/data-cloud/workloads/applications/native-apps/?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)
 - [Snowflake Native Apps Documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)

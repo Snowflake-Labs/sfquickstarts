@@ -1,16 +1,15 @@
 author: Rajiv Shah
 id: notebook-llama32v
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: This guide will walk show you how to use LLama 3.2 Vision Models on Snowflake Notebooks with Container Runtime with Transformers
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with Llama 3.2 Vision Models on Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Leverage the LLama 3.2 Vision models with Snowflake Notebooks on Snowpark Container Services through Container Runtime. This quickstart will show you how you can:
 
@@ -45,7 +44,6 @@ This Quickstart will guide you through the steps of running Snowflake Notebooks 
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -119,7 +117,6 @@ GRANT USAGE ON INTEGRATION hf_access_integration TO ROLE container_runtime_lab_u
 ```
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 15
 
 ### Get the Notebook into Snowflake
 - Download the notebook from [https://github.com/rajshah4/snowflake-notebooks/blob/main/Models/Llama3_2_Vision.ipynb](https://github.com/rajshah4/snowflake-notebooks/blob/main/Models/Llama3_2_Vision.ipynb)
@@ -142,7 +139,6 @@ Duration: 15
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 You have successfully run a Snowflake Notebook on Snowpark Container Services through Container Runtime. You have also used the Llama 3.2 Vision model with Transformers. Feel free to explore other models available on Hugging Face and run them in your Snowflake Notebook. 
 
 ### What You Learned
@@ -153,4 +149,4 @@ You have successfully run a Snowflake Notebook on Snowpark Container Services th
 ### Related Resources
 - [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
 - [Meta's 3.2 11B Vision Model](https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct)
-- [Using Container Notebook](https://quickstarts.snowflake.com/guide/notebook-container-runtime/)
+- [Using Container Notebook](/en/developers/guides/notebook-container-runtime/)

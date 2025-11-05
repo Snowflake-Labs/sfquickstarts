@@ -1,20 +1,19 @@
 author: Charlie Hammond
 id: develop-and-manage-ml-models-with-feature-store-and-model-registry
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: This guide demonstrates an end-to-end ML experiment cycle in Snowflake including feature creation, training data generation, model training and inference
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science 
 
 # Develop and Manage ML Models with Feature Store and Model Registry
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
-[Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) is an integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos, or governance tradeoffs. The Snowpark ML Python library (the snowflake-ml-python package) provides APIs for developing and deploying your Snowflake ML pipelines.
+[Snowflake ML](/en/data-cloud/snowflake-ml/) is an integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos, or governance tradeoffs. The Snowpark ML Python library (the snowflake-ml-python package) provides APIs for developing and deploying your Snowflake ML pipelines.
 
-This is part 3 of a 3-part introduction quickstart series to Snowflake Feature Store (check out part 1 [here](https://quickstarts.snowflake.com/guide/intro-to-feature-store/index.html#0) and part 2 [here](https://quickstarts.snowflake.com/guide/overview-of-feature-store-api/index.html?index=..%2F..index#0)). This quickstart demonstrates an end-to-end ML experiment cycle including feature creation, training data generation, model training and inference. The workflow touches on key Snowflake ML features including [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowpark-ml/feature-store/overview), [Dataset](https://docs.snowflake.com/en/developer-guide/snowpark-ml/dataset), [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling), and [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview). 
+This is part 3 of a 3-part introduction quickstart series to Snowflake Feature Store (check out part 1 [here](/en/developers/guides/intro-to-feature-store/) and part 2 [here](/en/developers/guides/overview-of-feature-store-api/)). This quickstart demonstrates an end-to-end ML experiment cycle including feature creation, training data generation, model training and inference. The workflow touches on key Snowflake ML features including [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowpark-ml/feature-store/overview), [Dataset](https://docs.snowflake.com/en/developer-guide/snowpark-ml/dataset), [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling), and [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview). 
 
 ![snowflake-ml-overview](assets/snowflake-ml-process.png)
 
@@ -31,7 +30,6 @@ This is part 3 of a 3-part introduction quickstart series to Snowflake Feature S
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -61,7 +59,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE ML_MODEL_DATABASE TO ROLE ML_MODEL_RO
 
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 10
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/0_start_here.ipynb)
 - Download [feature-store-ui.png](https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/feature-store-ui.png) and [model-registry-ui.png](https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/model-registry-ui.png)
@@ -81,7 +78,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Snowflake ML offers a comprehensive, integrated platform for end-to-end machine learning, allowing data scientists and ML engineers to develop and deploy scalable models seamlessly, all within a governed data environment. With the Snowpark ML Python library, you can build and manage your ML pipelines without the need for data movement or compromising on governance.
 
@@ -95,12 +91,17 @@ Ready to elevate your machine learning projects? Dive into the full potential of
 - How to log and reference models using [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview)
 
 ### Related Quickstarts
-- Part 1: [Introduction to Snowflake Feature Store with Snowflake Notebooks](https://quickstarts.snowflake.com/guide/intro-to-feature-store/index.html#0)
-- Part 2: [Getting Started with Snowflake Feature Store API](https://quickstarts.snowflake.com/guide/overview-of-feature-store-api/index.html?index=..%2F..index#0)
+- Part 1: [Introduction to Snowflake Feature Store with Snowflake Notebooks](/en/developers/guides/intro-to-feature-store/)
+- Part 2: [Getting Started with Snowflake Feature Store API](/en/developers/guides/overview-of-feature-store-api/)
 
 ### Related Resources
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Entities](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities)
 - [Feature Views](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views)
 - [Datasets](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/modeling#generating-datasets-for-training)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
+
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/notebooks/0_start_here.ipynb?_fsi=EwgOAmF4&_fsi=EwgOAmF4)
+- [Download Reference Architecture](https://drive.google.com/file/d/1GA_pt6Pdy76tWkxyPFKL2xH_YG3v5ZRM/view?usp=sharing)
+- [Read Engineering Blog](/en/engineering-blog/machine-learning-container-runtime/)
+- [Watch the Demo](https://youtu.be/5zXP6Kj5gM4?list=TLGGiXdaWh2xmL4yMjA5MjAyNQ)

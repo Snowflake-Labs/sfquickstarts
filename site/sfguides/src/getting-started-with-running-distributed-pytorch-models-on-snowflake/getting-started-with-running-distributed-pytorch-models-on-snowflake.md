@@ -1,20 +1,19 @@
 author: Swathi Jasti
 id: getting-started-with-running-distributed-pytorch-models-on-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions
+language: en
 summary: Getting Started with Running Distributed PyTorch Models on Snowflake
-categories: Getting-Started, Tasty-Bytes, data-science, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Apps 
 
 # Getting Started with Running Distributed PyTorch Models on Snowflake
 
 ## Overview
-Duration: 3
 
-<img src="assets/TB_EndToEndML_banner.png"/>
+![assets/TB_EndToEndml_banner.png](assets/TB_EndToEndml_banner.png)
 
-This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). This involves:
+This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using [Snowflake ML](/en/data-cloud/snowflake-ml/). This involves:
 
 - Extracting features from customer, menu, and purchase history.
 - Preprocessing data.
@@ -23,7 +22,7 @@ This solution generates upsell and cross-sell recommendations to increase sales 
 - Running predictions and visualizing recommendations on Streamlit.
 - Displaying personalized menu item recommendations along with purchase history in a Streamlit app.
 
-In addition, this end-to-end ML solution using [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) aims to address the common challenges in building ML workflows, such as:
+In addition, this end-to-end ML solution using [Snowflake ML](/en/data-cloud/snowflake-ml/) aims to address the common challenges in building ML workflows, such as:
 
 **Eliminating Silos and Governance Challenges:** Ensuring a seamless and integrated environment for ML development, from data processing to model serving, to tackle the issue of isolated workflows and governance difficulties.
 
@@ -38,7 +37,7 @@ In addition, this end-to-end ML solution using [Snowflake ML](https://www.snowfl
 ### Prerequisites
 - Privileges necessary to create a user, database, and warehouse in Snowflake
 - A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
-- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
 
 ### What You Will Learn
 - How to extract features from customer, menu, and purchase history.
@@ -63,18 +62,16 @@ From Snowflake Notebooks on Container Runtime (public preview), you will complet
 Afterward, we will also show you how to build a Streamlit app for running predictions and visualizing recommendations.
 
 ## Setup Environment
-Duration: 10
 
 Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
 Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/scripts/setup.sql) in the worksheet to create Snowflake objects (database, schema, tables),
 
 ## Architecture
-Duration: 3
 
 The architecture of the Tasty Bytes ML solution is designed to generate personalized upsell and cross-sell recommendations. Here's a detailed walkthrough of how we use components of Snowflake ML to complete this workflow:
 
-<img src="assets/Architecture.png"/>
+![Architecture](assets/architecture.png)
 
 **Extracting Features:** This begins with the ingestion of data into Snowflake. Data sources include customer profiles, menu details, and purchase histories. Snowflake Notebooks can be leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. The team automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps.
 
@@ -91,7 +88,6 @@ The architecture of the Tasty Bytes ML solution is designed to generate personal
 This architecture integrates various Snowflake features to create a robust end-to-end ML solution. From data ingestion and preprocessing to model training, deployment, and visualization, each component plays a crucial role in ensuring the efficiency, scalability, and consistency of the ML workflow. By leveraging Snowflake ML, the Tasty Bytes team successfully addresses common challenges in ML workflows, empowering their business with actionable insights to drive sales growth.
 
 ## Notebook
-Duration: 5
 
 This notebook demonstrates how to create and manage feature views within a feature store. By facilitating collaboration across teams, it enables seamless reuse of features while bridging the gap between training and serving environments. In this example, we train and deploy a deep learning model to generate personalized recommendations for loyalty customers, aiming to drive engagement and improve performance for underperforming food trucks at Tasty Bytes.
 
@@ -101,24 +97,23 @@ This notebook demonstrates how to create and manage feature views within a featu
 
 - Import the following Snowflake Notebook in Snowsight: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/notebooks/0_start_here.ipynb)
 
-<img src="assets/import.png"/>
+![assets/import.png](assets/import.png)
 
 - Create notebook with the settings in the screenshot.
 
-<img src="assets/create_notebook.png"/>
+![assets/create_notebook.png](assets/create_notebook.png)
 
 - Once created, Click on Notebook Settings in the top right corner inside Snowflake Notebooks
 
-<img src="assets/notebook_settings.png"/>
+![assets/notebook_settings.png](assets/notebook_settings.png)
 
 - Enable **TASTYBYTESENDTOENDML_ALLOW_ALL_ACCESS_INTEGRATION** as per screenshot
 
-<img src="assets/eai.png"/>
+![assets/eai.png](assets/eai.png)
 
 - Click each cell or Run all to run the Notebook
 
 ## Streamlit Application
-Duration: 3
 
 The Streamlit app showcases the deep learning model's predictions, featuring personalized upsell and cross-sell recommendations alongside relevant customer purchase history. This comprehensive view helps users easily understand and leverage the insights generated by the model. The app provides recommendations by gathering data, processing features, and utilizing a model registry for deployed deep learning model inference to deliver menu item suggestions. Various filter options are available to tailor the recommendations based on specific use cases. Users also have the option to save these results for campaigns and marketing efforts.
 
@@ -132,7 +127,7 @@ To set up the Streamlit in Snowflake Application,
 4. Once the App is created, replace the example code with the streamlit code in the [file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/streamlit/Menu_Item_Recommendations_App.py) 
 4. Add **snowflake-ml-python** and **pytorch** packages to the app and Run the Application.
 
-<img src="assets/create_streamlit.png"/>
+![assets/create_streamlit.png](assets/create_streamlit.png)
 
 ### Application Flow
 
@@ -140,7 +135,7 @@ This application generates menu item recommendations based on the filters select
 
 When you click the **Get Recommendations** button, the application filters the data based on your selections, processes the features for the model, and runs the deep learning model inference to generate menu item recommendations along with purchase history for better context. You also have the option to save these results for use in campaigns and marketing efforts. By clicking the **Save** button, the results are saved to the Stage.
 
-<img src="assets/App_Preview.png"/>
+![assets/app_preview.png](assets/App_Preview.png)
 
 ## Conclusion And Resources
 
@@ -160,11 +155,15 @@ When you click the **Get Recommendations** button, the application filters the d
 - [Snowflake Notebooks: Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - [Feature Store: Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Model Registry: Documentation](https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview?utm_cta=snowpark-dg-hero-card)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 
 ### Related Quickstarts
-- [Getting Started with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/#0)
-- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/#0)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/#0)
-- [Getting Started with Snowflake MLeg](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- [Getting Started with Snowflake Notebooks on Container Runtime](/en/developers/guides/notebook-container-runtime/)
+- [Train an XGBoost Model with GPUs using Snowflake Notebooks](/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Snowflake MLeg](/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/tree/main)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/End-to-End-ML-Workflows-with-Snowflake-ML-Architecture.png)
+- [Read the Blog](https://medium.com/snowflake/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution-452d16a39553)
+- [Watch the Demo](https://youtu.be/9uqcNBIY14g?list=TLGGGYyd9046ENkyNDA5MjAyNQ) 

@@ -1,0 +1,3 @@
+Loaded 514 id->language mappings from site/sfguides/src/_SCRIPTS/language_data.csv
+Scanned 528 markdown files under site/sfguides/src; updated 0 files.
+No changes made.

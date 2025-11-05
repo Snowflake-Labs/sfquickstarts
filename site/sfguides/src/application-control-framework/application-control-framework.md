@@ -1,16 +1,15 @@
 author: Marc Henderson
 id: application-control-framework
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: A guide to building a Native App with consumer controls and limits.
-categories: Getting-Started, App-Development, Streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Native Apps, Streamlit 
 
 # Getting Started with the Application Control Framework (ACF)
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 This guide will show you how to deploy the ACF and build a demo Native App with controls and limits.
 
@@ -45,7 +44,6 @@ The rest of this Snowflake guide walks you through deploying the ACF and demo da
 
 <!-- ------------------------ -->
 ## Downloading the Code
-Duration: 3
 
 The code used in this guide is hosted in github. You can download the code as a ZIP from [GitHub](https://github.com/Snowflake-Labs/sfguide-application-control-framework/archive/refs/heads/main.zip) or use the following git command to clone the repository.
 
@@ -56,7 +54,6 @@ git clone https://github.com/Snowflake-Labs/sfguide-application-control-framewor
 After downloading you will have a folder ```sfguide-application-control-framework``` containing all the code needed to deploy the ACF. Open the folder in VSCode to review the project.
 
 ## Event Account Setup
-Duration: 5
 
 The first step is to set up an event account for each region the native app will be deployed.  The script referenced below creates an event table (if one has not already been created), streams, tasks, and data listings to share consumer native app events from the event account to the ACF (main) account.
 
@@ -109,7 +106,6 @@ Where **\<REGION\>** = the cloud/region where the event account is being configu
 <!-- ------------------------ -->
 
 ## ACF Account Setup
-Duration: 5
 
 The second step is to deploy the ACF to the main account.  This account is different from an event account and will be where the ACF will reside and be managed.
 
@@ -152,7 +148,6 @@ APP_CODE=SDE
 <!-- ------------------------ -->
 
 ## Mount the Event Shares
-Duration: 5
 
 Once the ACF has been deployed, the shares from the event account(s) can be mounted in the ACF account.  The following step details how to mount the share from each event account set up from.
 
@@ -187,7 +182,6 @@ CALL P_SDE_ACF_DB.EVENTS.STREAM_TO_EVENT_MASTER(TO_ARRAY('<EVENT_DBS>'));
 **\<EVENT\_DBS\>** = the event database created in **Step 5**.
 
 ## Dev Environment Setup
-Duration: 2
 
 The ACF also comes with a set of scripts that creates the provider’s dev environment.  This dev environment includes the application logic functions and/or procedures to be included in the Native App.  In addition, the dev environment also includes the objects required to test the application functions/procedures locally, to ensure desired functionality, before building the native app.
 
@@ -206,7 +200,6 @@ Complete the previous step, **Mount the Event Shares**.
 <!-- ------------------------ -->
 
 ## Demo App Setup 
-Duration: 2
 
 The ACF also comes with a set of scripts that creates objects in the provider’s dev environment to build a demo data enrichment app.  The demo app includes sample source graph data, a function that can be shared with the consumer, and a stored procedure that enriches consumer data with data from the source graph.
 
@@ -225,7 +218,6 @@ Complete the previous step, **Dev Environment Setup**.
 <!-- ------------------------ -->
 
 ## App Control Manager
-Duration: 5
 
 The ACF includes the App Control Manager, a Streamlit UI available in the provider account. The App Control Manager allows the provider to easily build and manage an app built on the ACF, manage consumers, and remove the ACF if/when desired.
 
@@ -250,7 +242,6 @@ The App Control Manager can be accessed via the following steps:
 <!-- ------------------------ -->
 
 ## Build Demo Native App
-Duration: 20
 
 The demo app is a simple data enrichment app that enriches a consumer’s dataset with attributes from the provider’s dataset, when the records have the same email address.
 
@@ -324,21 +315,18 @@ To grant consumers access to the latest version/patch, the provider must create 
 <!-- ------------------------ -->
 
 ## Create the Native App Listing
-Duration: 10
 
 Once the application package has a released version and patch, the native app is ready to be privately listed. For instructions on how to create a Private Listing for the native app and add the demo consumer account, visit the **Create a Listing for Your Application** section: [https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#publish-and-install-your-application](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#publish-and-install-your-application).
 
 <!-- ------------------------ -->
 
 ## Install the Native App in the Consumer Account
-Duration: 5
 
 In the demo consumer account added to the listing created in **Create the Native App Listing** section, install the native app available from the private listing. For instructions on how to install a native app, visit the **Install the Application** section [https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#id6](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#id6).
 
 <!-- ------------------------ -->
 
 ## Run the Scripts from the Native App’s Readme
-Duration: 5
 
 With each installation, the consumer is barred from using the native app until the consumer has executed a series of commands, including sharing events with the provider. These commands are located in the native app’s Readme.
 
@@ -366,7 +354,6 @@ With each installation, the consumer is barred from using the native app until t
 <!-- ------------------------ -->
 
 ## App Usage
-Duration: 15
 
 Once the native app has been enabled, the consumer can now use the app to enrich data. Sample data was created during executing the Readme commands. The following steps detail how to use the app to enrich data:
 
@@ -409,7 +396,6 @@ SELECT * FROM <APP_NAME>.RESULTS_APP.<TABLE_NAME> WHERE email IS NOT NULL LIMIT 
 <!-- ------------------------ -->
 
 ## Additional Test Scenarios
-Duration: 10
 
 ### Reach the Five Requests Limit Then Increase the Limit
 By default, the ACF sets limits of the FREE version of the app to five requests. Once the limit is reached, the app is no longer usable, until the limit is increased by the provider in the App Control Manager.
@@ -471,8 +457,7 @@ Repeat the steps in the **Disable the Consumer** section, but set the enabled va
 
 <!-- ------------------------ -->
 
-## Conclusion
-Duration: 1
+## Conclusion And Resources
 
 You've performed the following:
 - Successfully built and deployed a Native App with consumer controls and limits, set via the ACF.
@@ -487,3 +472,10 @@ To get more comfortable with this solution, continue to toggle the limits set fo
 - How to use the ACF Streamlit App (App Control Manager) to set Native App limits and which functionality consumers can access
 - How to build and list a demo Native App, using the ACF
 - How to update consumer metadata and verify that the changes are applied immediately.
+
+###Resources
+- [Fork repo on Github](https://github.com/Snowflake-Labs/sfguide-application-control-framework/tree/main)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/05/Application-Control-Framework-Reference-Architecture.pdf)
+- [Explore Emerging Solutions Toolbox](https://emerging-solutions-toolbox.streamlit.app/)
+- [Read blog](https://medium.com/snowflake/manage-how-consumers-use-your-native-app-d8eeb4af8f5c)
+- [Watch the Demo](https://youtu.be/gZv-EkZsOAk?si=Mb1RSYIGQfuiLPip)

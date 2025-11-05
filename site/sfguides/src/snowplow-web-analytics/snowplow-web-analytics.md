@@ -1,15 +1,14 @@
 author: Snowplow
 id: snowplow-web-analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics
+language: en
 summary: Set up real-time event tracking and analytics using Snowplow and Snowflake
-categories: Getting-Started,Data-Engineering
 environments: web
 status :Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Snowplow, Snowflake, Real-Time Analytics, Behavioral Tracking
 # Snowplow Digital Analytics with Snowflake
 
 ## Overview
-Duration: 1
 
 ### Overview
 
@@ -34,7 +33,6 @@ In this guide, you'll learn how to set up real-time event tracking and analytics
 
 
 ## Set up Tracking 
-Duration: 30
 
 With Snowplow, tracking capabilities are virtually limitless, offering a wide range of possibilities. 
 
@@ -63,7 +61,6 @@ Here's a summary of the steps to implement a basic web tracking setup using Snow
 
 
 ## Configure Snowflake Streaming Loader
-Duration: 15
 
 In this section, you'll learn how to set up the Snowflake Streaming Loader to ingest Snowplow event data into Snowflake in near real-time. By the end of this step, you'll have a streaming pipeline that delivers enriched event data with minimal latency.
 
@@ -101,7 +98,6 @@ and then generate and run the script to set up everything that will be needed in
 Click the “Test and complete destination set up” button and reach out to Snowplow Support (support@snowplow.io) to finish the process
 
 ## Deploy Unified Digital dbt Package
-Duration: 10
 
 In this section, we'll explore how to deploy the Unified Digital dbt package in Snowflake to transform raw event data into modeled data and actionable insights. We will use the raw data that we previously ingested in Snowflake using the streaming loader
 
@@ -185,7 +181,6 @@ Steps:
 > **Gains**: Deploying the Unified Digital Model simplifies your data landscape. With standardized tables and fields, your team can focus on generating insights rather than spending time and engineering resources wrangling data. Visit [Unified documentation](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-models/dbt-unified-data-model/) for further customization 
 
 ## Explore Modeled with Snowflake Notebooks
-Duration: 15
 
 In this section, we'll explore your processed behavioral derived data using Snowflake Notebooks in depth. We'll focus on the derived tables created by the Unified Digital package, such as `derived.snowplow_unified_users`, `derived.snowplow_unified_sessions`, and `derived.snowplow_unified_views`. This hands-on session will guide you through querying these tables to extract valuable insights into user behavior, session metrics, and content performance.
 
@@ -448,7 +443,6 @@ By focusing on the derived tables, you've efficiently navigated through high-lev
 - Leveraged Snowflake Notebooks for collaborative data exploration.
 
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 At the end of this guide, you've successfully set up a near real-time data ingestion pipeline using Snowplow and Snowflake and deployed the Unified Digital dbt package for streamlined analytics. This powerful combination allows your business to harness real-time insights and make data-driven decisions efficiently.
@@ -465,5 +459,8 @@ At the end of this guide, you've successfully set up a near real-time data inges
 - [Snowplow GitHub Repository](https://github.com/snowplow/snowplow)
 - [Snowplow Documentation](https://docs.snowplow.io/)
 - [Snowflake Snowpipe Streaming Documentation](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/Next-Gen-Digital-Analytics-with-Snowplow.pdf)
+- [Read the Blog](https://medium.com/snowflake/snowflake-hybrid-connected-native-apps-featuring-snowplow-e704314bcc90)
+- [Watch the Demo](https://youtu.be/mk2LrJ6JikM?list=TLGGuTqHXnTLVtcyNTA5MjAyNQ)
 
 Happy Streaming and Analyzing!

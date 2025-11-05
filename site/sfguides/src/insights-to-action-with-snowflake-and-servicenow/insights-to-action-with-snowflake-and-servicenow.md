@@ -1,16 +1,15 @@
 author: 
 id: insights-to-action-with-snowflake-and-servicenow
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: insights-to-action-with-snowflake-and-servicenow
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering 
 
 # Insights to Action With Snowflake and ServiceNow
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ServiceNow Workflows automate business processes by defining a series of tasks, approvals, and conditions within the platform. They help streamline IT service management (ITSM), HR, customer service, and other enterprise functions by reducing manual effort and enforcing consistency. Workflows can be triggered manually or automatically based on certain events such as insights generated in  your data and AI platform.
 
@@ -70,7 +69,6 @@ Some of the use cases where this solution can drive real business value across d
 - Benefit: Avoids stockouts and maintains continuity in operations.
 
 ## Create ServiceNow Workflow   
-Duration: 5
 
 In this quickstart, we will implement **Use Case 2: IT Operations / Infrastructure**.
 
@@ -132,7 +130,6 @@ Click Done. This completes your workflow definition in ServiceNow.
 
 
 ## Create Connection to ServiceNow
-Duration: 4
 
 Now that the ServiceNow workflow is defined, the next step is to create a connection from Snowflake to your ServiceNow instance. To do this, we will leverage a few Snowflake primitives that enable secure, external API access:
 
@@ -207,7 +204,6 @@ CREATE OR REPLACE TABLE workflow_log (
 ```
 
 ## Create Snowflake Alert
-Duration: 4
 
 So far, we have the workflow set up in ServiceNow and the device_signals table created in Snowflake. Next, we need to define an alert that will be triggered when a specified condition occurs. This alert will call a UDF that passes the event details and starts the corresponding workflow in ServiceNow.
 
@@ -298,7 +294,6 @@ This completes all the plumbing we need to put in place to trigger the workflow 
 
 
 ## Execute the Workflow 
-Duration: 2
 
 The final step is to test our integration. Since we’ve defined the trigger condition as a **'1-High'** impact event being logged in the **device_signals** table, let’s insert a record and verify that the corresponding incident is automatically created in ServiceNow—without any additional user intervention. This should also insert a record into the **workflow_log** table, capturing the execution ID of the ServiceNow workflow.
 
@@ -320,7 +315,6 @@ Voila! You now have an incident record created in ServiceNow—automatically tri
 
 
 ## Conclusion And Resources
-Duration: 2
 
 Congratulations—you’ve made it to the end!
 In this quickstart, you learned how to automatically trigger a workflow in ServiceNow from Snowflake. Together, Snowflake and ServiceNow offer a powerful opportunity to streamline and enhance business operations by transforming raw data insights into actionable outcomes.

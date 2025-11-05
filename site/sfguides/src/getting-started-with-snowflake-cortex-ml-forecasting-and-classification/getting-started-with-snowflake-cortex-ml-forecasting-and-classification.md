@@ -1,23 +1,22 @@
 author: Ellery Berk
 id: getting-started-with-snowflake-cortex-ml-forecasting-and-classification
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: This is an introduction to building with ML functions.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake ML Functions, Advanced Analytics, Machine Learning 
 
 # Getting Started with Snowflake ML Forecasting and Classification
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
-One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: identify trends, identify abnormalities within their data, and classify users or entities into one of many groups. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach.
+One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: identify trends, identify abnormalities within their data, and classify users or entities into one of many groups. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, Python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach.
 For these use cases, Snowflake has developed a set of SQL based ML Functions that implement machine learning models on the user's behalf. As of June 2024, four ML Functions are available:
 
 ### Time series functions
-1. Forecasting: which enables users to forecast a metric based on past values. Common use-cases for forecasting include predicting future sales, demand for particular sku's of an item, or volume of traffic into a website over a period of time.
-2. Anomaly Detection: which flags anomalous values using both unsupervised and supervised learning methods. This may be useful in use-cases where you want to identify spikes in your cloud spend, identifying abnormal data points in logs, and more.
+1. Forecasting: which enables users to forecast a metric based on past values. Common use cases for forecasting include predicting future sales, demand for particular SKUs of an item, or volume of traffic into a website over a period of time.
+2. Anomaly Detection: which flags anomalous values using both unsupervised and supervised learning methods. This may be useful in use cases where you want to identify spikes in your cloud spend, identifying abnormal data points in logs, and more.
 3. Contribution Explorer: which enables users to perform root cause analysis to determine the most significant drivers to a particular metric of interest.
 
 ### Other analytical functions
@@ -26,7 +25,7 @@ For these use cases, Snowflake has developed a set of SQL based ML Functions tha
 For further details on ML Functions, please refer to the [Snowflake documentation](https://docs.snowflake.com/guides-overview-analysis).
 
 ### Prerequisites
-- A Snowflake account login with an `ACCOUNTADMIN` role. If not, you will need to use a different role- Access to Snowsight and working knowledge of SQL.
+- A Snowflake account login with an `ACCOUNTADMIN` role. If not, you will need to use a different role - Access to Snowsight and working knowledge of SQL.
 
 ### What You’ll Learn 
 
@@ -52,14 +51,13 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Setting Up Data in Snowflake
-Duration: 5
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), the Snowflake web interface, to:
 - Create Snowflake objects (i.e warehouse, database, schema, etc..)
-- Ingest data from S3 and load it into a snowflake table
+- Ingest data from S3 and load it into a Snowflake table
 
 Creating Objects, Loading Data, & Set Up Tables: 
-- Create a new SQL worksheet by clicking on the ‘Worksheets' tab on the left hand side.
+- Create a new SQL worksheet by clicking on the 'Worksheets' tab on the left hand side.
 - Paste and run the following SQL commands in the worksheet to create the required Snowflake objects, ingest data from S3, and create the tables we will use for this lab.
 
 ```sql
@@ -126,7 +124,6 @@ SELECT * FROM quickstart.ml_functions.bank_marketing LIMIT 100;
 ```
 <!-- ------------------------ -->
 ## Exploratory Data Analysis
-Duration: 3
 
 Before building our model, let's first visualize our data to get a feel for what it looks like and get a sense of what variables we will be working with. Follow along below:
 ```sql
@@ -137,7 +134,7 @@ LIMIT 100;
 ```
 After running the command, you'll notice that we have a total of 21 columns in the result set that is displayed at the bottom of the worksheet.
 
-<img src ="assets/bank_marketing_top100.png">
+![assets/bank_marketing_top100.png](assets/bank_marketing_top100.png)
 
 The variables in this dataset can be roughly grouped into three categories: 
 
@@ -154,7 +151,6 @@ Lastly, on the right hand side of the result set, you'll notice that there are m
 ## Classification
 
 ### Step 1: Preparing Training and Inference Views
-Duration: 2
 
 Now that we have a sense of what our data looks like, let's prepare our dataset for both training and inference purposes.
 ```sql
@@ -194,40 +190,38 @@ In the code above, we made use of the both the `Uniform` and the `Random` functi
 In the next section, we will use these views to build our model and make predictions.
 
 ### Step 2: Use Snowflake AI & ML Studio
-Duration: 2
 
 We’ll use the new **Snowflake AI & ML Studio** to set us up for classification.
 
 First, navigate to Snowsight. Click “Create” next to the Classification button below. 
 
-<img src ="assets/cortex_landing_page.png">
+![assets/cortex_landing_page.png](assets/cortex_landing_page.png)
 
 Name your model `bank_classifier`, or whatever suits you! Also, select a role and warehouse. See the in-context warehouse suggestions for help on warehouse selection. Note that we’re leaving “Generate evaluation metrics” checked, since we want to evaluate our model after we’ve trained it. 
 
-<img src ="assets/cortex_pg1.png">
+![assets/cortex_pg1.png](assets/cortex_pg1.png)
 
 Next, choose `training_view` from the database and schema you’ve been working in. A data preview should automatically appear – to help us sanity check that the data are as expected.
 
-<img src ="assets/cortex_pg2.png">
+![assets/cortex_pg2.png](assets/cortex_pg2.png)
 
 Choose `client_subscribed` as your target column. This is the column you want to predict for new customers (i.e., whether new customers will subscribe or not to your product). We leave “Log all errors if training fails” checked to allow the training process to complete and log all relevant errors instead of stopping at the first error encountered. This is helpful for debugging. 
 
-<img src ="assets/cortex_pg3.png">
+![assets/cortex_pg3.png](assets/cortex_pg3.png)
 
 Now, select the data you’d like to classify. In this scenario, we’re selecting a new set of customers to predict whether they’re likely to subscribe to our product or not. Note that we keep “Skip rows that cannot be included in predictions” so that we can get predictions for as many rows as possible without failing the whole process when a row without sufficient informationis encountered. 
 
-<img src ="assets/cortex_pg4.png">
+![assets/cortex_pg4.png](assets/cortex_pg4.png)
 
 Finally, we select the table we want to store our predictions into. 
 
-<img src ="assets/cortex_pg5.png">
+![assets/cortex_pg5.png](assets/cortex_pg5.png)
 
 The results? A worksheet with all of the SQL you need to train your model, generate predictions and evaluate your results. 
 
-<img src ="assets/cortex_class_sql.png">
+![assets/cortex_class_sql.png](assets/cortex_class_sql.png)
 
 ### Step 2: Generate Predictions
-Duration: 3
 
 Use the SQL generated in the previous section to train a model, generate predictions, evaluate your model and generate predictions. 
 First, train your model: 
@@ -262,7 +256,7 @@ from INFERENCE_VIEW;
 SELECT * FROM My_classification_2024_04_15;
 ```
 
-<img src ="assets/image10.png">
+![assets/image10.png](assets/image10.png)
 
 In the result set, we see that the model produces both a predicted class denoted by `True` or `False` as well giving us the probability of the respective class membership. Oftentimes, we may want to parse out the probabilities or the prediction directly, and have it in its own column. 
 See the example below in how to do this, where we create a new table with the predicted class and its associated probability parsed out:
@@ -272,12 +266,11 @@ SELECT * EXCLUDE predictions,
       round(predictions['probability'][class], 3) as probability
 FROM My_classification_2024_04_15;
 ```
-<img src ="assets/image14.png">
+![assets/image14.png](assets/image14.png)
 
 Note that each row contains `CUSTOMER_ID`, so that we can understand which specific customers will subscribe _in addition_ to understanding in aggregate how many customers will subscribe.
 
 ### Step 3: Evaluating our Classifier and Understanding Feature Importances
-Duration: 6
 
 Now that we have built our classifier, we can begin to evaluate it to better understand both its performance as well as the primary factors within the dataset that were driving the predictions. Follow along below to see the various commands you may run to evalute your own classifier:
 
@@ -290,7 +283,7 @@ Let's first create our confusion matrix before looking at these model metrics.
 ```sql
 CALL bank_classifier!SHOW_CONFUSION_MATRIX();
 ```
-<img src ="assets/image19.png">
+![assets/image19.png](assets/image19.png)
 
 We can turn the output table above into a visualization by:
 1. Clicking on the "Chart" button found above the result set
@@ -298,7 +291,7 @@ We can turn the output table above into a visualization by:
 3. Select "Actual Class" for the Rows, and "Predicted Class" as the column
 4. Ensure that there are no aggregations selected, and "None" is selected for all the data.
 
-<img src ="assets/image26.png">
+![assets/image26.png](assets/image26.png)
 
 With our confusion matrix, we can calculate both precision, recall and other classifier metrics by running the following queries below. The first one will provide model metrics against each class (i.e True vs False for `CLIENT_SUBSCRIBED`), while the global evaluation metrics provides the averaged model metrics across classes. For more information on how these metrics are calculated, please refer to the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-powered/classification#metrics-in-show-evaluation-metrics) for further details. Note: The metrics below are calculated on a previously unseen holdout set that we had configured when first training the model.
 ```sql
@@ -306,7 +299,7 @@ With our confusion matrix, we can calculate both precision, recall and other cla
 CALL bank_classifier!SHOW_EVALUATION_METRICS();
 CALL bank_classifier!SHOW_GLOBAL_EVALUATION_METRICS();
 ```
-<img src ="assets/image9.png">
+![assets/image9.png](assets/image9.png)
 
 This image above calculates the overall precision, recall, f1, and AUC across all the classes (i.e the `GLOBAL_EVALUATION_METRICS`). In the case that you are working on a multi-class problem with more than two classes, looking at the `SHOW_EVALUATION_METRICS` will give you a better sense of how good the model is at predicting each one of the classes. A higher number here (i.e closer to 1) means that the model is more predictive of the outcomes.
 
@@ -319,7 +312,7 @@ The ML Classification function provides a method to do just this, and provides u
 ```sql
 CALL bank_classifier!SHOW_FEATURE_IMPORTANCE();
 ```
-<img src ="assets/image12.png">
+![assets/image12.png](assets/image12.png)
 
 For this particular dataset, it appears that `Duration`, `Euribor_3_month_rate`, and `Age` were the top three features. From the data dictionary, these features should make sense, as `Duration` stands for the amount of time the customer spent with the bank in their previous interaction. If they spent a longer time, it'd be likely indicative that they are strongly interested in the services the bank has to offer. Similarly, the macroeconomic variable `Euribor_3_month_rate` tells us the interest rate is highly indicative of a customer subscribing to the term deposit. If an interest rate is very high or low compared to the historical average, the customer may behave differently.
 
@@ -331,7 +324,6 @@ Now that we’ve built a model to understand whether specific customers are like
 To do this, we’ll train a forecasting model then use it to generate predictions – and evaluate the model to understand how accurate those predictions are likely to be. 
 
 ### Step 1: Visualize Data and Prepare for Forecasting
-Duration: 3
 
 In this scenario, we want to forecast the number of total subscriptions per day – for customers aged 40 and under, and aged 40 and up. This helps us better prepare for and market to our distinct customer segments. 
 
@@ -384,52 +376,50 @@ WHERE timestamp NOT IN (SELECT timestamp FROM forecast_training);
 ```
 
 ### Step 2: Use Snowflake AI & ML Studio 
-Duration: 3
 
 We’ll use the new Snowflake AI & ML Studio to set us up for forecasting. 
 
 First, navigate to Snowsight. Click “Create” next to the Forecasting button below. 
 
-<img src ="assets/cortex_landing.png">
+![assets/cortex_landing.png](assets/cortex_landing.png)
 
 Name your model `forecast_subscriptions_model`, or whatever suits you! Also, select a role and warehouse. See the in-context warehouse suggestions for help on warehouse selection. Note that we’re leaving “Generate evaluation metrics” checked, since we want to evaluate our model after we’ve trained it. You’ll see later that we turn this option _off_ when we are generating predictions on a recurring basis using Snowflake Tasks. 
 
-<img src ="assets/cortex_forecast_pg1.png">
+![assets/cortex_forecast_pg1.png](assets/cortex_forecast_pg1.png)
 
 Next, choose `forecast_training` from the database and schema you’ve been working in. A data preview should automatically appear – to help us sanity check that the data are as expected.
 
-<img src ="assets/cortex_forecast_pg2.png">
+![assets/cortex_forecast_pg2.png](assets/cortex_forecast_pg2.png)
 
 In the next two steps, choose `subscribed_count` as your target column. Your target column is the one you want the model to predict. And choose `timestamp` as your timestamp column.
 
-<img src ="assets/cortex_forecast_pg3.png">
-<img src ="assets/cortex_forecast_pg4.png">
+![assets/cortex_forecast_pg3.png](assets/cortex_forecast_pg3.png)
+![assets/cortex_forecast_pg4.png](assets/cortex_forecast_pg4.png)
 
 Now, select your “series identifier”, which in this case is `age_bin`. By using this option, we’re telling the forecast function to train separate models for each of the unique categories in `age_bin`. In this case, the forecast function will train two separate models for us, one for “40 and up” the other for “40 and under.” 
 
-<img src ="assets/cortex_forecast_pg5.png">
+![assets/cortex_forecast_pg5.png](assets/cortex_forecast_pg5.png)
 
 
 Confirm that you want to use all remaining columns in your table as features. In this case, we’re using `interest_rate` as a feature when we train our model. 
 
-<img src ="assets/cortex_forecast_pg6.png">
+![assets/cortex_forecast_pg6.png](assets/cortex_forecast_pg6.png)
 
 In the next few steps, you’ll pick the data the model should use as an input when it makes its predictions and indicate which columns hold timestamps and series identifiers, just like we did for the training data. Note that we _must_ provide input data at this prediction step because we asked the model to train not only on historical subscription counts (our “target”) but also on interest rates. Now, the model needs to know what interest rates are predicted to be in order to predict daily subscription counts accurately. 
 
-<img src ="assets/cortex_forecast_pg7.png">
-<img src ="assets/cortex_forecast_pg8.png">
-<img src ="assets/cortex_forecast_pg9.png">
+![assets/cortex_forecast_pg7.png](assets/cortex_forecast_pg7.png)
+![assets/cortex_forecast_pg8.png](assets/cortex_forecast_pg8.png)
+![assets/cortex_forecast_pg9.png](assets/cortex_forecast_pg9.png)
 
 Finally, we select our prediction interval width and name the table we want to store our predictions into. 
 
-<img src ="assets/cortex_forecast_pg10.png">
+![assets/cortex_forecast_pg10.png](assets/cortex_forecast_pg10.png)
 
 The results? A worksheet with all of the SQL you need to train your model, generate predictions and evaluate your results. 
 
-<img src ="assets/cortex_forecast_sql.png">
+![assets/cortex_forecast_sql.png](assets/cortex_forecast_sql.png)
 
 ### Step 3: Generate Predictions and Visualize 
-Duration: 3
 
 **Once you’ve run the steps under `SETUP` in your worksheet,** run this step in your worksheet to train your model: 
 ```sql
@@ -480,10 +470,9 @@ SELECT  ts as TIMESTAMP, NULL AS actual, forecast, lower_bound, upper_bound
 
 Run the above SQL then click on “Chart” in the results pane. Be sure to add `FORECAST` as a variable and set “Aggregation” to “None” for both `ACTUAL` and `FORECAST`. 
 
-<img src ="assets/image28.png">
+![assets/image28.png](assets/image28.png)
 
 ### Step 4: Evaluate the Model 
-Duration: 3
 
 Great, we’ve trained a model and used it to generate forecasts. Before we rely on this model to make recurring business decisions, let’s see how well it performs. 
 
@@ -493,12 +482,12 @@ To do this, we’ll inspect the model’s accuracy metrics by calling the below 
 CALL forecast_subscriptions_model!SHOW_EVALUATION_METRICS();
 ```
 
-The results include separate evaluation metrics for _both_ age bins we provided to the model. The results also list out various metrics we can use to understand our model’s performance. We’ll look at MAPE, Mean Absolute Error, which represents the average absolute error between actual and predicted values. At a high level, we can interpret this as a representation of how accurate the model’s predictions will be. The lower the better.  
+The results include separate evaluation metrics for _both_ age bins we provided to the model. The results also list out various metrics we can use to understand our model’s performance. We’ll look at MAPE and Mean Absolute Error, which represents the average absolute error between actual and predicted values. At a high level, we can interpret this as a representation of how accurate the model’s predictions will be. The lower the better.  
 
 The results we get indicate that, on average, our forecasts are off by 3 to six daily sales. 
 
-<img src ="assets/image23.png">
-<img src ="assets/image2.png">
+![assets/image23.png](assets/image23.png)
+![assets/image2.png](assets/image2.png)
 
 Next, we’ll inspect the relative importance of the features the model auto-generated and the feature we provided (interest rate). 
 ```sql
@@ -508,12 +497,11 @@ CALL forecast_subscriptions_model!EXPLAIN_FEATURE_IMPORTANCE();
 
 The results indicate that `aggregated_endogenous_trend_features` are the most important features to the model. These include rolling averages of our historical subscriptions (e.g., a 7-day rolling average of daily subscriptions). Our `interest_rate` feature, which we provided to the model, is the next most influential feature for generating prediction. The other features the model auto-generates are also listed in this table, including lags (e.g., a 7-day lag of daily subscriptions, calendar variables like day of quarter). 
 
-<img src ="assets/image15.png">
+![assets/image15.png](assets/image15.png)
 
 We now know how well our model is likely to perform (accuracy) and what is influencing our model’s predictions! 
 
 ### Step 5: Use Tasks to Automate Training and Prediction
-Duration: 3
 
 Now that we’ve gotten comfortable with our model, we can schedule our model to train and predict on a regular basis. This is helpful when our business needs predictions each week to help make planning decisions. These steps are not included in the worksheet you produced, so you’ll need to copy these into your worksheet.
 
@@ -549,7 +537,7 @@ AS
     END; 
 ```
 
-If you’d like to test your task, you can run EXECUTE TASK. To suspend or drop your task, run the ALTER and DROP commands below. 
+If you’d like to test your task, you can run `EXECUTE TASK`. To suspend or drop your task, run the `ALTER` and `DROP` commands below. 
 
 ```sql
 -- Execute your task immediately to confirm it is working. 
@@ -562,7 +550,6 @@ DROP TASK predict_task;
 ```
 
 ## Conclusion and Resources
-Duration: 1
 
 You did it! You've successfully built and evaluated Snowflake ML Classification and Forecast models!
 
@@ -576,7 +563,7 @@ As a review, in this guide we covered how you are able to:
 * How to build your own classification model 
 * How to build your own forecasting model 
 * How to evaluate those models and use them for prediction 
-* How to apply abstract concepts like classification and forecasting to real world problems 
+* How to apply abstract concepts like classification and forecasting to real-world problems 
 
 ### Resources
 - Classification [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/classification), alongside the [classification syntax](https://docs.snowflake.com/sql-reference/classes/classification)
