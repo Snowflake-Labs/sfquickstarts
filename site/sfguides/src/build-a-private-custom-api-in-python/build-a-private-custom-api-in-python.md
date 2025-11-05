@@ -265,7 +265,7 @@ SHOW SERVICES;
 
 #### Get started with Ockam
 
-[Signup for Ockam](https://www.ockam.io/signup) and run the following commands in the codespace terminal:
+[Ockam](https://www.ockam.io) and run the following commands in the codespace terminal:
 
 ```sh
 # Install Ockam Command
