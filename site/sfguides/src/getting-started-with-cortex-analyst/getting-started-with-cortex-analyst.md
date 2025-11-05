@@ -33,7 +33,7 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
+  
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst)
 - (Optional) [Python >= 3.9, <= 3.11 installed](https://www.python.org/downloads/) to run the OSS Semantic Model Generator
@@ -48,7 +48,7 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
 
-> aside positive
+
 >
 > MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst).
 
@@ -136,7 +136,7 @@ These can also be found in the [**create_snowflake_objects.sql**](https://github
 <!-- ------------------------ -->
 ## Ingest the Revenue Data and Semantic Model YAML
 
-> aside positive
+
 >
 > MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst).
 

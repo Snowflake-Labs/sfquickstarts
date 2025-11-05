@@ -1,26 +1,22 @@
-summary: This is a sample Snowflake Guide
+summary: This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.  
 id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
 status: Hidden
+author:  Snowflake DevRel Team
 
-authors: Guide Author Name (Github User Name)
+# Snowflake Guide Basics
 
-# Snowflake Guide Template
-
-
-<!-- ------------------------ -->
 ## Components of a Guide
 
-<!-- ------------------------ -->
 ### Overview 
 
-Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own quickstarts, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).
 
-Previously, we had Quickstarts and Solutions which are now combined into a single "Guide" at www.snowflake.com/en/developers/guides page.  Going forward, we encourage users to think along creating **logged out experiences**  or **topic pages.** A few examples of these pages are:
+Previously, we had Quickstarts and Solutions which are now combined into a single page for "Guides" at [www.snowflake.com/en/developers/guides](https://www.snowflake.com/en/developers/guides/) page.  Going forward, we encourage users to think along creating **logged out experiences**  or **topic pages.** A few examples of these pages are:
 
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)

@@ -6,7 +6,7 @@ summary: Get started with Cortex Agents
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents
+open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents/&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
 # Getting Started with Cortex Agents
@@ -173,7 +173,7 @@ Let's run the streamlit and call the API locally:
 **Step 3.** Find your account URL in Snowsight: Click on your profile (bottom left corner) » Account » View account details.
 
 **Step 4.** In the cloned repo run the following commands (replacing the PAT and ACCOUNT_URL):
-```
+```python
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt

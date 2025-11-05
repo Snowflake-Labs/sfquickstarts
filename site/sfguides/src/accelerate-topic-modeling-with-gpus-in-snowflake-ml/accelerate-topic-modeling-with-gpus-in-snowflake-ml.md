@@ -1,7 +1,7 @@
 author: Chanin Nantasenamat, Vinay Sridhar, Lucy Zhu
 id: accelerate-topic-modeling-with-gpus-in-snowflake-ml
 summary: This guide covers how to use NVIDIA's cuML and cuDF libraries, now pre-installed in Snowflake ML, to accelerate scikit-learn and pandas workflows with zero code changes.
-categories: snowfalke-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, 
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, 
 environments: web
 language: en
 status: Published
