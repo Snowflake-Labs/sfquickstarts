@@ -19,7 +19,7 @@ compliant Snowflake environment by implementing the principles of the
 recommendations provided within this framework are based on the **Shared
 Responsibility Model** and focus on the security controls that are the
 customer's responsibility. The goal is to minimize security risks by
-securing the Snowflake perimeter, using the principle of hell least privilege
+securing the Snowflake perimeter, using the principle of least privilege
 for data access, responsibly deploying AI, and preparing for security
 incidents.
 
