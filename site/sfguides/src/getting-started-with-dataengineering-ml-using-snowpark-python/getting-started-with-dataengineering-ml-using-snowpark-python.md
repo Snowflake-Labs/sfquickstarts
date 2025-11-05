@@ -85,7 +85,6 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
-> aside positive
 > IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 
 <!-- ------------------------ -->
@@ -96,7 +95,7 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables and load data from Amazon S3.
 
-> aside positive
+
 > IMPORTANT:
 >
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -182,7 +181,7 @@ VALUES
 
 Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/setup.sql) in Snowsight and run all SQL statements to create the objects and load data from AWS S3.
 
-> aside positive
+
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
@@ -373,7 +372,7 @@ You can also enable push notifications to a cloud messaging service when errors 
 ## Machine Learning
 
 
-> aside negative
+
 > PREREQUISITE: Successful completion of steps outlined under [Data Engineering](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb).
 
 The Notebook linked below covers the following machine learning tasks.

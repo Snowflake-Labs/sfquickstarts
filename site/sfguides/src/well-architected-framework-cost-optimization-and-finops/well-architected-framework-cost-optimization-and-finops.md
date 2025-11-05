@@ -7,9 +7,6 @@ environments: web
 status: Published 
 
 
-
-
-
 # Cost Optimization
 
 ## Overview
@@ -221,8 +218,6 @@ organizations can move the conversation with leadership from cost
 oversight to demonstrable value realization, positioning Snowflake as a
 clear enabler of enterprise growth and innovation.
 
-#### 
-
 #### Trade-off analysis
 
 Defining SLAs or explicit business needs ensures that Snowflake
@@ -242,7 +237,7 @@ within acceptable cost-performance boundaries. All design decisions have
 trade-offs, and explicitly calling out the expected outcomes leads to
 streamlined decision-making in the future when outcomes are reviewed.
 
-#### ![Trade-off Analysis](assets/image1.png)
+![Trade-off Analysis](assets/image1.png)
 
 #### Measure business value KPIs baseline
 
@@ -364,7 +359,6 @@ parameters. High-level categories are below.
   Snowflake accounts. See the latest terms and more details
   [<u>here</u>](/en/legal/).
 
-#### 
 
 #### Establish a consistent and granular cost attribution strategy
 
@@ -545,124 +539,16 @@ contains two key schemas for this purpose:
 [<u>ORGANIZATION_USAGE</u>](https://docs.snowflake.com/en/sql-reference/organization-usage)
 (for a consolidated view across all accounts).
 
-<table>
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 27%" />
-<col style="width: 28%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr>
-<th><strong>Metric Category</strong></th>
-<th><strong>Description</strong></th>
-<th><strong>Key Metrics</strong></th>
-<th><strong>Primary Data Sources</strong></th>
-</tr>
-<tr>
-<th>Compute &amp; query metrics</th>
-<th>Understand the cost of query execution, warehouse consumption, and
-overall compute health. These are often the most dynamic and largest
-portion of your spend.</th>
-<th><p><strong>Credits used:</strong> Total credits consumed by
-individual warehouses.</p>
-<p><strong>Query performance:</strong> Execution time, bytes scanned,
-and compilation time for specific queries or parameterized query
-hashes.</p>
-<p><strong>Warehouse health:</strong> % idle time, queueing, spilling,
-and concurrency to identify under- or over-provisioned
-warehouses.</p></th>
-<th><p>ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY: Provides hourly credit
-usage for individual virtual warehouses, including attributed and
-compute credits to compute idle time %.</p>
-<p>ACCOUNT_USAGE.QUERY_HISTORY: Offers detailed data on every query
-executed, including performance metrics and associated
-warehouses.</p></th>
-</tr>
-<tr>
-<th>Storage metrics</th>
-<th>Insight into costs associated with compressed data, including active
-data, historical data (Time Travel), and disaster recovery data
-(Fail-safe).</th>
-<th><p><strong>Storage volume:</strong> The average monthly compressed
-data volume stored.</p>
-<p><strong>Inactive storage:</strong> Bytes consumed by Time Travel and
-Fail-safe data, which are common areas for review for optimization.</p>
-<p><strong>Storage growth rates:</strong> Tracking the rate of increase
-to forecast future storage costs</p>
-<p><strong>Table access:</strong><br />
-Review tables that are stale or unused across a set period of
-time.</p></th>
-<th><p>ACCOUNT_USAGE.TABLE_STORAGE_METRICS: Details table-level storage
-utilization, including active, Time Travel, and Fail-safe bytes.<br />
-<br />
-ACCOUNT_USAGE.DATABASE_STORAGE_USAGE_HISTORY: Provides daily database
-storage usage.</p>
-<p>ACCOUNT_USAGE.ACCESS_HISTORY: Records object access patterns to
-identify unused tables or views that can be archived or
-deleted.</p></th>
-</tr>
-<tr>
-<th>Serverless &amp; AI metrics</th>
-<th>Track the consumption of credits by automated, Snowflake-managed
-services and AI features.</th>
-<th><p><strong>Credits used by service:</strong> Consumption broken down
-by specific services like Snowpipe, Automatic Clustering, Search
-Optimization, or Cortex AI features.</p>
-<p><strong>Cost per credit-consuming events:</strong> Identify specific
-events that trigger high credit usage and develop a cost per event
-within these services (e.g. Cost per DML statement for Auto
-Clustering).</p></th>
-<th><p>ACCOUNT_USAGE.&lt;Serverless Feature&gt;_HISTORY: Specific view
-bespoke to each serverless feature’s usage history.</p>
-<p>ORGANIZATION_USAGE.METERING_DAILY_HISTORY: Provides daily credit
-usage categorized by service type (e.g., Compute, Storage, Snowpipe, AI
-Services).<br />
-<br />
-Specific views for AI services, such as CORTEX_FUNCTIONS_USAGE_HISTORY,
-CORTEX_ANALYST_USAGE_HISTORY, and DOCUMENT_AI_USAGE_HISTORY.</p></th>
-</tr>
-<tr>
-<th>Data transfer</th>
-<th>Track the cost of moving data into (ingress) and out of (egress)
-Snowflake. Costs are typically incurred when data crosses cloud provider
-regions or different cloud providers.</th>
-<th><strong>Bytes transferred:</strong> The total volume of data moved
-between regions or clouds, which is the basis for billing.<br />
-<br />
-<strong>Transfer cost by destination:</strong> Analyzing costs based on
-the target region or cloud to identify expensive data paths.<br />
-<br />
-<strong>Replication vs. egress:</strong> Differentiating costs between
-data moved for replication/failover and data unloaded for external
-use.</th>
-<th><p>ACCOUNT_USAGE.DATA_TRANSFER_HISTORY: Review data transfer charges
-due to individual data transfer causes.</p>
-<p>ORGANIZATION_USAGE.DATA_TRANSFER_DAILY_HISTORY: Organization-wide
-Daily view of Data Transfer charges across all accounts in an
-organization. Able to see all charges regardless of transfer
-type.</p></th>
-</tr>
-<tr>
-<th>Financial metrics</th>
-<th>Translate credit consumption into currency and provide a high-level,
-organization-wide view of spending.</th>
-<th><strong>Overall dollar spend:</strong> Daily credit usage converted
-into your billing currency.<br />
-<br />
-<strong>Spend by service type:</strong> Breakdown of costs by Compute,
-Storage, and various services across the entire organization.</th>
-<th><p>ORGANIZATION_USAGE.USAGE_IN_CURRENCY_DAILY: Provides daily credit
-usage and converts it into currency, which is paramount for financial
-reconciliation. Also includes non-resource-based billing (e.g. rebates
-and Priority Support).</p>
-<p>ORGANIZATION_USAGE.RATE_SHEET_DAILY: Details adjusted billing prices
-based on negotiated capacity discounts across service types.</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+
+| Metric Category | Description | Key Metrics | Primary Data Sources |
+|---|---|---|---|
+| Compute & query metrics | Understand the cost of query execution, warehouse consumption, and overall compute health. These are often the most dynamic and largest portion of your spend. | - Credits used: total credits by warehouse<br>- Query performance: execution time, bytes scanned, compilation time, parameterized query hash<br>- Warehouse health: % idle time, queueing, spilling, concurrency | - `ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY` (hourly warehouse credit usage)<br>- `ACCOUNT_USAGE.QUERY_HISTORY` (detailed query metrics and associated warehouses) |
+| Storage metrics | Costs for compressed data, including active data, Time Travel, and Fail‑safe. | - Storage volume (avg monthly compressed GB/TB)<br>- Inactive storage (Time Travel, Fail‑safe)<br>- Storage growth rates<br>- Table access (stale/unused) | - `ACCOUNT_USAGE.TABLE_STORAGE_METRICS`<br>- `ACCOUNT_USAGE.DATABASE_STORAGE_USAGE_HISTORY`<br>- `ACCOUNT_USAGE.ACCESS_HISTORY` |
+| Serverless & AI metrics | Track credit consumption by Snowflake‑managed services and AI features. | - Credits used by service<br>- Cost per credit‑consuming events | - `ACCOUNT_USAGE.<Serverless Feature>_HISTORY`<br>- `ORGANIZATION_USAGE.METERING_DAILY_HISTORY`<br>- AI views such as `CORTEX_FUNCTIONS_USAGE_HISTORY`, `CORTEX_ANALYST_USAGE_HISTORY`, `DOCUMENT_AI_USAGE_HISTORY` |
+| Data transfer | Cost of moving data into (ingress) and out of (egress) Snowflake, especially cross‑region/cloud. | - Bytes transferred<br>- Transfer cost by destination<br>- Replication vs. egress | - `ACCOUNT_USAGE.DATA_TRANSFER_HISTORY`<br>- `ORGANIZATION_USAGE.DATA_TRANSFER_DAILY_HISTORY` |
+| Financial metrics | Translate credits to currency and provide org‑wide spend view. | - Overall dollar spend (daily)<br>- Spend by service type | - `ORGANIZATION_USAGE.USAGE_IN_CURRENCY_DAILY`<br>- `ORGANIZATION_USAGE.RATE_SHEET_DAILY` |
+
+
 
 **Normalize consumption with unit economic metrics**
 
@@ -707,8 +593,6 @@ Some common examples include:
 > Customers can track credits (warehouse) per thousand queries within a
 > use case to see how efficiency has evolved over time and determine if
 > they are achieving economies of scale.
-
-#### 
 
 **Business metrics (business KPIs)**
 
@@ -1077,8 +961,6 @@ usage and prevent excessive costs.
     queries you want to cancel, as you have full control over defining
     the stored procedure logic.
 
-<!-- -->
-
 - **Auto-suspend policies**: Auto-suspend policies are a foundational
   cost control for virtual warehouses, automatically suspending a
   warehouse after a defined period of inactivity. By default, all
@@ -1268,7 +1150,7 @@ effective governance:
 
 #### Overview
 
-#### The Optimization principle of the Cost Optimization framework focuses on continuously improving the efficiency of your Snowflake resources. This includes optimizing compute, storage, data transfer, and managed services by understanding their usage and identifying areas for improvement. The frequency of optimization efforts should be guided by the metrics established in the Visibility principle and monitored through the Control principle. All recommendations within this Optimize principle are to be reviewed on a regular cadence and balanced with business and performance needs.
+The Optimization principle of the Cost Optimization framework focuses on continuously improving the efficiency of your Snowflake resources. This includes optimizing compute, storage, data transfer, and managed services by understanding their usage and identifying areas for improvement. The frequency of optimization efforts should be guided by the metrics established in the Visibility principle and monitored through the Control principle. All recommendations within this Optimize principle are to be reviewed on a regular cadence and balanced with business and performance needs.
 
 #### Recommendations
 
@@ -1658,7 +1540,7 @@ Minimizing data transfer costs for your workloads heavily depends on the
 architecture of your data pipelines and applications. Adhere to the
 following best practices to achieve this:
 
-- **Unloading Ddta:**
+- **Unloading Data:**
 
   - **Compress data:** When using the [<u>COPY INTO
     \<location\></u>](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location)
