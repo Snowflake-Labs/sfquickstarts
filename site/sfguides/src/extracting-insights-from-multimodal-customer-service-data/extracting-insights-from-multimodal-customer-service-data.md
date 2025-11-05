@@ -3,14 +3,13 @@ summary: Snowflake Cortex AI SQL: Extracting Insights from Multimodal Customer S
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: James Cha-Earley
 
 # Snowflake Cortex AI SQL: Extracting Insights from Multimodal Customer Service Data
-<!-- ------------------------ -->
+
 ## Overview
-Duration: 5
 
 In this quickstart, you'll learn how to build a comprehensive customer service analytics system that processes audio, text, and document data using Snowflake Cortex AI functions. This application demonstrates how to extract insights from multimodal data sources including call recordings, chat logs, support tickets, and PDF documents.
 
@@ -41,7 +40,6 @@ A production-ready customer service analytics system that:
   - [Cortex AI Functions](https://docs.snowflake.com/en/sql-reference/functions-ai)
 
 ## Setup Environment
-Duration: 10
 
 ### Run Setup Script
 
@@ -67,7 +65,6 @@ Duration: 10
    * Click on Create button
 
 ## Process Audio with AI Functions
-Duration: 20
 
 The Notebook demonstrates how to chain multiple Snowflake Cortex AI functions together to analyze customer service calls. This section covers the complete audio processing pipeline.
 
@@ -119,7 +116,6 @@ After processing, query the transcription_results table to see all analyzed call
 > - File format compatibility
 
 ## Process Documents and Text Data
-Duration: 15
 
 ### Parse PDF Documents
 
@@ -162,7 +158,6 @@ The final analysis uses AI_COMPLETE to semantically compare support tickets with
 The query creates a comprehensive flagging system that identifies issue misalignments, category mismatches, and product inconsistencies. This cross-validation ensures data consistency across customer service systems and helps identify where processes need improvement.
 
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You've successfully built a comprehensive multimodal customer service analytics system using Snowflake Cortex AI functions. Using Snowflake Notebooks, you've implemented a solution that transcribes audio calls, translates conversations, analyzes sentiment, categorizes issues, generates summaries, parses documents, and validates data quality - all while keeping your data secure within Snowflake's environment.
 
