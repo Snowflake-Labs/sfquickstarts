@@ -148,9 +148,9 @@ In all of the following examples, notice the highlighted clip start and end time
 
 **Search text**: `snowflake intelligence`
 
-![Search blender foundation](search_snowflake_intelligence.png)
+![Search blender foundation](assets/search_snowflake_intelligence.png)
 
-![Clip snowflake intelligence](clip_snowflake_intelligence.png)
+![Clip snowflake intelligence](assets/clip_snowflake_intelligence.png)
 
 ---
 
@@ -158,9 +158,9 @@ In all of the following examples, notice the highlighted clip start and end time
 
 **Search text**: `blender foundation`
 
-![Search blender foundation](search_blender_foundation.png)
+![Search blender foundation](assets/search_blender_foundation.png)
 
-![Clip blender foundation](clip_blender_foundation.png)
+![Clip blender foundation](assets/clip_blender_foundation.png)
 
 ---
 
@@ -168,9 +168,9 @@ In all of the following examples, notice the highlighted clip start and end time
 
 **Search text**: `bunny`
 
-![Search bunny](search_bunny.png)
+![Search bunny](assets/search_bunny.png)
 
-![Clip blender foundation](clip_bunny.png)
+![Clip blender foundation](assets/clip_bunny.png)
 
 ---
 
