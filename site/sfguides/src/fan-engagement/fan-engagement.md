@@ -90,7 +90,7 @@ Now you'll upload the downloaded files to 2 stages via the Snowsight UI.
    - Select `Switch Role` → `FAN_ENGAGEMENT`
 
 2. **Navigate to Database Explorer:**
-   - Go to `Catalog` → `Databases` → `FAN_ENGAGEMENT_DB` → `FAN_ENGAGEMENT` schema
+   - Go to `Catalog` → `Database Explorer` → `FAN_ENGAGEMENT_DB` → `FAN_ENGAGEMENT` schema
 
 3. **Upload to USOPC_DATA (3 files):**
    - Click `Stages` in the left sidebar
