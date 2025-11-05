@@ -31,8 +31,7 @@ The end-to-end workflow will look like this:
 
 ### Prerequisites
 - Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
-- Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account with access to Bedrock AgentCore and knowledge of using the AWS CLI.
-- An IDE like Visual Studio .
+- Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account with access to Bedrock AgentCore.
 - A Subscription to a Claude Sonnet model in AWS Marketplace. You can complete this by going to AWS marketplace console -> discover products -> search for claude sonnet 4 -> view purchase options -> subscribe.
 
 Once subscribed to a model it will look like this:
@@ -228,33 +227,14 @@ Once complete make sure to also retrieve your **Account Locator** by going to th
 <!-- ------------------------ -->
 ## Set Up AgentCore
 
-Head to your IDE where you cloned the repo and connect to the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-using.html)
+Let's use the CloudFormation service in the AWS console. 
+- Select **Create stack**.
+- Select **upload from template file** then **choose file** and select the **ec2-agentcore-with-iam-user.yaml** and select **Next**.
+- Enter **agentcore-pokemon-demo** for the Stack name then select any public Subnet for **SubnetId** or a private subnet should have a nat gateway for egress traffic. Select **Next**.
+- Leave as-is and check that you acknowledge IAM resources with custom names will be created.
+- Select **Submit**.
 
-Deploy the Cloud Formation Template by running the below code
-
-```bash
-
-VPC_ID=$(aws ec2 describe-vpcs --filters "Name=is-default,Values=true" --query 'Vpcs[0].VpcId' --output text)
-
-SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[0].SubnetId' --output text)
-
-REGION=$(aws configure get region)
-
-echo "Deploying to VPC: $VPC_ID, Subnet: $SUBNET_ID, Region: $REGION"
-
-aws cloudformation create-stack \
-  --stack-name agentcore-pokemon-demo \
-  --template-body file://ec2-agentcore-with-iam-user.yaml \
-  --parameters \
-    ParameterKey=VpcId,ParameterValue=$VPC_ID \
-    ParameterKey=SubnetId,ParameterValue=$SUBNET_ID \
-    ParameterKey=UserName,ParameterValue=AgentCoreAdmin \
-    ParameterKey=PlaceIndexName,ParameterValue=agentcore-index \
-  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
-  --region $REGION
-```
-
-After several minutes, go to your AWS console and check that the CFT deployed.
+After several minutes, the CFT will be deployed.
 
 ![](assets/cft.png)
 
@@ -338,7 +318,5 @@ This quickstart is just that, a quick way to get you started with using AgentCor
 There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together:
 
 - [Snowflake Cortex](/en/data-cloud/cortex/)
-
-- [Amazon Q](https://aws.amazon.com/q/?trk=c570e8a2-ec3c-4968-baa4-f8537e37dd1d&sc_channel=ps&s_kwcid=AL!4422!10!71949557907688!71950102400240&ef_id=07cc246a6d4218358de8430ee23fc18e:G:s&msclkid=07cc246a6d4218358de8430ee23fc18e)
-
+- [Amazon Bedrock AgentCore](https://aws.amazon.com/bedrock/agentcore/)
 - [Amazon Bedrock and Snowflake Cortex](https://catalog.us-east-1.prod.workshops.aws/workshops/2d4e5ea4-78c8-496f-8246-50d8971414c9/en-US/01-overview)
