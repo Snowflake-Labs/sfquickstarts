@@ -297,7 +297,7 @@ Keep base tables secured and expose consumers to policy‑protected views.
 Separate administrative personas from analytical personas to avoid
 privilege creep and ensure least privilege.
 
-**Assessment prompts **
+**Assessment Prompts**
 Which roles can view clear PII, and under what context? How are
 exceptions time‑boxed, tracked, and reviewed?
 
