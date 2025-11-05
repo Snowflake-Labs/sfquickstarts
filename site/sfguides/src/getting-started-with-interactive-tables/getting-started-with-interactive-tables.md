@@ -1,15 +1,16 @@
 author: Chanin Nantasenamat
 id: getting-started-with-interactive-tables
 summary: This guide demonstrates how to set up and use Snowflake's Interactive Warehouses and Tables to achieve sub-second query performance.
-categories: snowfalke-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+language: en
 environments: web
 status: Hidden
 language: en
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 
 # Getting Started with Snowflake Interactive Tables
-<!-- ------------------------ -->
+
 ## Overview
 
 
@@ -38,7 +39,6 @@ You will build a complete, functioning interactive data environment in Snowflake
 - Familiarity with data warehousing and performance concepts.
 - A Snowflake role with privileges to create warehouses and tables (*i.e.*, `SYSADMIN` is used in the notebook).
 
-<!-- ------------------------ -->
 ## Understand Interactive Warehouses and Interactive Tables
 
 
@@ -49,12 +49,10 @@ Think of them as a high-performance pair. Interactive tables are structured for 
 ![](assets/interactive-tables-and-warehouses.png)
 
 ### Interactive Warehouses
-An interactive warehouse tunes the Snowflake engine specially for low-latency, interactive workloads. It leverages additional metadata and index information in the underlying interactive tables to accelerate queries. This type of warehouse is optimized to run continuously, serving high volumes of concurrent queries. All interactive warehouses run on the latest generation of hardware.
+An interactive warehouse tunes the Snowflake engine specially for low-latency, interactive workloads. This type of warehouse is optimized to run continuously, serving high volumes of concurrent queries. All interactive warehouses run on the latest generation of hardware and can only query interactive tables.
 
 ### Interactive Tables
-You can only query these tables through interactive warehouses. Interactive tables have different methods for data ingestion and support a more limited set of SQL statements and query operators than standard Snowflake tables.
-
-An interactive table stores additional metadata and index information when created. The additional metadata and index information is compressed and thus does not have a substantial impact on the size of the table.
+Interactive tables have different methods for data ingestion and support a more limited set of SQL statements and query operators than standard Snowflake tables.
 
 ### Use cases
 Snowflake interactive tables are optimized for fast, simple queries when you require consistent low-latency responses. Interactive warehouses provide the compute resources required to serve these queries efficiently. Together, they enable use cases such as live dashboards, data-powered APIs, and serving high-concurrency workloads.
@@ -63,16 +61,17 @@ Snowflake interactive tables are optimized for fast, simple queries when you req
 
 Furthermore, this pairing of interactive warehouses and tables is ideal for a range of specific, demanding use cases where sub-second query performance is paramount. In industries like ad-tech, IoT, and video analytics, it can power near real-time decisioning on massive event streams. For application development, it enables highly responsive data-powered APIs and in-app user behavior analytics. It's also perfectly suited for internal analytics, providing the speed needed for live dashboards, BI acceleration, and critical observability/APM systems that require high-throughput alerting.
 
+
 ### Limitations
 
-The simple queries that work best with interactive tables are usually `SELECT` statements with selective `WHERE` clauses, optionally including a `GROUP BY` clause on a few dimensions. Avoid queries involving joins or large subqueries. The performance of queries that use other features, such as window functions, is highly dependent on the data shapes that you are querying.
+The queries that work best with interactive tables are usually `SELECT` statements with selective `WHERE` clauses, optionally including a `GROUP BY` clause on a few dimensions.
 
 Here are some limitations of interactive warehouses and interactive tables:
 - An interactive warehouse is always up and running by design. You can manually suspend the warehouse, but expect significant query latency when you resume the warehouse.
-- Snowflake interactive tables don’t support ETL, long-running queries (more than 15 minutes), or data manipulation language (DML) commands such as `UPDATE` and `DELETE`.
-- Currently, queries that require JOIN aren’t supported.
+- Snowflake interactive tables don’t support ETL, long-running queries (more than 5 seconds), or data manipulation language (DML) commands such as `UPDATE` and `DELETE`.
+- Do modify data, you should update the data in source tables and either fully replace an interative table with new version, or use a dynamic table style incremental refresh by setting TARGET_LAG
 - You can't query standard Snowflake tables from an interactive warehouse. To query both standard tables and interactive tables in the same session, run `USE WAREHOUSE` to switch to the appropriate warehouse type depending on the type of table.
-- You can't run `CALL` commands to call stored procedures.
+- You can't run `CALL` commands to call stored procedures through interactive warehouse
 
 <!-- ------------------------ -->
 ## Setup
@@ -81,6 +80,7 @@ Here are some limitations of interactive warehouses and interactive tables:
 
 #### Optional: Create warehouse
 
+In order to create an interactive table and fill the table with data, you'll need to use a standard warehouse.
 You can use any existing warehouse or create a new one, here we'll create a new warehouse called `WH`:
 
 ```sql
@@ -214,7 +214,7 @@ def run_and_measure(count, mode):
                 time_taken = time.time() - t0
                 timings.append(time_taken)
                 
-    return timings[1:]
+    return timings
     
 def plot_data(data, title, time_taken, color='blue'):
     # Separate titles and counts
@@ -233,10 +233,6 @@ def plot_data(data, title, time_taken, color='blue'):
     #plt.tight_layout()
     plt.show()
 
-# Separate titles and counts
-#titles = ['Run 1', 'Run 2', 'Run 3', 'Run 4', 'Run 5', 'Run 6', 'Run 7', 'Run 8']
-counts_std = [0.1,0.15, 0.09, 0.12, 0.11, 0.13, 0.10, 0.14]
-counts_iw = [0.05, 0.08, 0.07, 0.06, 0.09, 0.08, 0.07, 0.06]
 ```
 
 ### Setting up connection to a Snowflake deployment and verifying versions
@@ -246,38 +242,12 @@ Here, we'll connect to Snowflake and verify the version and confirm that key int
 ```python
 config = { }
 cursor = snow.connect(**config).cursor()
-execute_and_print('select current_version();')
-execute_and_print("show parameters like 'ENABLE_INTERACTIVE_WAREHOUSES' for account;")
-execute_and_print("show parameters like 'ENABLE_INTERACTIVE_TABLE_DDL' for account;")
-execute_and_print("show parameters like 'SHOW_INCLUDE_INTERACTIVE_TABLES' for account;")
+
 query = """ USE DATABASE MY_DEMO_DB; """
 execute_and_print(query)
 
 query = """ USE ROLE SYSADMIN;  """
 execute_and_print(query)
-```
-
-This should yield an output similar to the following:
-
-```
--------------------------------  
-9.26.50 b20250903184849fccf20d9  
--------------------------------  
------------------------------  ----  -----  -------  --------------------------------------------------------------------  -------  ------  ------------------------------------  -----------------------------  ------  --------------    ----------------------------------  
-ENABLE_INTERACTIVE_WAREHOUSES  true  false  ACCOUNT  Enables interactive warehouses with simplified configuration options  BOOLEAN  268037  01bed41c-0000-d4fd-0000-00041e60df12  2025-09-04 08:56:54.919 -0700  294796  qc-17689534226    cmcelhanney ClickNoMore validation  
------------------------------  ----  -----  -------  --------------------------------------------------------------------  -------  ------  ------------------------------------  -----------------------------  ------  --------------    ----------------------------------  
-----------------------------  ----  -----  -------  -----------------------------------------------------------------------------------------------------------  -------  ------  ------------------------------------  -----------------------------  ------  --------------    ----------------------------------  -------------------------  
-ENABLE_INTERACTIVE_TABLE_DDL  true  false  ACCOUNT  If true, enables the DDL for Interactive Table, which allows users to create and manage interactive tables.  BOOLEAN  268037  01bed41c-0000-d4fd-0000-00041e60df12  2025-09-04 08:56:54.924 -0700  294796  qc-17689534226    cmcelhanney ClickNoMore validation  FEATURE_INTERACTIVE_TABLE  
-----------------------------  ----  -----  -------  -----------------------------------------------------------------------------------------------------------  -------  ------  ------------------------------------  -----------------------------  ------  --------------    ----------------------------------  -------------------------  
--------------------------------  ----  -----  -------  -----------------------------------------------------------------------------------------  -------  ------  ------------------------------------  -----------------------------  ------  --------------    ----------------------------------  -------------------------  
-SHOW_INCLUDE_INTERACTIVE_TABLES  true  false  ACCOUNT  If true, include interactive tables in SHOW TABLES/OBJECTS with the is_interactive column  BOOLEAN  268037  01bed41c-0000-d4fd-0000-00041e60df12  2025-09-04 08:56:54.923 -0700  294796  qc-17689534226    cmcelhanney ClickNoMore validation  FEATURE_INTERACTIVE_TABLE  
--------------------------------  ----  -----  -------  -----------------------------------------------------------------------------------------  -------  ------  ------------------------------------  -----------------------------  ------  --------------    ----------------------------------  -------------------------  
---------------------------------  
-Statement executed successfully.  
---------------------------------  
---------------------------------  
-Statement executed successfully.  
---------------------------------
 ```
 
 ### Create an interactive warehouse
@@ -307,9 +277,6 @@ This should yield the following output:
 --------------------------------------------------------------  
 INTERACTIVE WAREHOUSE INTERACTIVE_DEMO_B successfully created.  
 --------------------------------------------------------------  
---------------------------------  
-Statement executed successfully.  
---------------------------------
 ```
 
 ### Create an interactive table
@@ -369,9 +336,7 @@ Running the above statement should yield the following:
 --------------------------------  
 Statement executed successfully.  
 --------------------------------  
---------------------------------  
-Statement executed successfully.  
---------------------------------
+...
 ```
 
 ### Run queries with interactive warehouse
@@ -518,4 +483,4 @@ In this guide, we explored how to address the challenge of low-latency, near rea
 ### Related Resources
 
 Documentation:
-- [Snowflake interactive tables and interactive warehouses](https://docs.snowflake.com/LIMITEDACCESS/interactive)
+- [Snowflake interactive tables and interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive)

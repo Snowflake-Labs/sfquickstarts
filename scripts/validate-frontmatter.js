@@ -45,6 +45,19 @@ for (const filePath of files) {
     const fm = matter(content);
     id = fm?.data?.id;
   } catch {}
+  // Fallback: scan first ~120 lines for a loose 'id:' key if YAML delimiters are missing
+  if (!id) {
+    const headLines = content.split(/\r?\n/, 120);
+    const idx = headLines.findIndex((l) => /^\s*id\s*:/i.test(l));
+    if (idx !== -1) {
+      let after = headLines[idx].replace(/^\s*id\s*:/i, '').trim();
+      // strip surrounding quotes if present
+      if (/^".*"$/.test(after) || /^'.*'$/.test(after)) {
+        after = after.slice(1, -1);
+      }
+      id = after;
+    }
+  }
 
   const fileName = path.basename(filePath, path.extname(filePath));
   const folderName = path.basename(path.dirname(filePath));
