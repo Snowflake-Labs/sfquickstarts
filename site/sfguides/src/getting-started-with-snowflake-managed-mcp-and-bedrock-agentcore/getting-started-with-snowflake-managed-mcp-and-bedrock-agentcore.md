@@ -234,6 +234,24 @@ Deploy the Cloud Formation Template by running the below code
 
 ```bash
 
+VPC_ID=$(aws ec2 describe-vpcs --filters "Name=is-default,Values=true" --query 'Vpcs[0].VpcId' --output text)
+
+SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[0].SubnetId' --output text)
+
+REGION=$(aws configure get region)
+
+echo "Deploying to VPC: $VPC_ID, Subnet: $SUBNET_ID, Region: $REGION"
+
+aws cloudformation create-stack \
+  --stack-name agentcore-pokemon-demo \
+  --template-body file://ec2-agentcore-with-iam-user.yaml \
+  --parameters \
+    ParameterKey=VpcId,ParameterValue=$VPC_ID \
+    ParameterKey=SubnetId,ParameterValue=$SUBNET_ID \
+    ParameterKey=UserName,ParameterValue=AgentCoreAdmin \
+    ParameterKey=PlaceIndexName,ParameterValue=agentcore-index \
+  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+  --region $REGION
 ```
 
 After several minutes, go to your AWS console and check that the CFT deployed.
