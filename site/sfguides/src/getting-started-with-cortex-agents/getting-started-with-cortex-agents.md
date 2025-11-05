@@ -173,7 +173,7 @@ Let's run the streamlit and call the API locally:
 **Step 3.** Find your account URL in Snowsight: Click on your profile (bottom left corner) » Account » View account details.
 
 **Step 4.** In the cloned repo run the following commands (replacing the PAT and ACCOUNT_URL):
-```
+```python
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
