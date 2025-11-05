@@ -11,7 +11,6 @@ Open in snowflake link: https://app.snowflake.com/templates?template=get_started
 
 
 # Getting Started with Snowflake Intelligence
-<!-- ------------------------ -->
 
 ## Overview
 
