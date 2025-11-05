@@ -18,8 +18,6 @@ This Snowflake Quickstart introduces you to the basics of using Snowflake togeth
 
 **The Use Case:** Recent advances in generative AI have made it easy to apply for jobs. But be careful! Scammers have also been known to create fake job applications in the hopes of stealing personal information. Let’s see if you — with Dataiku & Snowflake's help — can spot a real job posting from a fake one!
 
-> aside positive
-> 
 >  **About the data:** <br> The data for this quickstart comes from a Kaggle dataset of ~18000 job descriptions, out of which about 800 are fake. These are fairly simple datasets, once you have completed the lab you could consider enriching the project with additional data.
 
 ### Prerequisites
