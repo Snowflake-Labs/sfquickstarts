@@ -230,6 +230,9 @@ Once complete make sure to also retrieve your **Account Locator** by going to th
 Let's use the CloudFormation service in the AWS console. 
 - Select **Create stack**.
 - Select **upload from template file** then **choose file** and select the **ec2-agentcore-with-iam-user.yaml** and select **Next**.
+
+![](assets/cftsetup.png)
+
 - Enter **agentcore-pokemon-demo** for the Stack name then select any public Subnet for **SubnetId** or a private subnet should have a nat gateway for egress traffic. Select **Next**.
 - Leave as-is and check that you acknowledge IAM resources with custom names will be created.
 - Select **Submit**.
