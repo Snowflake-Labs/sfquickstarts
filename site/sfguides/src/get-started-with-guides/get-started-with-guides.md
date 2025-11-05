@@ -6,15 +6,10 @@ environments: web
 status: Hidden
 author:  Snowflake DevRel Team
 
-authors: Guide Author Name (Github User Name)
-
 # Snowflake Guide Basics
 
-
-<!-- ------------------------ -->
 ## Components of a Guide
 
-<!-- ------------------------ -->
 ### Overview 
 
 Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 

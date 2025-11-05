@@ -10,7 +10,7 @@ language: en
 
 
 # Getting Started with Snowflake Interactive Tables
-<!-- ------------------------ -->
+
 ## Overview
 
 
@@ -39,7 +39,6 @@ You will build a complete, functioning interactive data environment in Snowflake
 - Familiarity with data warehousing and performance concepts.
 - A Snowflake role with privileges to create warehouses and tables (*i.e.*, `SYSADMIN` is used in the notebook).
 
-<!-- ------------------------ -->
 ## Understand Interactive Warehouses and Interactive Tables
 
 
@@ -50,10 +49,10 @@ Think of them as a high-performance pair. Interactive tables are structured for 
 ![](assets/interactive-tables-and-warehouses.png)
 
 ### Interactive Warehouses
-An interactive warehouse tunes the Snowflake engine specially for low-latency, interactive workloads. It leverages additional metadata and index information in the underlying interactive tables to accelerate queries. This type of warehouse is optimized to run continuously, serving high volumes of concurrent queries. All interactive warehouses run on the latest generation of hardware.
+An interactive warehouse tunes the Snowflake engine specially for low-latency, interactive workloads. This type of warehouse is optimized to run continuously, serving high volumes of concurrent queries. All interactive warehouses run on the latest generation of hardware and can only query interactive tables.
 
 ### Interactive Tables
-You can only query these tables through interactive warehouses. Interactive tables have different methods for data ingestion and support a more limited set of SQL statements and query operators than standard Snowflake tables.
+Interactive tables have different methods for data ingestion and support a more limited set of SQL statements and query operators than standard Snowflake tables.
 
 ### Use cases
 Snowflake interactive tables are optimized for fast, simple queries when you require consistent low-latency responses. Interactive warehouses provide the compute resources required to serve these queries efficiently. Together, they enable use cases such as live dashboards, data-powered APIs, and serving high-concurrency workloads.
@@ -484,4 +483,4 @@ In this guide, we explored how to address the challenge of low-latency, near rea
 ### Related Resources
 
 Documentation:
-- [Snowflake interactive tables and interactive warehouses](https://docs.snowflake.com/LIMITEDACCESS/interactive)
+- [Snowflake interactive tables and interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive)

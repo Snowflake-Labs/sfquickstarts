@@ -282,7 +282,7 @@ SELECT 'setup is now complete' AS note;
 
 Below is a short list of suggestions:
 * You may safely delete the SQL cell previously ran from the Hex project or comment it out. Once completed, you may select Run all at the top right of the Hex project or step through each code cell and run them individually. The ladder is the recommended approach. 
-* By default, Hex will run in [Auto mode](https://learn.hex.tech/docs/explore-data/projects/compute-model/run-modes-and-cell-staleness#run-modes) which automatically runs depended downstream cells. You can edit this project behavior at the bottom right of the Hex project.
+* By default, Hex will run in [Auto mode](https://learn.hex.tech/docs/explore-data/projects/project-execution/run-modes-and-cell-staleness#run-modes) which automatically runs depended downstream cells. You can edit this project behavior at the bottom right of the Hex project.
 * Ensure that every SQL cell has the correct Snowflake database connection selected prior to running it.
 
 ## Working With Snowpark In Hex
