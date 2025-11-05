@@ -110,10 +110,6 @@ Now you'll upload the downloaded files to 2 stages via the Snowsight UI.
      - `USOPC_FAN_ENGAGEMENT_DEMO.yaml` (~39KB - Cortex Analyst semantic model)
    - Wait for upload to complete
 
-> aside positive
-> 
-> **Simplified!** Only 2 stages needed - all files go into FAN_ENGAGEMENT schema. You can upload the 3 files to USOPC_DATA at once by selecting all 3 together.
-
 ### Step 4: Import and Configure the Setup Notebook
 
 1. **Import into Snowflake**:
