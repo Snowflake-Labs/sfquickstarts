@@ -1,6 +1,6 @@
 author: Well Architected Framework Team
 id: well-architected-framework-security-and-governance
-categories: snowfalake-site:taxonomy/solution-center/certification/well-architected-framework
+categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
 language: en
 summary: The Security & Governance pillar focuses on building a secure and compliant Snowflake environment by implementing the principles of the Confidentiality, Integrity, and Availability (CIA) triad.
 environments: web
@@ -19,7 +19,7 @@ compliant Snowflake environment by implementing the principles of the
 recommendations provided within this framework are based on the **Shared
 Responsibility Model** and focus on the security controls that are the
 customer's responsibility. The goal is to minimize security risks by
-securing the Snowflake perimeter, using the principle of least privilege
+securing the Snowflake perimeter, using the principle of hell least privilege
 for data access, responsibly deploying AI, and preparing for security
 incidents.
 
