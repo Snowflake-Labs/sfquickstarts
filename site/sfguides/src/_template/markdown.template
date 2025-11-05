@@ -57,7 +57,7 @@ The metadata contains all the information required for listing and publishing yo
 - **id**: sample-separated-by-hyphens-not-underscores 
   - make sure to match the id here with the name of the file, all one word.
 - **language**: pick from list 
-  - pick the appropriate language from the lsit provided.  
+  - pick the appropriate language from the list provided.  
 - **categories**: Pick from the list
   - select from the complete list of categories 1, 2 and 3 prrovided.  Please DO NOT create new categories.
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
