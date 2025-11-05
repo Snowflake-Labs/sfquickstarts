@@ -27,9 +27,7 @@ This quickstart demonstrates a three-stage approach to data harmonization:
 2. **Hybrid Entity Matching**: Combine vector similarity (fast, efficient) with AI_CLASSIFY (intelligent, context-aware) for optimal matching performance
 3. **Unmatched Record Reconciliation**: Provide an interactive interface for reviewing and correcting low-confidence matches
 
-<br/><br/>
 ![](assets/Entity_Resolution.png)
-<br/><br/>
 
 ### What You'll Learn
 
