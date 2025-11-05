@@ -151,7 +151,6 @@ You'll now have a list of all the traces for your event table. The Trace Explore
 
 You can now click on any trace to view its spans in detail.
 
-> aside positive
 >
 > If you don't see any traces after enabling tracing, you'll need to execute operations that generate traces, such as stored procedures or UDFs.
 >
@@ -198,7 +197,6 @@ The **Logs** tab shows logs directly related to the trace.
 
 This detailed information helps you understand exactly what happened during each operation and identify optimization opportunities.
 
-> aside positive
 >
 > For full details on each of the above fields, see the [documentation here](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing-accessing-events).
 
@@ -250,7 +248,6 @@ You can also click on any log entry to bring up a sidebar with more details, inc
 
 ![A screenshot showing details of one specific log in the sidebar](./assets/logs-details.png)
 
-> aside positive
 >
 > If you don't see any logs after enabling logging, you'll need to execute operations that generate logs. such as UDFs or stored procedures with logging statements.
 >
@@ -299,7 +296,6 @@ When you click on any query in the history, you'll see three main tabs with deta
 
 The **Query Details** tab shows details about the query run (status, duration, ID, etc), the SQL text of the query run, and the query results.
 
-> aside positive
 >
 > By default, the query text for failed queries is redacted. You can change this behavior by following the following KB article: [SQL text is showing redacted for failed queries](https://community.snowflake.com/s/article/SQL-text-is-showing-redacted-for-failed-queries).
 
@@ -313,7 +309,6 @@ The **Query Profile** tab provides a visual representation of query execution, w
 
 For a list of all possible fields, see the [documentation here](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity#query-profile-reference).
 
-> aside positive
 >
 > The Query Profile is essential for query optimization. Look for:
 >
@@ -389,7 +384,6 @@ Click on any operation to see detailed information about that operation/target t
 
 ![A screenshot of the Copy History view for a single table in Snowsight showing filter options](./assets/copy-history-record.png)
 
-> aside positive
 >
 > If you don't see any copy history, you'll need to perform data loading operations (`COPY INTO`, Snowpipe, or Snowpipe Streaming).
 >
@@ -452,7 +446,6 @@ Clicking into any task run will bring you to the Run History for that task.
 
 ![A screenshot showing the task runs for a single task](./assets/tasks-runs-details.png)
 
-> aside positive
 >
 > If you don't see any task history, you'll need to create and run some tasks.
 >
@@ -503,7 +496,6 @@ Clicking on any table will bring you to the graph view for that table.
 
 ![A screenshot showing the graph view of a dynamic table](./assets/dynamic-tables-graph.png)
 
-> aside positive
 >
 > If you don't see any Dynamic Tables, you'll need to create one first.
 >

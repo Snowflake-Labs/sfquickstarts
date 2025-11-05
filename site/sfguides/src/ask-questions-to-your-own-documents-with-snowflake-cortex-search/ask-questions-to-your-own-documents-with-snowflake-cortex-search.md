@@ -46,7 +46,6 @@ The final product includes an application that lets users test how the LLM respo
 - Check [LLM availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_ga=2.5151286.405859672.1709568467-277021311.1701887324&_gac=1.124754680.1707955750.Cj0KCQiA5rGuBhCnARIsAN11vgRLWfK6RIoIEqcZ7cFas8qwN4yCoL0q9nttp5UEmSocnPmhdBG57fgaAjqNEALw_wcB&_fsi=j2b82Wl3#availability) to help you decide where you want to create your snowflake account
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 
-> aside positive
 > NOTE: For an end-to-end setup experience using Snowflake Notebook, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/RAG_Using_Snowflake_Cortex_Search_Setup_Notebook.ipynb) file and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account. The Notebook covers setup steps 2, 3, and 4.
 
 <!-- ------------------------ -->
@@ -452,7 +451,6 @@ if __name__ == "__main__":
     main()
 ```
 
-> aside positive
 > NOTE: When you paste that code and run the app, you will get this error
 
 ![App](assets/fig10_error.png)

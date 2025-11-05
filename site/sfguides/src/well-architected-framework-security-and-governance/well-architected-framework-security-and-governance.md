@@ -621,7 +621,7 @@ Time Objective (RTO) and Recovery Point Objective (RPO) requirements.
 
 ## Identify and assess threat
 
-### **Identification phase - audit**
+### Identification phase - audit
 
 1.  Access your **Account Usage** database, which provides 365 days of
     "tamper proof" audit logs.

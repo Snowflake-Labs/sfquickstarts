@@ -63,7 +63,6 @@ Notebooks come pre-installed with common Python libraries for data science and m
 %pip install --quiet -U langchain-core langchain-snowflake trulens-core trulens-providers-cortex trulens-connectors-snowflake trulens-apps-langchain
 ```
 
-> aside positive
 > IMPORTANT:
 > - Make sure your Snowflake account has Cortex features enabled
 > - You'll need appropriate permissions to create databases, schemas, and search services

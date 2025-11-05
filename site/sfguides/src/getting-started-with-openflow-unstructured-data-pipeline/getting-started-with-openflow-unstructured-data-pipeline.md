@@ -23,7 +23,6 @@ You'll work with a realistic **Festival Operations** business document collectio
 - **Real business scenarios**: $2.8M technology investments, market expansion strategies, regulatory compliance
 - **Multi-format intelligence**: Demonstrating cross-format document search and analysis
 
-> aside positive
 > **IMPORTANT - Demo Data Disclaimer:** All business data, financial figures, and organizational information in this demo are **entirely fictitious** and created for demonstration purposes only. This includes financial figures, project timelines, employee data, and business scenarios.
 
 By completing this guide, you will be able to build an end-to-end unstructured data pipeline that ingests documents from Google Drive, processes them through Openflow, and enables intelligent search and analysis using Snowflake Intelligence.
@@ -94,7 +93,6 @@ Before starting, ensure you have:
 - **Google Workspace**: Admin access to create and configure service accounts
 - **Google Service Account (GSA)**: JSON key file with domain-wide delegation configured
 
-> aside positive
 > **IMPORTANT:**
 >
 > **Google Service Account Setup**: You'll need to create a Google Service Account (GSA) with appropriate permissions. Follow the official Google Cloud documentation to:
@@ -140,7 +138,6 @@ For executing SQL scripts directly in Snowsight, you can import this repository 
 4. Configure your API integration and credentials
 5. Execute SQL scripts directly in Snowsight without leaving your browser
 
-> aside positive
 > **IMPORTANT:** You still need to **clone or download the repository locally** to access the `sample-data/google-drive-docs/` files for uploading to Google Drive. The Git integration in Workspaces provides access to SQL scripts but not binary document files (PDF, DOCX, PPTX, JPG) needed for the demo.
 
 Learn more about [integrating Workspaces with Git](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git).
@@ -149,7 +146,6 @@ Learn more about [integrating Workspaces with Git](https://docs.snowflake.com/en
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create the necessary database objects.
 
-> aside positive
 > **IMPORTANT:**
 >
 > - If you use different names for objects created in this section, be sure to update scripts and configurations in the following sections accordingly.
@@ -182,14 +178,12 @@ USE DATABASE OPENFLOW_FESTIVAL_DEMO;
 CREATE SCHEMA IF NOT EXISTS FESTIVAL_OPS;
 ```
 
-> aside positive
 > **TIP:** These commands are also available in `sql/setup.sql` in the repository for easy execution.
 
 ### Enable Required Services (Optional)
 
 Cortex Search and Snowflake Intelligence are available by default in most regions.
 
-> aside positive
 > **NOTE:** If your Snowflake account is in **`us-west-2`**, Cortex services are already available and this step can be skipped.
 
 **For accounts in other regions**, you may need to enable cross-region Cortex access:
@@ -206,7 +200,6 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT;
 ```
 
-> aside positive
 > **TIP:** Contact your Snowflake administrator if you need assistance with ORGADMIN privileges or Cortex enablement.
 
 ### Setup External Access Integration
@@ -282,7 +275,6 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION festival_ops_access_integration
 DESC EXTERNAL ACCESS INTEGRATION festival_ops_access_integration;
 ```
 
-> aside positive
 > **TIP:** If you created a workspace domain network rule, uncomment and add it to the `ALLOWED_NETWORK_RULES` list in the external access integration.
 
 ### Grant Permissions
@@ -299,7 +291,6 @@ GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE OPENFLOW_ADMI
 SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 ```
 
-> aside positive
 > **NOTE:**
 >
 > - The `OPENFLOW_ADMIN` role is created automatically during Openflow SPCS deployment setup
@@ -307,7 +298,6 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 > - **No manual stages or tables** - All document storage objects are automatically created by the Openflow connector
 > - SQL snippets available in `sql/network.sql` in the repository
 
-> aside positive
 > **IMPORTANT:** Make note of the database, schema, and warehouse names as you'll need them for Openflow configuration.
 
 <!-- ------------------------ -->
@@ -316,7 +306,6 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 
 This section guides you through setting up Openflow SPCS infrastructure and creating a runtime for the Festival Operations document pipeline.
 
-> aside positive
 > **IMPORTANT:** Before configuring connectors, you must complete the **Openflow SPCS deployment setup**. This is a one-time configuration that establishes the foundation for all your Openflow data pipelines.
 
 ### Complete Openflow SPCS Setup
@@ -342,7 +331,6 @@ This 25-minute setup includes:
 - **Runtime Role**: For this quickstart, use `FESTIVAL_DEMO_ROLE` (created in Setup Environment) with database, schema, warehouse access, and external access integrations
 - **Active Runtime**: Ready to host connectors like Google Drive
 
-> aside positive
 > **TIP:** The quickstart includes downloadable SQL scripts and Jupyter notebooks for automated setup. You can use these scripts to accelerate your deployment process.
 
 **After Setup**: Once you complete the quickstart, you'll have a production-ready Openflow environment. You can then proceed with adding the Google Drive connector for this Festival Operations demo.
@@ -390,7 +378,6 @@ Create a dedicated runtime for this demo:
    - **Schema**: `FESTIVAL_OPS`
    - **Warehouse**: `FESTIVAL_DEMO_S`
 
-> aside positive
 > **NOTE:** Ensure the `festival_ops_access_integration` is accessible to `FESTIVAL_DEMO_ROLE`:
 >
 > ```sql
@@ -415,7 +402,6 @@ If you already have a runtime from the Openflow SPCS quickstart (e.g., `QUICKSTA
 
 2. The runtime will automatically have access to the integration for Google Drive connectivity
 
-> aside positive
 > **RESOURCE MANAGEMENT:**
 >
 > - Openflow SPCS automatically manages compute resources and scaling
@@ -437,7 +423,6 @@ Once the runtime is active, add the [Google Drive connector](https://docs.snowfl
 
    ![Add Connector to Runtime](assets/openflow_add_connector_to_runtime.gif)
 
-> aside positive
 > **NOTE:** After adding the connector to the runtime, you may see authorization prompts. Accept these prompts to allow the connector to access the runtime and required resources.
 
 The connector will be automatically added to your canvas:
@@ -452,7 +437,6 @@ Before configuring the connector, set up your Google Drive location:
 
 2. **Create Festival Operations Folder**: Inside the shared drive, create a folder named "Festival Operations". This will be used as your **Google Folder Name** in the connector configuration.
 
-> aside positive
 > **TIP:** Keep your Google Drive browser tab open - you'll need the shared drive ID and folder name for the next configuration step.
 
 <!-- ------------------------ -->
@@ -468,7 +452,6 @@ Now configure the Google Drive connector with the following parameters:
 - **GCP Service Account JSON**: Paste the JSON content from your Google Service Account key file
 - **Google Delegation User**: `hi@kameshs.dev` (your Google Workspace user with drive access)
 
-> aside positive
 > **SECURITY BEST PRACTICE:** For production environments, consider using a **SecretManagerParameterProvider** (such as `AwsSecretsManagerParameterProvider`) to securely manage sensitive credentials like the GCP Service Account JSON. This approach stores secrets in a dedicated secrets manager instead of directly in the connector configuration, providing better security and easier credential rotation.
 
 ### Configure Destination Parameters
@@ -483,7 +466,6 @@ Now configure the Google Drive connector with the following parameters:
 
 ### Configure Ingestion Parameters
 
-> aside positive
 > **NOTE:** By default, this section inherits parameters from "Configure Source Parameters" and "Configure Destination Parameters" sections above. For clarity in this quickstart, we'll turn off inheritance and configure only the required ingestion-specific parameters.
 
 Navigate to Parameter Contexts from Runtime Canvas:
@@ -576,7 +558,6 @@ sample-data/google-drive-docs/
 
 **Document Formats**: PDF, DOCX, PPTX, JPG - demonstrating true multi-format document intelligence
 
-> aside positive
 > **NOTE:** The `.md` files in the repository are source templates. The demo uses the converted formats shown above.
 
 ### Google Drive Setup
@@ -596,7 +577,6 @@ Complete the document preparation in your Google Drive:
 
 2. **Upload Documents**: Drag and drop files from your local `sample-data/google-drive-docs/` directory into the corresponding folders
 
-> aside positive
 > **TIP:** Maintain the same folder structure in Google Drive as in `sample-data/google-drive-docs/` to organize documents by category. The connector's **Recursive** mode will scan all subfolders automatically.
 
 ### Verify Document Upload
@@ -645,7 +625,6 @@ The animation demonstrates:
 4. **Navigate back to the canvas** to see the overall pipeline health
 5. **Monitor byte throughput** for each stage (In, Read/Write, Out) shown in the statistics panel
 
-> aside positive
 > **NOTE:** Pipeline statistics automatically reset every 5 minutes, providing a rolling view of recent activity.
 
 <!-- ------------------------ -->
@@ -777,7 +756,6 @@ Verify the documents stage created by the connector:
 LS @documents;
 ```
 
-> aside positive
 > **TIP:** All verification queries are available in `sql/checks.sql` in the repository for easy execution.
 
 ### Expected Document Collection
@@ -800,7 +778,6 @@ The pipeline should have ingested the Festival Operations business document coll
 
 **Total**: 15 business documents demonstrating multi-format document intelligence
 
-> aside positive
 > **NOTE:** All document counts and content are based on the Festival Operations demo dataset from `sample-data/google-drive-docs/`.
 
 <!-- ------------------------ -->
@@ -960,7 +937,6 @@ Based on the Festival Operations dataset, here are sample questions organized by
 "What health and safety policies are in effect across all formats - show me formal policies, vendor agreements, and visual guides"
 ```
 
-> aside positive
 > **TIP:** These sample questions are designed specifically for the Festival Operations dataset. Use them as templates and adapt the language to match your organization's terminology and business context.
 
 <!-- ------------------------ -->
@@ -969,7 +945,6 @@ Based on the Festival Operations dataset, here are sample questions organized by
 
 Snowflake Intelligence enables you to create AI agents that can query and analyze your unstructured data using natural language. This section shows how to connect Snowflake Intelligence to the Cortex Search service created by your Openflow pipeline.
 
-> aside positive
 > **IMPORTANT:** All queries from Snowflake Intelligence use the user's credentials. Role-based access control and data-masking policies automatically apply to all agent interactions.
 
 ### Prerequisites
@@ -1002,7 +977,6 @@ GRANT CREATE AGENT ON SCHEMA snowflake_intelligence.agents TO ROLE FESTIVAL_DEMO
 
 ### Create the Agent
 
-> aside positive
 > **IMPORTANT:** Before creating the agent, ensure you are using the `FESTIVAL_DEMO_ROLE` role in Snowsight. This ensures the agent is owned by the correct role and has proper access to resources. You can switch roles using the role selector in the top-right corner of Snowsight.
 
 #### Access Agent Creation Interface
@@ -1035,7 +1009,6 @@ After creating the agent, you need to configure its details:
 
    ![Agent Edit Button](assets/si_agent_edit.png)
 
-> aside positive
 > **IMPORTANT:** As you configure each section below (About, Tools, Orchestration, Access), remember to click **"SAVE"** after completing all configurations to ensure your changes are preserved.
 
 Now configure the agent basics in the "About" section:
@@ -1082,7 +1055,6 @@ Now configure the agent basics in the "About" section:
 - **Search Service:** `OPENFLOW_FESTIVAL_DEMO.FESTIVAL_OPS.CORTEX_SEARCH_SERVICE`
 - **Description:** `Query and analyze business documents using natural language, powered by festival operations data processed via Openflow pipeline.`
 
-> aside positive
 > **TIP:** The search service name follows the pattern `DATABASE_NAME.SCHEMA_NAME.SERVICE_NAME`. In this case:
 > `OPENFLOW_FESTIVAL_DEMO.FESTIVAL_OPS.CORTEX_SEARCH_SERVICE`
 
@@ -1106,7 +1078,6 @@ Always provide specific document references when citing information.
 Focus on actionable insights and business value in your responses.
 ```
 
-> aside positive
 > **TIP:** Use `auto` (default) to let Snowflake automatically select the best available model for your region and query type. Supported models include Claude 4.0, Claude 3.7, Claude 3.5, and GPT 4.1.
 
 ### Set Access Controls
@@ -1122,7 +1093,6 @@ Focus on actionable insights and business value in your responses.
 - **Role:** `FESTIVAL_DEMO_ROLE`
 - **Permission:** `OWNERSHIP`
 
-> aside positive
 > **NOTE:** All queries use the user's credentials. Ensure users have appropriate access to the Cortex Search service, source database/schema, and underlying data.
 
 ### Test Your Agent
@@ -1262,7 +1232,6 @@ SELECT
 FROM docs_chunks;
 ```
 
-> aside positive
 > **NOTE:** AI_COMPLETE uses [Mistral Large 2](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) to generate intelligent summaries. You can also use `mistral-large`, `llama3.1-70b`, or other supported models.
 
 #### Create Custom Cortex Search Service
@@ -1321,7 +1290,6 @@ SELECT PARSE_JSON(
 - **Better Search Results**: Summaries provide cleaner, more focused search hits
 - **Agent-Friendly**: Snowflake Intelligence agents can leverage summarized content more efficiently
 
-> aside positive
 > **CUSTOMIZATION TIP:** Create multiple specialized views for different departments (e.g., `executive_summaries`,
 > `compliance_summaries`, `operations_summaries`) and corresponding Cortex Search services for targeted intelligence.
 
@@ -1394,7 +1362,6 @@ Runs all conversion tasks to generate documents in all supported formats (PDF, D
 3. **Run the conversion** using the appropriate task
 4. **Upload to Google Drive** and let Openflow process the new documents
 
-> aside positive
 > **TIP:** The Taskfile demonstrates how to create multi-format document collections for comprehensive testing of Openflow's document intelligence capabilities.
 
 <!-- ------------------------ -->
@@ -1410,7 +1377,6 @@ When you're finished with the demo, follow these steps to clean up resources.
 3. Select **Stop** to halt document ingestion
 4. Wait for the connector to fully stop (status indicator turns red)
 
-> aside positive
 > **TIP:** Stopping the connector preserves your configuration while preventing further document processing and associated compute costs.
 
 ### Drop the Snowflake Intelligence Agent (Optional)
@@ -1444,7 +1410,6 @@ DROP WAREHOUSE IF EXISTS FESTIVAL_DEMO_S;
 DROP ROLE IF EXISTS FESTIVAL_DEMO_ROLE;
 ```
 
-> aside negative
 > **WARNING:** Dropping the database will permanently delete all ingested documents, Cortex Search services, and pipeline configurations. Only perform this if you no longer need the demo.
 
 <!-- ------------------------ -->
