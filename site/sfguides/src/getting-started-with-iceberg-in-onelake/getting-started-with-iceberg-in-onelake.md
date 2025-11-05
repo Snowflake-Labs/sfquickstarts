@@ -1,7 +1,7 @@
 author: Eric Tolotti
 id: getting_started_with_iceberg_in_oneLake
 summary: This is a quickstart for creating Catalog Linked Databases and Iceberg tables usable by both Snowflake and Microsoft Fabric
-categories: Getting-Started, data-engineering, azure, iceberg, Microsoft, Fabric, OneLake, search
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 environments: web
 language: en
 status: Published 
