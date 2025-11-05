@@ -1,26 +1,14 @@
-author: tolotti-snow
-<<<<<<< HEAD:site/sfguides/src/getting-started-with-iceberg-in-onelake/getting-started-with-iceberg-in-onelake.md
-id: getting-started-with-iceberg-in-onelake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
-language: en
-summary: This is a quickstart for creating Iceberg tables usable by both Snowflake and Microsoft Fabric
-=======
+author: Eric Tolotti
 id: getting_started_with_iceberg_in_oneLake
 summary: This is a quickstart for creating Catalog Linked Databases and Iceberg tables usable by both Snowflake and Microsoft Fabric
 categories: Getting-Started, data-engineering, azure, iceberg, Microsoft, Fabric, OneLake, search
->>>>>>> f838566c (Updates to OneLake Iceberg Quickstart for CLDB):site/sfguides/src/getting_started_with_Iceberg_in_OneLake/getting_started_with_iceberg_in_oneLake.md
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Iceberg in OneLake
 <!-- ------------------------ -->
-<<<<<<< HEAD:site/sfguides/src/getting-started-with-iceberg-in-onelake/getting-started-with-iceberg-in-onelake.md
-## Overview 
-=======
 ## Overview
-Duration: 3
->>>>>>> f838566c (Updates to OneLake Iceberg Quickstart for CLDB):site/sfguides/src/getting_started_with_Iceberg_in_OneLake/getting_started_with_iceberg_in_oneLake.md
 
 Apache Iceberg is an open table format for huge analytical datasets that enables high performance analytics on open data formats with ACID compliance. Snowflake and Azure both support Iceberg format that enables customers to drastically improve data interoperability, speed of implementation, and performance for integrated data lakes.
 
@@ -53,10 +41,6 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Prepare Sample Data
-<<<<<<< HEAD:site/sfguides/src/getting-started-with-iceberg-in-onelake/getting-started-with-iceberg-in-onelake.md
-=======
-Duration: 5
->>>>>>> f838566c (Updates to OneLake Iceberg Quickstart for CLDB):site/sfguides/src/getting_started_with_Iceberg_in_OneLake/getting_started_with_iceberg_in_oneLake.md
 
 In Microsoft Fabric, begin by creating a New Item.
 ![](assets/NewItem.png)
@@ -68,11 +52,7 @@ You should now see a number of tables available.
 
 
 <!-- ------------------------ -->
-<<<<<<< HEAD:site/sfguides/src/getting-started-with-iceberg-in-onelake/getting-started-with-iceberg-in-onelake.md
-## Create an Iceberg table in OneLake
-=======
 ## Create a Snowflake Catalog Linked Database
-Duration: 20
 
 ### Azure Portal
 1. In the Azure portal search for and open "App Registrations"
@@ -487,8 +467,6 @@ It may take a minute for the initial sync to complete. You can run the troublesh
 
 <!-- ------------------------ -->
 ## Create a Snowflake Iceberg table in OneLake
-Duration: 15
->>>>>>> f838566c (Updates to OneLake Iceberg Quickstart for CLDB):site/sfguides/src/getting_started_with_Iceberg_in_OneLake/getting_started_with_iceberg_in_oneLake.md
 
 In this section, curated and enriched data will be written back to OneLake. In a real environment this would be the data engineering work to clean the raw data in OneLake, combine data from disparate sources, modeling the unified data in your enterprise data warehouse, and preparing data products to be consumed by users. But for the sake of this quickstart, this step will just be merging some of the raw data and filtering records and writing the table back to OneLake.
 
@@ -574,12 +552,7 @@ Select * from ICEBERGQUICKSTART_ENRICHEDDATA.DBO.FACT_EMPLOYEE_PROFIT;
 ```
 
 <!-- ------------------------ -->
-<<<<<<< HEAD:site/sfguides/src/getting-started-with-iceberg-in-onelake/getting-started-with-iceberg-in-onelake.md
-## Accessing the Data in Fabric
-=======
 ## Reading Snowflake Data Object in Fabric
-Duration: 10
->>>>>>> f838566c (Updates to OneLake Iceberg Quickstart for CLDB):site/sfguides/src/getting_started_with_Iceberg_in_OneLake/getting_started_with_iceberg_in_oneLake.md
 
 In order for Fabric to work on the Iceberg tables, you need to set up shortcuts to the data.
 
