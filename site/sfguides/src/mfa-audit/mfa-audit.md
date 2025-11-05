@@ -114,7 +114,7 @@ COPY INTO MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DATA
 2. Create a table called `CHANINN_DEMO_DATA.PUBLIC.MFA_DATA`. Particularly, you'll see a pop-up, go ahead and select a warehouse, upload the CSV file, specify the database (`CHANINN_DEMO_DATA`), schema (`PUBLIC`) and table name (`MFA_DATA`).
 3. Upload the [demo data file](https://sfquickstarts.s3.us-west-1.amazonaws.com/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv)
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 ### Setting up Email Notifications
 Create a notification integration for email communications by entering the following into a SQL cell:
@@ -126,7 +126,7 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION my_email_int
 ```
 
 Running this query should return the following confirmation:
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 > aside positive
 > IMPORTANT:
@@ -163,11 +163,11 @@ CALL SYSTEM$SEND_EMAIL(
 
 Running the above SQL query will return the following confirmation output:
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 The notification email looks as follows:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 <!-- ------------------------ -->
 ## Building the Streamlit Interface
@@ -227,7 +227,7 @@ Once we run the code cell, make a selection on the select box drop-down widget s
 
 Here's how the MFA report that has been delivered to your email inbox looks like:
 
-![image](assets/img06.PNG)
+![image](assets/img06.png)
 
 ## Conclusion
 

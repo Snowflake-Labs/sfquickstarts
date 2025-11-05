@@ -7,7 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Machine Learning with Snowpark Python: - Credit Card Approval Prediction
+# Machine Learning with Snowpark Python: Credit Card Approval Prediction
 <!-- ------------------------ -->
 ## Overview 
 
@@ -130,7 +130,7 @@ After that, open up the [`0_setup_environment`](https://github.com/Snowflake-Lab
 
 Open up the [`1_1_DEMO_basic_data_exploration_transformation`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_1_DEMO_basic_data_exploration_transformation.ipynb) Jupyter notebook and run each of the cells.
 
-### Excercise
+### Exercise
 **What You'll Do**: 
 - Test your understanding of working with Snowpark DataFrames
 - Answer basic questions about your data by using the Snowpark-API
@@ -139,7 +139,7 @@ Open up the [`1_1_DEMO_basic_data_exploration_transformation`](https://github.co
 Open up the [`1_2_EXERCISE_basic_data_exploration_transformation`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_2_EXERCISE_basic_data_exploration_transformation.ipynb) Jupyter notebook and develop/adjust the code to solve the tasks.
 
 ### Solution
-You can verify your excercise results by having a look at the solution provided in the  [`1_2_SOLUTION_basic_data_exploration_transformation`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_2_SOLUTION_basic_data_exploration_transformation.ipynb) Jupyter notebook.
+You can verify your exercise results by having a look at the solution provided in the  [`1_2_SOLUTION_basic_data_exploration_transformation`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_2_SOLUTION_basic_data_exploration_transformation.ipynb) Jupyter notebook.
 
 ### Demo
 **What You'll Do**: 
@@ -163,7 +163,7 @@ Open up the [`2_1_DEMO_model_building_scoring`](https://github.com/Snowflake-Lab
 <!-- ------------------------ -->
 ## Building Additional Models
 
-### Excercise
+### Exercise
 **What You'll Do**: 
 - Apply your knowledge of Snowpark ML to train, score and evaluate additional models
 - You can choose between [XGBoost](https://github.com/dmlc/xgboost) or [LightGBM](https://github.com/microsoft/LightGBM) as your additional model
@@ -176,10 +176,10 @@ Open up the [`3_2_EXERCISE_additional_models_lightgbm`](https://github.com/Snowf
 
 ### Solution
 **For XGBoost:**  
-You can verify your excercise results by having a look at the solution provided in the  [`3_1_SOLUTION_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_1_SOLUTION_additional_models_xgboost.ipynb) Jupyter notebook.
+You can verify your exercise results by having a look at the solution provided in the  [`3_1_SOLUTION_additional_models_xgboost`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_1_SOLUTION_additional_models_xgboost.ipynb) Jupyter notebook.
 
 **For LightGBM:**  
-You can verify your excercise results by having a look at the solution provided in the  [`3_2_SOLUTION_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_2_SOLUTION_additional_models_lightgbm.ipynb) Jupyter notebook.
+You can verify your exercise results by having a look at the solution provided in the  [`3_2_SOLUTION_additional_models_lightgbm`](https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_2_SOLUTION_additional_models_lightgbm.ipynb) Jupyter notebook.
 
 <!-- ------------------------ -->
 ## Hyperparameter Tuning with Snowpark ML and GridSearchCV

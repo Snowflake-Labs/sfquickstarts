@@ -3,7 +3,7 @@ summary: Build a complete ML lifecycle in Snowflake from development to producti
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: James Cha Earley
 
@@ -52,7 +52,6 @@ A production-ready ML system that:
 
 The setup script will create all the necessary infrastructure for this quickstart.
 
-
 > NOTE: The setup script includes proper permissions and configurations needed for the entire ML workflow.
 
 ### Import Sentiment Analysis Model from HuggingFace
@@ -79,7 +78,6 @@ Before extracting features, you need to import the sentiment analysis model into
 
 The model will be imported into your Model Registry and will be available for use in the notebook.
 
-
 > NOTE: The Model Registry enables you to manage model versions, track lineage, and ensure consistent model usage across your ML workflows.
 
 ### Verify Model Import
@@ -87,7 +85,6 @@ The model will be imported into your Model Registry and will be available for us
 After import completes, you should see the model `MULTILINGUAL_SENTIMENT_ANALYSIS` listed in your Models under BUILD25_DEV_TO_PRODUCTION.DATA schema.
 
 ## Open Notebook and Extract Features
-
 
 ### Import the Notebook
 
@@ -170,7 +167,6 @@ After extraction completes, you can review the results in the `call_acoustic_fea
 > TROUBLESHOOTING: The container runtime provides the necessary compute resources for processing. If feature extraction is slow, the notebook cells may need additional time to complete due to the complexity of the ML operations.
 
 ## Generate Labels and Train Models
-
 
 ### AI-Powered Label Generation
 
@@ -345,11 +341,9 @@ The real-time dashboard provides supervisors with instant visibility into call q
 
 The dashboard uses the online feature store for low-latency retrieval (under 30 seconds) and provides supervisors with actionable insights for coaching agents in real-time.
 
-
 > TIP: The dashboard auto-refreshes every 5 seconds when enabled, perfect for monitoring live calls. You can also manually refresh or select specific calls to examine in detail.
 
 ## Conclusion and Resources
-
 
 Congratulations! You've successfully built a complete ML lifecycle in Snowflake that transforms call center audio into actionable insights. You imported a HuggingFace model into the Model Registry, extracted comprehensive features, trained multiple ML models with experiment tracking, deployed models as services, set up monitoring, and enabled real-time feature serving with a Streamlit dashboard - all within Snowflake's unified platform.
 
