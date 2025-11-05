@@ -225,7 +225,6 @@ You will be redirected to the Dataiku Cloud Launchpad site. Click `GOT IT!` to c
 
 This is the Cloud administration console where you can perform tasks such as inviting other users to collaborate, add plugin extensions, install industry solutions to accelerate projects as well as access community and academy resources to help your learning journey. 
 
->aside negative
 >**NOTE:** It may take several minutes for your instance to Dataiku to start up the first time,
 > during this time you will not be able to add the extension as described below.
 > You can always come back to this task later if time doesn't allow now
