@@ -7,7 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Cost-Effective Data Streaming in Apache Iceberg&trade; Format and Snowflake Open Catalog Integration with StreamNative
+# Snowflake Open Catalog Integration with StreamNative and Data Streaming in Apache Iceberg
 <!-- ------------------------ -->
 ## Overview 
 

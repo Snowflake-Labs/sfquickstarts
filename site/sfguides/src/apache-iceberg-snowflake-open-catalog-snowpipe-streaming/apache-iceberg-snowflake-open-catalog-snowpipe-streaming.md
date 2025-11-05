@@ -15,7 +15,6 @@ authors: Dash Desai
 
 Snowflake’s native integration with Apache Iceberg empowers organizations to build a highly interoperable and open lakehouse architecture. With streamlined support for batch and streaming data ingestion, transformation pipelines, and analytics, Snowflake simplifies complex workflows on Iceberg tables. Additionally, Snowflake Open Catalog, a managed service for Apache Polaris, offers robust role-based access controls, ensuring seamless data governance and secure collaboration across multiple engines.
 
-> aside positive
 > NOTE: Apache Polaris™ is currently undergoing Incubation at the Apache Software Foundation.
 
 ### What You Will Learn
@@ -94,7 +93,7 @@ You will need to replace the following values with your own:
     - OAUTH_CLIENT_ID
     - OAUTH_CLIENT_SECRET
 
-> aside positive
+
 > NOTE: The OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET for creating the catalog integration are of the `snowflake_engineer_role` principal role.
 
 **Step 3.** Create Tables
@@ -122,7 +121,7 @@ Use the following .csv files and load data into respective tables using [Snowsig
 
 - **(Optional)** [VEHICLE_MODELS_EVENTS_LAST_MAINTENANCE](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpipe-streaming-apache-iceberg-snowflake-open-catalog/blob/main/polaris-iceberg-spark/VEHICLE_MODELS_EVENTS_LAST_MAINTENANCE.csv)
 
-> aside positive
+
 > NOTE: Data in STREAMING_VEHICLE_EVENTS will (also) be inserted via Snowpipe Streaming via Java SDK (see next section) and as that happens the data will (also) get populated in VEHICLE_EVENTS_SCD2, VEHICLE_MODELS_EVENTS, and VEHICLE_MODELS_EVENTS_LAST_MAINTENANCE Dynamic Iceberg tables.
 
 <!-- ------------------------ -->
@@ -143,7 +142,7 @@ Follow these instructions to setup Snowpipe Streaming.
     - ROLE
     - ACCOUNT
 
-> aside positive
+
 > NOTE: You may not alter the following attributes:
 >    - ENABLE_ICEBERG_STREAMING: This enables writing directly into STREAMING_VEHICLE_EVENTS iceberg dynamice table  
 >    - DATA_FILE: The data in [DATA.csv](https://github.com/Snowflake-Labs/snowflake-build-2024-iceberg-catalog-demo/blob/main/snowpipe-streaming-java/DATA.csv) is used to simulate streaming records. So the records from this file are read and written to the channel and eventually into the STREAMING_VEHICLE_EVENTS table.
@@ -218,7 +217,7 @@ Assuming everything has gone smoothly so far, follow instructions below to query
 * Click on **Save** button
 * Click on **Start** button on top right
 
-> aside positive
+
 > NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 **Step 4.** Run Notebook
@@ -281,7 +280,7 @@ Assuming everything has gone smoothly so far, follow instructions below to query
 * Click on **Save** button
 * Click on **Start** button on top right
 
-> aside positive
+
 > NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 **Step 4.** Run Notebook

@@ -11,11 +11,8 @@ authors: Brad Culberson, Scott Winkler, François Vienneau Binette
 
 ## Overview
 
-> aside negative
 > ⚠️ **Disclaimer**: You may have already been using the Provider in one of it's legacy version developed by the open source community. Major reworks came with v1.0.0 at the end of 2024, bringing us closer to the official and generally available v2.0.0 release. Not every Snowflake objects are available through the Provider, it's a work in progress. Refer to the [official documentation](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs) and check out the [project roadmap](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/ROADMAP.md) for more information.
 
-> aside positive
-> 
 >  **Tip** – This tutorial will work with the Provider version v1.0.0 and over.
 
 [Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by HashiCorp. It is a declarative Infrastructure as Code tool, meaning instead of writing step-by-step imperative instructions like with SQL, JavaScript or Python, you can declare what you want using a YAML like syntax. Terraform is also stateful, meaning it keeps track of your current state, and compares it with your desired state. A reconciliation process between the two states generates a plan that Terraform can execute to create new resources, or update/delete existing resources. This plan is implemented as an acyclic graph, and is what allows Terraform to understand and handle dependencies between resources. Using Terraform is a great way to manage account level Snowflake resources like Warehouses, Databases, Schemas, Tables, and Roles/Grants, among many other use cases.  

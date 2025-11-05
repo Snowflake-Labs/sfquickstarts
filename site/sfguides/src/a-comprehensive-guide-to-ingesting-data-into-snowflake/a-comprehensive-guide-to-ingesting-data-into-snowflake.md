@@ -356,7 +356,9 @@ The example above could not use executemany as it had VARIANT data.
 The next methods will show how to batch into better sized blocks of work which will drive higher throughputs and higher efficiency on Snowflake.
 
 
-## File Upload & Copy (Warehouse) from the Python Connector
+##  File Uploads
+
+### File Upload & Copy (Warehouse) from the Python Connector
 
 To get to better sized batches, the client can upload a file and have a warehouse copy the data into the destination. The Python connector can execute the COPY after uploading the file.
 
@@ -500,7 +502,7 @@ cat data.json.gz | zcat | python py_copy_into.py 10000
 
 This last call will batch together 10,000 records into each file for processing. As this file gets larger, up to 100mb, you will see this be more efficient on seconds of compute used in Snowpipe and see higher throughputs. Feel free to generate more test data and increase this to get more understanding of this relationship. Review the query performance in Query History in Snowflake.
 
-### Tips
+#### Tips
 
 * Ingest is billed based on warehouse credits consumed while online.
 
@@ -511,7 +513,7 @@ This last call will batch together 10,000 records into each file for processing.
 * Best warehouses sizes are almost always way smaller than expected, commonly XS.
 
 
-## File Upload & Copy (Snowpipe) using Python
+### File Upload & Copy (Snowpipe) using Python
 
 Another way to get data into Snowflake is to use a service specifically designed for this task: [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro). Snowpipe uses serverless infrastructure to ingest data from a file uploaded from a client. In this use case I will upload a file to an internal stage and call the Snowpipe service to ingest the file.
 
@@ -641,7 +643,7 @@ This last call will batch together 10,000 records into each file for processing.
 
 Test this approach with more test data and larger batch sizes. Review INFORMATION_SCHEMA PIPE_USAGE_HISTORY to see how efficient large batches are vs small batches.
 
-### Tips
+#### Tips
 
 * Ingest is billed based on seconds of compute used by Snowpipe and number of files ingested.
 
@@ -651,7 +653,7 @@ Test this approach with more test data and larger batch sizes. Review INFORMATIO
 
 * Expect delays when Snowpipe has enqueued the request to ingest the data. This process is asynchronous. In most cases these patterns can deliver ~ minute ingest times when including the time to batch, upload, and copy but this varies based on your use case.
 
-## File Upload & Copy (Serverless) from the Python Connector
+### File Upload & Copy (Serverless) from the Python Connector
 
 It can be useful to leverage a [Serverless Task](https://docs.snowflake.com/en/user-guide/tasks-intro) which is scheduled every minute to ingest the files uploaded by clients over the last minute.
 
@@ -784,7 +786,7 @@ The code is calling execute task after each file is uploaded. While this may not
 
 It is also common to schedule the task to run every n minutes instead of calling from the clients.
 
-### Tips
+#### Tips
 
 * Only run the Task as needed when enough data (> 100mb) has been loaded into stage for most efficiency.
 
@@ -985,7 +987,7 @@ python ./data_generator.py 1 | python ./publish_data.py
 
 This should succeed by creating the topic and inserting the data. You can view the success in the [Redpanda console](http://localhost:8080).
 
-## From Kafka - in Snowpipe (Batch) mode
+### From Kafka - in Snowpipe (Batch) mode
 
 The table for the data to be written to will be automatically created by the connector.
 
@@ -1050,7 +1052,7 @@ export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_BATCH
 cat data.json.gz | zcat | python ./publish_data.py
 ```
 
-### Tips
+#### Tips
 
 * Every partition will flush to a file when the bytes, time, or records is hit. This can create a LOT of tiny files if not configured well which will be inefficient.
 
@@ -1064,7 +1066,7 @@ cat data.json.gz | zcat | python ./publish_data.py
 
 * Kafka Connector for Snowflake is billed by the second of compute needed to ingest files (Snowpipe).
 
-## From Kafka - in Snowpipe Streaming mode
+### From Kafka - in Snowpipe Streaming mode
 
 Configure and install a new connector to load data in streaming mode:
 
@@ -1132,7 +1134,7 @@ Query the table to verify the data was inserted. Data will appear in the table i
 SELECT count(*) FROM LIFT_TICKETS_KAFKA_STREAMING;
 ```
 
-### Tips
+#### Tips
 
 * Kafka Connector for Snowflake in Streaming mode is billed by the second of compute needed to merge files as well as the clients connected.
 
@@ -1142,7 +1144,7 @@ SELECT count(*) FROM LIFT_TICKETS_KAFKA_STREAMING;
 
 * Streaming is the best ingest pattern when using Kafka.
 
-## From Kafka - Streaming with Schematization
+### From Kafka - Streaming with Schematization
 
 The previous methods for loading data from Kafka landed the data in a Variant field. While this is flexible, it is not the most user friendly or performant way to land data. The Snowflake Connector for Kafka can use schematization to maintain the schema of the landed data.
 

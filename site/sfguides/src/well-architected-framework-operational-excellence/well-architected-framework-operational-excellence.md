@@ -78,7 +78,7 @@ iterative approach:
 
 ## Ensure operational readiness & performance
 
-#### Overview
+### Overview
 
 Ensuring operational readiness and performance in the Snowflake AI Data
 Cloud is about creating a stable, efficient, and scalable environment
@@ -92,7 +92,7 @@ schedule, analytical queries return quickly, AI models are trained and
 deployed efficiently, and data applications deliver a seamless user
 experience.
 
-#### Focus areas
+### Focus areas
 
 To achieve peak performance and operational excellence in Snowflake,
 concentrate on four key areas that directly impact your workloads.
@@ -130,7 +130,7 @@ concentrate on four key areas that directly impact your workloads.
   regional outages and implementing regular testing of your BCDR plan to
   ensure its effectiveness.
 
-#### Phase-based activities
+### Phase-based activities
 
 #### Prepare
 
@@ -231,7 +231,7 @@ and refinement.
 - **Update BCDR Plan:** Incorporate lessons learned from BCDR drills and
   evolving business requirements into the disaster recovery plan.
 
-#### Recommendations
+### Recommendations
 
 Here are the key recommendations focused specifically on ensuring
 operational readiness and performance for your Snowflake environment.
@@ -335,7 +335,7 @@ Find the specific commands and procedures in the guide for [Database
 Replication and
 Failover/Failback](https://docs.snowflake.com/en/user-guide/account-replication-intro).
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 The table below outlines the roles and responsibilities for ensuring
 operational readiness and performance.
@@ -355,7 +355,7 @@ operational readiness and performance.
 
 ## Automate infrastructure & maintenance
 
-#### Overview
+### Overview
 
 Automating infrastructure and maintenance is crucial for achieving
 efficiency, consistency, and scalability in the Snowflake AI Data Cloud.
@@ -367,7 +367,7 @@ setup, deployment, and operation of your Snowflake environment to
 support data engineering, analytics, AI, and application workloads
 reliably and at scale.
 
-#### Focus areas
+### Focus areas
 
 To effectively automate your Snowflake environment, concentrate on four
 key areas. These areas provide a structured approach to managing your
@@ -404,212 +404,63 @@ human error.
   Automation ensures that security is consistently applied and auditable
   across the platform.
 
-#### Phase-based activities
+### Phase-based activities
 
 Adopting automation is a journey. The following activities are organized
 by phase to provide a clear roadmap from initial preparation to
 continuous improvement, aligned with our defined focus areas.
 
-#### Prepare
+### Prepare
 
 The **Prepare** phase is about planning and laying the foundation for
 successful automation.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th><strong>Focus Area</strong></th>
-<th><strong>Activities</strong></th>
-</tr>
-<tr>
-<th><strong>Infrastructure as Code (IaC)</strong></th>
-<th><p>Evaluate and select an IaC tool (e.g., Terraform,
-Schemachange).</p>
-<p>Define and document naming conventions and standards for all
-Snowflake objects.</p>
-<p>Establish a Git repository structure for managing your IaC
-configurations.</p></th>
-</tr>
-<tr>
-<th><strong>CI/CD for data &amp; applications</strong></th>
-<th><p>Choose CI/CD tools (e.g., GitHub Actions, Jenkins, GitLab CI)
-that integrate with your code repositories.</p>
-<p>Define a branching and deployment strategy (e.g., GitFlow) for
-promoting changes from development to production.</p></th>
-</tr>
-<tr>
-<th><strong>Observability &amp; monitoring</strong></th>
-<th><p>Identify key metrics for cost, performance, and security that
-need to be tracked.</p>
-<p>Evaluate tools for collecting and visualizing data from the Snowflake
-ACCOUNT_USAGE schema.</p>
-<p>Define initial alert thresholds for critical events like high credit
-usage or long-running queries.</p></th>
-</tr>
-<tr>
-<th><strong>Automated governance</strong></th>
-<th><p>Define your RBAC model and map business roles to Snowflake
-roles.</p>
-<p>Document your data classification standards and corresponding
-security controls (e.g., masking policies for PII).</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus Area | Activities |
+|---|---|
+| Infrastructure as Code (IaC) | - Evaluate and select an IaC tool (e.g., Terraform, Schemachange).<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
+| CI/CD for data & applications | - Choose CI/CD tools (e.g., GitHub Actions, Jenkins, GitLab CI) that integrate with your code repositories.<br>- Define a branching and deployment strategy (e.g., GitFlow) for promoting changes from development to production. |
+| Observability & monitoring | - Identify key metrics for cost, performance, and security that need to be tracked. Evaluate tools for collecting and visualizing data from the Snowflake `ACCOUNT_USAGE` schema.<br>- Define initial alert thresholds for critical events like high credit usage or long-running queries. |
+| Automated governance | - Define your RBAC model and map business roles to Snowflake roles.<br>- Document your data classification standards and corresponding security controls (e.g., masking policies for PII). |
 
-#### Implement
+
+### Implement
 
 The Implement phase involves the initial build-out and rollout of your
 automation scripts and pipelines.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th><strong>Focus Area</strong></th>
-<th><strong>Activities</strong></th>
-</tr>
-<tr>
-<th><strong>Infrastructure as Code (IaC)</strong></th>
-<th><p>Develop initial IaC modules to manage core objects: roles, users,
-warehouses, and databases.</p>
-<p>Create a sandbox environment entirely provisioned through your IaC
-scripts to validate the process.</p></th>
-</tr>
-<tr>
-<th><strong>CI/CD for data &amp; applications</strong></th>
-<th><p>Build a starter CI/CD pipeline for a single data engineering
-(e.g., dbt) or Snowpark project.</p>
-<p>This pipeline should automate code linting, unit testing, and
-deployment to a development environment.</p></th>
-</tr>
-<tr>
-<th><strong>Observability &amp; monitoring</strong></th>
-<th><p>Develop scripts or configure tools to automatically pull data
-from ACCOUNT_USAGE into a monitoring dashboard.</p>
-<p>Configure basic automated alerts for budget overruns (via resource
-monitors) and warehouse contention.</p></th>
-</tr>
-<tr>
-<th><strong>Automated governance</strong></th>
-<th><p>Write scripts to provision your defined RBAC model in
-Snowflake.</p>
-<p>Implement initial dynamic data masking policies on a non-production
-table containing sensitive data.</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus Area | Activities |
+|---|---|
+| Infrastructure as Code (IaC) | - Evaluate and select an IaC tool (e.g., Terraform, Schemachange).<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
+| CI/CD for data & applications | - Choose CI/CD tools (e.g., GitHub Actions, Jenkins, GitLab CI) that integrate with your code repositories.<br>- Define a branching and deployment strategy (e.g., GitFlow) for promoting changes from development to production. |
+| Observability & monitoring | - Identify key metrics for cost, performance, and security that need to be tracked. Evaluate tools for collecting and visualizing data from the Snowflake `ACCOUNT_USAGE` schema.<br>- Define initial alert thresholds for critical events like high credit usage or long-running queries. |
+| Automated governance | - Define your RBAC model and map business roles to Snowflake roles.<br>- Document your data classification standards and corresponding security controls (e.g., masking policies for PII). |
 
-#### Operate
+### Operate
 
 The Operate phase focuses on using and managing your automated systems
 for day-to-day activities.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th><strong>Focus Area</strong></th>
-<th><strong>Activities</strong></th>
-</tr>
-<tr>
-<th><strong>Infrastructure as Code (IaC)</strong></th>
-<th><p>Use your IaC repository and pull-request workflow as the sole
-method for making environmental changes.</p>
-<p>Run periodic checks to detect any manual changes ("drift") that
-deviate from the code-defined state.</p></th>
-</tr>
-<tr>
-<th><strong>CI/CD for data &amp; applications</strong></th>
-<th><p>All code changes for data pipelines, AI models, and applications
-are deployed to production via the automated CI/CD pipeline.</p>
-<p>Use automated testing gates to prevent regressions from reaching
-production.</p>
-<p>Implement fix forward or rollback for defects.</p></th>
-</tr>
-<tr>
-<th><strong>Observability &amp; monitoring</strong></th>
-<th><p>Regularly review automated cost and performance dashboards.</p>
-<p>Integrate automated alerts with your team's communication channels
-(e.g., Slack, PagerDuty).</p></th>
-</tr>
-<tr>
-<th><strong>Automated governance</strong></th>
-<th><p>Run automated quarterly access reviews and entitlement
-reports.</p>
-<p>Automate the process of granting and revoking access based on
-requests from your identity provider (e.g., Okta, Azure AD) via
-SCIM.</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus Area | Activities |
+|---|---|
+| Infrastructure as Code (IaC) | - Develop initial IaC modules to manage core objects: roles, users, warehouses, and databases.<br>- Create a sandbox environment entirely provisioned through your IaC scripts to validate the process. |
+| CI/CD for data & applications | - Build a starter CI/CD pipeline for a single data engineering (e.g., dbt) or Snowpark project.<br>- This pipeline should automate code linting, unit testing, and deployment to a development environment. |
+| Observability & monitoring | - Develop scripts or configure tools to automatically pull data from `ACCOUNT_USAGE` into a monitoring dashboard.<br>- Configure basic automated alerts for budget overruns (via resource monitors) and warehouse contention. |
+| Automated governance | - Write scripts to provision your defined RBAC model in Snowflake.<br>- Implement initial dynamic data masking policies on a non-production table containing sensitive data. |
 
-#### Improve
+
+### Improve
 
 The Improve phase is about refining and optimizing your automation to
 increase efficiency and capability.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th><strong>Focus Area</strong></th>
-<th><strong>Activities</strong></th>
-</tr>
-<tr>
-<th><strong>Infrastructure as Code (IaC)</strong></th>
-<th><p>Refactor IaC modules for greater reusability and simplicity.</p>
-<p>Implement automated validation and policy-as-code checks (e.g.,
-ensuring all warehouses have auto-suspend enabled) before applying
-changes.</p></th>
-</tr>
-<tr>
-<th><strong>CI/CD for data &amp; applications</strong></th>
-<th><p>Optimize pipeline performance to reduce deployment times.</p>
-<p>Introduce more sophisticated testing, such as data quality tests
-(e.g., using dbt tests) and integration tests within the pipeline.</p>
-<p>Explore zero-downtime deployment strategies for applications and
-stored procedures.</p></th>
-</tr>
-<tr>
-<th><strong>Observability &amp; monitoring</strong></th>
-<th><p>Implement automated cost optimization actions, such as
-automatically resizing warehouses based on historical usage
-patterns.</p>
-<p>Use machine learning to forecast future credit usage and detect
-performance anomalies.</p></th>
-</tr>
-<tr>
-<th><strong>Automated governance</strong></th>
-<th><p>Automate the tagging of data objects based on their contents to
-streamline governance.</p>
-<p>Develop automated routines to scan for and mask newly discovered
-sensitive data, ensuring continuous compliance.</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus Area | Activities |
+|---|---|
+| Infrastructure as Code (IaC) | - Refactor IaC modules for greater reusability and simplicity.<br>- Implement automated validation and policy-as-code checks (e.g., ensuring all warehouses have auto-suspend enabled) before applying changes. |
+| CI/CD for data & applications | - Optimize pipeline performance to reduce deployment times.<br>- Introduce more sophisticated testing, such as data quality tests (e.g., using dbt tests) and integration tests within the pipeline.<br>- Explore zero-downtime deployment strategies for applications and stored procedures. |
+| Observability & monitoring | - Implement automated cost optimization actions, such as automatically resizing warehouses based on historical usage patterns.<br>- Use machine learning to forecast future credit usage and detect performance anomalies. |
+| Automated governance | - Automate the tagging of data objects based on their contents to streamline governance.<br>- Develop automated routines to scan for and mask newly discovered sensitive data, ensuring continuous compliance. |
 
-#### Recommendations
+### Recommendations
 
 - **Start small and iterate:** Don't try to automate everything at once.
   Begin with a single, high-impact area, such as role management via IaC
@@ -638,7 +489,7 @@ sensitive data, ensuring continuous compliance.</p></th>
   grants, and ensuring compliance with organizational policies before
   deployment.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 This RACI (Responsible, Accountable, Consulted, Informed) matrix
 clarifies the roles and responsibilities for automation activities
@@ -660,7 +511,7 @@ across different personas.
 
 ## Enhance Observability & Issue Resolution
 
-#### Overview
+### Overview
 
 Observability in the Snowflake AI Data Cloud is about gaining deep,
 actionable insights into your platform's health, performance, cost, and
@@ -674,7 +525,7 @@ to building a comprehensive observability strategy that delivers trust
 and maximizes the value of your Snowflake investment for all
 stakeholders, from engineers to the C-suite.
 
-#### Focus areas
+### Focus areas
 
 We'll organize our observability strategy around four key focus areas.
 These pillars ensure a holistic view of your Snowflake environment,
@@ -701,7 +552,7 @@ covering everything from cost efficiency to data integrity.
   metrics, tracking data lineage from source to consumption, and quickly
   identifying the root cause of data-related issues.
 
-#### Phase-based activities
+### Phase-based activities
 
 A successful observability strategy is implemented incrementally. The
 following phases provide a roadmap from initial preparation to
@@ -713,188 +564,38 @@ This foundational phase is about defining what "good" looks like by
 establishing goals, metrics, and ownership before implementing any
 tools.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th><strong>Focus area</strong></th>
-<th><strong>Activities</strong></th>
-</tr>
-<tr>
-<th><strong>Cost &amp; performance intelligence</strong></th>
-<th><p>• <strong>Define cost allocation strategy:</strong> Establish a
-consistent tagging methodology for users, roles, and warehouses to
-enable accurate chargeback.</p>
-<p>• <strong>Establish performance baselines:</strong> Identify key
-queries and workloads (e.g., critical dashboard refreshes, ETL jobs) and
-document their expected runtimes and credit consumption.</p>
-<p><strong>• Select tooling:</strong> Evaluate whether to use native
-Snowflake features (Snowsight, ACCOUNT_USAGE views), third-party
-observability platforms, or a combination.</p></th>
-</tr>
-<tr>
-<th><strong>Workload health &amp; reliability</strong></th>
-<th><p>• <strong>Define key Service Level Objectives (SLOs):</strong>
-For each workload, define measurable reliability targets. Examples:
-Snowpipe data freshness within 5 minutes; critical data transformation
-(dbt) jobs complete by 6 AM.</p>
-<p>• <strong>Map critical data paths:</strong> Document the key data
-flows for your most important analytics, applications, and AI
-models.</p></th>
-</tr>
-<tr>
-<th><strong>Security &amp; access analytics</strong></th>
-<th><p>• <strong>Define sensitive data &amp; roles:</strong> Classify
-sensitive data objects and map the roles and users that should have
-access.</p>
-<p><strong>• Establish alerting policies</strong>: Define what
-constitutes a security incident (e.g., unauthorized access attempts,
-privilege escalation, data exfiltration patterns) that requires an
-immediate alert.</p></th>
-</tr>
-<tr>
-<th><strong>Data integrity &amp; lineage</strong></th>
-<th><p>• <strong>Identify Critical Data Elements (CDEs):</strong>
-Pinpoint the most vital datasets that power executive dashboards,
-financial reporting, or production AI models.</p>
-<p>• <strong>Define data quality rules:</strong> For CDEs, define rules
-for key metrics like freshness, completeness, and validity (e.g.,
-`order_date` cannot be in the future).</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus area | Activities |
+|---|---|
+| Cost & performance intelligence | - Define cost allocation strategy: Establish a consistent tagging methodology for users, roles, and warehouses to enable accurate chargeback.<br>- Establish performance baselines: Identify key queries and workloads (e.g., critical dashboard refreshes, ETL jobs) and document their expected runtimes and credit consumption.<br>- Select tooling: Evaluate whether to use native Snowflake features (Snowsight, `ACCOUNT_USAGE` views), third-party observability platforms, or a combination. |
+| Workload health & reliability | - Define key Service Level Objectives (SLOs): For each workload, define measurable reliability targets. Examples: Snowpipe data freshness within 5 minutes; critical data transformation (dbt) jobs complete by 6 AM.<br>- Map critical data paths: Document the key data flows for your most important analytics, applications, and AI models. |
+| Security & access analytics | - Define sensitive data & roles: Classify sensitive data objects and map the roles and users that should have access.<br>- Establish alerting policies: Define what constitutes a security incident (e.g., unauthorized access attempts, privilege escalation, data exfiltration patterns) that requires an immediate alert. |
+| Data integrity & lineage | - Identify Critical Data Elements (CDEs): Pinpoint the most vital datasets that power executive dashboards, financial reporting, or production AI models.<br>- Define data quality rules: For CDEs, define rules for key metrics like freshness, completeness, and validity (e.g., `order_date` cannot be in the future). |
 
 #### Implement
 
 In this phase, you'll configure the tools and processes defined during
 preparation to start collecting and visualizing observability data.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: left;"><strong>Focus area</strong></th>
-<th style="text-align: left;"><strong>Activities</strong></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Cost &amp; performance
-intelligence</strong></th>
-<th style="text-align: left;"><p>• <strong>Configure resource
-monitors:</strong> set up warehouse-level monitors to prevent budget
-overruns by suspending warehouses or sending notifications at defined
-credit thresholds.</p>
-<p>• <strong>Build foundational dashboards:</strong> create snowsight
-dashboards to visualize credit usage by warehouse/tag, identify
-long-running queries (QUERY_HISTORY), and monitor warehouse
-queuing.</p></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Workload health &amp;
-reliability</strong></th>
-<th style="text-align: left;"><p>• <strong>Implement error
-notifications:</strong> configure notifications for failed tasks
-(SYSTEM$SEND_EMAIL) or snowpipe copy errors to immediately alert the
-responsible teams.</p>
-<p>• <strong>Monitor data ingestion:</strong> use the COPY_HISTORY and
-PIPE_USAGE_HISTORY views to track the latency and health of data loading
-processes.</p></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Security &amp; access
-analytics</strong></th>
-<th style="text-align: left;"><p>• <strong>Enable access
-monitoring:</strong> build dashboards on top of the ACCESS_HISTORY and
-LOGIN_HISTORY views to visualize user login patterns, query activity on
-sensitive tables, and privilege grants.</p>
-<p>• <strong>Set up security alerts:</strong> implement snowflake alerts
-to trigger notifications for defined security events, such as a user
-being granted the ACCOUNTADMIN role.</p></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Data integrity &amp;
-lineage</strong></th>
-<th style="text-align: left;"><p>• <strong>Deploy data quality
-tests:</strong> implement data quality checks as part of your data
-transformation pipeline (e.g., using dbt tests) that run on a
-schedule.</p>
-<p>• <strong>Utilize object tagging for lineage:</strong> apply tags to
-tables and columns to create a basic, searchable framework for tracking
-data lineage.</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus area | Activities |
+|---|---|
+| Cost & performance intelligence | - **Configure resource monitors:** set up warehouse-level monitors to prevent budget overruns by suspending warehouses or sending notifications at defined credit thresholds.<br>- **Build foundational dashboards:** create Snowsight dashboards to visualize credit usage by warehouse/tag, identify long-running queries (`QUERY_HISTORY`), and monitor warehouse queuing. |
+| Workload health & reliability | - **Implement error notifications:** configure notifications for failed tasks (`SYSTEM$SEND_EMAIL`) or Snowpipe copy errors to immediately alert the responsible teams.<br>- **Monitor data ingestion:** use the `COPY_HISTORY` and `PIPE_USAGE_HISTORY` views to track the latency and health of data loading processes. |
+| Security & access analytics | - **Enable access monitoring:** build dashboards on top of the `ACCESS_HISTORY` and `LOGIN_HISTORY` views to visualize user login patterns, query activity on sensitive tables, and privilege grants.<br>- **Set up security alerts:**** implement Snowflake alerts to trigger notifications for defined security events, such as a user being granted the `ACCOUNTADMIN` role. |
+| Data integrity & lineage | - **Deploy data quality tests:** implement data quality checks as part of your data transformation pipeline (e.g., using dbt tests) that run on a schedule.<br>- **Utilize object tagging for lineage:** apply tags to tables and columns to create a basic, searchable framework for tracking data lineage. |
+
 
 #### Operate
 
 This phase focuses on the day-to-day use of the implemented
 observability systems to monitor health and resolve issues.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: left;"><strong>Focus area</strong></th>
-<th style="text-align: left;"><strong>Activities</strong></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Cost &amp; performance
-intelligence</strong></th>
-<th style="text-align: left;">• <strong>Conduct regular cost
-reviews:</strong> Hold weekly or bi-weekly reviews with engineering and
-finance teams to analyze spending trends and identify optimization
-opportunities. • <strong>Triage performance issues</strong>: Use query
-history and query profiles to investigate and troubleshoot slow-running
-queries, identifying bottlenecks like disk spilling or inefficient
-joins.</th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Workload health &amp;
-reliability</strong></th>
-<th style="text-align: left;"><p>• <strong>Respond to workload
-alerts:</strong> Triage and resolve alerts for failed tasks, data
-loading errors, or SLO breaches.</p>
-<p>• <strong>Manage incidents</strong>: Follow a defined incident
-management process for critical failures, including communication, root
-cause analysis (RCA), and post-mortems.</p></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Security &amp; access
-analytics</strong></th>
-<th style="text-align: left;">• <strong>Review access logs:</strong>
-Periodically audit access to sensitive data, investigate anomalous
-queries, and ensure access patterns align with business needs. •
-<strong>Investigate security alerts</strong>: When an alert is
-triggered, follow a security runbook to investigate the potential
-threat, determine its impact, and remediate as needed.</th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Data integrity &amp;
-lineage</strong></th>
-<th style="text-align: left;"><p>• <strong>Investigate data quality
-failures:</strong> When a data quality test fails, use lineage
-information to trace the issue back to its source and notify the data
-producers.</p>
-<p>• <strong>Communicate data incidents</strong>: Proactively inform
-data consumers when a known data quality issue impacts their dashboards
-or applications.</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus area | Activities |
+|---|---|
+| Cost & performance intelligence | **Conduct regular cost reviews:** Hold weekly or bi-weekly reviews with engineering and finance teams to analyze spending trends and identify optimization opportunities.<br>**Triage performance issues:** Use query history and query profiles to investigate and troubleshoot slow-running queries, identifying bottlenecks like disk spilling or inefficient joins. |
+| Workload health & reliability | **Respond to workload alerts:** Triage and resolve alerts for failed tasks, data loading errors, or SLO breaches.<br>**Manage incidents:** Follow a defined incident management process for critical failures, including communication, root cause analysis (RCA), and post-mortems. |
+| Security & access analytics | **Review access logs:** Periodically audit access to sensitive data, investigate anomalous queries, and ensure access patterns align with business needs.<br>- Investigate security alerts: When an alert is triggered, follow a security runbook to investigate the potential threat, determine its impact, and remediate as needed. |
+| Data integrity & lineage | **Investigate data quality failures:** When a data quality test fails, use lineage information to trace the issue back to its source and notify the data producers.<br>**Communicate data incidents:** Proactively inform data consumers when a known data quality issue impacts their dashboards or applications. |
+
 
 #### Improve
 
@@ -902,73 +603,21 @@ This final phase is about moving from reactive to proactive operations
 by analyzing trends, automating responses, and continuously refining
 your observability strategy.
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: left;"><strong>Focus area</strong></th>
-<th style="text-align: left;"><strong>Activities</strong></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Cost &amp; performance
-intelligence</strong></th>
-<th style="text-align: left;"><p>• <strong>Automate warehouse
-scaling:</strong> Use historical workload patterns to right-size
-warehouses or implement a more dynamic scaling strategy for spiky
-workloads.</p>
-<p>• <strong>Optimize high-cost queries:</strong> Proactively identify
-the top credit-consuming queries each month and assign them to
-engineering teams for performance tuning or rewriting.</p></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Workload health &amp;
-reliability</strong></th>
-<th style="text-align: left;"><p>• <strong>Perform trend
-analysis:</strong> Analyze historical task and pipe error rates to
-identify systemic issues in data pipelines and prioritize fixes.</p>
-<p>• <strong>Refine SLOs and alerts:</strong> Adjust SLO thresholds
-based on historical performance and business needs. Tune alerts to
-reduce noise and false positives.</p></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Security &amp; access
-analytics</strong></th>
-<th style="text-align: left;"><p>• <strong>Automate access
-reviews:</strong> Develop automated workflows to periodically require
-business owners to certify who has access to their data, reducing manual
-toil for security teams.</p>
-<p>• <strong>Enhance threat detection models:</strong> Use historical
-access data to build simple anomaly detection models (e.g., using
-Snowpark) to identify suspicious behavior that deviates from a user's
-normal baseline.</p></th>
-</tr>
-<tr>
-<th style="text-align: left;"><strong>Data integrity &amp;
-lineage</strong></th>
-<th style="text-align: left;"><p>• <strong>Implement automated
-lineage:</strong> Adopt tools that automatically parse SQL from
-QUERY_HISTORY to generate column-level lineage, dramatically speeding up
-impact analysis and root cause identification.</p>
-<p>• <strong>Expand data quality coverage:</strong> Use insights from
-data incidents to expand data quality monitoring to more datasets across
-the platform.</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Focus area | Activities |
+|---|---|
+| Cost & performance intelligence | **Automate warehouse scaling:** Use historical workload patterns to right-size warehouses or implement a more dynamic scaling strategy for spiky workloads.<br> **Optimize high-cost queries:** Proactively identify the top credit-consuming queries each month and assign them to engineering teams for performance tuning or rewriting. |
+| Workload health & reliability | **Perform trend analysis:** Analyze historical task and pipe error rates to identify systemic issues in data pipelines and prioritize fixes.<br>**Refine SLOs and alerts:** Adjust SLO thresholds based on historical performance and business needs. Tune alerts to reduce noise and false positives. |
+| Security & access analytics | **Automate access reviews:** Develop automated workflows to periodically require business owners to certify who has access to their data, reducing manual toil for security teams.<br> **Enhance threat detection models:** Use historical access data to build simple anomaly detection models (e.g., using Snowpark) to identify suspicious behavior that deviates from a user's normal baseline. |
+| Data integrity & lineage | **Implement automated lineage:** Adopt tools that automatically parse SQL from QUERY_HISTORY to generate column-level lineage, dramatically speeding up impact analysis and root cause identification.<br>**Expand data quality coverage:** Use insights from data incidents to expand data quality monitoring to more datasets across the platform. |
 
-#### Recommendations
+### Recommendations
 
 The following recommendations provide actionable steps for implementing
 a robust observability and issue resolution strategy on Snowflake. They
 are designed to guide interactions between teams and leverage specific
 platform features.
 
-#### Establish a centralized observability data model
+### Establish a centralized observability data model
 
 Instead of allowing teams to query raw metadata independently, create a
 governed, centralized foundation for all observability data. This
@@ -1003,7 +652,7 @@ ensures consistency and simplifies access control.
   a data engineer debugging a pipeline to a CIO reviewing costs, is
   looking at the same source of truth.
 
-#### Enrich observability data with contextual tagging
+### Enrich observability data with contextual tagging
 
 Raw metrics like "credit usage" or "query runtime" are not actionable
 without context. A consistent tagging strategy is crucial for quickly
@@ -1031,7 +680,7 @@ isolating the source of any issue.
     warehouse to find the long-running queries without the noise from
     other workloads.
 
-#### Implement persona-driven observability dashboards
+### Implement persona-driven observability dashboards
 
 A single dashboard cannot serve everyone. Build a tiered set of
 dashboards in Snowsight that provides the right level of detail for each
@@ -1076,7 +725,7 @@ persona, enabling them to answer their specific questions quickly.
   - Key SLO attainment (e.g., "99.9% of critical data pipelines
     completed on time").
 
-#### Automate detection and response with alerts & tasks
+### Automate detection and response with alerts & tasks
 
 Move from passive monitoring to active, automated observability. Use
 Snowflake's native features to not only detect issues but also to notify
@@ -1108,7 +757,7 @@ the right people and, where appropriate, trigger corrective actions.
       example, an alert for a long-running, non-critical query could
       call a procedure that cancels it using SYSTEM\$CANCEL_QUERY.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 This RACI (Responsible, Accountable, Consulted, Informed) matrix
 clarifies the roles and responsibilities for key observability
@@ -1117,20 +766,21 @@ activities across different teams.
 **Legend:** **R** = Responsible, **A** = Accountable, **C** = Consulted,
 **I** = Informed
 
-||
-||
-||
-||
-||
-||
-||
-||
-||
-||
+| Activity | C-Level (CIO/CDO/CFO) | Chief Architect | Engineering | Data Science | Security | SRE |
+|---|---|---|---|---|---|---|
+| Define cost & security policies | A | R | C | C | R | C |
+| Implement & manage budgets (resource monitors) | A | C | R | I | I | R |
+| Build & maintain observability dashboards | I | C | R | C | C | R |
+| Investigate & resolve | I | C | R | C | I | R |
+| Monitor & triage workload failures (ETL, AI) | I | I | R | R | I | A |
+| Define & monitor data quality rules | C | C | C | A | I | I |
+| Investigate & remediate security incidents | A | C | C | I | R | C |
+| Conduct access & entitlement reviews | A | I | C | C | R | I |
+ 
 
 ## Manage incidents & problems
 
-#### Overview
+### Overview
 
 Effective incident and problem management is the cornerstone of a
 reliable data platform. In the Snowflake AI Data Cloud, where critical
@@ -1163,7 +813,7 @@ these practices builds confidence in your data platform, ensuring it
 remains a dependable foundation for critical business decisions and
 innovation.
 
-#### **Focus areas**
+### **Focus areas**
 
 **Detection & alerting**
 
@@ -1209,9 +859,9 @@ ensuring roles and communication plans are clearly defined. A
 well-prepared team can significantly reduce the time it takes to resolve
 future incidents.
 
-#### Phase-based activities
+### Phase-based activities
 
-#### Prepare
+### Prepare
 
 This phase includes all the proactive work your teams do *before* an
 incident occurs to ensure they are ready to respond effectively.
@@ -1239,7 +889,7 @@ incident occurs to ensure they are ready to respond effectively.
   impactful failure scenarios for your specific Snowflake workloads,
   such as a bad data deployment or a query storm from an application.
 
-#### Implement
+### Implement
 
 In this phase, you build and configure the systems, tools, and
 documentation needed to manage incidents efficiently.
@@ -1265,7 +915,7 @@ documentation needed to manage incidents efficiently.
   clear, step-by-step diagnostic and resolution instructions for the
   failure scenarios you identified in the Prepare phase.
 
-#### Operate
+### Operate
 
 This phase covers the real-time activities your team performs *during*
 an active incident.
@@ -1294,7 +944,7 @@ an active incident.
   preventing responders from having to solve problems from scratch under
   pressure.
 
-#### Improve
+### Improve
 
 This phase is about learning from past incidents *after* they are
 resolved to build a more resilient system and process.
@@ -1322,14 +972,14 @@ resolved to build a more resilient system and process.
   and the accuracy of your documentation by conducting "Game Days" that
   simulate real-world incidents.
 
-#### Recommendations
+### Recommendations
 
 Effective incident management in Snowflake relies on leveraging its
 unique architectural strengths—separating compute from storage and
 providing rich operational metadata. These recommendations provide
 actionable steps for detection, response, and improvement.
 
-#### Establish a single source of truth for triage
+### Establish a single source of truth for triage
 
 During an incident, speed and accuracy are paramount. Centralize your
 initial investigation using Snowflake's comprehensive metadata logs to
@@ -1355,7 +1005,7 @@ Centralize incident detection with ACCOUNT_USAGE views
   schema](https://docs.snowflake.com/en/sql-reference/account-usage),
   Snowsight Dashboards, Snowflake Alerts.
 
-#### Isolate and mitigate performance incidents immediately 
+### Isolate and mitigate performance incidents immediately 
 
 Snowflake's architecture provides powerful levers to contain and resolve
 performance degradation without affecting the entire platform. Your
@@ -1388,7 +1038,7 @@ adjusting compute resources dynamically.
   WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse)
   ... SET WAREHOUSE_SIZE = ..., Multi-cluster Warehouse configuration.
 
-#### Automate disaster recovery and high-availability responses 
+### Automate disaster recovery and high-availability responses 
 
 For major incidents like a regional outage, your response should be
 swift, tested, and reliable. This depends on preparation and leveraging
@@ -1408,7 +1058,7 @@ Snowflake's built-in business continuity features.
   Replication](https://docs.snowflake.com/en/user-guide/account-replication-intro),
   **Failover Groups**, **Client Redirect**
 
-#### Perform data-driven post-mortems for continuous improvement
+### Perform data-driven post-mortems for continuous improvement
 
 Every incident is a learning opportunity. Use Snowflake's detailed query
 execution data to move beyond symptoms and identify the precise root
@@ -1428,7 +1078,7 @@ cause, leading to permanent fixes.
   Profile](https://docs.snowflake.com/en/user-guide/ui-query-profile)
   interface in Snowsight.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 A RACI (Responsible, Accountable, Consulted, Informed) matrix defines
 the roles and responsibilities for incident and governance management:
@@ -1436,16 +1086,16 @@ the roles and responsibilities for incident and governance management:
 **Legend:** **R** = Responsible, **A** = Accountable, **C** = Consulted,
 **I** = Informed
 
-||
-||
-||
-||
-||
-||
+| Role | CIO/CDO/CTO/CFO | Chief Enterprise Architect | Engineering | Data Science | Security | SRE |
+|---|---|---|---|---|---|---|
+| Incident management | A | C | R | I | C | R |
+| Governance | A | R | C | I | R | C |
+| Security | A | C | I | I | R | C |
+| Cost management | A | C | R | I | I | C |
 
 ## Enable collaboration & Secure Sharing
 
-#### Overview
+### Overview
 
 Enabling secure, real-time collaboration across your organization, with
 customers, and with business partners is a foundational pillar of the
@@ -1462,7 +1112,7 @@ guidelines, you can break down data silos, accelerate innovation, and
 create new value streams, all while ensuring your data remains
 protected.
 
-#### Focus areas
+### Focus areas
 
 To effectively enable collaboration and secure sharing in Snowflake,
 concentrate on four key areas. These areas provide a structured approach
@@ -1494,13 +1144,13 @@ to designing, implementing, and managing your data sharing ecosystem.
   auditing access patterns using views like ACCESS_HISTORY, and setting
   up alerts to detect and respond to anomalous activity.
 
-#### Phase-based activities
+### Phase-based activities
 
 A successful data sharing strategy is implemented progressively. The
 following phases outline the journey from initial planning to continuous
 improvement.
 
-#### Prepare
+### Prepare
 
 The Prepare phase is about establishing the strategy, governance
 framework, and organizational alignment needed for secure data sharing.
@@ -1512,7 +1162,7 @@ framework, and organizational alignment needed for secure data sharing.
 | **Unified collaboration for workloads** | Identify key collaboration use cases, such as joint AI/ML model development or building a shared analytics dashboard. |
 | **Comprehensive auditing and monitoring** | Define key metrics for success and risk, such as the number of data consumers, query volume on shares, and types of sensitive data being accessed. Plan your auditing strategy. |
 
-#### Implement
+### Implement
 
 The Implement phase involves the hands-on configuration of the Snowflake
 platform to bring your sharing strategy to life.
@@ -1524,7 +1174,7 @@ platform to bring your sharing strategy to life.
 | **Unified collaboration for workloads** | Develop and deploy Snowpark applications that can be shared via listings. Build shared data engineering pipelines using Streams and Tasks. Package and publish Snowflake Native Apps to offer data and application logic together. |
 | **Comprehensive auditing and monitoring** | Configure alerts on QUERY_HISTORY and ACCESS_HISTORY to monitor for unusual access patterns on shared objects. Set up monitoring dashboards to track share consumption and performance. |
 
-#### Operate
+### Operate
 
 The Operate phase focuses on the day-to-day management of your data
 sharing environment, ensuring it runs smoothly and securely.
@@ -1536,7 +1186,7 @@ sharing environment, ensuring it runs smoothly and securely.
 | **Unified collaboration for workloads** | Provide support for shared assets like Snowpark applications and data pipelines. Gather feedback from users to identify areas for improvement. |
 | **Comprehensive auditing and monitoring** | Regularly review audit logs and monitoring dashboards. Investigate any security alerts or performance degradation related to data sharing activities. |
 
-#### Improve
+### Improve
 
 The Improve phase is about optimizing and evolving your data sharing
 capabilities based on feedback, usage data, and new business
@@ -1549,7 +1199,7 @@ requirements.
 | **Unified collaboration for workloads** | Enhance Snowflake Native Apps with new features based on consumer feedback. Explore new collaboration patterns using emerging Snowflake features. |
 | **Comprehensive auditing and Monitoring** | Fine-tune monitoring alerts to reduce false positives. Develop more sophisticated usage analytics to better understand the value derived from shared data and identify new sharing opportunities. |
 
-#### Recommendations
+### Recommendations
 
 To activate your data sharing and collaboration strategy, your teams
 should take specific, coordinated actions. The following recommendations
@@ -1557,7 +1207,7 @@ provide an imperative guide for stakeholders, detailing the exact tools
 to use and referencing official Snowflake documentation for further
 detail.
 
-#### Mandate the use of secure views for all shares
+### Mandate the use of secure views for all shares
 
 Instead of sharing raw tables, always use [SECURE
 VIEWS](https://docs.snowflake.com/en/user-guide/views-secure) as the
@@ -1587,7 +1237,7 @@ object.
 5.  Finally, the Data Engineer grants SELECT on the secure view to the
     SHARE.
 
-#### Operationalize a "data as a product" mindset with in-platform documentation
+### Operationalize a "data as a product" mindset with in-platform documentation
 
 Treat every shared dataset as a product. A product requires clear
 documentation that allows consumers to discover, understand, and trust
@@ -1615,7 +1265,7 @@ documentation alongside the data itself.
     rich descriptions and sample queries directly into the listing's UI
     in Snowsight.
 
-#### Automate governance at scale with tag-based policies
+### Automate governance at scale with tag-based policies
 
 Manually applying security policies to hundreds of tables is not
 scalable and is prone to error. Instead, implement a [tag-based
@@ -1648,7 +1298,7 @@ based on its classification.
     without manual intervention before the data is ever added to a
     share.
 
-#### Distribute application logic securely with Snowflake Native Apps
+### Distribute application logic securely with Snowflake Native Apps
 
 When you need to share more than just data—such as a proprietary
 algorithm, a machine learning model, or a complete interactive
@@ -1678,7 +1328,7 @@ code or data ever leaving their secure Snowflake environment.
     provider's proprietary model against their own private customer
     table, with the provider having zero access to the consumer's data.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 Clarifying roles and responsibilities is crucial for a well-governed
 data sharing program. The following RACI (Responsible, Accountable,
@@ -1690,18 +1340,18 @@ persona.
 
 | **Activity** | **CIO / CDO** | **Chief Enterprise Architect** | **Security** | **Engineering / SRE** | **Data Science** |
 |----|----|----|----|----|----|
-| **Define Data Sharing & Monetization Strategy** | **A** | **C** | **C** | **I** | **C** |
-| **Establish Governance & Sharing Policies** | **A** | **C** | **R** | **I** | **I** |
-| **Design the Sharing Architecture (e.g., Shares, Views)** | **I** | **A** | **C** | **R** | **C** |
-| **Implement and Apply Security Controls (Masking/Row Access)** | **I** | **I** | **A** | **R** | **I** |
-| **Publish and Manage Marketplace Listings** | **A** | **I** | **C** | **R** | **C** |
-| **Approve and Onboard Data Consumers** | **I** | **I** | **C** | **R** | **A** |
-| **Monitor and Audit Sharing Usage** | **I** | **I** | **A** | **R** | **I** |
-| **Develop Collaborative Snowpark/Native App Assets** | **I** | **C** | **C** | **R** | **A** |
+| Define Data Sharing & Monetization Strategy | A | C | C | I | C |
+| Establish Governance & Sharing Policies | A | C | R | I | I |
+| Design the Sharing Architecture (e.g., Shares, Views) | I | A | C | R | C |
+| Implement and Apply Security Controls (Masking/Row Access) | I | I | A | R | I |
+| Publish and Manage Marketplace Listings | A | I | C | R | C |
+| Approve and Onboard Data Consumers | I | I | C | R | A |
+| Monitor and Audit Sharing Usage | I | I | A | R | I |
+| Develop Collaborative Snowpark/Native App Assets | I | C | C | R | A |
 
 ## Manage the Software Development Lifecycle (SDLC)
 
-#### Overview
+### Overview
 
 A well-defined Software Development Lifecycle (SDLC) in Snowflake
 enables teams to innovate faster while maintaining stability and
@@ -1714,7 +1364,7 @@ assets. This is essential for all key workloads, whether you are
 building scalable data pipelines, developing complex machine learning
 models with Snowpark, or deploying native applications.
 
-#### Focus areas
+### Focus areas
 
 To build a robust SDLC, we recommend concentrating on five key focus
 areas. These areas provide the foundation for a mature and scalable
@@ -1756,12 +1406,12 @@ development process on Snowflake.
   observability helps you detect issues proactively, troubleshoot
   failures, and optimize resource usage.
 
-#### Phase-based activities
+### Phase-based activities
 
 Managing the SDLC in a well-architected way can be broken down into four
 distinct phases. Here's how the focus areas apply to each phase.
 
-#### Prepare
+### Prepare
 
 This phase is about planning and setting up the foundational components
 for your project.
@@ -1787,7 +1437,7 @@ for your project.
   capture query history, credit usage, and performance metrics from
   Snowflake's ACCOUNT_USAGE views.
 
-#### Implement
+### Implement
 
 This phase involves the core development and building of your data asset
 or application.
@@ -1815,7 +1465,7 @@ or application.
   (e.g., in Snowpark functions or stored procedures). Add custom tags to
   queries to track lineage and cost attribution.
 
-#### Operate
+### Operate
 
 This phase focuses on deploying, managing, and monitoring the solution
 in production.
@@ -1842,7 +1492,7 @@ in production.
   query performance, and credit consumption. Configure alerts to notify
   the SRE team of failures, performance degradation, or cost anomalies.
 
-#### Improve
+### Improve
 
 This final phase is about iterating on the solution and the process
 itself based on operational feedback.
@@ -1869,14 +1519,14 @@ itself based on operational feedback.
   post-mortems on incidents to identify root causes and implement
   preventative measures.
 
-#### Recommendations
+### Recommendations
 
 To implement a mature SDLC for the Snowflake AI Data Cloud, your teams
 should adopt specific practices and tools. These recommendations provide
 actionable guidance for each stakeholder to build a reliable, automated,
 and governable development lifecycle.
 
-#### Standardize your core SDLC toolchain
+### Standardize your core SDLC toolchain
 
 **Action:** The Chief Enterprise Architect and Engineering Leads should
 define and enforce a single, approved toolchain for source control,
@@ -1904,7 +1554,7 @@ CLI](https://docs.snowflake.com/en/user-guide/snowsql) or the
 Python](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector)
 to execute scripts and deploy objects against Snowflake environments.
 
-#### Adopt GitOps for all Snowflake object management
+### Adopt GitOps for all Snowflake object management
 
 **Action:** All changes to Snowflake database objects (schemas, tables,
 views, roles, grants) can be managed declaratively as code in Git.
@@ -1931,7 +1581,7 @@ This practice provides a robust audit trail for all DDL, DML, and DCL
 statements executed against Snowflake, improving governance and
 simplifying troubleshooting.
 
-#### Automate quality gates with comprehensive testing
+### Automate quality gates with comprehensive testing
 
 **Action:** Enforce automated testing as a mandatory step in your CI
 pipeline. Pull requests that do not pass all tests must be blocked from
@@ -1957,7 +1607,7 @@ Testing can be done against temporary schemas or databases created using
 Zero-Copy Cloning, providing a production-like environment without
 incurring storage costs or performance impact.
 
-#### Isolate workflows with on-demand cloned environments
+### Isolate workflows with on-demand cloned environments
 
 **Action:** Empower your development teams with self-service, isolated
 environments using Snowflake's [Zero-Copy
@@ -1985,7 +1635,7 @@ Cloning is an instantaneous metadata operation, meaning environments are
 ready in seconds, not hours, and consume no additional storage until
 changes are made.
 
-#### Embed cost and performance monitoring into the workflow
+### Embed cost and performance monitoring into the workflow
 
 **Action:** Make cost and performance explicit responsibilities of the
 development team, not just an operational afterthought. Integrate
@@ -2010,7 +1660,7 @@ This leverages Snowflake's rich metadata and governance features. Using
 QUERY_TAG allows you to precisely attribute credit consumption to
 specific features or changes, enabling true cost visibility.
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 This RACI (Responsible, Accountable, Consulted, Informed) matrix
 outlines the typical roles and responsibilities across the SDLC
@@ -2019,24 +1669,24 @@ lifecycle.
 **Legend:** **R** = Responsible, **A** = Accountable, **C** = Consulted,
 **I** = Informed
 
-||
-||
-||
-||
-||
-||
-||
-||
-||
-||
-||
-||
-||
-||
+| Focus Area / Activity                 | Engineering | Data Science | SRE | Security | Architecture | C‑Level |
+|---|---|---|---|---|---|---|
+| Define SDLC toolchain & standards     | R | C | C | C | A | I |
+| Set up Git repos & branching strategy | R | R | C | I | A | I |
+| Develop & commit code/models          | R | R | I | I | C | I |
+| Conduct peer code reviews                   | R | R | C | C | I | I |
+| Build & maintain CI/CD pipelines            | R | C | A | C | C | I |
+| Write unit & integration tests              | R | R | C | I | I | I |
+| Manage environment provisioning (IaC)       | C | I | R | C | A | I |
+| Execute production deployments              | A | I | R | C | I | I |
+| Monitor production health & performance     | C | C | R | I | I | I |
+| Respond to production incidents             | C | C | R | I | I | I |
+| Optimize pipeline performance cost                           | R | R | A | I | C | I |
+| Define & enforce security policies | C | C | C | A | R | I |
 
 ## Continuously improve performance & practices
 
-#### Overview
+### Overview
 
 Continuously improving performance and operational practices is
 essential for maximizing the value, efficiency, and innovation you get
@@ -2046,7 +1696,7 @@ your platform evolves with your business needs. This approach helps you
 control costs, enhance user experience, and maintain a robust, scalable
 data environment.
 
-#### Focus areas
+### Focus areas
 
 To structure your improvement efforts, concentrate on these four key
 areas. They provide a comprehensive framework for optimizing every
@@ -2077,13 +1727,13 @@ aspect of your Snowflake usage, from query execution to team expertise.
   Snowflake requires continuous learning to leverage new features and
   capabilities effectively.
 
-#### Phase-based activities
+### Phase-based activities
 
 Continuous improvement is a journey. By breaking it down into the four
 distinct iterative phases of the Operational Excellence pillar, you can
 apply focused effort at each stage of your project lifecycle.
 
-#### Prepare
+### Prepare
 
 In this phase, you lay the groundwork for success by defining goals,
 standards, and metrics before a project begins.
@@ -2117,7 +1767,7 @@ standards, and metrics before a project begins.
   - Identify any new Snowflake features the project will use (e.g.,
     Snowpark, Streamlit) and arrange for team training.
 
-#### Implement
+### Implement
 
 During the development and deployment phase, you turn plans into action,
 with a focus on building efficient and manageable solutions.
@@ -2151,7 +1801,7 @@ with a focus on building efficient and manageable solutions.
   - Conduct regular peer code reviews to share knowledge and enforce
     best practices for SQL, Snowpark, and application code.
 
-#### Operate
+### Operate
 
 Once a solution is live, the focus shifts to monitoring, maintenance,
 and real-time optimization.
@@ -2186,7 +1836,7 @@ and real-time optimization.
   - Encourage teams to participate in Snowflake webinars, workshops, and
     community forums to stay current.
 
-#### Improve
+### Improve
 
 This proactive phase involves looking for opportunities to refine and
 enhance your existing solutions and practices.
@@ -2224,9 +1874,9 @@ enhance your existing solutions and practices.
   - Invest in official Snowflake certifications to validate and deepen
     team expertise.
 
-#### Recommendations
+### Recommendations
 
-#### Proactively manage workload performance with observability tools
+### Proactively manage workload performance with observability tools
 
 Don't wait for performance issues to arise. Empower your teams to use
 Snowflake's built-in observability tools to find and fix inefficiencies
@@ -2260,7 +1910,7 @@ before they impact the business.
   workloads and configure alerts that trigger when these SLOs are at
   risk.
 
-#### Implement a continuous compute optimization cycle
+### Implement a continuous compute optimization cycle
 
 Virtual warehouse configuration is not a "set it and forget it" task.
 Create a formal, data-driven process to ensure your compute resources
@@ -2295,11 +1945,11 @@ are always perfectly matched to your workloads.
   suspending compute when consumption exceeds its budget—often a sign of
   a runaway query or performance issue.
 
-#### Automate performance guardrails and operational tasks
+### Automate performance guardrails and operational tasks
 
 Reduce manual effort and human error by embedding performance best
 practices and operational duties directly into your automated workflows
-and data pipelines. ⚙️
+and data pipelines.
 
 **Action for SREs & DevOps Engineers**:
 
@@ -2326,7 +1976,7 @@ and data pipelines. ⚙️
   many common workflows, improving reliability and reducing operational
   complexity.
 
-#### Foster a culture of continuous learning and excellence
+### Foster a culture of continuous learning and excellence
 
 Your team's expertise is the most critical factor in achieving sustained
 performance. Invest in a structured program to keep skills sharp and
@@ -2356,13 +2006,26 @@ align everyone on best practices.
   tough performance challenges to foster [collaborative
   problem-solving.](https://community.snowflake.com/s/)
 
-#### Persona responsibilities (RACI chart)
+### Persona responsibilities (RACI chart)
 
 Clarifying roles ensures that everyone understands their part in the
 continuous improvement process. The matrix below outlines typical
 responsibilities.
 
-**Legend**: **R** - Responsible, **A** - Accountable, **C** - Consulted,
+
+
+**Legend:** **R** - Responsible, **A** - Accountable, **C** - Consulted,
 **I** - Informed
+
+| Activity | C-Level (CIO/CDO) | Chief Architect | Engineering | Data Science | Security | SRE |
+|---|---|---|---|---|---|---|
+| Set platform budget & cost strategy | A | C | I | I | I | I |
+| Define performance & architectural standards | A | R | C | C | C | C |
+| Tune queries & optimize workloads | I | C | R | R | I | C |
+| Monitor & adjust warehouse configuration | I | C | R | C | I | R |
+| Develop & maintain CI/CD pipelines | I | C | R | C | I | A |
+| Implement cost tagging & monitoring | I | A | R | R | I | R |
+| Conduct regular FinOps reviews | A | R | C | C | I | C |
+| Establish a Center of Excellence (CoE) | A | R | C | C | C | C |
 
 

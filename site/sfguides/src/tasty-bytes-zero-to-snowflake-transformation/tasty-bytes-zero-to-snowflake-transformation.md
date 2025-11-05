@@ -89,7 +89,7 @@ USE DATABASE tb_101;
 CREATE OR REPLACE TABLE raw_pos.truck_dev CLONE raw_pos.truck;
 ```
 
-> aside positive
+
 > **Zero Copy Cloning**: Creates a copy of a database, schema or table. A snapshot of data present in the source object is taken when the clone is created and is made available to the cloned object. 
 >The cloned object is writable and is independent of the clone source. That is, changes made to either the source object or the clone object are not part of the other. 
 >
@@ -139,7 +139,7 @@ ORDER BY t.truck_id;
 ![assets/truck_2.png](assets/truck_2.png)
 
 
->aside positive
+
 > If a user repeats a query that has already been run, and the data in the table(s) hasn’t changed since the last time that the query was run, then the result of the query is the same. Instead of running the query again, Snowflake simply returns the same result that it returned previously. 
 >         
 >This can substantially reduce query time because Snowflake bypasses query execution and, instead,retrieves the result directly from the cache.
@@ -224,7 +224,7 @@ It looks like we messed up the `truck_type` concatenation.  We will need to reso
 ### Overview
 Althoug we made a mistake on the Update statement earlier and missed adding a space  between Year and Make. Thankfully, we can use Time Travel to revert our table back to the state it was after we fixed the misspelling so we can correct our work.
 
->aside positive
+
 > Time Travel enables accessing historical data (i.e. data that has been changed or deleted) at any point within a defined period.
 >
 
@@ -282,7 +282,7 @@ ORDER BY truck_id;
 ![assets/time_travel.png](assets/time_travel.png)
 
 Please refer to the list below for the other Time-Travel Statement options available.
->aside positive
+
 >**AT:** The AT keyword specifies that the request is inclusive of any changes made by a statement or transaction with timestamp equal to the specified parameter.
 >
 >**BEFORE:** The BEFORE keyword specifies that the request refers to a point immediately preceding the specified parameter.

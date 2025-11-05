@@ -1,8 +1,9 @@
 author: Joviane Bellegarde
 id: cortex-ai-demo-framework
 summary: Cortex AI Demo Framework - Build sophisticated Cortex-powered demos in ~5 minutes
-categories: Cortex, AI, Demo Development, Getting-Started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, 
 environments: web
+language: en
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, AI, Demo Development, Framework
@@ -56,7 +57,6 @@ In this step, you'll create the Snowflake database objects and prepare for frame
 
 ### Step 1: Create Database Objects
 
-> aside positive
 > 
 > Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces). Workspaces will become the default SQL editor. Follow the instructions below that match your interface.
 
@@ -410,7 +410,6 @@ Set your batch configuration using the sliders:
 - **Number of Batches**: `10` (Slider: 1-1000)
 - **Total records to generate**: `100`
 
-> aside positive
 > 
 > **Recommended Settings**:
 > - **Testing**: 10 records × 10 batches = 100 records (~2-3 min)
@@ -433,7 +432,6 @@ Configure the Cortex LLM settings:
 - **Temperature**: `0.7` (Slider: 0.0-1.0, step 0.1)
 - **Max Tokens**: `4000` (Slider: 100-8000, step 100)
 
-> aside positive
 > 
 > **Model Selection Guide**:
 > - **mistral-large2** (LARGE): Best accuracy, handles any batch size
@@ -466,7 +464,6 @@ Check the following options:
 - **Table Name**: `GENERATED_DATA`
 - ☑ **Append to existing table**
 
-> aside positive
 > 
 > **Important**: Data saves to `BRONZE_LAYER` first. You'll transform it to `SILVER_LAYER` in App 2!
 
@@ -647,7 +644,6 @@ Avg Length: 2,500 chars
 - **Invalid JSON** should be 0 or very low
 - **Very Short** indicates truncated records
 
-> aside positive
 > 
 > **Good Quality Indicators**:
 > - Valid JSON = Total Records (100% success rate)
@@ -934,7 +930,6 @@ LIMIT 10;
 - Separate steps with SQL comments (`-- Step X:`)
 - Mix different query types (SELECT, GROUP BY, Cortex functions)
 
-> aside positive
 > 
 > **Cortex AI Integration**: The app automatically detects `SNOWFLAKE.CORTEX.COMPLETE()` calls and creates interactive steps where users can modify prompts and see real-time AI responses!
 
@@ -1233,7 +1228,6 @@ If your SQL includes `SNOWFLAKE.CORTEX.COMPLETE()` calls, you'll see an interact
 - Edit system and user prompts live
 - Re-run queries with different parameters
 
-> aside positive
 > 
 > **Live Audience Engagement**: Modify AI prompts in real-time during presentations!
 
@@ -1301,7 +1295,6 @@ Table: TECHCORP_ORDERS_STRUCTURED ▼
 
 Select your structured table from the previous steps.
 
-> aside positive
 > 
 > **Success Check**: After selecting your table, you should see a preview showing your columns (CUSTOMER_NAME, ORDER_DATE, etc.) and sample data rows.
 
@@ -1374,7 +1367,6 @@ Priority: 1
 
 **IMPORTANT**: After editing, click **"Apply All Dimension Changes"** button at the bottom!
 
-> aside positive
 > 
 > **Required Step**: You MUST click "Apply All Dimension Changes" or your edits won't be saved!
 
@@ -1412,7 +1404,6 @@ Decimals: 2
 
 **IMPORTANT**: After editing, click **"Apply All Metric Changes"** button at the bottom!
 
-> aside positive
 > 
 > **Required Step**: You MUST click "Apply All Metric Changes" or your edits won't be saved!
 
