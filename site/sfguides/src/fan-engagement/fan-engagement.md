@@ -55,7 +55,7 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 1. In Snowsight, navigate to **Projects** > **Worksheets**
 2. Create a new SQL worksheet
-3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/quickstart/manual-demo/quickstart-assets/setup.sql) and paste it into your worksheet
+3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/scripts/setup.sql) and paste it into your worksheet
 4. Run the script
 
 The setup script creates:
@@ -74,11 +74,12 @@ Download these files from the GitHub repository:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
-| **Data File** | USOPC fan profiles (300k records) | [unified_customer_profile.csv.gz](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/dataops/event/data/unified_customer_profile.csv.gz) |
-| **Streamlit App** | Interactive analytics dashboard | [fan_engagement_dashboard.py](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/quickstart/manual-demo/quickstart-assets/fan_engagement_dashboard.py) |
-| **Environment File** | Streamlit dependencies | [environment.yml](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/quickstart/manual-demo/quickstart-assets/environment.yml) |
-| **Semantic Model** | Cortex Analyst semantic model | [USOPC_FAN_ENGAGEMENT_DEMO.yaml](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/quickstart/manual-demo/quickstart-assets/USOPC_FAN_ENGAGEMENT_DEMO.yaml) |
-| **Notebook** | Complete setup notebook | [usopc_fan_engagement_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/quickstart/manual-demo/quickstart-assets/usopc_fan_engagement_setup.ipynb) |
+| **Setup Script** | SQL setup script for infrastructure | [setup.sql](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/scripts/setup.sql) |
+| **Data File** | USOPC fan profiles (300k records) | [unified_customer_profile.csv.gz](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/scripts/unified_customer_profile.csv.gz) |
+| **Streamlit App** | Interactive analytics dashboard | [fan_engagement_dashboard.py](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/scripts/fan_engagement_dashboard.py) |
+| **Environment File** | Streamlit dependencies | [environment.yml](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/scripts/environment.yml) |
+| **Semantic Model** | Cortex Analyst semantic model | [USOPC_FAN_ENGAGEMENT_DEMO.yaml](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/scripts/USOPC_FAN_ENGAGEMENT_DEMO.yaml) |
+| **Notebook** | Complete setup notebook | [usopc_fan_engagement_setup.ipynb](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/notebooks/usopc_fan_engagement_setup.ipynb) |
 
 ### Step 3: Upload Files to Stages
 
@@ -269,10 +270,18 @@ ORDER BY campaign_id DESC;
 
 When you're ready to remove all the resources created during this guide:
 
-1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/scripts/setup.sql) script
-2. Scroll to the bottom to find the "TEARDOWN SCRIPT" section
-3. Uncomment the teardown statements
-4. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
+1. Open a new SQL worksheet in Snowsight
+2. Copy and paste the teardown script below
+3. Run the script to remove all databases, warehouses, roles, and objects
+
+```sql
+-- Teardown Script
+USE ROLE ACCOUNTADMIN;
+
+DROP DATABASE IF EXISTS FAN_ENGAGEMENT_DB CASCADE;
+DROP WAREHOUSE IF EXISTS FAN_ENGAGEMENT_WH;
+DROP ROLE IF EXISTS FAN_ENGAGEMENT;
+```
 
 This will clean up all fan engagement components while preserving any other work in your Snowflake account.
 
@@ -302,6 +311,6 @@ Congratulations! You've successfully built the complete USOPC Fan Engagement pla
 - [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Intelligence Agents](https://docs.snowflake.com/en/user-guide/snowflake-intelligence)
 - [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
-- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-exploring-fan-engagement-with-snowflake-intelligence/blob/main/notebooks/usopc_fan_engagement_setup.ipynb)
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguides-exploring-fan-engagement-data-with-snowflake-intelligence/blob/main/notebooks/usopc_fan_engagement_setup.ipynb)
 
 
