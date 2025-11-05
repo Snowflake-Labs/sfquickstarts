@@ -10,7 +10,7 @@ language: en
 
 
 # Getting Started with Snowflake Interactive Tables
-<!-- ------------------------ -->
+
 ## Overview
 
 
@@ -39,7 +39,6 @@ You will build a complete, functioning interactive data environment in Snowflake
 - Familiarity with data warehousing and performance concepts.
 - A Snowflake role with privileges to create warehouses and tables (*i.e.*, `SYSADMIN` is used in the notebook).
 
-<!-- ------------------------ -->
 ## Understand Interactive Warehouses and Interactive Tables
 
 
