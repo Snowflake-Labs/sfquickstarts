@@ -26,11 +26,11 @@ This guide provides a high-level overview of the 5-part series, which is availab
 
 ### What You'll Build
 You will build a comprehensive end-to-end machine learning project for bear species classification, broken into five parts:
-1. **Data Operations**: Ingest data, perform data wrangling, and use Cortex AI for feature extraction.
-2. **Exploratory Data Analysis (EDA)**: Explore data, summary statistics, and data visualization.
-3. **Machine Learning (ML)**: Prepare data and features to build models using different ML algorithms.
-4. **Experiment Tracking**: Initiate experiment tracking when building and trying out different hyperparameters.
-5. **Data App**: Build a shareable Streamlit application for model deployment.
+- **Data Operations**: Ingest data, perform data wrangling, and use Cortex AI for feature extraction.
+- **Exploratory Data Analysis (EDA)**: Explore data, summary statistics, and data visualization.
+- **Machine Learning (ML)**: Prepare data and features to build models using different ML algorithms.
+- **Experiment Tracking**: Initiate experiment tracking when building and trying out different hyperparameters.
+- **Data App**: Build a shareable Streamlit application for model deployment.
 
 ### Prerequisites
 - **Snowflake Account**: Access to a Snowflake account. Sign up for a [30-day free trial account](https://signup.snowflake.com/)
@@ -51,16 +51,16 @@ To follow this tutorial, you will use the files from the following GitHub reposi
 
 ### Notebook Configuration
 Before running the notebooks, ensure you configure your Snowflake Notebook environment:
-1. **Compute Pool**: In "Notebook settings," under "Run on container," select a CPU compute pool.
-2. **External Access**: In the "External access" tab, select a policy that allows the notebook to access external data from GitHub.
-3. **Packages**: Add the following packages via the "Packages" dropdown: `modin`, `scikit-learn`, and `snowflake-ml-python`.
+- **Compute Pool**: In "Notebook settings," under "Run on container," select a CPU compute pool.
+- **External Access**: In the "External access" tab, select a policy that allows the notebook to access external data from GitHub.
+- **Packages**: Add the following packages via the "Packages" dropdown: `modin`, `scikit-learn`, and `snowflake-ml-python`.
 
 ## The Bear Data Set
 
 ### About the Data Set
 The bear dataset is composed of two main parts:
 
-1. Tabular Data (`bear_raw_data.csv`): The first portion of the data contains physical measurements for each bear as expressed by the columns as follows:
+- Tabular Data (`bear_raw_data.csv`): The first portion of the data contains physical measurements for each bear as expressed by the columns as follows:
 
 | Column                      | Description                                                  |
 | --------------------------- | ------------------------------------------------------------ |
@@ -73,7 +73,7 @@ The bear dataset is composed of two main parts:
 | `forearm_circumference_cm`  | The circumference of the bear's forearm, measured in centimeters (cm). |
 | `ear_length_cm`             | The length of the bear's ears, measured in centimeters (cm).   |
 
-2. Image Data (`images/` folder): The second portion is a collection of images, where each image corresponds to a unique ID from the tabular data (*e.g.* `ABB_01`, `EUR_01`, `GRZ_01` and `KDK_01`). This allows for visual analysis and the extraction of image-based features.
+- Image Data (`images/` folder): The second portion is a collection of images, where each image corresponds to a unique ID from the tabular data (*e.g.* `ABB_01`, `EUR_01`, `GRZ_01` and `KDK_01`). This allows for visual analysis and the extraction of image-based features.
 
 
 | ![American Black Bear](assets/ABB_01.png) <br> **American Black Bear** | ![Eurasian Brown Bear](assets/EUR_01.png) <br> **Eurasian Brown Bear** | ![Grizzly Bear](assets/GRZ_01.png) <br> **Grizzly Bear** | ![Kodiak Bear](assets/KDK_01.png) <br> **Kodiak Bear** |
@@ -99,7 +99,7 @@ This part of the project focuses on data ingestion, wrangling, and feature extra
 -   **Combine and Save**: Finally, you will merge the original tabular data with these new AI-extracted features and save the complete, enriched dataset to a new Snowflake table named `BEAR`.
 
 > **Get the Code:**
-> -   [**View Part 1 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_1_DATA.ipynb)
+> - [**View Part 1 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_1_DATA.ipynb)
 
 ## Part 2: Exploratory Data Analysis (EDA)
 
@@ -115,7 +115,7 @@ With a clean dataset in Snowflake, the next step is to explore it. This notebook
     -   **Categorical Analysis**: Bar and pie charts to see the distribution of categorical features, including the target variable `species`.
 
 > **Get the Code:**
-> -   [**View Part 2 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_2_EDA.ipynb)
+> - [**View Part 2 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_2_EDA.ipynb)
 
 ## Part 3: Machine Learning Model Training
 
@@ -133,7 +133,7 @@ This notebook walks you through the classical machine learning workflow: data pr
 -   **Interpretability**: Analyze the feature importance from the Random Forest model to understand which features contribute most to the predictions.
 
 > **Get the Code:**
-> -   [**View Part 3 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_3_ML.ipynb)
+> - [**View Part 3 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_3_ML.ipynb)
 
 ## Part 4: Experiment Tracking and Model Registry
 
@@ -147,7 +147,7 @@ This notebook introduces the MLOps capabilities of Snowflake, demonstrating how 
 -   **Register Model**: After training the final model with the best parameters, you will register it in the Snowflake Model Registry, giving it a name and version. This makes the model available for deployment and inference.
 
 > **Get the Code:**
-> -   [**View Part 4 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_4_EXPERIMENT_TRACKING.ipynb)
+> - [**View Part 4 Notebook**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_FIRST_ML_PROJECT_PART_4_EXPERIMENT_TRACKING.ipynb)
 
 ## Part 5: Building a Streamlit Data App
 
@@ -160,7 +160,7 @@ The final step is to create a user-facing application that uses the model you ju
 -   **Make Predictions**: When the user submits the features, the app sends this data to the registered model and displays the returned prediction for the bear species.
 
 > **Get the Code:**
-> -   [**View Part 5 App File**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_PREDICTION_APP.py)
+> - [**View Part 5 App File**](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/First_Machine_Learning_Project/CHANINN_BEAR_PREDICTION_APP.py)
 
 ## Conclusion And Resources
 
