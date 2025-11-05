@@ -339,7 +339,7 @@ jobs:
         snow connection add \
           --connection-name cicd_connection \
           --account <your snowflake account> \
-          --host <your snowfalke host> \
+          --host <your snowflake host> \
           --user DCM_DEMO \
           --warehouse <xsmall warehouse> \
           --database DCM --schema DCM \
@@ -392,7 +392,7 @@ jobs:
         snow connection add \
           --connection-name cicd_connection \
           --account <your snowflake account> \
-          --host <your snowfalke host> \
+          --host <your snowflake host> \
           --user DCM_DEMO \
           --warehouse <xsmall warehouse> \
           --database DCM --schema DCM \

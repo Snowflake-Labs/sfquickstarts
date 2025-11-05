@@ -114,7 +114,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 
 Dans notre jeu de résultats, nous constatons que `menu_item_health_metrics_obj` est un type de données [VARIANT](https://docs.snowflake.com/fr/sql-reference/data-types-semistructured).
 
->aside positive Pour les données qui sont le plus souvent régulières et n’utilisent que des types de données natifs pour le format semi-structuré que vous utilisez (chaînes et entiers pour le format JSON), les exigences de stockage et les performances de requête pour les opérations sur les données relationnelles et les données dans une colonne VARIANT sont très similaires.
+> Pour les données qui sont le plus souvent régulières et n’utilisent que des types de données natifs pour le format semi-structuré que vous utilisez (chaînes et entiers pour le format JSON), les exigences de stockage et les performances de requête pour les opérations sur les données relationnelles et les données dans une colonne VARIANT sont très similaires.
 >
 
 ### Étape 3 – Parcourir des données semi-structurées à l’aide de la notation par points
@@ -151,7 +151,7 @@ Dans cette section, nous allons procéder à un traitement plus poussé des donn
 ### Étape 1 – Découvrir la fonction d’aplatissement avec vue latérale
 Cette fonction permet d’extraire de notre colonne `menu_item_health_metrics_obj` davantage de données demandées par nos utilisateurs en aval. Exécutez la requête suivante, qui utilise la fonctionnalité de notation par points dont nous venons de parler, avec les fonctions d’aplatissement ([FLATTEN](https://docs.snowflake.com/fr/sql-reference/functions/flatten)) et de jointure latérale ([LATERAL JOIN](https://docs.snowflake.com/fr/sql-reference/constructs/join-lateral)) de Snowflake pour nous fournir le premier ARRAY `ingredient` qu’on nous a demandé.
 
->aside positive **FLATTEN :** fonction de table qui prend une colonne VARIANT, OBJECT ou ARRAY et produit une vue latérale. La fonction FLATTEN peut être utilisée pour convertir des données semi-structurées en une représentation relationnelle.
+> **FLATTEN :** fonction de table qui prend une colonne VARIANT, OBJECT ou ARRAY et produit une vue latérale. La fonction FLATTEN peut être utilisée pour convertir des données semi-structurées en une représentation relationnelle.
 >
 >**LATERAL JOIN :** contrairement à la sortie d’une jointure non latérale, la sortie d’une jointure latérale ne comprend que les lignes générées à partir de la vue en ligne. Les lignes du côté gauche n’ont pas besoin d’être reliées au côté droit, car les lignes du côté gauche ont déjà été prises en compte en étant passées dans la vue en ligne. 
 >
@@ -218,7 +218,7 @@ En reprenant la requête exacte de la fin de la section précédente, exécutez 
 
 Dans cette requête, nous utilisons la commande [CREATE VIEW](https://docs.snowflake.com/fr/sql-reference/sql/create-view) dans notre schéma harmonisé pour encapsuler la logique de traitement des données semi-structurées et d’autres colonnes sous forme de table.
 
->aside positive Une vue permet de consulter le résultat d’une requête comme s’il s’agissait d’une table. Les vues servent à diverses fins, notamment à combiner, séparer ou protéger des données. 
+> Une vue permet de consulter le résultat d’une requête comme s’il s’agissait d’une table. Les vues servent à diverses fins, notamment à combiner, séparer ou protéger des données. 
 >
 
 ```
@@ -255,7 +255,7 @@ Dans cette requête, nous voyons de nouvelles fonctions dont nous n’avons pas 
 
 Nous utilisons également les paramètres [SELECT * EXCLUDE et RENAME](https://docs.snowflake.com/fr/sql-reference/sql/select#parameters), qui peuvent faciliter la vie des développeurs SQL en simplifiant la définition de la requête ou de la vue.
 
->aside positive **EXCLUDE :** lorsque vous sélectionnez toutes les colonnes (SELECT * ou SELECT table_name.\*), EXCLUDE spécifie les colonnes à exclure des résultats.
+> **EXCLUDE :** lorsque vous sélectionnez toutes les colonnes (SELECT * ou SELECT table_name.\*), EXCLUDE spécifie les colonnes à exclure des résultats.
 >
 > **RENAME :** lorsque vous sélectionnez toutes les colonnes (SELECT * ou SELECT table_name.\*), RENAME spécifie les alias de colonnes qui doivent être utilisés dans les résultats.
 >
