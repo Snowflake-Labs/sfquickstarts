@@ -9,8 +9,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # AutoML with Snowflake and H2O Driverless AI
 
-<!-- ------------------------ -->
-# AutoML with Snowflake and H2O Driverless AI
 ## Use Case Overview
 
 H2O Driverless AI is a supervised machine learning platform leveraging the concept of automated machine learning. Supervised machine learning is a method that takes historic data where the response or **target** is known and build relationships between the input variables and the target variable. Driverless AI automates most of difficult supervised machine learning workflow such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines, which are produced from H2O Driverless AI, can exported as standalone scoring artifacts to power your AI/ML use case.
