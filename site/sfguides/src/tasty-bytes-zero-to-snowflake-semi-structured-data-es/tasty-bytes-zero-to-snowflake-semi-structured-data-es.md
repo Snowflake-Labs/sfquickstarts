@@ -112,7 +112,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 
 Si observamos el conjunto de resultados, podemos ver que `menu_item_health_metrics_obj` es del tipo de datos [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured).
 
->aside positive En el caso de datos mayormente regulares que solo usan tipos nativos del formato semiestructurado en cuestión (como cadenas o enteros en formato JSON), los requisitos de almacenamiento y rendimiento de consultas para las operaciones en datos relacionales y en una columna VARIANT son muy similares.
+> En el caso de datos mayormente regulares que solo usan tipos nativos del formato semiestructurado en cuestión (como cadenas o enteros en formato JSON), los requisitos de almacenamiento y rendimiento de consultas para las operaciones en datos relacionales y en una columna VARIANT son muy similares.
 >
 
 ### Paso 3: recorrer datos semiestructurados mediante la notación de puntos
@@ -149,7 +149,7 @@ En esta sección, realizaremos procesamientos adicionales de datos semiestructur
 ### Paso 1: familiarizarse con la función FLATTEN
 Para seguir extrayendo datos, los usuarios posteriores hacen consultas relativas a la columna `menu_item_health_metrics_obj`. Ejecuta la siguiente consulta, que usa la funcionalidad de la notación de puntos que acabamos de ver, junto con la función [FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten) y la capacidad [LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral) de Snowflake para ofrecernos el array que hemos solicitado: `ingredient`.
 
->aside positive **FLATTEN:** es una función de tabla que selecciona una columna VARIANT, OBJECT o ARRAY y genera una vista lateral. Puede usarse para convertir datos semiestructurados en una representación relacional.
+> **FLATTEN:** es una función de tabla que selecciona una columna VARIANT, OBJECT o ARRAY y genera una vista lateral. Puede usarse para convertir datos semiestructurados en una representación relacional.
 >
 >**LATERAL JOIN:** a diferencia de los resultados de las uniones no laterales, el resultado de una unión lateral solo incluye las filas generadas desde la vista de línea. Las filas de la izquierda no necesitan unirse a las de la derecha, ya que las de la izquierda ya se han tenido en cuenta al pasarse a la vista de línea. 
 >
@@ -216,7 +216,7 @@ Vamos a utilizar la consulta con la que hemos finalizado la última sección. Ej
 
 En esta consulta utilizaremos [CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view) en nuestro esquema armonizado para incluir en una tabla la lógica de procesamiento semiestructurada y las columnas adicionales.
 
->aside positive Una vista permite acceder al resultado de una consulta como si fuera una tabla. Las vistas pueden utilizarse para muchos fines, como combinar, segregar o proteger datos. 
+> Una vista permite acceder al resultado de una consulta como si fuera una tabla. Las vistas pueden utilizarse para muchos fines, como combinar, segregar o proteger datos. 
 >
 
 ```
@@ -253,7 +253,7 @@ Podemos ver que en esta consulta hay un par de funciones nuevas que todavía no 
 
 Por otro lado, estamos utilizando los parámetros [SELECT * EXCLUDE y RENAME](https://docs.snowflake.com/en/sql-reference/sql/select#parameters), que pueden facilitarles mucho el trabajo a los desarrolladores de SQL al reducir la complejidad de las consultas o de la definición de la vista.
 
->aside positive **EXCLUDE:** al seleccionar todas las columnas (con SELECT * o SELECT table_name.\*), EXCLUDE especifica qué columnas deben ser excluidas de los resultados.
+> **EXCLUDE:** al seleccionar todas las columnas (con SELECT * o SELECT table_name.\*), EXCLUDE especifica qué columnas deben ser excluidas de los resultados.
 >
 > **RENAME:** al seleccionar todas las columnas (con SELECT * o SELECT table_name.\*), se especifican los alias de las columnas que deben utilizarse en los resultados.
 >

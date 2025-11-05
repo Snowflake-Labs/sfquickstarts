@@ -6,11 +6,11 @@ summary: This guide will provide step-by-step details for building data engineer
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-Open in snowflake link: https://app.snowflake.com/templates?template=data_engineering_pipelines_snowpark_python
+open in snowflake link: https://app.snowflake.com/templates?template=data_engineering_pipelines_snowpark_python&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
 # Data Engineering Pipelines with Snowpark Python
-<!-- ------------------------ -->
+
 ## Overview 
 
 > "Data engineers are focused primarily on building and maintaining data pipelines that transport data through different steps and put it into a usable state ... The data engineering process encompasses the overall effort required to create **data pipelines** that automate the transfer of data from place to place and transform that data into a specific format for a certain type of analysis. In that sense, data engineering isn’t something you do once. It’s an ongoing practice that involves collecting, preparing, transforming, and delivering data. A data pipeline helps automate these tasks so they can be reliably repeated. It’s a practice more than a specific technology." (From Cloud Data Engineering for Dummies, Snowflake Special Edition)
@@ -24,8 +24,7 @@ This Quickstart will cover a lot of ground, and by the end you will have built a
 
 So buckle up and get ready!
 
-> aside negative
-> 
+
 > **Note** - As of 3/7/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 
@@ -65,7 +64,6 @@ You will need the following things before beginning:
 * GitHub account
     * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 
-> aside positive
 > Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python.ipynb) and import it to your Snowflake account as shown below.
 
 ![notebook_callout](assets/notebook.png)
@@ -85,7 +83,6 @@ During this Quickstart you will accomplish the following things:
 <!-- ------------------------ -->
 ## Quickstart Setup
 
-> aside positive
 > Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python.ipynb) and import it to your Snowflake account as shown below.
 
 ![notebook_callout](assets/notebook.png)
@@ -368,7 +365,6 @@ That will result in the SnowCLI tool generating the SQL query above and running 
 ### Overview of the SnowCLI Tool
 The [SnowCLI](https://github.com/Snowflake-Labs/snowcli) tool is a command line tool for developers, and is executed as `snow` from the command line. 
 
-> aside negative
 > **Note** - Do not confuse this with the [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) command line tool which is a client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, and is executed as `snowsql` from the command line.
 
 SnowCLI simplifies the development and deployment of the following Snowflake objects:
@@ -388,8 +384,6 @@ For this Quickstart we will be focused on the first two. And for Snowpark Python
 
 This also allows you to develop and test your Python application without having to worry about wrapping it in a corresponding Snowflake database object.
 
-> aside negative
-> 
 > **Note** -  As of 3/7/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 ### More on Snowpark Python UDFs
@@ -799,16 +793,14 @@ From the repository, click on the `Settings` tab near the top of the page. From 
     </tbody>
 </table>
 
-> aside positive
-> 
+
 >  **Tip** - For more details on how to structure the account name in SNOWFLAKE_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
 
 When you’re finished adding all the secrets, the page should look like this:
 
 ![assets/github-actions-secrets.png](assets/github-actions-secrets.png)
 
-> aside positive
-> 
+
 >  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
 
@@ -838,13 +830,11 @@ As soon as you pushed the changes to your GitHub forked repo the workflow kicked
 The output of the `Deploy Snowpark apps` step should be familiar to you by now, and should be what you saw in the terminal in VS Code when you ran SnowCLI in previous steps. The one thing that may be different is the order of the output, but you should be able to see what's happening.
 
 
-<!-- ------------------------ -->
 ## Teardown
 
 Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/11_teardown.sql` script. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/11_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
 
 
-<!-- ------------------------ -->
 ## Conclusion
 
 Wow, we have covered a lot of ground during this Quickstart! By now you have built a robust data engineering pipeline using Snowpark Python stored procedures. This pipeline processes data incrementally, is orchestrated with Snowflake tasks, and is deployed via a CI/CD pipeline. You also learned how to use Snowflake's new developer CLI tool and Visual Studio Code extension! Here's a quick visual recap:
