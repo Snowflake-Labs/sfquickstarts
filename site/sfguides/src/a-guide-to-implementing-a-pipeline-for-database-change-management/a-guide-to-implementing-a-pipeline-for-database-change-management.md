@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Implementing a Pipeline for Database Change Management
 environments: web
-status: Draft
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
@@ -44,7 +44,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 - **id**: a_guide_to_implementing_a_pipeline_for_dcm
 - **categories**: data-engineering
 - **environments**: web
-- **status**: Draft
+- **status**: Hidden
   - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
 - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
 - **tags**: Getting Started, Getting Started, Data Engineering
