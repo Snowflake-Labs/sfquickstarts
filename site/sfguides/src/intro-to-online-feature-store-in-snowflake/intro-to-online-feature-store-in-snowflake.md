@@ -62,6 +62,9 @@ USE ROLE ACCOUNTADMIN;
 SET USERNAME = (SELECT CURRENT_USER());
 SELECT $USERNAME;
 
+-- Set query tag for tracking
+ALTER SESSION SET QUERY_TAG = '{"origin":"sf_sit-is", "name":"sfguide_intro_to_online_feature_store", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
+
 -- ============================================================================
 -- SECTION 1: CREATE ROLE AND GRANT ACCOUNT-LEVEL PERMISSIONS
 -- ============================================================================
@@ -73,12 +76,9 @@ GRANT ROLE FS_DEMO_ROLE TO USER identifier($USERNAME);
 -- Grant account-level permissions
 GRANT CREATE DATABASE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT IMPORT SHARE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SECTION 2: SWITCH TO ROLE AND CREATE RESOURCES
@@ -112,21 +112,7 @@ CREATE OR REPLACE STAGE FS_DEMO_ASSETS
     COMMENT = 'Stage for storing model assets and data files';
 
 -- ============================================================================
--- SECTION 3: GIT INTEGRATION FOR WORKSPACES
--- ============================================================================
-
--- Create API integration with GitHub using Snowflake GitHub App
-CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_FS_DEMO
-    API_PROVIDER = git_https_api
-    API_ALLOWED_PREFIXES = ('https://github.com/')
-    API_USER_AUTHENTICATION = (
-        TYPE = snowflake_github_app
-    )
-    ENABLED = TRUE
-    COMMENT = 'Git integration for Feature Store demo';
-
--- ============================================================================
--- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
+-- SECTION 3: COMPUTE POOL FOR MODEL DEPLOYMENT
 -- ============================================================================
 
 -- Create compute pool for SPCS model serving
@@ -141,6 +127,10 @@ CREATE COMPUTE POOL IF NOT EXISTS trip_eta_prediction_pool
 -- Grant usage on compute pool
 GRANT USAGE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
 GRANT OPERATE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
+
+-- ============================================================================
+-- SETUP COMPLETE
+-- ============================================================================
 ```
 
 This will create:
@@ -380,8 +370,8 @@ online_df = fs.read_feature_view(
 online_df.show()
 ```
 
-> aside positive
-> **Note**: The first refresh may take 10-30 seconds. If you see "not refreshed yet" error, wait a moment and re-run the cell.
+Positive
+: **Note**: The first refresh may take 10-30 seconds. If you see "not refreshed yet" error, wait a moment and re-run the cell.
 
 <!-- ------------------------ -->
 ## Train ML Model
@@ -568,10 +558,10 @@ Congratulations! You've successfully built an end-to-end ML workflow using Snowf
 
 ### Related Resources
 
+- [GitHub Repository - Complete Code and Notebooks](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake)
 - [Snowflake Feature Store Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake ML for Python](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake)
-- [Online Feature Tables Documentation]()
+- [Online Feature Tables Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/create-and-serve-online-features-python)
 - [Snowpark ML Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 
 ### Next Steps
