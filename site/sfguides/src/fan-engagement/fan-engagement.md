@@ -264,26 +264,6 @@ Query the CAMPAIGN_AUDIENCES table and show me all saved campaigns with their na
 
 ---
 
-### Verify Saved Campaigns in SQL
-
-After asking the agent to save campaigns, verify they were persisted:
-
-```sql
--- View all saved campaigns
-SELECT * FROM FAN_ENGAGEMENT_DB.FAN_ENGAGEMENT.CAMPAIGN_AUDIENCES
-ORDER BY created_at DESC;
-
--- Get campaign summary
-SELECT 
-    campaign_id,
-    campaign_name,
-    COUNT(*) as total_fans,
-    ROUND(AVG(lifetime_value), 2) as avg_lifetime_value
-FROM FAN_ENGAGEMENT_DB.FAN_ENGAGEMENT.CAMPAIGN_AUDIENCES
-GROUP BY campaign_id, campaign_name
-ORDER BY campaign_id DESC;
-```
-
 <!-- ------------------------ -->
 ## Clean Up Resources
 
