@@ -11,7 +11,6 @@ tags: Model Development, Snowflake ML Functions, Snowpark, Dynamic Tables, AI, D
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 The Snowflake Online Feature Store provides low-latency, key-based feature retrieval for real-time ML inference. This guide demonstrates how to build an end-to-end machine learning workflow using the Online Feature Store to predict taxi trip durations in New York City.
 
@@ -42,7 +41,6 @@ You'll learn how to register entities and feature views, perform feature enginee
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 10
 
 Before starting, you need to set up your Snowflake environment with the necessary resources and permissions.
 
@@ -156,7 +154,6 @@ The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
 
 <!-- ------------------------ -->
 ## Upload and Open Notebook
-Duration: 5
 
 Now that your environment is set up, import the demo notebook to Snowflake.
 
@@ -177,7 +174,6 @@ The notebook will open and be ready to run.
 
 <!-- ------------------------ -->
 ## Load Sample Data
-Duration: 5
 
 The notebook uses NYC taxi trip data to demonstrate the Online Feature Store. The data is loaded automatically using Snowflake ML's example helper.
 
@@ -204,7 +200,6 @@ This creates the `NYC_YELLOW_TRIPS` table with sample taxi trip data ready for f
 
 <!-- ------------------------ -->
 ## Initialize Feature Store
-Duration: 3
 
 The Snowflake Feature Store manages your ML features and provides both online and offline storage.
 
@@ -230,7 +225,6 @@ The Feature Store will:
 
 <!-- ------------------------ -->
 ## Register Entities
-Duration: 5
 
 Entities represent the keys used to join features. For taxi trip prediction, we define entities for routes and pickup times.
 
@@ -272,7 +266,6 @@ fs.list_entities().show()
 
 <!-- ------------------------ -->
 ## Engineer Features
-Duration: 10
 
 Create meaningful features from raw taxi trip data to improve model predictions.
 
@@ -320,7 +313,6 @@ route_stats = df.group_by("PULOCATIONID", "DOLOCATIONID").agg([
 
 <!-- ------------------------ -->
 ## Create Feature View with Online Serving
-Duration: 10
 
 Feature views define how features are computed and enable online serving for real-time inference.
 
@@ -362,7 +354,6 @@ The online feature table will automatically sync data from the offline store bas
 
 <!-- ------------------------ -->
 ## Monitor Online Feature Refresh
-Duration: 3
 
 Check that the online feature table is refreshing properly.
 
@@ -398,7 +389,6 @@ online_df.show()
 
 <!-- ------------------------ -->
 ## Train ML Model
-Duration: 15
 
 Train an XGBoost regression model to predict taxi trip durations using features from the feature store.
 
@@ -451,7 +441,6 @@ print(f"Test R²: {r2:.2f}")
 
 <!-- ------------------------ -->
 ## Make Real-Time Predictions
-Duration: 8
 
 Use online features for low-latency, real-time predictions.
 
@@ -493,7 +482,6 @@ print(f"Predicted trip duration: {prediction['predicted_eta'][0]:.1f} minutes")
 
 <!-- ------------------------ -->
 ## Register Model (Optional)
-Duration: 5
 
 Register your trained model in Snowflake Model Registry for versioning and deployment.
 
@@ -528,7 +516,6 @@ The Model Registry provides:
 
 <!-- ------------------------ -->
 ## Deploy Model to SPCS (Optional)
-Duration: 10
 
 Deploy your model as a containerized service for scalable inference.
 
@@ -566,7 +553,6 @@ print("Prediction from SPCS:", spcs_prediction)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You've successfully built an end-to-end ML workflow using Snowflake Online Feature Store.
 
