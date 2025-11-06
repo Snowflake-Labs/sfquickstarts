@@ -35,6 +35,7 @@ You can submit your own Guides to be published on Snowflake's website by submitt
   3. Navigate to the site directory `cd sfquickstarts/site`
   4. Navigate to your Guide folder
   5.  Start authoring in markdown format.  Feel free to use this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template).
+  > You can render markdown using GitHub preview or cmd+shift+v (on a Mac) if using VS Code. No need to spin up local infrastructure!
 
 ```diff
 ! Congratulations! 
@@ -49,7 +50,10 @@ You now have the setup to work on your Snowflake Guide.
 - Please ensure you include all required pieces in the header.<br>
    Required items includes: language, category tags, id, author name.<br>
    Optional items include: Summary, Github Issues link etc.  
-- Complete the Get Started with Guides to learn more about about the specifics.  It will give you details on formatting and layout etc.
+- Check the [Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/) to learn more about about the specifics.  It will give you details on formatting and layout etc.
+- DO NOT include images in tables.
+- Image sizes should be 150kb max file size, gifs are an exception but they should also be optimized
+- Image file names should be in lower case and can include hyphens.  No underscores or capitalization please.
 
 
 
@@ -72,6 +76,7 @@ Here are three QS Guides you can take a look as references:
 
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+* **Simple Guide:** [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 
 
 We want to maintain a standard and consistency across all QS guides and it's very imp that we all follow these guidelines. Really appreciate your help and support. 
