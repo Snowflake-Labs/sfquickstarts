@@ -22,7 +22,7 @@ SQL JOINs are fundamental commands used to combine rows from two or more tables 
 | **RIGHT JOIN** | All rows from right table + matching left rows | All right table rows, NULLs if no match on left | All orders, including those without customers |
 | **FULL OUTER JOIN** | All rows from both tables, matched where possible | All rows from both tables, NULLs where no match | Complete dataset combining customers & orders |
 
-Explore detailed examples, advanced JOIN types like SELF and NATURAL JOIN, performance tips, and interview questions below.
+Explore detailed examples, advanced JOIN types like `SELF` and `NATURAL JOIN`, performance tips, and interview questions below.
 
 ---
 
@@ -61,9 +61,9 @@ ON table1.common_column = table2.common_column;
 ```
 
 ### Explanation
-* INNER JOIN returns only the rows where there is a match in both tables.
-* The ON clause specifies the condition for matching rows.
-* If the ON clause is missing or incorrect, the JOIN will fail or produce unexpected results.
+* `INNER JOIN` returns only the rows where there is a match in both tables.
+* The `ON` clause specifies the condition for matching rows.
+* If the `ON` clause is missing or incorrect, the JOIN will fail or produce unexpected results.
 
 ### Practical Example
 Consider two tables:
@@ -82,6 +82,50 @@ Consider two tables:
 | 102 | 3 | Smartphone |
 | 103 | 1 | Keyboard |
 
+<details>
+  <summary>Create these tables on Snowflake:</summary>
+  
+  ```SQL
+  USE ROLE SNOWFLAKE_LEARNING_ROLE;
+  USE DATABASE SNOWFLAKE_LEARNING_DB; 
+  USE WAREHOUSE SNOWFLAKE_LEARNING_WH;
+  
+  SET schema_name = CONCAT(CURRENT_USER, '_SQL_JOIN_EXAMPLE');
+  CREATE OR REPLACE SCHEMA IDENTIFIER($schema_name);
+  USE SCHEMA IDENTIFIER($schema_name);
+  
+  -- Customers table
+  CREATE OR REPLACE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(50), 
+    City VARCHAR(50)
+  );
+  
+  INSERT INTO Customers
+  VALUES
+      (1, 'Alice', 'London'),
+      (2, 'Bob', 'Manchester'), 
+      (3, 'Charlie', 'Leeds');
+  
+  
+  -- Orders table
+  CREATE OR REPLACE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    Product VARCHAR,
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+  );
+  
+  INSERT INTO Orders 
+  VALUES
+      (101, '1', 'Laptop'),
+      (102, '3', 'Keyboard'), 
+      (103, '1', 'Smartphone');
+
+
+  ```
+</details>
+
 **Query to find customers with orders**
 ```sql
 SELECT Customers.Name, Orders.Product
@@ -99,7 +143,8 @@ ON Customers.CustomerID = Orders.CustomerID;
 
 > _Note:_ Bob is excluded because he has no orders.
 
-[Try example in Snowsight](https://app.snowflake.com/)
+
+[Try example in Snowsight](https://app.snowflake.com/) 
 
 ---
 
@@ -210,6 +255,7 @@ FROM Customers
 FULL OUTER JOIN Orders
 ON Customers.CustomerID = Orders.CustomerID;
 ```
+
 Result:
 | Name | Product | 
 | -- | -- | 
@@ -220,16 +266,29 @@ Result:
 
 
 ### Common Misconceptions
-* Some beginners confuse FULL JOIN with UNION; FULL JOIN preserves unmatched rows with NULLs.
-* Not all SQL engines support FULL OUTER JOIN (e.g., MySQL before 8.0).
+* Some beginners confuse `FULL JOIN` with `UNION`; `FULL JOIN` preserves unmatched rows with NULLs.
+* Not all SQL engines support `FULL OUTER JOIN` (e.g., MySQL before 8.0).
 
 [Try example in Snowsight](https://app.snowflake.com/) 
 
 ---
 
-## Advanced JOIN Types
+## Advanced JOIN Types: `SELF JOIN` and `NATURAL JOIN` Explained
 
-### SELF JOIN
+### `SELF JOIN`
+
+A `SELF JOIN` joins a table to itself. This is useful for hierarchical or relational data within the same table.
+
+### Example: Employee-Manager Relationship
+
+| EmployeeID | Name | ManagerID | 
+|--| --|
+| 1 | John | NULL | 
+| 2 | Sarah | 1 |
+| 3 | Mike | 1 | 
+
+**Query to list employees with their managers:**
+
 ```sql
 SELECT e.Name AS Employee, m.Name AS Manager
 FROM Employees e
@@ -237,20 +296,29 @@ LEFT JOIN Employees m
 ON e.ManagerID = m.EmployeeID;
 ```
 
+**Query Result:**
+
+
 | Employee | Manager |
 |-----------|----------|
 | John | NULL |
 | Sarah | John |
 | Mike | John |
 
+
 ### NATURAL JOIN
+
+Automatically joins tables on all columns with the same name. Syntax: 
 ```sql
 SELECT columns
 FROM table1
 NATURAL JOIN table2;
 ```
 
-> ⚠️ Use with caution — automatically joins all columns with matching names.
+> ⚠️ Use with caution:
+> * can lead to unexpected results if tables share columns unintentionally.
+> * not recommended for production code -- in production environments, explicit join conditions improve clarity and maintainability.
+
 
 ---
 
@@ -258,20 +326,46 @@ NATURAL JOIN table2;
 
 | Aspect | JOINs | Subqueries |
 |---------|--------|-------------|
-| **Execution** | Generally faster with indexes | Can be slower |
-| **Readability** | Clear for combining related tables | Useful for filtering |
-| **Optimization** | Better by SQL engines | May cause nested loops |
+| **Execution** | Generally faster, especially with indexes | Can be slower, depending on query plan |
+| **Readability** | Clear for combining related tables | Useful for filtering or aggregation |
+| **Optimization** | Better optimizations by SQL engines | May cause nested loops or scans |
 
-**Best Practices:**
-- Always specify `ON` conditions.  
-- Use indexes on join columns.  
-- Avoid `SELECT *`.  
-- Analyze queries with `EXPLAIN`.  
-- Consider denormalization if performance suffers.
+
+**When to Prefer JOINs**
+* Combining related data from multiple tables.
+* When indexes exist on join columns.
+* For queries requiring multiple columns from joined tables.
+
+**When to Prefer Subqueries**
+* Filtering based on aggregated or computed values.
+* When logic is easier to express in nested queries.
+
+**Indexing Tips for JOIN Performance** 
+* Index columns used in JOIN conditions.
+* Use composite indexes if joining on multiple columns.
+* Avoid functions on join columns that prevent index use.
+
+**Performance Tips Callout**
+* Always specify explicit JOIN conditions (ON clause).
+* Prefer INNER JOINs when possible for better performance.
+* Use EXPLAIN plans to analyze query execution.
+* Avoid unnecessary columns in SELECT to reduce data load.
+* Consider denormalization if JOINs become a bottleneck in large datasets.
 
 ---
 
 ## Practical Example: Joining Multiple Tables
+
+### Joining Customers, Orders, and Products
+
+**Tables:**
+* Customers (CustomerID, Name)
+* Orders (OrderID, CustomerID, ProductID)
+* Products (ProductID, ProductName)
+
+**Query:**
+
+List customers with their ordered products:
 
 ```sql
 SELECT c.Name, p.ProductName, o.OrderID
@@ -280,6 +374,46 @@ INNER JOIN Orders o ON c.CustomerID = o.CustomerID
 INNER JOIN Products p ON o.ProductID = p.ProductID;
 ```
 
+**Explanation** 
+First, join Customers and Orders on CustomerID. Then join the result with Products on ProductID. Returns only customers who placed orders with product details.
+
+**Full code example**
+
+
+```sql
+-- Customers table
+CREATE TABLE Customers (
+  CustomerID INT PRIMARY KEY,
+  Name VARCHAR(50)
+);
+
+
+-- Orders table
+CREATE TABLE Orders (
+  OrderID INT PRIMARY KEY,
+  CustomerID INT,
+  ProductID INT,
+  FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+
+-- Products table
+CREATE TABLE Products (
+  ProductID INT PRIMARY KEY,
+  ProductName VARCHAR(50)
+);
+
+
+-- Query joining three tables
+SELECT c.Name, p.ProductName, o.OrderID
+FROM Customers c
+INNER JOIN Orders o ON c.CustomerID = o.CustomerID
+INNER JOIN Products p ON o.ProductID = p.ProductID;
+```
+
+CTA Button: Try example in Snowsight (https://app.snowflake.com/) 
+
+
 ---
 
 ## Common SQL JOIN Interview Questions and Answers
@@ -287,22 +421,26 @@ INNER JOIN Products p ON o.ProductID = p.ProductID;
 
 | Question | Answer |
 |-----------|---------|
-| Difference between INNER JOIN and LEFT JOIN? | INNER JOIN shows only matches; LEFT JOIN includes all left rows. |
-| How do NULLs affect JOINs? | OUTER JOINs show NULLs for unmatched rows. |
-| When is a JOIN faster than a subquery? | When combining related tables with indexes. |
-| Can you join more than two tables? | Yes, by chaining multiple JOINs. |
-| What is a SELF JOIN? | Joining a table to itself for hierarchical data. |
+| What is the difference between an INNER JOIN and a LEFT JOIN? |  INNER JOIN returns only matching rows; LEFT JOIN returns all left table rows plus matches. | 
+| How do NULL values affect JOIN results? | NULLs appear in columns of unmatched rows in OUTER JOINs; INNER JOIN excludes unmatched rows.| 
+| When is a JOIN faster than a subquery? | JOINs are usually faster when combining related tables with indexes; subqueries may be slower. |
+| Can you join more than two tables in SQL? | Yes, by chaining multiple JOINs with appropriate ON conditions. |
+| What is a SELF JOIN and when should it be used? | Joining a table to itself to query hierarchical or relational data within the same table. |
+| What is the difference between FULL JOIN and FULL OUTER JOIN? | They are synonyms; both return all rows from both tables, matched where possible. |
+| What are best practices for optimizing JOIN queries?| Use indexes, specify join conditions explicitly, avoid SELECT *, analyze query plans. |
+
+
 
 ---
 
-## Summary and Best Practices
-
-- Understand each JOIN type.  
-- Always specify `ON` conditions.  
-- Optimize with indexing.  
-- Avoid NATURAL JOINs unless safe.  
-- Use EXPLAIN for performance analysis.  
-- Practice JOINs across multiple tables.
+## Summary and Best Practices for Using SQL JOINs
+1. Understand the purpose and behavior of each JOIN type.
+2. Always specify explicit join conditions using the ON clause.
+3. Prefer INNER JOINs for matching data; use LEFT/RIGHT/FULL OUTER JOINs for including unmatched rows.
+4. Use SELF JOINs for hierarchical data and avoid NATURAL JOINs unless you fully understand their behavior.
+5. Optimize JOIN performance with proper indexing and query analysis.
+6. Practice writing multi-table JOINs and review query plans regularly.
+7. Prepare for interviews by mastering JOIN concepts and common questions.
 
 ---
 
