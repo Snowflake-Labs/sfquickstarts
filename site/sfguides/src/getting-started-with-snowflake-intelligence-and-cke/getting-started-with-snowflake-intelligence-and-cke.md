@@ -52,7 +52,7 @@ How to acquire external knowledge sources from the Snowflake Marketplace and cre
 
 ### What You Will Build
 
-Snowflake Intelligence that can respond to questions by reasoning over data from Cortex Knowledge Extensions.
+An Enterprise Intelligence Agent - Snowflake Intelligence - that can respond to questions by reasoning over data from Cortex Knowledge Extensions. 
 
 <!-- ------------------------ -->
 ## Setup
@@ -164,7 +164,7 @@ NOTE: The Agent will use the Send_Email custom tool to summarize the answer and 
 ## Conclusion And Resources
 
 
-Congratulations! You've successfully created agents to build an enterprise intelligence agent - Snowflake Intelligence - that can respond to questions by reasoning over the data from Cortex Knowledge Extensions. You have expanded your application’s reach beyond your organization’s internal data.
+Congratulations! You've successfully built an enterprise intelligence agent - Snowflake Intelligence - that can respond to questions by reasoning over the data from Cortex Knowledge Extensions. You have expanded your application’s reach beyond your organization’s internal data.
 
 ### What You Learned
 
