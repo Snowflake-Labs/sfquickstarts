@@ -179,7 +179,7 @@ Your platform includes:
 2. Find and click on `FAN_ENGAGEMENT_ASSISTANT`
 3. Try the sample questions below
 
-### Demo Flow: 5 Key Questions
+### Demo Flow: 7 Key Questions
 
 Ask these questions in order to demonstrate the full analytics-to-activation workflow:
 
@@ -239,7 +239,32 @@ propensity score for them to buy merchandise or attend an event?
 
 ---
 
-### Verify Saved Campaigns
+**6. Campaign Save - Analytics to Activation ⭐**
+
+```
+Perfect! Now save these doctorate holders with high purchase propensity as a campaign 
+called "Doctorate VIP Campaign" for our premium event invitation
+```
+
+**What It Shows:** Analytics-to-activation pipeline—the agent doesn't just provide insights, it takes ACTION by saving the identified audience directly to the database for immediate marketing execution
+
+> aside positive
+>
+> **Key Differentiator:** This demonstrates Snowflake Intelligence's ability to move beyond traditional analytics. The agent seamlessly transitions from semantic search (finding the right fans) to data activation (saving them for campaigns)—all in a single conversation flow.
+
+---
+
+**7. Verify Campaign Creation**
+
+```
+Query the CAMPAIGN_AUDIENCES table and show me all saved campaigns with their names, total fans, and average customer value
+```
+
+**What It Shows:** Campaign verification using Cortex Analyst—the agent queries the CAMPAIGN_AUDIENCES table and returns a formatted report showing all saved campaigns with key metrics, demonstrating that campaigns are persisted and ready for marketing activation
+
+---
+
+### Verify Saved Campaigns in SQL
 
 After asking the agent to save campaigns, verify they were persisted:
 
