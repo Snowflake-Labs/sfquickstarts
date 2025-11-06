@@ -136,6 +136,8 @@ The notebook contains 8 sections that will:
 <!-- ------------------------ -->
 ## Run Setup Notebook
 
+![Running the Setup Notebook](assets/notebook.gif)
+
 ### Execute the Complete Setup Workflow
 
 1. Go to `Projects` → `Notebooks` in Snowsight
@@ -155,6 +157,8 @@ The notebook contains 8 sections that will:
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
 
+![Fan Engagement Dashboard](assets/app.gif)
+
 ### Access Your Fan Engagement Platform
 
 1. Navigate to `Projects` → `Streamlit` in Snowsight
@@ -171,7 +175,7 @@ Your platform includes:
 - **AI Assistant** - Cortex Analyst for natural language queries
 
 <!-- ------------------------ -->
-## Test Intelligence Agent
+## Snowflake Intelligence
 
 ### Access Snowflake Intelligence
 
@@ -193,7 +197,7 @@ How many of our fans have degrees and how many do not?
 
 **What It Shows:** Basic Cortex Analyst analytics—quick demographic segmentation with clear numerical results
 
----
+![Question 1 Result](assets/q1.png)
 
 **2. Comparative Segment Analysis**
 
@@ -204,7 +208,7 @@ our engagement stats and spend stats?
 
 **What It Shows:** Advanced multi-metric analysis across segments—demonstrates the agent's ability to combine engagement, value, and demographic data
 
----
+![Question 2 Result](assets/q2.png)
 
 **3. Campaign Strategy Development**
 
@@ -213,20 +217,18 @@ If I want to target the degree holders and develop a customized campaign to
 better optimize my relationship with them, how should I go about doing it? 
 Give me a plan.
 ```
-
 **What It Shows:** Strategic AI reasoning—the agent provides actionable campaign recommendations and engagement tactics
 
----
+![Question 3 Result](assets/q3.gif)
 
 **4. Audience List Creation**
 
 ```
 Give me a list of customer IDs to use in this initial campaign.
 ```
-
 **What It Shows:** Data activation capability—insights immediately convert to actionable audience lists
 
----
+![Question 4 Result](assets/q4.png)
 
 **5. Advanced Semantic Search with Propensity Scoring**
 
@@ -237,32 +239,28 @@ propensity score for them to buy merchandise or attend an event?
 
 **What It Shows:** Cortex Search integration + custom action—semantic fan discovery combined with ML-powered propensity scoring
 
----
+![Question 5 Result](assets/q5.png)
 
 **6. Campaign Save - Analytics to Activation ⭐**
 
 ```
 Perfect! Now save these doctorate holders with high purchase propensity as a campaign 
-called "Doctorate VIP Campaign" for our premium event invitation
+called "Doctorate VIP Campaign" for our premium event invitation.
 ```
 
 **What It Shows:** Analytics-to-activation pipeline—the agent doesn't just provide insights, it takes ACTION by saving the identified audience directly to the database for immediate marketing execution
 
-> aside positive
->
-> **Key Differentiator:** This demonstrates Snowflake Intelligence's ability to move beyond traditional analytics. The agent seamlessly transitions from semantic search (finding the right fans) to data activation (saving them for campaigns)—all in a single conversation flow.
-
----
+![Question 6 Result](assets/q6.png)
 
 **7. Verify Campaign Creation**
 
 ```
-Query the CAMPAIGN_AUDIENCES table and show me all saved campaigns with their names, total fans, and average customer value
+Query the CAMPAIGN_AUDIENCES table and show me all saved campaigns with their names, total fans, and average customer value.
 ```
 
 **What It Shows:** Campaign verification using Cortex Analyst—the agent queries the CAMPAIGN_AUDIENCES table and returns a formatted report showing all saved campaigns with key metrics, demonstrating that campaigns are persisted and ready for marketing activation
 
----
+![Question 7 Result](assets/q7.png)
 
 <!-- ------------------------ -->
 ## Clean Up Resources
