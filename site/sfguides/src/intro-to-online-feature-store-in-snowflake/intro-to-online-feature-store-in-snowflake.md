@@ -370,8 +370,8 @@ online_df = fs.read_feature_view(
 online_df.show()
 ```
 
-Positive
-: **Note**: The first refresh may take 10-30 seconds. If you see "not refreshed yet" error, wait a moment and re-run the cell.
+> NOTE:
+> The first refresh may take 10-30 seconds. If you see "not refreshed yet" error, wait a moment and re-run the cell.
 
 <!-- ------------------------ -->
 ## Train ML Model
