@@ -60,12 +60,13 @@ INNER JOIN table2
 ON table1.common_column = table2.common_column;
 ```
 
-### Explanation
+### How it Works
 * `INNER JOIN` returns only the rows where there is a match in both tables.
 * The `ON` clause specifies the condition for matching rows.
 * If the `ON` clause is missing or incorrect, the JOIN will fail or produce unexpected results.
 
-### Practical Example
+### A Practical Example
+
 Consider two tables:
 
 **Customers**
@@ -82,10 +83,29 @@ Consider two tables:
 | 102 | 3 | Smartphone |
 | 103 | 1 | Keyboard |
 
+
+**Query to find customers with orders**
+```sql
+SELECT Customers.Name, Orders.Product
+FROM Customers
+INNER JOIN Orders
+ON Customers.CustomerID = Orders.CustomerID;
+```
+
+**Result:**
+| Name | Product |
+|------|----------|
+| Alice | Laptop |
+| Charlie | Smartphone |
+| Alice | Keyboard |
+
+> _Note:_ Bob is excluded because he has no orders.
+
+**[Try this on Snowflake](https://app.snowflake.com/)**
+
 <details>
-  <summary>Create these tables on Snowflake:</summary>
   
-  ```SQL
+  ```sql
   USE ROLE SNOWFLAKE_LEARNING_ROLE;
   USE DATABASE SNOWFLAKE_LEARNING_DB; 
   USE WAREHOUSE SNOWFLAKE_LEARNING_WH;
@@ -122,31 +142,15 @@ Consider two tables:
       (102, '3', 'Keyboard'), 
       (103, '1', 'Smartphone');
 
-
+  -- INNER JOIN EXAMPLE 
+  SELECT Customers.Name, Orders.Product
+  FROM Customers
+  INNER JOIN Orders
+  ON Customers.CustomerID = Orders.CustomerID;
   ```
 </details>
 
-**Query to find customers with orders**
-```sql
-SELECT Customers.Name, Orders.Product
-FROM Customers
-INNER JOIN Orders
-ON Customers.CustomerID = Orders.CustomerID;
-```
-
-**Result:**
-| Name | Product |
-|------|----------|
-| Alice | Laptop |
-| Alice | Keyboard |
-| Charlie | Smartphone |
-
-> _Note:_ Bob is excluded because he has no orders.
-
-
-[Try example in Snowsight](https://app.snowflake.com/) 
-
----
+--- 
 
 ## LEFT JOIN: Use Cases and Examples
 
