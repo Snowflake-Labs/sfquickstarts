@@ -1,4 +1,3 @@
-
 author: Kevin Keller (kkellersnow)
 id: python-camouflage
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
