@@ -75,7 +75,7 @@ The bear dataset is composed of two main parts:
 - Image Data (`images/` folder): The second portion is a collection of images, where each image corresponds to a unique ID from the tabular data (*e.g.* `ABB_01`, `EUR_01`, `GRZ_01` and `KDK_01`). This allows for visual analysis and the extraction of image-based features.
 
 
-| ![American Black Bear](assets/abb-01.png) <br> **American Black Bear** | ![Eurasian Brown Bear](assets/eur-01.png) <br> **Eurasian Brown Bear** | ![Grizzly Bear](assets/grz-01.png) <br> **Grizzly Bear** | ![Kodiak Bear](assets/kdk-01.png) <br> **Kodiak Bear** |
+| ![](assets/abb-01.png)<br> **American Black Bear** | ![](assets/eur-01.png) <br> **Eurasian Brown Bear** | ![](assets/grz-01.png) <br> **Grizzly Bear** | ![](assets/kdk-01.png) <br> **Kodiak Bear** |
 |:---------------------------------------------------------------------:|:---------------------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
 
 
