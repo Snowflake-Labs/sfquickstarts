@@ -222,8 +222,9 @@ INNER JOIN Products p ON o.ProductID = p.ProductID;
 
 **FAQ**  
 
-**Q: What are the different types of SQL JOINs?**
-**A:** INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, SELF JOIN, and NATURAL JOIN.
+❓**Q: What are the different types of SQL JOINs?** <br/>
+💡**A:** INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, SELF JOIN, and NATURAL JOIN.
+  
 
 **Q: How does an INNER JOIN differ from a LEFT JOIN?**
 **A:** INNER JOIN returns only matching rows; LEFT JOIN returns all rows from the left table plus matched rows from the right.
