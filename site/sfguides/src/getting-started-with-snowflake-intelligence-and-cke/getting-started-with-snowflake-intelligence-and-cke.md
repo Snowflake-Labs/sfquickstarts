@@ -24,16 +24,16 @@ Snowflake Intelligence removes the barriers to insights, enabling users to under
 
 Ask complex questions of all your data, analyze and get insights instantly with Snowflake Intelligence as your always-on thought partner.
 
-* Deep analysis, quick action: Go beyond the “what” to quickly understand the critical “why,” accelerating action with AI agents that use natural language to analyze and reason across all your data, including third-party sources and market intelligence.
-* Verified, trusted answers: Trace every answer to its source. Codify "golden" questions for verified answers.
-* Enterprise-ready: Maintain peace of mind knowing that Snowflake Intelligence scales with your enterprise data and application complexity — all within Snowflake’s secure perimeter and with the same robust governance policies.
+* **Deep analysis, quick action**: Go beyond the “what” to quickly understand the critical “why,” accelerating action with AI agents that use natural language to analyze and reason across all your data, including third-party sources and market intelligence.
+* **Verified, trusted answers**: Trace every answer to its source. Codify "golden" questions for verified answers.
+* **Enterprise-ready**: Maintain peace of mind knowing that Snowflake Intelligence scales with your enterprise data and application complexity — all within Snowflake’s secure perimeter and with the same robust governance policies.
 
 
 ![Snowflake Intelligence](assets/si.png)
 
 ### What are Cortex Knowledge Extensions?
 
-[Cortex Knowledge Extensions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-knowledge-extensions/cke-overview?utm_source=guide&utm_medium=gettingstartedwithsi) (CKEs) allow publishers to bring their documents (for example, news articles, market research reports, books, articles, etc.) directly to customers in their generative AI applications.  They are Snowflake [Cortex Search Services](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview?utm_source=guide&utm_medium=gettingstartedwithsi) that can be shared on the Snowflake Marketplace or through private listings. They enable a [retrieval-augmented generation](/en/fundamentals/rag/?utm_source=guide&utm_medium=gettingstartedwithsi) (RAG) architecture to integrate licensed and proprietary content into Cortex AI applications.
+[Cortex Knowledge Extensions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-knowledge-extensions/cke-overview?utm_source=guide&utm_medium=gettingstartedwithsi) (CKEs) allow publishers to bring their documents (news articles, market research reports, books, articles, etc.) directly to customers in their generative AI applications. They are Snowflake [Cortex Search Services](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview?utm_source=guide&utm_medium=gettingstartedwithsi) that can be shared on the Snowflake Marketplace or through private listings. They enable a [retrieval-augmented generation](https://www.snowflake.com/en/fundamentals/rag/) (RAG) architecture to integrate licensed and proprietary content into Cortex AI applications.
 
 ![Snowflake Intelligence](assets/cke.png)
 
@@ -44,15 +44,15 @@ Ask complex questions of all your data, analyze and get insights instantly with 
 Download the [Git repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence-and-cke). This is how you get the necessary source code and data to complete this quickstart.
 
 
-* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=guide&utm_medium=gettingstartedwithsi) with ACCOUNTADMIN role.
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=guide&utm_medium=gettingstartedwithsi) with the ACCOUNTADMIN role.
 
 ### What You Will Learn
 
-How to acquire external knowledge sources from the Snowflake Marketplace and create the building blocks (agents) for Snowflake Intelligence that can intelligently respond to questions by reasoning over data from Cortex Knowledge Extensions.
+How to acquire external knowledge sources from the Snowflake Marketplace and create the building blocks (agents) for Snowflake Intelligence that can respond to questions by reasoning over data from Cortex Knowledge Extensions.
 
 ### What You Will Build
 
-A Snowflake Intelligence agent that can respond to questions by reasoning over data from Cortex Knowledge Extensions.
+Snowflake Intelligence that can respond to questions by reasoning over data from Cortex Knowledge Extensions.
 
 <!-- ------------------------ -->
 ## Setup
@@ -70,7 +70,7 @@ A Snowflake Intelligence agent that can respond to questions by reasoning over d
 
 ### Cortex Knowledge Extension
 
-* In Snowsight, on the left hand navigation menu, select  **Marketplace** 
+* In Snowsight, on the left hand navigation menu, select **Marketplace** 
 * In **Snowflake Marketplace**, search for **Snowflake Documentation** 
 * Click on **Snowflake Documentation** 
 * On the top right, click on **Get** and follow instructions while keeping the default values 
@@ -125,7 +125,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
     > NOTE: For the recipient_email parameter in the Send_Email custom tool, make sure to replace YOUR_EMAIL_ADDRESS_GOES_HERE with your actual email address.
 
       - Parameter: subject
-        - Description: *If the subject is not provided, use "Snowflake Intelligence"*.
+        - Description: *If the subject is not provided, use "Snowflake Intelligence".*
       
 
 * Orchestration instructions: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
@@ -158,13 +158,13 @@ ___
 
 ### Q4. *Send a summary email*
 
-NOTE: NOTE: The Agent will use the Send_Email custom tool to summarize the answer and send the content to the verified email address configured in the tool.  Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **Snowflake_Documentation** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**.
+NOTE: The Agent will use the Send_Email custom tool to summarize the answer and send the content to the verified email address configured in the tool. Check your inbox to see the summary email that would have been sent to the email address set in **AI & ML** >> **Agents** >> **Snowflake_Documentation** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 
-Congratulations! You've successfully created agents to build an enterprise intelligence agent - Snowflake Intelligence that can respond to questions by reasoning over the data from Cortex Knowledge Extensions. You have expanded your application’s reach beyond your organization’s internal data.
+Congratulations! You've successfully created agents to build an enterprise intelligence agent - Snowflake Intelligence - that can respond to questions by reasoning over the data from Cortex Knowledge Extensions. You have expanded your application’s reach beyond your organization’s internal data.
 
 ### What You Learned
 
