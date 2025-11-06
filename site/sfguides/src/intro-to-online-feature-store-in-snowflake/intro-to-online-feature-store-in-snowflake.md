@@ -1,4 +1,4 @@
-author: Dureti Shemsi
+
 language: en
 id: intro-to-online-feature-store-in-snowflake
 summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving
@@ -7,6 +7,7 @@ environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/issues
 tags: Model Development, Snowflake ML Functions, Snowpark, Dynamic Tables, AI, Data Engineering, Snowpark Container Services, Applied Analytics
+author: Dureti Shemsi
 
 # Introduction to Online Feature Store in Snowflake
 
