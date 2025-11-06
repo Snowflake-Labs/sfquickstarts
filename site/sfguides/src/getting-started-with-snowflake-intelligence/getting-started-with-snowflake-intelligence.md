@@ -52,7 +52,7 @@ How to create the building blocks (agents) for Snowflake Intelligence.
 
 ### What You Will Build
 
-Snowflake Intelligence that can respond to questions by reasoning over both structured and unstructured data.
+An Enterprise Intelligence Agent - Snowflake Intelligence - that can respond to questions by reasoning over both structured and unstructured data.
 
 <!-- ------------------------ -->
 ## Setup
@@ -244,7 +244,7 @@ Here are some other questions you may ask.
 ## Conclusion And Resources
 
 
-Congratulations! You've successfully created agents to build an enterprise  intelligence agent - Snowflake Intelligence - that can respond to questions by reasoning over both structured and unstructured data.
+Congratulations! You've successfully built an enterprise intelligence agent - Snowflake Intelligence - that can respond to questions by reasoning over both structured and unstructured data.
 
 ### What You Learned
 
