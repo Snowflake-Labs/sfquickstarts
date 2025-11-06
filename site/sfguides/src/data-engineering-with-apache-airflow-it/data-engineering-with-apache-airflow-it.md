@@ -1,7 +1,7 @@
 autors: Adrian Lee
 id: data-engineering-with-apache-airflow-it
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
-language: en
+language: it
 summary: questo è un esempio di guida di Snowflake
 environments: web
 status: Pubblicato

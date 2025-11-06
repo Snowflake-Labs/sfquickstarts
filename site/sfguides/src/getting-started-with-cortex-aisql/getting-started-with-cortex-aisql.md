@@ -94,14 +94,14 @@ Snowflake Notebook that helps you get started with using Cortex AISQL with multi
 
 * Click on **Start** button on top right
 
-> aside positive
+
 > NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 <!-- ------------------------ -->
 ## Run Notebook
 
 
-> aside negative
+
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
 Here's the code walkthrough of the [cortex_aisql.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/cortex_aisql.ipynb) notebook that you downloaded and imported into your Snowflake account. *NOTE: Individual functions in the Cortex AISQL suite are Preview Features. Check the status of each function on its SQL reference page before using it in production. Functions not marked as preview features are generally available (GA) and can be used in production.*
@@ -158,19 +158,19 @@ If you'd like to see images displayed in the Notebook as part of the consolidate
 
 **Step 4.** If the session is **Active**, click on it to end the current session. Otherwise, click on **Start** to start a new session which will also update the packages list and include our custom package **snowbooks_extras**.
 
-> aside positive
+
 > NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 **Step 5.** Add `import snowbooks_extras` to the libraries list under **Import_Libraries** and run the cell.
 
 **Step 6.** Now if you run **Preview_Data** cell, you will see images displayed in **INPUT_FILE** column as shown below.
 
-> aside negative 
+
 > Before importing `snowbooks_extras` 
 
 ![Data without images](assets/df_without_img.png)
 
-> aside negative 
+ 
 > After importing `snowbooks_extras` -- you will need to click twice (not exactly a double-click though :)) to see the enlarged image as shown.
 
 ![Data with images](assets/df_with_img.png)
