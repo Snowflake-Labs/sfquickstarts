@@ -1,4 +1,5 @@
 author: Dureti Shemsi
+language: en
 id: intro-to-online-feature-store-in-snowflake
 summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
