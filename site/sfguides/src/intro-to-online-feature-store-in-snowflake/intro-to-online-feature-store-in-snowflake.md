@@ -41,9 +41,9 @@ You'll learn how to register entities and feature views, perform feature enginee
 - A real-time prediction system using online features
 
 <!-- ------------------------ -->
-## Setup Environment
+## Setup and Data Preparation
 
-Before starting, you need to set up your Snowflake environment with the necessary resources and permissions.
+This section covers environment setup, notebook upload, and loading the sample dataset for the feature store demo.
 
 ### Run the Setup Script
 
@@ -153,8 +153,7 @@ This will create:
 
 The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
 
-<!-- ------------------------ -->
-## Upload and Open Notebook
+### Upload and Open Notebook
 
 Now that your environment is set up, import the demo notebook to Snowflake.
 
@@ -173,8 +172,7 @@ Download the notebook from [this link](https://github.com/Snowflake-Labs/sfguide
 
 The notebook will open and be ready to run.
 
-<!-- ------------------------ -->
-## Load Sample Data
+### Load Sample Data
 
 The notebook uses NYC taxi trip data to demonstrate the Online Feature Store. The data is loaded automatically using Snowflake ML's example helper.
 
@@ -200,9 +198,9 @@ source_tables = example_helper.load_example('new_york_taxi_features')
 This creates the `NYC_YELLOW_TRIPS` table with sample taxi trip data ready for feature engineering.
 
 <!-- ------------------------ -->
-## Initialize Feature Store
+## Build Feature Store
 
-The Snowflake Feature Store manages your ML features and provides both online and offline storage.
+This section covers initializing the feature store, registering entities, and engineering features for the taxi trip prediction model.
 
 ### Create Feature Store Instance
 
@@ -224,8 +222,7 @@ The Feature Store will:
 - Handle data synchronization between offline and online stores
 - Track feature lineage
 
-<!-- ------------------------ -->
-## Register Entities
+### Register Entities
 
 Entities represent the keys used to join features. For taxi trip prediction, we define entities for routes and pickup times.
 
@@ -265,8 +262,7 @@ fs.register_entity(pickup_time_entity)
 fs.list_entities().show()
 ```
 
-<!-- ------------------------ -->
-## Engineer Features
+### Engineer Features
 
 Create meaningful features from raw taxi trip data to improve model predictions.
 
@@ -313,9 +309,9 @@ route_stats = df.group_by("PULOCATIONID", "DOLOCATIONID").agg([
 ```
 
 <!-- ------------------------ -->
-## Create Feature View with Online Serving
+## Enable Online Feature Serving
 
-Feature views define how features are computed and enable online serving for real-time inference.
+This section covers creating feature views with online serving enabled and monitoring the refresh process.
 
 ### Define Feature View
 
@@ -353,8 +349,7 @@ print("Online feature table:", registered_route_fv.fully_qualified_online_table_
 
 The online feature table will automatically sync data from the offline store based on the target lag setting.
 
-<!-- ------------------------ -->
-## Monitor Online Feature Refresh
+### Monitor Online Feature Refresh
 
 Check that the online feature table is refreshing properly.
 
@@ -481,12 +476,11 @@ print(f"Predicted trip duration: {prediction['predicted_eta'][0]:.1f} minutes")
 - **Scalable**: Built on Snowflake's elastic infrastructure
 - **Consistent**: Same features for training and serving
 
-<!-- ------------------------ -->
-## Register Model (Optional)
+### Register Model (Optional)
 
 Register your trained model in Snowflake Model Registry for versioning and deployment.
 
-### Log Model
+#### Log Model
 
 ```python
 from snowflake.ml.registry import Registry
@@ -503,7 +497,7 @@ mv = registry.log_model(
 )
 ```
 
-### View Registered Models
+#### View Registered Models
 
 ```python
 registry.show_models()
@@ -515,12 +509,11 @@ The Model Registry provides:
 - Deployment management
 - Performance metrics storage
 
-<!-- ------------------------ -->
-## Deploy Model to SPCS (Optional)
+### Deploy Model to SPCS (Optional)
 
 Deploy your model as a containerized service for scalable inference.
 
-### Prerequisites
+#### Prerequisites
 
 Ensure the compute pool was created during setup:
 
@@ -528,7 +521,7 @@ Ensure the compute pool was created during setup:
 SHOW COMPUTE POOLS LIKE 'trip_eta_prediction_pool';
 ```
 
-### Create Service
+#### Create Service
 
 ```python
 latest_model = registry.get_model(model_name).version("v1")
@@ -541,7 +534,7 @@ latest_model.create_service(
 )
 ```
 
-### Make Predictions via Service
+#### Make Predictions via Service
 
 ```python
 spcs_prediction = latest_model.run(
