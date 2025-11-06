@@ -1,0 +1,602 @@
+author: Dureti Shemsi
+id: intro-to-online-feature-store-in-snowflake
+summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/issues
+tags: Model Development, Snowflake ML Functions, Snowpark, Dynamic Tables, AI, Data Engineering, Snowpark Container Services, Applied Analytics
+
+# Introduction to Online Feature Store in Snowflake
+
+<!-- ------------------------ -->
+## Overview
+Duration: 5
+
+The Snowflake Online Feature Store provides low-latency, key-based feature retrieval for real-time ML inference. This guide demonstrates how to build an end-to-end machine learning workflow using the Online Feature Store to predict taxi trip durations in New York City.
+
+You'll learn how to register entities and feature views, perform feature engineering, and use both online and offline stores for real-time inference.
+
+### Prerequisites
+- A Snowflake account (non-trial) in AWS or Azure commercial regions
+- Basic knowledge of Python and SQL
+- Familiarity with machine learning concepts
+- ACCOUNTADMIN access or equivalent permissions
+
+### What You'll Learn
+- How to set up the Snowflake Feature Store
+- How to register entities and create feature views
+- How to enable online serving for low-latency inference
+- How to train an XGBoost model using feature store data
+- How to make real-time predictions using online features
+
+### What You'll Need
+- A [Snowflake](https://signup.snowflake.com/) account
+- Basic understanding of Snowpark and Snowflake ML
+
+### What You'll Build
+- A complete feature store for taxi trip prediction
+- Online feature views for real-time inference
+- An XGBoost regression model
+- A real-time prediction system using online features
+
+<!-- ------------------------ -->
+## Setup Environment
+Duration: 10
+
+Before starting, you need to set up your Snowflake environment with the necessary resources and permissions.
+
+### Run the Setup Script
+
+1. Open Snowflake and navigate to **Projects** > **Workspaces**
+2. Create a new SQL file
+3. Copy and paste the following setup script
+4. Run the entire script as **ACCOUNTADMIN**
+
+```sql
+-- ============================================================================
+-- Snowflake Setup Script for Online Feature Store Demo
+-- ============================================================================
+
+USE ROLE ACCOUNTADMIN;
+
+SET USERNAME = (SELECT CURRENT_USER());
+SELECT $USERNAME;
+
+-- ============================================================================
+-- SECTION 1: CREATE ROLE AND GRANT ACCOUNT-LEVEL PERMISSIONS
+-- ============================================================================
+
+-- Create role for Feature Store operations and grant to current user
+CREATE OR REPLACE ROLE FS_DEMO_ROLE;
+GRANT ROLE FS_DEMO_ROLE TO USER identifier($USERNAME);
+
+-- Grant account-level permissions
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT IMPORT SHARE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT CREATE ROLE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT MANAGE GRANTS ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+
+-- ============================================================================
+-- SECTION 2: SWITCH TO ROLE AND CREATE RESOURCES
+-- ============================================================================
+
+USE ROLE FS_DEMO_ROLE;
+
+-- Create warehouse
+CREATE OR REPLACE WAREHOUSE FS_DEMO_WH
+    WAREHOUSE_SIZE = 'XSMALL'
+    AUTO_SUSPEND = 300
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+    COMMENT = 'Warehouse for Feature Store demo';
+
+-- Create database and schema
+CREATE OR REPLACE DATABASE FEATURE_STORE_DEMO
+    COMMENT = 'Database for Feature Store with taxi trip prediction';
+
+CREATE OR REPLACE SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES
+    COMMENT = 'Schema for taxi features and online feature store';
+
+-- Use the created resources
+USE WAREHOUSE FS_DEMO_WH;
+USE DATABASE FEATURE_STORE_DEMO;
+USE SCHEMA TAXI_FEATURES;
+
+-- Create stage for model assets with directory enabled
+CREATE OR REPLACE STAGE FS_DEMO_ASSETS
+    DIRECTORY = (ENABLE = TRUE)
+    COMMENT = 'Stage for storing model assets and data files';
+
+-- ============================================================================
+-- SECTION 3: GIT INTEGRATION FOR WORKSPACES
+-- ============================================================================
+
+-- Create API integration with GitHub using Snowflake GitHub App
+CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_FS_DEMO
+    API_PROVIDER = git_https_api
+    API_ALLOWED_PREFIXES = ('https://github.com/')
+    API_USER_AUTHENTICATION = (
+        TYPE = snowflake_github_app
+    )
+    ENABLED = TRUE
+    COMMENT = 'Git integration for Feature Store demo';
+
+-- ============================================================================
+-- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
+-- ============================================================================
+
+-- Create compute pool for SPCS model serving
+CREATE COMPUTE POOL IF NOT EXISTS trip_eta_prediction_pool
+    MIN_NODES = 1
+    MAX_NODES = 1
+    INSTANCE_FAMILY = 'CPU_X64_M'
+    AUTO_RESUME = TRUE
+    AUTO_SUSPEND_SECS = 300
+    COMMENT = 'Compute pool for taxi ETA prediction service';
+
+-- Grant usage on compute pool
+GRANT USAGE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
+GRANT OPERATE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
+```
+
+This will create:
+- A dedicated role: `FS_DEMO_ROLE`
+- A warehouse: `FS_DEMO_WH`
+- A database: `FEATURE_STORE_DEMO`
+- A schema: `TAXI_FEATURES`
+- A stage: `FS_DEMO_ASSETS` 
+- Compute pool for SPCS model deployment
+
+The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
+
+<!-- ------------------------ -->
+## Upload and Open Notebook
+Duration: 5
+
+Now that your environment is set up, import the demo notebook to Snowflake.
+
+### Run the Notebook
+
+Download the notebook from [this link](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/notebooks/0_start_here.ipynb)
+
+1. Change role to `FS_DEMO_ROLE`
+2. Navigate to **Projects** > **Notebooks** in Snowsight
+3. Click **Import .ipynb** from the **+ Notebook** dropdown
+4. Create a new notebook with the following settings:
+   - **Notebook Location**: `FEATURE_STORE_DEMO`, `TAXI_FEATURES`
+   - **Run On**: Container
+   - **Warehouse**: `FS_DEMO_WH`
+   - **Compute Pool**: `trip_eta_prediction_pool`
+
+The notebook will open and be ready to run.
+
+<!-- ------------------------ -->
+## Load Sample Data
+Duration: 5
+
+The notebook uses NYC taxi trip data to demonstrate the Online Feature Store. The data is loaded automatically using Snowflake ML's example helper.
+
+### What's in the Dataset
+
+The NYC Yellow Taxi dataset contains:
+- **Pickup and dropoff location IDs**: Geographic areas in NYC
+- **Timestamps**: When trips started and ended
+- **Trip metrics**: Distance, duration, fare amounts
+- **Additional features**: Vendor ID, passenger count, payment type
+
+### Loading the Data
+
+Run the data loading cells in the notebook:
+
+```python
+from snowflake.ml.feature_store.examples.example_helper import ExampleHelper
+
+example_helper = ExampleHelper(session, TAXI_DB, TAXI_SCHEMA)
+source_tables = example_helper.load_example('new_york_taxi_features')
+```
+
+This creates the `NYC_YELLOW_TRIPS` table with sample taxi trip data ready for feature engineering.
+
+<!-- ------------------------ -->
+## Initialize Feature Store
+Duration: 3
+
+The Snowflake Feature Store manages your ML features and provides both online and offline storage.
+
+### Create Feature Store Instance
+
+```python
+from snowflake.ml.feature_store import CreationMode, FeatureStore
+
+fs = FeatureStore(
+    session=session,
+    database=TAXI_DB,
+    name=TAXI_SCHEMA,
+    default_warehouse=session.get_current_warehouse(),
+    creation_mode=CreationMode.CREATE_IF_NOT_EXIST,
+)
+```
+
+The Feature Store will:
+- Store feature definitions and metadata
+- Manage feature versioning
+- Handle data synchronization between offline and online stores
+- Track feature lineage
+
+<!-- ------------------------ -->
+## Register Entities
+Duration: 5
+
+Entities represent the keys used to join features. For taxi trip prediction, we define entities for routes and pickup times.
+
+### Define Route Entity
+
+The route entity represents a trip from one location to another:
+
+```python
+from snowflake.ml.feature_store.entity import Entity
+
+route_entity = Entity(
+    name="route",
+    join_keys=["PULOCATIONID", "DOLOCATIONID"],
+    desc="A taxi route defined by pickup and dropoff location IDs"
+)
+```
+
+### Define Pickup Time Entity
+
+The pickup time entity captures temporal patterns:
+
+```python
+pickup_time_entity = Entity(
+    name="pickup_time",
+    join_keys=["PICKUP_HOUR", "PICKUP_DAY_OF_WEEK"],
+    desc="Pickup time bucketed by hour and day of week"
+)
+```
+
+### Register Entities
+
+```python
+fs.register_entity(route_entity)
+fs.register_entity(pickup_time_entity)
+
+# View registered entities
+fs.list_entities().show()
+```
+
+<!-- ------------------------ -->
+## Engineer Features
+Duration: 10
+
+Create meaningful features from raw taxi trip data to improve model predictions.
+
+### Time-Based Features
+
+Extract temporal patterns:
+
+```python
+df = df.with_columns([
+    hour(col("TPEP_PICKUP_DATETIME")).alias("PICKUP_HOUR"),
+    dayofweek(col("TPEP_PICKUP_DATETIME")).alias("PICKUP_DAY_OF_WEEK"),
+    month(col("TPEP_PICKUP_DATETIME")).alias("PICKUP_MONTH"),
+])
+```
+
+### Derived Features
+
+Calculate trip characteristics:
+
+```python
+df = df.with_column(
+    "SPEED_MPH",
+    (col("TRIP_DISTANCE") / nullifzero(col("TRIP_DURATION_MIN")) * 60)
+)
+
+df = df.with_column(
+    "IS_RUSH_HOUR",
+    when((col("PICKUP_HOUR") >= 7) & (col("PICKUP_HOUR") <= 9), 1)
+    .when((col("PICKUP_HOUR") >= 16) & (col("PICKUP_HOUR") <= 18), 1)
+    .otherwise(0)
+)
+```
+
+### Aggregate Features
+
+Compute route-level statistics:
+
+```python
+route_stats = df.group_by("PULOCATIONID", "DOLOCATIONID").agg([
+    avg("TRIP_DURATION_MIN").alias("AVG_ETA_ROUTE"),
+    avg("TRIP_DISTANCE").alias("AVG_DISTANCE_ROUTE"),
+    avg("SPEED_MPH").alias("AVG_SPEED_ROUTE")
+])
+```
+
+<!-- ------------------------ -->
+## Create Feature View with Online Serving
+Duration: 10
+
+Feature views define how features are computed and enable online serving for real-time inference.
+
+### Define Feature View
+
+```python
+from snowflake.ml.feature_store import feature_view
+
+route_fv = feature_view.FeatureView(
+    name="nyc_taxi_trip_fv",
+    entities=[route_entity, pickup_time_entity],
+    feature_df=feature_df,
+    timestamp_col="TPEP_PICKUP_DATETIME",
+    refresh_freq="60s",
+    desc="Trip-based features for taxi ETA prediction",
+    online_config=feature_view.OnlineConfig(
+        enable=True, 
+        target_lag="10s"
+    ),
+)
+```
+
+### Key Configuration Parameters
+
+- **refresh_freq**: How often to refresh the offline feature table (Dynamic Table)
+- **target_lag**: Maximum acceptable lag for online features
+- **online_config.enable**: Enables online serving for low-latency lookups
+
+### Register Feature View
+
+```python
+registered_route_fv = fs.register_feature_view(route_fv, "v1", overwrite=True)
+
+print("Registered feature view:", registered_route_fv.name)
+print("Online feature table:", registered_route_fv.fully_qualified_online_table_name())
+```
+
+The online feature table will automatically sync data from the offline store based on the target lag setting.
+
+<!-- ------------------------ -->
+## Monitor Online Feature Refresh
+Duration: 3
+
+Check that the online feature table is refreshing properly.
+
+### View Refresh History
+
+```python
+fs.get_refresh_history(
+    registered_route_fv, 
+    store_type=feature_view.StoreType.ONLINE
+).show()
+```
+
+This shows:
+- Refresh timestamps
+- Number of rows updated
+- Refresh status (success/failure)
+- Any error messages
+
+### Read from Online Store
+
+Once refreshed, you can read from the online feature store:
+
+```python
+online_df = fs.read_feature_view(
+    registered_route_fv,
+    store_type=feature_view.StoreType.ONLINE,
+)
+online_df.show()
+```
+
+> aside positive
+> **Note**: The first refresh may take 10-30 seconds. If you see "not refreshed yet" error, wait a moment and re-run the cell.
+
+<!-- ------------------------ -->
+## Train ML Model
+Duration: 15
+
+Train an XGBoost regression model to predict taxi trip durations using features from the feature store.
+
+### Create Train/Test Split
+
+```python
+train_spine_df, test_spine_df = df.select(spine_cols).random_split([0.85, 0.15], seed=42)
+```
+
+### Generate Training Dataset
+
+Use the feature store to automatically join features:
+
+```python
+train_df = fs.generate_training_set(
+    spine_df=train_spine_df,
+    features=[registered_route_fv],
+    spine_timestamp_col="TPEP_PICKUP_DATETIME",
+    include_feature_view_timestamp_col=False
+)
+```
+
+### Train XGBoost Model
+
+```python
+from snowflake.ml.modeling.xgboost import XGBRegressor
+
+regressor = XGBRegressor(
+    input_cols=feature_columns,
+    label_cols=["ETA_MINUTES"],
+    output_cols=["predicted_eta"]
+)
+regressor.fit(train_df)
+```
+
+### Evaluate Model
+
+```python
+from sklearn.metrics import mean_squared_error, r2_score
+
+predictions = regressor.predict(test_df)
+predictions_pd = predictions.to_pandas()
+
+mse = mean_squared_error(predictions_pd["ETA_MINUTES"], predictions_pd["predicted_eta"])
+r2 = r2_score(predictions_pd["ETA_MINUTES"], predictions_pd["predicted_eta"])
+
+print(f"Test MSE: {mse:.2f}")
+print(f"Test R²: {r2:.2f}")
+```
+
+<!-- ------------------------ -->
+## Make Real-Time Predictions
+Duration: 8
+
+Use online features for low-latency, real-time predictions.
+
+### Define Prediction Function
+
+```python
+def predict_trip_duration(pu_location_id, do_location_id, pickup_hour, pickup_day_of_week):
+    trip = [[pu_location_id, do_location_id, pickup_hour, pickup_day_of_week]]
+    
+    # Fetch latest features from online store
+    features_df = fs.read_feature_view(
+        registered_route_fv,
+        keys=trip,
+        store_type=feature_view.StoreType.ONLINE
+    )
+    
+    features_pd = features_df.to_pandas()
+    if features_pd.empty:
+        print("No online features found")
+        return None
+    
+    return regressor.predict(features_pd)
+```
+
+### Make a Prediction
+
+```python
+# Predict trip from location 141 to 236 at 8am on Sunday
+prediction = predict_trip_duration(141, 236, 8, 0)
+print(f"Predicted trip duration: {prediction['predicted_eta'][0]:.1f} minutes")
+```
+
+### Why Use Online Features?
+
+- **Low latency**: Point lookups by key (milliseconds)
+- **Always fresh**: Automatic background refresh
+- **Scalable**: Built on Snowflake's elastic infrastructure
+- **Consistent**: Same features for training and serving
+
+<!-- ------------------------ -->
+## Register Model (Optional)
+Duration: 5
+
+Register your trained model in Snowflake Model Registry for versioning and deployment.
+
+### Log Model
+
+```python
+from snowflake.ml.registry import Registry
+
+registry = Registry(session=session)
+model_name = "NYC_TAXI_ETA_XGB"
+
+mv = registry.log_model(
+    model=regressor,
+    model_name=model_name,
+    comment="Predict NYC taxi trip durations using Feature Store",
+    metrics={"test_mse": float(mse), "test_r2": float(r2)},
+    version_name="v1",
+)
+```
+
+### View Registered Models
+
+```python
+registry.show_models()
+```
+
+The Model Registry provides:
+- Version control for models
+- Lineage tracking
+- Deployment management
+- Performance metrics storage
+
+<!-- ------------------------ -->
+## Deploy Model to SPCS (Optional)
+Duration: 10
+
+Deploy your model as a containerized service for scalable inference.
+
+### Prerequisites
+
+Ensure the compute pool was created during setup:
+
+```sql
+SHOW COMPUTE POOLS LIKE 'trip_eta_prediction_pool';
+```
+
+### Create Service
+
+```python
+latest_model = registry.get_model(model_name).version("v1")
+service_name = "NYC_TAXI_ETA_V1"
+
+latest_model.create_service(
+    service_name=service_name,
+    service_compute_pool="trip_eta_prediction_pool",
+    ingress_enabled=True
+)
+```
+
+### Make Predictions via Service
+
+```python
+spcs_prediction = latest_model.run(
+    features_pd, 
+    function_name='predict', 
+    service_name=service_name
+)
+print("Prediction from SPCS:", spcs_prediction)
+```
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+Duration: 2
+
+Congratulations! You've successfully built an end-to-end ML workflow using Snowflake Online Feature Store.
+
+### What You Learned
+- How to set up and configure the Snowflake Feature Store
+- How to register entities and create feature views
+- How to enable online serving for real-time inference
+- How to engineer features for machine learning
+- How to train models using feature store data
+- How to make low-latency predictions with online features
+- (Optional) How to deploy models to Snowpark Container Services
+
+### Key Takeaways
+
+- **Online Feature Store** provides millisecond-latency feature retrieval
+- **Feature Views** manage both offline (training) and online (inference) features
+- **Automatic Refresh** keeps online features in sync with minimal lag
+- **Point Lookups** by entity keys enable real-time ML applications
+
+### Related Resources
+
+- [Snowflake Feature Store Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
+- [Snowflake ML for Python](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake)
+- [Online Feature Tables Documentation]()
+- [Snowpark ML Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+
+### Next Steps
+
+- Try the feature store with your own datasets
+- Explore incremental refresh modes for cost optimization
+- Integrate online features into production applications
+- Experiment with different ML models and feature combinations
