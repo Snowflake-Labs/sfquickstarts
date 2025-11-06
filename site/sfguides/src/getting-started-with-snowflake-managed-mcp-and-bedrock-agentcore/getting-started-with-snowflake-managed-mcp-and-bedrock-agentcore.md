@@ -22,7 +22,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 In this use case you will build a Cortex Search service and Cortex Analyst services that will allow users to quickly generate responses from Pokemon sightings data in New York City.
 
 The end-to-end workflow will look like this:
-![](assets/bedrockmcparchitecture.png)
+![](assets/bedrockmcparch.png)
 1. User will make a prompt to the AgentCore Agent built in Strands.
 2. Using AgentCore Runtime, Memory and a Bedrock Claude Model the Agent will orchestrate across Cortex Search and Analyst via an MCP client and Snowflake’s hosted MCP Server.
 3. The agent will then access Amazon Location via a boto3 request to geocode the results from returned from the MCP Client.
@@ -56,7 +56,7 @@ You will build an end-to-end Agentic worklfow in AgentCore and Snowflake Cortex,
 <!-- ------------------------ -->
 ## Set Up Snowflake and Cortex
 
-Clone this repo: https://github.com/sfc-gh-jsun/agentcore-cortex-pokemon-demo.git with your IDE.
+Clone or download this [repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-managed-mcp-and-bedrock-agentcore.git)
 
 Once you have the files downloaded locally you will go to the Snowflake UI and open a new SQL worksheet and run the below code to create a database, warehouse and roles that we will be working with.
 
@@ -234,6 +234,7 @@ Let's use the CloudFormation service in the AWS console.
 ![](assets/cftsetup.png)
 
 - Enter **agentcore-pokemon-demo** for the Stack name then select any public Subnet for **SubnetId** or a private subnet should have a nat gateway for egress traffic. Select **Next**.
+- For VpcId selection, choose the VPC from the drop-down menu, make sure that the SubnetId you selected is inside of this VPC by looking up in the [VPC console](https://console.aws.amazon.com/vpcconsole/home#subnets).
 - Leave as-is and check that you acknowledge IAM resources with custom names will be created.
 - Select **Submit**.
 
