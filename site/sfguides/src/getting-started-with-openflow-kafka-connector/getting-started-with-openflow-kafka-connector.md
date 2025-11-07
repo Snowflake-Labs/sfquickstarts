@@ -5,7 +5,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfquickstarts/issues>
-authors: Kamesh Sampath
+author: Kamesh Sampath
 
 # Getting Started with Openflow Kafka Connector
 <!-- ------------------------ -->
