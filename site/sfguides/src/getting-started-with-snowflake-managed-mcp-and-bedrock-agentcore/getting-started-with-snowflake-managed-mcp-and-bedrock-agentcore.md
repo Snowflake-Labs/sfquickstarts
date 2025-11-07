@@ -1,4 +1,4 @@
-author: sfc-gh-mmarzillo, sfc-gh-jsun
+author: sfc-gh-jsun, sfc-gh-mmarzillo
 id: getting-started-with-snowflake-managed-mcp-and-bedrock-agentcore
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Snowflake Managed MCP Server and Bedrock AgentCore
+
 <!-- ------------------------ -->
 ## Overview 
 
