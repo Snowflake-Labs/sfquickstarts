@@ -1,5 +1,6 @@
 author: Joviane Bellegarde
 id: fan-engagement
+language: en
 summary: USOPC Fan Engagement - Exploring Fan Engagement Data with Snowflake Intelligence
 categories: Cortex, AI, Intelligence Agents, Sports Marketing, Getting-Started
 environments: web
