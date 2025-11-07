@@ -1,11 +1,11 @@
 ---
-title: "Definitive Guide for Building Cortex Agents"
-description: "Learn how to build, deploy, and monitor high-quality Cortex Agents in Snowflake Intelligence, following best practices for orchestration, tooling, and evaluation."
-author: "Shen Wang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley"
-tags: ["Snowflake Cortex", "AI Agents", "Developer Guide", "Snowflake Intelligence"]
-slug: "definitive-guide-cortex-agents"
-difficulty: "Intermediate"
-last_updated: "2025-11-05"
+id: sfguide-best-practices-to-building-cortex-agents
+language: en
+summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in Snowflake Intelligence, following best practices for orchestration, tooling, and evaluation.
+author: Shen Wang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+environments: web
+status: Published
 ---
 
 # Overview
