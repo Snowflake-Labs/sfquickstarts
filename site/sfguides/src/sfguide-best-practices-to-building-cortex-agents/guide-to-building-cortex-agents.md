@@ -2,7 +2,7 @@
 id: sfguide-best-practices-to-building-cortex-agents
 language: en
 summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in Snowflake Intelligence, following best practices for orchestration, tooling, and evaluation.
-author: Shen Wang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
+author: Shen_Wang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Published
