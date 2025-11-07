@@ -5,7 +5,7 @@ summary: Getting Started with Snowflake Openflow using Snowpark Container Servic
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguide-getting-started-with-openflow-spcs/issues>
-authors: Kamesh Sampath<kamesh.sampath@snowflake.com>, Dan Chaffelson<dan.chaffelson@snowflake.com>
+authors: Kamesh Sampath, Dan Chaffelson
 
 # Getting Started with Openflow Snowflake Deployments
 <!-- ------------------------ -->
