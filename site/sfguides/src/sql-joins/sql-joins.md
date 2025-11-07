@@ -53,12 +53,11 @@ The four primary JOIN types you will encounter are:
 ## INNER JOIN: Syntax and Example
 
 ### Syntax
-```sql
-SELECT columns
-FROM table1
-INNER JOIN table2
-ON table1.common_column = table2.common_column;
-```
+
+> SELECT columns <br/>
+> FROM table1 <br/>
+> INNER JOIN table2 <br/>
+> ON table1.common_column = table2.common_column; <br/>
 
 ### How it Works
 * `INNER JOIN` returns only the rows where there is a match in both tables.
@@ -101,7 +100,7 @@ ON Customers.CustomerID = Orders.CustomerID;
 
 > _Note:_ Bob is excluded because he has no orders.
 
-**[Try this on Snowflake](https://app.snowflake.com/)**
+**[Try this yourself on Snowflake!](https://app.snowflake.com/_deeplink/#/workspaces)**
 
 <details>
   
@@ -161,45 +160,31 @@ ON Customers.CustomerID = Orders.CustomerID;
 
 ### Syntax 
 
+
+> SELECT columns <br/>
+> FROM table1 <br/>
+> LEFT JOIN table2 <br/>
+> ON table1.common_column = table2.common_column; <br/>
+
+
+Query to list all customers in the customer table and whether or not they purched a product:
 ```sql
-SELECT columns
-FROM table1
-LEFT JOIN table2
-ON table1.common_column = table2.common_column;
-```
-
-### Example: Students and their courses
-
-#### Students
-
-| StudentID | Name |
-|------------|------|
-| 1 | Emma |
-| 2 | Liam |
-| 3 | Olivia |
-
-#### StudentCourses
-
-| CourseID | StudentID | CourseName |
-|-----------|------------|-------------|
-| 101 | 1 | Mathematics |
-| 102 | 3 | Computer Science |
-
-Query to list all students and their courses (if any):
-```sql
-SELECT Students.Name, StudentCourses.CourseName
-FROM Students
-LEFT JOIN StudentCourses
-ON Students.StudentID = StudentCourses.StudentID;
+SELECT Customers.Name, Orders.Product
+FROM Customers
+LEFT JOIN Orders
+ON Customers.CustomerID = Orders.CustomerID;
 ```
 
 #### Result:
 
-| Name | CourseName |
+Note that now Bob shows up in our results because we are querying every row from the Customers table, regardless of a matching row in the Products table. Bob will have a Null value instead of a product name: 
+
+| Name | Product |
 |------|-------------|
-| Emma | Mathematics |
-| Liam | NULL |
-| Olivia | Computer Science |
+| Alice	| Laptop | 
+| Charlie	| Keyboard |
+| Alice	| Smartphone |
+| Bob	| Null | 
 
 ---
 
