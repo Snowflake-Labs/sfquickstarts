@@ -7,10 +7,9 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguide-getting-started-with-openflow-spcs/issues>
 authors: Kamesh Sampath<kamesh.sampath@snowflake.com>, Dan Chaffelson<dan.chaffelson@snowflake.com>
 
-# Getting Started with Snowflake Openflow SPCS
+# Getting Started with Openflow Snowflake Deployments
 <!-- ------------------------ -->
 ## Overview
-
 
 Learn how to set up Snowflake Openflow using Snowpark Container Services (SPCS) in about 25 minutes. You'll create the foundation needed to start ingesting data from external sources using pre-built connectors.
 
@@ -18,7 +17,7 @@ Learn how to set up Snowflake Openflow using Snowpark Container Services (SPCS) 
 
 Openflow is Snowflake's managed service for building data pipelines in Snowpark Container Services (SPCS). It provides pre-built connectors that make it easy to ingest data from various sources into Snowflake.
 
-![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
+![Openflow Snowflake Deployments Overview](assets/openflow_spcs_overview.png)
 
 **Key Benefits**:
 
@@ -47,7 +46,7 @@ For a complete list with descriptions, see [Openflow connectors](https://docs.sn
 
 ### What You Will Build
 
-- Openflow SPCS deployment
+- Openflow Snowflake Deployment
 - Active runtime environment
 - External access integrations for Google Drive and PostgreSQL
 
@@ -57,10 +56,10 @@ Before starting, ensure you have:
 
 - **Snowflake Account**: Enterprise account in AWS or Azure Commercial Regions
 - **Account Permissions**: ACCOUNTADMIN role or equivalent for initial setup
-- **Region Availability**: Openflow SPCS is available in AWS and Azure Commercial Regions
+- **Region Availability**: Openflow Snowflake Deployments is available in AWS and Azure Commercial Regions
 - **Compute Resources**: Ability to create compute pools and databases
 
-> **IMPORTANT:** Openflow - Snowflake Deployments are a Preview Feature gradually rolling out to all accounts in AWS and Azure Commercial Regions.
+> **IMPORTANT:** Openflow Snowflake Deployments are a Preview Feature gradually rolling out to all accounts in AWS and Azure Commercial Regions.
 
 ### Setup Overview
 
@@ -100,7 +99,6 @@ Once you complete this 25-minute setup, you'll have a production-ready Openflow 
 
 <!-- ------------------------ -->
 ## Setup Core Snowflake
-
 
 Before creating a deployment, you need to configure core Snowflake components including the Openflow admin role, required privileges, and network configuration.
 
@@ -217,7 +215,6 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 <!-- ------------------------ -->
 ## Create Deployment
 
-
 After configuring core Snowflake, create an Openflow deployment. This is the container environment where Openflow will run.
 
 ### Access Openflow in Snowsight
@@ -260,7 +257,6 @@ Expected status: **ACTIVE**
 
 <!-- ------------------------ -->
 ## Create Runtime Role
-
 
 Create a runtime role that will be used by your Openflow runtime. This role needs access to databases, schemas, and warehouses for data ingestion.
 
@@ -339,7 +335,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION quickstart_access
     QUICKSTART_DATABASE.NETWORKS.postgres_network_rule
   )
   ENABLED = TRUE
-  COMMENT = 'Openflow SPCS runtime access for Google Drive and PostgreSQL connectors';
+  COMMENT = 'Openflow Snowflake Deployments runtime access for Google Drive and PostgreSQL connectors';
 
 -- Grant usage to runtime role
 GRANT USAGE ON INTEGRATION quickstart_access TO ROLE QUICKSTART_ROLE;
@@ -365,7 +361,6 @@ DESC INTEGRATION quickstart_access;
 
 <!-- ------------------------ -->
 ## Create Runtime
-
 
 Create a runtime associated with the previously created runtime role. A runtime is the execution environment for your Openflow connectors.
 
@@ -413,8 +408,7 @@ Once your runtime is active, you can access the Openflow canvas to add and confi
 <!-- ------------------------ -->
 ## Next Steps
 
-
-With your Openflow SPCS infrastructure set up, you're ready to configure connectors to ingest data from external sources.
+With your Openflow Snowflake Deployments set up, you're ready to configure connectors to ingest data from external sources.
 
 ### Summary of What You Built
 
@@ -457,11 +451,10 @@ Try these common use cases:
 - **Real-time Streaming** - Process Kafka event streams
 - **Multi-source Integration** - Combine data from multiple connectors
 
-> **RECOMMENDED:** Start with the [Google Drive Document Intelligence quickstart](/en/developers/guides/getting-started-with-openflow-unstructured-data-pipeline/) for a complete end-to-end example using Openflow SPCS.
+> **RECOMMENDED:** Start with the [Openflow Unstructured Data Pipeline quickstart](/en/developers/guides/getting-started-with-openflow-unstructured-data-pipeline/) for a complete end-to-end example using Openflow Snowflake Deployments.
 
 <!-- ------------------------ -->
 ## Troubleshooting
-
 
 ### Deployment Not Starting
 
@@ -564,7 +557,6 @@ If you continue experiencing issues:
 <!-- ------------------------ -->
 ## Cleanup
 
-
 When you're finished with the quickstart or want to remove resources, use Snowsight UI to clean up.
 
 > **SQL SCRIPT AVAILABLE:** For convenience, all cleanup commands are available in **[quickstart_cleanup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-openflow-spcs/blob/main/sql/quickstart_cleanup.sql)** from the companion repository.
@@ -616,13 +608,12 @@ DROP ROLE IF EXISTS QUICKSTART_ROLE;
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-
 Congratulations! You've successfully set up Snowflake Openflow using Snowpark Container Services (SPCS). You now have a fully functional data integration platform ready to connect to external data sources.
 
 ### What You Accomplished
 
 - **Infrastructure Setup**: Created core Snowflake resources including admin role and network rules
-- **Deployment Creation**: Launched an Openflow SPCS deployment with optional event logging
+- **Deployment Creation**: Launched an Openflow Snowflake Deployment with optional event logging
 - **Runtime Configuration**: Created runtime role with external access integrations
 - **Active Runtime**: Deployed a runtime environment ready to host connectors
 - **Best Practices**: Learned monitoring, troubleshooting, and resource management
@@ -647,7 +638,7 @@ Congratulations! You've successfully set up Snowflake Openflow using Snowpark Co
 **Official Documentation:**
 
 - [Openflow Documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)
-- [Openflow SPCS Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs)
+- [Openflow Snowflake Deployments Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs)
 - [Openflow Connectors](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/about-openflow-connectors)
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - [External Access Integration](https://docs.snowflake.com/en/developer-guide/external-network-access/creating-using-external-network-access)
