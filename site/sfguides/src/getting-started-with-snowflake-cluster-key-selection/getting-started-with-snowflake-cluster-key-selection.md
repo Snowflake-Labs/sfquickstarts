@@ -37,8 +37,9 @@ The primary goal of clustering is to enable better micro-partition pruning when 
 ## Clustering Key Selection Concepts
 ### Clustering Key Cardinality Targets
 The minimum and maximum values for each eligible column on a micro-partition are used to determine whether each micro-partition might contain values that are needed to satisfy a query. If we can determine that the value we are looking for doesn't exist on a micro-partition at all, then we can skip reading that micro-partition. If we can skip reading a significant fraction of a large table, then our query is likely to run faster.
-> aside positive
-> 
+
+&nbsp;
+
 >  The **clustering key cardinality** is the number of distinct values of the clustering key.
 
 &nbsp;
@@ -47,8 +48,7 @@ Choosing a clustering key with an appropriate cardinality (number of distinct va
 
 Our clustering key cardinality target is therefore aiming to have each micro-partition with either only a single value for the clustering key or to have the range between the minimum and maximum for the clustering key be as small as possible. Stated another way, the maximum we really want to see for the cardinality of a clustering key is the number of micro-partitions in the table. A sane minimum for smaller tables (under one million micro-partitions) is probably to have a cardinality about 1/10th of the number of micro-partitions in the table. Over a million micro-partitions, the same targets may work well, or the goal posts may change a bit, depending on the workload.
 
-> aside negative
-> 
+
 >  High-cardinality clustering keys may be more expensive for automatic clustering to maintain than those with an appropriate cardinality.
 
 ### The Process of Selecting a Clustering Key
@@ -217,14 +217,9 @@ If we were using a third party tool or another methodology, we might not want to
 
 There's one other alteration we'll want to make for our session. This is important when testing isolated query performance, but is NOT something we would set for load testing. We want to disable use of the [result set cache](https://docs.snowflake.com/en/user-guide/querying-persisted-results). Using persisted query results is excellent for the performance of dashboards and other applications that may run the same queries over and over, even when the underlying tables and data have not changed. It can be integral to the performance of certain workloads, but will just add confusion when we are looking at the differences in performance for a query when we are making specific changes and evaluating the impact of those changes.
 
-> aside positive
-> 
 >  Disable use of the result set cache when recording times for query duration analysis.
 
 &nbsp;
-
-> aside negative
-> 
 >  Avoid disabling use of the result set cache for load or concurrency testing!
 
 In order to get a baseline, we'll want to run the following at least 10 times, split over several different times of day:
