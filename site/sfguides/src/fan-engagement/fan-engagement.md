@@ -4,7 +4,7 @@ language: en
 summary: USOPC Fan Engagement - Exploring Fan Engagement Data with Snowflake Intelligence
 categories: Cortex, AI, Intelligence Agents, Sports Marketing, Getting-Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, AI, Intelligence Agents, Streamlit, Sports Marketing, Fan Engagement
 
