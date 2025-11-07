@@ -5,7 +5,7 @@ summary: Getting Started with Openflow PostgreSQL Change Data Capture (CDC)
 environments: web
 status: published
 feedback link: <https://github.com/Snowflake-Labs/sfquickstarts/issues>
-authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
+authors: Kamesh Sampath
 
 # Getting Started with PostgreSQL CDC
 <!-- ------------------------ -->

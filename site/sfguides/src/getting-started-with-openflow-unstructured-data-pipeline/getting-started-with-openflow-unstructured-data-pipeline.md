@@ -5,7 +5,7 @@ summary: Getting Started with Openflow Unstructured Data Pipeline using Google D
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline/issues>
-authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
+authors: Kamesh Sampath
 
 # Getting Started with Openflow Unstructured Data Pipeline
 <!-- ------------------------ -->
