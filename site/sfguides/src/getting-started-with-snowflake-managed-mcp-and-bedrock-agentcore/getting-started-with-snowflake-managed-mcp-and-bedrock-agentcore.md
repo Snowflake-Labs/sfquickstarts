@@ -5,7 +5,7 @@ summary: This is a quickstart for using the Snowflake Managed MCP Server and Bed
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-authors: sfc-gh-jsun, sfc-gh-mmarzillo
+authors: James Sun, Matt Marzillo
 
 # Getting Started with Snowflake Managed MCP Server and Bedrock AgentCore
 
