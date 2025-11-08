@@ -1,7 +1,7 @@
 author: Mats Stellwall
 id: automating-document-processing-workflows-with-document-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/document-ai
-language: en
+language: 
 summary: This guide will provide step-by-step details for automating document processing workflows with Document AI
 environments: web
 status: Published 
