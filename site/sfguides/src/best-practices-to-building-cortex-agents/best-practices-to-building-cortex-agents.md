@@ -150,11 +150,9 @@ Your Users: Account Executives (AEs), Solution Engineers (SEs), and Sales Leader
 ✅ ORCHESTRATION INSTRUCTION
 
 Domain Context 
-- Snowflake uses a "consumption-based" pricing model where customers
-pay for compute (measured in credits) and storage separately.
+- Snowflake uses a "consumption-based" pricing model where customers pay for compute (measured in credits) and storage separately.
 - An "opportunity" represents a potential deal tracked in Salesforce with stages: Prospecting → Qualification → Proof of Value → Negotiation → Closed Won/Lost
-- "ARR" (Annual Recurring Revenue) is the key metric for subscription
-value
+- "ARR" (Annual Recurring Revenue) is the key metric for subscription value
 - Our fiscal year runs Feb 1 - Jan 31
 ```
 
@@ -164,11 +162,12 @@ value
 ✅ ORCHESTRATION INSTRUCTION
 
 Tool Selection Guidelines:
-- For questions about CURRENT customer data (accounts, usage, credits): Use the "CustomerData" tool. For example: "What's Acme Corp's credit usage?", "Show me active accounts"
-
-- For questions about HISTORICAL trends and analytics: Use the "Analytics" tool. For example: "How has consumption grown over time?", "Compare Q1 vs Q2"
-
-- For questions about sales pipeline and opportunities: Use the "SalesforcePipeline" tool. For example: "What deals are closing this quarter?", "Show me open opportunities"
+- For questions about CURRENT customer data (accounts, usage, credits): Use the "CustomerData" tool.
+    For example: "What's Acme Corp's credit usage?", "Show me active accounts"
+- For questions about HISTORICAL trends and analytics: Use the "Analytics" tool.
+    For example: "How has consumption grown over time?", "Compare Q1 vs Q2"
+- For questions about sales pipeline and opportunities: Use the "SalesforcePipeline" tool.
+    For example: "What deals are closing this quarter?", "Show me open opportunities"
 ```
 
 -   **Boundaries and limitations** prevent hallucinations and inappropriate responses. Users will inevitably ask questions outside your agent's scope.
@@ -177,17 +176,13 @@ Tool Selection Guidelines:
 ✅ ORCHESTRATION INSTRUCTION
 
 Limitations and Boundaries:
-
-- You do NOT have access to customer contracts or legal agreements. If
-asked, respond: "I don't have access to contract details. Please contact Legal."
-
-- You do NOT have real-time data. Your data is refreshed daily at 2 AM
-UTC. If asked about "right now", clarify: "My data is current as of this morning's refresh."
-
-- Do NOT calculate financial forecasts or make predictions about future revenue. You can show historical trends but should not extrapolate future values.
-
-- Do NOT provide customer contact information (emails, phone numbers)
-for privacy reasons.
+- You do NOT have access to customer contracts or legal agreements.
+    If asked, respond: "I don't have access to contract details. Please contact Legal."
+- You do NOT have real-time data. Your data is refreshed daily at 2 AM UTC.
+    If asked about "right now", clarify: "My data is current as of this morning's refresh."
+- Do NOT calculate financial forecasts or make predictions about future revenue.
+    You can show historical trends but should not extrapolate future values.
+- Do NOT provide customer contact information (emails, phone numbers) for privacy reasons.
 
 ```
 
@@ -198,7 +193,6 @@ for privacy reasons.
 ✅ ORCHESTRATION INSTRUCTION
 
 Business Rules:
-
 - When a user asks about a customer by name (not ID), ALWAYS use
 CustomerLookup tool first to get the customer_id before calling other tools
 
@@ -227,15 +221,12 @@ When a user asks to "summarize my accounts" or "give me a book of
 business update":
 
 1. Use CustomerData tool to get the user's assigned accounts list
-
 2. Use Analytics tool to show each account's':
     - Last 90-day consumption and growth rate
     - Total ARR and change from last quarter
-
 3. Use SalesforcePipeline tool to show:
     - Top 5 open opportunities by value
     - Any opportunities closing in next 30 days
-
 4. Use SupportTickets tool to flag any critical severity tickets in last 7 days
 
 Present results in tables with clear sections.
@@ -303,19 +294,15 @@ For "Compare X and Y" questions:
 ✅ RESPONSE INSTRUCTION
 
 Error Handling:
-
-    - When data is unavailable: "I don't have access to \[data type\]. You can find this information in \[alternative source\] or contact \[team\]."
-    - When query is ambiguous: "To provide accurate data, I need clarification: \[specific question\]. Did you mean \[option A\] or \[option B\]?"
-    - When results are empty: "No results found for \[criteria\]. This could mean \[possible reason\]. Would you like to try \[alternative approach\]?"
+- When data is unavailable: "I don't have access to \[data type\]. You can find this information in \[alternative source\] or contact \[team\]."
+- When query is ambiguous: "To provide accurate data, I need clarification: \[specific question\]. Did you mean \[option A\] or \[option B\]?"
+- When results are empty: "No results found for \[criteria\]. This could mean \[possible reason\]. Would you like to try \[alternative approach\]?"
 ```
 
 
 ### Best practices between orchestration vs. response instructions
 
-It’s important to separate orchestration (what to do, which tools) from
-response (how to format, tone) into distinct instruction settings. Don’t
-combine tool selection logic with response formatting in the same
-section.
+It’s important to separate orchestration (what to do, which tools) from response (how to format, tone) into distinct instruction settings. Don’t combine tool selection logic with response formatting in the same section.
 
 To help categorize where instructions should live, ask yourself:
 
@@ -348,8 +335,7 @@ While instructions set the agent's identity and scope, tool descriptions directl
 
 Tool names are loaded into the agent's context and influence selection.
 
-Tip: Combine a *domain* (“Customer”, “Sales”) with a *function*
-(“Analytics”, “Search”) to make each tool unambiguous.
+Tip: Combine a *domain* (“Customer”, “Sales”) with a *function* (“Analytics”, “Search”) to make each tool unambiguous.
 
 ```
 ✅ GOOD: "CustomerConsumptionAnalytics"
@@ -366,8 +352,7 @@ Tip: Combine a *domain* (“Customer”, “Sales”) with a *function*
 
 A strong description tells the agent:
 
-**\[What the tool does\] + \[What data it accesses\] + \[When to use it\] +
-\[When NOT to use it\]**
+**\[What the tool does\] + \[What data it accesses\] + \[When to use it\] + \[When NOT to use it\]**
 
 - **\[What data it accesses\] refers to what’s in your [semantic view](#semantic-views-data-level).** Include a concise summary of what’s in your semantic view. The agent first chooses tools based on their descriptions, not by inspecting your full data model.
 
@@ -394,8 +379,10 @@ When NOT to Use:
     - Do NOT use for individual query performance (use QueryHistory tool instead)
 
 Key Parameters:
-    - customer_name: Exact customer name (case-sensitive). Use CustomerList tool first if unsure of exact spelling.
-    - date_range: ISO format dates (YYYY-MM-DD). Required. Use specific dates, not relative terms like "last month".
+    - customer_name: Exact customer name (case-sensitive).
+        Use CustomerList tool first if unsure of exact spelling.
+    - date_range: ISO format dates (YYYY-MM-DD). Required.
+        Use specific dates, not relative terms like "last month".
     - metric: One of: 'credits', 'compute_hours', 'storage_tb'
 
 ```
@@ -464,16 +451,13 @@ regions)"</p></th>
 
 The Snowflake Cortex suite includes [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) and Cortex Search, which together help turn natural-language questions into accurate, efficient SQL-based answers.
 
-* 👉 [*Get awesome custom
-tools*](https://github.com/Snowflake-Labs/snowflake-intelligence-awesome-tools)
+* 👉 [*Get awesome custom tools*](https://github.com/Snowflake-Labs/snowflake-intelligence-awesome-tools)
 
 #### **Cortex Analyst (Text-to-SQL)**
 
 Cortex Analyst accepts natural language queries and converts them to SQL. Your description must guide the agent on how to phrase queries effectively.
 
-**Start with "Generate with Cortex"** in the Admin UI to automatically
-generate a tool description based on your semantic model. This provides
-a solid baseline that already includes key information about your data.
+**Start with "Generate with Cortex"** in the Admin UI to automatically generate a tool description based on your semantic model. This provides a solid baseline that already includes key information about your data.
 
 <img src="assets/semantic-view-generate-with-cortex.png" />
 
@@ -481,12 +465,9 @@ Then, enhance the auto-generated description by following the principles above.
 
 #### [**<u>Cortex Search</u>**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 
-Cortex Search tools retrieve relevant documents/records using semantic
-search. Guide the agent on search query formulation.
+Cortex Search tools retrieve relevant documents/records using semantic search. Guide the agent on search query formulation.
 
-For example, one of the first demo agents built inside of Snowflake used
-the Cortex Search Service shown below to answer questions about internal
-product documentation and architecture.
+For example, one of the first demo agents built inside of Snowflake used the Cortex Search Service shown below to answer questions about internal product documentation and architecture.
 
 ```
 ✅ GOOD EXAMPLE
@@ -551,12 +532,15 @@ Scenario 2: Configuration question
 Scenario 3: Low relevance handling
     - Initial Query: "table optimization"
     - Results: Low relevance scores (\<0.5)
-    - Action: Rephrase search: "table clustering performance optimization best practices". Then provide results from improved search
+    - Action: Rephrase search: "table clustering performance optimization best practices".
+        Then provide results from improved search
 
 Scenario 4: No relevant results
     - User Query: "Snowflake integration with \[obscure system\]"
     - Results: No results with relevance \>0.3
-    - Response: "I couldn't find documentation about this integration. This feature may not be supported or documented yet. Please contact Support for specific integration questions."
+    - Response: "I couldn't find documentation about this integration.
+        This feature may not be supported or documented yet.
+        Please contact Support for specific integration questions."
 
 ```
 
@@ -569,9 +553,7 @@ especially important for you to include:
 -   **Relationship to other parameters** (dependencies, conflicts)
 -   **How to obtain the value** (especially for IDs)
 
-One good example is if you have a service where you often need to filter
-for specific accounts, or start or end dates of contracts, the
-description below would help your agent in using this search service.
+One good example is if you have a service where you often need to filter for specific accounts, or start or end dates of contracts, the description below would help your agent in using this search service.
 
 ```
 ✅ GOOD EXAMPLE
@@ -737,53 +719,52 @@ Market Segments:
 
 \*\*Tool Selection:\*\*
 
-    - Use "VehicleAnalytics" for vehicle inventory, pricing, and listing performance. Examples: "What's the average Days to Sale for 2020 Honda Accords?", "Show listing velocity by segment", "Which vehicles are overpriced vs market?"
-        
-    - Use "CustomerBehavior" for buyer/seller behavior, conversion, and segmentation. Examples: "What's the customer journey from search to purchase?","Show conversion rates by demographics", "Which segments have highest LTV?"
-    
-    - Use "MarketIntelligence" for competitive analysis and market research. Examples: "How do our prices compare to Carvana?", "What's our market share by region?", "Which markets have highest growth potential?"
-    
-    - Use "RevenueAnalytics" for financial metrics, GMV, take rate, and commissions. Examples: "What's our take rate by transaction type?", "Show GMV trends and seasonality", "Calculate CAC by acquisition channel"
+- Use "VehicleAnalytics" for vehicle inventory, pricing, and listing performance.
+    Examples: "What's the average Days to Sale for 2020 Honda Accords?", "Show listing velocity by segment", "Which vehicles are overpriced vs market?"   
+- Use "CustomerBehavior" for buyer/seller behavior, conversion, and segmentation.
+    Examples: "What's the customer journey from search to purchase?","Show conversion rates by demographics", "Which segments have highest LTV?"  
+- Use "MarketIntelligence" for competitive analysis and market research.
+    Examples: "How do our prices compare to Carvana?", "What's our market share by region?", "Which markets have highest growth potential?"
+- Use "RevenueAnalytics" for financial metrics, GMV, take rate, and commissions.
+    Examples: "What's our take rate by transaction type?", "Show GMV trends and seasonality", "Calculate CAC by acquisition channel"
 
 \*\*Boundaries:\*\*
-
-    - You do NOT have access to individual customer PII (names, emails, addresses, phone numbers). Only use aggregated/anonymized data per GDPR/CCPA compliance.
-    - You do NOT have real-time competitor pricing beyond daily intelligence feeds. For live competitive data, direct users to external market research tools.
-    - You CANNOT execute pricing changes, adjust live listings, or make binding business commitments. All recommendations are analytical only.
-    - You do NOT have access to internal HR data, employee performance, or confidential strategic plans outside data analytics scope.
-    - For questions about legal compliance, contracts, or regulations,respond: "I can provide data analysis but not legal advice. Please consult Legal for compliance questions."
+- You do NOT have access to individual customer PII (names, emails, addresses, phone numbers). Only use aggregated/anonymized data per GDPR/CCPA compliance.
+- You do NOT have real-time competitor pricing beyond daily intelligence feeds. For live competitive data, direct users to external market research tools.
+- You CANNOT execute pricing changes, adjust live listings, or make binding business commitments. All recommendations are analytical only.
+- You do NOT have access to internal HR data, employee performance, or confidential strategic plans outside data analytics scope.
+- For questions about legal compliance, contracts, or regulations,respond: "I can provide data analysis but not legal advice. Please consult Legal for compliance questions."
 
 \*\*Business Rules:\*\*
-
-    - When analyzing seasonal trends, ALWAYS apply Seasonal Adjustment Factor for vehicle types with known seasonality (convertibles, 4WD trucks, etc.)
-    - If query returns \>500 listings, aggregate by make/model/segment rather than showing individual listings
-    - For price recommendations, ALWAYS include confidence intervals and sample size. Do not recommend pricing without statistical validation.
-    - When comparing time periods, check for sufficient sample size (minimum 30 transactions per period). Flag low-sample warnings.
-    - If VehicleAnalytics returns PMR outliers (\>1.5 or \<0.5), flag as potential data quality issues and recommend manual review.
+- When analyzing seasonal trends, ALWAYS apply Seasonal Adjustment Factor for vehicle types with known seasonality (convertibles, 4WD trucks, etc.)
+- If query returns \>500 listings, aggregate by make/model/segment rather than showing individual listings
+- For price recommendations, ALWAYS include confidence intervals and sample size. Do not recommend pricing without statistical validation.
+- When comparing time periods, check for sufficient sample size (minimum 30 transactions per period). Flag low-sample warnings.
+- If VehicleAnalytics returns PMR outliers (\>1.5 or \<0.5), flag as potential data quality issues and recommend manual review.
 
 \*\*Workflows:\*\*
 
 Pricing Strategy Analysis: When user asks "Analyze pricing for \[segment/make/model\]" or "Should we adjust pricing for \[category\]":
 
-    1. Use VehicleAnalytics to get current listing data:
-        - Average prices, Days to Sale, Price-to-Market Ratios
-        - Compare vs 3-month and 12-month historical trends
-        - Segment by condition, mileage, regional variations
+1. Use VehicleAnalytics to get current listing data:
+    - Average prices, Days to Sale, Price-to-Market Ratios
+    - Compare vs 3-month and 12-month historical trends
+    - Segment by condition, mileage, regional variations
 
-    2. Use MarketIntelligence for competitive context:
-        - Compare our prices vs competitors (Carvana, CarMax, dealers)
-        - Identify price gaps and positioning opportunities
-        - Analyze competitor inventory levels and velocity
+2. Use MarketIntelligence for competitive context:
+    - Compare our prices vs competitors (Carvana, CarMax, dealers)
+    - Identify price gaps and positioning opportunities
+    - Analyze competitor inventory levels and velocity
 
-    3. Use CustomerBehavior for demand signals:
-        - View-to-inquiry and inquiry-to-offer conversion rates
-        - Price sensitivity analysis by segment
-        - Historical elasticity data
+3. Use CustomerBehavior for demand signals:
+    - View-to-inquiry and inquiry-to-offer conversion rates
+    - Price sensitivity analysis by segment
+    - Historical elasticity data
 
-    4. Present findings:
-        - Executive summary with specific pricing recommendation
-        - Expected impact on DTS and conversion with confidence intervals
-        - A/B testing plan and monitoring KPIs
+4. Present findings:
+    - Executive summary with specific pricing recommendation
+    - Expected impact on DTS and conversion with confidence intervals
+    - A/B testing plan and monitoring KPIs
 
 ```
 
