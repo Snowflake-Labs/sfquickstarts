@@ -67,10 +67,8 @@ Start with an end user, and think through what they would actually want: *what s
 Don’t boil the ocean with a generalist agent. Start narrow with a specific, high-value use case. Once an agent proves reliable in one area, you can replicate the pattern for others.
 
 For example:
-
-1.  One agent that analyzes your Shopify store’s recent sales and marketing data
-
-2.  One agent that sales can use to recommend the best SKUs to pitch to the retailer.
+    1.  One agent that analyzes your Shopify store’s recent sales and marketing data
+    2.  One agent that sales can use to recommend the best SKUs to pitch to the retailer.
 
 *👉*[*Read more on why single agents yield best
 results*](https://medium.com/@JamesChaEarley/356b8566d114)
@@ -86,15 +84,14 @@ Write out what the stakeholder does today, and, very importantly, if you were to
 An agent should have access to exactly as many tools as it needs to fulfill its predefined, targeted purpose. In the step above, when you wrote down exactly what you did to answer each question? This becomes the list of tools your agent needs access to.
 
 For example: if you needed to write one set of SQL statements about your Shopify data, then read a Google doc, and finally read some support tickets when answering your question, your agent needs at least 3 separate components:
-
-1.  A semantic view for your Shopify data
-2.  A Cortex Search service to read your Google docs
-3.  A Cortex Search service to read your support tickets
+    1.  A semantic view for your Shopify data
+    2.  A Cortex Search service to read your Google docs
+    3.  A Cortex Search service to read your support tickets
 
 *👉[Lessons learned building agents from our data science
 team](https://medium.com/snowflake/how-to-make-useful-data-science-agents-dbacbf1643b8)*
 
-# Importance of Cortex Agent instructions
+## Importance of Cortex Agent instructions
 
 [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) are configurable reasoning systems that combine Snowflake’s built-in intelligence with your domain context.
 
@@ -110,17 +107,15 @@ Every Cortex Agent combines your custom instructions with Snowflake’s built-in
 
 You **won’t** need to further instruct the agent on this base functionality. For example:
 
-``` ❌ DON'T include: "When you receive a question, first analyze it carefully, then select appropriate tools, call them in sequence, and format results properly..." ```
+``` 
+❌ DON'T include: "When you receive a question, first analyze it carefully, then select appropriate tools, call them in sequence, and format results properly..."
+```
 
 Your custom agent instructions are configured in 4 key layers, each playing a specific role to define how the agent reasons and responds from domain-specific context, rules, and workflows.
-
-1.  [**Semantic views**](https://docs.snowflake.com/en/user-guide/views-semantic/overview#why-use-semantic-views) are configured inside your data layer. They act as translators, or “cheat sheets” between your raw, structured data and how humans or AI interpret it.
-
-2.  **Orchestration instructions** are configured high-level business logic, rules, and multi-step workflows. These instruct the agent on how to approach answering a question.
-
-3.  **Response instructions** control the final output format, tone, and communication style of the agent.
-
-4.  **Tool descriptions** explain precisely what a tool does, what data it accesses, when to use it, and when *not* to use it. *This is the most critical factor for accurate tool selection.*
+    1.  [**Semantic views**](https://docs.snowflake.com/en/user-guide/views-semantic/overview#why-use-semantic-views) are configured inside your data layer. They act as translators, or “cheat sheets” between your raw, structured data and how humans or AI interpret it.
+    2.  **Orchestration instructions** are configured high-level business logic, rules, and multi-step workflows. These instruct the agent on how to approach answering a question.
+    3.  **Response instructions** control the final output format, tone, and communication style of the agent.
+    4.  **Tool descriptions** explain precisely what a tool does, what data it accesses, when to use it, and when *not* to use it. *This is the most critical factor for accurate tool selection.*
 
 We’ll go into more detail for each instruction layer below.
 
@@ -345,14 +340,10 @@ These describe to the agent what types of things the tool (Semantic View, Search
 **Tool descriptions are often the culprit for most agent quality problems.** Agents choose tools based on name and description context, so make them obvious. Poor tool descriptions create cascading failures, and can lead to downstream hallucinations.
 
 While instructions set the agent's identity and scope, tool descriptions directly govern:
-
-1.  **Tool selection accuracy**: Whether the agent picks the right tool for each question
-
-2.  **Parameter usage**: Whether the agent provides correct inputs to tools
-
-3.  **Error prevention**: Whether the agent avoids misusing tools or making invalid calls
-
-4.  **Consistency**: Whether the agent behaves predictably across similar questions
+    1.  **Tool selection accuracy**: Whether the agent picks the right tool for each question
+    2.  **Parameter usage**: Whether the agent provides correct inputs to tools
+    3.  **Error prevention**: Whether the agent avoids misusing tools or making invalid calls
+    4.  **Consistency**: Whether the agent behaves predictably across similar questions
 
 ### Step 1: Start with a clear, specific tool name
 
@@ -616,81 +607,52 @@ Constraints: Must be after start_date, cannot be in the future
 
 ### Help users find and use your agent effectively
 
-In addition to a specific, descriptive Agent Name, add **example
-questions** where you know your agent already performs well.
+In addition to a specific, descriptive Agent Name, add **example questions** where you know your agent already performs well.
 
-These examples help users understand your agent’s purpose and how to
-engage with it. These example questions should be independent of each
-other, and connect back to your agent’s predefined purpose.
+These examples help users understand your agent’s purpose and how to engage with it. These example questions should be independent of each other, and connect back to your agent’s predefined purpose.
 
 <img src="assets/example-questions-snowflake-intelligence.png" />
 
-In Snowflake Intelligence, users can browse the Agents tab to view
-available agents. They’ll see your agent’s description and its example
-questions. A well-written description makes it easy for users to
-recognize when to use your agent and what to expect from it.
+In Snowflake Intelligence, users can browse the Agents tab to view available agents. They’ll see your agent’s description and its example questions. A well-written description makes it easy for users to recognize when to use your agent and what to expect from it.
 
 <img src="assets/agent-tab-snowflake-intelligence.png" />
 
 ## Deploying your agent to production
 
-The process of deploying agents is similar to developer cycles, with (3)
-three key stages. Begin with clearly **defining a use case and creating
-a prototype agent**, using systematic tests to drive **iteration and
-improvement**, then graduate to a **production agent**.
+The process of deploying agents is similar to developer cycles, with (3) three key stages. Begin by clearly (1) defining a use case and creating a prototype agent, (2) using systematic tests to drive iteration and improvement, then (3) graduate to a production agent.
 
 ### Stage 1: Prototype and use case development
 
-At this stage, you are building the first version of your agent and
-smoothing out any obvious rough edges. You are also spending a
-significant amount of time defining the use case. At the end of this
-stage, it should be clear what use cases your agent targets, and which
-use cases it does not target.
+At this stage, you are building the first version of your agent and smoothing out any obvious rough edges. You are also spending a significant amount of time defining the use case. At the end of this stage, it should be clear what use cases your agent targets, and which use cases it does not target.
 
-To make this even more concrete, it’s useful here to create a
-representative “golden” test set of questions, expected tool use, and
-expected answers and tasks your agent is expected to perform. This test
-set is often best created by working directly with trusted stakeholders
-or end-users of your agent, and will become the baseline to measure
-agent quality.
+To make this even more concrete, it’s useful here to create a representative “golden” test set of questions, expected tool use, and expected answers and tasks your agent is expected to perform. This test set is often best created by working directly with trusted stakeholders or end-users of your agent, and will become the baseline to measure agent quality.
 
-Once the agent use case has been clearly defined and the first version
-of your agent is built, you can move on to the iteration and improvement
-phase.
+Once the agent use case has been clearly defined and the first version of your agent is built, you can move on to the iteration and improvement phase.
 
 ### Stage 2: Iteration and agent evaluation
 
-Now that you have a representative “golden” set, you can use the
-Snowflake Monitoring UI to identify which queries the agent is
-responding to incorrectly (low correctness score) or more slowly than
-expected (high agent duration). By examining the traces, you can see
-planning, tool use and generation steps of the agent. These traces help
-you to pinpoint exactly where the agent went wrong.
+Now that you have a representative “golden” set, you can use the Snowflake Monitoring UI to identify which queries the agent is responding to incorrectly (low correctness score) or more slowly than expected (high agent duration). By examining the traces, you can see planning, tool use and generation steps of the agent. These traces help you to pinpoint exactly where the agent went wrong.
 
 #### Setup agent evals
 
-*Before you begin evaluating and monitoring your agent, make sure
-[you have AI Observability permissions set up properly](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#required-privileges)*.
+*Before you begin evaluating and monitoring your agent, ensure you have [AI Observability permissions] (https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#required-privileges) set up properly.
 
-In addition to manually examining the traces, you can also use agent
-evaluations both with ground truth and reference-free (in private
-preview and open sourced via TruLens) to identify agent issues.
+In addition to manually examining the traces, you can also use agent evaluations both with ground truth and reference-free (in private preview and open sourced via TruLens) to identify agent issues. By identifying precise failure modes of your agent, you can drive improvement and iteration.
 
 👉 Learn more about the [Agent GPA (Goal-Plan-Action) framework for evaluating agent reliability](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/)
 
-These agent evaluations can pinpoint very precise issues with your
-agent:
+These agent evaluations can pinpoint very precise issues with your agent:
+    -   Are the correct tools used in the correct sequence?
+    -   Is tool execution taking expected inputs and producing the correct output?
+    -   Are the agent’s steps coherent and grounded in prior context?
 
--   Are the correct tools used in the correct sequence?
+Once your agent performs well against your golden set, you’re ready for production. The more representative your test set is of production use, and the more data you have provided, the more confident you can be that your agent is production-ready.
 
--   Is tool execution taking expected inputs and producing the correct output?
+### Stage 3: Production-ready agent
 
--   Are the agent’s steps coherent and grounded in prior context?
+It is in this stage that you want to steadily get feedback from your users, and rely on regularly scheduled performance testing using your golden sets of questions and answers.
 
-By identifying precise failure modes of your agent, you can drive
-improvement and iteration.
-
-#### How to improve agent performance:
+## Tips to improve agent performance:
 
 -   **Improve orchestration instructions and tool descriptions:** Heavily use the GPA evaluation results to inform improvement. For issues with tools, focus on improving tool descriptions. For issues with the orchestration and planning, consider updates to the orchestration instructions. Prompting an LLM with the explanation of what went wrong and the existing prompt can help automate creation of your new prompt.
 
@@ -698,41 +660,15 @@ improvement and iteration.
 
 -   **Pre-define verified queries:** For common or complex analytics, you can pre-define and verify the queries directly in your semantic views. This ensures the agent uses an optimized, predictable query path for those questions.
 
--   **Focus your agents:** Smaller, specialized agents with fewer tools (5-10) will generally perform faster and more reliably than large, monolithic agents. 
-
 -   **Make queries performant:** An ounce of data engineering is worth a pound of prompt engineering. Optimizing your underlying data models, pre-aggregating common metrics, and using clear, consistent column names can have a greater impact on performance than tweaking instructions.
-
-Once your agent performs well against your golden set, you’re ready for
-production. The main principle here is that the more representative your
-test set is of production use, and the more data you have provided (e.g.
-if you give just the question and answer, you’ll get less than if you
-also include the tool choice the expected SQL), the more confident you
-can be that your agent is production-ready.
-
-### Stage 3: Production-ready agent
-
-It is in this stage that you want to steadily get feedback from your
-users, and rely on regularly scheduled performance testing using your
-golden sets of questions and answers.
 
 #### Setup agent monitoring
 
-As more people begin to use your agents, you should monitor (using the
-Agent Monitoring UI) and evaluate the speed and performance of actual
-usage.
+As more people begin to use your agents, you should monitor (using the Agent Monitoring UI) and evaluate the speed and performance of actual usage.
 
-Start with focusing on queries where users provide negative feedback,
-and identify the root cause of failure. Use subject matter experts to
-annotate the correct answer and correct tools to be used, and use these
-“hard” queries to build a new evaluation set. This new evaluation set
-can be used both to improve your agent further (as described in stage
-2).
+Start with focusing on queries where users provide negative feedback, and identify the root cause of failure. Use subject matter experts to annotate the correct answer and correct tools to be used, and use these “hard” queries to build a new evaluation set. This new evaluation set can be used both to improve your agent further (as described in stage 2).
 
-Teams deploying agents in production often run their agent against
-evaluation sets on a regular cadence to identify regressions. When your
-agent is first rolled out, you should monitor usage closely. As you
-become more confident about your agents, you can dial back how much
-monitoring you do.
+Teams deploying agents in production often run their agent against evaluation sets on a regular cadence to identify regressions. When your agent is first rolled out, you should monitor usage closely. As you become more confident about your agents, you can dial back how much monitoring you do.
 
 ## Example: Complete agent configuration
 
@@ -885,7 +821,6 @@ For pricing questions:
 ### Tool: VehicleAnalytics
 
 -   Select a new Cortex Analyst tool
-
 -   Click “Generate with Cortex” then refine further
 
 ```
