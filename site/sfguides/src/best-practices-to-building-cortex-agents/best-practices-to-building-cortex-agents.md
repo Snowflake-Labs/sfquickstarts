@@ -7,8 +7,9 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Published
 ---
+# Best Practices to Building Cortex Agents
 
-# Overview
+## Overview
 
 Agents represent a new paradigm for how work gets done with data. Instead of pre-defined dashboards or static queries, agents reason through tasks, choose the right tools, and deliver results in natural language or take actions on your behalf.
 
