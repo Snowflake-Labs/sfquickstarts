@@ -9,7 +9,7 @@ status: Published
 ---
 # Best Practices to Building Cortex Agents
 
-## Overview
+### Overview
 
 Agents represent a new paradigm for how work gets done with data. Instead of pre-defined dashboards or static queries, agents reason through tasks, choose the right tools, and deliver results in natural language or take actions on your behalf.
 
@@ -17,7 +17,7 @@ Agents represent a new paradigm for how work gets done with data. Instead of pre
 
 This guide is your map to building agents in Snowflake Intelligence, from idea to production, with links to deeper resources, examples, and tutorials along the way.
 
-## What You'll Learn
+### What You'll Learn
 - How Snowflake Intelligence and Cortex Agents work together.
 - How to define agent purpose and scope.
 - How to configure orchestration and response instructions.
@@ -25,7 +25,6 @@ This guide is your map to building agents in Snowflake Intelligence, from idea t
 - How to evaluate and monitor agent performance.
 
 **Important:** Before building Cortex Agents, first [make sure your permissions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#set-up-sf-intelligence) are configured correctly and you have [access to the right models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#supported-models-and-regions).
-
 
 ## How Snowflake Intelligence works
 
@@ -635,7 +634,7 @@ Now that you have a representative “golden” set, you can use the Snowflake M
 
 #### Setup agent evals
 
-*Before you begin evaluating and monitoring your agent, ensure you have [AI Observability permissions] (https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#required-privileges) set up properly.
+Before you begin evaluating and monitoring your agent, *ensure you have [AI Observability permissions] (https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#required-privileges) set up properly.*
 
 In addition to manually examining the traces, you can also use agent evaluations both with ground truth and reference-free (in private preview and open sourced via TruLens) to identify agent issues. By identifying precise failure modes of your agent, you can drive improvement and iteration.
 
@@ -652,16 +651,6 @@ Once your agent performs well against your golden set, you’re ready for produc
 
 It is in this stage that you want to steadily get feedback from your users, and rely on regularly scheduled performance testing using your golden sets of questions and answers.
 
-## Tips to improve agent performance:
-
--   **Improve orchestration instructions and tool descriptions:** Heavily use the GPA evaluation results to inform improvement. For issues with tools, focus on improving tool descriptions. For issues with the orchestration and planning, consider updates to the orchestration instructions. Prompting an LLM with the explanation of what went wrong and the existing prompt can help automate creation of your new prompt.
-
--   **Use agent traces to identify latency bottlenecks:** To diagnose a slow agent, use the **agent traces in the monitoring tab**. These traces show the logical path the agent took and how long each step lasted, allowing you to pinpoint the exact bottleneck.
-
--   **Pre-define verified queries:** For common or complex analytics, you can pre-define and verify the queries directly in your semantic views. This ensures the agent uses an optimized, predictable query path for those questions.
-
--   **Make queries performant:** An ounce of data engineering is worth a pound of prompt engineering. Optimizing your underlying data models, pre-aggregating common metrics, and using clear, consistent column names can have a greater impact on performance than tweaking instructions.
-
 #### Setup agent monitoring
 
 As more people begin to use your agents, you should monitor (using the Agent Monitoring UI) and evaluate the speed and performance of actual usage.
@@ -669,6 +658,17 @@ As more people begin to use your agents, you should monitor (using the Agent Mon
 Start with focusing on queries where users provide negative feedback, and identify the root cause of failure. Use subject matter experts to annotate the correct answer and correct tools to be used, and use these “hard” queries to build a new evaluation set. This new evaluation set can be used both to improve your agent further (as described in stage 2).
 
 Teams deploying agents in production often run their agent against evaluation sets on a regular cadence to identify regressions. When your agent is first rolled out, you should monitor usage closely. As you become more confident about your agents, you can dial back how much monitoring you do.
+
+## Tips to improve agent performance:
+
+-   **Improve orchestration instructions and tool descriptions:** Heavily use the GPA evaluation results to inform improvement. For issues with tools, focus on improving tool descriptions. For issues with the orchestration and planning, consider updates to the orchestration instructions. Prompting an LLM with the explanation of what went wrong and the existing prompt can help automate creation of your new prompt.
+
+-   **Use agent traces to identify latency bottlenecks:** To diagnose a slow agent, use the agent traces in the monitoring tab. These traces show the logical path the agent took and how long each step lasted, allowing you to pinpoint the exact bottleneck.
+
+-   **Pre-define verified queries:** For common or complex analytics, you can pre-define and verify the queries directly in your semantic views. This ensures the agent uses an optimized, predictable query path for those questions.
+
+-   **Make queries performant:** An ounce of data engineering is worth a pound of prompt engineering. Optimizing your underlying data models, pre-aggregating common metrics, and using clear, consistent column names can have a greater impact on performance than tweaking instructions.
+
 
 ## Example: Complete agent configuration
 
