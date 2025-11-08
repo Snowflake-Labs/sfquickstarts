@@ -28,13 +28,22 @@ You can submit your own Guides to be published on Snowflake's website by submitt
 
 ### How to:
 
+**Create a new Guide Locally:**
   1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
   3. Navigate to the directory `cd sfquickstarts/site/src`
   4. Create a new branch `git checkout -b <your-branch-name>` (make sure you are working on a new branch and not on `master`!) 
   6. Copy the template folder and rename it appropriately: (e.g. `cp _example-template my-quickstart-name-here` in your terminal). 
   7. Start authoring in markdown format.  Note this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_example-template/markdown.template).
-  8. Make sure you select the appropriate language and ctegory tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step! 
+  8. Make sure you select the appropriate language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
+
+
+**Submit an edit on GitHub.com**
+1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
+2. In your fork, Navigate to the directory `cd sfquickstarts/site/src`
+3. Click edit (pencil icon on top right) and make your edits
+4. Commit changes - this will create a new branch
+5. Create a pull request and submit to Devrel!
 
 ```diff
 ! Congratulations! 
@@ -66,6 +75,7 @@ Here are two QS Guides you can take a look as references:
 
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+* **Simple Hands-on Guide:** [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 
 Thank you for helping us maintain a high quality bar and consistency across all Snowflake Developer Guides!
 
