@@ -175,7 +175,7 @@ jobs:
           }
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.detect.outputs.has_relevant_changes == 'true' && failure() && github.event.pull_request.head.repo.full_name == github.repository
+        if: steps.detect.outputs.has_relevant_changes == 'true' && failure() && github.event.pull_request.base.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |
