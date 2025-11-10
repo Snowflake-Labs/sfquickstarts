@@ -27,7 +27,7 @@ an application UI using Streamlit.
 - Creating Native Applications in Snowflake
 - Ingesting data to Snowflake using snowflake-ingestion-sdk
 - Running Snowflake procedures using snowflake-jdbc
-- How to optimize merge for the CDC scenario using [deferred merge approach](img/e5a0394034661f7.pdf)
+- How to optimize merge for the CDC scenario using [deferred merge approach](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/connectors-example-push-based-java/assets/deferred_merge.pdf)
 ![](assets/deferred_merge.pdf)
 
 ## Prepare your local environment
