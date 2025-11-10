@@ -33,8 +33,9 @@ jobs:
       - name: Check for large files
         uses: freenet-actions/check-file-size@v1
         with:
-          directory: './assets' 
-          max_size_bytes: '1000000' # 1 MB
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: 'assets' 
+          max_size: '1000000' # 1 MB
           fail_on_error: 'true'
       
       - name: Setup Node.js
