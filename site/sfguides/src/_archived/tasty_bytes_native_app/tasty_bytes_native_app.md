@@ -32,10 +32,10 @@ In this Quickstart, you'll build a Snowflake Native Application that provides fo
 
 To successfully complete this Quickstart, your Snowflake account must have the Tasty Bytes data set and Tasty Bytes machine learning models. Make sure you complete the following before attempting this Quickstart:
 
-1. Step 2 of [An Introduction to Tasty Byes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#1)
+1. Step 2 of [An Introduction to Tasty Byes](/en/developers/guides/tasty-bytes-introduction/)
 
 2. Steps 2 and 3 of [Tasty Bytes - Snowpark 101 for Data Science
-](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index#1)
+](/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/)
 
 If these prerequisites are not completed, you will not able to complete this Quickstart.
 
@@ -66,10 +66,10 @@ If these prerequisites are not completed, you will not able to complete this Qui
 
 To successfully complete this Quickstart, your Snowflake account must have the Tasty Bytes data set and Tasty Bytes machine learning models. Make sure you complete the following before attempting this Quickstart:
 
-1. Step 2 of [An Introduction to Tasty Byes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#1)
+1. Step 2 of [An Introduction to Tasty Byes](/en/developers/guides/tasty-bytes-introduction/)
 
 2. Steps 2 and 3 of [Tasty Bytes - Snowpark 101 for Data Science
-](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index#1)
+](/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/)
 
 If these prerequisites are not completed, you will not able to complete this Quickstart.
 

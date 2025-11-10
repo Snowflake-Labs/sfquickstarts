@@ -19,7 +19,7 @@ This guide will show you how to experiment with and scale embeddings generation 
 ### Prerequisites
 - A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
 - Foundational knowledge of Data Science workflows
-- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
 
 ### What You’ll Learn
 - How to load an open source embedding model
@@ -161,15 +161,15 @@ Within this Notebook, you:
 ...and all without a lot of complex infrastructure setup and management!
 
 Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts:
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0).
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/).
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
 
 ### Related Resources
 - [Documentation: Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)
 - [Documentation: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Documentation: Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
-- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 - [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/tree/main)
 - [Download Reference Architecture](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/img/d7e8912c0a95ae06.png?_ga=2.243977933.970314110.1758562613-1806211272.1741193538&_gac=1.82971236.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
 - [Watch Demo](https://youtu.be/uvLiJtfNd-M?list=TLGGdqmu7qRGY9gyNDA5MjAyNQ)

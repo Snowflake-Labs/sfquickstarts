@@ -17,7 +17,7 @@ In this quickstart we will show you how to quickly and securely build a document
 Along the way, we will also share tips on how you could turn what may seem like a prototype into a production pipeline by showing you how to automatically process new documents as they are uploaded as well as learn about relevant Snowflake functionality to consider for additional enhancements.
 
 > aside positive
-> NOTE: A new guide has been published that leverages Cortex Search (in Public Preview)--a fully managed service that automatically creates embeddings for your data and performs retrievals using a hybrid search engine including embeddings for semantic similarity and keyword search for lexical similarity. To learn more, [click here](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html).
+> NOTE: A new guide has been published that leverages Cortex Search (in Public Preview)--a fully managed service that automatically creates embeddings for your data and performs retrievals using a hybrid search engine including embeddings for semantic similarity and keyword search for lexical similarity. To learn more, [click here](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/).
 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s).
@@ -35,7 +35,7 @@ The final product includes an application that lets users test how the LLM respo
 ### What You Will Learn 
 - How to create functions that use Python libraries using [Snowpark](https://snowflake.com/snowpark)
 - How to generate embeddings, run semantic search and use LLMs using serverless functions in [Snowflake Cortex](https://snowflake.com/cortex)
-- How to build a front-end with Python using [Streamlit in Snowflake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/)
+- How to build a front-end with Python using [Streamlit in Snowflake](/en/data-cloud/overview/streamlit-in-snowflake/)
 - Optional: How to automate data processing pipelines using directory tables, [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) and [Task](https://docs.snowflake.com/en/user-guide/tasks-intro)
 
 ### Prerequisites
@@ -975,13 +975,13 @@ Congratulations! You've successfully performed RAG using Snowflake Cortex and se
 ### Related Resources
 
 - [Docs: Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Blog: RAG explainer and how it works in Snowflake](https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex)
+- [Blog: RAG explainer and how it works in Snowflake](/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex)
 - [Blog: Customizing RAG framework components using Snowpark Container Services](https://medium.com/@jason.summer/developing-a-product-chatbot-with-airmiles-in-snowflake-6b197d3fc424)
 - [Docs: Snowflake Directory Tables](https://docs.snowflake.com/en/user-guide/data-load-dirtables)
 - [Docs: Creating User-Defined Table Functions](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
 - [Blog: Build a RAG-Based AI Application on SEC Filing Data Using Snowflake Cortex and Streamlit](https://medium.com/snowflake/retrieval-augmented-generation-rag-application-using-snowflake-cortex-and-streamlit-9cb261e81c2e)
 - [Fork Repo on GitHub](https://github.com/jeremyjgriffith/cortex-rag-application/)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-Based-Application-on-SEC-Filing-Data-Using-Snowflake-Cortex.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-Based-Application-on-SEC-Filing-Data-Using-Snowflake-Cortex.pdf)
   
 ---
 

@@ -151,6 +151,6 @@ Ask one of the preconfigured questions or any other question! Cortex Analyst use
 - [TIME_SLICE](https://docs.snowflake.com/en/sql-reference/functions/time_slice)
 - [ASOF JOIN](https://docs.snowflake.com/en/sql-reference/constructs/asof-join)
 - [RANGE BETWEEN](https://docs.snowflake.com/en/sql-reference/functions-analytic)
-- [DOWNLOAD REFERENCE ARCHITECTURE](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/09/Time_Series_Analytics_Solution_Architecture.png)
-- [READ THE BLOG](https://www.snowflake.com/en/blog/time-series-analytics-asof-join-generally-available/)
+- [DOWNLOAD REFERENCE ARCHITECTURE](/content/dam/snowflake-site/developers/2024/09/Time_Series_Analytics_Solution_Architecture.png)
+- [READ THE BLOG](/en/blog/time-series-analytics-asof-join-generally-available/)
 - [WATCH THE DEMO](https://youtu.be/kJN80yR9fn0?list=TLGGuatxmhLPH_wyNTA5MjAyNQ)

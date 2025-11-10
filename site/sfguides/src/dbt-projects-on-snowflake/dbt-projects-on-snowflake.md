@@ -35,14 +35,6 @@ In this lab, we will go through everything you need to know to get started with 
 
 We will be using Tasty Bytes data in this lab. Run the script [here](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake/blob/main/tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql) in Snowsight to build the objects and data required for this lab.
 
-Workspaces that you create in Snowflake are created in the personal database associated with the active user. To use Workspaces, you must run the following SQL commands to activate all secondary roles for your user.
-
-``` sql
-ALTER USER my_user SET DEFAULT_SECONDARY_ROLES = ('ALL');
-```
-
-Sign out of Snowsight and sign back in.
-
 <!-- ------------------------ -->
 ## Introduction to Workspaces
 
@@ -96,7 +88,7 @@ Let's now clone an example dbt project we will use in the rest of this lab.
     1. Repository URL: `https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake.git`
     2. Workspace Name: `Example-dbt-Project`
     3. API Integration: `GIT_INTEGRATION`. Note: the [API Integration](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#label-integrating-git-repository-api-integration) has already been configured for you. 
-    4. Select Public Repository
+    4. Select Public Repository. Note: Private repos can be authenticated with personal access tokens and GitHub users can authenticate with [OAuth](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#configure-for-authenticating-with-oauth).
 3. Click Create!
 
 ![create-dbt-project](assets/create-workspace-git.png)
@@ -245,6 +237,8 @@ Let's create tasks to regularly run and test our dbt project.
 3. Enter a name, schedule, and profile, then click create
 
 ![create-task](assets/create-task.png)
+![create-schedule](assets/dbt-create-schedule.png)
+![create-task](assets/create-schedule.png)
 
 #### Complex Tasks and Alerts
 

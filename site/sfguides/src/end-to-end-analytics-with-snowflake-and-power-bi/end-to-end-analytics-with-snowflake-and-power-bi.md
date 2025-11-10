@@ -14,14 +14,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ## Overview
 
 
-By completing this quickstart, you will learn how to easily transform raw data into an optimal format for analysis within Power BI. This quickstart will build upon [An Introduction to Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0) quickstart. We'll begin by profiling the data within Snowsight, followed by creating new roles and granting appropriate privileges for our fictitious global BI Analyst team. Next, we'll enrich our data with third party location data from the Snowflake Marketplace in a matter of minutes. From there, we'll transform our raw data into an optimal model for downstream analysis within Power BI. Next, we'll add column and row-level data protections to our data model. Lastly, we'll connect the provided Power BI template (.pbit) file to our Snowflake data model and analyze sales transactions live.
+By completing this quickstart, you will learn how to easily transform raw data into an optimal format for analysis within Power BI. This quickstart will build upon [An Introduction to Tasty Bytes](/en/developers/guides/tasty-bytes-introduction/) quickstart. We'll begin by profiling the data within Snowsight, followed by creating new roles and granting appropriate privileges for our fictitious global BI Analyst team. Next, we'll enrich our data with third party location data from the Snowflake Marketplace in a matter of minutes. From there, we'll transform our raw data into an optimal model for downstream analysis within Power BI. Next, we'll add column and row-level data protections to our data model. Lastly, we'll connect the provided Power BI template (.pbit) file to our Snowflake data model and analyze sales transactions live.
 
 
 ![Overview_Diagram](assets/Overview_Diagram1.jpg)
 
 ### Prerequisites
 
-- Completion of [An Introduction to Tasty Bytes quickstart](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0) as this will create the dataset and initial virtual warehouses needed for this guide
+- Completion of [An Introduction to Tasty Bytes quickstart](/en/developers/guides/tasty-bytes-introduction/) as this will create the dataset and initial virtual warehouses needed for this guide
 - Familiarity with Snowflake
 - Experience with Power BI
 
@@ -58,7 +58,7 @@ In this section, we'll review the Tasty Bytes dataset and use Snowsight to easil
 
 > aside negative
 >
-> NOTE: You must complete [An Intro to Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0) quickstart first, to set up the dataset we'll be working with in this guide.
+> NOTE: You must complete [An Intro to Tasty Bytes](/en/developers/guides/tasty-bytes-introduction/) quickstart first, to set up the dataset we'll be working with in this guide.
 
 ### Setup
 
@@ -306,7 +306,7 @@ In this section, we'll provide an overview of the Snowflake Marketplace and leve
 
 ### Snowflake Marketplace
 
-The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/) is a component of the Snowflake AI Data Cloud that allows consumers (e.g., you) to explore and access data products such as third party datasets, connectors, native applications, and more. You can browse the [Snowflake Marketplace here](https://app.snowflake.com/marketplace) without having to be logged into your Snowflake account.
+The [Snowflake Marketplace](/en/data-cloud/marketplace/) is a component of the Snowflake AI Data Cloud that allows consumers (e.g., you) to explore and access data products such as third party datasets, connectors, native applications, and more. You can browse the [Snowflake Marketplace here](https://app.snowflake.com/marketplace) without having to be logged into your Snowflake account.
 
 From our [Snowflake Documentation](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about), Marketplace consumers can do the following:
 
@@ -1387,9 +1387,9 @@ Congratulations! You have completed the End-to-End Analytics with Snowflake and 
 - [Snowflake and Power BI: Best Practices and Recent Improvements](https://medium.com/snowflake/snowflake-and-power-bi-best-practices-and-recent-improvements-183e2d970c0c) (Blog)
 - [Exploring Snowflake Data Governance with Power BI](https://medium.com/snowflake/exploring-snowflake-data-governance-with-power-bi-50835f301cfc) (Blog)
 - [Understand Star Schema and the Importance for Power BI](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema) (Microsoft Documentation)
-- [Getting Started with Snowflake Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html?index=..%2F..index#0) (Snowflake Quickstart)
-- [Tasty Bytes - Zero to Snowflake - Collaboration](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/index.html?index=..%2F..index#0) (Snowflake Quickstart)
-- [Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index#0) (Snowflake Quickstart)
-- [Getting Started with Horizon for Data Governance in Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_horizon_for_data_governance_in_snowflake/index.html?index=..%2F..index#0) (Snowflake Quickstart)
+- [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/) (Snowflake Quickstart)
+- [Tasty Bytes - Zero to Snowflake - Collaboration](/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration/) (Snowflake Quickstart)
+- [Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon](/en/developers/guides/tasty-bytes-zero-to-snowflake-governance-with-horizon/) (Snowflake Quickstart)
+- [Getting Started with Horizon for Data Governance in Snowflake](/en/developers/guides/getting-started-with-horizon-for-data-governance-in-snowflake/) (Snowflake Quickstart)
 
 <!-- ------------------------ -->

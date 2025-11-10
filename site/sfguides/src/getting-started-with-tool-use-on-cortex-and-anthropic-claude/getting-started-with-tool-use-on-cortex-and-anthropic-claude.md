@@ -457,5 +457,5 @@ Documentation:
 
 Sample Code & Resources:
 - [Snowflake Developer Resources](https://developers.snowflake.com/)
-- [Snowflake Quickstarts](https://quickstarts.snowflake.com/)
-- [Getting Started with Anthropic on Snowflake Cortex](https://quickstarts.snowflake.com/guide/getting_started_with_anthropic_on_snowflake_cortex/index.html?index=..%2F..index#0)
+- [Snowflake Quickstarts](/en/developers/guides/)
+- [Getting Started with Anthropic on Snowflake Cortex](/en/developers/guides/getting-started-with-anthropic-on-snowflake-cortex/)

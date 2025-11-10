@@ -21,7 +21,7 @@ Snowflake offers two broad categories of powerful, intelligent features based on
 
 Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.
 
-Learn more about [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/).
+Learn more about [Snowflake Cortex AI](/en/product/features/cortex/).
 
 ### What You Will Learn
 - How to use Snowflake Cortex AI for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and task-specific LLM functions to perform operations like translate, sentiment scoring, etc

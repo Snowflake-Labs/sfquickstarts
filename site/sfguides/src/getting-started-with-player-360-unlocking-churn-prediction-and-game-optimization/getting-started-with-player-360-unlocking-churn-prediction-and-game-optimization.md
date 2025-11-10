@@ -240,13 +240,13 @@ This demo has showcased how Snowflake enables the creation of unified "Player 36
 - How to use Streamlit in Snowflake to construct a front-facing client application
 
 ### Related Resources
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 - [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling)
 - [Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - [Streamlit](https://docs.streamlit.io/)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview)
 - [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
 - [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/12/player-360-reference-architecture.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/12/player-360-reference-architecture.pdf)
 - [Read Medium Blog](https://medium.com/snowflake/getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization-cff23c188fd3)
 - [Watch the Demo](https://youtu.be/Ws7O8iSPoUM?list=TLGGpCvoAtbDc_QyNDA5MjAyNQ)

@@ -42,7 +42,7 @@ A Data Agent that can intelligently respond to questions by reasoning over both 
 
 ### What You Will Need
 
-* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](https://quickstarts.snowflake.com/guide/build-agentic-application-in-snowflake/index.html?index=..%2F..index#1).
+* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](/en/developers/guides/build-agentic-application-in-snowflake/).
 
 <!-- ------------------------ -->
 ## Snowflake Trial Account
@@ -278,7 +278,7 @@ Notice that all 3 tables are used to answer this question.
 
 #### - *Q. What are the top 5 customers buying the carvers?*
 
-> aside positive
+
 > Feel free to explore the semantic model to ask other questions.
 
 ## Conclusion And Resources

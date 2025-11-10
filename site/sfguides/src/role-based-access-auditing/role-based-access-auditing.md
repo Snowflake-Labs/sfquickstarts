@@ -76,7 +76,7 @@ ORDER BY
 
 This returns the following output:
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 Next, we'll convert the above SQL query output to a Pandas DataFrame (we'll also name this Python cell `df_user_role`, which we'll make a reference to shortly).
 
@@ -205,7 +205,7 @@ with st.expander("View DataFrame"):
 
 This code snippet generates the following Streamlit powered dashboard. Note how we can filter the data by adjusting the `st.selectbox()` drop-down widgets, which in turn is used to generate the displayed heatmap:
 
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 <!-- ------------------------ -->
 ## Implement Role Grant Analysis
@@ -226,7 +226,7 @@ FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES
 WHERE deleted_on IS NULL;
 ```
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 Next, we'll convert the data to a Pandas Dataframe assigned to `df_role_grants`, which is also the cell name:.
 
@@ -329,7 +329,7 @@ st.altair_chart(top_N_chart, use_container_width=True)
 
 This should generate the following Streamlit app:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

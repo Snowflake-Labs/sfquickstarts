@@ -76,7 +76,7 @@ Note: The above Python cell is named `sql_top_tables_pd`.
 
 The returned output is shown below:
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 <!-- ------------------------ -->
 ## Analyze Query Patterns
@@ -92,7 +92,7 @@ selection = st.text_input(label="Enter a fully resolved table path to explore")
 
 From the first column of the above table, we'll copy the path to a table of our choice, which in this example is `PENGUINS_ML_APP.DATA.PENGUINS`, then paste it to the text box as shown below:
 
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 ### Analyze Query Performance
 Let's now pass that variable into a SQL query so we can grab query analytics on this table. Note that we'll name the cell to `sql_most_expensive_queries_on_table`.
@@ -115,7 +115,7 @@ LIMIT 10
 
 This returns the following table output:
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 Next, we'll use the SQL cell name from above and convert it into a Pandas DataFrame using `to_pandas()`:
 
@@ -134,7 +134,7 @@ st.dataframe(df,
 
 After converting to a Pandas DataFrame, we'll stylize this via `st.dataframe()` (notice the progress bar visuals):
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 Make note that the above cell is named `py_visualization`, which we'll make reference to in this tutorial.
 
@@ -161,13 +161,13 @@ ORDER BY number_of_queries DESC
 
 This returns the following results:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 Now, let's say we want to materialize a specific long running query. Grab a query from the `py_visualization` cell.
 
 We can now plug it into the `QUERY_TEXT` value below to find out who else would benefit from materializing this pattern. And this returns the following:
 
-![image](assets/img05.PNG)
+![image](assets/img05.png)
 
 ```python
 query_selection = st.text_input(label="Enter the query text you want to look up")
@@ -192,7 +192,7 @@ ORDER BY total_credits DESC
 
 And the query output is shown below:
 
-![image](assets/img06.PNG)
+![image](assets/img06.png)
 
 ## Conclusion And Resources
 

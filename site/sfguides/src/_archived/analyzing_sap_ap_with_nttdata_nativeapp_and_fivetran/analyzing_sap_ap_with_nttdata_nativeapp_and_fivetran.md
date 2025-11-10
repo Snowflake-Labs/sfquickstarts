@@ -384,4 +384,4 @@ If you have any questions about any Fivetran connectors, please check out the Fi
 
 ### Additional resources
 
-- [Snowflake Native App Developer Toolkit](https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)
+- [Snowflake Native App Developer Toolkit](/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)

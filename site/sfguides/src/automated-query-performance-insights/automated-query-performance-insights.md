@@ -65,7 +65,7 @@ LIMIT 50;
 
 Here, I'll specify `'CHANIN_XS'` as this is the warehouse that I typically use and here's what the returned results would look like:
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 <!-- ------------------------ -->
 ## Analyze Query Patterns in Relation to Execution Time
@@ -90,7 +90,7 @@ GROUP BY 1;
 
 An analysis of the query patterns for my warehouse `'CHANIN_XS'` returned the following output:
 
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 <!-- ------------------------ -->
 ## Analyze Query Patterns to Find Repeated Queries
@@ -112,7 +112,7 @@ LIMIT 100;
 ```
 Here's the returned output for my frequently executed queries:
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 ## Analyze Warehouse Load
 
@@ -131,7 +131,7 @@ HAVING SUM(avg_queued_load) >0;
 
 Results from warehouse utilization is shown below:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 <!-- ------------------------ -->
 ## Identify Long-Running Tasks
@@ -148,7 +148,7 @@ ORDER BY duration_seconds DESC;
 
 The returned output for task execution time is shown below:
 
-![image](assets/img05.PNG)
+![image](assets/img05.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

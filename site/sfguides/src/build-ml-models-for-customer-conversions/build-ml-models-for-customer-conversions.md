@@ -243,8 +243,8 @@ Congratulations! You've successfully built an end-to-end ML workflow in Snowflak
 - How to create dynamic visualizations to communicate insights to stakeholders
 
 ### Resources
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 - [Documentation](https://docs.snowflake.com/en/user-guide/snowflake-ml)
-- [Quickstart: Build an End-to-End ML Model in Snowflake](https://quickstarts.snowflake.com/)
-- [Other Related Quickstarts](https://quickstarts.snowflake.com/)
+- [Quickstart: Build an End-to-End ML Model in Snowflake](/en/developers/guides/)
+- [Other Related Quickstarts](/en/developers/guides/)
 - Have a question? Ask in [Snowflake Community](https://community.snowflake.com/)

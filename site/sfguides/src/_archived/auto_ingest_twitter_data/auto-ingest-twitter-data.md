@@ -15,7 +15,7 @@ In this guide, we’ll be walking you through how to auto-ingest streaming and e
 - Familiarity with command-line navigation
 
 ### What You’ll Need
-- A [Snowflake](https://www.snowflake.com/) Account
+- A [Snowflake](/) Account
 - A Text Editor (such as [Visual Studio Code](https://code.visualstudio.com/))
 - [git](https://git-scm.com/downloads)
 - [Twitter Developer](https://developer.twitter.com/) account (free)

@@ -15,11 +15,11 @@ In this quickstart, we will review how to build a Streamlit App within Snowflake
 
 ### What is Streamlit?
 Streamlit enables Snowflake users to combine Streamlit’s component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
-https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/
+/en/data-cloud/overview/streamlit-in-snowflake/
 
 ### What is Snowflake Cortex?
 Snowflake Cortex AI provides access to top-tier LLMs within your Snowflake environment. Build GenAI applications with fully managed LLMs and chat with your data services.
-https://www.snowflake.com/en/data-cloud/cortex/
+/en/data-cloud/cortex/
 
 ### What is Jamba-Instruct?
 AI21’s Jamba-Instruct is the world’s first-ever commercial LLM to successfully leverage SSM-Transformer architecture. This hybrid approach delivers leading quality, performance, and cost, offering the best value per cost across an impressive 256k context window.

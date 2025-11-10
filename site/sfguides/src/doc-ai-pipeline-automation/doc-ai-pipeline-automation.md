@@ -51,7 +51,7 @@ The pipeline ensures that documents meet business expectations through pre-proce
 The pre-processing stage validates document attributes such as size and page count to ensure only processable documents proceed further. Criteria can be customized to align with business needs and Document AI guidelines, as outlined in the [Snowflake Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/preparing-documents)
 Files failing these checks are routed to a "Manual Review" stage, where users can review and, if necessary, resend documents for processing via a Streamlit app.
 
-![Pre-Process](assets/pre-processing.png)
+![Pre-Process](assets/pre_processing.png)
 
 
 Documents are ingested from the Internal Stage and processed through a stream. A Python-based UDF evaluates the attributes, storing results in a pre-filter table. Documents passing the validation move to the DOC AI Data Extraction, while invalid ones are redirected for manual review.
@@ -189,7 +189,7 @@ The Streamlit app provides full control over the pipeline and enables real-time 
    - Upload all sample documents from [GitHub Sample Docs](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs) to your `INVOICE_DOCS` stage under the folder `Invoice`.
    - For this QuickStart, load the same set of files into another folder called `Purchase`.
 
-![Stage](assets/stage.png)
+![Stage](assets/Stage.png)
 
 
 2. **Monitor the Pipeline in Streamlit**:
@@ -199,7 +199,7 @@ The Streamlit app provides full control over the pipeline and enables real-time 
 
 This step completes the setup, allowing you to see the automated document processing pipeline in action!
 
-![Streamlit](assets/Streamlit_screen.png)
+![Streamlit](assets/create_streamlit.png)
 
 
 <!-- ------------------------ -->

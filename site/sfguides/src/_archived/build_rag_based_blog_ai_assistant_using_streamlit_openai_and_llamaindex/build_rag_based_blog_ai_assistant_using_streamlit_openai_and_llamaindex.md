@@ -98,11 +98,11 @@ During this step, we will identify the blog or list of blogs that we want to que
 
 ```python
 PAGES = [
-    "https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python",
+    "/en/developers/guides/data-engineering-pipelines-with-snowpark-python/",
     "https://quickstarts.snowflake.com/guide/cloud_native_data_engineering_with_matillion_and_snowflake",
-    "https://quickstarts.snowflake.com/guide/data_engineering_with_apache_airflow",
-    "https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python",
-    "https://quickstarts.snowflake.com/guide/data_engineering_with_snowpark_python_and_dbt"
+    "/en/developers/guides/data-engineering-with-apache-airflow/",
+    "/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python/",
+    "/en/developers/guides/data-engineering-with-snowpark-python-and-dbt/"
 ]
 ```
 
