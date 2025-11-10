@@ -12,22 +12,15 @@ authors: Dash Desai
 
 ## Overview
 
-
 In this guide, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 
 We'll use a custom dataset focused on bikes and skis. This dataset is intentionally artificial, ensuring that no external LLM has prior knowledge of it. This gives us a clean and controlled environment to test and evaluate our data agent. By the end of the session, you'll have a working AI-powered agent capable of understanding and retrieving insights across diverse data types — all securely within Snowflake.
 
-*NOTE: Snowflake Intelligence is in Public Preview as of August 2025*.
-
 ### What is Snowflake Intelligence? 
 
-Snowflake Intelligence is an agentic AI solution, enabling business users to directly and securely interact with their organization's structured and unstructured data using natural language. Snowflake Intelligence provides:
+Snowflake Intelligence is an Enterprise Intelligence Agent that provides every user with the ability to answer complex questions in natural language, and puts insights at every user’s fingertips. With a single question, you can get comprehensive insights across your business data. It moves beyond the “what” to the critical “why” with an always-available thought partner at their fingertips that can facilitate deep research and suggest solutions to previously difficult and time-consuming business problems.
 
-* Natural language interaction: Engage with data like a trusted colleague to securely access and analyze both structured and unstructured data to uncover trends and understand the "why" behind the "what."
-
-* Actionable intelligence: Go beyond just insights by configuring agents to perform tasks based on findings, such as sending notifications, updating records in other systems, or triggering workflows.
-
-* Enterprise-grade security and governance: Honors existing access controls and governance, unifies information from Snowflake and third-party applications for a holistic view, and provides transparency on how answers are derived and data lineage.
+Snowflake Intelligence removes the barriers to insights, enabling users to understand the cross-sections of their data and test assumptions with a shared understanding of the data needed to make impactful business decisions.
 
 ### What You Will Learn
 
@@ -121,9 +114,8 @@ Let's get started!
 * Browse to [Databases](https://app.snowflake.com/_deeplink/#/data/databases?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) and select **DASH_CORTEX_AGENTS** » **DATA** » **Git Repositories** » **GIT REPO** and right click on `SETUP_TOOLS.ipynb`, then click on "..." and select **Create notebook**.
 
 * Give it a name and select other options including **DASH_CORTEX_AGENTS** and **DATA** for location and **Run on warehouse** for Python environment.
-
-> aside negative
-> IMPORTANT NOTE: Run through all the cells in the Snowflake Notebook before proceeding.
+  
+IMPORTANT NOTE: Run through all the cells in the Snowflake Notebook before proceeding.
 
 ## Explore Semantic Model
 
@@ -171,7 +163,6 @@ Notice that Cortex Analyst is now able to provide the right answer because of th
 
 ## Snowflake Intelligence
 <!-- ------------------------ -->
-
 
 Now that we have the tools ready, we can create a Data Agent for Snowflake Intelligence.
 
