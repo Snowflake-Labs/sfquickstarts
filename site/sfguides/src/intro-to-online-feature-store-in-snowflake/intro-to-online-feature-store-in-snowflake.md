@@ -1,4 +1,4 @@
-author: Dureti Shemsi
+author: Doris Lee, Dureti Shemsi
 language: en
 id: intro-to-online-feature-store-in-snowflake
 summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving
@@ -79,6 +79,8 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT IMPORT SHARE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SECTION 2: SWITCH TO ROLE AND CREATE RESOURCES
@@ -111,8 +113,43 @@ CREATE OR REPLACE STAGE FS_DEMO_ASSETS
     DIRECTORY = (ENABLE = TRUE)
     COMMENT = 'Stage for storing model assets and data files';
 
+-- Grant full privileges on database and schema to the role
+GRANT ALL PRIVILEGES ON DATABASE FEATURE_STORE_DEMO TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON WAREHOUSE FS_DEMO_WH TO ROLE FS_DEMO_ROLE;
+
+-- Grant future privileges to handle dynamically created objects
+GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE DYNAMIC TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE STAGES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+
 -- ============================================================================
--- SECTION 3: COMPUTE POOL FOR MODEL DEPLOYMENT
+-- SECTION 3: NETWORK RULES AND EXTERNAL ACCESS FOR NOTEBOOKS
+-- ============================================================================
+
+-- Create network rule to allow all external access (required for notebooks)
+CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = ('0.0.0.0:443', '0.0.0.0:80');
+
+-- Switch back to ACCOUNTADMIN to create integration
+USE ROLE ACCOUNTADMIN;
+
+-- Create external access integration (requires ACCOUNTADMIN)
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION ALLOW_ALL_INTEGRATION
+    ALLOWED_NETWORK_RULES = (FEATURE_STORE_DEMO.TAXI_FEATURES.ALLOW_ALL_RULE)
+    ENABLED = TRUE;
+
+-- Grant usage on the external access integration to FS_DEMO_ROLE
+GRANT USAGE ON INTEGRATION ALLOW_ALL_INTEGRATION TO ROLE FS_DEMO_ROLE;
+
+-- Switch back to FS_DEMO_ROLE
+USE ROLE FS_DEMO_ROLE;
+
+-- ============================================================================
+-- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT
 -- ============================================================================
 
 -- Create compute pool for SPCS model serving
@@ -139,6 +176,7 @@ This will create:
 - A database: `FEATURE_STORE_DEMO`
 - A schema: `TAXI_FEATURES`
 - A stage: `FS_DEMO_ASSETS` 
+- Network rule and external access integration for notebooks
 - Compute pool for SPCS model deployment
 
 The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
@@ -161,6 +199,20 @@ Download the notebook from [this link](https://github.com/Snowflake-Labs/sfguide
    - **Compute Pool**: `trip_eta_prediction_pool`
 
 The notebook will open and be ready to run.
+
+### Add External Access to Notebook
+
+After creating the notebook, you need to configure external access to allow the notebook to install Python packages and access external resources required by Snowflake ML libraries.
+
+1. Open the notebook in Snowsight
+2. Click the **three dots menu** (⋮) in the top right
+3. Select **Notebook settings**
+4. Under **External Access Integrations**, click **+ External Access Integration**
+5. Select `ALLOW_ALL_INTEGRATION` from the dropdown
+6. Click **Save** to apply changes
+
+> NOTE:
+> The `ALLOW_ALL_INTEGRATION` external access integration was created by the setup script and allows the notebook to install Python packages and access external APIs required by Snowflake ML libraries.
 
 ### Load Sample Data
 
