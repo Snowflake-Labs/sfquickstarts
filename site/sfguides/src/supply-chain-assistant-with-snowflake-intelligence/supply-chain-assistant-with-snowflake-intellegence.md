@@ -1,17 +1,11 @@
 author: Reid Lewis, Cameron Shimmin
-
 id: supply-chain-assistant-with-snowflake-intelligence
-
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search
 language: English
-
 summary: Build an intelligent supply chain assistant using Snowflake Intelligence and Cortex AI capabilities to help operations managers make data-driven inventory management decisions.
-
 categories: data-science, data-engineering, featured
-
 environments: web
-
 status: Published
-
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 tags: Snowflake Intelligence, Cortex Analyst, Cortex Search, Cortex AI, Supply Chain, RAG, Semantic Models
@@ -21,8 +15,6 @@ tags: Snowflake Intelligence, Cortex Analyst, Cortex Search, Cortex AI, Supply C
 <!-- ------------------------ -->
 
 ## Overview
-
-Duration: 5
 
 Modern supply chain operations face a critical challenge: efficiently managing raw material inventory across multiple manufacturing facilities. Operations managers must constantly balance inventory levels, deciding whether to transfer materials between plants with excess and shortage, or purchase new materials from suppliers. Making these decisions manually is time-consuming, error-prone, and often results in suboptimal cost outcomes.
 
@@ -89,8 +81,6 @@ This solution leverages Snowflake Intelligence and Cortex AI capabilities to cre
 
 ## Snowflake Cortex and Intelligence Overview
 
-Duration: 3
-
 ### What is Snowflake Cortex?
 
 ![Alt Text](assets/cortex_image.png)
@@ -119,8 +109,6 @@ Learn more about [Snowflake Intelligence](https://docs.snowflake.com/en/user-gui
 <!-- ------------------------ -->
 
 ## Setup Database and Load Data
-
-Duration: 10
 
 In this step, you'll create the complete supply chain database infrastructure with all necessary tables, stages, and sample data.
 
@@ -151,8 +139,6 @@ The database schema models a complete supply chain network with:
 
 ## Upload Documents and Semantic Models
 
-Duration: 5
-
 Within the first step, all objects have been created in `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES` database/schema. Now you'll upload the necessary files to the internal stages.
 
 ### Upload PDF Documents
@@ -177,8 +163,6 @@ These semantic models define the structure, relationships, and verified queries 
 <!-- ------------------------ -->
 
 ## Create Cortex Search Service
-
-Duration: 15
 
 You have two options to create the Cortex Search service that will enable semantic search over your supply chain documentation.
 
@@ -261,8 +245,6 @@ The search service will begin indexing your parsed PDF content and will be ready
 <!-- ------------------------ -->
 
 ## Build Your Snowflake Intelligence Agent
-
-Duration: 20
 
 Now that you have your semantic models and search service created, you can combine them into an intelligent agent using Snowflake Intelligence. The agent will intelligently route user questions to the appropriate tool based on the nature of the query.
 
@@ -372,8 +354,6 @@ For each of the following custom tools, click **+ Add** next to **Custom Tool**,
 
 ## Test Your Agent with Example Questions
 
-Duration: 10
-
 Start with simple questions and build up to more complex analysis. Notice how the agent automatically determines which tool to use based on your question!
 
 ![Alt text](assets/Agent.gif)
@@ -436,8 +416,6 @@ The agent will intelligently determine which tools to use based on the question,
 <!-- ------------------------ -->
 
 ## Conclusion and Resources
-
-Duration: 2
 
 Congratulations! You've built a comprehensive Supply Chain Assistant powered by Snowflake Intelligence that combines multiple AI capabilities into a single, intelligent agent.
 
