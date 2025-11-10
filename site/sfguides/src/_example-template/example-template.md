@@ -1,19 +1,18 @@
 author: AUTHOR_NAME
-id: SFGUIDE-NAME
-language: 
+id: example-template
+language: en
 summary: This is a sample Snowflake Template
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
-author:  Kanwal Komail (github: kanwalzs)
+
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
 
-Please use [Snowflake Guide](#) as a guiding document for writing your own Snowflake Guide. <br>
+Please use [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/) as a guiding document for writing your own Snowflake Guide. <br>
 This example guide has elements that you will use when writing your own guides, including: formatting, code snippet highlighting, video links, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: 
@@ -93,10 +92,11 @@ All the content for the step goes here.
 ## Step 2 Title as H2 tag
 
 ### Subheader goes here as H3 tag.
+
+Please do not go beyond H4 headers!
 ```
 
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
 
 <!-- ------------------------ -->
 ## Headers and Subheaders
@@ -179,3 +179,4 @@ If you want to learn more about Snowflake Guide formatting, checkout the officia
 ### EXAMPLES:
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+* **A simple guide/demo:** [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
