@@ -295,8 +295,6 @@ Now that you’ve added your Source node, let’s prepare the data by adding bus
 3. On the right hand side of the Node Editor is the Config section, where you can view and set configurations based on the type of node you’re using. 
 
 ![image35](assets/image35.png)
-![][image34]
-
      
 4. At the bottom of the Node Editor, press the arrow button to view the Data Preview pane. 
 
