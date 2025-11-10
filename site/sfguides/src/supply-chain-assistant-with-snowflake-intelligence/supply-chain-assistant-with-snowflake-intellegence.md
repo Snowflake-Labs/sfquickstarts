@@ -58,6 +58,9 @@ This solution leverages Snowflake Intelligence and Cortex AI capabilities to cre
 * Cortex Analyst, Cortex Search, and Snowflake Intelligence must be available in your Snowflake region
 * Familiarity with Snowflake SQL and Snowsight interface
 
+> aside negative
+> **Note:** The custom tools for web search and web scraping require external integration access, which is not available on trial accounts. You can still complete this quickstart without these tools by skipping the custom tool setup steps.
+
 ### What You'll Learn
 
 * How to model a multi-tier supply chain in Snowflake with proper relationships
@@ -90,6 +93,8 @@ Duration: 3
 
 ### What is Snowflake Cortex?
 
+![Alt Text](assets/cortex_image.png)
+
 Snowflake Cortex provides fully managed Generative AI capabilities that run securely within your Snowflake environment and governance boundary. Key features include:
 
 **Cortex Analyst** - Enables business users to ask questions about structured data in natural language. It uses a semantic model to understand your data and generates accurate SQL queries automatically.
@@ -119,9 +124,10 @@ Duration: 10
 
 In this step, you'll create the complete supply chain database infrastructure with all necessary tables, stages, and sample data.
 
-1. Open a new worksheet in Snowsight
-2. Import the **scripts/setup.sql** file from the quickstart repository
-3. Click **Run All** to execute the entire script
+1. Navigate to **Projects > Workspaces** to create a new private workspace in Snowsight
+2. Add a new SQL file to your workspace
+3. Import the **scripts/setup.sql** file from the quickstart repository
+4. Click **Run All** to execute the entire script
 
 This script will create:
 
@@ -176,11 +182,9 @@ Duration: 15
 
 You have two options to create the Cortex Search service that will enable semantic search over your supply chain documentation.
 
-### Option A: Using SQL Script (Recommended)
+### Option A: Using SQL Script
 
-This is the fastest and most automated approach.
-
-1. Open a new worksheet in Snowsight
+1. In your workspace in Snowsight, add a new SQL file
 2. Import the **scripts/configure_search_services.sql** file from the quickstart repository
 3. Click **Run All** to execute the script
 
@@ -200,7 +204,7 @@ If you prefer to create the search service manually through the UI:
 
 #### Step 1: Prepare the Data (SQL Required)
 
-Even with the UI approach, you'll need to run SQL to parse and prepare the documents. Open a new worksheet and run:
+Even with the UI approach, you'll need to run SQL to parse and prepare the documents. In your workspace, add a new SQL file and run:
 
 ```sql
 USE SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES;
@@ -239,15 +243,17 @@ ALTER WAREHOUSE SUPPLY_CHAIN_ASSISTANT_WH SET WAREHOUSE_SIZE = 'SMALL';
 #### Step 2: Create Search Service via UI
 
 1. In Snowsight, navigate to **AI & ML** > **Cortex Search** in the left navigation
-2. Click **+ Search Service** button
+2. Click **Create** button
 3. Configure the search service:
-   * **Name:** `SUPPLY_CHAIN_INFO`
    * **Database:** `SUPPLY_CHAIN_ASSISTANT_DB`
    * **Schema:** `ENTITIES`
-   * **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
-   * **Source Table:** `PARSED_PDFS`
+   * **Name:** `SUPPLY_CHAIN_INFO`
+   * **Source Table to be Indexed:** `PARSED_PDFS`
    * **Search Column:** Select `PAGE_CONTENT`
+   * **Attributes**: Click **Next**
+   * **Select Columns**: Click **Next**
    * **Target Lag:** `1 hour`
+   * **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 4. Click **Create Search Service**
 
 The search service will begin indexing your parsed PDF content and will be ready to use once indexing completes.
@@ -265,73 +271,93 @@ Now that you have your semantic models and search service created, you can combi
 1. Click on **Agents** within the **AI & ML** section on the left-hand navigation bar in Snowsight
 2. Click **Create Agent** button
 3. Name it **Supply_Chain_Agent**
-4. Once created, click **Edit**
-5. Navigate to **Tools** on the left panel
+4. Once created, navigate to **Tools** tab
 
 ### Add First Cortex Analyst Tool - Supply Chain Data
 
-1. Click **Add Tool** and select **Cortex Analyst**
+1. Click **+ Add** next to **Cortex Analyst**
 2. Configure the tool:
+   * Select the **Semantic model file** radio button
+   * **Database** `SUPPLY_CHAIN_ASSISTANT_DB`
+   * **Schema** `ENTITIES`
+   * **Stage** `SEMANTIC_MODELS_STAGE`
+   * Select `SUPPLY_CHAIN_ASSISTANT_MODEL.yaml`
    * **Name:** `SUPPLY_CHAIN_ASSISTANT_MODEL`
-   * **Semantic Model File:** Navigate to `SUPPLY_CHAIN_ASSISTANT_DB` > `ENTITIES` > `SEMANTIC_MODELS_STAGE` > `SUPPLY_CHAIN_ASSISTANT_MODEL.yaml`
-   * **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
    * **Description:** *"Tool for analyzing supply chain data."*
+   * **Warehouse:** Select **Custom** radio button then choose `SUPPLY_CHAIN_ASSISTANT_WH`
 3. Click **Save**
 
 ### Add Second Cortex Analyst Tool - Weather Data
 
-1. Click **Add Tool** and select **Cortex Analyst**
+1. Click **+ Add** next to **Cortex Analyst**
 2. Configure the tool:
+   * Select the **Semantic model file** radio button
+   * **Database** `SUPPLY_CHAIN_ASSISTANT_DB`
+   * **Schema** `ENTITIES`
+   * **Stage** `SEMANTIC_MODELS_STAGE`
+   * Select `WEATHER_FORECAST.yaml`
    * **Name:** `WEATHER_FORECAST`
-   * **Semantic Model File:** Navigate to `SUPPLY_CHAIN_ASSISTANT_DB` > `WEATHER` > `SEMANTIC_MODELS_STAGE` > `WEATHER_FORECAST.yaml`
-   * **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
-   * **Description:** *"Tool for analyzing weather data."*
+   * **Description:** *"Tool for analyzing supply chain data."*
+   * **Warehouse:** Select **Custom** radio button then choose `SUPPLY_CHAIN_ASSISTANT_WH`
 3. Click **Save**
 
 ### Add Cortex Search Tool
 
-1. Click **Add Tool** and select **Cortex Search**
+1. Click **+ Add** next to **Cortex Search Services**
 2. Configure the tool:
+   * **Database** `SUPPLY_CHAIN_ASSISTANT_DB`
+   * **Schema** `ENTITIES`
+   * **Search Service:** Select `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES.SUPPLY_CHAIN_INFO`
    * **Name:** `SUPPLY_CHAIN_INFO`
    * **Description:** *"Tool for searching supply chain unstructured data."*
-   * **Search Service:** Select `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES.SUPPLY_CHAIN_INFO`
    * **ID Column:** `PAGE_URL`
    * **Title Column:** `TITLE`
 3. Click **Save**
 
 ### Add Custom Tools
 
-For each of the following custom tools, click **Add Tool**, select **Custom Tool**, then configure:
+> aside negative
+> **Note:** The WEB_SEARCH and WEB_SCRAPE custom tools require external integration access, which is not available on trial accounts. If you're using a trial account, you can skip adding these two tools and still use the other agent capabilities.
+
+For each of the following custom tools, click **+ Add** next to **Custom Tool**, then configure:
 
 #### 1. CREATE_HTML_NEWSLETTER
 
-* **Type:** Stored Procedure
+* **Type:** procedure
 * **Schema:** `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES`
+* **Custom tool identifier:** `CREATE_HTML_NEWSLETTER_SP`
 * **Name:** `CREATE_HTML_NEWSLETTER_SP`
+* **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 * **Description:** *"Create HTML newsletter from responses."*
 
 #### 2. WEB_SEARCH
 
-* **Type:** Function
+* **Type:** function
 * **Schema:** `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES`
+* **Custom tool identifier:** `WEB_SEARCH`
 * **Name:** `WEB_SEARCH`
+* **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 * **Description:** *"Search the web using DuckDuckGo."*
 
 #### 3. WEB_SCRAPE
 
-* **Type:** Function
+* **Type:** function
 * **Schema:** `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES`
+* **Custom tool identifier:** `WEB_SCRAPE`
 * **Name:** `WEB_SCRAPE`
+* **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 * **Description:** *"Web scraping and content extraction."*
 
-#### 4. SEND_MAIL (Optional)
+#### 4. SEND_MAIL
 
 > aside negative
 > **Note:** This tool requires a verified email address in Snowflake to function properly.
 
-* **Type:** Stored Procedure
+* **Type:** procedure
 * **Schema:** `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES`
+* **Custom tool identifier:** `SEND_MAIL`
 * **Name:** `SEND_MAIL`
+* **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 * **Description:** *"Send emails to recipients with HTML formatted content."*
 
 ### Save and Access Your Agent
