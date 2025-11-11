@@ -5,14 +5,13 @@ language: en
 summary: Deepnote's SQL + Python notebook, along with their suite of low-code tools, allow for rapid data exploration of the Snowflake warehouse.
 environments: web
 status: Hidden
-feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://github.com/Snowflake-Labs/sfguides/issues)
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Exploratory Data Analysis with Snowflake and Deepnote
 
 <!-- ------------------------ -->
 
 ## Overview
-
 
 Deepnote brings Python and SQL into a collaborative data science notebook, along with a suite 
 of low-code tools and tight integration with Snowflake. Altogether, Deepnote 
@@ -162,7 +161,7 @@ stopping us from using Altair, Plotly, or any other Python visualization library
 ## Build a UI around the SQL query
 
 
-Data exploration is iterative. Put another way—data exploration is repetitive. 
+Data exploration is iterative. Put another way — data exploration is repetitive. 
 While analysts strive to follow the DRY principle (do not repeat yourself), 
 EDA code and behaviour is often at odds with that principle (in practice). 
 For example, an SQL query that neatly displays one aspect of the data is 
