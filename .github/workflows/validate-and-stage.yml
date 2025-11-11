@@ -180,6 +180,7 @@ jobs:
       - name: Validate abusive words in markdown
         if: steps.detect.outputs.has_relevant_changes == 'true'
         id: validate
+        continue-on-error: true
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
@@ -192,6 +193,7 @@ jobs:
       - name: Validate categories syntax in markdown
         if: steps.detect.outputs.has_relevant_changes == 'true'
         id: validate_categories
+        continue-on-error: true
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
         run: |
@@ -203,6 +205,7 @@ jobs:
       - name: Validate frontmatter id and path
         if: steps.detect.outputs.has_relevant_changes == 'true'
         id: validate_frontmatter
+        continue-on-error: true
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
         run: |
@@ -214,6 +217,7 @@ jobs:
       - name: Validate language tags
         if: steps.detect.outputs.has_relevant_changes == 'true'
         id: validate_language
+        continue-on-error: true
         env:
           QUICKSTART_NAMES_JSON: ${{ steps.detect.outputs.quickstart_names_json }}
         run: |
@@ -259,7 +263,7 @@ jobs:
             const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
             if (largeFiles.length > 0) {
               const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
-              sections.push(`## ⚠️ Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`);
+              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`);
             }
             
             // 2. Language validation
@@ -268,7 +272,7 @@ jobs:
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
                 if (v && v.type === 'language') {
                   const items = Array.isArray(v.objects) ? v.objects.map(o => `- ${o.name}: "${o.language || ''}"`).join('\n') : '';
-                  sections.push(`### ❌ Language Validation Failed\n\n${v.message || 'Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br'}\n\n${items}`);
+                  sections.push(`### 🌐 Language Validation Failed\n\n${v.message || 'Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br'}\n\n${items}`);
                 }
               } catch {}
             }
@@ -280,9 +284,9 @@ jobs:
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
                   const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.invalid || []).join(', ')}`);
-                  sections.push(`### ❌ Category Syntax Validation Failed\n\nExpected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`);
+                  sections.push(`### 🏷️ Category Syntax Validation Failed\n\nExpected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`);
                 } else {
-                  sections.push(`### ❌ Category Syntax Validation Failed\n\nCategory syntax is invalid.`);
+                  sections.push(`### 🏷️ Category Syntax Validation Failed\n\nCategory syntax is invalid.`);
                 }
               } catch {}
             }
@@ -294,9 +298,9 @@ jobs:
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
                   const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.errors || []).join('; ')}`);
-                  sections.push(`### ❌ Frontmatter Validation Failed\n\nFrontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`);
+                  sections.push(`### 📄 Frontmatter Validation Failed\n\nFrontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`);
                 } else {
-                  sections.push(`### ❌ Frontmatter Validation Failed\n\nFrontmatter id check failed.`);
+                  sections.push(`### 📄 Frontmatter Validation Failed\n\nFrontmatter id check failed.`);
                 }
               } catch {}
             }
@@ -308,17 +312,17 @@ jobs:
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (data.error) {
                   // Installation error
-                  sections.push(`### ❌ Profanity Check Failed\n\n${data.error}`);
+                  sections.push(`### 🚫 Profanity Check Failed\n\n${data.error}`);
                 } else if (issues.length) {
                   // Abusive words found
                   const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.words || []).join(', ')}`);
-                  sections.push(`### ❌ Profanity Check Failed\n\nAbusive words detected:\n\n${lines.join('\n')}`);
+                  sections.push(`### 🚫 Profanity Check Failed\n\nAbusive words detected:\n\n${lines.join('\n')}`);
                 } else {
                   // Empty issues array (shouldn't happen with refactored script, but handle gracefully)
-                  sections.push(`### ❌ Profanity Check Failed\n\nProfanity check failed but no issues were listed.`);
+                  sections.push(`### 🚫 Profanity Check Failed\n\nProfanity check failed but no issues were listed.`);
                 }
               } catch {
-                sections.push(`### ❌ Profanity Check Failed\n\nProfanity check encountered an error.`);
+                sections.push(`### 🚫 Profanity Check Failed\n\nProfanity check encountered an error.`);
               }
             }
             
