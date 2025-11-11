@@ -142,12 +142,89 @@ jobs:
 
       - name: Check for large files
         if: steps.detect.outputs.has_relevant_changes == 'true'
+        id: check_large_files
+        continue-on-error: true
         uses: freenet-actions/check-file-size@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           max_size: '1000000' # 1 MB
           fail_on_find: 'true'
           directory: 'pr'
+
+      - name: Comment on PR for large files
+        if: steps.detect.outputs.has_relevant_changes == 'true' && steps.check_large_files.outcome == 'failure' && github.event.pull_request.base.repo.full_name == github.repository
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+            
+            // Find files larger than 1MB using the same approach as check-file-size
+            const largeFiles = [];
+            
+            try {
+              // Use find command similar to what check-file-size action uses
+              const output = execSync('find pr -type f -size +1000000c -printf "%P\\n"', { 
+                encoding: 'utf-8',
+                stdio: ['pipe', 'pipe', 'pipe']
+              });
+              
+              if (output && output.trim()) {
+                const files = output.trim().split('\n').filter(f => f.length > 0);
+                largeFiles.push(...files);
+              }
+            } catch (error) {
+              // Fallback: use Node.js to find large files
+              const path = require('path');
+              
+              function findLargeFiles(dir, baseDir = '') {
+                const files = [];
+                try {
+                  const entries = fs.readdirSync(dir, { withFileTypes: true });
+                  for (const entry of entries) {
+                    const fullPath = path.join(dir, entry.name);
+                    const relPath = baseDir ? path.join(baseDir, entry.name) : entry.name;
+                    
+                    if (entry.isDirectory()) {
+                      files.push(...findLargeFiles(fullPath, relPath));
+                    } else if (entry.isFile()) {
+                      try {
+                        const stats = fs.statSync(fullPath);
+                        if (stats.size > 1000000) {
+                          files.push(relPath);
+                        }
+                      } catch (e) {
+                        // Skip files we can't stat
+                      }
+                    }
+                  }
+                } catch (e) {
+                  // Skip directories we can't read
+                }
+                return files;
+              }
+              
+              if (fs.existsSync('pr')) {
+                largeFiles.push(...findLargeFiles('pr'));
+              }
+            }
+            
+            if (largeFiles.length > 0) {
+              const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
+              const body = `⚠️ **Issue detected**: Files larger than 1MB found in this PR:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body
+              });
+            }
+            
+            // Fail the step to maintain workflow failure behavior
+            if (largeFiles.length > 0) {
+              process.exit(1);
+            }
 
       - name: Validate abusive words in markdown
         if: steps.detect.outputs.has_relevant_changes == 'true'
