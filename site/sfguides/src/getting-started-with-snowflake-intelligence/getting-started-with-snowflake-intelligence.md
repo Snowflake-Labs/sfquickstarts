@@ -42,18 +42,17 @@ Snowflake Intelligence streamlines data-driven decision-making across various bu
 
 ### Prerequisites
 
-* Git installed
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
 
-* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=guide&utm_medium=gettingstartedwithsi) with ACCOUNTADMIN role in a region where you have access to the supported models. 
- Otherwise, you will need to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference/?utm_source=guide&utm_medium=gettingstartedwithsi).
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=guide&utm_medium=gettingstartedwithsi) with the ACCOUNTADMIN role in a region where you have access to the [supported models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#supported-models-and-regions). Otherwise, you will need to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference/?utm_source=guide&utm_medium=gettingstartedwithsi).
 
 ### What You Will Learn
 
-How to create the building blocks for Snowflake Intelligence agent.
+How to create the building blocks (agents) for Snowflake Intelligence.
 
 ### What You Will Build
 
-Snowflake Intelligence that can respond to questions by reasoning over both structured and unstructured data.
+An Enterprise Intelligence Agent - Snowflake Intelligence - that can respond to questions by reasoning over both structured and unstructured data.
 
 <!-- ------------------------ -->
 ## Setup
@@ -79,7 +78,7 @@ This tool enables the agent to query structured data in Snowflake by generating 
 
 ### Cortex Search
 
-This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform [Retrieval Augmented Generation](/en/fundamentals/rag/) (RAG).
+This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform [Retrieval Augmented Generation](https://www.snowflake.com/en/fundamentals/rag/) (RAG).
 
 * In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) 
 * On the top right, click on **Create**
@@ -173,7 +172,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
         - Title column: TITLE
         - Name: Support_Cases
 
-    >  ***NOTE: If you optionally created AGGREGATED_SUPPORT_CASES Cortex Search service, you may add it here as well.***
+    >  NOTE: If you optionally created AGGREGATED_SUPPORT_CASES Cortex Search service, you may add it here as well.
 
   - **Custom tools**
     - Click on **+ Add**
@@ -186,9 +185,9 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
       - Parameter: body
         - Description: *Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
-        - Description: *If the email is not provided, send it to the current user's email address.
+        - Description: *If the email is not provided, send it to the current user's email address.*
       - Parameter: subject
-        - Description: *If subject is not provided, use "Snowflake Intelligence"*.
+        - Description: *If the subject is not provided, use "Snowflake Intelligence".*
       
 
 * Orchestration Instructions: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
@@ -205,7 +204,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Open [Snowflake Intelligence](https://ai.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, the warehouse should be set to **DASH_WH_SI** , and your agent should be set to Sales//AI.
+Open [Snowflake Intelligence](https://ai.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, the warehouse should be set to **DASH_WH_SI**, and your agent should be set to Sales//AI.
 
 Now, let's ask the following questions.
 
@@ -245,11 +244,11 @@ Here are some other questions you may ask.
 ## Conclusion And Resources
 
 
-Congratulations! You've successfully created an enterprise  intelligence agent - Snowflake Intelligence that can respond to questions by reasoning over both structured and unstructured data
+Congratulations! You've successfully built an enterprise intelligence agent - Snowflake Intelligence - that can respond to questions by reasoning over both structured and unstructured data.
 
 ### What You Learned
 
-You've learned how to create the fundamental building blocks for Snowflake Intelligence agent that can reason effectively. This agent is now a powerful asset, capable of combining analysis and automated tasks right from a single chat interface. 
+You've learned how to create the fundamental building blocks for Snowflake Intelligence. This agent is now a powerful asset, capable of combining analysis and automated tasks right from a single chat interface. 
 
 ### Related Resources
 
