@@ -34,9 +34,8 @@ jobs:
         uses: freenet-actions/check-file-size@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          directory: 'site/sfguides/src/*' 
           max_size: '1000000' # 1 MB
-          fail_on_error: 'true'
+          fail_on_find: 'true'
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
