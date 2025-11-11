@@ -302,6 +302,18 @@ jobs:
             frontmatter-error.json
           if-no-files-found: ignore
 
+      - name: Fail workflow if validation failed
+        if: steps.detect.outputs.has_relevant_changes == 'true' && always()
+        run: |
+          # Check if any validation step failed
+          if [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ]; then
+            echo "Validation failed. See PR comment for details."
+            exit 1
+          fi
+
       - name: Call Workato staging webhook
         if: steps.detect.outputs.has_relevant_changes == 'true'
         env:
