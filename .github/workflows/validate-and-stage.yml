@@ -21,6 +21,9 @@ jobs:
         with:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: |
+            scripts/
+          sparse-checkout-cone-mode: true
 
       - name: Checkout PR head (untrusted) into ./pr
         uses: actions/checkout@v4
@@ -113,22 +116,6 @@ jobs:
               objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
               names_arr=$(echo "$names_arr" | jq -c --arg name "$name" '. + [$name]')
             done <<< "$quickstart_names"
-
-            # Validate languages are in allowed set (legacy behavior)
-            invalid_count=$(echo "$objs" | jq '[ .[]
-              | if type=="object" and (.language|type)=="string"
-                then (.language | ascii_downcase) as $l
-                | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l))
-                | ( . == null )
-                else true
-              end
-            ] | map(select(.)) | length')
-          if [ "$invalid_count" -ne 0 ]; then
-              echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
-              echo "$objs" | jq . >&2
-              jq -n --argjson objs "$objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
-              exit 1
-            fi
 
             quickstart_names_json="$objs"
             quickstart_folders_json=$(echo "$names_arr" | jq -c .)
@@ -224,6 +211,38 @@ jobs:
             exit 1
           }
 
+      - name: Validate language tags
+        if: steps.detect.outputs.has_relevant_changes == 'true'
+        id: validate_language
+        env:
+          QUICKSTART_NAMES_JSON: ${{ steps.detect.outputs.quickstart_names_json }}
+        run: |
+          # Validate languages are in allowed set
+          objs="$QUICKSTART_NAMES_JSON"
+          if [ -z "$objs" ] || [ "$objs" = "[]" ]; then
+            echo "No quickstarts to validate"
+            exit 0
+          fi
+          
+          invalid_count=$(echo "$objs" | jq '[ .[]
+            | if type=="object" and (.language|type)=="string"
+              then (.language | ascii_downcase) as $l
+              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l))
+              | ( . == null )
+              else true
+            end
+          ] | map(select(.)) | length')
+          
+          if [ "$invalid_count" -ne 0 ]; then
+            echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
+            echo "$objs" | jq . >&2
+            jq -n --argjson objs "$objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
+            exit 1
+          else
+            echo "Language validation passed"
+            exit 0
+          fi
+
       - name: Comment PR with validation findings (on failure)
         if: steps.detect.outputs.has_relevant_changes == 'true' && (failure() || steps.check_large_files.outcome == 'failure') && github.event.pull_request.base.repo.full_name == github.repository
         uses: actions/github-script@v7
@@ -232,63 +251,83 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            let body = 'Validation failed.';
+            const sections = [];
             
-            // Check for large files first (highest priority)
+            // Collect all validation failures
+            
+            // 1. Large files
             const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
             if (largeFiles.length > 0) {
               const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
-              body = `⚠️ **Issue detected**: Files larger than 1MB found in this PR:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`;
-            } else if (fs.existsSync('validation-error.json')) {
+              sections.push(`## ⚠️ Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`);
+            }
+            
+            // 2. Language validation
+            if (fs.existsSync('validation-error.json')) {
               try {
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
                 if (v && v.type === 'language') {
                   const items = Array.isArray(v.objects) ? v.objects.map(o => `- ${o.name}: "${o.language || ''}"`).join('\n') : '';
-                  body = `${v.message || 'Language validation failed.'}\n\n${items}`;
+                  sections.push(`## ❌ Language Validation Failed\n\n${v.message || 'Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br'}\n\n${items}`);
                 }
               } catch {}
-            } else if (fs.existsSync('categories-error.json')) {
+            }
+            
+            // 3. Categories validation
+            if (fs.existsSync('categories-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('categories-error.json','utf8'));
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
-                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.invalid || []).join(', ')}`);
-                  body = `Validation failed: category syntax is invalid. Expected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`;
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.invalid || []).join(', ')}`);
+                  sections.push(`## ❌ Category Syntax Validation Failed\n\nExpected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`);
                 } else {
-                  body = 'Validation failed: category syntax is invalid.';
+                  sections.push(`## ❌ Category Syntax Validation Failed\n\nCategory syntax is invalid.`);
                 }
               } catch {}
-            } else if (fs.existsSync('frontmatter-error.json')) {
+            }
+            
+            // 4. Frontmatter validation
+            if (fs.existsSync('frontmatter-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('frontmatter-error.json','utf8'));
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
-                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.errors || []).join('; ')}`);
-                  body = `Validation failed: frontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`;
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.errors || []).join('; ')}`);
+                  sections.push(`## ❌ Frontmatter Validation Failed\n\nFrontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`);
                 } else {
-                  body = 'Validation failed: frontmatter id check failed.';
+                  sections.push(`## ❌ Frontmatter Validation Failed\n\nFrontmatter id check failed.`);
                 }
               } catch {}
-            } else if (fs.existsSync('profanity-report.json')) {
+            }
+            
+            // 5. Profanity validation
+            if (fs.existsSync('profanity-report.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('profanity-report.json','utf8'));
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
-                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.words || []).join(', ')}`);
-                  body = `Validation failed: abusive words detected.\n\n${lines.join('\n')}`;
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.words || []).join(', ')}`);
+                  sections.push(`## ❌ Profanity Check Failed\n\nAbusive words detected:\n\n${lines.join('\n')}`);
                 } else {
-                  body = 'Validation failed: profanity check failed but no issues were listed.';
+                  sections.push(`## ❌ Profanity Check Failed\n\nProfanity check failed but no issues were listed.`);
                 }
               } catch {
-                body = 'Validation failed due to profanity check.';
+                sections.push(`## ❌ Profanity Check Failed\n\nProfanity check encountered an error.`);
               }
             }
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body
-            });
+            
+            // Build aggregated comment
+            if (sections.length > 0) {
+              const body = `# ⚠️ Validation Failed\n\n${sections.join('\n\n---\n\n')}\n\nPlease fix the issues above before merging.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body
+              });
+            }
 
       - name: Upload validation artifacts
         if: steps.detect.outputs.has_relevant_changes == 'true' && always()
@@ -309,7 +348,8 @@ jobs:
           if [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
              [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
-             [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ]; then
+             [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_language.outcome }}" == "failure" ]; then
             echo "Validation failed. See PR comment for details."
             exit 1
           fi
