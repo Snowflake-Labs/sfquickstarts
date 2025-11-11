@@ -34,8 +34,6 @@ jobs:
             exit 0
           fi
           echo "has_relevant_changes=true" >> $GITHUB_OUTPUT
-          # Store files_json for later use
-          echo "$files_json" > files_json.txt
 
       - name: Checkout base repository (trusted)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -90,8 +88,13 @@ jobs:
       - name: Determine changed files in quickstarts (from PR)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          files_json=$(cat files_json.txt)
+          # Re-fetch files_json since checkout may have overwritten files_json.txt
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
           
           md_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(endswith(".md"))' | sort -u)
           if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
