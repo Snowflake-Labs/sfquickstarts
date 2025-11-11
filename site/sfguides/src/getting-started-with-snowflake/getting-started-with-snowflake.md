@@ -491,7 +491,7 @@ The JSON data consists of SEC filings provided by *Snowflake Public Data*, detai
 
 ![raw JSON sample](assets/7SemiStruct_1_1.png)
 
-_(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with the semi-structured JSON file to learn how to load structured data into Snowflake.)_
+_(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with the semi-structured JSON file to learn how to load structured data into Snowflake.)_
 
 > aside negative
 > 
@@ -644,7 +644,7 @@ Make sure you're using the `ACCOUNTADMIN` role and, [navigate to the Marketplace
 
 #### Find a listing
 
-Type `Snowflake Public Data (Free)` in the search box at the top, scroll through the results, and select [**Snowflake Public Data (Free)**]([https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29)) (provided by Snowflake Public Data).
+Type `Snowflake Public Data (Free)` in the search box at the top, scroll through the results, and select [**Snowflake Public Data (Free)**](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/) (provided by Snowflake Public Data).
 
 ![health tab](assets/Search_result.png)  
 
