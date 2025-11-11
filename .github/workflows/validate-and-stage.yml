@@ -32,6 +32,9 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           path: pr
+          sparse-checkout: |
+            site/sfguides/src/
+          sparse-checkout-cone-mode: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -46,7 +49,7 @@ jobs:
           node -e "require('badwords-list'); console.log('badwords-list installed')"
           node -e "require('gray-matter'); console.log('gray-matter installed')"
 
-      - name: Determine changed markdown files in quickstarts (from PR)
+      - name: Determine changed files in quickstarts (from PR)
         id: detect
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -123,7 +126,8 @@ jobs:
           fi
 
           # Get all changed files (not just markdown) for file size checking
-          all_changed_files=$(echo "$files_json" | jq -r '.[]?.filename' | sort -u)
+          # Only include files that will be checked out (site/sfguides/src/)
+          all_changed_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/"))' | sort -u)
           if [ -z "$all_changed_files" ]; then 
             all_changed_files_json='[]'
           else
