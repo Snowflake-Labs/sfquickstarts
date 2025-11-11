@@ -36,7 +36,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           max_size: '1000000' # 1 MB
           fail_on_find: 'true'
-          directory: '.'
+          directory: 'pr'
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
