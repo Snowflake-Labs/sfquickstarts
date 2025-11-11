@@ -69,11 +69,11 @@ The four primary JOIN types you will encounter are:
 Consider two tables:
 
 **Customers**
-| CustomerID | Name | City |
-|-------------|------|------|
-| 1 | Alice | London |
-| 2 | Bob | Manchester |
-| 3 | Charlie | Leeds |
+| CustomerID | Name | City | ReferredBy |
+|-------------|------|------|------------|
+| 1 | Alice | London | NULL |
+| 2 | Bob | Manchester | 1 |
+| 3 | Charlie | Leeds | 1 |
 
 **Orders**
 | OrderID | CustomerID | Product |
@@ -81,6 +81,7 @@ Consider two tables:
 | 101 | 1 | Laptop |
 | 102 | 3 | Smartphone |
 | 103 | 1 | Keyboard |
+| 104 | 4 | Tablet |
 
 
 **Query to find customers with orders**
@@ -117,29 +118,30 @@ ON Customers.CustomerID = Orders.CustomerID;
   CREATE OR REPLACE TABLE Customers (
     CustomerID INT PRIMARY KEY,
     Name VARCHAR(50), 
-    City VARCHAR(50)
+    City VARCHAR(50),
+    ReferredBy INT
   );
   
   INSERT INTO Customers
   VALUES
-      (1, 'Alice', 'London'),
-      (2, 'Bob', 'Manchester'), 
-      (3, 'Charlie', 'Leeds');
+      (1, 'Alice', 'London', NULL),
+      (2, 'Bob', 'Manchester', 1), 
+      (3, 'Charlie', 'Leeds', 1);
   
   
   -- Orders table
   CREATE OR REPLACE TABLE Orders (
     OrderID INT PRIMARY KEY,
     CustomerID INT,
-    Product VARCHAR,
-    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+    Product VARCHAR
   );
   
   INSERT INTO Orders 
   VALUES
       (101, '1', 'Laptop'),
-      (102, '3', 'Keyboard'), 
-      (103, '1', 'Smartphone');
+      (102, '3', 'Smartphone'), 
+      (103, '1', 'Keyboard'),
+      (104, '4', 'Tablet');
 
   -- INNER JOIN EXAMPLE 
   SELECT Customers.Name, Orders.Product
@@ -177,14 +179,14 @@ ON Customers.CustomerID = Orders.CustomerID;
 
 #### Result:
 
-Note that now Bob shows up in our results because we are querying every row from the Customers table, regardless of a matching row in the Products table. Bob will have a Null value instead of a product name: 
+Note that now Bob shows up in our results because we are querying every row from the Customers table, regardless of a matching row in the Orders table. Bob will have a NULL value instead of a product name: 
 
 | Name | Product |
 |------|-------------|
-| Alice	| Laptop | 
-| Charlie	| Keyboard |
-| Alice	| Smartphone |
-| Bob	| Null | 
+| Alice | Laptop | 
+| Alice | Keyboard |
+| Charlie | Smartphone |
+| Bob | NULL | 
 
 ---
 
@@ -213,6 +215,19 @@ FROM Customers
 RIGHT JOIN Orders
 ON Customers.CustomerID = Orders.CustomerID;
 ```
+
+**Result:**
+
+Note that RIGHT JOIN returns all rows from the Orders table (the right table). Order 104 has CustomerID 4, which doesn't exist in the Customers table, so it shows NULL in the Name column:
+
+| Name | Product |
+|------|----------|
+| Alice | Laptop |
+| Alice | Keyboard |
+| Charlie | Smartphone |
+| NULL | Tablet |
+
+> _Note:_ Order 104 (Tablet) has no matching customer, so the Name column shows NULL.
 
 ### When to use RIGHT JOIN  
 - Useful when the right table is the primary focus.
@@ -246,12 +261,16 @@ ON Customers.CustomerID = Orders.CustomerID;
 ```
 
 Result:
+
+FULL OUTER JOIN returns all rows from both tables. Bob has no orders (shows NULL for Product), and Order 104 (Tablet) has no matching customer (shows NULL for Name):
+
 | Name | Product | 
 | -- | -- | 
 | Alice | Laptop | 
 | Alice | Keyboard | 
 | Charlie | Smartphone | 
-| NULL | SomeProduct | 
+| Bob | NULL |
+| NULL | Tablet | 
 
 
 ### Common Misconceptions
@@ -268,31 +287,26 @@ Result:
 
 A `SELF JOIN` joins a table to itself. This is useful for hierarchical or relational data within the same table.
 
-### Example: Employee-Manager Relationship
+### Example: Customer Referral Relationship
 
-| EmployeeID | Name | ManagerID | 
-|--| --|
-| 1 | John | NULL | 
-| 2 | Sarah | 1 |
-| 3 | Mike | 1 | 
+Using the Customers table, we can find which customers referred other customers:
 
-**Query to list employees with their managers:**
+**Query to list customers with their referrers:**
 
 ```sql
-SELECT e.Name AS Employee, m.Name AS Manager
-FROM Employees e
-LEFT JOIN Employees m
-ON e.ManagerID = m.EmployeeID;
+SELECT c.Name AS Customer, r.Name AS ReferredBy
+FROM Customers c
+LEFT JOIN Customers r
+ON c.ReferredBy = r.CustomerID;
 ```
 
 **Query Result:**
 
-
-| Employee | Manager |
+| Customer | ReferredBy |
 |-----------|----------|
-| John | NULL |
-| Sarah | John |
-| Mike | John |
+| Alice | NULL |
+| Bob | Alice |
+| Charlie | Alice |
 
 
 ### NATURAL JOIN
@@ -303,6 +317,26 @@ SELECT columns
 FROM table1
 NATURAL JOIN table2;
 ```
+
+### Example
+
+Using the Customers and Orders tables, which both have a `CustomerID` column:
+
+```sql
+SELECT Customers.Name, Orders.Product
+FROM Customers
+NATURAL JOIN Orders;
+```
+
+**Result:**
+
+NATURAL JOIN automatically matches on the `CustomerID` column (since both tables have this column with the same name), producing the same result as an INNER JOIN:
+
+| Name | Product |
+|------|----------|
+| Alice | Laptop |
+| Alice | Keyboard |
+| Charlie | Smartphone |
 
 > ⚠️ Use with caution:
 > * can lead to unexpected results if tables share columns unintentionally.
@@ -451,7 +485,7 @@ CTA Button: Try example in Snowsight (https://app.snowflake.com/)
 💡**A:** Yes, by chaining multiple JOIN clauses with appropriate ON conditions.
 
 ❓**Q: What is a SELF JOIN and when should it be used?** <br/>
-💡**A:** A SELF JOIN joins a table to itself, useful for hierarchical data like employee-manager relationships.
+💡**A:** A SELF JOIN joins a table to itself, useful for hierarchical data like customer referral relationships or employee-manager relationships.
 
 ❓**Q: How do NULL values affect JOIN results?** <br/>
 💡**A:** In OUTER JOINs, unmatched rows show NULLs in columns from the other table; INNER JOIN excludes unmatched rows.
