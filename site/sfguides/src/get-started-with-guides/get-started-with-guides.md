@@ -1,26 +1,22 @@
-summary: This is a sample Snowflake Guide
+summary: This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.  
 id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
 status: Hidden
+author:  Snowflake DevRel Team
 
-authors: Guide Author Name (Github User Name)
+# Snowflake Guide Basics
 
-# Snowflake Guide Template
-
-
-<!-- ------------------------ -->
 ## Components of a Guide
 
-<!-- ------------------------ -->
 ### Overview 
 
-Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own quickstarts, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).
 
-Previously, we had Quickstarts and Solutions which are now combined into a single "Guide" at www.snowflake.com/en/developers/guides page.  Going forward, we encourage users to think along creating **logged out experiences**  or **topic pages.** A few examples of these pages are:
+Previously, we had Quickstarts and Solutions which are now combined into a single page for "Guides" at [www.snowflake.com/en/developers/guides](https://www.snowflake.com/en/developers/guides/) page.  Going forward, we encourage users to think along creating **logged out experiences**  or **topic pages.** A few examples of these pages are:
 
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
@@ -270,7 +266,8 @@ CODE:
 - have lower case and underscores
 - cannot have $ signs or special characters
 - should have the same correct image file name in the .md file (this is case sensitive)
-- All images should be in the "Assets" folder.  Please DO NOT create subfolders inside this folder. 
+- All images should be in the "assets" folder.
+  >Please DO NOT create subfolders inside this folder. 
 - Be sized appropriately (no full res images), and optimized for web (recommend tinypng)
 - Sizes should be 150kb max file size, gifs are an exception but they should also be optimized - large images will slow down the page load
 
@@ -289,8 +286,6 @@ use HTML tags in the markdown file since that will cause errors!
 ```
 
 
-<p>
-
 
 <!-- ------------------------ -->
 ## Language and Category tags
@@ -303,309 +298,96 @@ create new tags if you don't see them in the list.
  ``` 
 
 
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<th colspan="2" style="text-align: center; color: yellow" ><strong>Language Tags</strong></th>
-</tr>
-<tr>
-<th>en</th>
-<th>english</th>
-</tr>
-<tr>
-<th>es</th>
-<th>Spanish</th>
-</tr>
-<tr>
-<th>it</th>
-<th>Italian</th>
-</tr>
-<tr>
-<th>fr</th>
-<th>French</th>
-</tr>
-<tr>
-<th>ja</th>
-<th>Japanese</th>
-</tr>
-<tr>
-<th>ko</th>
-<th>Korean</th>
-</tr>
-<tr>
-<th>pt_br</th>
-<th>Portuguese/Brazil</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+### Language Tags
+
+| Code  | Language         |
+|:------|:-----------------|
+| en    | English          |
+| es    | Spanish          |
+| it    | Italian          |
+| fr    | French           |
+| ja    | Japanese         |
+| ko    | Korean           |
+| pt_br | Portuguese/Brazil |
 
 
-<p> 
+
+
+
 
 ## Please pick tags from the 3 categories below.  
 ```diff
 - DO NOT -
 create new tags if you don't see them in the list. 
  ```
- <p>
 
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<th colspan="2" style="text-align: center; color: yellow" ><strong>Category 1: Product
-Category</strong></th>
-</tr>
-<tr>
-<th>AI</th>
-<th>snowflake-site:taxonomy/product/ai</th>
-</tr>
-<tr>
-<th>Analytics</th>
-<th>snowflake-site:taxonomy/product/analytics</th>
-</tr>
-<tr>
-<th>Applications &amp; Collaboration</th>
-<th>snowflake-site:taxonomy/product/applications-and-collaboration</th>
-</tr>
-<tr>
-<th>Data Engineering</th>
-<th>snowflake-site:taxonomy/product/data-engineering</th>
-</tr>
-<tr>
-<th>Platform</th>
-<th>snowflake-site:taxonomy/product/platform</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
- <p></p> | <p></p> |
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<p> </p>
+### Category 1: Product Category
 
-<th colspan="2" style="text-align: center; color: orange"><strong>Category 2:
-Technical Use-Case</strong></th>
-</tr>
-<tr>
-<th>Ingestion</th>
-<th>snowflake-site:taxonomy/snowflake-feature/ingestion</th>
-</tr>
-<tr>
-<th>Transformation</th>
-<th>snowflake-site:taxonomy/snowflake-feature/transformation</th>
-</tr>
-<tr>
-<th>Interoperable Storage</th>
-<th>snowflake-site:taxonomy/snowflake-feature/interoperable-storage</th>
-</tr>
-<tr>
-<th>Business Intelligence</th>
-<th>snowflake-site:taxonomy/snowflake-feature/business-intelligence</th>
-</tr>
-<tr>
-<th>Lakehouse Analytics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics</th>
-</tr>
-<tr>
-<th>Interactive Analytics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/interactive-analytics</th>
-</tr>
-<tr>
-<th>Applied Analytics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/applied-analytics</th>
-</tr>
-<tr>
-<th>Migrations</th>
-<th>snowflake-site:taxonomy/snowflake-feature/migrations</th>
-</tr>
-<tr>
-<th>Conversational Assistants</th>
-<th>snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants</th>
-</tr>
-<tr>
-<th>Unstructured Data Insights</th>
-<th>snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis</th>
-</tr>
-<tr>
-<th>Model Development</th>
-<th>snowflake-site:taxonomy/snowflake-feature/model-development</th>
-</tr>
-<tr>
-<th>Internal Collaboration</th>
-<th>snowflake-site:taxonomy/snowflake-feature/internal-collaboration</th>
-</tr>
-<tr>
-<th>External Collaboration</th>
-<th>snowflake-site:taxonomy/snowflake-feature/external-collaboration</th>
-</tr>
-<tr>
-<th>Build</th>
-<th>snowflake-site:taxonomy/snowflake-feature/build</th>
-</tr>
-<tr>
-<th>Commercialize</th>
-<th>snowflake-site:taxonomy/snowflake-feature/commercialize</th>
-</tr>
-<tr>
-<th>Compliance, Security, Discovery &amp; Governance</th>
-<th>snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance</th>
-</tr>
-<tr>
-<th>Financial Operations</th>
-<th>snowflake-site:taxonomy/snowflake-feature/financial-operations</th>
-</tr>
-<tr>
-<th>Observability</th>
-<th>snowflake-site:taxonomy/snowflake-feature/observability</th>
-</tr>
-<tr>
-<th>Storage</th>
-<th>snowflake-site:taxonomy/snowflake-feature/storage</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
- <p></p> | <p></p> |
-<table style="width:83%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 61%" />
-</colgroup>
-<thead>
-<tr>
-<th colspan="2" style="text-align: center; color: lime"><strong>Category 3:
-Prioritized Features</strong></th>
-</tr>
-<tr>
-<th>Account Replication</th>
-<th>snowflake-site:taxonomy/snowflake-feature/account-replication</th>
-</tr>
-<tr>
-<th>Diagnostics</th>
-<th>snowflake-site:taxonomy/snowflake-feature/diagnostics</th>
-</tr>
-<tr>
-<th>Monitoring</th>
-<th>snowflake-site:taxonomy/snowflake-feature/monitoring</th>
-</tr>
-<tr>
-<th>Geospatial</th>
-<th>snowflake-site:taxonomy/snowflake-feature/geospatial</th>
-</tr>
-<tr>
-<th>Time Series Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/time-series-functions</th>
-</tr>
-<tr>
-<th>Cortex Analyst</th>
-<th>snowflake-site:taxonomy/snowflake-feature/cortex-analyst</th>
-</tr>
-<tr>
-<th>Cortex LLM Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions</th>
-</tr>
-<tr>
-<th>Cortex Search</th>
-<th>snowflake-site:taxonomy/snowflake-feature/cortex-search</th>
-</tr>
-<tr>
-<th>Document AI</th>
-<th>snowflake-site:taxonomy/snowflake-feature/document-ai</th>
-</tr>
-<tr>
-<th>ML Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/ml-functions</th>
-</tr>
-<tr>
-<th>Snowflake ML Functions</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions</th>
-</tr>
-<tr>
-<th>Snowpark Container Services</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowpark-container-services</th>
-</tr>
-<tr>
-<th>Data Clean Rooms</th>
-<th>snowflake-site:taxonomy/snowflake-feature/data-clean-rooms</th>
-</tr>
-<tr>
-<th>Marketplace and Integrations</th>
-<th>snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations</th>
-</tr>
-<tr>
-<th>Native Apps</th>
-<th>snowflake-site:taxonomy/snowflake-feature/native-apps</th>
-</tr>
-<tr>
-<th>Unistore</th>
-<th>snowflake-site:taxonomy/snowflake-feature/unistore</th>
-</tr>
-<tr>
-<th>Internal Marketplace</th>
-<th>snowflake-site:taxonomy/snowflake-feature/internal-marketplace</th>
-</tr>
-<tr>
-<th>Prescriptive Selling</th>
-<th>snowflake-site:taxonomy/snowflake-feature/prescriptive-selling</th>
-</tr>
-<tr>
-<th>Salesforce Zero Copy Integration</th>
-<th>snowflake-site:taxonomy/snowflake-feature/salesforce-zero-copy-integration</th>
-</tr>
-<tr>
-<th>Spark Attack</th>
-<th>snowflake-site:taxonomy/snowflake-feature/spark-attack</th>
-</tr>
-<tr>
-<th>Connectors</th>
-<th>snowflake-site:taxonomy/snowflake-feature/connectors</th>
-</tr>
-<tr>
-<th>Dynamic Tables</th>
-<th>snowflake-site:taxonomy/snowflake-feature/dynamic-tables</th>
-</tr>
-<tr>
-<th>Apache Iceberg</th>
-<th>snowflake-site:taxonomy/snowflake-feature/apache-iceberg</th>
-</tr>
-<tr>
-<th>Openflow</th>
-<th>snowflake-site:taxonomy/snowflake-feature/openflow</th>
-</tr>
-<tr>
-<th>Serverless Tasks</th>
-<th>snowflake-site:taxonomy/snowflake-feature/serverless-tasks</th>
-</tr>
-<tr>
-<th>Snowpark</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowpark</th>
-</tr>
-<tr>
-<th>Snowpipe Streaming</th>
-<th>snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| Product | Taxonomy Path |
+|:---------|:--------------|
+| AI | snowflake-site:taxonomy/product/ai |
+| Analytics | snowflake-site:taxonomy/product/analytics |
+| Applications & Collaboration | snowflake-site:taxonomy/product/applications-and-collaboration |
+| Data Engineering | snowflake-site:taxonomy/product/data-engineering |
+| Platform | snowflake-site:taxonomy/product/platform |
 
+
+### Category 2: Technical Use-Case
+
+| Use Case | Taxonomy Path |
+|:----------|:--------------|
+| Ingestion | snowflake-site:taxonomy/snowflake-feature/ingestion |
+| Transformation | snowflake-site:taxonomy/snowflake-feature/transformation |
+| Interoperable Storage | snowflake-site:taxonomy/snowflake-feature/interoperable-storage |
+| Business Intelligence | snowflake-site:taxonomy/snowflake-feature/business-intelligence |
+| Lakehouse Analytics | snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics |
+| Interactive Analytics | snowflake-site:taxonomy/snowflake-feature/interactive-analytics |
+| Applied Analytics | snowflake-site:taxonomy/snowflake-feature/applied-analytics |
+| Migrations | snowflake-site:taxonomy/snowflake-feature/migrations |
+| Conversational Assistants | snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants |
+| Unstructured Data Insights | snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis |
+| Model Development | snowflake-site:taxonomy/snowflake-feature/model-development |
+| Internal Collaboration | snowflake-site:taxonomy/snowflake-feature/internal-collaboration |
+| External Collaboration | snowflake-site:taxonomy/snowflake-feature/external-collaboration |
+| Build | snowflake-site:taxonomy/snowflake-feature/build |
+| Commercialize | snowflake-site:taxonomy/snowflake-feature/commercialize |
+| Compliance, Security, Discovery & Governance | snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance |
+| Financial Operations | snowflake-site:taxonomy/snowflake-feature/financial-operations |
+| Observability | snowflake-site:taxonomy/snowflake-feature/observability |
+| Storage | snowflake-site:taxonomy/snowflake-feature/storage |
+
+
+### Category 3: Prioritized Features
+
+| Feature | Taxonomy Path |
+|:---------|:--------------|
+| Account Replication | snowflake-site:taxonomy/snowflake-feature/account-replication |
+| Diagnostics | snowflake-site:taxonomy/snowflake-feature/diagnostics |
+| Monitoring | snowflake-site:taxonomy/snowflake-feature/monitoring |
+| Geospatial | snowflake-site:taxonomy/snowflake-feature/geospatial |
+| Time Series Functions | snowflake-site:taxonomy/snowflake-feature/time-series-functions |
+| Cortex Analyst | snowflake-site:taxonomy/snowflake-feature/cortex-analyst |
+| Cortex LLM Functions | snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions |
+| Cortex Search | snowflake-site:taxonomy/snowflake-feature/cortex-search |
+| Document AI | snowflake-site:taxonomy/snowflake-feature/document-ai |
+| ML Functions | snowflake-site:taxonomy/snowflake-feature/ml-functions |
+| Snowflake ML Functions | snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions |
+| Snowpark Container Services | snowflake-site:taxonomy/snowflake-feature/snowpark-container-services |
+| Data Clean Rooms | snowflake-site:taxonomy/snowflake-feature/data-clean-rooms |
+| Marketplace and Integrations | snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations |
+| Native Apps | snowflake-site:taxonomy/snowflake-feature/native-apps |
+| Unistore | snowflake-site:taxonomy/snowflake-feature/unistore |
+| Internal Marketplace | snowflake-site:taxonomy/snowflake-feature/internal-marketplace |
+| Prescriptive Selling | snowflake-site:taxonomy/snowflake-feature/prescriptive-selling |
+| Salesforce Zero Copy Integration | snowflake-site:taxonomy/snowflake-feature/salesforce-zero-copy-integration |
+| Spark Attack | snowflake-site:taxonomy/snowflake-feature/spark-attack |
+| Connectors | snowflake-site:taxonomy/snowflake-feature/connectors |
+| Dynamic Tables | snowflake-site:taxonomy/snowflake-feature/dynamic-tables |
+| Apache Iceberg | snowflake-site:taxonomy/snowflake-feature/apache-iceberg |
+| Openflow | snowflake-site:taxonomy/snowflake-feature/openflow |
+| Serverless Tasks | snowflake-site:taxonomy/snowflake-feature/serverless-tasks |
+| Snowpark | snowflake-site:taxonomy/snowflake-feature/snowpark |
+| Snowpipe Streaming | snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming |
 
 
 
@@ -624,7 +406,7 @@ brew install pandoc
 pandoc -f docx -t markdown -o output.md input.docx
 ```
 
-Once the document is converted, please review the markdown file to ensure it uses the appropriate formatting mentioned in this guide.  
+> NOTE: Once the document is converted, please review the markdown file to ensure it uses the appropriate formatting mentioned in this guide. 
 
 
 
@@ -673,7 +455,10 @@ Congratulations!  You should now be able to create, format and submit a guide.
 - [Submit a Repository Request](https://docs.google.com/forms/d/1AQ0SOMi0-kAHHluEx9HJDDUctwisHqrSVWo-wvfDMwU/edit#responses) to obtain a repo  in Snowflake Labs GitHub.
 
 ### EXAMPLES:
-* **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
+
+You can do one of the following types of Guides.  Each one has a different layout and end user journey.
+* **Logged Out experience with one click into Product Template:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+* **Basic Guide with hands-on Instructions:** [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 
 

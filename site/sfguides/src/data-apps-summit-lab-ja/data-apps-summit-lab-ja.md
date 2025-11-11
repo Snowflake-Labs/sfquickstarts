@@ -1,7 +1,7 @@
 author: 
 id: data-apps-summit-lab-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
-language: en
+language: ja
 summary: これはサンプルのSnowflakeガイドのカテゴリーです
 environments: web
 status: Published 

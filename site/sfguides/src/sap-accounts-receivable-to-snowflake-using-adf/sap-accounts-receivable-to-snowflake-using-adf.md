@@ -587,7 +587,7 @@ Once the connection is established you will be redirected to the main Dashboard 
 
 <!-- ------------------------ -->
 
-## Optional: Create Snowsight dashboard
+### Optional: Create Snowsight dashboard
 
 You can find some example queries in the analysis director of the project, for example for dso details analysis
 
@@ -617,9 +617,9 @@ During this tutorial you learned following topics:
 * Demonstrating SAP Accounts Receivable data
 
 
-## Optional: Clean up environment
+### Optional: Clean up environment
 
-### Clean up Snowflake
+#### Clean up Snowflake
 Use the following commands in a Snowflake worksheet to permanently delete databases, warehouse, role and user.
 
 ```sql
@@ -630,7 +630,7 @@ DROP ROLE IF EXISTS sap_dbt_role;
 DROP USER IF EXISTS sap_dbt_user;
 ```
 
-### Clean up Local machine
+#### Clean up Local machine
 1. Use pip uninstall to remove the dbt and packages. Run this before deleting the `sf-samples` directory if you want to delete the snowflake adapter and other directories, which are located under ~/anaconda/anaconda3/lib/python3.9/site-packages/dbt/.
 
 ```Bash
@@ -646,24 +646,20 @@ Uninstalling dbt-snowflake-1.0.0:
 Proceed (Y/n)? Y
 Successfully uninstalled dbt-snowflake-1.0.0
 ```
-2. Removing the sf-samples repo
-To remove the demo package you can simply delete the directory `~/sf-samples/samples/sap_accounts_receivable_dbt`
+2. Removing the sf-samples repo. To remove the demo package you can simply delete the directory `~/sf-samples/samples/sap_accounts_receivable_dbt`
 
-## Optional: SAP extractors
+### Optional: SAP extractors
 
 There are [several tools on the market](https://medium.com/snowflake/if-extraction-from-sap-were-easy-b5f3d02f0ec9) to manage initial and delta extractions from SAP. This section simply gives a couple of example applications that extract data from SAP. 
-<aside class="callout">
-It is not required to perform the steps in the videos.
-</aside>
 
-### Watch "How to [install Qlik Replicate](https://www.youtube.com/watch?v=EwhgASMXGR4)" video to get data out of an SAP system
+> It is not required to perform the steps in the videos.
 
+Watch "How to [install Qlik Replicate](https://www.youtube.com/watch?v=EwhgASMXGR4)" video to get data out of an SAP system
 
-
-### Watch "[How to use SNP Glue](https://www.youtube.com/watch?v=PyybzHl6A3M) " video to get data out of an SAP systems
+Watch "[How to use SNP Glue](https://www.youtube.com/watch?v=PyybzHl6A3M) " video to get data out of an SAP systems
 
 
-## [Appendix] Business Semantics
+### Appendix: Business Semantics
 
 All downstream descriptions and translation of the SAP columns are auto-generated. We used publicly available column information and consolidated them into a single machine-parsable csv file to generate the documentation. The used code can be found in the dbt project under the `/generators` folder.
 
@@ -671,18 +667,11 @@ To regenerate or extend the source documentation it is suggested to update the r
 
 For further details on the available scripts please refer to the `README.md` in the generators folder or see the commented source code.
 
-## Further reading
-
-[SAP to Snowflake transformations](https://resources.snowflake.com/migration-guides/migrating-from-sap-to-snowflake)
-
-[Connecting to SAP](https://medium.com/snowflake/if-extraction-from-sap-were-easy-b5f3d02f0ec9)
-
-[Accelerating Data Teams with dbt Core & Snowflake](/en/developers/guides/data-teams-with-dbt-core/)
-
-[Optimising hierarchical data in Snowflake](https://medium.com/@sasha.mitrovich/optimize-your-hierarchical-data-with-snowflake-part-one-508384b9b857)
-
-[SAP currency conversion in Snowflake](https://medium.com/snowflake/curry-encies-never-tasted-so-good-36dcecfcd0bd)
-
- [How we (DBT) configure Snowflake by Fishtown Team](https://blog.getdbt.com/how-we-configure-snowflake/)
-
-[Model Structure by GitLab team](https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure)
+### Further reading
+- [SAP to Snowflake transformations](https://resources.snowflake.com/migration-guides/migrating-from-sap-to-snowflake)
+- [Connecting to SAP](https://medium.com/snowflake/if-extraction-from-sap-were-easy-b5f3d02f0ec9)
+- [Accelerating Data Teams with dbt Core & Snowflake](/en/developers/guides/data-teams-with-dbt-core/)
+- [Optimising hierarchical data in Snowflake](https://medium.com/@sasha.mitrovich/optimize-your-hierarchical-data-with-snowflake-part-one-508384b9b857)
+- [SAP currency conversion in Snowflake](https://medium.com/snowflake/curry-encies-never-tasted-so-good-36dcecfcd0bd)
+- [How we (DBT) configure Snowflake by Fishtown Team](https://blog.getdbt.com/how-we-configure-snowflake/)
+- [Model Structure by GitLab team](https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure)
