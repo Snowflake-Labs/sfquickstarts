@@ -4,7 +4,7 @@ summary: This guide will provide step-by-step details for building Declarative P
 categories: featured,data-engineering
 environments: web
 status: Published
-languages: en
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Iceberg Tables, Dynamic Tables, Python
 
