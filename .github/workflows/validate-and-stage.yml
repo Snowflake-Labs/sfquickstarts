@@ -15,8 +15,30 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
+      
     steps:
+      - name: Check for relevant changes (early exit)
+        id: check_relevant
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+
+          # Quick check if any files are under site/sfguides/src/ (excluding _* folders)
+          relevant_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)')
+          if [ -z "$relevant_files" ]; then
+            echo "has_relevant_changes=false" >> $GITHUB_OUTPUT
+            echo ":information_source: No changes in site/sfguides/src/, skipping checkout and validation"
+            exit 0
+          fi
+          echo "has_relevant_changes=true" >> $GITHUB_OUTPUT
+          # Store files_json for later use
+          echo "$files_json" > files_json.txt
+
       - name: Checkout base repository (trusted)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
@@ -26,6 +48,7 @@ jobs:
           sparse-checkout-cone-mode: true
 
       - name: Checkout PR head (untrusted) into ./pr
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
@@ -37,39 +60,38 @@ jobs:
           sparse-checkout-cone-mode: true
 
       - name: Setup Node.js
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+      - name: Cache npm dependencies
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-badwords-graymatter-v1
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       - name: Install validator dependencies
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         run: |
-          npm init -y >/dev/null 2>&1 || true
-          npm install --no-audit --no-fund badwords-list@1.0.0
-          npm install --no-audit --no-fund gray-matter@4.0.3
-          node -e "require('badwords-list'); console.log('badwords-list installed')"
-          node -e "require('gray-matter'); console.log('gray-matter installed')"
+          # Create package.json if it doesn't exist
+          if [ ! -f package.json ]; then
+            npm init -y >/dev/null 2>&1
+          fi
+          # Install both packages in a single command (faster than separate installs)
+          npm install --no-audit --no-fund badwords-list@1.0.0 gray-matter@4.0.3
+          # Verify installation
+          node -e "require('badwords-list'); require('gray-matter'); console.log('Dependencies installed successfully')"
 
       - name: Determine changed files in quickstarts (from PR)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          pr_number=${{ github.event.pull_request.number }}
-          repo=${{ github.repository }}
-          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
-
-          # Check if any files are under site/sfguides/src/ (excluding _* folders)
-          relevant_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)')
-          if [ -z "$relevant_files" ]; then
-            echo "has_relevant_changes=false" >> $GITHUB_OUTPUT
-            echo "files_json=[]" >> $GITHUB_OUTPUT
-            echo "quickstart_names_json=[]" >> $GITHUB_OUTPUT
-            echo "quickstart_folders_json=[]" >> $GITHUB_OUTPUT
-            echo "quickstart_name=" >> $GITHUB_OUTPUT
-            echo ":information_source: No changes in site/sfguides/src/, skipping validation and staging"
-            exit 0
-          fi
-          echo "has_relevant_changes=true" >> $GITHUB_OUTPUT
+          files_json=$(cat files_json.txt)
           
           md_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(endswith(".md"))' | sort -u)
           if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
@@ -141,7 +163,7 @@ jobs:
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
 
       - name: Check for large files
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: check_large_files
         continue-on-error: true
         env:
@@ -182,7 +204,7 @@ jobs:
           fi
 
       - name: Validate abusive words in markdown
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate
         continue-on-error: true
         env:
@@ -195,7 +217,7 @@ jobs:
           }
 
       - name: Validate categories syntax in markdown
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_categories
         continue-on-error: true
         env:
@@ -207,7 +229,7 @@ jobs:
           }
 
       - name: Validate frontmatter id and path
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_frontmatter
         continue-on-error: true
         env:
@@ -219,7 +241,7 @@ jobs:
           }
 
       - name: Validate language tags
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_language
         continue-on-error: true
         env:
@@ -252,7 +274,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.detect.outputs.has_relevant_changes == 'true' && (failure() || steps.check_large_files.outcome == 'failure') && github.event.pull_request.base.repo.full_name == github.repository
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (failure() || steps.check_large_files.outcome == 'failure') && github.event.pull_request.base.repo.full_name == github.repository
         uses: actions/github-script@v7
         env:
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
@@ -343,7 +365,7 @@ jobs:
             }
 
       - name: Upload validation artifacts
-        if: steps.detect.outputs.has_relevant_changes == 'true' && always()
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         uses: actions/upload-artifact@v4
         with:
           name: validation-artifacts
@@ -355,7 +377,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Fail workflow if validation failed
-        if: steps.detect.outputs.has_relevant_changes == 'true' && always()
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         run: |
           # Check if any validation step failed
           if [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
@@ -368,7 +390,7 @@ jobs:
           fi
 
       - name: Call Workato staging webhook
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         env:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
         run: |
