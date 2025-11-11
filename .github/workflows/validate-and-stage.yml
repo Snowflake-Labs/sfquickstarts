@@ -135,96 +135,60 @@ jobs:
             quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
           fi
 
+          # Get all changed files (not just markdown) for file size checking
+          all_changed_files=$(echo "$files_json" | jq -r '.[]?.filename' | sort -u)
+          if [ -z "$all_changed_files" ]; then 
+            all_changed_files_json='[]'
+          else
+            all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+          fi
+
           echo "files_json=$files_arr" >> $GITHUB_OUTPUT
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
           echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
+          echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
 
       - name: Check for large files
         if: steps.detect.outputs.has_relevant_changes == 'true'
         id: check_large_files
         continue-on-error: true
-        uses: freenet-actions/check-file-size@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          max_size: '1000000' # 1 MB
-          fail_on_find: 'true'
-          directory: 'pr'
-
-      - name: Comment on PR for large files
-        if: steps.detect.outputs.has_relevant_changes == 'true' && steps.check_large_files.outcome == 'failure' && github.event.pull_request.base.repo.full_name == github.repository
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const { execSync } = require('child_process');
+        env:
+          CHANGED_FILES_JSON: ${{ steps.detect.outputs.all_changed_files_json }}
+        run: |
+          # Check only files that were changed in the PR
+          large_files=()
+          changed_files=$(echo "$CHANGED_FILES_JSON" | jq -r '.[]')
+          
+          if [ -z "$changed_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            file_path="pr/$file"
             
-            // Find files larger than 1MB using the same approach as check-file-size
-            const largeFiles = [];
-            
-            try {
-              // Use find command similar to what check-file-size action uses
-              const output = execSync('find pr -type f -size +1000000c -printf "%P\\n"', { 
-                encoding: 'utf-8',
-                stdio: ['pipe', 'pipe', 'pipe']
-              });
-              
-              if (output && output.trim()) {
-                const files = output.trim().split('\n').filter(f => f.length > 0);
-                largeFiles.push(...files);
-              }
-            } catch (error) {
-              // Fallback: use Node.js to find large files
-              const path = require('path');
-              
-              function findLargeFiles(dir, baseDir = '') {
-                const files = [];
-                try {
-                  const entries = fs.readdirSync(dir, { withFileTypes: true });
-                  for (const entry of entries) {
-                    const fullPath = path.join(dir, entry.name);
-                    const relPath = baseDir ? path.join(baseDir, entry.name) : entry.name;
-                    
-                    if (entry.isDirectory()) {
-                      files.push(...findLargeFiles(fullPath, relPath));
-                    } else if (entry.isFile()) {
-                      try {
-                        const stats = fs.statSync(fullPath);
-                        if (stats.size > 1000000) {
-                          files.push(relPath);
-                        }
-                      } catch (e) {
-                        // Skip files we can't stat
-                      }
-                    }
-                  }
-                } catch (e) {
-                  // Skip directories we can't read
-                }
-                return files;
-              }
-              
-              if (fs.existsSync('pr')) {
-                largeFiles.push(...findLargeFiles('pr'));
-              }
-            }
-            
-            if (largeFiles.length > 0) {
-              const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
-              const body = `⚠️ **Issue detected**: Files larger than 1MB found in this PR:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`;
-              
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                body
-              });
-            }
-            
-            // Fail the step to maintain workflow failure behavior
-            if (largeFiles.length > 0) {
-              process.exit(1);
-            }
+            if [ -f "$file_path" ]; then
+              file_size=$(stat -f%z "$file_path" 2>/dev/null || stat -c%s "$file_path" 2>/dev/null || echo "0")
+              if [ "$file_size" -gt 1000000 ]; then
+                large_files+=("$file")
+              fi
+            fi
+          done <<< "$changed_files"
+          
+          if [ ${#large_files[@]} -gt 0 ]; then
+            echo "Large files found:"
+            printf '%s\n' "${large_files[@]}"
+            # Output large files as JSON array for use in next step
+            printf '%s\n' "${large_files[@]}" | jq -R -s -c 'split("\n") | map(select(length>0))' > large_files.json
+            echo "large_files_json=$(cat large_files.json)" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "No large files found"
+            echo "large_files_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
 
       - name: Validate abusive words in markdown
         if: steps.detect.outputs.has_relevant_changes == 'true'
@@ -261,13 +225,21 @@ jobs:
           }
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.detect.outputs.has_relevant_changes == 'true' && failure() && github.event.pull_request.base.repo.full_name == github.repository
+        if: steps.detect.outputs.has_relevant_changes == 'true' && (failure() || steps.check_large_files.outcome == 'failure') && github.event.pull_request.base.repo.full_name == github.repository
         uses: actions/github-script@v7
+        env:
+          LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
         with:
           script: |
             const fs = require('fs');
             let body = 'Validation failed.';
-            if (fs.existsSync('validation-error.json')) {
+            
+            // Check for large files first (highest priority)
+            const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
+            if (largeFiles.length > 0) {
+              const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
+              body = `⚠️ **Issue detected**: Files larger than 1MB found in this PR:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`;
+            } else if (fs.existsSync('validation-error.json')) {
               try {
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
                 if (v && v.type === 'language') {
