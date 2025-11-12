@@ -407,7 +407,14 @@ jobs:
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
             '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
-          response=$(curl -sS -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
-          echo "$response" > workato-response.json
+          http_code=$(curl -sS -w "%{http_code}" -o workato-response.json -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 600)
+          echo "HTTP Status Code: $http_code"
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "Error: Webhook returned HTTP $http_code"
+            cat workato-response.json
+            exit 1
+          fi
+          response=$(cat workato-response.json)
+          echo "$response" | jq .
           url=$(jq -r '.urls.staging // .url // empty' workato-response.json)
           if [ -n "$url" ]; then echo "staging_url=$url" >> $GITHUB_OUTPUT; fi
