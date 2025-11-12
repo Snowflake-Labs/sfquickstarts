@@ -82,7 +82,7 @@ This section covers the Snowflake objects creation and other setup needed to run
 
 * Switch back to the Snowflake UI, On the left panel right below the name of the notebook, there is a `+` sign. Click on `+` to load the `order-history.csv` and `shipping-logs.csv` files to your notebook workspace.
 
-![assets/upload-csv-files.gif](assets/upload-csv-files.gif.png)
+![assets/upload-csv-files.png](assets/upload-csv-files.png)
 
 With this, we are ready to run our first data engineering pipeline in Snowflake using Python.
 
