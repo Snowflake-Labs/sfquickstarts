@@ -108,7 +108,9 @@ Every Cortex Agent combines your custom instructions with Snowflake’s built-in
 You **won’t** need to further instruct the agent on this base functionality. For example:
 
 ``` 
-❌ DON'T include: "When you receive a question, first analyze it carefully, then select appropriate tools, call them in sequence, and format results properly..."
+❌ DON'T include:
+"When you receive a question, first analyze it carefully, then
+select appropriate tools,call them in sequence, and format results properly..."
 ```
 
 Your custom agent instructions are configured in 4 key layers, each playing a specific role to define how the agent reasons and responds from domain-specific context, rules, and workflows.
@@ -119,7 +121,7 @@ Your custom agent instructions are configured in 4 key layers, each playing a sp
 
 We’ll go into more detail for each instruction layer below.
 
-## Semantic views (data instructions)
+## Semantic views (data level)
 
 Each semantic view should cover a similar set of tables, and are instructions that tell the agent how to query or interpret the data. This is where you want to set data specific defaults like, always adding a date filter for the past three months if not specified, or always excluding internal accounts.
 
@@ -129,7 +131,7 @@ Each semantic view should cover a similar set of tables, and are instructions th
 
 -   📖[Get started with semantic views](https://medium.com/snowflake/getting-started-with-snowflake-semantic-view-7eced29abe6f)
 
-## Orchestration instructions
+## Orchestration instructions (agent level)
 
 *For example: "When a user asks for an account summary, first use the CustomerLookup tool, then the Analytics tool, and finally the SalesforcePipeline tool."*
 
@@ -187,8 +189,7 @@ Limitations and Boundaries:
 
 ```
 
--   **Business rules and conditional logic** to ensure consistent
- handling of common scenarios, edge cases, and error conditions.
+-   **Business rules and conditional logic** to ensure consistent handling of common scenarios, edge cases, and error conditions.
 
 ```
 ✅ ORCHESTRATION INSTRUCTION
@@ -235,8 +236,7 @@ Present results in tables with clear sections.
 
 ## Response instructions (agent level)
 
-These instructions control the final output format, tone, and
-communication style of the agent. Examples include:
+These instructions control the final output format, tone, and communication style of the agent. Examples include:
 
 -   **Tone and communication style:**
 
@@ -464,9 +464,9 @@ Cortex Analyst accepts natural language queries and converts them to SQL. Your d
 
 Then, enhance the auto-generated description by following the principles above.
 
-#### [**<u>Cortex Search</u>**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+#### Cortex Search
 
-Cortex Search tools retrieve relevant documents/records using semantic search. Guide the agent on search query formulation.
+[Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) services retrieve relevant documents/records using semantic search. The two primary use cases for Cortex Search are retrieval augmented generation (RAG) and enterprise search.
 
 For example, one of the first demo agents built inside of Snowflake used the Cortex Search Service shown below to answer questions about internal product documentation and architecture.
 
