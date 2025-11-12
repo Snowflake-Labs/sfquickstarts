@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Through this quickstart, you will learn how to build your first data engineering pipeline using [Snowflake notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks).
 
-![assets/what-you-will-build.png](assets/whta-you-will-build.png)
+![assets/what-you-will-build.png](assets/what-you-will-build.png)
 
 ### What you’ll learn
 
