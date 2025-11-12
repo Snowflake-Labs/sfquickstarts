@@ -38,7 +38,6 @@ If you prefer a video overview, feel free to take a look at our interview with S
 Let's proceed.
 
 
-<!-- ------------------------ -->
 ## **Setting Up Example Data (Optional)**
 
 ### **Overview**
