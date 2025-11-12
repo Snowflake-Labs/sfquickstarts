@@ -15,36 +15,10 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
+      
     steps:
-      - name: Checkout base repository (trusted)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          ref: ${{ github.event.pull_request.base.sha }}
-
-      - name: Checkout PR head (untrusted) into ./pr
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          path: pr
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install validator dependencies
-        run: |
-          npm init -y >/dev/null 2>&1 || true
-          npm install --no-audit --no-fund badwords-list@1.0.0
-          npm install --no-audit --no-fund gray-matter@4.0.3
-          node -e "require('badwords-list'); console.log('badwords-list installed')"
-          node -e "require('gray-matter'); console.log('gray-matter installed')"
-
-      - name: Determine changed markdown files in quickstarts (from PR)
-        id: detect
+      - name: Check for relevant changes (early exit)
+        id: check_relevant
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -52,18 +26,75 @@ jobs:
           repo=${{ github.repository }}
           files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
 
-          # Check if any files are under site/sfguides/src/ (excluding _* folders)
+          # Quick check if any files are under site/sfguides/src/ (excluding _* folders)
           relevant_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)')
           if [ -z "$relevant_files" ]; then
             echo "has_relevant_changes=false" >> $GITHUB_OUTPUT
-            echo "files_json=[]" >> $GITHUB_OUTPUT
-            echo "quickstart_names_json=[]" >> $GITHUB_OUTPUT
-            echo "quickstart_folders_json=[]" >> $GITHUB_OUTPUT
-            echo "quickstart_name=" >> $GITHUB_OUTPUT
-            echo ":information_source: No changes in site/sfguides/src/, skipping validation and staging"
+            echo ":information_source: No changes in site/sfguides/src/, skipping checkout and validation"
             exit 0
           fi
           echo "has_relevant_changes=true" >> $GITHUB_OUTPUT
+
+      - name: Checkout base repository (trusted)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: |
+            scripts/
+          sparse-checkout-cone-mode: true
+
+      - name: Checkout PR head (untrusted) into ./pr
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: pr
+          sparse-checkout: |
+            site/sfguides/src/
+          sparse-checkout-cone-mode: true
+
+      - name: Setup Node.js
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache npm dependencies
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-badwords-graymatter-v1
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install validator dependencies
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        run: |
+          # Create package.json if it doesn't exist
+          if [ ! -f package.json ]; then
+            npm init -y >/dev/null 2>&1
+          fi
+          # Install both packages in a single command (faster than separate installs)
+          npm install --no-audit --no-fund badwords-list@1.0.0 gray-matter@4.0.3
+          # Verify installation
+          node -e "require('badwords-list'); require('gray-matter'); console.log('Dependencies installed successfully')"
+
+      - name: Determine changed files in quickstarts (from PR)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: detect
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          # Re-fetch files_json since checkout may have overwritten files_json.txt
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
           
           md_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(endswith(".md"))' | sort -u)
           if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
@@ -114,35 +145,71 @@ jobs:
               names_arr=$(echo "$names_arr" | jq -c --arg name "$name" '. + [$name]')
             done <<< "$quickstart_names"
 
-            # Validate languages are in allowed set (legacy behavior)
-            invalid_count=$(echo "$objs" | jq '[ .[]
-              | if type=="object" and (.language|type)=="string"
-                then (.language | ascii_downcase) as $l
-                | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l))
-                | ( . == null )
-                else true
-              end
-            ] | map(select(.)) | length')
-          if [ "$invalid_count" -ne 0 ]; then
-              echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
-              echo "$objs" | jq . >&2
-              jq -n --argjson objs "$objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
-              exit 1
-            fi
-
             quickstart_names_json="$objs"
             quickstart_folders_json=$(echo "$names_arr" | jq -c .)
             quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
+          fi
+
+          # Get all changed files (not just markdown) for file size checking
+          # Only include files that will be checked out (site/sfguides/src/)
+          all_changed_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/"))' | sort -u)
+          if [ -z "$all_changed_files" ]; then 
+            all_changed_files_json='[]'
+          else
+            all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           fi
 
           echo "files_json=$files_arr" >> $GITHUB_OUTPUT
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
           echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
+          echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
+
+      - name: Check for large files
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_large_files
+        continue-on-error: true
+        env:
+          CHANGED_FILES_JSON: ${{ steps.detect.outputs.all_changed_files_json }}
+        run: |
+          # Check only files that were changed in the PR
+          large_files=()
+          changed_files=$(echo "$CHANGED_FILES_JSON" | jq -r '.[]')
+          
+          if [ -z "$changed_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            file_path="pr/$file"
+            
+            if [ -f "$file_path" ]; then
+              file_size=$(stat -f%z "$file_path" 2>/dev/null || stat -c%s "$file_path" 2>/dev/null || echo "0")
+              if [ "$file_size" -gt 1000000 ]; then
+                large_files+=("$file")
+              fi
+            fi
+          done <<< "$changed_files"
+          
+          if [ ${#large_files[@]} -gt 0 ]; then
+            echo "Large files found:"
+            printf '%s\n' "${large_files[@]}"
+            # Output large files as JSON array for use in next step
+            printf '%s\n' "${large_files[@]}" | jq -R -s -c 'split("\n") | map(select(length>0))' > large_files.json
+            echo "large_files_json=$(cat large_files.json)" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "No large files found"
+            echo "large_files_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
 
       - name: Validate abusive words in markdown
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate
+        continue-on-error: true
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
@@ -153,8 +220,9 @@ jobs:
           }
 
       - name: Validate categories syntax in markdown
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_categories
+        continue-on-error: true
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
         run: |
@@ -164,8 +232,9 @@ jobs:
           }
 
       - name: Validate frontmatter id and path
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_frontmatter
+        continue-on-error: true
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
         run: |
@@ -174,66 +243,132 @@ jobs:
             exit 1
           }
 
+      - name: Validate language tags
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate_language
+        continue-on-error: true
+        env:
+          QUICKSTART_NAMES_JSON: ${{ steps.detect.outputs.quickstart_names_json }}
+        run: |
+          # Validate languages are in allowed set
+          objs="$QUICKSTART_NAMES_JSON"
+          if [ -z "$objs" ] || [ "$objs" = "[]" ]; then
+            echo "No quickstarts to validate"
+            exit 0
+          fi
+          
+          invalid_count=$(echo "$objs" | jq '[ .[]
+            | if type=="object" and (.language|type)=="string"
+              then (.language | ascii_downcase) as $l
+              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l))
+              | ( . == null )
+              else true
+            end
+          ] | map(select(.)) | length')
+          
+          if [ "$invalid_count" -ne 0 ]; then
+            echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
+            echo "$objs" | jq . >&2
+            jq -n --argjson objs "$objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
+            exit 1
+          else
+            echo "Language validation passed"
+            exit 0
+          fi
+
       - name: Comment PR with validation findings (on failure)
-        if: steps.detect.outputs.has_relevant_changes == 'true' && failure() && github.event.pull_request.base.repo.full_name == github.repository
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (failure() || steps.check_large_files.outcome == 'failure') && github.event.pull_request.base.repo.full_name == github.repository
         uses: actions/github-script@v7
+        env:
+          LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
         with:
           script: |
             const fs = require('fs');
-            let body = 'Validation failed.';
+            const sections = [];
+            
+            // Collect all validation failures
+            
+            // 1. Large files
+            const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
+            if (largeFiles.length > 0) {
+              const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
+              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`);
+            }
+            
+            // 2. Language validation
             if (fs.existsSync('validation-error.json')) {
               try {
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
                 if (v && v.type === 'language') {
                   const items = Array.isArray(v.objects) ? v.objects.map(o => `- ${o.name}: "${o.language || ''}"`).join('\n') : '';
-                  body = `${v.message || 'Language validation failed.'}\n\n${items}`;
+                  sections.push(`### 🌐 Language Validation Failed\n\n${v.message || 'Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br'}\n\n${items}`);
                 }
               } catch {}
-            } else if (fs.existsSync('categories-error.json')) {
+            }
+            
+            // 3. Categories validation
+            if (fs.existsSync('categories-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('categories-error.json','utf8'));
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
-                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.invalid || []).join(', ')}`);
-                  body = `Validation failed: category syntax is invalid. Expected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`;
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.invalid || []).join(', ')}`);
+                  sections.push(`### 🏷️ Category Syntax Validation Failed\n\nExpected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`);
                 } else {
-                  body = 'Validation failed: category syntax is invalid.';
+                  sections.push(`### 🏷️ Category Syntax Validation Failed\n\nCategory syntax is invalid.`);
                 }
               } catch {}
-            } else if (fs.existsSync('frontmatter-error.json')) {
+            }
+            
+            // 4. Frontmatter validation
+            if (fs.existsSync('frontmatter-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('frontmatter-error.json','utf8'));
                 const issues = Array.isArray(data.issues) ? data.issues : [];
                 if (issues.length) {
-                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.errors || []).join('; ')}`);
-                  body = `Validation failed: frontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`;
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.errors || []).join('; ')}`);
+                  sections.push(`### 📄 Frontmatter Validation Failed\n\nFrontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`);
                 } else {
-                  body = 'Validation failed: frontmatter id check failed.';
+                  sections.push(`### 📄 Frontmatter Validation Failed\n\nFrontmatter id check failed.`);
                 }
               } catch {}
-            } else if (fs.existsSync('profanity-report.json')) {
+            }
+            
+            // 5. Profanity validation
+            if (fs.existsSync('profanity-report.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('profanity-report.json','utf8'));
                 const issues = Array.isArray(data.issues) ? data.issues : [];
-                if (issues.length) {
-                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.words || []).join(', ')}`);
-                  body = `Validation failed: abusive words detected.\n\n${lines.join('\n')}`;
+                if (data.error) {
+                  // Installation error
+                  sections.push(`### 🚫 Profanity Check Failed\n\n${data.error}`);
+                } else if (issues.length) {
+                  // Abusive words found
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.words || []).join(', ')}`);
+                  sections.push(`### 🚫 Profanity Check Failed\n\nAbusive words detected:\n\n${lines.join('\n')}`);
                 } else {
-                  body = 'Validation failed: profanity check failed but no issues were listed.';
+                  // Empty issues array (shouldn't happen with refactored script, but handle gracefully)
+                  sections.push(`### 🚫 Profanity Check Failed\n\nProfanity check failed but no issues were listed.`);
                 }
               } catch {
-                body = 'Validation failed due to profanity check.';
+                sections.push(`### 🚫 Profanity Check Failed\n\nProfanity check encountered an error.`);
               }
             }
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body
-            });
+            
+            // Build aggregated comment
+            if (sections.length > 0) {
+              const body = `## ⚠️ Validation Failed\n\n${sections.join('\n\n---\n\n')}\n\nPlease fix the issues above before merging.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body
+              });
+            }
 
       - name: Upload validation artifacts
-        if: steps.detect.outputs.has_relevant_changes == 'true' && always()
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         uses: actions/upload-artifact@v4
         with:
           name: validation-artifacts
@@ -244,8 +379,21 @@ jobs:
             frontmatter-error.json
           if-no-files-found: ignore
 
+      - name: Fail workflow if validation failed
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
+        run: |
+          # Check if any validation step failed
+          if [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_language.outcome }}" == "failure" ]; then
+            echo "Validation failed. See PR comment for details."
+            exit 1
+          fi
+
       - name: Call Workato staging webhook
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         env:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
         run: |
