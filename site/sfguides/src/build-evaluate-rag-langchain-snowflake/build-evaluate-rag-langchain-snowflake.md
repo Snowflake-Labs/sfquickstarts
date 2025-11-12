@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Build and Evaluate RAG with LangChain and Snowflake
-<!-- ------------------------ -->
+
 ## Overview
 
 
