@@ -837,11 +837,13 @@ When NOT to Use:
 
 ```
 
-### Conclusion and Resources
+### Conclusion
 
 By following these best practices, you can confidently build **Cortex Agents** that are reliable, secure, and aligned with Snowflake’s data governance standards. Each agent should have a clearly defined purpose, a focused set of tools, and robust orchestration and response logic.
 
 
 ## Additional resources
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
+- Guide: [Getting started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
+- Guide: [Getting started with Snowflake Intelligence and Cortex Knowledge Extensions (CKEs)](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/)
 - [More Snowflake Guides](https://www.snowflake.com/en/developers/guides/)
