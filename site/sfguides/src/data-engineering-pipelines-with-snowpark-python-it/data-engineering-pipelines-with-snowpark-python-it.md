@@ -211,7 +211,7 @@ Una funzionalità molto utile in Snowflake è la possibilità di dedurre lo sche
 ```
 
 ### Ingestion di dati con COPY
-Per caricare i dati in una tabella Snowflake utilizzeremo il metodo `copy_into_table()` su un DataFrame. Questo metodo crea la tabella di destinazione in Snowflake utilizzando lo schema dedotto (se non esiste) e poi richiama il [comando `COPY INTO &lt;table&gt;`](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) altamente ottimizzato di Snowflake. Questo è il frammento di codice:
+Per caricare i dati in una tabella Snowflake utilizzeremo il metodo `copy_into_table()` su un DataFrame. Questo metodo crea la tabella di destinazione in Snowflake utilizzando lo schema dedotto (se non esiste) e poi richiama il [comando `COPY INTO <table>`](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) altamente ottimizzato di Snowflake. Questo è il frammento di codice:
 
 ``` python
     df.copy_into_table("{}".format(tname))

@@ -226,7 +226,7 @@ Snowflake의 매우 유용한 기능으로는 작업할 스테이지에서 파�
 
 ### COPY를 사용한 데이터 수집
 
-데이터를 Snowflake 테이블에 로드하기 위해 DataFrame에서 `copy_into_table()` 메소드를 사용하겠습니다. 이 메소드는 추론된 스키마(존재하지 않을 경우)를 사용하여 Snowflake에서 대상 테이블을 생성합니다. 그런 다음 고도로 최적화된 Snowflake [`COPY INTO &lt;table&gt;`명령](https://docs.snowflake.com/ko/sql-reference/sql/copy-into-table.html)을 호출합니다. 코드 조각은 다음과 같습니다.
+데이터를 Snowflake 테이블에 로드하기 위해 DataFrame에서 `copy_into_table()` 메소드를 사용하겠습니다. 이 메소드는 추론된 스키마(존재하지 않을 경우)를 사용하여 Snowflake에서 대상 테이블을 생성합니다. 그런 다음 고도로 최적화된 Snowflake [`COPY INTO <table>`명령](https://docs.snowflake.com/ko/sql-reference/sql/copy-into-table.html)을 호출합니다. 코드 조각은 다음과 같습니다.
 
 ```python
     df.copy_into_table("{}".format(tname))

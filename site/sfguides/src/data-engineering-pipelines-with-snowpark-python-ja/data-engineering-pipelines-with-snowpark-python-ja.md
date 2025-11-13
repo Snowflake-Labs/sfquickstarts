@@ -221,7 +221,7 @@ Snowflakeの非常に便利な機能の1つに、作業したいステージの�
 
 ### COPYによるデータの取り込み
 
-データをSnowflakeテーブルにロードするために、DataFrameに対して`copy_into_table()`メソッドを使用します。このメソッドは、推論されたスキーマ（存在しない場合）を使用してSnowflakeでターゲットテーブルを作成し、高度に最適化されたSnowflake `COPY INTO &lt;table&gt;`[コマンド](https://docs.snowflake.com/ja/sql-reference/sql/copy-into-table.html)を呼び出します。コードスニペットは次のとおりです。
+データをSnowflakeテーブルにロードするために、DataFrameに対して`copy_into_table()`メソッドを使用します。このメソッドは、推論されたスキーマ（存在しない場合）を使用してSnowflakeでターゲットテーブルを作成し、高度に最適化されたSnowflake `COPY INTO <table>`[コマンド](https://docs.snowflake.com/ja/sql-reference/sql/copy-into-table.html)を呼び出します。コードスニペットは次のとおりです。
 
 ```python
     df.copy_into_table("{}".format(tname))

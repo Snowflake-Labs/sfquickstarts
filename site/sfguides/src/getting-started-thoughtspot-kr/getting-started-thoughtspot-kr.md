@@ -611,7 +611,7 @@ import StoreSales from './Components/storesales'
 import About from './Components/about';
 ```
 
-그런 다음 `&lt;div className="App">` 요소 내에 라우팅 로직과 햄버거 메뉴 요소를 추가합니다.
+그런 다음 `<div className="App">` 요소 내에 라우팅 로직과 햄버거 메뉴 요소를 추가합니다.
 
 ```
 <div className="App">

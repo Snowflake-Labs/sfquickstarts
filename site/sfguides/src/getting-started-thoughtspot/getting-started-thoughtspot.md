@@ -702,7 +702,7 @@ import About from './Components/about';
 ```
 
 
-Then, within `&lt;div className="App">` element add our routing logic, and the hamburger menu component. 
+Then, within `<div className="App">` element add our routing logic, and the hamburger menu component. 
 
 
 ```
