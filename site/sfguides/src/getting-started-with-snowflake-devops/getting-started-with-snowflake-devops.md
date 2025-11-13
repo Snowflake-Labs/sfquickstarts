@@ -441,28 +441,11 @@ In order for your GitHub Actions workflow to connect to your Snowflake account y
 
 In GitHub, click on the “Settings” tab near the top of the page. From the Settings page, click on the “Secrets and variables” then “Actions” tab in the left hand navigation. The “Secrets” tab should be selected. For each secret listed below click on the green “New repository secret” and enter the name given below along with the appropriate value (adjusting as appropriate).
 
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWFLAKE_ACCOUNT</td>
-            <td>myaccount</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_USER</td>
-            <td>myusername</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_PRIVATE_KEY</td>
-            <td>contents of private key file (follow <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth">this guide</a> to setup key-pair auth)</td>
-        </tr>
-    </tbody>
-</table>
+| Secret name | Secret value |
+|-------------|--------------|
+| SNOWFLAKE_ACCOUNT | myaccount |
+| SNOWFLAKE_USER | myusername |
+| SNOWFLAKE_PRIVATE_KEY | contents of private key file (follow [this guide](https://docs.snowflake.com/en/user-guide/key-pair-auth) to setup key-pair auth) |
 
 > aside positive
 > Note: For more details on how to structure the account name in SNOWFLAKE_ACCOUNT secret, see the account name discussion in the [Snowflake Python Connector install guide](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-api#usage-notes-for-the-account-parameter-for-the-connect-method).

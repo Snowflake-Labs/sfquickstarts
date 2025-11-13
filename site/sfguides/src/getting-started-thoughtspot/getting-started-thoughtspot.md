@@ -44,26 +44,9 @@ Jump over to the [Snowflake Free Trial signup page](https://signup.snowflake.com
 A worksheet is a space where you can write SQL statements to interrogate data. We can use this to test our setup. First, we need to select the database and schema we want to use. Tap on the Context dropdown and select the following values:
 
 
-<table>
-  <tr>
-   <td><strong>Warehouse</strong>
-   </td>
-   <td>COMPUTE_WH(XS)
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Database</strong>
-   </td>
-   <td>SNOWFLAKE_SAMPLE_DATA
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Schema</strong>
-   </td>
-   <td>TPCDS_SF10TCL
-   </td>
-  </tr>
-</table>
+| **Warehouse** | **Database** | **Schema** |
+|---------------|--------------|------------|
+| COMPUTE_WH(XS) | SNOWFLAKE_SAMPLE_DATA | TPCDS_SF10TCL |
 
 ![alt_text](assets/image2.gif)
 
@@ -79,50 +62,15 @@ select s_store_name, s_hours, s_Manager, s_street_number, s_street_name, s_city,
 That’s it. You’ve set up your Snowflake instance. Throughout the tutorial we are going to use this store data within ThoughtSpot to analyse sales trends. Before we switch gears and set up ThoughtSpot, we want to note down a few configuration items which we will need to create the connection within ThoughtSpot. Take a note of the following items:
 
 
-<table>
-  <tr>
-   <td>Snowflake URL
-   </td>
-   <td>This is the first part of the snowflake instance URL, right before <code>.snowflakecomputing.</code> In the screenshot above, it is <code>mxa45427</code>. Yours will be different, but take a note of it here.
-   </td>
-  </tr>
-  <tr>
-   <td>Username
-   </td>
-   <td>This is your username assigned to you by Snowflake. Check your Activation email if you forgot it.
-   </td>
-  </tr>
-  <tr>
-   <td>Password
-   </td>
-   <td>The password you created upon signup
-   </td>
-  </tr>
-  <tr>
-   <td>Role
-   </td>
-   <td>In our tutorial we will use SYSADMIN
-   </td>
-  </tr>
-  <tr>
-   <td>Warehouse
-   </td>
-   <td>COMPUTE_WH
-   </td>
-  </tr>
-  <tr>
-   <td>Database
-   </td>
-   <td>SNOWFLAKE_SAMPLE_DATA
-   </td>
-  </tr>
-  <tr>
-   <td>Schema
-   </td>
-   <td>TPCDS_SF10TCL
-   </td>
-  </tr>
-</table>
+| Configuration | Value |
+|------|-------|
+| Snowflake URL | This is the first part of the snowflake instance URL, right before `.snowflakecomputing.` In the screenshot above, it is `mxa45427`. Yours will be different, but take a note of it here. |
+| Username | This is your username assigned to you by Snowflake. Check your Activation email if you forgot it. |
+| Password | The password you created upon signup |
+| Role | In our tutorial we will use SYSADMIN |
+| Warehouse | COMPUTE_WH |
+| Database | SNOWFLAKE_SAMPLE_DATA |
+| Schema | TPCDS_SF10TCL |
 
 
 
@@ -146,134 +94,28 @@ We will use three tables throughout this tutorial: store, item, and store_sales.
 Go ahead and map the following fields from each table.
 
 
-<table>
-  <tr>
-   <td><strong>Table</strong>
-   </td>
-   <td><strong>Field</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_store_sk
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_store_id
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_store_name
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_hours
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_Manager
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_street_number
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_street_name
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_city
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_county
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_state
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_country
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_item_sk
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_item_desc
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_size
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_color
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_product_name
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_item_sk
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_quantity
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_net_paid
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_store_sk
-   </td>
-  </tr>
-</table>
+| **Table** | **Field** |
+|-----------|-----------|
+| Store | s_store_sk |
+| Store | s_store_id |
+| Store | s_store_name |
+| Store | s_hours |
+| Store | s_Manager |
+| Store | s_street_number |
+| Store | s_street_name |
+| Store | s_city |
+| Store | s_county |
+| Store | s_state |
+| Store | s_country |
+| Item | i_item_sk |
+| Item | i_item_desc |
+| Item | i_size |
+| Item | i_color |
+| Item | i_product_name |
+| Store_sales | ss_item_sk |
+| Store_sales | ss_quantity |
+| Store_sales | ss_net_paid |
+| Store_sales | ss_store_sk |
 
 
 Once you have selected all the appropriate fields, tap Create Connection. To confirm you created everything, tap Data from the top menu, then Connections. You should see a tile like the one below.

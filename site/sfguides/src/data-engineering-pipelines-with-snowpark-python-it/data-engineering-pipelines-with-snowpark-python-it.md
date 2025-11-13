@@ -746,40 +746,14 @@ Perché il flusso di lavoro GitHub Actions sia in grado di connettersi al tuo ac
 
 Dal repository, fai clic sulla scheda `Settings` nella parte superiore della pagina. Dalla pagina Settings, fai clic su `Secrets and variables` e poi sulla scheda `Actions` nella barra di navigazione sulla sinistra. Dovrebbero essere selezionati i segreti `Actions`. Per ogni segreto elencato sotto, fai clic su `New repository secret` in alto a destra e inserisci il nome elencato sotto insieme al valore appropriato.
 
-<table>
-    <thead>
-        <tr>
-            <th>Nome del segreto</th>
-            <th>Valore del segreto</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWSQL_ACCOUNT</td>
-            <td>il tuo account</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_USER</td>
-            <td>il tuo nome utente</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_PWD</td>
-            <td>la tua password</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_ROLE</td>
-            <td>HOL_ROLE</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_WAREHOUSE</td>
-            <td>HOL_WH</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_DATABASE</td>
-            <td>HOL_DB</td>
-        </tr>
-    </tbody>
-</table>
+| Nome del segreto | Valore del segreto |
+|------------------|-------------------|
+| SNOWSQL_ACCOUNT | il tuo account |
+| SNOWSQL_USER | il tuo nome utente |
+| SNOWSQL_PWD | la tua password |
+| SNOWSQL_ROLE | HOL_ROLE |
+| SNOWSQL_WAREHOUSE | HOL_WH |
+| SNOWSQL_DATABASE | HOL_DB |
 
 > aside positive
 > 

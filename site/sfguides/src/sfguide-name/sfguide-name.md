@@ -117,19 +117,9 @@ for (statement 1; statement 2; statement 3) {
 </button>
 
 ### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
+| **The table header** | |
+|---------------------|-|
+| The table body | with two columns |
 
 ### Hyperlinking
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)

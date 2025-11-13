@@ -800,40 +800,14 @@ GitHubアクションワークフローがSnowflakeアカウントに接続で�
 
 レポジトリから、ページ上部付近にある「`Settings`」タブをクリックします。「設定」ページで「`Secrets and variables`」をクリックし、左側のナビゲーションで「`Actions`」タブをクリックします。`Actions`シークレットが選択されているはずです。以下の各シークレットについて、右上にある「`New repository secret`」をクリックし、下記の名前と適切な値（必要に応じて調整）を入力します。
 
-<table>
-    <thead>
-        <tr>
-            <th>シークレット名</th>
-            <th>シークレット値</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWSQL_ACCOUNT</td>
-            <td>myaccount</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_USER</td>
-            <td>myusername</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_PWD</td>
-            <td>mypassword</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_ROLE</td>
-            <td>HOL_ROLE</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_WAREHOUSE</td>
-            <td>HOL_WH</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_DATABASE</td>
-            <td>HOL_DB</td>
-        </tr>
-    </tbody>
-</table>
+| シークレット名 | シークレット値 |
+|----------------|----------------|
+| SNOWSQL_ACCOUNT | myaccount |
+| SNOWSQL_USER | myusername |
+| SNOWSQL_PWD | mypassword |
+| SNOWSQL_ROLE | HOL_ROLE |
+| SNOWSQL_WAREHOUSE | HOL_WH |
+| SNOWSQL_DATABASE | HOL_DB |
 > aside positive
 > 
 > **ヒント** - SNOWSQL_ACCOUNTのアカウント名の構成方法の詳細については、「[Snowflake Pythonコネクターインストールガイド](https://docs.snowflake.com/ja/user-guide/python-connector-install.html#step-2-verify-your-installation)」にあるアカウント名の説明を参照してください。

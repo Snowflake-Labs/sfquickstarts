@@ -44,26 +44,9 @@ author: Thoughtspot
 
 워크시트는 데이터를 얻기 위해 SQL 문을 작성할 수 있는 공간입니다. 이를 사용하여 설정을 테스트할 수 있습니다. 우선 사용하고자 하는 데이터베이스와 스키마를 선택해야 합니다. Context 드롭다운을 클릭하고 다음 값을 선택합니다.
 
-<table>
-  <tr>
-   <td><strong>Warehouse</strong>
-   </td>
-   <td>COMPUTE_WH(XS)
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Database</strong>
-   </td>
-   <td>SNOWFLAKE_SAMPLE_DATA
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Schema</strong>
-   </td>
-   <td>TPCDS_SF10TCL
-   </td>
-  </tr>
-</table>
+| **Warehouse** | **Database** | **Schema** |
+|---------------|--------------|------------|
+| COMPUTE_WH(XS) | SNOWFLAKE_SAMPLE_DATA | TPCDS_SF10TCL |
 
 ![alt_text](assets/image2.gif)
 
@@ -75,51 +58,15 @@ select s_store_name, s_hours, s_Manager, s_street_number, s_street_name, s_city,
 
 끝났습니다. 여러분의 Snowflake 인스턴스를 설정했습니다. 자습서를 진행하는 동안 ThoughtSpot 내에서 이 매장 데이터를 사용하여 매출 동향을 분석하겠습니다. 다음 단계로 이동하여 ThoughtSpot을 설정하기 전에 ThoughtSpot 내에서 연결을 생성하는 데 필요할 몇 가지 구성 항목을 기록하는 것이 좋습니다. 다음 항목을 기록합니다.
 
-<table>
-  <tr>
-   <td>Snowflake URL
-   </td>
-   <td>Snowflake 인스턴스 URL 중 <code>.snowflakecomputing</code> 바로 앞 부분입니다. 
-   예:) 위 스크린샷 같은 경우 <code>mxa45427</code> 입니다.
-   </td>
-  </tr>
-  <tr>
-   <td>Username
-   </td>
-   <td>Snowflake 사용자 이름입니다.
-   </td>
-  </tr>
-  <tr>
-   <td>Password
-   </td>
-   <td>Snowflake 사용자 비밀번호입니다.
-   </td>
-  </tr>
-  <tr>
-   <td>Role
-   </td>
-   <td>이번 튜토리얼에서는 <code>SYSADMIN</code>을 사용합니다.
-   </td>
-  </tr>
-  <tr>
-   <td>Warehouse
-   </td>
-   <td>COMPUTE_WH
-   </td>
-  </tr>
-  <tr>
-   <td>Database
-   </td>
-   <td>SNOWFLAKE_SAMPLE_DATA
-   </td>
-  </tr>
-  <tr>
-   <td>Schema
-   </td>
-   <td>TPCDS_SF10TCL
-   </td>
-  </tr>
-</table>
+|  |    |
+|--| -- | 
+| Snowflake URL | Snowflake 인스턴스 URL 중 `.snowflakecomputing` 바로 앞 부분입니다. 예:) 위 스크린샷 같은 경우 `mxa45427` 입니다. |
+| Username | Snowflake 사용자 이름입니다. |
+| Password | Snowflake 사용자 비밀번호입니다. |
+| Role | 이번 튜토리얼에서는 `SYSADMIN`을 사용합니다. |
+| Warehouse | COMPUTE_WH |
+| Database | SNOWFLAKE_SAMPLE_DATA |
+| Schema | TPCDS_SF10TCL |
 
 
 
@@ -141,134 +88,28 @@ select s_store_name, s_hours, s_Manager, s_street_number, s_street_name, s_city,
 
 각 테이블에서 다음 필드를 매핑합니다.
 
-<table>
-  <tr>
-   <td><strong>Table</strong>
-   </td>
-   <td><strong>Field</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_store_sk
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_store_id
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_store_name
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_hours
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_Manager
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_street_number
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_street_name
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_city
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_county
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_state
-   </td>
-  </tr>
-  <tr>
-   <td>Store
-   </td>
-   <td>s_country
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_item_sk
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_item_desc
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_size
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_color
-   </td>
-  </tr>
-  <tr>
-   <td>Item
-   </td>
-   <td>i_product_name
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_item_sk
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_quantity
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_net_paid
-   </td>
-  </tr>
-  <tr>
-   <td>Store_sales
-   </td>
-   <td>ss_store_sk
-   </td>
-  </tr>
-</table>
+| **Table** | **Field** |
+|-----------|-----------|
+| Store | s_store_sk |
+| Store | s_store_id |
+| Store | s_store_name |
+| Store | s_hours |
+| Store | s_Manager |
+| Store | s_street_number |
+| Store | s_street_name |
+| Store | s_city |
+| Store | s_county |
+| Store | s_state |
+| Store | s_country |
+| Item | i_item_sk |
+| Item | i_item_desc |
+| Item | i_size |
+| Item | i_color |
+| Item | i_product_name |
+| Store_sales | ss_item_sk |
+| Store_sales | ss_quantity |
+| Store_sales | ss_net_paid |
+| Store_sales | ss_store_sk |
 
 적절한 모든 필드를 선택했다면 Create Connection을 클릭합니다. 모든 것을 생성했는지 확인하기 위해 상단 메뉴에 있는 Data를 클릭한 다음 Connections를 클릭합니다. 아래와 같은 타일이 나타나야 합니다.
 
