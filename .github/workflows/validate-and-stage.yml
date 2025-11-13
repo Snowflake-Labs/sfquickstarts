@@ -159,11 +159,19 @@ jobs:
             all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           fi
 
+          # Count markdown files
+          if [ -z "$md_files" ]; then
+            md_file_count=0
+          else
+            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
+          fi
+
           echo "files_json=$files_arr" >> $GITHUB_OUTPUT
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
           echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
+          echo "md_file_count=$md_file_count" >> $GITHUB_OUTPUT
 
       - name: Check for large files
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -257,19 +265,23 @@ jobs:
             exit 0
           fi
           
-          invalid_count=$(echo "$objs" | jq '[ .[]
-            | if type=="object" and (.language|type)=="string"
+          # Filter to only include objects with invalid languages
+          invalid_objs=$(echo "$objs" | jq '[ .[]
+            | select(
+              if type=="object" and (.language|type)=="string"
               then (.language | ascii_downcase) as $l
-              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l))
-              | ( . == null )
+              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l)) == null
               else true
-            end
-          ] | map(select(.)) | length')
+              end
+            )
+          ]')
+          
+          invalid_count=$(echo "$invalid_objs" | jq 'length')
           
           if [ "$invalid_count" -ne 0 ]; then
             echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
-            echo "$objs" | jq . >&2
-            jq -n --argjson objs "$objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
+            echo "$invalid_objs" | jq . >&2
+            jq -n --argjson objs "$invalid_objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
             exit 1
           else
             echo "Language validation passed"
@@ -277,7 +289,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (failure() || steps.check_large_files.outcome == 'failure') && github.event.pull_request.base.repo.full_name == github.repository
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         uses: actions/github-script@v7
         env:
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
@@ -393,21 +405,33 @@ jobs:
           fi
 
       - name: Call Workato staging webhook
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 4
         env:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
         run: |
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
-            --arg pr "${{ github.event.pull_request.number }}" \
-            --arg sha "${{ github.event.pull_request.head.sha }}" \
+            --arg pr '${{ github.event.pull_request.number }}' \
+            --arg sha '${{ github.event.pull_request.head.sha }}' \
             --arg env "staging" \
-            --arg qname "${{ steps.detect.outputs.quickstart_name }}" \
+            --arg qname '${{ steps.detect.outputs.quickstart_name }}' \
             --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
             '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
-          response=$(curl -sS -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
-          echo "$response" > workato-response.json
-          url=$(jq -r '.urls.staging // .url // empty' workato-response.json)
-          if [ -n "$url" ]; then echo "staging_url=$url" >> $GITHUB_OUTPUT; fi
+          echo "Triggering webhook..."
+          response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2) || {
+            exit_code=$?
+            echo "❌ Webhook call failed with exit code: $exit_code"
+            exit $exit_code
+          }
+          http_code=$(echo "$response" | tail -n1)
+          response_body=$(echo "$response" | sed '$d')
+          echo "HTTP Status Code: $http_code"
+          echo "Response body:"
+          echo "$response_body" | jq . 2>/dev/null || echo "$response_body"
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "✅ Webhook call succeeded. Please wait a few minutes for the staging environment to produce a preview URL."
+          else
+            echo "⚠️ Webhook returned non-2xx status code: $http_code"
+          fi
