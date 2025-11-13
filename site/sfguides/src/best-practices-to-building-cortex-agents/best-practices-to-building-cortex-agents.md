@@ -118,7 +118,7 @@ Each [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/ove
 
 **Resources for semantic views:**
 -   🎥 [Watch the hands-on lab](https://www.snowflake.com/en/webinars/virtual-hands-on-lab/from-sql-to-agentic-analytics-building-a-semantic-layer-with-ai-to-empower-snowflake-intelligence-2025-11-20/)
--   📖 Get started with semantic views](https://medium.com/snowflake/getting-started-with-snowflake-semantic-view-7eced29abe6f)
+-   📖 [Get started with semantic views](https://medium.com/snowflake/getting-started-with-snowflake-semantic-view-7eced29abe6f)
 
 ## Orchestration instructions (agent level)
 
