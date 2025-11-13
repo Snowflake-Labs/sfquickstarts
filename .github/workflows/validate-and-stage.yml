@@ -431,7 +431,7 @@ jobs:
           echo "Response body:"
           echo "$response_body" | jq . 2>/dev/null || echo "$response_body"
           if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-            echo "✅ Webhook call succeeded"
+            echo "✅ Webhook call succeeded. Please wait a few minutes for the staging environment to produce a preview URL."
           else
             echo "⚠️ Webhook returned non-2xx status code: $http_code"
           fi
