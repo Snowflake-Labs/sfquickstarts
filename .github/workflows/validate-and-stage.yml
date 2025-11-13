@@ -285,7 +285,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (failure() || steps.check_large_files.outcome == 'failure') 
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         uses: actions/github-script@v7
         env:
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
