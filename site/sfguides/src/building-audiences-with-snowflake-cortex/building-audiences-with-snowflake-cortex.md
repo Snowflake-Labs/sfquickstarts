@@ -2,11 +2,11 @@ author: Luke Ambrosetti, Dureti Shemsi
 id: building-audiences-with-snowflake-cortex
 language: en
 summary: Build intelligent, industry-specific Cortex Agents that enable natural language audience building and customer analytics across Retail, Financial Services, and Gaming verticals.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cortex, AI, ML, Cortex Analyst, Customer Analytics, Marketing, Retail, Financial Services, Gaming
+tags: Getting Started, AI, Machine Learning, Cortex Analyst, Snowflake Intelligence, Customer Analytics, Marketing, Retail, Financial Services, Gaming
 
 # Building Audiences with Snowflake Cortex
 
@@ -50,9 +50,9 @@ Three fully functional Cortex Agents that can:
 
 Navigate to **Projects → Workspaces** in Snowsight and create a new SQL worksheet. Copy the complete SQL script below and execute all statements by clicking **▶ Run All** or pressing `Ctrl+Shift+Enter`.
 
-> aside positive
+> NOTE:
 > 
-> **Note**: The script uses `accountadmin` role for initial setup and automatically loads sample data from Snowflake's public S3 bucket.
+> The script uses `accountadmin` role for initial setup and automatically loads sample data from Snowflake's public S3 bucket.
 
 ```sql
 -- ============================================================================
