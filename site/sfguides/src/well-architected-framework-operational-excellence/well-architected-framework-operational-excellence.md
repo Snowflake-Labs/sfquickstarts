@@ -430,10 +430,10 @@ automation scripts and pipelines.
 
 | Focus Area | Activities |
 |---|---|
-| Infrastructure as Code (IaC) | - Evaluate and select an IaC tool (e.g., Terraform, Schemachange).<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
-| CI/CD for data & applications | - Choose CI/CD tools (e.g., GitHub Actions, Jenkins, GitLab CI) that integrate with your code repositories.<br>- Define a branching and deployment strategy (e.g., GitFlow) for promoting changes from development to production. |
-| Observability & monitoring | - Identify key metrics for cost, performance, and security that need to be tracked. Evaluate tools for collecting and visualizing data from the Snowflake `ACCOUNT_USAGE` schema.<br>- Define initial alert thresholds for critical events like high credit usage or long-running queries. |
-| Automated governance | - Define your RBAC model and map business roles to Snowflake roles.<br>- Document your data classification standards and corresponding security controls (e.g., masking policies for PII). |
+| Infrastructure as Code (IaC) | - Develop initial IaC modules to manage core objects: roles, users, warehouses, and databases.<br>- Create a sandbox environment entirely provisioned through your IaC scripts to validate the process. |
+| CI/CD for data & applications | - Build a starter CI/CD pipeline for a single data engineering (e.g., dbt) or Snowpark project.<br>- This pipeline should automate code linting, unit testing, and deployment to a development environment. |
+| Observability & monitoring | - Develop scripts or configure tools to automatically pull data from `ACCOUNT_USAGE` into a monitoring dashboard.<br>- Configure basic automated alerts for budget overruns (via resource monitors) and warehouse contention. |
+| Automated governance | - Write scripts to provision your defined RBAC model in Snowflake. <br>- Implement initial dynamic data masking policies on a non-production table containing sensitive data. |
 
 ### Operate
 
@@ -442,10 +442,10 @@ for day-to-day activities.
 
 | Focus Area | Activities |
 |---|---|
-| Infrastructure as Code (IaC) | - Develop initial IaC modules to manage core objects: roles, users, warehouses, and databases.<br>- Create a sandbox environment entirely provisioned through your IaC scripts to validate the process. |
-| CI/CD for data & applications | - Build a starter CI/CD pipeline for a single data engineering (e.g., dbt) or Snowpark project.<br>- This pipeline should automate code linting, unit testing, and deployment to a development environment. |
-| Observability & monitoring | - Develop scripts or configure tools to automatically pull data from `ACCOUNT_USAGE` into a monitoring dashboard.<br>- Configure basic automated alerts for budget overruns (via resource monitors) and warehouse contention. |
-| Automated governance | - Write scripts to provision your defined RBAC model in Snowflake.<br>- Implement initial dynamic data masking policies on a non-production table containing sensitive data. |
+| Infrastructure as Code (IaC) | - Use your IaC repository and pull-request workflow as the sole method for making environmental changes.<br>- Run periodic checks to detect any manual changes ("drift") that deviate from the code-defined state. |
+| CI/CD for data & applications | - All code changes for data pipelines, AI models, and applications are deployed to production via the automated CI/CD pipeline.<br>- Use automated testing gates to prevent regressions from reaching production.<br>- Implement fix forward or rollback for defects. |
+| Observability & monitoring | - Regularly review automated cost and performance dashboards.<br>- Integrate automated alerts with your team's communication channels (e.g., Slack, PagerDuty). |
+| Automated governance | - Run automated quarterly access reviews and entitlement reports.<br>- Automate the process of granting and revoking access based on requests from your identity provider (e.g., Okta, Azure AD) via SCIM. |
 
 
 ### Improve

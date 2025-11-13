@@ -1,12 +1,12 @@
-author: Dureti Shemsi
+author: Doris Lee, Dureti Shemsi
 language: en
 id: intro-to-online-feature-store-in-snowflake
 summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Hidden
-feedback link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/issues
-tags: Model Development, Snowflake ML Functions, Snowpark, Dynamic Tables, AI, Data Engineering, Snowpark Container Services, Applied Analytics
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 
 # Introduction to Online Feature Store in Snowflake
 
@@ -62,6 +62,9 @@ USE ROLE ACCOUNTADMIN;
 SET USERNAME = (SELECT CURRENT_USER());
 SELECT $USERNAME;
 
+-- Set query tag for tracking
+ALTER SESSION SET QUERY_TAG = '{"origin":"sf_sit-is", "name":"sfguide_intro_to_online_feature_store", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
+
 -- ============================================================================
 -- SECTION 1: CREATE ROLE AND GRANT ACCOUNT-LEVEL PERMISSIONS
 -- ============================================================================
@@ -73,12 +76,11 @@ GRANT ROLE FS_DEMO_ROLE TO USER identifier($USERNAME);
 -- Grant account-level permissions
 GRANT CREATE DATABASE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT IMPORT SHARE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SECTION 2: SWITCH TO ROLE AND CREATE RESOURCES
@@ -111,22 +113,43 @@ CREATE OR REPLACE STAGE FS_DEMO_ASSETS
     DIRECTORY = (ENABLE = TRUE)
     COMMENT = 'Stage for storing model assets and data files';
 
--- ============================================================================
--- SECTION 3: GIT INTEGRATION FOR WORKSPACES
--- ============================================================================
+-- Grant full privileges on database and schema to the role
+GRANT ALL PRIVILEGES ON DATABASE FEATURE_STORE_DEMO TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON WAREHOUSE FS_DEMO_WH TO ROLE FS_DEMO_ROLE;
 
--- Create API integration with GitHub using Snowflake GitHub App
-CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_FS_DEMO
-    API_PROVIDER = git_https_api
-    API_ALLOWED_PREFIXES = ('https://github.com/')
-    API_USER_AUTHENTICATION = (
-        TYPE = snowflake_github_app
-    )
-    ENABLED = TRUE
-    COMMENT = 'Git integration for Feature Store demo';
+-- Grant future privileges to handle dynamically created objects
+GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE DYNAMIC TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE STAGES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
--- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT (OPTIONAL)
+-- SECTION 3: NETWORK RULES AND EXTERNAL ACCESS FOR NOTEBOOKS
+-- ============================================================================
+
+-- Create network rule to allow all external access (required for notebooks)
+CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = ('0.0.0.0:443', '0.0.0.0:80');
+
+-- Switch back to ACCOUNTADMIN to create integration
+USE ROLE ACCOUNTADMIN;
+
+-- Create external access integration (requires ACCOUNTADMIN)
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION ALLOW_ALL_INTEGRATION
+    ALLOWED_NETWORK_RULES = (FEATURE_STORE_DEMO.TAXI_FEATURES.ALLOW_ALL_RULE)
+    ENABLED = TRUE;
+
+-- Grant usage on the external access integration to FS_DEMO_ROLE
+GRANT USAGE ON INTEGRATION ALLOW_ALL_INTEGRATION TO ROLE FS_DEMO_ROLE;
+
+-- Switch back to FS_DEMO_ROLE
+USE ROLE FS_DEMO_ROLE;
+
+-- ============================================================================
+-- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT
 -- ============================================================================
 
 -- Create compute pool for SPCS model serving
@@ -141,6 +164,10 @@ CREATE COMPUTE POOL IF NOT EXISTS trip_eta_prediction_pool
 -- Grant usage on compute pool
 GRANT USAGE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
 GRANT OPERATE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
+
+-- ============================================================================
+-- SETUP COMPLETE
+-- ============================================================================
 ```
 
 This will create:
@@ -149,6 +176,7 @@ This will create:
 - A database: `FEATURE_STORE_DEMO`
 - A schema: `TAXI_FEATURES`
 - A stage: `FS_DEMO_ASSETS` 
+- Network rule and external access integration for notebooks
 - Compute pool for SPCS model deployment
 
 The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
@@ -171,6 +199,20 @@ Download the notebook from [this link](https://github.com/Snowflake-Labs/sfguide
    - **Compute Pool**: `trip_eta_prediction_pool`
 
 The notebook will open and be ready to run.
+
+### Add External Access to Notebook
+
+After creating the notebook, you need to configure external access to allow the notebook to install Python packages and access external resources required by Snowflake ML libraries.
+
+1. Open the notebook in Snowsight
+2. Click the **three dots menu** (⋮) in the top right
+3. Select **Notebook settings**
+4. Under **External Access Integrations**, click **+ External Access Integration**
+5. Select `ALLOW_ALL_INTEGRATION` from the dropdown
+6. Click **Save** to apply changes
+
+> NOTE:
+> The `ALLOW_ALL_INTEGRATION` external access integration was created by the setup script and allows the notebook to install Python packages and access external APIs required by Snowflake ML libraries.
 
 ### Load Sample Data
 
@@ -380,8 +422,8 @@ online_df = fs.read_feature_view(
 online_df.show()
 ```
 
-> aside positive
-> **Note**: The first refresh may take 10-30 seconds. If you see "not refreshed yet" error, wait a moment and re-run the cell.
+> NOTE:
+> The first refresh may take 10-30 seconds. If you see "not refreshed yet" error, wait a moment and re-run the cell.
 
 <!-- ------------------------ -->
 ## Train ML Model
@@ -568,10 +610,10 @@ Congratulations! You've successfully built an end-to-end ML workflow using Snowf
 
 ### Related Resources
 
+- [GitHub Repository - Complete Code and Notebooks](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake)
 - [Snowflake Feature Store Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake ML for Python](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake)
-- [Online Feature Tables Documentation]()
+- [Online Feature Tables Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/create-and-serve-online-features-python)
 - [Snowpark ML Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 
 ### Next Steps

@@ -1,7 +1,7 @@
 id: getting-started-with-snowflake-mcp-server
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: This guide outlines the process for getting started with Snowflake MCP Server.
+summary: This guide outlines the process for getting started with Managed Snowflake MCP Server.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
@@ -24,8 +24,6 @@ The Snowflake MCP Server allows AI agents to securely retrieve data from Snowfla
 **Why It Matters**
 
 MCP Server on Snowflake simplifies the application architecture and eliminates the need for custom integrations. Enterprises can expedite delivery of generative AI applications with richer insights on a standards based architecture and a robust governance model with the Snowflake AI data cloud.
-
-*NOTE: Snowflake MCP Server is in Public Preview as of October 2025.*
 
 ![MCP](assets/mcp.png)
 
@@ -53,11 +51,11 @@ A Snowflake MCP Server that intelligently responds to questions by reasoning ove
 
 * In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
-### Create Personal Access Token
+### Personal Access Token
 
 Create a [Personal Access Token (PAT)](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) **for your role** and make a note/local copy of it. (You will need to paste it later.)
 
-### Create Cortex Search Service
+### Cortex Search Service
 
 This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
@@ -72,9 +70,17 @@ This tool allows the agent to search and retrieve information from unstructured 
     - Select columns to include in the service: Select all
     - Configure your Search Service: Keep default values and select **DASH_WH_S** for "Warehouse for indexing"
 
+### Cortex Analyst - Semantic View
+
+This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
+
+* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Analyst**](https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server)
+* On the top right, click on **Create new** down arrow and select **Upload your YAML file** 
+* Upload [FINANCIAL_SERVICES_ANALYTICS.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/FINANCIAL_SERVICES_ANALYTICS.yaml) | Select database, schema, and stage: **DASH_MCP_DB.DATA** >> **SEMANTIC_MODELS** 
+* On the top right, click on **Save** 
+
 <!-- ------------------------ -->
 ## Snowflake MCP Server
-
 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
@@ -86,36 +92,24 @@ To create the Snowflake MCP server, run the following in the same SQL worksheet.
 create or replace mcp server dash_mcp_server from specification
 $$
 tools:
-  - name: "Support Tickets Search Service"
-    identifier: "dash_mcp_db.data.support_tickets"
+  - name: "Finance & Risk Assessment Semantic View"
+    identifier: "DASH_MCP_DB.DATA.FINANCIAL_SERVICES_ANALYTICS"
+    type: "CORTEX_ANALYST_MESSAGE"
+    description: "Comprehensive semantic model for financial services analytics, providing unified business definitions and relationships across customer data, transactions, marketing campaigns, support interactions, and risk assessments."
+    title: "Financial And Risk Assessment"
+  - name: "Support Tickets Cortex Search"
+    identifier: "DASH_MCP_DB.DATA.SUPPORT_TICKETS"
     type: "CORTEX_SEARCH_SERVICE_QUERY"
-    description: "A tool that performs keyword and vector search over support tickets and call transcripts."
-    title: "Support Tickets"
+    description: "A tool that performs keyword and vector search over unstructured support tickets data."
+    title: "Support Tickets Cortex Search"
+  - name: "SQL Execution Tool"
+    type: "SYSTEM_EXECUTE_SQL"
+    description: "A tool to execute SQL queries against the connected Snowflake database."
+    title: "SQL Execution Tool"
 $$;
 ```
 
-Now let's try this out in Cursor, but note that you should be able to use other clients like CrewAI, Claude by Anthropic, Devin by Cognition, and Agentforce by Salesforce.
-
-#### Cursor
-
-In Cursor, open or create `mcp.json` located at the root of your project and add the following. NOTE: Replace **<YOUR-ORG-YOUR-ACCOUNT>** and **<YOUR-PAT-TOKEN>** with your values.
-
-```json
-{
-    "mcpServers": {
-      "Snowflake": {
-        "url": "https://<YOUR-ORG-YOUR-ACCOUNT>.snowflakecomputing.com/api/v2/databases/dash_mcp_db/schemas/data/mcp-servers/dash_mcp_server",
-            "headers": {
-              "Authorization": "Bearer <YOUR-PAT-TOKEN>"
-            }
-      }
-    }
-}
-```
-
-Then, select **Cursor** -> **Settings** -> **Cursor Settings** -> **MCP** (or **Tools & MCP**) and you should see **Snowflake** under **Installed Servers**. 
-
-NOTE: If it continues to say "Loading tools" running the following `curl` command to test your connection.
+Before proceeding, test the connection using `curl` to make sure your account URL/MCP server endpoint and PAT are correct. NOTE: Replace **<YOUR-ORG-YOUR-ACCOUNT>** and **<YOUR-PAT-TOKEN>** with your values.
 
 ```curl
 curl -X POST "https://<YOUR-ORG-YOUR-ACCOUNT>.snowflakecomputing.com/api/v2/databases/dash_mcp_db/schemas/data/mcp-servers/dash_mcp_server" \
@@ -130,145 +124,157 @@ curl -X POST "https://<YOUR-ORG-YOUR-ACCOUNT>.snowflakecomputing.com/api/v2/data
   }'
 ```
 
-### Q&A
+After running this command, you should see the list of configured tools as shown below. If not, make sure your account and PAT are correct.
 
-Assuming you're able to see the tool **Support_Tickets_Search_Service** under newly installed **Snowflake** MCP server, let's chat! Start a new chat in Cursor and set your `mcp.json` as context to ask the following questions.
-
-#### Q1. Can you summarize the overall sentiments based on the support calls?
-
-In a few moments, you should see a response similar to this. 
-
-*NOTE: The response may not be the exact same.*
-
-```code
-Based on my analysis of the support tickets data, here's a comprehensive summary of the overall sentiments from support calls:
-Overall Sentiment Summary
-
-The support call data reveals three distinct sentiment categories with varying customer experiences:
-
-🟢 Positive Sentiments (~35-40% of feedback)
-Key Characteristics:
-High praise for agent professionalism: Customers specifically commend agents who are "professional, knowledgeable, and genuinely cared about helping"
-Problem resolution satisfaction: Quick resolution of complex issues (e.g., account balance discrepancies, wire transfer problems)
-Communication excellence: Agents keeping customers informed throughout the process
-Persistence and dedication: Support staff staying on calls until complete resolution
-Representative feedback:
-"Outstanding customer care!"
-"They investigated thoroughly and found the missing deposit"
-"The agent stayed on the line until everything was resolved"
-
-🔴 Negative Sentiments (~30-35% of feedback)
-Major Pain Points:
-Long wait times: Customers reporting being on hold for over an hour
-Multiple transfers: Frustration with being transferred 3+ times without resolution
-Agent unprofessionalism: Reports of rude, dismissive, or annoyed agents
-Account issues: Unexpected account freezes causing public embarrassment
-Poor communication: Agents unable to explain problems or rushing through explanations
-Representative feedback:
-"Completely unprofessional"
-"I've been transferred three times already and still no resolution"
-"The embarrassment was terrible and the agent couldn't explain why it happened"
-
-🟡 Neutral/Informational (~25-30% of feedback)
-Characteristics:
-Routine inquiries: Questions about interest rates, account tiers, balance requirements
-Straightforward transactions: Basic information requests handled efficiently
-No strong emotional response: Professional but unremarkable interactions
-Representative feedback:
-"Everything was straightforward"
-"The agent provided the information and explained the different account tiers"
-
-Key Insights
-Bimodal Distribution: Customer sentiment tends to be either very positive or very negative, with fewer neutral experiences
-Agent Training Impact: The difference between positive and negative experiences often comes down to individual agent skills and approach
-Process Issues: System problems (account access, multiple transfers) contribute significantly to negative sentiment
-Resolution Speed: Quick, thorough problem-solving generates the strongest positive feedback
-
-Recommendations
-Focus on reducing wait times and transfer frequency
-Enhance agent training on communication and problem-solving skills
-Improve system reliability to prevent unexpected account issues
-Standardize the excellent service that generates positive feedback across all interactions
-
-The data suggests a support organization with high potential but inconsistent execution, where exceptional service exists alongside significant operational challenges.
+```json
+{
+  "jsonrpc" : "2.0",
+  "id" : 12345,
+  "result" : {
+    "tools" : [ {
+      "name" : "Finance & Risk Assessment Semantic View",
+      "description" : "Comprehensive semantic model for financial services analytics, providing unified business definitions and relationships across customer data, transactions, marketing campaigns, support interactions, and risk assessments.",
+      "title" : "Financial And Risk Assessment",
+      "inputSchema" : {
+        "type" : "object",
+        "description" : "A message and additional parameters for Cortex Analyst.",
+        "properties" : {
+          "message" : {
+            "description" : "The user's question.",
+            "type" : "string"
+          }
+        },
+        "required" : [ "message" ]
+      }
+    }, {
+      "name" : "Support Tickets Cortex Search",
+      "description" : "A tool that performs keyword and vector search over unstructured support tickets data.",
+      "title" : "Support Tickets Cortex Search",
+      "inputSchema" : {
+        "type" : "object",
+        "description" : "A search query and additional parameters for search.",
+        "properties" : {
+          "query" : {
+            "description" : "Unstructured text query.",
+            "type" : "string"
+          },
+          "columns" : {
+            "description" : "List of columns to return.",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "filter" : {
+            "description" : "Filter query. Cortex Search supports filtering on the ATTRIBUTES columns specified in the CREATE CORTEX SEARCH SERVICE command.\nCortex Search supports four matching operators:\n1. TEXT or NUMERIC equality: @eq\n2. ARRAY contains: @contains\n3. NUMERIC or DATE/TIMESTAMP greater than or equal to: @gte\n4. NUMERIC or DATE/TIMESTAMP less than or equal to: @lte\nThese matching operators can be composed with various logical operators:\n- @and\n- @or\n- @not\nThe following usage notes apply:\n  Matching against NaN ('not a number') values in the source query are handled as\n  described in Special values. Fixed-point numeric values with more than 19 digits (not\n  including leading zeroes) do not work with @eq, @gte, or @lte and will not be returned\n  by these operators (although they could still be returned by the overall query with the\n  use of @not).\nTIMESTAMP and DATE filters accept values of the form: YYYY-MM-DD and, for timezone\naware dates: YYYY-MM-DD+HH:MM. If the timezone offset is not specified, the date is interpreted in UTC.\nThese operators can be combined into a single filter object.\nExample:\nFiltering on rows where NUMERIC column numeric_col is between 10.5 and 12.5 (inclusive):\n  { \"@and\": [\n    { \"@gte\": { \"numeric_col\": 10.5 } },\n    { \"@lte\": { \"numeric_col\": 12.5 } }\n  ]}\n",
+            "type" : "object"
+          },
+          "limit" : {
+            "description" : "Max number of results to return.",
+            "type" : "integer",
+            "default" : 10
+          }
+        },
+        "required" : [ "query" ]
+      }
+    }, {
+      "name" : "SQL Execution Tool",
+      "description" : "A tool to execute SQL queries against the connected Snowflake database.",
+      "title" : "SQL Execution Tool",
+      "inputSchema" : {
+        "type" : "object",
+        "description" : "Tool to execute a SQL query.",
+        "properties" : {
+          "sql" : {
+            "description" : "Single SQL query to execute.",
+            "type" : "string"
+          }
+        }
+      }
+    } ]
+  }
+}
 ```
 
-#### Q2. Which support categories would benefit most from automated responses based on transcript analysis?
+Now let's try this out in Cursor, but note that you should be able to use other clients like CrewAI, Claude by Anthropic, Devin by Cognition, and Agentforce by Salesforce.
 
-In a few moments, you should see a response similar to this.
+#### Cursor
 
-*NOTE: The response may not be the exact same.*
+In Cursor, open or create `mcp.json` located at the root of your project and add the following. NOTE: Replace **<YOUR-ORG-YOUR-ACCOUNT>** and **<YOUR-PAT-TOKEN>** with your values.
 
-```code
-Based on my comprehensive analysis of the support call transcripts, here are the support categories that would benefit most from automated responses:
-
-🟢 High Automation Potential (70-90% automation success rate)
-
-1. Account Balance & Transaction Inquiries
-Evidence: Multiple calls with identical patterns: "I called to check my current account balance and recent transaction history. The agent verified my identity and provided the requested information."
-Automation Strategy:
-Automated identity verification via PIN/security questions
-Real-time balance lookup from banking systems
-Transaction history delivery via voice or SMS
-Estimated Impact: Reduces call volume by 15-20%
-
-2. Interest Rates & Product Information
-Evidence: "I'm calling to inquire about the current interest rates for savings accounts. The agent provided the information and explained the different account tiers."
-Automation Strategy:
-Dynamic rate lookup from current rate tables
-Automated explanation of account tiers and requirements
-Minimum balance and fee information delivery
-Estimated Impact: Reduces call volume by 10-15%
-
-3. Basic Account Information
-Evidence: Frequent requests for routing numbers, branch locations, hours
-Automation Strategy:
-Location-based branch finder
-Automated routing number delivery after identity verification
-Business hours and contact information
-Estimated Impact: Reduces call volume by 8-12%
-
-4. Standard Check Orders
-Evidence: "I need to order checks for my checking account. The representative took my order and confirmed the delivery address."
-Automation Strategy:
-Automated order processing with address confirmation
-Style selection through interactive menu
-Delivery timeline and cost information
-Estimated Impact: Reduces call volume by 5-8%
-
-🟡 Medium Automation Potential (40-60% automation success rate)
-
-5. Lost/Stolen Card Replacement
-Evidence: "I called to report a lost debit card and request a replacement. The agent immediately canceled the old card and ordered a new one."
-Automation Strategy:
-Automated card cancellation after identity verification
-Replacement card ordering with address confirmation
-Temporary card number provision for immediate use
-Escalation: Complex fraud cases require human intervention
-
-6. Simple Fee Inquiries
-Evidence: Complaints about unexpected fees, but also straightforward fee structure questions
-Automation Strategy:
-Automated fee schedule delivery
-Account-specific fee history
-Escalation: Fee disputes require human review
-
-🔴 Low Automation Potential (Requires Human Intervention)
-
-7. Transaction Disputes & Fraud
-Evidence: "Thank you so much for your help today! I was really worried about the unauthorized transaction, but you walked me through the dispute process clearly."
-Why Human Required:
-Complex investigation needed
-Emotional support required
-Legal compliance requirements
-Multi-step verification processes
+```json
+{
+    "mcpServers": {
+      "Snowflake MCP Server": {
+        "url": "https://<YOUR-ORG-YOUR-ACCOUNT>.snowflakecomputing.com/api/v2/databases/dash_mcp_db/schemas/data/mcp-servers/dash_mcp_server",
+            "headers": {
+              "Authorization": "Bearer <YOUR-PAT-TOKEN>"
+            }
+      }
+    }
+}
 ```
 
-> NOTE: Feel free to explore the transcripts in FACT_SUPPORT_TICKETS table and try out other prompts.
+Then, select **Cursor** -> **Settings** -> **Cursor Settings** -> **Tools & MCP** and you should see **Snowflake MCP Server** under **Installed Servers**.
+
+### Q&A in Cursor
+
+Assuming you're able to see the tools under newly installed **Snowflake MCP Server**, let's chat! Start a new chat in Cursor and set your `mcp.json` as context to ask the following sample questions.
+
+#### Q1. Show me the results for risk profile distribution across customer segments with transaction volumes. Include the number of customers, transaction counts, and average transactions per customer for each segment and risk profile combination.
+
+#### Q2. What is the average customer lifetime value by region for customers with Low risk profile?
+
+#### Q3. What is the risk profile distribution across customer segments and their correlation with transaction volumes?
+
+#### Q4. Can you summarize the overall sentiments based on the support calls?
+
+#### Q5. Which support categories would benefit most from automated responses based on transcript analysis?
+
+### Optional -- Agent Calling
+
+To see how you can call agent(s) that you have access to, follow these steps. 
+
+* [Create an agent for Snowflake Documentation](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/). 
+
+> NOTE: You may also use an existing agent that you have access to.
+
+* Recreate the Snowflake MCP Server as follows. Notice new `type: "CORTEX_AGENT_RUN"` added at the end.
+
+```sql
+create or replace mcp server dash_mcp_server from specification
+$$
+tools:
+  - name: "Finance & Risk Assessment Semantic View"
+    identifier: "DASH_MCP_DB.DATA.FINANCIAL_SERVICES_ANALYTICS"
+    type: "CORTEX_ANALYST_MESSAGE"
+    description: "Comprehensive semantic model for financial services analytics, providing unified business definitions and relationships across customer data, transactions, marketing campaigns, support interactions, and risk assessments."
+    title: "Financial And Risk Assessment"
+  - name: "Support Tickets Cortex Search"
+    identifier: "DASH_MCP_DB.DATA.SUPPORT_TICKETS"
+    type: "CORTEX_SEARCH_SERVICE_QUERY"
+    description: "A tool that performs keyword and vector search over unstructured support tickets data."
+    title: "Support Tickets Cortex Search"
+  - name: "SQL Execution Tool"
+    type: "SYSTEM_EXECUTE_SQL"
+    description: "A tool to execute SQL queries against the connected Snowflake database."
+    title: "SQL Execution Tool"
+  - name: "Snowflake Documentation Agent"
+    identifier: "SNOWFLAKE_INTELLIGENCE.AGENTS.SNOWFLAKE_DOCUMENTATION"
+    type: "CORTEX_AGENT_RUN"
+    description: "An agent that performs keyword and vector search over Snowflake Documentation."
+    title: "Snowflake Documentation"
+$$;
+```
+
+* Ask questions that will be routed to `Snowflake_Documentation_Agent`
+
+#### Q1. How do I create an agent?
+
+#### Q2. What are virtual warehouses in Snowflake, and how do I properly size them?
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-
 
 Congratulations! You've successfully created a Snowflake MCP Server that intelligently responds to questions by reasoning over data from within Cursor.
 
