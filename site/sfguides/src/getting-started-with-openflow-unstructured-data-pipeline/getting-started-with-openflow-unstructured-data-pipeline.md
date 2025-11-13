@@ -5,12 +5,11 @@ summary: Getting Started with Openflow Unstructured Data Pipeline using Google D
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline/issues>
-authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
+author: Kamesh Sampath
 
 # Getting Started with Openflow Unstructured Data Pipeline
 <!-- ------------------------ -->
 ## Overview
-
 
 This demo showcases how to transform Google Drive business documents into actionable strategic intelligence using Snowflake's unstructured data processing capabilities.
 
@@ -41,7 +40,7 @@ Here is a summary of what you will be able to learn in each step by following th
 
 [Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about) is Snowflake's managed service for building and running data pipelines in [Snowpark Container Services (SPCS)](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview). It provides pre-built connectors and processing capabilities that make it easy to ingest, transform, and analyze data from various sources including unstructured documents.
 
-![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
+![Openflow Snowflake Deployments Overview](assets/openflow_spcs_overview.png)
 
 **Key Benefits**:
 
@@ -111,7 +110,6 @@ Before starting, ensure you have:
 
 <!-- ------------------------ -->
 ## Setup Environment
-
 
 ### Clone the QuickStart Repository
 
@@ -269,7 +267,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION festival_ops_access_integration
     -- , OPENFLOW_FESTIVAL_DEMO.NETWORKS.your_workspace_domain_network_rule
   )
   ENABLED = TRUE
-  COMMENT = 'Used for Openflow SPCS runtime to access Google Drive';
+  COMMENT = 'Used for Openflow Snowflake Deployments runtime to access Google Drive';
 
 -- Verify the external access integration was created with correct settings
 DESC EXTERNAL ACCESS INTEGRATION festival_ops_access_integration;
@@ -293,8 +291,8 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 
 > **NOTE:**
 >
-> - The `OPENFLOW_ADMIN` role is created automatically during Openflow SPCS deployment setup
-> - **No compute pools needed** - Openflow SPCS manages compute resources automatically  
+> - The `OPENFLOW_ADMIN` role is created automatically during Openflow Snowflake Deployment setup
+> - **No compute pools needed** - Openflow Snowflake Deployments manages compute resources automatically  
 > - **No manual stages or tables** - All document storage objects are automatically created by the Openflow connector
 > - SQL snippets available in `sql/network.sql` in the repository
 
@@ -303,23 +301,22 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 <!-- ------------------------ -->
 ## Openflow Configuration
 
+This section guides you through setting up Openflow Snowflake Deployments infrastructure and creating a runtime for the Festival Operations document pipeline.
 
-This section guides you through setting up Openflow SPCS infrastructure and creating a runtime for the Festival Operations document pipeline.
+> **IMPORTANT:** Before configuring connectors, you must complete the **Openflow Snowflake Deployments setup**. This is a one-time configuration that establishes the foundation for all your Openflow data pipelines.
 
-> **IMPORTANT:** Before configuring connectors, you must complete the **Openflow SPCS deployment setup**. This is a one-time configuration that establishes the foundation for all your Openflow data pipelines.
+### Complete Openflow Snowflake Deployments Setup
 
-### Complete Openflow SPCS Setup
+Follow the comprehensive **Getting Started with Openflow Snowflake Deployments** quickstart to set up your infrastructure:
 
-Follow the comprehensive **Getting Started with Openflow SPCS** quickstart to set up your infrastructure:
-
-**Quickstart Guide**: [Getting Started with Openflow SPCS](/en/developers/guides/getting-started-with-openflow-spcs/)
+**Quickstart Guide**: [Getting Started with Openflow Snowflake Deployments](/en/developers/guides/getting-started-with-openflow-spcs/)
 
 This 25-minute setup includes:
 
 | Step | Task | Duration | What You'll Create |
 |------|------|----------|-------------------|
 | 1 | **Setup Core Snowflake** | 10 min | `OPENFLOW_ADMIN` role, network rules, BCR bundles |
-| 2 | **Create Deployment** | 5 min | Openflow SPCS deployment with optional event logging |
+| 2 | **Create Deployment** | 5 min | Openflow Snowflake Deployment with optional event logging |
 | 3 | **Create Runtime Role** | 5 min | Runtime role with external access integrations |
 | 4 | **Create Runtime** | 5 min | Active runtime environment ready for connectors |
 
@@ -337,7 +334,7 @@ This 25-minute setup includes:
 
 ### Alternative: Use Existing Openflow Infrastructure
 
-If you already have Openflow SPCS set up in your account, you can reuse your existing infrastructure. However, for this quickstart, we recommend using `FESTIVAL_DEMO_ROLE` to keep naming consistent:
+If you already have Openflow Snowflake Deployments set up in your account, you can reuse your existing infrastructure. However, for this quickstart, we recommend using `FESTIVAL_DEMO_ROLE` to keep naming consistent:
 
 1. **Use existing deployment and runtime** - No need to create new ones
 2. **Grant `FESTIVAL_DEMO_ROLE` access** - Ensure it has access to `festival_ops_access_integration` (created in the previous "Setup Environment" section)
@@ -350,7 +347,7 @@ If you already have Openflow SPCS set up in your account, you can reuse your exi
 
 ### Access Openflow Interface
 
-After completing the Openflow SPCS setup, access the Openflow interface to configure your runtime:
+After completing the Openflow Snowflake Deployments setup, access the Openflow interface to configure your runtime:
 
 1. In Snowsight, navigate to **Work with data** in the left sidebar
 2. Select **Ingestion**
@@ -387,11 +384,11 @@ Create a dedicated runtime for this demo:
 
 After creating the runtime, your Openflow interface will look like this:
 
-![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
+![Openflow Snowflake Deployments Overview](assets/openflow_spcs_overview.png)
 
 #### Option B: Use Existing Runtime
 
-If you already have a runtime from the Openflow SPCS quickstart (e.g., `QUICKSTART_RUNTIME`):
+If you already have a runtime from the Openflow Snowflake Deployments quickstart (e.g., `QUICKSTART_RUNTIME`):
 
 1. Grant access to the Festival Operations integration:
 
@@ -404,7 +401,7 @@ If you already have a runtime from the Openflow SPCS quickstart (e.g., `QUICKSTA
 
 > **RESOURCE MANAGEMENT:**
 >
-> - Openflow SPCS automatically manages compute resources and scaling
+> - Openflow Snowflake Deployments automatically manages compute resources and scaling
 > - No manual compute pool configuration is required
 > - Database and schema access is configured at the runtime level
 > - Connector-specific settings are configured when adding the Google Drive connector
@@ -441,7 +438,6 @@ Before configuring the connector, set up your Google Drive location:
 
 <!-- ------------------------ -->
 ## Configure Document Ingestion Pipeline
-
 
 Now configure the Google Drive connector with the following parameters:
 
@@ -519,7 +515,6 @@ The pipeline will automatically:
 
 <!-- ------------------------ -->
 ## Prepare Sample Documents
-
 
 Before running the pipeline, you need to prepare the Festival Operations sample documents in your Google Drive.
 
@@ -629,7 +624,6 @@ The animation demonstrates:
 
 <!-- ------------------------ -->
 ## Data Pipeline Results
-
 
 ### Verify Document Ingestion
 
@@ -782,7 +776,6 @@ The pipeline should have ingested the Festival Operations business document coll
 
 <!-- ------------------------ -->
 ## Cortex Search
-
 
 ### Automatic Cortex Search Service Creation
 
@@ -941,7 +934,6 @@ Based on the Festival Operations dataset, here are sample questions organized by
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
-
 
 Snowflake Intelligence enables you to create AI agents that can query and analyze your unstructured data using natural language. This section shows how to connect Snowflake Intelligence to the Cortex Search service created by your Openflow pipeline.
 
@@ -1155,7 +1147,6 @@ Focus on actionable insights and business value in your responses.
 <!-- ------------------------ -->
 ## Advanced Use Cases
 
-
 ### Multi-Document Analysis
 
 Use the agent for complex analysis across multiple documents:
@@ -1367,7 +1358,6 @@ Runs all conversion tasks to generate documents in all supported formats (PDF, D
 <!-- ------------------------ -->
 ## Cleanup
 
-
 When you're finished with the demo, follow these steps to clean up resources.
 
 ### Stop the Google Drive Connector
@@ -1415,7 +1405,6 @@ DROP ROLE IF EXISTS FESTIVAL_DEMO_ROLE;
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-
 Congratulations! You've successfully built an end-to-end unstructured data pipeline using Openflow and Snowflake Intelligence. You can now:
 
 - Automatically ingest documents from Google Drive
@@ -1451,14 +1440,14 @@ Congratulations! You've successfully built an end-to-end unstructured data pipel
 
 **Quickstarts:**
 
-- [Getting Started with Openflow SPCS](/en/developers/guides/getting-started-with-openflow-spcs/) - Complete infrastructure setup guide
+- [Getting Started with Openflow Snowflake Deployments](/en/developers/guides/getting-started-with-openflow-spcs/) - Complete infrastructure setup guide
 - [Source Code and Sample Data](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline)
 
 **Documentation:**
 
 - [Snowflake Workspaces Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces)
 - [Openflow Documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)
-- [Openflow SPCS Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs) - Official setup documentation
+- [Openflow Snowflake Deployments Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs) - Official setup documentation
 - [Google Drive Connector Documentation](https://docs.snowflake.com/user-guide/data-integration/openflow/connectors/google-drive/about)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
