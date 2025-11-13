@@ -32,7 +32,7 @@ Through this quickstart guide, you will build and deploy three intelligent Corte
 
 ### What You'll Need
 
-- [GitHub Repository Files](https://github.com/Snowflake-Labs/building-audiences-with-snowflake-cortex) including SQL setup script and three semantic model YAML files
+- [SFGuide GitHub Repository Files](https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex/tree/main) including SQL setup script and three semantic model YAML files
 - A [Snowflake](https://signup.snowflake.com/) account
 
 ### What You'll Build
@@ -759,7 +759,7 @@ Congratulations! You've completed the Building Audiences with Snowflake Cortex q
 
 ### Related Resources
 
-- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex)
+- [SFGuide GitHub Repository](https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex/tree/main)
 - [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/guides-overview-ai-features)
 - [Cortex Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence?_ga=2.191660586.1400445987.1762962408-1322428164.1757697987&_gac=1.162580302.1762217442.CjwKCAiAwqHIBhAEEiwAx9cTedSfDOZVCiqeWnA8OzH_hIUccsg787q86tkyw4qJtQq1hrLSDqVInRoCgdsQAvD_BwE)
