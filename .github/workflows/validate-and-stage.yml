@@ -412,19 +412,19 @@ jobs:
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
             --arg pr '${{ github.event.pull_request.number }}' \
-            --arg sha '${{ github.event.pull_request.head.sha }}'' \
+            --arg sha '${{ github.event.pull_request.head.sha }}' \
             --arg env "staging" \
             --arg checkrunid '${{ github.run_id }}' \ 
             --arg qname '${{ steps.detect.outputs.quickstart_name }}' \
             --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
-            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, check_run_id:$checkrunid, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, check_run_id:($checkrunid|tonumber), quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
           echo "Triggering webhook asynchronously..."
           curl -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2 > /dev/null 2>&1 || true
           echo "Webhook call sent (response will be handled asynchronously by external tool)"
 
-      - name: Wait for tests to succeed
+      - name: Wait for Workato to succeed
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 4
         uses: poseidon/wait-for-status-checks@v0.6.0
         with:
