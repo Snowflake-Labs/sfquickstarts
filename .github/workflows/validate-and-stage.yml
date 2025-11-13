@@ -159,11 +159,19 @@ jobs:
             all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           fi
 
+          # Count markdown files
+          if [ -z "$md_files" ]; then
+            md_file_count=0
+          else
+            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
+          fi
+
           echo "files_json=$files_arr" >> $GITHUB_OUTPUT
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
           echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
+          echo "md_file_count=$md_file_count" >> $GITHUB_OUTPUT
 
       - name: Check for large files
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -393,7 +401,7 @@ jobs:
           fi
 
       - name: Call Workato staging webhook
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 4
         env:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
         run: |
@@ -412,7 +420,7 @@ jobs:
           echo "Webhook call sent (response will be handled asynchronously by external tool)"
 
       - name: Wait for tests to succeed
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 4
         uses: poseidon/wait-for-status-checks@v0.6.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
