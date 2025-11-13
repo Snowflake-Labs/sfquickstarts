@@ -407,10 +407,10 @@ This should open the Policy Document into which you add authentication informati
 Find the "Statement.Condition" field. Initially, this should contain only curly braces ("{}"). Paste the following between the curly braces:
 
 ```
-"StringEquals": { "sts:ExternalId": "xxx" }
+"StringEquals": { "sts:ExternalId": "***" }
 ```
 
-Replace the "xxx" with the value for the "API_AWS_EXTERNAL_ID" recorded in your template.
+Replace the `***` with the value for the "API_AWS_EXTERNAL_ID" recorded in your template.
 
 After you are done editing the "Policy Document" for the trust relationship, it should look similar to the following:
 
