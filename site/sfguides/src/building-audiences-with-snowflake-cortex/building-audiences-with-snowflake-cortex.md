@@ -2,12 +2,12 @@ author: Luke Ambrosetti, Dureti Shemsi
 id: building-audiences-with-snowflake-cortex
 language: en
 summary: Build intelligent, industry-specific Cortex Agents that enable natural language audience building and customer analytics across Retail, Financial Services, and Gaming verticals.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex
-tags: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+
 
 # Building Audiences with Snowflake Cortex
 
