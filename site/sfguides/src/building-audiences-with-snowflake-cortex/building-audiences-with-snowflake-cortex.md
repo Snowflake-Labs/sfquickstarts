@@ -387,7 +387,7 @@ The script creates roles, warehouses, databases, schemas, customer data tables (
 <!-- ------------------------ -->
 ## Configure Semantic Models
 
-Download the three YAML files from [`scripts/semantic_models/`](https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex/tree/main/scripts/semantic_models): `retail_customer.yaml`, `fsi_customer.yaml`, and `gaming_customer.yaml`.
+Download the three YAML files from [scripts/semantic_models/](https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex/tree/main/scripts/semantic_models): `retail_customer.yaml`, `fsi_customer.yaml`, and `gaming_customer.yaml`.
 
 In Snowsight, navigate to **Data → Databases → CUSTOMER_ANALYTICS_DB → ANALYTICS → Stages → SEMANTIC_MODELS**. Click **+ Files** and upload all three YAML files.
 
