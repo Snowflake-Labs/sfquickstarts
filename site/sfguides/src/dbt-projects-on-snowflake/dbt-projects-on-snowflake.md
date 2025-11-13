@@ -6,6 +6,7 @@ summary: This Quickstart will show you how to get started using dbt Projects on 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake
 
 # Exploring dbt Projects on Snowflake
 <!-- ------------------------ -->
@@ -220,24 +221,23 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 <!-- ------------------------ -->
 ## Orchestration and Monitoring
 
-### Monitor dbt Projects
-
-You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to monitoring > dbt Projects to view overall status of dbt Projects and quickly jump to the deployed projects.
-
-![dbt-projects](assets/dbt-projects.png)
-
 ### Orchestrate with Tasks
+
+Navigate to Catalog > Database Explorer > TASTY_BYTES_DBT_DB > RAW > dbt Projects > DBT_PROJECT to view the project details. From the Run History tab, you can view all runs associated with the project.
+
+![project-details](assets/dbt_project_details.png)
 
 #### Create Scheduled dbt Tasks
 
 Let's create tasks to regularly run and test our dbt project. 
 
-1. Click dbt_project in the top right corner of Workspaces
-2. Click Create Schedule from the dropdown
+1. Navigate to the Project Details tab
+2. Click Create Schedule from the Schedules dropdown
 3. Enter a name, schedule, and profile, then click create
 
-![create-task](assets/create-task.png)
+
 ![create-schedule](assets/dbt-create-schedule.png)
+
 ![create-task](assets/create-schedule.png)
 
 #### Complex Tasks and Alerts
@@ -257,18 +257,7 @@ CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_run_task
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_test_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
 	AFTER tasty_bytes_dbt_db.raw.dbt_run_task
-	AS
-        DECLARE 
-            dbt_success BOOLEAN;
-            dbt_exception STRING;
-            my_exception EXCEPTION (-20002, 'My exception text');
-        BEGIN
-            EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='test --target dev';
-            SELECT SUCCESS, EXCEPTION into :dbt_success, :dbt_exception FROM TABLE(result_scan(last_query_id()));
-            IF (NOT :dbt_success) THEN
-              raise my_exception;
-            END IF;
-        END;
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='test --target dev';
 
 -- Run the tasks once
 ALTER TASK tasty_bytes_dbt_db.raw.dbt_test_task RESUME;
@@ -319,6 +308,13 @@ EXECUTE ALERT tasty_bytes_dbt_db.raw.dbt_alert;
 You can view the status or running tasks by going to Monitoring > Task History.
 
 ![tasks](assets/tasks.png)
+
+### Monitor dbt Projects
+
+You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to Monitoring > dbt Projects to view overall status of dbt Projects and quickly jump to the deployed projects.
+
+![dbt-projects](assets/dbt-projects.png)
+
 
 ### Tracing
 
