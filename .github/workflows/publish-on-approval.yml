@@ -115,5 +115,44 @@ jobs:
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
             '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
-          response=$(curl -sS -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
-          echo "$response" | cat
+          
+          max_retries=3
+          retry_count=0
+          wait_time=60
+          
+          while [ $retry_count -lt $max_retries ]; do
+            response=$(curl -sS -w "\n%{http_code}" -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
+            http_code=$(echo "$response" | tail -n1)
+            response_body=$(echo "$response" | sed '$d')
+            
+            echo "$response_body" | cat
+            
+            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+              echo "Webhook call successful (HTTP $http_code)"
+              exit 0
+            fi
+            
+            if echo "$response_body" | grep -qi "Rate limit reached: 6000 requests per 5m0s"; then
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "Rate limit reached. Waiting 5 minutes before retry $retry_count/$max_retries..."
+                sleep 300
+              else
+                echo "Rate limit reached. Max retries exceeded. Exiting." >&2
+                exit 1
+              fi
+            elif [ "$http_code" -ge 500 ]; then
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "Server error (HTTP $http_code). Waiting ${wait_time}s before retry $retry_count/$max_retries..."
+                sleep $wait_time
+                wait_time=$((wait_time * 2))
+              else
+                echo "Server error (HTTP $http_code). Max retries exceeded. Exiting." >&2
+                exit 1
+              fi
+            else
+              echo "Webhook call failed with HTTP $http_code" >&2
+              exit 1
+            fi
+          done
