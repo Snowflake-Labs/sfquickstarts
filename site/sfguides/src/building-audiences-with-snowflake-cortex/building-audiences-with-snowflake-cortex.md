@@ -38,13 +38,15 @@ Through this quickstart guide, you will build and deploy three intelligent Corte
 
 ### What You'll Build
 
-Three fully functional Cortex Agents that can:
+**Three intelligent Cortex Agents** (Retail, FSI, Gaming) integrated with **Snowflake Intelligence**, enabling you to:
 
-- Query customer data using natural language across multiple industries
-- Build targeted marketing audiences with conversational queries
-- Analyze customer behavior, segmentation, and lifetime value
-- Generate actionable insights for campaign planning
-- Materialize audience segments as permanent tables
+- **Interact conversationally** with your customer data through Snowflake Intelligence's natural language interface
+- **Build targeted marketing audiences** by asking questions and refining segments across multiple industries
+- **Analyze customer behavior** including segmentation, lifetime value, and campaign ROI—all through conversation
+- **Generate actionable insights** with business outcomes, financial projections, and recommended actions
+- **Materialize campaign audiences** as permanent tables ready for CRM activation
+
+**End result:** Complete, ROI-justified marketing campaigns built in minutes through conversational analytics—no SQL required.
 
 <!-- ------------------------ -->
 ## Setup Environment
@@ -385,7 +387,7 @@ The script creates roles, warehouses, databases, schemas, customer data tables (
 <!-- ------------------------ -->
 ## Configure Semantic Models
 
-Download the three YAML files from [`scripts/semantic_models/`](https://github.com/Snowflake-Labs/building-audiences-with-snowflake-cortex/tree/main/scripts/semantic_models): `retail_customer.yaml`, `fsi_customer.yaml`, and `gaming_customer.yaml`.
+Download the three YAML files from [`scripts/semantic_models/`](https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex/tree/main/scripts/semantic_models): `retail_customer.yaml`, `fsi_customer.yaml`, and `gaming_customer.yaml`.
 
 In Snowsight, navigate to **Data → Databases → CUSTOMER_ANALYTICS_DB → ANALYTICS → Stages → SEMANTIC_MODELS**. Click **+ Files** and upload all three YAML files.
 
