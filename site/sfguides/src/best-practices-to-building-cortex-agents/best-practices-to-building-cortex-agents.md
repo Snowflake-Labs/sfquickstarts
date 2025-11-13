@@ -35,6 +35,7 @@ Cortex Agents power the reasoning behind Snowflake Intelligence, turning natural
 When a user asks a question in Snowflake Intelligence, it uses [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) under the hood to combine reasoning from large language models with Snowflake’s governance, data access, and observability layers to deliver accurate, explainable answers.
 
 <img src="assets/snowflake-intelligence-agent-architecture.png" />
+
 1.  **User input:** A user submits a natural-language question (e.g. *“How are Q4 sales trending?”*).
 2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): The question is routed to the **Cortex Agent API**, which powers Snowflake Intelligence.
 3.  **Orchestration:** The orchestrator (an LLM) interprets intent, selects the right tools, and plans the sequence of actions. It may use one tool, chain several together, or decide that the question is out of scope.
