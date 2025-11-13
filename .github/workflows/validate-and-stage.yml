@@ -265,19 +265,23 @@ jobs:
             exit 0
           fi
           
-          invalid_count=$(echo "$objs" | jq '[ .[]
-            | if type=="object" and (.language|type)=="string"
+          # Filter to only include objects with invalid languages
+          invalid_objs=$(echo "$objs" | jq '[ .[]
+            | select(
+              if type=="object" and (.language|type)=="string"
               then (.language | ascii_downcase) as $l
-              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l))
-              | ( . == null )
+              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l)) == null
               else true
-            end
-          ] | map(select(.)) | length')
+              end
+            )
+          ]')
+          
+          invalid_count=$(echo "$invalid_objs" | jq 'length')
           
           if [ "$invalid_count" -ne 0 ]; then
             echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
-            echo "$objs" | jq . >&2
-            jq -n --argjson objs "$objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
+            echo "$invalid_objs" | jq . >&2
+            jq -n --argjson objs "$invalid_objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
             exit 1
           else
             echo "Language validation passed"
