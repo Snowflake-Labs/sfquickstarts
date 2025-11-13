@@ -419,6 +419,19 @@ jobs:
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
             '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
-          echo "Triggering webhook asynchronously..."
-          curl -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2 > /dev/null 2>&1 || true
-          echo "Webhook call sent (response will be handled asynchronously by external tool)"
+          echo "Triggering webhook..."
+          response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2) || {
+            exit_code=$?
+            echo "❌ Webhook call failed with exit code: $exit_code"
+            exit $exit_code
+          }
+          http_code=$(echo "$response" | tail -n1)
+          response_body=$(echo "$response" | sed '$d')
+          echo "HTTP Status Code: $http_code"
+          echo "Response body:"
+          echo "$response_body" | jq . 2>/dev/null || echo "$response_body"
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "✅ Webhook call succeeded"
+          else
+            echo "⚠️ Webhook returned non-2xx status code: $http_code"
+          fi
