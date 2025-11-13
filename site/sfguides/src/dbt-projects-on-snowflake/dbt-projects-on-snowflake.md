@@ -6,6 +6,7 @@ summary: This Quickstart will show you how to get started using dbt Projects on 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake
 
 # Exploring dbt Projects on Snowflake
 <!-- ------------------------ -->
