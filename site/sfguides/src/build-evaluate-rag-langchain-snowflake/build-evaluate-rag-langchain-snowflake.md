@@ -35,7 +35,6 @@ A complete RAG application that can answer questions about sales conversations b
 - Valid Snowflake credentials
 - Python 3.8+
 
-<!-- ------------------------ -->
 ## Setup
 
 
