@@ -138,37 +138,12 @@ On the second page, where it asks for the "Workspace Name" enter `gh-actions-dem
 ### Setup Environment Variables
 In order for Terraform Cloud to be able to connect to your Snowflake account you'll need to store the settings in Environment variables. Fortunately, Terraform Cloud makes this easy. From your new workspace homepage click on the "Variables" tab. Then for each variable listed below click on "+ Add variable" button (under the "Environment Variables" section) and enter the name given below along with the appropriate value (adjusting as appropriate).
 
-<table>
-    <thead>
-        <tr>
-            <th>Variable key</th>
-            <th>Variable value</th>
-            <th>Sensitive?</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWFLAKE_ACCOUNT</td>
-            <td>xy12345</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_REGION</td>
-            <td>east-us-2.azure</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_USER</td>
-            <td>DEMO_USER</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>*****</td>
-            <td>Yes</td>
-        </tr>
-    </tbody>
-</table>
+| Variable key | Variable value | Sensitive? |
+|--------------|----------------|------------|
+| SNOWFLAKE_ACCOUNT | xy12345 | No |
+| SNOWFLAKE_REGION | east-us-2.azure | No |
+| SNOWFLAKE_USER | DEMO_USER | No |
+| SNOWFLAKE_PASSWORD | ***** | Yes |
 
 > aside positive
 > 

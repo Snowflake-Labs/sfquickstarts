@@ -155,44 +155,15 @@ In this step we will define the questions for extracting values and the name of 
 ![First Value](assets/locate_first_value.png)  
 ![First Value](assets/first_value_location.png)  
 3. Add the rest of the the value names and questions from the table below   
-<table>
-    <thead>
-        <tr>
-            <th>VALUE NAME</th>
-            <th>QUESTION</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>parties</td>
-            <td>Who are the parties involved in the agreement?</td>
-        </tr>
-        <tr>
-            <td>duration</td>
-            <td>What is the duration of the agreement?</td>
-        </tr>
-        <tr>
-            <td>notice_period</td>
-            <td>What is the notice period for termination?</td>
-        </tr>
-        <tr>
-            <td>indemnification_clause</td>
-            <td>Is there an indemnification clause?</td>
-        </tr>
-        <tr>
-            <td>renewal_options</td>
-            <td>Are there any renewal options or conditions mentioned?</td>
-        </tr>
-        <tr>
-            <td>force_majeure</td>
-            <td>Is there a force majeure clause?</td>
-        </tr>
-        <tr>
-            <td>payment_terms</td>
-            <td>What are the payment terms, including amounts, timing, and conditions?</td>
-        </tr>
-    </tbody>
-</table>
+| VALUE NAME | QUESTION |
+|------------|----------|
+| parties | Who are the parties involved in the agreement? |
+| duration | What is the duration of the agreement? |
+| notice_period | What is the notice period for termination? |
+| indemnification_clause | Is there an indemnification clause? |
+| renewal_options | Are there any renewal options or conditions mentioned? |
+| force_majeure | Is there a force majeure clause? |
+| payment_terms | What are the payment terms, including amounts, timing, and conditions? |
 
 4. Once all values are defined click on **Accept and review next**
 5. If a value is missing or for example it is a **No** for a value, you can verify if it is correct by searching for the term in the document  

@@ -226,7 +226,7 @@ Snowflake의 매우 유용한 기능으로는 작업할 스테이지에서 파�
 
 ### COPY를 사용한 데이터 수집
 
-데이터를 Snowflake 테이블에 로드하기 위해 DataFrame에서 `copy_into_table()` 메소드를 사용하겠습니다. 이 메소드는 추론된 스키마(존재하지 않을 경우)를 사용하여 Snowflake에서 대상 테이블을 생성합니다. 그런 다음 고도로 최적화된 Snowflake [`COPY INTO &lt;table&gt;`명령](https://docs.snowflake.com/ko/sql-reference/sql/copy-into-table.html)을 호출합니다. 코드 조각은 다음과 같습니다.
+데이터를 Snowflake 테이블에 로드하기 위해 DataFrame에서 `copy_into_table()` 메소드를 사용하겠습니다. 이 메소드는 추론된 스키마(존재하지 않을 경우)를 사용하여 Snowflake에서 대상 테이블을 생성합니다. 그런 다음 고도로 최적화된 Snowflake [`COPY INTO <table>`명령](https://docs.snowflake.com/ko/sql-reference/sql/copy-into-table.html)을 호출합니다. 코드 조각은 다음과 같습니다.
 
 ```python
     df.copy_into_table("{}".format(tname))
@@ -815,40 +815,14 @@ GitHub Actions 워크플로우를 Snowflake 계정과 연결하려면 Snowflake 
 
 리포지토리에서 페이지 상단 부근에 있는 `Settings` 탭을 클릭합니다. 설정 페이지에서 `Secrets and variables`를 클릭한 다음 왼쪽 탐색에 있는 `Actions` 탭을 클릭합니다. `Actions` 비밀을 선택해야 합니다. 아래에 나열된 각 비밀을 위해 오른쪽 상단 부근에 있는 `New repository secret`을 클릭하고 적절한 값(적절하게 조정)과 아래에 제공된 이름을 입력합니다.
 
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWSQL_ACCOUNT</td>
-            <td>myaccount</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_USER</td>
-            <td>myusername</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_PWD</td>
-            <td>mypassword</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_ROLE</td>
-            <td>HOL_ROLE</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_WAREHOUSE</td>
-            <td>HOL_WH</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_DATABASE</td>
-            <td>HOL_DB</td>
-        </tr>
-    </tbody>
-</table>
+| Secret name | Secret value |
+|-------------|--------------|
+| SNOWSQL_ACCOUNT | myaccount |
+| SNOWSQL_USER | myusername |
+| SNOWSQL_PWD | mypassword |
+| SNOWSQL_ROLE | HOL_ROLE |
+| SNOWSQL_WAREHOUSE | HOL_WH |
+| SNOWSQL_DATABASE | HOL_DB |
 
 > aside positive
 > 
