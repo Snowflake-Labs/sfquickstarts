@@ -130,13 +130,13 @@ cd sfguide-getting-started-openflow-unstructured-data-pipeline
 
 For executing SQL scripts directly in Snowsight, you can import this repository into [Snowflake Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git):
 
-1. Sign in to Snowsight and navigate to **Projects** → **Workspaces**
+1. Sign in to Snowsight and navigate to [**Projects** → **Workspaces**](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)
 2. Select **From Git repository**
 3. Paste the repository URL: `https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline`
 4. Configure your API integration and credentials
 5. Execute SQL scripts directly in Snowsight without leaving your browser
 
-> **IMPORTANT:** You still need to **clone or download the repository locally** to access the `sample-data/google-drive-docs/` files for uploading to Google Drive. The Git integration in Workspaces provides access to SQL scripts but not binary document files (PDF, DOCX, PPTX, JPG) needed for the demo.
+> **IMPORTANT:** You still need to **clone or download the repository locally** to access the `sample-data/google-drive-docs/` files for uploading to Google Drive. The Git integration in [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) provides access to SQL scripts but not binary document files (PDF, DOCX, PPTX, JPG) needed for the demo.
 
 Learn more about [integrating Workspaces with Git](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git).
 
@@ -150,7 +150,7 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-Open [Snowflake Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-openflow-unstructured-data-pipeline) and run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html), and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role.html).
+Open [Snowflake Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) and run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html), and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role.html).
 
 ```sql
 -- Create role and warehouse
