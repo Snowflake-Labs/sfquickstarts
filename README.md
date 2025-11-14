@@ -46,7 +46,7 @@ For advanced users
   3. Navigate to the directory `cd sfquickstarts/site/src`
   4. Create a new branch `git checkout -b <your-branch-name>` (make sure you are working on a new branch and not on `master`!) 
   6. Copy the template folder and rename it appropriately: (e.g. `cp _example-template my-quickstart-name-here` in your terminal). 
-  7. Start authoring in markdown format.  Note this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_example-template/markdown.template).
+  7. Start authoring in markdown format.  Note this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_example-template/markdown-template).
   8. Make sure you select the appropriate language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
 
 
