@@ -90,7 +90,7 @@ Ok, let's replicate our structured data from a PostgreSQL database into Snowflak
 - Host:  34.94.122.157
 - Port:  5432
 - User:  fivetran
-- Password:  2PcnxqFrHh64WKbfsYDU
+- Password:  2PcnxqFr...h64WKbfsYDU
 - Database:  industry
 
 ![Fivetran Connector 3](assets/fivetran/f_0030.png)
