@@ -77,14 +77,14 @@ Agentic workflow using Smolagents library and Snowflake Cortex AI in Snowflake N
 * Click on **Save** button
 * Click on **Start** button on top right
 
-> aside positive
+> 
 > NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 <!-- ------------------------ -->
 ## Run Notebook
 
 
-> aside negative
+> 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
 Here's the code walkthrough of the [huggingface_smolagents_notebook_app.ipynb](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/huggingface_smolagents_notebook_app.ipynb) notebook that you downloaded and imported into your Snowflake account.
@@ -97,7 +97,7 @@ Install **Smolagents** library
 
 Here we create instances of **HfApiModel**, **ToolCallingAgent**, and **CodeAgent** to perform web search using built-in **DuckDuckGoSearchTool**. 
 
-> aside positive
+> 
 > NOTE: Replace `hf_ZkEXVwIXXXXXXXXXXXXXXX` with your Hugging Face token before proceeding.
 
 **Cell 3**
@@ -126,7 +126,7 @@ If all goes well, you should see the output similar to the following:
 
 ---
 
-> aside positive
+> 
 > NOTES:
 > In all of the cases, notice the Python and other code snippets being generated to perform the task(s).
 >

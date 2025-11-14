@@ -100,7 +100,7 @@ Stored Procedure:
   - send_email
 ```
 
-> aside positive
+> 
 > NOTE: Switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 ## Create Tools
@@ -229,7 +229,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
-> aside positive
+> 
 > NOTE: On the top right corner, click on **Save** to save the newly updated **Dash_AI** agent.
 
 ### Launch Snowflake Intelligence
@@ -252,7 +252,7 @@ Since we have processed images, the extracted descriptions can also be used by C
 
 #### - *Q. Is there any brand in the frame of the downhill bike?*
 
-> aside positive
+> 
 > Feel free to explore the PDF documents and images to ask other questions.
 
 ### Structured Data

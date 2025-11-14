@@ -115,7 +115,7 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 
 ![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
-> aside positive **제로 카피 클론**: 데이터베이스, 스키마 또는 테이블의 사본을 생성합니다. 소스 객체에 있는 데이터의 스냅샷은 복제가 생성되었고 이것이 복제된 객체에 제공되었을 때 찍습니다. 복제된 객체는 쓰기 가능하며 복제 소스와는 별도입니다. 따라서 소스 객체 또는 복제 객체에 적용된 변경 사항은 다른 객체에 포함되지 않습니다.
+> 
 
 ### 2단계 - 다음 클릭 -->
 
@@ -165,7 +165,7 @@ ORDER BY t.truck_id;
 ![assets/4.2.1.truck.png](assets/4.2.1.truck.png)
 ![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
-> aside positive 사용자가 이미 실행된 쿼리를 반복하고 마지막으로 쿼리를 실행한 시점 이후로 테이블에 있는 데이터가 변경되지 않은 경우, 쿼리 결과는 동일합니다. Snowflake는 쿼리를 다시 실행하는 대신 이전에 반환된 결과와 동일한 결과를 반환합니다.
+> 
 > 
 > 이를 통해 Snowflake가 쿼리를 실행하지 않고 캐시에서 직접 해당 결과를 검색하므로 쿼리 시간을 상당히 단축할 수 있습니다.
 
@@ -264,7 +264,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 
 실수를 하긴 했지만 Snowflake에는 문제를 해결하는 데 도움이 되는 다양한 기능이 있습니다. 진행할 프로세스는 쿼리 내역, SQL 변수 및 Time Travel을 활용하여 `truck_dev` 테이블을 잘못된 업데이트 문 이전 상태로 되돌립니다.
 
-> aside positive Time Travel을 사용하면 정의된 기간 내 모든 시점의 과거 데이터(예: 변경 또는 삭제된 데이터)에 액세스할 수 있습니다.
+> 
 
 ### 1단계 - 쿼리 내역 활용
 
@@ -320,7 +320,7 @@ BEFORE(STATEMENT => $query_id);
 
 다른 사용 가능한 Time Travel 문 옵션은 아래 목록을 참조하십시오.
 
-> aside positive **AT:** AT 키워드는 지정된 매개변수와 동일한 타임스탬프를 갖는 문 또는 트랜잭션에 의해 수행된 모든 변경 사항을 요청이 포함하도록 지정합니다.
+> 
 > 
 > **BEFORE:** BEFORE 키워드는 요청이 지정된 매개변수 바로 앞의 지점을 참조하도록 지정합니다.
 > 

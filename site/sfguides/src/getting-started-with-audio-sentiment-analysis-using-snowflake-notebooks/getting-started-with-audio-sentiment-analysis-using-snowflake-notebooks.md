@@ -90,7 +90,7 @@ A full-stack application that enables users to:
 * Click on **Save** button
 * Click on **Start** button on top right
 
-> aside positive
+> 
 > NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 ## Audio File Requirements
@@ -127,13 +127,13 @@ This system works well for analyzing:
 - Support interactions
 - Training materials
 
-> aside positive
+> 
 > TIP: If your audio files don't meet these specifications, consider using audio processing tools like ffmpeg to convert them to the recommended format before analysis.
 
 ## Run Notebook
 
 
-> aside negative
+> 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
 Here's the walkthrough of the notebook cells and their functions:
@@ -182,7 +182,7 @@ Example output:
 3  customer_call4.wav       happy         0.834    This service has exceeded my expectations...              0.9            Match
 ```
 
-> aside positive
+> 
 > The DataFrame shows the complete analysis for each audio file, including the detected emotion, confidence scores, and whether the emotional tone matches the sentiment of the transcribed text.
 
 The notebook outputs results showing the file name, detected emotion, emotion confidence score, transcript, sentiment score, and whether the tone matches the sentiment analysis.

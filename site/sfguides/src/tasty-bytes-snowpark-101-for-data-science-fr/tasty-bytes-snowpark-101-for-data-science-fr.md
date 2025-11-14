@@ -67,7 +67,7 @@ Tasty Bytes exploite des food trucks dans des villes du monde entier, chaque cam
 
 ![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
->aside positive SafeGraph est une entreprise mondiale de données géospatiales qui offre des données sur n’importe quel endroit dans le monde. Des entreprises comme Esri, Tripadvisor, Mapbox et Sysco utilisent les données de SafeGraph pour mieux comprendre leurs clients, créer de nouveaux produits et prendre des décisions plus avisées concernant leur activité.
+> 
 >
 ### Étape 2 – Créer des objets, charger des données et associer des données
 - Accédez aux feuilles de calcul, cliquez sur « + » dans le coin supérieur droit pour créer une nouvelle feuille de calcul, puis choisissez « SQL Worksheet » (Feuille de calcul SQL).
@@ -172,13 +172,13 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 ### Étape 2 – Mettre à jour le fichier d’autorisation
 - Mettez à jour le fichier [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) avec vos identifiants de compte Snowflake. Le notebook Python utilisera ce fichier pour accéder à vos identifiants et se connecter à Snowflake.<br>
 ![assets/auth_file.png](assets/auth_file.png)
->aside positive    
+> 
 > Pour le paramètre `account` (Compte), utilisez votre [identificateur de compte](https://docs.snowflake.com/fr/user-guide/admin-account-identifier). Notez que l’identificateur de compte ne comprend pas le suffixe snowflakecomputing.com.
 
 ### Étape 3 – Créer l’environnement Python
->aside positive Les instructions suivantes utilisent [Anaconda](https://www.anaconda.com/) pour créer l’environnement Python. *Vous pouvez utiliser un autre environnement Python avec Python 3.8, par exemple, [virtualenv](https://virtualenv.pypa.io/en/latest/)*.
+> 
 
->aside negative **Apple M1** : il existe un problème connu d’exécution de Snowpark Python sur les puces Apple M1 en raison de la gestion de la mémoire dans pyOpenSSL. Reportez-vous à la [**documentation Snowpark correspondante**](https://docs.snowflake.com/fr/developer-guide/snowpark/python/setup.html) pour résoudre ce problème.<br>
+> 
 
  **Sur le terminal, procédez comme suit pour créer l’environnement Python et lancer le notebook Jupyter :**<br>
 i. Créez un environnement Python 3.8 appelé « py38_env_tb1 » (tb1 = Tasty Bytes 1) à l’aide de packages (et versions) du canal Anaconda Snowflake. 

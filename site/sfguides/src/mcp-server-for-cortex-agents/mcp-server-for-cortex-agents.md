@@ -187,7 +187,7 @@ Error: Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIF
 Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found: post https://xxxxx.snowflakecomputing.com:443/session/v1/login-request?request_id=b4e367d4-d8ac-48d3-8e44-96f42defa9c5&request_guid=4f63e07c-e42c-43b8-8f79-f6c577ee0d0e
 ```
 
-> aside negative
+> 
 > NOTE: If you get the above errors, make sure the SNOWFLAKE_ACCOUNT_URL and PAT variables in the **_.env_** file are set correctly. Account URLs including an underscore (`_`) may cause this issue, which can be fixed by changing the underscore to a hyphen (`-`). For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 ## (Optional) Customize Cortex Agents

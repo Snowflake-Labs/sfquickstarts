@@ -37,7 +37,7 @@ An interactive Streamlit application that displays user MFA status and sends for
 ### Open Snowflake Notebook
 You can retrieve the [MFA Audit Snowflake Notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/MFA_Audit_of_Users/MFA_Audit_of_Users_with_Streamlit_in_Snowflake_Notebooks.ipynb) and follow along with the tutorial.
 
-> aside positive
+> 
 > NOTE:
 > On the above mentioned GitHub page, please click on the download icon (upon hover it should display "Download raw file").
 
@@ -128,7 +128,7 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION my_email_int
 Running this query should return the following confirmation:
 ![image](assets/img02.png)
 
-> aside positive
+> 
 > IMPORTANT:
 > This setup ensures you have the necessary privileges to create notification integrations
 
@@ -157,7 +157,7 @@ CALL SYSTEM$SEND_EMAIL(
 );
 ```
 
-> aside positive
+> 
 > IMPORTANT:
 > Replace `your-name@email-address.com` with the email address tied to your user account.
 

@@ -126,7 +126,7 @@ Segui i passaggi e il video qui di seguito per acquisire questo prodotto in cata
 
 ![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 
->aside positive
+> 
 Weather Source è un fornitore leader di dati meteorologici e climatici globali e la sua suite di prodotti OnPoint fornisce alle aziende i dati meteorologici e climatici necessari per generare rapidamente insight pratici e significativi per un’ampia gamma di casi d’uso in tutti i settori.
 >
 
@@ -251,7 +251,7 @@ $$;
 
 ![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
->aside positive
+> 
 Quando si crea una UDF, si specifica un gestore il cui codice è scritto in uno dei linguaggi supportati. A seconda del linguaggio del gestore, puoi includerne il codice sorgente in linea con l’istruzione CREATE FUNCTION o fare riferimento alla sua posizione da CREATE FUNCTION, in cui il gestore è precompilato o codice sorgente in uno stage.
 >
 

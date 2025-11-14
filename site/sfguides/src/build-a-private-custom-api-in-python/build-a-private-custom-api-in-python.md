@@ -171,7 +171,7 @@ GRANT READ ON IMAGE REPOSITORY API TO ROLE DATA_API_ROLE;
 SHOW IMAGE REPOSITORIES;
 ```
 
-> aside positive
+> 
 > Note the `repository_url` in the response as that will be needed in the next step.
 
 <!-- ------------------------ -->
@@ -257,7 +257,7 @@ To verify, check that the DNS name of the API is an internal domain:
 SHOW SERVICES;
 ```
 
-> aside positive
+> 
 > Note the service's DNS name from the `dns_name`. You will need this in the next step when creating the Ockam service.
 
 <!-- ------------------------ -->
@@ -282,7 +282,7 @@ ockam project ticket --usage-count 1 --expires-in 1h \
 ockam project show --jq '.egress_allow_list[]'
 ```
 
-> aside positive
+> 
 > Note the `egress_allow_list` in the response as that will be needed in the next step.
 
 #### Create an Ockam node in Snowpark Container Services
@@ -297,7 +297,7 @@ docker push <repository_url>/ockam
 
 Next, create a new service in Snowflake to run the Ockam node. Run the following command in the Snowflake console or SnowSQL:
 
-> aside positive
+> 
 > IMPORTANT:
 >
 > - Replace `<EGRESS_ALLOW_LIST>` values in `VALUE_LIST` with the `egress_allow_list` you just noted.

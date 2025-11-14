@@ -139,7 +139,7 @@ ORDER BY t.truck_id;
 
 ![assets/4.2.1.truck.png](assets/4.2.1.truck.png) ![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
->aside positive
+> 
 Se un utente ripete una query che è già stata eseguita e i dati nelle tabelle non sono cambiati dall’ultima esecuzione della query, il risultato della query è lo stesso. Invece di eseguire nuovamente la query, Snowflake restituisce semplicemente lo stesso risultato fornito in precedenza. 
 >         
 >Questo può ridurre notevolmente il tempo necessario per le query, poiché Snowflake evita di eseguire nuovamente la query e recupera invece il risultato direttamente dalla cache.
@@ -225,7 +225,7 @@ Evidentemente abbiamo sbagliato il calcolo di `truck_age` inserendo una division
 ### Panoramica
 Anche se abbiamo fatto un errore, Snowflake offre molte funzionalità che possono aiutarci a salvare la situazione. In questo processo utilizzeremo Query History, le variabili SQL e Time Travel per ripristinare la tabella `truck_dev` allo stato in cui si trovava prima di quell’istruzione pdate errata.
 
->aside positive 
+> 
 Snowflake Time Travel consente di accedere ai dati storici (ossia dati che sono stati modificati o cancellati) in qualsiasi momento entro un periodo definito.
 >
 
@@ -274,7 +274,7 @@ BEFORE(STATEMENT => $query_id);
 ![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 Di seguito sono riportate le altre opzioni disponibili per le istruzioni Time Travel.
->aside positive
+> 
 **AT:** la parola chiave AT indica che la richiesta include tutte le eventuali modifiche apportate da un’istruzione o una transazione con data e ora uguali al parametro specificato.
 >
 >**BEFORE:** la parola chiave BEFORE indica che la richiesta si riferisce a un punto immediatamente precedente al parametro specificato.
