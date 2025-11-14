@@ -1,19 +1,19 @@
-author: AUTHOR_NAME
-id: SFGUIDE-NAME
+author: author name
+id: markdown-template
 language: 
 summary: This is a sample Snowflake Template
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
-author:  Kanwal Komail (github: kanwalzs)
+fork repo link: <links to your repo>
+open in snowflake: <links to the product>
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
 
-Please use [Snowflake Guide](#) as a guiding document for writing your own Snowflake Guide. <br>
+Please use [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides) as a guiding document for writing your own Snowflake Guide. <br>
 This example guide has elements that you will use when writing your own guides, including: formatting, code snippet highlighting, video links, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: 
@@ -24,7 +24,7 @@ It is important to include on the first page of your guide the following section
 
 Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+The rest of this Snowflake Guide explains the steps of writing your own guide and the various formatting options available. 
 
 ### Prerequisites
 - Familiarity with Markdown syntax
@@ -63,9 +63,10 @@ The metadata contains all the information required for listing and publishing yo
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
   `Published` - implies the guide is active<br>
   `Hidden` - implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.<br>
-  `Archived` - imlplies the sfguide is out of date and deprecated and no longer available.
+  `Archived` - implies the sfguide is out of date and deprecated and no longer available.
 - **authors**: Author Full Name (+ author GitHub account)
   - Indicate the author(s) of this specific sfguide.  Including the GitHub Account login helps us notify you of any changes requested in the future.
+- **fork repo link**: add your repo link here for GitHub
 
 ```diff
 - OPTIONAL
@@ -75,15 +76,15 @@ The metadata contains all the information required for listing and publishing yo
   - **environments**: web 
   - `web` is default. If this will be published for a specific event or  conference, include it here.
   - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
+  - **open in snowflake**: add deeplinks straight into the product or to a template within Snowflake.
 
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
 
 
 <!-- ------------------------ -->
 ## Creating Sections
 
-A single sfguide consists of multiple steps or sections. These sections are defined in Markdown using Header tags.  Header 2 tag is `##`, Header 3 tag is `###` and so forth. 
+A single sfguide consists of multiple steps or sections. 
+These sections are defined in Markdown using Header tags.  Header 2 tag is `##`, Header 3 tag is `###` and so forth. 
 
 ```markdown
 ## Step 1 Title as H2 tag
@@ -93,10 +94,10 @@ All the content for the step goes here.
 ## Step 2 Title as H2 tag
 
 ### Subheader goes here as H3 tag.
+
+
 ```
-
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+>Please avoid going beyond H4 #### as it will not render on the page correctly!
 
 <!-- ------------------------ -->
 ## Headers and Subheaders
@@ -179,3 +180,4 @@ If you want to learn more about Snowflake Guide formatting, checkout the officia
 ### EXAMPLES:
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+* **Simple Hands-on Guide**: [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
