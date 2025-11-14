@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with the Application Control Framework (ACF)
-<!-- ------------------------ -->
+
 ## Overview 
 
 This guide will show you how to deploy the ACF and build a demo Native App with controls and limits.
