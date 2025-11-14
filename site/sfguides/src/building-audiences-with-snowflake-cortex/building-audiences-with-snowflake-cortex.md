@@ -51,7 +51,7 @@ Through this quickstart guide, you will build and deploy three intelligent Corte
 <!-- ------------------------ -->
 ## Setup Environment
 
-Navigate to **[Projects → Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)** in Snowsight and create a new SQL worksheet. Copy the complete SQL script below and execute all statements by clicking **▶ Run All** or pressing `Ctrl+Shift+Enter`.
+Navigate to [**Projects → Workspaces**](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) in Snowsight and create a new SQL worksheet. Copy the complete SQL script below and execute all statements by clicking **▶ Run All** or pressing `Ctrl+Shift+Enter`.
 
 > NOTE:
 > 
