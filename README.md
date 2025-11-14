@@ -28,7 +28,19 @@ You can submit your own Guides to be published on Snowflake's website by submitt
 
 ### How to:
 
-**Create a new Guide Locally:**
+
+**Submit an edit on GitHub.com**
+1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
+2. In your fork, Navigate to the directory 
+3. Click edit (pencil icon on top right) and make your edits
+4. Create a new branch (name it appropriately) and commit your changes
+5. Create a pull request and submit to Devrel!
+
+
+
+
+**Create a new Guide Locally:** 
+For advanced users
   1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
   2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
   3. Navigate to the directory `cd sfquickstarts/site/src`
@@ -38,12 +50,6 @@ You can submit your own Guides to be published on Snowflake's website by submitt
   8. Make sure you select the appropriate language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
 
 
-**Submit an edit on GitHub.com**
-1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
-2. In your fork, Navigate to the directory `cd sfquickstarts/site/src`
-3. Click edit (pencil icon on top right) and make your edits
-4. Commit changes - this will create a new branch
-5. Create a pull request and submit to Devrel!
 
 ```diff
 ! Congratulations! 
@@ -53,7 +59,7 @@ You now have the setup to work on your Snowflake Guide.
 ### Submitting: 
    1. If you need to synchronize your branch with your repo: `git push --set-upstream origin <your-branch-name>`
    2. Create a  **draft PR** pull request against sfquickstarts/master from your fork, using <your-branch-name>.
-   3. GitHub will run validation for basic formatting, required fields, tags, and language. If there are errors, you will be notified to correct them. A staging link will be generated for you -- use this to verify that your guide looks as expected! 
+   3. GitHub will run validation for basic formatting, image sizes less than 1MB, required fields, tags, and language. If there are errors, you will be notified to correct them. A staging link will be generated for you -- use this to verify that your guide looks as expected! 
    4. Once validation passes, request review from @kanwalzs. Note that the devrel team has a 24 hour SLA for approving PRs. You do not need to post in #devrel to notify us :) 
    5. The devrel team will make sure your branch is up to date with master, and then merge it in. 
    6. Expect content to appear/update on snowflake.com/en/developers/guides within 30 minutes of your PR being merged in. 
