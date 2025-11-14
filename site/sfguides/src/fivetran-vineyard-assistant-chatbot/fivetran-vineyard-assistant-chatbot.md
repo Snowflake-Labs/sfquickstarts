@@ -73,7 +73,7 @@ In the case where you have Snowflake and Fivetran accounts already, you may use 
 
 Ok, let's replicate our structured data from a PostgreSQL database into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
 
-> aside negative
+
 > Note: If for some reason you are unable to connect to the database, you may use <a href="#3" target="_self">Option 2 Amazon S3 Source</a>.
 >
 
@@ -123,7 +123,7 @@ Find the `Agriculture` schema in the list, click on the toggle on the right side
 
 ![Fivetran Connector 10](assets/fivetran/f_0090.png)
 
-> aside positive
+
 > This is the power of Fivetran.  No allocating resources.  No development.  No code.  No column mapping.  No pre-building schemas or tables in the destination.  A fully automated, production data pipeline in a few steps!
 >
 
@@ -516,7 +516,7 @@ if __name__ == "__main__":
 
 **Step 5.** Let's break down the code before we run the application just so we understand how it all comes together.
 
-> aside positive
+
 > Note: There are no additional packages needed to run the lab.  So we do not need to use the `packages` import functionality at the top of the code editor.
 >
 
@@ -552,11 +552,11 @@ Let's quickly run through the interface controls.
 - Next is the `use your dataset` checkbox which enables RAG.  When this checkbox is checked or unchecked, you will see the message below the prompt change alerting you of what to expect in your results.  Try a prompt with the checkbox checked and then uncheck to see the response change and see why RAG enables your chatbot to provide insight on "your" data (use at least one control record so that you know RAG is being performed since the control records/wineries/vineyards do not exist in reality).
 - Under `advanced options`, the `number of chunks` list sets the limit on the number of records/chunks to add to the current context for the LLM.  This is the core of RAG functionality.  As noted before, there are limits to the number of chunks (translated into tokens) for each model.  So keep that in mind.  The current list of numbers in the chunks drop down list should not cause any harm in running in any current LLM in the list.
 
-> aside positive 
+
 > One main item to note is the chatbot does not use previous responses to further refine results.  This feature could be added, but for this iteration, every prompt will be a new prompt for the LLM possibly using a new set of RAG context.
 >
 
-> aside positive 
+
 > If you edit the code, adding a new model to the list for example, ensure you click the `run` button in the upper right.  This tells Streamlit to use the updated code.
 >
 
@@ -622,7 +622,7 @@ Additionally, there are unique aspects in various vineyard descriptions that are
 - Hirsch Vineyards: Kelly Kohlleffel recommends this winery for its location on the extreme Sonoma Coast. You will need your mapping app to navigate here, but you'll find terrific views and world-class pinot noir and chardonnay.
 - Alpha Omega Winery: This winery is highly recommended by Kelly Kohlleffel based on enjoying an afternoon glass of wine on the patio facing the fountains. Also, the AO Era is a must try as well.
 
-> aside positive 
+
 > Remember the chunks!  The more vineyards/wineries you ask for, the more chunks you will need to pass to the LLM or the LLM will try to figure it out on its own!
 >
 
