@@ -95,7 +95,7 @@ You can see the **Set Event Level** dialog box below.
 
 ### (Option 2): Setting Telemetry Levels via SQL
 
-1. Open a new SQL worksheet or a workspace.
+1. Open a new SQL worksheet or a [workspace](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides).
 1. Run the following:
 
 ```sql
