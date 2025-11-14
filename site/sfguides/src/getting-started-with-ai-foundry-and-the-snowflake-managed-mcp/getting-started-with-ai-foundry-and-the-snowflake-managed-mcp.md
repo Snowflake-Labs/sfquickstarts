@@ -1,7 +1,6 @@
 author: sfc-gh-mmarzillo
 id: getting-started-with-ai-foundry-and-the-snowflake-managed-mcp
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
-language: en
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants,
 summary: This is a quickstart showing users how use Azure AI Foundry and the Snowflake Managed MCP Server
 environments: web
 status: Published 
