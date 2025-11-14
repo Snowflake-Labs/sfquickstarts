@@ -73,6 +73,7 @@ For advanced users
    3. GitHub will run validation for basic formatting, image sizes less than 1MB, required fields, tags, and language. If there are errors, you will be notified to correct them.
       > A staging link will be generated for you and automatically commented in the PR -- use this to verify that your guide looks as expected! 
    4. Once validation passes, request review from @kanwalzs. Note that the devrel team has a 24 hour SLA for approving PRs. You do not need to post in #devrel to notify us :) 
+      on the "conversation" tab, click on reviewers on the top right and add a reviewer.
    5. The devrel team will make sure your branch is up to date with master, and then merge it in. 
    6. Expect content to appear/update on snowflake.com/en/developers/guides within 30 minutes of your PR being merged in. 
 
