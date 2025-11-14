@@ -1,3 +1,13 @@
+author: Mehernosh Garda
+id: a-guide-to-implementing-a-pipeline-for-database-change-management
+language: en
+summary: Your description here 
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: <!-- if you have a companion repo, paste it here and remove the arrows, otherwise remove this line --> 
+
 # GitHub Actions for DCM
 
 This document describes the GitHub Actions workflows used for managing DCM (Data Change Management) deployments across non-production and production environments.
