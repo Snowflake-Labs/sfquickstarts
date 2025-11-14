@@ -138,11 +138,17 @@ Create and configure API integration based on the specific Snowflake native appl
 
 **Spark Connector (UATUS)**
 
-<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (UATUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>arn:aws:iam::533606394992:role/Snowflake-WASM-Server-Invoker</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com</td></tr></tbody></table>
+| Parameters | Configuration for Spark Connector (UATUS) |
+|------------|-------------------------------------------|
+| `<AWS_ARN>` | arn:aws:iam::53360639****:role/Snowflake-WASM-Server-Invoker |
+| `<SPARK_PROXY>` | https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com |
 
 **Spark Connector (PRODUS)**
 
-<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (PRODUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>(<em>Coming soon...</em>)</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>(<em>Coming soon...</em>)</td></tr></tbody></table>
+| Parameters | Configuration for Spark Connector (PRODUS) |
+|------------|--------------------------------------------|
+| `<AWS_ARN>` | (*Coming soon...*) |
+| `<SPARK_PROXY>` | (*Coming soon...*) |
 
 
 

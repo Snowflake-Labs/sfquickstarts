@@ -78,7 +78,7 @@ Snowflake GitHub 리포지토리에서 데모를 찾을 수 있습니다. Git을
 
 ### 연결 설정 구성
 
-이 파일을 편집하고 Snowflake와 연결하기 위해 사용하는 값으로 `&lt;placeholder&gt;` 값을 대체합니다. 예:
+이 파일을 편집하고 Snowflake와 연결하기 위해 사용하는 값으로 `<placeholder>` 값을 대체합니다. 예:
 
 ```console
 URL = https://myaccount.snowflakecomputing.com

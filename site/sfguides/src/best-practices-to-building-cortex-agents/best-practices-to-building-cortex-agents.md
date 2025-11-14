@@ -388,55 +388,13 @@ Description: Gets consumption data.
 
 **This is where most tool descriptions fail.** Ambiguous inputs to your tools lead to incorrect tool calls and errors, whether Cortex Analyst, Cortex Search, or custom tools.
 
-<table>
-<colgroup>
-<col style="width: 41%" />
-<col style="width: 58%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th><strong>Common pitfalls</strong></th>
-<th><strong>Recommendation</strong></th>
-</tr>
-<tr class="odd">
-<th><p><strong>Using a generic name</strong></p>
-<p>user vs user_id vs username</p></th>
-<th><strong>Be specific</strong><br />
-salesforce_user_id (18-char ID) vs user_email (email string)</th>
-</tr>
-<tr class="header">
-<th><p><strong>Unclear data formats</strong></p>
-<p>"date" vs "ISO 8601 date (YYYY-MM-DD)"</p></th>
-<th><p><strong>Specify data format</strong></p>
-<p>Agents may pass "last month", "Q3", or other invalid formats</p></th>
-</tr>
-<tr class="odd">
-<th><p><strong>Not explaining how to obtain IDs</strong></p>
-<p>"Provide customer_id"</p></th>
-<th><p><strong>Provide clear data instructions</strong></p>
-<p>"Customer ID from CustomerLookup tool, or directly from user if known"</p></th>
-</tr>
-<tr class="header">
-<th><p><strong>Unclear optionality</strong></p>
-<p>"region (optional)”</p></th>
-<th><p><strong>Provide default guidance</strong></p>
-<p>"region (optional, defaults to 'ALL', returns data for all
-regions)"</p></th>
-</tr>
-<tr class="odd">
-<th><p><strong>Using inconsistent terminology</strong></p>
-<p>Pick one term and use it consistently everywhere.</p>
-<p>Instructions say "customers" but tool descriptions say
-"accounts"</p></th>
-<th><p><strong>Use consistent terminology</strong></p>
-<p>If your domain has multiple</p>
-<p>terms for the same concept, define them explicitly:</p>
-<p>"Account (also called 'customer' in billing context): A business entity that..."</p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+| **Common pitfalls** | **Recommendation** |
+|---------------------|-------------------|
+| **Using a generic name**<br>user vs user_id vs username | **Be specific**<br>salesforce_user_id (18-char ID) vs user_email (email string) |
+| **Unclear data formats**<br>"date" vs "ISO 8601 date (YYYY-MM-DD)" | **Specify data format**<br>Agents may pass "last month", "Q3", or other invalid formats |
+| **Not explaining how to obtain IDs**<br>"Provide customer_id" | **Provide clear data instructions**<br>"Customer ID from CustomerLookup tool, or directly from user if known" |
+| **Unclear optionality**<br>"region (optional)" | **Provide default guidance**<br>"region (optional, defaults to 'ALL', returns data for all regions)" |
+| **Using inconsistent terminology**<br>Pick one term and use it consistently everywhere.<br>Instructions say "customers" but tool descriptions say "accounts" | **Use consistent terminology**<br>If your domain has multiple terms for the same concept, define them explicitly:<br>"Account (also called 'customer' in billing context): A business entity that..." |
 
 ## Using Cortex Tools
 

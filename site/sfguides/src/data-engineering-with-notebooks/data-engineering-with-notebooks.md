@@ -80,44 +80,15 @@ The last step to enable your GitHub Actions workflow is to create the required s
 
 From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
 
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWFLAKE_ACCOUNT</td>
-            <td>myaccount</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_USER</td>
-            <td>myusername</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>mypassword</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_ROLE</td>
-            <td>DEMO_ROLE</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_DATABASE</td>
-            <td>DEMO_DB</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_SCHEMA</td>
-            <td>INTEGRATIONS</td>
-        </tr>
-    </tbody>
-</table>
+| Secret name | Secret value |
+|-------------|--------------|
+| SNOWFLAKE_ACCOUNT | myaccount |
+| SNOWFLAKE_USER | myusername |
+| SNOWFLAKE_PASSWORD | mypassword |
+| SNOWFLAKE_ROLE | DEMO_ROLE |
+| SNOWFLAKE_WAREHOUSE | DEMO_WH |
+| SNOWFLAKE_DATABASE | DEMO_DB |
+| SNOWFLAKE_SCHEMA | INTEGRATIONS |
 
 > aside positive
 > 
