@@ -89,9 +89,13 @@ Snowflake Cortex provides fully managed Generative AI capabilities that run secu
 
 **Cortex Analyst** - Enables business users to ask questions about structured data in natural language. It uses a semantic model to understand your data and generates accurate SQL queries automatically.
 
+![Alt Text](assets/building_the_semantic_layer.png)
+
 **Cortex Search** - Provides easy-to-use semantic search over unstructured data. It handles document chunking, embedding generation, and retrieval, making it simple to implement RAG (Retrieval Augmented Generation) patterns.
 
 **Cortex Agents** - Orchestrates multiple AI capabilities (like Analyst and Search) to intelligently route user queries to the appropriate service and synthesize responses.
+
+![Alt Text](assets/what_is_cortex_agent.png)
 
 Learn more about [Snowflake Cortex](https://www.snowflake.com/en/product/features/cortex/).
 
@@ -360,58 +364,15 @@ Start with simple questions and build up to more complex analysis. Notice how th
 
 ### Supply Chain Data Questions
 
-These questions will be routed to the Cortex Analyst tool using the Supply Chain semantic model:
-
-* "How many orders did we receive in the last month?"
-* "Which manufacturing plants have low inventory for which raw materials?"
-* "Who are our top 5 customers by order value?"
-* "What's the total quantity of finished goods in our manufacturing plants?"
-* "Which manufacturing plants have low inventory of raw materials AND which plants have excess inventory of those same materials?"
-* "For plants with low inventory of a raw material, compare the cost of replenishing from a supplier vs transferring from another plant with excess inventory"
-
-### Weather Data Questions
-
-These questions will be routed to the Cortex Analyst tool using the Weather semantic model:
-
-* "What's the weather forecast for Seattle?"
-* "Which cities have the highest precipitation probability?"
-* "Show me the temperature forecast for Phoenix"
-* "What are the wind conditions in Chicago?"
-
-### Documentation Questions
-
-These questions will be routed to the Cortex Search tool to search through your supply chain documentation:
-
-* "Explain how shipment tracking works in our business"
-* "What are our business lines?"
-* "How does our supply chain network operate?"
-
-### Web Research Questions
-
-These questions will use the custom web search and web scraping tools:
-
-* "Search the web for recent supply chain disruptions"
-* "What are the latest trends in supply chain management?"
-
-### Email and Newsletter Creation
-
-These questions will use the HTML newsletter generation custom tool:
-
-* "Create an HTML newsletter summarizing our top customers this month"
-* "Draft an email about our current inventory status"
+* "Where do I have critical low inventory levels?"
+* "Where do we have low inventory of rare earth materials?"
+* "Compare the cost of transferring this inventory from a plant with excess inventory versus replenishing from a supplier."
+* "For plants with low inventory of a raw material, compare the cost of replenishing from a supplier vs transferring from another plant with excess inventory."
+* "What type of weather events might impact this transfer?"
+* "Draft an executive summary email with this analysis, our options, and a recommendation."
 
 > aside negative
 > **Note:** Sending emails requires proper email integration and verified email addresses.
-
-### Cross-Tool Complex Questions
-
-These sophisticated questions will require the agent to use multiple tools:
-
-* "What's the weather forecast for cities where our manufacturing plants are located?"
-* "Compare inventory levels at plants with upcoming severe weather conditions"
-* "Search for recent supply chain best practices and create a newsletter about them"
-
-The agent will intelligently determine which tools to use based on the question, execute the necessary queries or searches, and synthesize the results into a coherent response.
 
 <!-- ------------------------ -->
 
