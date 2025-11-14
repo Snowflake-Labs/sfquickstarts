@@ -161,8 +161,8 @@ jobs:
             
             if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
               echo "✓ Webhook call successful (HTTP $http_code)"
-              echo "Waiting 60 seconds before processing next quickstart..."
-              sleep 60
+              echo "Waiting 150 seconds before processing next quickstart..."
+              sleep 150
               exit 0
             fi
             
