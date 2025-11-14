@@ -5,21 +5,21 @@ summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in S
 author: ShenWang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
+open in snowflake link: https://app.snowflake.com/_deeplink/#/agents
 status: Published
 
 
 # Best Practices to Building Cortex Agents
 
-## Overview
+### Overview
 
 Agents represent a new paradigm for how work gets done with data. Instead of pre-defined dashboards or static queries, agents reason through tasks, choose the right tools, and deliver results in natural language or take actions on your behalf.
 
 [Snowflake Intelligence](https://ai.snowflake.com/) makes it possible to create, update, and deploy these high-quality agents directly inside your Snowflake environment, with governance, observability, and performance built in.
 
-### What You'll Build
 This guide is your map to building agents in Snowflake Intelligence, from idea to production, with links to deeper resources, examples, and tutorials along the way.
 
-### What You'll Learn
+### What you'll learn
 - How Snowflake Intelligence and Cortex Agents work together.
 - How to define agent purpose and scope.
 - How to configure orchestration and response instructions.
@@ -37,19 +37,12 @@ When a user asks a question in Snowflake Intelligence, it uses [Cortex Agents](h
 <img src="assets/snowflake-intelligence-agent-architecture.png" />
 
 1.  **User input:** A user submits a natural-language question (e.g. *“How are Q4 sales trending?”*).
-
 2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): The question is routed to the **Cortex Agent API**, which powers Snowflake Intelligence.
-
 3.  **Orchestration:** The orchestrator (an LLM) interprets intent, selects the right tools, and plans the sequence of actions. It may use one tool, chain several together, or decide that the question is out of scope.
-
 4.  **Tool execution:**
-
-    -   [**Cortex Analyst**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst): Write and run SQL on your semantic views for structured data.
-
-    -   **[Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview):** Retrieve relevant document text for unstructured data.
-
-    -   **Custom Tools**: Execute user-defined functions or stored procedures for actions.
-
+    -   [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst): Write and run SQL on your semantic views for structured data.
+    -   [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview):** Retrieve relevant document text for unstructured data.
+    -   Custom Tools: Execute user-defined functions or stored procedures for actions.
 5.  **Reflection & response:** The orchestrator reviews results, refines if needed, and generates the final answer (including summaries, tables, or charts) shown in the Snowflake Intelligence UI.
 
 *👉 Read the blog to learn more about [Snowflake Intelligence Orchestration Works](https://www.snowflake.com/en/engineering-blog/inside-snowflake-intelligence-enterprise-agentic-ai/)*
@@ -57,50 +50,48 @@ When a user asks a question in Snowflake Intelligence, it uses [Cortex Agents](h
 
 ## Building Cortex Agents
 
+[Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) are configurable reasoning systems that combine Snowflake’s built-in intelligence with your domain context.
+
+You can build and run agents in two ways:
+
+1.  **Agent UI in Snowsight:** An interactive interface that handles identity, access control, and monitoring out of the box.
+2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): A REST API for integrating agents into your own applications (like Streamlit apps or custom apps).
+
 ### Step 0: Define your agent's purpose
 
 Every great agent starts with a clear purpose. Before adding tools or writing instructions, define why the agent exists, who it serves, and what specific questions it should answer. This step shapes everything that follows, from tool selection to performance and trust.
 
 Start with an end user, and think through what they would actually want: *what specific job is this agent meant to do, and for whom?* If they had 24/7 access to a data analyst who reads incredibly quickly and has single-digit minute response times, what would they ask of them?
 
-#### Favor narrowly-scoped specialized agents
+### Favor narrowly-scoped specialized agents
 
 Don’t boil the ocean with a generalist agent. Start narrow with a specific, high-value use case. Once an agent proves reliable in one area, you can replicate the pattern for others.
 
 For example:
-    1.  One agent that analyzes your Shopify store’s recent sales and marketing data
-    2.  One agent that sales can use to recommend the best SKUs to pitch to the retailer.
+1.  One agent that analyzes your Shopify store’s recent sales and marketing data
+2.  One agent that sales can use to recommend the best SKUs to pitch to the retailer.
 
 *👉*[*Read more on why single agents yield best
 results*](https://medium.com/@JamesChaEarley/356b8566d114)
 
-#### Map key use cases to tools
+### Map key use cases to tools
 
 To get to high-value, narrow use cases, partner with business stakeholders to identify their top 20 most important questions they need answered. Use these questions as the initial scope for your agent.
 
 Write out what the stakeholder does today, and, very importantly, if you were to answer that question using a set of documents, data, or otherwise, what would you do? Would you use the sales table, read a few Google docs (which ones?), or look up support tickets?
 
 **How many tools should a single agent have?**
-
 An agent should have access to exactly as many tools as it needs to fulfill its predefined, targeted purpose. In the step above, when you wrote down exactly what you did to answer each question? This becomes the list of tools your agent needs access to.
 
 For example: if you needed to write one set of SQL statements about your Shopify data, then read a Google doc, and finally read some support tickets when answering your question, your agent needs at least 3 separate components:
-    1.  A semantic view for your Shopify data
-    2.  A Cortex Search service to read your Google docs
-    3.  A Cortex Search service to read your support tickets
+1.  A semantic view for your Shopify data
+2.  A Cortex Search service to read your Google docs
+3.  A Cortex Search service to read your support tickets
 
 *👉[Lessons learned building agents from our data science
 team](https://medium.com/snowflake/how-to-make-useful-data-science-agents-dbacbf1643b8)*
 
 ## Importance of Cortex Agent instructions
-
-[Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) are configurable reasoning systems that combine Snowflake’s built-in intelligence with your domain context.
-
-You can build and run agents in two ways:
-
-1.  **Agent UI in Snowsight:** An interactive interface that handles identity, access control, and monitoring out of the box.
-
-2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): A REST API for integrating agents into your own applications (like Streamlit apps or custom apps).
 
 A well-written agent will run efficiently and reliably: calling the right tools, producing explainable results, and reflecting your business logic. Poor or incomplete instructions lead to missteps in reasoning, incorrect data retrieval, and wasted compute cost.
 
@@ -109,26 +100,26 @@ Every Cortex Agent combines your custom instructions with Snowflake’s built-in
 You **won’t** need to further instruct the agent on this base functionality. For example:
 
 ``` 
-❌ DON'T include: "When you receive a question, first analyze it carefully, then select appropriate tools, call them in sequence, and format results properly..."
+❌ DON'T include:
+"When you receive a question, first analyze it carefully, then
+select appropriate tools,call them in sequence, and format results properly..."
 ```
 
 Your custom agent instructions are configured in 4 key layers, each playing a specific role to define how the agent reasons and responds from domain-specific context, rules, and workflows.
-    1.  [**Semantic views**](https://docs.snowflake.com/en/user-guide/views-semantic/overview#why-use-semantic-views) are configured inside your data layer. They act as translators, or “cheat sheets” between your raw, structured data and how humans or AI interpret it.
-    2.  **Orchestration instructions** are configured high-level business logic, rules, and multi-step workflows. These instruct the agent on how to approach answering a question.
-    3.  **Response instructions** control the final output format, tone, and communication style of the agent.
-    4.  **Tool descriptions** explain precisely what a tool does, what data it accesses, when to use it, and when *not* to use it. *This is the most critical factor for accurate tool selection.*
+1.  [**Semantic views**](https://docs.snowflake.com/en/user-guide/views-semantic/overview#why-use-semantic-views) are configured inside your data layer. They act as translators, or “cheat sheets” between your raw, structured data and how humans or AI interpret it.
+2.  **Orchestration instructions** are configured high-level business logic, rules, and multi-step workflows. These instruct the agent on how to approach answering a question.
+3.  **Response instructions** control the final output format, tone, and communication style of the agent.
+4.  **Tool descriptions** explain precisely what a tool does, what data it accesses, when to use it, and when *not* to use it. *This is the most critical factor for accurate tool selection.*
 
 We’ll go into more detail for each instruction layer below.
 
-## Semantic views (data level):
+## Semantic views (data level)
 
-Each semantic view should cover a similar set of tables, and are instructions that tell the agent how to query or interpret the data. This is where you want to set data specific defaults like, always adding a date filter for the past three months if not specified, or always excluding internal accounts.
+Each [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview) should cover a similar set of tables, and are instructions that tell the agent how to query or interpret the data. This is where you want to set data specific defaults like, always adding a date filter for the past three months if not specified, or always excluding internal accounts.
 
 **Resources for semantic views:**
-
--   🎥[Watch the hands-on lab](https://www.snowflake.com/en/webinars/virtual-hands-on-lab/from-sql-to-agentic-analytics-building-a-semantic-layer-with-ai-to-empower-snowflake-intelligence-2025-11-20/)
-
--   📖[Get started with semantic views](https://medium.com/snowflake/getting-started-with-snowflake-semantic-view-7eced29abe6f)
+-   🎥 [Watch the hands-on lab](https://www.snowflake.com/en/webinars/virtual-hands-on-lab/from-sql-to-agentic-analytics-building-a-semantic-layer-with-ai-to-empower-snowflake-intelligence-2025-11-20/)
+-   📖 [Get started with semantic views](https://medium.com/snowflake/getting-started-with-snowflake-semantic-view-7eced29abe6f)
 
 ## Orchestration instructions (agent level)
 
@@ -188,8 +179,7 @@ Limitations and Boundaries:
 
 ```
 
--   **Business rules and conditional logic** to ensure consistent
- handling of common scenarios, edge cases, and error conditions.
+-   **Business rules and conditional logic** to ensure consistent handling of common scenarios, edge cases, and error conditions.
 
 ```
 ✅ ORCHESTRATION INSTRUCTION
@@ -236,8 +226,7 @@ Present results in tables with clear sections.
 
 ## Response instructions (agent level)
 
-These instructions control the final output format, tone, and
-communication style of the agent. Examples include:
+These instructions control the final output format, tone, and communication style of the agent. Examples include:
 
 -   **Tone and communication style:**
 
@@ -302,7 +291,7 @@ Error Handling:
 ```
 
 
-### Best practices between orchestration vs. response instructions
+## Best practices between orchestration vs. response instructions
 
 It’s important to separate orchestration (what to do, which tools) from response (how to format, tone) into distinct instruction settings. Don’t combine tool selection logic with response formatting in the same section.
 
@@ -328,10 +317,10 @@ These describe to the agent what types of things the tool (Semantic View, Search
 **Tool descriptions are often the culprit for most agent quality problems.** Agents choose tools based on name and description context, so make them obvious. Poor tool descriptions create cascading failures, and can lead to downstream hallucinations.
 
 While instructions set the agent's identity and scope, tool descriptions directly govern:
-    1.  **Tool selection accuracy**: Whether the agent picks the right tool for each question
-    2.  **Parameter usage**: Whether the agent provides correct inputs to tools
-    3.  **Error prevention**: Whether the agent avoids misusing tools or making invalid calls
-    4.  **Consistency**: Whether the agent behaves predictably across similar questions
+1.  **Tool selection accuracy**: Whether the agent picks the right tool for each question
+2.  **Parameter usage**: Whether the agent provides correct inputs to tools
+3.  **Error prevention**: Whether the agent avoids misusing tools or making invalid calls
+4.  **Consistency**: Whether the agent behaves predictably across similar questions
 
 ### Step 1: Start with a clear, specific tool name
 
@@ -373,7 +362,7 @@ customers, updated nightly. Includes data from the past 2 years.
 When to Use:
     - Questions about customer usage patterns, trends, or growth
     - Queries about specific customers' consumption (e.g., "How much did Acme use?")
-- Comparisons between time periods (e.g., "Compare Q1 vs Q2 usage")
+    - Comparisons between time periods (e.g., "Compare Q1 vs Q2 usage")
 
 When NOT to Use:
     - Do NOT use for real-time/current-hour data (data is daily batch, not real-time)
@@ -407,13 +396,13 @@ Description: Gets consumption data.
 | **Unclear optionality**<br>"region (optional)" | **Provide default guidance**<br>"region (optional, defaults to 'ALL', returns data for all regions)" |
 | **Using inconsistent terminology**<br>Pick one term and use it consistently everywhere.<br>Instructions say "customers" but tool descriptions say "accounts" | **Use consistent terminology**<br>If your domain has multiple terms for the same concept, define them explicitly:<br>"Account (also called 'customer' in billing context): A business entity that..." |
 
-### **Using Cortex Tools**
+## Using Cortex Tools
 
 The Snowflake Cortex suite includes [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) and Cortex Search, which together help turn natural-language questions into accurate, efficient SQL-based answers.
 
 * 👉 [*Get awesome custom tools*](https://github.com/Snowflake-Labs/snowflake-intelligence-awesome-tools)
 
-#### **Cortex Analyst (Text-to-SQL)**
+#### Cortex Analyst (Text-to-SQL)
 
 Cortex Analyst accepts natural language queries and converts them to SQL. Your description must guide the agent on how to phrase queries effectively.
 
@@ -423,9 +412,9 @@ Cortex Analyst accepts natural language queries and converts them to SQL. Your d
 
 Then, enhance the auto-generated description by following the principles above.
 
-#### [**<u>Cortex Search</u>**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+#### Cortex Search
 
-Cortex Search tools retrieve relevant documents/records using semantic search. Guide the agent on search query formulation.
+[Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) services retrieve relevant documents/records using semantic search. The two primary use cases for Cortex Search are retrieval augmented generation (RAG) and enterprise search.
 
 For example, one of the first demo agents built inside of Snowflake used the Cortex Search Service shown below to answer questions about internal product documentation and architecture.
 
@@ -558,7 +547,7 @@ In Snowflake Intelligence, users can browse the Agents tab to view available age
 
 <img src="assets/agent-tab-snowflake-intelligence.png" />
 
-## Deploying agent to production
+## Deploying your agent to production
 
 The process of deploying agents is similar to developer cycles, with (3) three key stages. Begin by clearly (1) defining a use case and creating a prototype agent, (2) using systematic tests to drive iteration and improvement, then (3) graduate to a production agent.
 
@@ -583,9 +572,9 @@ In addition to manually examining the traces, you can also use agent evaluations
 👉 Learn more about the [Agent GPA (Goal-Plan-Action) framework for evaluating agent reliability](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/)
 
 These agent evaluations can pinpoint very precise issues with your agent:
-    -   Are the correct tools used in the correct sequence?
-    -   Is tool execution taking expected inputs and producing the correct output?
-    -   Are the agent’s steps coherent and grounded in prior context?
+-   Are the correct tools used in the correct sequence?
+-   Is tool execution taking expected inputs and producing the correct output?
+-   Are the agent’s steps coherent and grounded in prior context?
 
 Once your agent performs well against your golden set, you’re ready for production. The more representative your test set is of production use, and the more data you have provided, the more confident you can be that your agent is production-ready.
 
@@ -601,7 +590,7 @@ Start with focusing on queries where users provide negative feedback, and identi
 
 Teams deploying agents in production often run their agent against evaluation sets on a regular cadence to identify regressions. When your agent is first rolled out, you should monitor usage closely. As you become more confident about your agents, you can dial back how much monitoring you do.
 
-## Improve agent performance
+## How to improve agent performance
 
 -   **Improve orchestration instructions and tool descriptions:** Heavily use the GPA evaluation results to inform improvement. For issues with tools, focus on improving tool descriptions. For issues with the orchestration and planning, consider updates to the orchestration instructions. Prompting an LLM with the explanation of what went wrong and the existing prompt can help automate creation of your new prompt.
 
@@ -612,7 +601,7 @@ Teams deploying agents in production often run their agent against evaluation se
 -   **Make queries performant:** An ounce of data engineering is worth a pound of prompt engineering. Optimizing your underlying data models, pre-aggregating common metrics, and using clear, consistent column names can have a greater impact on performance than tweaking instructions.
 
 
-## Complete agent configuration
+## Example: Complete agent configuration
 
 Here's a comprehensive example bringing it all together in the Snowflake Agent UI. We're building "CarAnalytics Pro", an automotive marketplace analytics agent.
 
@@ -796,11 +785,13 @@ When NOT to Use:
 
 ```
 
-## Conclusion and Resources
+### Conclusion
 
 By following these best practices, you can confidently build **Cortex Agents** that are reliable, secure, and aligned with Snowflake’s data governance standards. Each agent should have a clearly defined purpose, a focused set of tools, and robust orchestration and response logic.
 
 
-### Additional Resources
+## Additional resources
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
+- Guide: [Getting started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
+- Guide: [Getting started with Snowflake Intelligence and Cortex Knowledge Extensions (CKEs)](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/)
 - [More Snowflake Guides](https://www.snowflake.com/en/developers/guides/)
