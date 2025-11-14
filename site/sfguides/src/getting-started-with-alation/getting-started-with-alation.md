@@ -153,19 +153,9 @@ In today's world of data management, it is common to have policies and procedure
 
 ![VHOL-Border4](./assets/borderline.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/lightbulb.png](./assets/lightbulb.png)</td>
-            <td><b>Exercise Guidance</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+| ![assets/lightbulb.png](./assets/lightbulb.png) | **Exercise Guidance** |
 
 1. Policies are part of Alation Data Governance which also includes Stewardship Workbench, and Workflow. Duplicate your current brower tab, then click on Policies in the left-hand navigation.
 
@@ -182,19 +172,9 @@ In today's world of data management, it is common to have policies and procedure
 
 ![VHOL-Border5](./assets/borderline.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
-            <td><b>Benefits</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+| ![assets/blackcheckmark.png](./assets/blackcheckmark.png) | **Benefits** |
 
 Policies as living content centralized with data asset information helps everyone in the organization.  They consist of both business and data policies.
 
@@ -217,19 +197,9 @@ Alation creates an experience that allows users to expand their world of knowled
 
 ![VHOL-Border6](./assets/borderline.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/lightbulb.png](./assets/lightbulb.png)</td>
-            <td><b>Exercise Guidance</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+| ![assets/lightbulb.png](./assets/lightbulb.png) | **Exercise Guidance** |
 
 1. The Alation Search bar is always present on the home page in the header and at the top of the other pages.
 
@@ -252,19 +222,9 @@ Alation creates an experience that allows users to expand their world of knowled
 
 ![VHOL-Border7](./assets/borderline.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
-            <td><b>Benefits</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+![assets/blackcheckmark.png](./assets/blackcheckmark.png) | **Benefits** |
 
 Search is core to increasing productivity and data literacy. Spend minutes instead of days finding the data that you need.
 
@@ -288,19 +248,9 @@ Queries can be developed by those who know SQL and shared with others in the org
 
 ![VHOL-Border8](./assets/borderline.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/lightbulb.png](./assets/lightbulb.png)</td>
-            <td><b>Exercise Guidance</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+| ![assets/lightbulb.png](./assets/lightbulb.png) | **Exercise Guidance** |
 
 Queries and Compose are accessible from several places in the application. The following shows how you can navigate to them.
 
@@ -321,19 +271,9 @@ Queries and Compose are accessible from several places in the application. The f
 
 ![VHOL-Border9](./assets/borderline.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
-            <td><b>Benefits</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+![assets/blackcheckmark.png](./assets/blackcheckmark.png) | **Benefits** | 
 
 Compose helps spread data literacy in the organization by allowing users to build and share queries that help answer business questions.
 
@@ -358,19 +298,9 @@ When the stakes are high, especially when providing data for AI models, data qua
 
 ![VHOL-Border4](./assets/borderline.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/lightbulb.png](./assets/lightbulb.png)</td>
-            <td><b>Exercise Guidance</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+![assets/lightbulb.png](./assets/lightbulb.png) | **Exercise Guidance** | 
 
 
 1. To review the DMFs currently created, click on Data Quality Processor in the left-hand navigation.
@@ -408,19 +338,9 @@ When the stakes are high, especially when providing data for AI models, data qua
 
 ![VHOL-Screen36](./assets/section9_quality_screen10.png)
 
-<table>   
-    <thead>
-        <tr>
-            <th colspan="2"> </th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>![assets/blackcheckmark.png](./assets/blackcheckmark.png)</td>
-            <td><b>Benefits</b></td>
-        </tr>
-    </tbody>
-</table>
+| | |
+|---|---|
+![assets/blackcheckmark.png](./assets/blackcheckmark.png) | **Benefits** | 
 
 An integrated data quality solution that makes consumers aware of the data health at the point of consumption is priceless! Trust is the most critical factor for your data, especially when taking advantage of it with AI.
 
