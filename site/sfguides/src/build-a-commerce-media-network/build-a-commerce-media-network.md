@@ -11,7 +11,7 @@ tags: Marketing, Partners, Media, Hightouch, Retail, Commerce
 # Build an Offsite Commerce Media Network on Snowflake with Hightouch & The Trade Desk
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+
 
 In this guide you will learn how to transform your existing Snowflake investment into a user-friendly platform that a non-technical commerce media team can use to curate custom audiences, activate and share them with their advertising partners, and provide closed-loop attribution.
 
@@ -42,7 +42,7 @@ Our task is to build a platform that our non-techincal media team can use to cre
 
 <!-- ------------------------ -->
 ## Enrich the Snowflake Customers table with UID2
-Duration: 1
+
 
 These instructions provide basic setup details for this hands-on lab. Implementation for your business may vary based on your unique data, use cases, and requirements. For detailed implementation instructions, visit the [UID2 Snowflake Integration Guide &rarr;](https://unifiedid.com/docs/guides/integration-snowflake)
 
@@ -87,7 +87,7 @@ on a.ID=m.ID;
 
 <!-- ------------------------ -->
 ## Connect Hightouch to Snowflake
-Duration: 1
+
 
 Hightouch transforms Snowflake into a customer data platform (CDP), giving your commerce media team the ability to curate customer audiences, activate them for onsite and offsite targeting, and provide attribution and incrementality reporting without the need for engineering support. As the leading Snowflake-native CDP, Hightouch does not copy and store your data in its own infrastructure, ensuring that Snowflake remains your single source of truth and that your customer data remains private and secure. 
 
@@ -114,7 +114,7 @@ To connect Hightouch to Snowflake:
 
 <!-- ------------------------ -->
 ## Connect Hightouch to Omnira's The Trade Desk account
-Duration: 1
+
 
 Next, we will connect Hightouch to The Trade Desk so that you can sync audiences and conversion events from Snowflake directly to Omnira's advertising account.
 
@@ -149,7 +149,7 @@ To connect The Trade Desk destination:
 
 <!-- ------------------------ -->
 ## Build the audience schema
-Duration: 1
+
 
 Data schemas define how data is structured, including the data types (like users, events, accounts, and households) and relationships between those data types. If you think of your data warehouse like an actual house, your data schema is the blueprint. Just like a blueprint outlines the structure of a house—where the rooms are and how they connect—a data schema defines how your data is organized and how different parts of your data relate to one another.
 
@@ -230,7 +230,7 @@ The **Purchases** parent model will now be linked to the Customers parent model.
 
 <!-- ------------------------ -->
 ## Create a custom audience for monetization
-Duration: 1
+
 
 Now that we've built the schema for audience building and conversion tracking, we can use Hightouch's audience builder to create a custom audience for our advertising partner's upcoming campaign.
 
@@ -273,7 +273,7 @@ To build the audience:
 
 <!-- ------------------------ -->
 ## Sync the audience to The Trade Desk
-Duration: 1
+
 
 Now we will sync the audience that we created to The Trade Desk for targeting. For managed services, the audience can be used immediately in campaigns from Altuva’s Trade Desk seat. For self-service, we will share the audience to Omnira's seat in a following step.
 
@@ -302,7 +302,7 @@ The Run Summary page provides granular insight into the status and speed of the 
 
 <!-- ------------------------ -->
 ## Share the audience with the advertising partner
-Duration: 1
+
 
 Now that your audience has been synced to your The Trade Desk seat, there are two ways you can enable your advertising partners to run their campaigns:
 1. **Managed Service**: Run campaigns for your advertising partner. This gives you full control over how your brand is represented and how ads are served, but it comes with higher operational costs.
@@ -317,7 +317,7 @@ To do this, we will use The Trade Desk's platform-native audience sharing featur
 
 <!-- ------------------------ -->
 ## Advertiser: Run a self-service campaign
-Duration: 1
+
 
 Now that Omnira has access to the audience, they can select and target that audience in campaigns that they control from their own advertising seat. When the campaign ends, Altuva can remove access to the audience.
 
@@ -328,7 +328,7 @@ To select and use the shared audience in a campaign:
 
 <!-- ------------------------ -->
 ## Create, sync, and share brand-specific conversion events
-Duration: 1
+
 
 Now that Omnira is actively targeting hotel visits with targeted ads, they want to track the success of their campaign in The Trade Desk by syncing conversion events to their advertising seat. However, the purchases happen through Altuva meaning that they do not have direct access to conversion data.
 
@@ -343,15 +343,15 @@ Let's start with creating a brand-specific conversion model...
 
 <!-- ------------------------ -->
 ## Create a brand-specific conversion model
-Duration: 1
+
 
 <!-- ------------------------ -->
 ## Create an Offline Conversion Sync to The Trade Desk
-Duration: 1
+
 
 <!-- ------------------------ -->
 ## Share and use conversion data in a campaign
-Duration: 1
+
 
 Now that Omnira's conversion events are being privately and securely synced to Altuva's advertising seat, we can share that conversion event data with Omnira to use for self-service campaign optimization and reporting.
 
@@ -381,15 +381,15 @@ Conversion Pixels can be found within the TTD Advertiser Data & Identity tile. O
 
 <!-- ------------------------ -->
 ## (Bonus) Set up REDS data sync
-Duration: 1
+
 
 <!-- ------------------------ -->
 ## (Bonus) Create an attribution report
-Duration: 1
+
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 0
+
 
 
 
@@ -397,7 +397,7 @@ Duration: 0
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
-Duration: 2
+
 
 Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 
@@ -418,13 +418,12 @@ for (statement 1; statement 2; statement 3) {
 ```
 
 ### Info Boxes
-> aside positive
-> 
+
 >  This will appear in a positive info box.
 
 
-> aside negative
-> 
+
+
 >  This will appear in a negative info box.
 
 ### Buttons
@@ -453,7 +452,7 @@ for (statement 1; statement 2; statement 3) {
 
 <!-- ------------------------ -->
 ## Images, Videos, and Surveys, and iFrames
-Duration: 2
+
 
 Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
 
@@ -477,7 +476,7 @@ Videos from youtube can be directly embedded:
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
+
 
 At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
 
