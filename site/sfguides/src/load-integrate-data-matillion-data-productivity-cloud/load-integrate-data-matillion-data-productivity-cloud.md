@@ -77,9 +77,9 @@ The last setup screen invites you to choose a target platform.
 It will take a couple of minutes for Matillion to create a free, empty, trial Snowflake account and connect everything together.
 Once that's done you'll end up in the Matillion Data Productivity Cloud's main ETL [pipeline designer interface](https://docs.matillion.com/data-productivity-cloud/designer/docs/designer-overview/).
 
-For reference here's a video that takes you through all the steps above.
+For reference [here's a video](https://www.youtube.com/watch?v=G2Rc7K_8pZw) that takes you through all the steps above.
 
-<video id="G2Rc7K_8pZw"></video>
+
 
 <!-- ------------------------ -->
 ## Create a Development branch
@@ -127,41 +127,17 @@ Complete the properties of the new Fixed Flow by setting:
 
 **Columns**
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Name</i></td>
-            <td><i>Datatype</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>WORKSHEET_NAME</td>
-            <td>VARCHAR</td>
-        </tr>
-    </tbody>
-</table>
+| Name | Datatype |
+| --- | --- |
+| WORKSHEET_NAME | VARCHAR |
 
 **Values**
 
-<table>
-    <thead>
-        <tr>
-            <td><i>WORKSHEET_NAME</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ITEMS</td>
-        </tr>
-        <tr>
-            <td>ORDERS</td>
-        </tr>
-        <tr>
-            <td>ORDER_ITEMS</td>
-        </tr>
-    </tbody>
-</table>
+| WORKSHEET_NAME |
+| --- |
+| ITEMS |
+| ORDERS |
+| ORDER_ITEMS |
 
 > aside negative
 >
@@ -391,50 +367,20 @@ Some minor datatype fixes are needed before integrating, so add a [Convert Type]
 
 Repeat for `GW_ORDER_ITEMS`, naming it `ORDER_ITEM` with these conversions:
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Column</i></td>
-            <td><i>Type</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ITEM_RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>ORDER_RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>QUANTITY</td><td>NUMBER</td>
-        </tr>
-    </tbody>
-</table>
+| Column | Type |
+| --- | --- |
+| ITEM_RID | NUMBER |
+| ORDER_RID | NUMBER |
+| RID | NUMBER |
+| QUANTITY | NUMBER |
 
 ... and for `GW_ITEMS`, naming it `ITEM_REF` with these conversions:
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Column</i></td>
-            <td><i>Type</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>COST</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>PRICE</td><td>NUMBER</td>
-        </tr>
-    </tbody>
-</table>
+| Column | Type |
+| --- | --- |
+| RID | NUMBER |
+| COST | NUMBER |
+| PRICE | NUMBER |
 
 Now for the data integration, find and drag on a [Join](https://docs.matillion.com/data-productivity-cloud/designer/docs/join/) component. Link all **four** inputs to it, and configure it as follows:
 
@@ -456,34 +402,14 @@ Now for the data integration, find and drag on a [Join](https://docs.matillion.c
 
 - Column Mappings:
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Source Column</i></td>
-            <td><i>Target Column</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>O.ORDER_DATE</td><td>ORDER_DATE</td>
-        </tr>
-        <tr>
-            <td>OI.QUANTITY</td><td>QUANTITY</td>
-        </tr>
-        <tr>
-            <td>I.NAME</td><td>ITEM_NAME</td>
-        </tr>
-        <tr>
-            <td>I.PRICE</td><td>PRICE</td>
-        </tr>
-        <tr>
-            <td>I.COST</td><td>COST</td>
-        </tr>
-        <tr>
-            <td>A.account_name</td><td>ACCOUNT_NAME</td>
-        </tr>
-    </tbody>
-</table>
+| Source Column | Target Column |
+| --- | --- |
+| O.ORDER_DATE | ORDER_DATE |
+| OI.QUANTITY | QUANTITY |
+| I.NAME | ITEM_NAME |
+| I.PRICE | PRICE |
+| I.COST | COST |
+| A.account_name | ACCOUNT_NAME |
 
 Once this is configured and validates successfully, open the **Sample data** panel and check the results. You should find the same number of records (999) as there were in `GW_ORDER_ITEMS`, with these columns:
 
@@ -605,11 +531,10 @@ You have experienced how Matillion's close integration with Snowflake benefits t
 
 Continue to use your free trial of Matillion and Snowflake: load and process your own sample or real data, investigating some of the more advanced platform features that are not covered in this lab.
 
-- Read the definitive Snowflake guide to [maximizing your free trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
+- Read the definitive Snowflake guide to [maximizing your free trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
 - Visit the [Matillion](https://www.matillion.com/) [product tour](https://www.matillion.com/tour) and interactive demo experience
 - Learn how to [bring the power of AI to data engineering](https://www.matillion.com/ai)
 - Take a training course from the [Matillion Academy](https://academy.matillion.com/trainings)
 
-A full video demonstration of this lab is also available:
-<video id="FGaf-6TcGYU"></video>
+A full [video demonstration](https://www.youtube.com/watch?v=FGaf-6TcGYU) of this lab is also available.
 

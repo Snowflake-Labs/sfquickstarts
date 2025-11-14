@@ -283,7 +283,7 @@ Documentation:
 - [Snowflake Notifications](https://docs.snowflake.com/en/user-guide/notifications/snowflake-notifications)
 
 More ML quickstart: 
-- [Build an End-to-End ML Workflow in Snowflake](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/index.html?index=..%2F..index#1)
-- [Building ML Models to Crack the Code of Customer Conversions](https://quickstarts.snowflake.com/guide/build-ml-models-for-customer-conversions/index.html?index=..%2F..index#0)
+- [Build an End-to-End ML Workflow in Snowflake](/en/developers/guides/end-to-end-ml-workflow/)
+- [Building ML Models to Crack the Code of Customer Conversions](/en/developers/guides/build-ml-models-for-customer-conversions/)
 
 Happy building with Snowflake ML!

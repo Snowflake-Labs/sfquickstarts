@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations.
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Build a Financial Services Asset Management P&L Dashboard
@@ -715,5 +715,5 @@ Documentation:
 - [Snowsight Filters](https://docs.snowflake.com/en/user-guide/ui-snowsight-filters)
 
 Additional Reading:
-- [Snowflake for Asset Management](https://www.snowflake.com/en/solutions/industries/financial-services/asset-management/)
+- [Snowflake for Asset Management](/en/solutions/industries/financial-services/asset-management/)
 - [Asset Management With Snowflake: Real-Time Cash & PnL On 3 Billion Trades](https://youtu.be/HkrRXMHDd-E?si=nf0lAupIKK8HVMuM)

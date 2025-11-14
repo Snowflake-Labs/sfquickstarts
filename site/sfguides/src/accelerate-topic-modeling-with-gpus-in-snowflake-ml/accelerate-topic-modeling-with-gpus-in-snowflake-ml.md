@@ -1,8 +1,9 @@
 author: Chanin Nantasenamat, Vinay Sridhar, Lucy Zhu
 id: accelerate-topic-modeling-with-gpus-in-snowflake-ml
 summary: This guide covers how to use NVIDIA's cuML and cuDF libraries, now pre-installed in Snowflake ML, to accelerate scikit-learn and pandas workflows with zero code changes.
-categories: featured, data-science, getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, 
 environments: web
+language: en
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake, Machine Learning, Python, NVIDIA, GPU, scikit-learn, pandas
@@ -54,7 +55,6 @@ import cudf; cudf.pandas.install()
 import cuml; cuml.accel.install()
 ```
 
-> aside positive
 > IMPORTANT:
 > - These two lines of code are the only changes needed to enable GPU acceleration for your existing pandas and scikit-learn code.
 > - This "flips the switch," allowing the libraries to automatically handle the execution on GPUs.
@@ -112,11 +112,11 @@ The integration of NVIDIA's cuML and cuDF libraries into Snowflake ML offers a p
 ### Related Resources
 
 Ready for more? After you complete this quickstart, you can try one of the following additional examples:
-- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/)
+- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
 
 Learn more about Snowflake ML:
 - [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)

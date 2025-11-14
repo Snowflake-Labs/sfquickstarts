@@ -231,7 +231,7 @@ library(ggplot2)
 Before starting the modeling process, we need to connect to our database and load
 the loan data.
 
-We'll use the DBI and odbc R packages to connect to the database. We'll then use dplyr and dbplyr to query the data with R without having to write raw SQL. To learn more, see [Analyze Data with R using Posit Workbench and Snowflake](https://quickstarts.snowflake.com/guide/analyze_data_with_r_using_posit_workbench_and_snowflake/#0).
+We'll use the DBI and odbc R packages to connect to the database. We'll then use dplyr and dbplyr to query the data with R without having to write raw SQL. To learn more, see [Analyze Data with R using Posit Workbench and Snowflake](/en/developers/guides/analyze-data-with-r-using-posit-workbench-and-snowflake/).
 
 ### Connect with DBI
 
@@ -311,7 +311,6 @@ column). To prepare our data for modeling, we'll first select a few columns of i
 (loan term, credit utilization, credit open-to-buy, and all utilization),
 convert `INT_RATE` to a numeric variable, and remove missing values.
 
-> aside positive
 > Typically, we'd find our columns of interest with exploratory data analysis techniques,
 > but for the purposes of this Quickstart, we've skipped this step.
 
@@ -637,7 +636,6 @@ preds <-
 
 Another is to write our model prediction function as a [view](https://docs.snowflake.com/en/user-guide/views-introduction).
 
-> aside positive
 >
 > A view allows query results to be accessed like a table. The query will execute
 > anytime the view is called, and will run on any new data that has been added to the table.

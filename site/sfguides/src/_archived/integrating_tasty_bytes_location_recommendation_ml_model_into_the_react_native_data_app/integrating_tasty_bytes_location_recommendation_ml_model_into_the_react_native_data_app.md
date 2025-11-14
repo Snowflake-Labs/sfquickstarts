@@ -465,7 +465,7 @@ By doing so you have learned:
 - Integrated ML model into the Data App
 
 ### Next Steps
-To learn more about Location Recommendations ML model, Please refer to our [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science) quickstarts.
+To learn more about Location Recommendations ML model, Please refer to our [Tasty Bytes - Snowpark 101 for Data Science](/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/) quickstarts.
 
 To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes - Quickstarts available to you.
 

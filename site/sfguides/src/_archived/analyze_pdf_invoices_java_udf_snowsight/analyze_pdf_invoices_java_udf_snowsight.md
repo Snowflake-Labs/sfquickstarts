@@ -14,7 +14,7 @@ tags: Data Science, Data Engineering, Unstructured Data
 This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for unstructured data and Snowpark. Although this guide is specific to processing PDF files, you can apply this pattern of processing natively in Snowflake to many types of unstructured data. All source code for this guide can be found on [Github](https://github.com/Snowflake-Labs/sfquickstarts).
 
 ### Prerequisites
-- Completion of [Getting Started with Unstructured Data](http://quickstarts.snowflake.com/guide/getting_started_with_unstructured_data/index.html?index=..%2F..index)
+- Completion of [Getting Started with Unstructured Data](/en/developers/guides/getting-started-with-unstructured-data/)
 
 ### What You'll Need
 - Snowflake account
@@ -67,7 +67,7 @@ use schema public;
 use warehouse quickstart;
 
 create or replace stage pdf_external
-url="s3://sfquickstarts/Analyze PDF Invoices/Invoices/"
+url="s3:/sfquickstarts/Analyze PDF Invoices/Invoices/"
 directory = (enable = TRUE);
 ```
 
@@ -123,7 +123,7 @@ The Java code to parse PDFs requires some dependencies. Instead of downloading t
 ```sql
 -- Create external stage to import PDFBox from S3
 create or replace stage jars_stage
- url = "s3://sfquickstarts/Common JARs/"
+ url = "s3:/sfquickstarts/Common JARs/"
  directory = (enable = true auto_refresh = false);
 
 -- Create a java function to parse PDF files
@@ -399,6 +399,6 @@ Congratulations! You used Snowflake to analyze PDF invoices.
 - Visualize data with __Snowsight__
 
 ### Related Resources
-- [Quickstart: Extract Attributes from DICOM Files using a Java UDF](https://quickstarts.snowflake.com/guide/extract_attributes_dicom_files_java_udf/index.html)
+- [Quickstart: Extract Attributes from DICOM Files using a Java UDF](/en/developers/guides/extract-attributes-dicom-files-java-udf/)
 - [Unstructured Data Docs](https://docs.snowflake.com/en/user-guide/unstructured.html)
 - [Snowpark Docs](https://docs.snowflake.com/en/developer-guide/snowpark/index.html)

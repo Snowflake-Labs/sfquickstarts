@@ -26,7 +26,7 @@ You can view all source code of this guide on [GitHub](https://github.com/Snowfl
 - Model Training, Deployment, and Inference Using Snowflake External Functions
 
 ### What You’ll Need
-- A [Snowflake](https://www.snowflake.com/) Account
+- A [Snowflake](/) Account
 - An IDE (such as [Visual Studio Code](https://code.visualstudio.com/))
 - A [Snowflake account](https://trial.snowflake.com/) with `ACCOUNTADMIN` access.
 - An AWS account with administrator access (or scoped IAM user with access to Lambda, API Gateway, SageMaker, AWS Systems Manager

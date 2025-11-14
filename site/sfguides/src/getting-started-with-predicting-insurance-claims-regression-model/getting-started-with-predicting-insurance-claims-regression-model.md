@@ -109,4 +109,4 @@ In this quickstart, you learned how to use Snowflake's integrated ML tools to cr
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-predicting-insurance-claims-regression-model)
 - [Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Model Registry](https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview?utm_cta=snowpark-dg-hero-card)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)

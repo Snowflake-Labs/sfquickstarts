@@ -510,5 +510,5 @@ Learnt How-To,
 
 - [Mistral-7B-Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1)
 - [NeMo Microservices](https://developer.nvidia.com/nemo-microservices)
-- [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/)
+- [Snowflake Native Apps](/en/data-cloud/workloads/applications/native-apps/)
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)

@@ -29,7 +29,7 @@ In this Quickstart, we will employ all three techniques to analyze meeting video
 
 ### What You Will Build
 
-You will build a multi-step pipeline that uses [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/) for OCR and ASR, and VLM deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/) to extract structured data from meeting video. You’ll store the output from all three models into structured Snowflake tables and build a simple chatbot allowing you to use language to generate rich analytical queries. You will be able to assess meeting effectiveness, identify decision points, and extract action items—directly within the AI Data Cloud. 
+You will build a multi-step pipeline that uses [Snowflake Cortex AI](/en/product/features/cortex/) for OCR and ASR, and VLM deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/) to extract structured data from meeting video. You’ll store the output from all three models into structured Snowflake tables and build a simple chatbot allowing you to use language to generate rich analytical queries. You will be able to assess meeting effectiveness, identify decision points, and extract action items—directly within the AI Data Cloud. 
 
 ![1](assets/1_arch_diagram.png)
 
@@ -54,7 +54,7 @@ Snowpark Container Services and Snowflake Cortex AI are two of the major compone
 
 ### Overview of Cortex AI
 
-[Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/) enables you to quickly analyze unstructured data and build generative AI applications using fully managed LLMs, RAG and text-to-SQL services. Enable multiple users to use AI services with no-code, SQL and REST API interfaces.
+[Snowflake Cortex AI](/en/product/features/cortex/) enables you to quickly analyze unstructured data and build generative AI applications using fully managed LLMs, RAG and text-to-SQL services. Enable multiple users to use AI services with no-code, SQL and REST API interfaces.
 
 ![Cortex_AI](assets/platform-cortex-2025.jpeg)
 
@@ -405,6 +405,6 @@ In this quickstart, you used Optical Character Recognition (OCR),  Automatic Spe
 - Github repo [Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis)
 - Snowpark Container Services [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - Snowflake Cortex AI [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Getting Started with Cortex Analyst Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/)
+- [Getting Started with Cortex Analyst Quickstart](/en/developers/guides/getting-started-with-cortex-analyst/)
 
 

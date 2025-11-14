@@ -16,7 +16,7 @@ Hybrid tables provide high concurrency and lower latency than standard Snowflake
 your use case is response time sensitive, this guide will help you understand the 
 best practices associated with performance testing hybrid tables.
 
-This quickstart assumes you have executed the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables/)
+This quickstart assumes you have executed the [Getting Started with Hybrid Tables](/en/developers/guides/getting-started-with-hybrid-tables/)
 lesson.
 
 While you will be using JMeter for this quickstart, this guide is not a comprehensive JMeter tutorial. The basics
