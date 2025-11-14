@@ -356,23 +356,84 @@ For each of the following custom tools, click **+ Add** next to **Custom Tool**,
 
 <!-- ------------------------ -->
 
+## User Personas
+
+We are building for three core user archetypes involved in supply chain operations.
+
+### Maria Chen (The Operator - Supply Chain Operations Manager)
+
+**Role**: Manages day-to-day operations and material flow. Responsible for resolving inventory issues, coordinating logistics, and keeping the supply chain moving.
+
+**Goals**: Maximize asset availability, resolve stockouts before they impact production, and optimize for cost and speed.
+
+**Needs**: Real-time, actionable answers. A prioritized list of critical issues. Tools to quickly compare options and take action.
+
+**Frustrations**: Constant "fire-fighting." Waiting hours or days for an analyst to run a report. Making decisions with incomplete data (e.g., not knowing about weather disruptions).
+
+### Victor Rodriguez (The Executive - VP of Operations)
+
+**Role**: Oversees supply chain budget and long-term strategy. Responsible for profitability, efficiency, and risk management.
+
+**Goals**: Ensure operational continuity, meet financial targets, and understand high-level risks and opportunities.
+
+**Needs**: A high-level, aggregate view of supply chain health. Clear, concise summaries of critical problems, their financial impact, and the recommended solution.
+
+**Frustrations**: Unforeseen budget overruns. Surprises from major disruptions. Reports that are too detailed and don't provide a clear recommendation.
+
+### Leo Martinez (The Data Steward - Analytics Engineer)
+
+**Role**: The technical and business-logic expert. Responsible for data quality and enabling the AI agent by teaching it the business's unique logic.
+
+**Goals**: Ensure the agent's answers are accurate and trusted. Codify business definitions. Reduce his own ad-hoc reporting backlog.
+
+**Needs**: A simple UI to define business semantics. The ability to test, validate, and "bless" queries. Tools to debug why an agent gave a specific answer.
+
+**Frustrations**: Vague requests from users. The same simple questions being asked repeatedly. Business users misinterpreting raw data.
+
+<!-- ------------------------ -->
+
+## Walking Through a Real-World Scenario
+
+**As Maria (The Operator)**, I want to ask, *"Where do I have critical low inventory levels?"* and instantly see the most critical plants, so I can immediately know where to focus.
+
+When Maria discovers the Miami plant is critically low on rare earth materials, she asks, *"For plants with low inventory of a raw material, compare the cost of replenishing from a supplier vs transferring from another plant with excess inventory."* The agent compares transfer from Austin (71% savings) vs. purchasing from a supplier, so she can make the most cost-effective decision.
+
+Before finalizing the transfer, Maria asks, *"What type of weather events might impact this transfer?"* The agent automatically checks the Weather Forecast tool and warns: **"A major hurricane is forecasted; transport may be impossible,"** so she doesn't make a costly logistical mistake.
+
+**As Victor (The Executive)**, I want to receive a clear summary when Maria asks the agent to *"Draft an executive summary email with this analysis, our options, and a recommendation."* The agent generates an HTML-formatted email with Executive Summary, Financial Comparison, Key Risks, and Final Recommendation, so I can make an informed decision and reply "Approved" in minutes.
+
+**As Leo (The Data Steward)**, I previously defined business logic like "critical low inventory" in the semantic model YAML file and added verified queries for cost comparisons, so the agent understands our business rules and Maria can trust the answers.
+
+<!-- ------------------------ -->
+
 ## Test Your Agent with Example Questions
 
-Start with simple questions and build up to more complex analysis. Notice how the agent automatically determines which tool to use based on your question!
+Now it's your turn to experience the Supply Chain Assistant! Follow Maria's journey by asking these questions in order, or explore on your own. Notice how the agent automatically determines which tool to use based on your question!
 
 ![Alt text](assets/Agent.gif)
 
-### Supply Chain Data Questions
+### Following Maria's Scenario
 
-* "Where do I have critical low inventory levels?"
-* "Where do we have low inventory of rare earth materials?"
+Ask these questions in sequence to replicate the scenario above:
+
+1. *"Where do I have critical low inventory levels?"*
+2. *"Where do we have low inventory of rare earth materials?"*
+3. *"For plants with low inventory of a raw material, compare the cost of replenishing from a supplier vs transferring from another plant with excess inventory."*
+4. *"What type of weather events might impact this transfer?"*
+5. *"Draft an executive summary email with this analysis, our options, and a recommendation."*
+
+### Additional Questions to Explore
+
+Try these variations to explore different capabilities:
+
 * "Compare the cost of transferring this inventory from a plant with excess inventory versus replenishing from a supplier."
-* "For plants with low inventory of a raw material, compare the cost of replenishing from a supplier vs transferring from another plant with excess inventory."
-* "What type of weather events might impact this transfer?"
-* "Draft an executive summary email with this analysis, our options, and a recommendation."
+* "Show me all plants with excess inventory that could support transfers."
+* "What are the lead times for our primary suppliers?"
+* "Search our documentation for transfer policies." (uses Cortex Search)
+* "What orders are scheduled for the aerospace business line?"
 
 > aside negative
-> **Note:** Sending emails requires proper email integration and verified email addresses.
+> **Note:** Sending emails requires proper email integration and verified email addresses. The WEB_SEARCH and WEB_SCRAPE tools require external integration access, which is not available on trial accounts.
 
 <!-- ------------------------ -->
 
