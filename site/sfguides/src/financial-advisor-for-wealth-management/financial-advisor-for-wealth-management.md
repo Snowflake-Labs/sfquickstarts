@@ -6,11 +6,15 @@ environments: web
 status: Hidden
 author: Tess Dicker, Constantin Stanca, Cameron Shimmin
 
-# Overview
+# Financial Advisor for Wealth Management
 
-This solution delivers an AI-powered wealth management platform that transforms how financial advisors serve their clients. By integrating portfolio analytics, document search, and conversational AI within Snowflake, it enables advisors to access comprehensive insights about client portfolios, market research, and client interactions in seconds. The solution demonstrates how financial firms can modernize their advisory practices by centralizing all client data, market intelligence, and AI capabilities on a unified platform.
+## Overview
 
-# Key Features
+This solution delivers an AI-powered wealth management platform that transforms how financial advisors serve their clients. By integrating portfolio analytics, document search, and conversational AI within Snowflake, it enables advisors to access comprehensive insights about client portfolios, market research, and client interactions in seconds. 
+
+The solution demonstrates how financial firms can modernize their advisory practices by centralizing all client data, market intelligence, and AI capabilities on a unified platform.
+
+## Key Features
 
   * **Intelligent Research Discovery**: Search through equity research reports, market commentary, SEC filings, and Fed documents using natural language queries. Powered by Snowflake's Cortex Search, advisors can instantly find analyst recommendations, macroeconomic insights, and regulatory updates without manual document navigation.
   * **Conversational Portfolio Analytics**: Query client portfolios, performance metrics, and risk profiles using simple questions. The system leverages Snowflake Intelligence with Cortex Analyst to interpret questions about holdings, benchmark performance, goal progress, and sector concentrations, delivering instant, data-driven answers.
@@ -18,7 +22,7 @@ This solution delivers an AI-powered wealth management platform that transforms 
   * **Unified AI Financial Advisor**: A single intelligent agent combines portfolio analytics, research search, and client transcript analysis. Advisors can ask complex questions that span structured portfolio data and unstructured research content, enabling holistic client advisory and strategic planning.
   * **Alert and Priority Management**: Automatically identify clients who need attention based on performance issues, goal tracking, concentration risk, or relationship management needs.
 
-# How It Works
+## How It Works
 
 This solution leverages Snowflake's native AI capabilities to create a seamless, end-to-end wealth management platform without external infrastructure.
 
@@ -28,7 +32,7 @@ This solution leverages Snowflake's native AI capabilities to create a seamless,
   * **Snowflake Intelligence**: An AI agent is created and equipped with both the Cortex Analyst semantic model and all five Cortex Search services. Custom orchestration instructions enable the agent to intelligently route queries, combining structured analytics with unstructured research insights to provide comprehensive answers.
   * **Query Orchestration**: The agent decomposes complex questions, determines whether to use structured data tools (Cortex Analyst) or unstructured document search (Cortex Search), and synthesizes results into actionable recommendations tailored for client presentations.
 
-# Business Impact
+## Business Impact
 
 This solution helps wealth management and asset management firms transition from fragmented, manual research processes to an integrated, AI-driven advisory experience, resulting in:
 
@@ -38,7 +42,7 @@ This solution helps wealth management and asset management firms transition from
   * **Risk Management**: Proactively identifies clients with concentration risk, underperformance issues, or portfolios misaligned with risk tolerance, helping firms maintain compliance and fiduciary standards.
   * **Operational Simplification**: Eliminates the need for multiple external tools and data platforms, reducing IT complexity and ensuring all sensitive client data remains securely within Snowflake's governed environment.
 
-# Use Cases and Applications
+## Use Cases and Applications
 
 This solution serves as a comprehensive foundation for various wealth management and asset management applications:
 
