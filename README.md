@@ -63,7 +63,7 @@ For advanced users
      or
      Edit the existing files in the directory
   7. Start authoring in markdown format.  Note this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_markdown-template/markdown-template).
-  8. Make sure you select the appropriate language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
+  8. Make sure you select the appropriate content type, industries, language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
 
 
 
@@ -80,11 +80,13 @@ For advanced users
 
 ### Important Notes 
 
-- Ensure your folder uses "Hyphens (-)" and not "Underscores(_)" in folder name
+- Ensure your folder uses lower case alphabets and "Hyphens (-)" and not "Underscores(_)" in folder name.
+  Your folder name must match the .md file name inside.
+  Images must be in an "assets" folder and must be less than 1MB.
 - Please ensure you include all required pieces in the header.<br>
   - Required items includes: language, category tags, id, author name.<br>
-  - Optional items include: Summary, Github link, open in Snowflake link etc.  
-- Complete the Get Started with Guides to learn more about about the specifics.  It will give you details on formatting and layout etc.
+  - Optional items include: Summary, Github repo link, open in Snowflake link etc.  
+- Complete the [Get Started with Guides](https://www.snowflake.com/en/developers/guides/](https://www.snowflake.com/en/developers/guides/) to learn more about about the specifics.  It will give you details on formatting and layout etc.
 - Always check if the first step is labeled **Overview** AND then make sure there are these specific sections under that step: <br>1) Overview, <br>2) What You Will Build, <br> 3) What You Will Learn, <br>4) Prerequisite
 - Always check if the last step is labeled **Conclusion and Resources** and then make sure it includes these specific sections <br>1) Conclusion, <br>2) What You Learned, and <br>3) Resources (*with links to docs, blogs, videos, etc.*)
 
