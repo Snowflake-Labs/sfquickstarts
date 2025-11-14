@@ -1,5 +1,5 @@
 author: AUTHOR_NAME
-id: SFGUIDE-NAME
+id: example-template
 language: 
 summary: This is a sample Snowflake Template
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
