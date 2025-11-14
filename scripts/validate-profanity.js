@@ -60,6 +60,21 @@ const extraWords = readBlocklistFromEnv();
 const baseWords = getBaseProfanityWords().map((w) => String(w).toLowerCase());
 const allWordsSet = new Set([...baseWords, ...extraWords.map((w) => w.toLowerCase())]);
 
+// Check for installation error first
+if (baseWords.length === 0) {
+  console.error('Profanity base list unavailable. Ensure badwords-list is installed.');
+  // Write error report for installation failure
+  try {
+    fs.writeFileSync('profanity-report.json', JSON.stringify({ 
+      issues: [],
+      error: 'Profanity base list unavailable. Ensure badwords-list is installed.'
+    }, null, 2));
+  } catch (e) {
+    // ignore
+  }
+  process.exit(2);
+}
+
 const report = [];
 
 for (const filePath of files) {
@@ -76,17 +91,13 @@ for (const filePath of files) {
   }
 }
 
-// Write machine-readable report
-try {
-  fs.writeFileSync('profanity-report.json', JSON.stringify({ issues: report }, null, 2));
-} catch (e) {
-  // ignore
-}
-
-if (baseWords.length === 0) {
-  console.error('Profanity base list unavailable. Ensure badwords-list is installed.');
-  process.exit(2);
-} else if (report.length > 0) {
+// Write machine-readable report only if abusive words were found
+if (report.length > 0) {
+  try {
+    fs.writeFileSync('profanity-report.json', JSON.stringify({ issues: report }, null, 2));
+  } catch (e) {
+    // ignore
+  }
   console.error('Abusive words detected in the following files:');
   for (const r of report) {
     console.error(`- ${r.file}: ${r.words.join(', ')}`);
@@ -94,6 +105,8 @@ if (baseWords.length === 0) {
   process.exit(1);
 } else {
   console.log('No abusive words found.');
+  // Don't write profanity-report.json when no issues found
+  process.exit(0);
 }
 
 

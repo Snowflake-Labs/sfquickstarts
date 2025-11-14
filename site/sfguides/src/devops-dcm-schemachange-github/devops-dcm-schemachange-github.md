@@ -125,40 +125,14 @@ Action Secrets in GitHub are used to securely store values/variables which will 
 
 From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
 
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SF_ACCOUNT</td>
-            <td>xy12345.east-us-2.azure</td>
-        </tr>
-        <tr>
-            <td>SF_USERNAME</td>
-            <td>DEMO_USER</td>
-        </tr>
-        <tr>
-            <td>SF_PASSWORD</td>
-            <td>*****</td>
-        </tr>
-        <tr>
-            <td>SF_ROLE</td>
-            <td>DEMO_ROLE</td>
-        </tr>
-        <tr>
-            <td>SF_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-        </tr>
-        <tr>
-            <td>SF_DATABASE</td>
-            <td>DEMO_DB</td>
-        </tr>
-    </tbody>
-</table>
+| Secret name | Secret value |
+|-------------|--------------|
+| SF_ACCOUNT | xy12345.east-us-2.azure |
+| SF_USERNAME | DEMO_USER |
+| SF_PASSWORD | ***** |
+| SF_ROLE | DEMO_ROLE |
+| SF_WAREHOUSE | DEMO_WH |
+| SF_DATABASE | DEMO_DB |
 
 > aside positive
 > 
