@@ -287,24 +287,16 @@ Action Secrets in GitHub are used to securely store values/variables for your CI
 
 From your repository, go to **Settings > Secrets and variables > Actions**. Add the following secrets (adjust names/values as needed):
 
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td>SNOWFLAKE_ACCOUNT</td><td>xy12345.east-us-2.azure</td></tr>
-        <tr><td>SNOWFLAKE_USERNAME</td><td>DEMO_USER</td></tr>
-        <tr><td>SNOWFLAKE_PASSWORD</td><td>*****</td></tr>
-        <tr><td>SNOWFLAKE_ROLE</td><td>DEMO_ROLE</td></tr>
-        <tr><td>SNOWFLAKE_WAREHOUSE</td><td>DEMO_WH</td></tr>
-        <tr><td>SNOWFLAKE_DATABASE</td><td>DEMO_DB</td></tr>
-        <tr><td>SNOWFLAKE_SCHEMA</td><td>DLSYNC</td></tr>
-        <tr><td>SNOWFLAKE_PROFILE</td><td>dev</td></tr>
-    </tbody>
-</table>
+| Secret name | Secret value |
+|-------------|--------------|
+| SNOWFLAKE_ACCOUNT | xy12345.east-us-2.azure |
+| SNOWFLAKE_USERNAME | DEMO_USER |
+| SNOWFLAKE_PASSWORD | ***** |
+| SNOWFLAKE_ROLE | DEMO_ROLE |
+| SNOWFLAKE_WAREHOUSE | DEMO_WH |
+| SNOWFLAKE_DATABASE | DEMO_DB |
+| SNOWFLAKE_SCHEMA | DLSYNC |
+| SNOWFLAKE_PROFILE | dev |
 
 > aside positive
 > 
