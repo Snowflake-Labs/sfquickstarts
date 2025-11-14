@@ -5,6 +5,8 @@ language: en
 environments: web
 status: Hidden
 author: Tess Dicker, Constantin Stanca, Cameron Shimmin
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-financial-advisor-for-asset-management
 
 # Financial Advisor for Wealth Management
 
