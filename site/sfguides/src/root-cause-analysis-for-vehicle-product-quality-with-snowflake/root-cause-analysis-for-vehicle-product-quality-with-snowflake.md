@@ -61,7 +61,7 @@ This section will walk you through creating various objects
 
 #### High-Level Workflow
 
-<img src="assets/connectedmobilityflow.png"/>
+![Connected Mobility Flow](assets/Connectedmobilityflow.png)
 
 
 In a real-world situation with Snowflakes Data Sharing each of the data will be shared from a particular region and cloud provider. In this scenario for sake of simplicity we will assume the data is available in a single cloud provider, AWS S3 bucket. We will be downloading the data and storing in tables in a Snowflake account and use that for further analytics.

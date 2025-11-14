@@ -33,7 +33,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ### What You’ll Build 
 - In this lab you will build a sales performance portal that live queries against data in Snowflake and provides unique drill down and exploration capabilities to the end users through embedding Sigma. 
 
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)
 <!-- ------------------------ -->
 ## Setting up Snowflake 
 
@@ -67,7 +67,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
  ![imgae3](assets/settingupsnowflake_4.png) 
 
- ![Footer](assets/sigma_footer.png)
+ ![Footer](assets/sigma_Footer.png)
   ## Provisioning Sigma
   ### Provisioning Sigma via Snowflake Partner Connect
 
@@ -83,7 +83,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
    
 ![sigmaorg](assets/provisioningsigma_3.png)
 
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)
 
 ## Preparing and Loading Data into Snowflake
 
@@ -175,7 +175,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 8. <strong>SELECT * FROM TRANSACTIONS LIMIT 1000;</strong>
 - A SELECT * against the transactions table should complete successfully and show the data we have loaded. If not, please go back and re-run the prior steps of this module using the SYSADMIN role to ensure permissions were granted to the new role appropriately.    
   
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)
 ## Building Your Sigma Workbook 
 ### Connecting Your Workbook to the Dataset
 
@@ -234,7 +234,7 @@ We have data files in our stage as shown in the previous list (ls) command. Thes
 ![build11](assets/buildworkbook_11.png)
 
  - If we navigate back to our Snowflake environment, we can see the queries being pushed down in our Snowflake query history view as well.
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)
   ## Creating Visualizations & Filters
   ### Creating Visualizations
   It is often easier to spot trends, outliers, or insights which lead to further questions when viewing data in a visualization. Sigma makes it easy to create visualizations of your data while also enabling you to dig into the data that makes up the visualization. 
@@ -373,7 +373,7 @@ In Sigma, you can add a variety of UI elements to your workbook to customize the
   ![build36](assets/buildworkbook_36.png)
 
 5. Click Publish to save these changes. 
-![Footer](assets/sigma_footer.png)   
+![Footer](assets/sigma_Footer.png)   
 ## Embedding the Sigma Workbook into an Application
    ### Building the Application / Portal
 
@@ -471,7 +471,7 @@ There are two key edits we need to make in order for the server to use our workb
 
 8. You will notice that your workbook shows All Brands Sales Performance as we have not added any row level security yet. We will see changes in this title following the next section.
 
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)
 ## Row Level Security 
 1. Now we might want to put some row level security on this dashboard, so that brands can only see data related to the sale of their own products. Navigate back to your data page in your Sigma workbook. 
 
@@ -505,7 +505,7 @@ Update control-id to 'Product-Brand' (or whatever the control ID was labeled in 
 ![rls5](assets/rowlevelsecurity_5.png)
 
 For more details on how to set up dynamic row-level security in Sigma, refer [here](https://help.sigmacomputing.com/hc/en-us/articles/6709896696979-User-Attributes).
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)
 ## Exploring the Embed
 For the purpose of this lab, we will now explore the portal as a member of the Samsung marketing team. We have been tasked with identifying which regions to focus our in store marketing efforts on, and will use the Plugs Sales Performance portal to help identify where the majority of our in store purchases happen. 
 
@@ -546,7 +546,7 @@ For the purpose of this lab, we will now explore the portal as a member of the S
 
 12. Minimize the element using the arrows in the top right to collapse this new visualization back into the larger page. 
 
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)
 ## Conclusion & Helpful Resources
 
 ### Conclusion
@@ -569,4 +569,4 @@ Thank you for your participation in this hands-on lab. To learn more about how r
 - Resources and Case Studies: [https://www.sigmacomputing.com/resources](https://www.sigmacomputing.com/resources)
 - Help Center including Documentation: [https://help.sigmacomputing.com/hc/en-us](https://help.sigmacomputing.com/hc/en-us)
 
-![Footer](assets/sigma_footer.png)
+![Footer](assets/sigma_Footer.png)

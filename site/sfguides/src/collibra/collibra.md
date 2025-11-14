@@ -25,7 +25,7 @@ Collibra overall functionality in integration with Snowflake can be summarized w
 
 Collibra is a Data Intelligence platform that allows users to search, and find or create trusted data Enterprise wide. Collibra allows users to automatically catalog technical metadata and link it to the business and logical and data privacy context required. It also allows for Data Quality discovery and metrics. Collibra has automation in the collaboration of users, the certification of data assets and in general of data intelligence processes. 
 
-![Catalog](assets/Dataintelligence.png)
+![Catalog](assets/DataIntelligence.png)
 
 
 
@@ -101,7 +101,7 @@ In this stage, we will specifically define the Data Privacy policies and rules t
 
 Please click on the Collibra Protect option after clicking the nine dots all the way to the top right of the Collibra User Interface:
 
-![Protect](assets/Protect.jpg)
+![Protect](assets/protect.jpg)
 
 This will take you to the Collibra Protect environment, then click on the Data Access Rules. And then click on Create a Data Access Rule button:
 

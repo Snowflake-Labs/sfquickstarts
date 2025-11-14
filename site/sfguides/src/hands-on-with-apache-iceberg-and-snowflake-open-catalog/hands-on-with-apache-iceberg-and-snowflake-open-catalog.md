@@ -39,7 +39,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 - Click Admin -> Accounts
 - Click the dropdown arrow next to “+ Account” in the top right
 
-![create snowflake open catalog account](assets/img01.PNG)
+![create snowflake open catalog account](assets/img01.png)
 
 - In the dialog box that pops up:
     For “Cloud”, choose “AWS”
@@ -60,7 +60,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
     You’ll be prompted to reset your password. Enter a new password that meets the same requirements (and can’t be the same one you set in step 1.f.iii)
     Once you click “Reset”, you’ll be logged in and redirected to the home page of Snowflake Open Catalog
 
-![open catalog home page](assets/img02.PNG)
+![open catalog home page](assets/img02.png)
 
 ### Creating an S3 Bucket
 
@@ -90,7 +90,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 - In the navigation pane on the left under “Access management”, select “Account settings”
 - Under Security Token Service (STS), in the Endpoints list, find the line for **US West-2**. If the STS status is inactive, set the toggle to Active.
 
-![sts endpoints page](assets/img03.PNG)
+![sts endpoints page](assets/img03.png)
 
 - In the navigation pane on the left under “Access management”, select “Policies”
 - Select “Create Policy” in the top right

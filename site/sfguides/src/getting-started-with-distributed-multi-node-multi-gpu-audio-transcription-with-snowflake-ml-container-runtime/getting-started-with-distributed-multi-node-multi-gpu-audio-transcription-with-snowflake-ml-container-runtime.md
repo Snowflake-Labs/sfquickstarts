@@ -63,17 +63,17 @@ integration-friendly format.
 Container Runtime for ML provides several APIs to handle unstructured data, such as images, text and binary files, from Snowflake Stage and process it in Snowflake's Container Runtime using [Ray Data](https://docs.ray.io/en/latest/data/data.html). These APIs enable efficient unstructured data processing and analysis without the need for complex data movement or transformation. At the time of writing this quickstart, Container Runtime for ML has the following APIs for handling unstructured data:
 
 1. Reading into Snowflake:   
-   1. SFStageImageDatasource \- This class allows us to load images from Snowflake Stage and pass them forward for distributed processing with Container Runtime for ML.  
-   2. SFStageTextDatasource \- This class allows us to load text from Snowflake Stage and use them in downstream distributed calls.  
-   3. SFStageBinaryFileDataSource \- This class allows us to read content from Snowflake stage as binary files and use them in downstream processors.  
+   1. SFStageImageDatasource - This class allows us to load images from Snowflake Stage and pass them forward for distributed processing with Container Runtime for ML.  
+   2. SFStageTextDatasource - This class allows us to load text from Snowflake Stage and use them in downstream distributed calls.  
+   3. SFStageBinaryFileDataSource - This class allows us to read content from Snowflake stage as binary files and use them in downstream processors.  
 2. Writing to Snowflake:   
-   1. SnowflakeTableDatasink \- This class provides snowflake specific [Ray data sink APIs](https://docs.ray.io/en/latest/data/api/doc/ray.data.Datasink.html) to allow customers write the processed dataset into a snowflake table
+   1. SnowflakeTableDatasink - This class provides snowflake specific [Ray data sink APIs](https://docs.ray.io/en/latest/data/api/doc/ray.data.Datasink.html) to allow customers write the processed dataset into a snowflake table
 
 In this quickstart, we will be using SFStageBinaryFileDataSource and SnowflakeTableDatasink class.
 
 ### What model are we using for audio transcription?
 
-Whisper is a state-of-the-art model for automatic speech recognition (ASR) and speech translation, proposed in the paper [Robust Speech Recognition via Large-Scale Weak Supervision](https://huggingface.co/papers/2212.04356) by Alec Radford et al. from OpenAI. Trained on \>5M hours of labeled data, Whisper demonstrates a strong ability to generalise to many datasets and domains in a zero-shot setting.
+Whisper is a state-of-the-art model for automatic speech recognition (ASR) and speech translation, proposed in the paper [Robust Speech Recognition via Large-Scale Weak Supervision](https://huggingface.co/papers/2212.04356) by Alec Radford et al. from OpenAI. Trained on >5M hours of labeled data, Whisper demonstrates a strong ability to generalise to many datasets and domains in a zero-shot setting.
 
 Whisper large-v3 has the same architecture as the previous [large](https://huggingface.co/openai/whisper-large) and [large-v2](https://huggingface.co/openai/whisper-large-v2) models, except for the following minor differences:
 
@@ -115,13 +115,13 @@ This section will walk you through creating various objects. The repository with
 
 Complete the following steps to setup your account:
 
-* Download the Snowflake Objects creation file “step0\_setup.sql”  from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/step0_setup.sql). 
+* Download the Snowflake Objects creation file "step0_setup.sql"  from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/step0_setup.sql). 
 
 * Roles required to execute commands in file are SYSADMIN and ACCOUNTADMIN.
 
 * In Snowsight navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
-* Paste the contents from the downloaded file “step0\_setup.sql”  in the worksheet
+* Paste the contents from the downloaded file "step0_setup.sql"  in the worksheet
 
 * Run all the commands to create Snowflake objects (database, schema, warehouse, compute pools and external access integration).
 
@@ -134,40 +134,40 @@ This notebook linked below covers the creation of snowflake objects and data loa
 
 To get started, follow these steps: 
 
-* Download the notebook “Audio Processing \- Setup.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Setup.ipynb)
+* Download the notebook "Audio Processing - Setup.ipynb" from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Setup.ipynb)
 
 * Navigate to Snowsight and change role to **SYSADMIN**
 
-* Navigate to **Projects** \> **Notebooks** in Snowsight
+* Navigate to **Projects** > **Notebooks** in Snowsight
 
 * On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
 
-* Create a new notebook “Audio Processing \- Setup.ipynb” with the following settings
+* Create a new notebook "Audio Processing - Setup.ipynb" with the following settings
 
- * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
+ * For the Notebook Location, select MULTINODE_MULTIGPU_MYDB database and AUDIO_TRANSCRIPTION_SCH schema
 
-  * Select Warehouse – ML\_MODEL\_WH
+  * Select Warehouse – ML_MODEL_WH
 
-  * Python Environment \- Run On Container
+  * Python Environment - Run On Container
 
-  * Runtime \- Snowflake ML Runtime CPU 1.0
+  * Runtime - Snowflake ML Runtime CPU 1.0
 
-  * Compute Pool \- AUDIO\_PROCESSING\_CP\_DATA\_DOWNLOAD
+  * Compute Pool - AUDIO_PROCESSING_CP_DATA_DOWNLOAD
 
   * Click on **Create Button**
 
-![Audio Processing Setup](assets/Audio_processing_Setup_create_notebook.png)
+![Audio Processing Setup](assets/Audio_Processing_Setup_create_notebook.png)
 
-* Click the three dots in the top right \> Notebook Settings  
-* Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
+* Click the three dots in the top right > Notebook Settings  
+* Enable the ALLOW_ALL_INTEGRATION and click SAVE.
 
-![Audio Processing Setup External Access](assets/Audio_processing_Setup_notebook_settings_external_access.png)
+![Audio Processing Setup External Access](assets/Audio_Processing_Setup_notebook_settings_external_access.png)
 
-* Run cells in the notebook\!
+* Run cells in the notebook!
 
-* Notebook will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named AUDIO\_FILES\_STAGE.
+* Notebook will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named AUDIO_FILES_STAGE.
 
-![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
+![Audio Processing Setup Notebook](assets/Audio_Processing_notebook.png)
 
 
 Note: - "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
@@ -193,8 +193,8 @@ class SFStageBinaryFileDataSource(
 * `stage_location`: Stage path  
 * `database`: Database name. Defaults to notebook session's current database   
 * `schema`: Schema name. Defaults to notebook session's current database   
-* `file_pattern`: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "\*.flac" will match all files with .png extension Default is to include all files under stage\_location  
-* `local_path`: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file\_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
+* `file_pattern`: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "*.flac" will match all files with .png extension Default is to include all files under stage_location  
+* `local_path`: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
 
 ```py
 from snowflake.ml.ray.datasink import SnowflakeTableDatasink
@@ -218,47 +218,46 @@ label_dataset.write_datasink(datasink, concurrency=4)
 
 To get started, follow these steps:
 
-* Download the notebook “Audio Processing \- Distributed Inferencing.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Distributed%20Inferencing.ipynb)
+* Download the notebook "Audio Processing - Distributed Inferencing.ipynb" from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Distributed%20Inferencing.ipynb)
 
 * Navigate to Snowsight and change role to the **SYSADMIN** role
 
-* Navigate to **Projects** \> **Notebooks** in Snowsight
+* Navigate to **Projects** > **Notebooks** in Snowsight
 
 * On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
 
 * Create a new notebook with the following settings
 
-  * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
+  * For the Notebook Location, select MULTINODE_MULTIGPU_MYDB database and AUDIO_TRANSCRIPTION_SCH schema
 
-  * Select Warehouse – ML\_MODEL\_WH
+  * Select Warehouse – ML_MODEL_WH
 
-  * Python Environment \- Run On Container
+  * Python Environment - Run On Container
 
-  * Runtime \- Snowflake ML Runtime GPU 1.0
+  * Runtime - Snowflake ML Runtime GPU 1.0
 
-  * Compute Pool \- AUDIO\_PROCESSING\_CP\_GPU\_NV\_S\_5\_NODES
+  * Compute Pool - AUDIO_PROCESSING_CP_GPU_NV_S_5_NODES
 
   * Click on **Create Button**
 
-![Audio Processing Distributed Inferencing Notebook](assets/Audio_processing_Distributed_Inferencing_create_notebook.png)
+![Audio Processing Distributed Inferencing Notebook](assets/Audio_Processing_Distributed_Inferencing_create_notebook.png)
 
-* Click the three dots in the top right \> Notebook Settings  
-* Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
+* Click the three dots in the top right > Notebook Settings  
+* Enable the ALLOW_ALL_INTEGRATION and click SAVE.
 
 
-![Audio Processing Distributed Inferencing Notebook External Access](assets/Audio_processing_Distributed_Inferencing_notebook_settings_external_access.png)
+![Audio Processing Distributed Inferencing Notebook External Access](assets/Audio_Processing_Distributed_inferencing_notebook_settings_external_access.png)
 
-* Run cells in the notebook\!
+* Run cells in the notebook!
 
       Lets break down step by step in the notebook
 
 - Create a Ray cluster and scale upto 5 nodes.  
 - Configure logging for Ray Cluster and do necessary setups for the Ray Cluster  
-- Verify the Audio files in the stage uploaded during Step 3\.  
+- Verify the Audio files in the stage uploaded during Step 3.  
 - Download the whisper model from OpenAI for distributed inferencing of the audio files  
 - Run distributed inference on the multi-node, multi-GPU audio transcription  
 - Write data to the Snowflake table using Snowflake APIs.
-
 
 Note: "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
 

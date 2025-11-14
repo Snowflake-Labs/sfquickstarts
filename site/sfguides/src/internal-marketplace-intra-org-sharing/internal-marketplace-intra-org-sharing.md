@@ -479,7 +479,7 @@ Now that access has been granted, let's go back to the consumer roles:
   - Schema and object names are appended to access specific objects in the data product.
 - **Optional**: Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and perform the same steps.
 
-![](assets/consumelisting.png)
+![](assets/ConsumeListing.png)
 
 ---
 ## Live Data Sharing

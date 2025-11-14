@@ -187,7 +187,7 @@ After the Image upload process completes the code we'll use to build our App pac
 
 When this is done succesfully your SPCS_APP.NAPP.APP_STAGE should look like the following in Snowsight:
 
-![APP_STAGE](assets/app_stage.png)
+![APP_STAGE](assets/APP_STAGE.png)
 
 <!-- ------------------------ -->
 ## Create Application Package
@@ -242,7 +242,7 @@ call spcs_app_instance.app_public.app_url();
 ```
 
 When up and running you should see a screen like this at your service endpoint. 
-![CLERKS](assets/clerks.png)
+![CLERKS](assets/CLERKS.png)
 
 
 <!-- ------------------------ -->
