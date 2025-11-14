@@ -24,7 +24,8 @@ It is important to include on the first page of your guide the following section
 
 Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
-The rest of this Snowflake Guide explains the steps of writing your own guide and the various formatting options available. 
+The rest of this Snowflake Guide explains the steps of writing your own guide with some basic layout information.  
+Detailed formatting options can be found in this [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides) . 
 
 ### Prerequisites
 - Familiarity with Markdown syntax
@@ -125,7 +126,11 @@ Please use the guide to add elements to your markdown within this template.  <p>
 
 
 <!-- ------------------------ -->
-## Languages and Category Tags 
+## Adding Appropriate Tags 
+
+**Content Type & Industries Tags** 
+- Pick the appropriate content type that applies to your Guide. This helps with filtering content on the website.
+- If relevant, please pick industry tags as well so content is reflected appropriately on the website.
 
 - Languages
 Guides are available in various languages for the regions.
@@ -140,7 +145,7 @@ specific language tags must be added to the document to ensure the regional page
 - DO NOT create new tags if you don't see them in the list.  
 
 
-A complete list of the language and category tags is available in [Get Started with Guides](#)
+A complete list of the language and category tags is available in [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides) 
 
 
 
