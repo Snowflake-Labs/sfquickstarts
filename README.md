@@ -28,6 +28,15 @@ You can submit your own Guides to be published on Snowflake's website by submitt
 
 ### How to:
 
+**Create a new Guide on GitHub.com**
+1. Fork this repository to your GitHub account (top right of webpage, `fork` button)
+2. In your fork, Navigate to the /src folder 
+3. Click "Add file" --> "Create new file" 
+4. In the "Name your file" field, type your new folder name followed by a "/", then a file name inside it.  for example my-new-folder/my-new-folder.md
+   This tells GitHub to creat a folder named "my-new-folder" with a placeholder file inside it.
+5. Start authoring in markdown format.  Note this [Markdown Template](https://src/_example-template/markdown-template).
+6. Create a new branch (name it appropriately) and commit your changes
+7. Create a pull request and submit to Devrel!
 
 **Submit an edit on GitHub.com**
 1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
@@ -38,28 +47,31 @@ You can submit your own Guides to be published on Snowflake's website by submitt
 
 
 
-
-**Create a new Guide Locally:** 
-For advanced users
-  1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
-  2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
-  3. Navigate to the directory `cd sfquickstarts/site/src`
-  4. Create a new branch `git checkout -b <your-branch-name>` (make sure you are working on a new branch and not on `master`!) 
-  6. Copy the template folder and rename it appropriately: (e.g. `cp _example-template my-quickstart-name-here` in your terminal). 
-  7. Start authoring in markdown format.  Note this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_example-template/markdown-template).
-  8. Make sure you select the appropriate language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
-
-
-
 ```diff
 ! Congratulations! 
 You now have the setup to work on your Snowflake Guide.
 ```
 
-### Submitting: 
-   1. If you need to synchronize your branch with your repo: `git push --set-upstream origin <your-branch-name>`
+**Create a new Guide or edit Locally:** 
+For advanced users
+  1. Fork this repository to your personal GitHub account (top right of webpage, `fork` button)
+  2. Clone your new fork `git clone git@github.com:<YOUR-USERNAME>/sfquickstarts.git sfquickstarts`
+  3. Navigate to the directory `cd sfquickstarts/site/src`
+  4. Create a new branch `git checkout -b <your-branch-name>` (make sure you are working on a new branch and not on `master`!) 
+     If you need to synchronize your branch with your repo: `git push --set-upstream origin <your-branch-name>`
+  6. Copy the template folder and rename it appropriately: (e.g. `cp _markdown-template my-quickstart-name-here` in your terminal).
+     or
+     Edit the existing files in the directory
+  7. Start authoring in markdown format.  Note this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_markdown-template/markdown-template).
+  8. Make sure you select the appropriate language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
+
+
+
+
+### Submitting Your Pull Requests: 
    2. Create a  **draft PR** pull request against sfquickstarts/master from your fork, using <your-branch-name>.
-   3. GitHub will run validation for basic formatting, image sizes less than 1MB, required fields, tags, and language. If there are errors, you will be notified to correct them. A staging link will be generated for you -- use this to verify that your guide looks as expected! 
+   3. GitHub will run validation for basic formatting, image sizes less than 1MB, required fields, tags, and language. If there are errors, you will be notified to correct them.
+      > A staging link will be generated for you and automatically commented in the PR -- use this to verify that your guide looks as expected! 
    4. Once validation passes, request review from @kanwalzs. Note that the devrel team has a 24 hour SLA for approving PRs. You do not need to post in #devrel to notify us :) 
    5. The devrel team will make sure your branch is up to date with master, and then merge it in. 
    6. Expect content to appear/update on snowflake.com/en/developers/guides within 30 minutes of your PR being merged in. 
@@ -70,7 +82,7 @@ You now have the setup to work on your Snowflake Guide.
 - Ensure your folder uses "Hyphens (-)" and not "Underscores(_)" in folder name
 - Please ensure you include all required pieces in the header.<br>
   - Required items includes: language, category tags, id, author name.<br>
-  - Optional items include: Summary, Github Issues link etc.  
+  - Optional items include: Summary, Github link, open in Snowflake link etc.  
 - Complete the Get Started with Guides to learn more about about the specifics.  It will give you details on formatting and layout etc.
 - Always check if the first step is labeled **Overview** AND then make sure there are these specific sections under that step: <br>1) Overview, <br>2) What You Will Build, <br> 3) What You Will Learn, <br>4) Prerequisite
 - Always check if the last step is labeled **Conclusion and Resources** and then make sure it includes these specific sections <br>1) Conclusion, <br>2) What You Learned, and <br>3) Resources (*with links to docs, blogs, videos, etc.*)
