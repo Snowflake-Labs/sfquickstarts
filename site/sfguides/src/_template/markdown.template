@@ -7,7 +7,6 @@ environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
-author:  Kanwal Komail (github: kanwalzs)
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
