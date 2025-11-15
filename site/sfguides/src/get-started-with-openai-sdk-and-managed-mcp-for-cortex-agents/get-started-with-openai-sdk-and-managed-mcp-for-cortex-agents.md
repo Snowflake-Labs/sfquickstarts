@@ -1,19 +1,17 @@
 author: James Cha-Earley
 id: get-started-with-openai-sdk-and-managed-mcp-for-cortex-agents
 summary: Get Started with OpenAI SDK and Managed MCP for Cortex Agents
-categories: snowflake-site:taxonomy/product/ai
-snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/snowflake-feature/ml-functions
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cortex AI, MCP, OpenAI SDK
 language: en
 
 
 # Get Started with OpenAI SDK and Managed MCP for Cortex Agents
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
+
 
 ### Overview
 
@@ -43,7 +41,6 @@ You'll build two complete applications that demonstrate external access patterns
 
 <!-- ------------------------ -->
 ## Snowflake Setup
-Duration: 5
 
 ### Download Project Files
 
@@ -91,7 +88,7 @@ SHOW SEMANTIC VIEWS IN SCHEMA SALES_INTELLIGENCE.DATA;
 
 <!-- ------------------------ -->
 ## Create Cortex Agent via UI
-Duration: 3
+
 
 ### Build the Sales Intelligence Agent
 
@@ -140,7 +137,6 @@ Before proceeding, verify the agent works:
 
 <!-- ------------------------ -->
 ## Setup MCP Server with OAuth
-Duration: 5
 
 ### Create OAuth Integration and MCP Server
 
@@ -190,7 +186,7 @@ DESC SECURITY INTEGRATION SALES_MCP_OAUTH;
 
 <!-- ------------------------ -->
 ## Generate Access Token
-Duration: 2
+
 
 ### Create Personal Access Token
 
@@ -206,7 +202,7 @@ You'll need a Personal Access Token (PAT) for both applications.
 
 <!-- ------------------------ -->
 ## Setup Python Environment
-Duration: 5
+
 
 ### Install Dependencies
 
@@ -262,7 +258,7 @@ MCP_SERVER_NAME=SALES_INTELLIGENCE_MCP
 
 <!-- ------------------------ -->
 ## App 1: Chat with GPT-5 (openai_sdk.py)
-Duration: 10
+
 
 ### What You'll Build
 
@@ -311,7 +307,7 @@ Select from the dropdown menu:
 
 <!-- ------------------------ -->
 ## App 2: LangGraph MCP Agent (agent.py)
-Duration: 15
+
 
 ### What You'll Build
 
@@ -405,7 +401,7 @@ Show me all closed deals
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
+
 
 ### Conclusion
 
