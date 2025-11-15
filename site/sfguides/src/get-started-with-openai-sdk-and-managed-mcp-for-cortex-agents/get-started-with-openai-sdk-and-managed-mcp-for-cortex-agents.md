@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex AI, MCP, OpenAI SDK
+language: en
 
 
 # Get Started with OpenAI SDK and Managed MCP for Cortex Agents
