@@ -37,7 +37,7 @@ Previously, we had Quickstarts and Solutions which are now combined into a singl
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
-- A Code Editor like [VSCode](https://code.visualstudio.com/download) if you choose to edit locally
+- (OPTIONAL) A Code Editor like [VSCode](https://code.visualstudio.com/download) if you choose to edit locally
 
 
 ### What You’ll Build 
@@ -58,10 +58,10 @@ There are three main sub-headers in a Conclusion step:
 It's also important to remember that by the time a reader has completed a Guide, the goal is that they have actually built something! Guides teach through hands-on examples -- not just explaining concepts.
 
 ### What We've Covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images and videos
-- importing other markdown files
+- Creating steps and setting duration
+- Adding code snippets
+- Embedding images and videos
+- Importing other markdown files
 
 ### Related Resources
 - [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
@@ -80,11 +80,11 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
 ```
 
 - **id**: sample-separated-by-hyphens-not-underscores 
-  - make sure to match the id here with the name of the file, all one word.
+  - Make sure to match the id here with the name of the file, all one word.
 - **language**: pick from list 
-  - pick the appropriate language from the lsit provided.  
+  - Pick the appropriate language from the lsit provided.  
 - **categories**: Pick from the list
-  - select from the complete list of content type categories, categories 1, 2 and 3 and/or industries categories provided.  Please DO NOT create new categories.
+  - Select from the complete list of content type categories, categories 1, 2 and 3 and/or industries categories provided.  Please DO NOT create new categories.
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
   `Published` - implies the guide is active<br>
   `Hidden` - this status will no longer be used.  Preview links are generated during the PR submission process and can be used for internal review.<br>
@@ -267,14 +267,15 @@ Use this markdown format for images:
 
 CODE:
 ```
-![Alt text](path/to/image.jpg "Optional Title")
+![](my-guide-folder/assets/image-1.jpg "Optional Title of Image")
 ```
 
 **Images should:**
-- have lower case and hyphens
-- cannot have $ signs or special characters
-- should have the same correct image file name in the .md file (this is case sensitive)
-- All images should be in the "assets" folder.
+- Have lower case and hyphens
+- Cannot have $ signs or special characters
+- Should have the same correct image file name in the .md file (this is case sensitive)
+- Upload all images should be in the "assets" folder. 
+  Navigage to the folder,  click "Add file"  on top-right and select "Upload files."  Drag-and-drop or "choose your files."
   >Please DO NOT create subfolders inside this folder. 
 - Be sized appropriately (no full res images), and optimized for web (recommend tinypng)
 - Sizes should be 1 MB max file size, gifs are an exception but they should also be optimized - large images will slow down the page load
