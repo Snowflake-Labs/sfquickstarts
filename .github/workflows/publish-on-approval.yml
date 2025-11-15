@@ -7,10 +7,12 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment:
-      name: production
     permissions:
       contents: read
+    outputs:
+      has_relevant_changes: ${{ steps.detect.outputs.has_relevant_changes }}
+      quickstart_names_json: ${{ steps.detect.outputs.quickstart_names_json }}
+      pr_number: ${{ steps.pr.outputs.number }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -95,25 +97,53 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Call Workato production webhook
-        if: steps.detect.outputs.has_relevant_changes == 'true'
+  call-webhooks:
+    needs: publish
+    if: needs.publish.outputs.has_relevant_changes == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        quickstart: ${{ fromJson(needs.publish.outputs.quickstart_names_json) }}
+      max-parallel: 1  # Sequential execution to avoid rate limits
+      fail-fast: false  # Continue processing other quickstarts even if one fails
+    steps:
+      - name: Call Workato production webhook for ${{ matrix.quickstart.name }}
         env:
           WORKATO_PROD_WEBHOOK_URL: ${{ secrets.WORKATO_PROD_WEBHOOK_URL }}
         run: |
           if [ -z "$WORKATO_PROD_WEBHOOK_URL" ]; then
-            echo "WORKATO_PROD_URL is not set. Cannot call production webhook." >&2
+            echo "WORKATO_PROD_WEBHOOK_URL is not set. Cannot call production webhook." >&2
             exit 1
           fi
+          
+          qname="${{ matrix.quickstart.name }}"
+          qlang="${{ matrix.quickstart.language }}"
+          
+          echo "======================================"
+          echo "Processing quickstart: $qname"
+          echo "Language: $qlang"
+          echo "======================================"
+          
+          # Create single-item array for quickstart_names to match expected format
+          qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
+          qfolders_array=$(jq -n --arg name "$qname" '[$name]')
+          
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
             --arg sha "$GITHUB_SHA" \
             --arg ref "$GITHUB_REF" \
             --arg env "prod" \
-            --arg pr_num "${{ steps.pr.outputs.number }}" \
-            --arg qname "${{ steps.detect.outputs.quickstart_name }}" \
-            --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
-            --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
+            --arg pr_num "${{ needs.publish.outputs.pr_number }}" \
+            --arg qname "$qname" \
+            --argjson qnames "$qnames_array" \
+            --argjson qfolders "$qfolders_array" \
             '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+          
+          echo "Payload:"
           echo "$payload" | jq .
           
           max_retries=3
@@ -125,34 +155,38 @@ jobs:
             http_code=$(echo "$response" | tail -n1)
             response_body=$(echo "$response" | sed '$d')
             
+            echo "Response:"
             echo "$response_body" | cat
+            echo "HTTP Status: $http_code"
             
             if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-              echo "Webhook call successful (HTTP $http_code)"
+              echo "✓ Webhook call successful (HTTP $http_code)"
+              echo "Waiting 150 seconds before processing next quickstart..."
+              sleep 150
               exit 0
             fi
             
             if echo "$response_body" | grep -qi "Rate limit reached: 6000 requests per 5m0s"; then
               retry_count=$((retry_count + 1))
               if [ $retry_count -lt $max_retries ]; then
-                echo "Rate limit reached. Waiting 5 minutes before retry $retry_count/$max_retries..."
+                echo "⚠ Rate limit reached. Waiting 5 minutes before retry $retry_count/$max_retries..."
                 sleep 300
               else
-                echo "Rate limit reached. Max retries exceeded. Exiting." >&2
+                echo "✗ Rate limit reached. Max retries exceeded." >&2
                 exit 1
               fi
             elif [ "$http_code" -ge 500 ]; then
               retry_count=$((retry_count + 1))
               if [ $retry_count -lt $max_retries ]; then
-                echo "Server error (HTTP $http_code). Waiting ${wait_time}s before retry $retry_count/$max_retries..."
+                echo "⚠ Server error (HTTP $http_code). Waiting ${wait_time}s before retry $retry_count/$max_retries..."
                 sleep $wait_time
                 wait_time=$((wait_time * 2))
               else
-                echo "Server error (HTTP $http_code). Max retries exceeded. Exiting." >&2
+                echo "✗ Server error (HTTP $http_code). Max retries exceeded." >&2
                 exit 1
               fi
             else
-              echo "Webhook call failed with HTTP $http_code" >&2
+              echo "✗ Webhook call failed with HTTP $http_code" >&2
               exit 1
             fi
           done
