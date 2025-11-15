@@ -240,8 +240,6 @@ CODE:
 | Row 1     | Data      | More data |
 | Row 2     | More      | Still more |
 
-
-
 CODE:
 ```
 | Column 1 | Column 2 | Column 3 |
@@ -252,7 +250,6 @@ CODE:
 
 #### Hyperlinking
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
-
 CODE:
 ```
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
@@ -283,7 +280,6 @@ CODE:
 
 #### Videos
 Videos from youtube can be linked to the text like a normal link like [this video](https://www.youtube.com/watch?v=KmeiFXrZucE).
-
 CODE:
 ```
 [this video](https://www.youtube.com/watch?v=KmeiFXrZucE)>
