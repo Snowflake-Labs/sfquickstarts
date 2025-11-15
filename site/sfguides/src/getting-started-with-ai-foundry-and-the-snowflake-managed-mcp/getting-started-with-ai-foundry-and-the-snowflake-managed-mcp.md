@@ -1,4 +1,4 @@
-author: sfc-gh-mmarzillo
+author: Matt Marzillo
 id: getting-started-with-ai-foundry-and-the-snowflake-managed-mcp
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en

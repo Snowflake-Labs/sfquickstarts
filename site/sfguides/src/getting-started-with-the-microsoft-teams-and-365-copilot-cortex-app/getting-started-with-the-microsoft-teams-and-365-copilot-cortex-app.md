@@ -299,11 +299,11 @@ And you are now ready to go! You can continue asking questions like:
 
 The Snowflake Cortex Teams and M365 App now supports the below functionality. Users are encouraged to expand on this use case to explore its complete functionality
 
-:busts_in_silhouette: Multi-Agent Support: Users can now use and switch between multiple agents across multiple Snowflake accounts.
+- Multi-Agent Support: Users can now use and switch between multiple agents across multiple Snowflake accounts.
 
-:left_speech_bubble: Multi-Turn Conversations: Stateful conversations are now supported via the new Threads API, providing a genuine chatbot experience.
+- Multi-Turn Conversations: Stateful conversations are now supported via the new Threads API, providing a genuine chatbot experience.
 
-:brain: Improved Reasoning & UX: Agents now use a multi-step “Reasoning Path” for tools, and the UI shows “thinking” traces and status updates.
+- Improved Reasoning & UX: Agents now use a multi-step “Reasoning Path” for tools, and the UI shows “thinking” traces and status updates.
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
