@@ -60,8 +60,8 @@ In this step, you'll create the Snowflake database objects and upload all necess
 > Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces). Workspaces will become the default SQL editor. Follow the instructions below that match your interface.
 
 **To use Workspaces:**
-1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation
-2. Click `+ Add new` to create a new Workspace
+1. In Snowsight, click `Projects`, then [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) in the left navigation
+2. Click `+ Add new` to create a new [Workspace](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)
 3. Click `SQL File` to create a new SQL file
 4. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your SQL file, then run it
 
