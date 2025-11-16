@@ -1,16 +1,15 @@
 author: Shriya Rai
 id: build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
 summary: This is a sample Snowflake Guide
-categories: data-science, data-science-&-ml, app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Data Applications, Machine Learning, Streamlit, Snowpark, Notebook
 
 # Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 In this quickstart, you will be introduced to ML Sidekick, a no-code app built using Streamlit in Snowflake, designed for building and deploying machine learning models in Snowflake. This application aids both seasoned data scientists and business users with no coding experience by simplifying the machine learning process and making it accessible to a broader audience.
 
@@ -35,7 +34,6 @@ In this quickstart, you will be introduced to ML Sidekick, a no-code app built u
 
 <!-- ------------------------ -->
 ## App creation and setting up the data in Snowflake
-Duration: 7
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
@@ -74,7 +72,6 @@ You will likely need a role with necessary [CREATE INTEGRATION](https://docs.sno
 
 <!-- ------------------------ -->
 ## Dataset selection
-Duration: 2
 
 ### Overview
 In this section, we will navigate the deployed app to select the dataset we would like to work with. 
@@ -95,7 +92,6 @@ In this section, we will navigate the deployed app to select the dataset we woul
 
 <!-- ------------------------ -->
 ## Pre-processing data
-Duration: 4
 
 ### Overview
 
@@ -127,7 +123,6 @@ After dataset selection, we tackle data preprocessing—a critical step for mode
 
 <!-- ------------------------ -->
 ## Train & log machine learning model
-Duration: 7
 
 ### Overview 
 
@@ -169,7 +164,6 @@ After prepping our data, we go on to training our machine learning model. In thi
 
 <!-- ------------------------ -->
 ## Generate notebook for the pipeline
-Duration: 2
 ### Overview
 
 The ML Sidekick app automatically generates a jupyter notebook or Snowflake notebook that showcases the underlying Python code, making it easy to explore and customize the machine learning pipeline we went through so far. It enhances transparency, serves as an educational tool, and allows us to fine-tune models or adapt the code for future projects—all within the familiar Snowflake environment. 
@@ -191,7 +185,6 @@ The ML Sidekick app automatically generates a jupyter notebook or Snowflake note
 
 <!-- ------------------------ -->
 ## Explore and compare registered models
-Duration: 4
 ### Overview
 
 The ML Sidekick app offers another powerful feature that simplifies model management by facilitating automatic version control and streamlined model comparison. This means we can easily track different iterations of the models and evaluate their performance without any manual effort.
@@ -224,7 +217,6 @@ The ML Sidekick app offers another powerful feature that simplifies model manage
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You have successfully deployed and utilized ML_SIDEKICK application to: 
 
@@ -243,4 +235,8 @@ And you did all of it within the secure walls of Snowflake!
 * [Documentation for Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)   
 * [Documentation for Snowpark ML modeling](https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling)  
 * [Documentation for Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)  
-* [Documentation for Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) 
+* [Documentation for Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+* [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/09/ML-SideKick-Reference-Architecture.pdf)
+* [Read Blog](https://medium.com/snowflake/ml-sidekick-your-ml-assistant-in-snowflake-4dba0ceee982)
+* [Watch Demo](https://youtu.be/9GwElsYDMQA?si=_JefVKAhWgnhCjr_)

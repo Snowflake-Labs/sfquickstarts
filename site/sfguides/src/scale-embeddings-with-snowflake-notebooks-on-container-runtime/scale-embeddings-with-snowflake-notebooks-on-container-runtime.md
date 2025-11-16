@@ -1,17 +1,16 @@
 author: Sikha Das
 id: scale-embeddings-with-snowflake-notebooks-on-container-runtime
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This guide will show you how to experiment with and scale embeddings generation in Snowflake Notebooks with Container Runtime
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Machine Learning, Model Registry
 
 # Scale Embeddings with Snowflake Notebooks on Container Runtime
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 1
 
 [Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) are a powerful IDE option for building ML workloads at scale. Container Runtime is a fully managed container environment that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
 
@@ -20,7 +19,7 @@ This guide will show you how to experiment with and scale embeddings generation 
 ### Prerequisites
 - A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
 - Foundational knowledge of Data Science workflows
-- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
 
 ### What You’ll Learn
 - How to load an open source embedding model
@@ -42,7 +41,6 @@ You're a Data Scientist looking to experiment with an open source embedding mode
 <!-- ------------------------ -->
 ## Setup Your Account
 
-Duration: 5
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -131,7 +129,6 @@ GRANT CREATE SERVICE ON SCHEMA EMBEDDING_MODEL_HOL_SCHEMA TO ROLE EMBEDDING_MODE
 <!-- ------------------------ -->
 ## Run the Notebook
 
-Duration: 60
 
 - Download the notebook: [0_start_here](https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/blob/main/notebooks/0_start_here.ipynb)
 - Change role to `EMBEDDING_MODEL_HOL_USER`
@@ -151,7 +148,6 @@ Duration: 60
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 In conclusion, running Snowflake Notebooks on Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. 
 
@@ -165,12 +161,15 @@ Within this Notebook, you:
 ...and all without a lot of complex infrastructure setup and management!
 
 Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts:
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0).
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/).
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
 
 ### Related Resources
 - [Documentation: Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)
 - [Documentation: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Documentation: Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
-- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/tree/main)
+- [Download Reference Architecture](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/img/d7e8912c0a95ae06.png?_ga=2.243977933.970314110.1758562613-1806211272.1741193538&_gac=1.82971236.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
+- [Watch Demo](https://youtu.be/uvLiJtfNd-M?list=TLGGdqmu7qRGY9gyNDA5MjAyNQ)

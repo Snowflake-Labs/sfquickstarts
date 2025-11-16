@@ -1,11 +1,11 @@
 author: Gilberto Hernandez, Kamesh Sampath
 id: getting-started-snowflake-python-api
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: Learn how to get started with Snowflake's Python API to manage Snowflake objects and tasks.
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # Getting Started with the Snowflake Python API
 
@@ -13,7 +13,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 
 ## Overview
 
-Duration: 1
 
 The Snowflake Python API allows you to manage Snowflake using Python. Using the API, you're able to create, delete, and modify tables, schemas, warehouses, tasks, and much more, in many cases without needing to write SQL or use the Snowflake Connector for Python. In this Quickstart, you'll learn how to get started with the Snowflake Python API for object and task management with Snowflake.
 
@@ -43,7 +42,6 @@ The Snowflake Python API allows you to manage Snowflake using Python. Using the 
 
 ## Install the Snowflake Python API
 
-Duration: 8
 
 > aside negative
 >
@@ -112,7 +110,6 @@ Next create a `connections_params` dictionary as show below and set the connecti
 
 ## Overview of the Snowflake Python API
 
-Duration: 5
 
 Let's quickly take a look at how the Snowflake Python API is organized:
 
@@ -159,7 +156,6 @@ Let's get started!
 
 ## Set up your development environment
 
-Duration: 10
 
 In this Quickstart, we'll walk through a Jupyter notebook to incrementally showcase the capabilities of the Snowflake Python API. Let's start by setting up your development environment so that you can run the notebook.
 
@@ -220,7 +216,6 @@ And that's it! By running these four cells, we're now ready to use the Snowflake
 
 ## Create a database, schema, and table
 
-Duration: 5
 
 Let's use our `root` object to create a database, schema, and table in your Snowflake account.
 
@@ -293,7 +288,6 @@ After running these two cells, navigate back to your Snowflake account and confi
 
 ## Retrieve object data
 
-Duration: 5
 
 Let's cover a couple of ways to retrieve metadata about an object in Snowflake. Run the following cell:
 
@@ -344,7 +338,6 @@ Object metadata is useful when building business logic in your application. For 
 
 ## Programmatically update a table
 
-Duration: 5
 
 Let's take a look at how you might programmatically add a column to a table. The `PYTHON_API_TABLE` table currently has two columns, `TEMPERATURE` and `LOCATION`, let us add a new column named `ELEVATION` of type `int` and set it as the table's `Primary Key`.
 
@@ -414,7 +407,6 @@ Finally, visually confirm by navigating to your Snowflake account and inspecting
 
 ## Create, suspend, and delete a warehouse
 
-Duration: 5
 
 You can also manage warehouses with the Snowflake Python API. Let's use the API to create, suspend, and delete a warehouse.
 
@@ -527,7 +519,6 @@ Navigate once again to your Snowflake account and confirm the deletion of the wa
 
 ## Managing tasks
 
-Duration: 10
 
 You can also manage tasks using the Snowflake Python API. Let's use the API to manage a couple of basic stored procedures using tasks.
 
@@ -652,7 +643,6 @@ filter_task.delete()
 
 ## Managing Directd Acyclic Graphs(DAG)
 
-Duration: 8
 
 When the number of tasks that must be managed becomes very large, individually managing each task can be a challenge. The Snowflake Python API provides functionality to orchestrate tasks with a higher level DAG API. Let's take a look at how it can be used.
 
@@ -722,7 +712,6 @@ session.close()
 
 ## Managing Snowpark Container Services
 
-Duration: 10
 
 > aside negative
 >
@@ -893,7 +882,6 @@ nginx_service.delete()
 
 ## Conclusion
 
-Duration: 1
 
 Congratulations! In this Quickstart, you learned the fundamentals for managing Snowflake objects, tasks, DAGs, and Snowpark Container Services using the Snowflake Python API.
 

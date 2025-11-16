@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: getting-started-with-feature-store-and-dbt
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This guide will go through everything you need to get started with dbt and Snowflake Feature Store
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science 
 
 # Getting Started with Snowflake Feature Store and dbt
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This Quickstart demonstrates the integration between dbt and Snowflake Feature Store. The source data is managed within a Snowflake database, while the feature pipelines are orchestrated and executed using dbt. The resulting feature tables are stored in Snowflake. We then read from these feature tables, register them as Feature Views, and build ML Datasets.
 
@@ -31,7 +30,6 @@ This architecture allows you to leverage dbt for data transformation while incor
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -61,7 +59,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FS_DBT_DATABASE TO ROLE FS_DBT_ROLE C
 
 <!-- ------------------------ -->
 ## Setup dbt Cloud
-Duration: 15
 This notebook requires a dbt account. You can follow the following steps to setup an account via partner connect. 
 
 - From your Snowflake account, go to Data Products > Partner Connect, search for dbt
@@ -103,7 +100,6 @@ This notebook requires a dbt account. You can follow the following steps to setu
 
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 10
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/notebooks/0_start_here.ipynb)
 - Change role to FS_DBT_ROLE
@@ -119,7 +115,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 In conclusion, this Quickstart showcases how dbt and Snowflake Feature Store can work together to create a seamless and efficient ML pipeline. By managing your source data in Snowflake and orchestrating feature pipelines with dbt, you can streamline the process of transforming, storing, and utilizing feature tables for your machine learning models.
 

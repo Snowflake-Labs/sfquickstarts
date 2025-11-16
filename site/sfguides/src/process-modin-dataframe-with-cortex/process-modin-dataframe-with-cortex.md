@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: process-modin-dataframe-with-cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: Learn how to process data using Modin DataFrames with Snowflake Cortex AI capabilities for text classification, translation, sentiment analysis, and more.
-categories: getting-started, data-engineering, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Cortex, Modin, DataFrames, AI, ML, Streamlit, Data Processing
 
 # Build an AI-Powered Data Processing Pipeline with Modin and Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Ready to supercharge your data processing with AI, all while working in the familiar environment of pandas.
 
@@ -40,7 +39,6 @@ A complete data processing pipeline that transforms product catalog data using A
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Retrieve the Notebook
 
@@ -74,7 +72,6 @@ This code imports Modin's pandas implementation and connects to your active Snow
 
 <!-- ------------------------ -->
 ## Load Data
-Duration: 10
 
 ### Store Data into a Snowflake Stage
 
@@ -130,7 +127,6 @@ Once loaded, your DataFrame will feature three key columns, ready for the forthc
 
 <!-- ------------------------ -->
 ## Classify Text
-Duration: 10
 
 ### Classify Text with Cortex
 
@@ -173,7 +169,6 @@ And just like that, we have beautifully clean category columns, perfectly ready 
 
 <!-- ------------------------ -->
 ## Translate Text
-Duration: 10
 
 Snowflake Cortex makes language translation incredibly simple. Let's leverage Cortex's powerful `Translate` function to instantly localize our product information from English into German:
 
@@ -195,7 +190,6 @@ With just a few lines of code, you can localize your entire product catalog, ope
 
 <!-- ------------------------ -->
 ## Process Text
-Duration: 15
 
 ### Analyze Sentiment
 
@@ -253,7 +247,6 @@ This demonstrates how you can use Cortex to extract structured information from 
 
 <!-- ------------------------ -->
 ## Post-Process Data
-Duration: 5
 
 Our data has been enriched with powerful AI insights, but before we finalize it, a little post-processing goes a long way to ensure accurate and reliable subsequent data analysis and visualization.
 
@@ -290,7 +283,6 @@ With these quick clean-up steps, our DataFrame is now perfectly structured and r
 
 <!-- ------------------------ -->
 ## Data Operations
-Duration: 5
 
 Now that our data is transformed, enriched, and polished, it's time to persist these valuable insights. The beauty of working within the Snowflake ecosystem is the seamless ability to write your processed data directly back into a Snowflake table, making it available for countless other applications and analyses.
 
@@ -320,7 +312,6 @@ pd.read_snowflake("avalanche_products")
 
 <!-- ------------------------ -->
 ## Build a Streamlit Dashboard
-Duration: 15
 
 What's the point of all this incredible AI-powered data processing if you can't easily share and interact with the insights? This is where Streamlit steps in, allowing you to transform your data into a beautiful, interactive web application with just a few lines of Python code. Let's build a simple yet powerful dashboard to visualize our newly enriched product data!
 
@@ -378,7 +369,6 @@ And there you have it! This intuitive Streamlit app instantly provides:
 This isn't just a visualization; it's an interactive AI-powered data app that empower users to perform self-serve analytics!
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've not just followed a tutorial; you've successfully engineered a powerful, end-to-end data processing pipeline. You've harnessed the scalability of Modin DataFrames and the cutting-edge AI capabilities of Snowflake Cortex to transform raw data into actionable intelligence. From loading external data to applying sophisticated AI transformations like classification, translation, sentiment analysis, and text summarization, you've done it all. And to top it off, you've brought your insights to life with a dynamic, interactive Streamlit dashboard!
 
@@ -399,7 +389,7 @@ Want to dive deeper or explore related topics? Check out these valuable resource
 **Articles:**
 - [pandas on Snowflake](https://docs.snowflake.com/en/developer-guide/snowpark/python/pandas-on-snowflake)
 - [Using Snowflake Cortex LLM functions with Snowpark pandas](https://docs.snowflake.com/en/developer-guide/snowpark/python/pandas-on-snowflake#using-snowflake-cortex-llm-functions-with-snowpark-pandas)
-- [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/)
+- [Snowflake Cortex AI](/en/product/features/cortex/)
 
 **Documentation:**
 - [Snowflake Documentation](https://docs.snowflake.com/)

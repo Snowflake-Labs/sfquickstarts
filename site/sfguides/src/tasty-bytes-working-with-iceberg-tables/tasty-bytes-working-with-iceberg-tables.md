@@ -1,16 +1,15 @@
 author: nadithya-sf
-id: tasty_bytes_working_with_iceberg_tables
+id: tasty-bytes-working-with-iceberg-tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: This tutorial is a guide built as an extention to the Tasty Bytes series, where we will go over how data from an external Data Lake is made available in Snowflake using External Tables & Iceberg Tables.
-categories: Getting-Started, Tasty-Bytes, Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Iceberg Tables, AWS, S3
 
 # Tasty Bytes - Working with Iceberg Tables
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![banner](assets/banner.png)
 
@@ -50,7 +49,6 @@ We will build an External Table that queries data stored in external storage. Th
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 15
 
 Create a database, schema and warehouse in your Snowflake account
 
@@ -297,7 +295,6 @@ FROM @tasty_bytes_db.raw.s3load/raw_pos/order_header/;
 
 <!-- ------------------------ -->
 ## Create an External Table
-Duration: 5
 
 An external table is a Snowflake feature that allows you to query data stored in an external stage as if the data were inside a table in Snowflake. The external stage is not part of Snowflake, so Snowflake does not store or manage the stage. External tables let you store (within Snowflake) certain file-level metadata, including filenames, version identifiers, and related properties.
 
@@ -380,7 +377,6 @@ SELECT * FROM tasty_bytes_db.raw.ext_survey_data LIMIT 100;
 
 <!-- ------------------------ -->
 ## Configure External Table to Auto-Refresh
-Duration: 1
 
 Execute the SHOW EXTERNAL TABLES command. Tip: run the commands below together to get the **notication_channel** column.
 
@@ -416,7 +412,6 @@ When new or updated data files are added to the S3 bucket, the event notificatio
 
 <!-- ------------------------ -->
 ## Create Iceberg Table
-Duration: 5
 
 An Iceberg table uses the Apache Iceberg open table format specification, which provides an abstraction layer on data files stored in open formats and supports features such as:
 

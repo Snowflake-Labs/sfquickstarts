@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: snowflake-semantic-view
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Learn how to create and query Snowflake Semantic Views to enhance AI-powered Business Intelligence and conversational analytics with a consistent, database-native semantic layer.
-categories: getting-started, data-engineering, artificial-intelligence
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Semantic Views, AI, Business Intelligence, BI, TPC-DS, Cortex Analyst, Data Modeling
 
 # Getting Started with Snowflake Semantic View
 <!-- ------------------------ -->
 ## Overview
-Duration: 45
 
 AI-powered Business Intelligence (BI) and conversational analytics hold immense promise for data-driven decision-making. However, directly applying these technologies to complex enterprise schemas often leads to inaccurate or inconsistent results, commonly referred to as "hallucinations." This challenge arises because AI and BI systems may struggle to interpret raw data without a clear understanding of the organizational context and definitions.
 
@@ -35,7 +34,6 @@ You will build a foundational understanding and practical setup of a Snowflake s
 
 <!-- ------------------------ -->
 ## Understand Semantic Views
-Duration: 5
 
 ### What is a Semantic View?
 
@@ -61,7 +59,6 @@ Every semantic view definition requires essential elements:
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 10
 
 ### Download the Notebook
 
@@ -136,7 +133,6 @@ SHOW VIEWS;
 
 <!-- ------------------------ -->
 ## Create the Semantic View
-Duration: 15
 
 ### Define the Semantic View
 
@@ -240,7 +236,6 @@ DESC SEMANTIC VIEW TPCDS_SEMANTIC_VIEW_SM
 
 <!-- ------------------------ -->
 ## "Talk To" the Semantic View with Cortex Analyst
-Duration: 5
 
 ### Natural Language Querying
 
@@ -284,7 +279,6 @@ Cortex Analyst will automatically translate this natural language question into 
 
 <!-- ------------------------ -->
 ## Query Semantic Views
-Duration: 10
 
 ### Basic Query Structure
 
@@ -337,7 +331,6 @@ ORDER BY TotalSalesQuantity DESC LIMIT 10;
 
 <!-- ------------------------ -->
 ## Build an Interactive Data App
-Duration: 10
 
 In this step, we'll build 2 simple interactive data apps:
 
@@ -494,7 +487,6 @@ if st.checkbox("Show data table"):
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully created your first Snowflake semantic view. By implementing this semantic layer directly within Snowflake, you've established a foundation for consistent, AI-ready analytics that bridges the gap between raw data and meaningful business insights. 
 

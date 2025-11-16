@@ -1,16 +1,15 @@
 author: Tyler Rockwood
 id: redpanda-connect-ingestion-with-snowpipe-streaming
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: How to use Redpanda Connect and Snowpipe Streaming to ingest data into Snowflake.
-categories: data-engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Redpanda, Ingestion, Snowpipe Streaming
 
 # Ingesting data with Snowpipe Streaming using Redpanda Connect
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Snowflake's Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency.
 It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake
@@ -44,7 +43,6 @@ supported by Redpanda Connect, such as [a MQTT server](https://docs.redpanda.com
 
 <!-- ------------------------ -->
 ## Prepare Snowflake Account for streaming
-Duration: 8
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -144,7 +142,6 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 <!-- ------------------------ -->
 ## Setup Redpanda
-Duration: 8
 
 ### Create a Redpanda Serverless Cluster
 
@@ -177,7 +174,6 @@ the configuration file. First navigate to the Secrets Store page, then click on 
 
 <!-- ------------------------ -->
 ## Generating load into Redpanda
-Duration: 8
 
 Now that Redpanda is all setup, we can now create our first Redpanda Connect pipeline. 
 
@@ -316,7 +312,6 @@ You'll see results that look something like the below screenshot.
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 1
 
 When you are done with the demo, to tear down the Redpanda Cluster, simply go to the Cluster settings page and click "Delete cluster".
 
@@ -335,7 +330,6 @@ DROP USER IF EXISTS STREAMING_USER;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 In this lab, we built a demo to show how to ingest data using Snowpipe streaming and Redpanda with low latency.
 We demonstrated this using Redpanda Connect's Snowflake output, and showed how in a few lines of YAML you can
@@ -347,7 +341,7 @@ create a production ready ingestion pipeline.
 - How to using Snowflake to query realtime data
 
 ### Related Resources
-- [Getting started with Snowflake](https://quickstarts.snowflake.com/)
+- [Getting started with Snowflake](/en/developers/guides/)
 - [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
 - [Snowpipe Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Redpanda Serverless](https://www.redpanda.com/redpanda-cloud/serverless)

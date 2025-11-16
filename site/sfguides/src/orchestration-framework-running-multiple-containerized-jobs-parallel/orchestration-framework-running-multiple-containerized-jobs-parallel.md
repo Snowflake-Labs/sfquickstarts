@@ -1,16 +1,15 @@
 author: Phani Raj
 id: orchestration-framework-running-multiple-containerized-jobs-parallel
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Building custom orchestration framework for running containerized jobs in parallel 
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowpark Container Services,  Data Engineering, Kubernetes, Orchestration Framework , Containers
 
 # Building Orchestration Framework for Running Containerized Jobs in Parallel
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 In the rapidly evolving landscape of containerized workloads for data processing and running ML workloads a, efficient orchestration of containerized workloads running in parallel has become a critical requirement for businesses to streamline their data pipelines. If you’ve been using containers, executing multiple jobs with the help of external tools like Argo, and you’re interested in learning how to run containerised jobs in parallel directly in Snowflake, this quickstart will helps you to build a custom orchestration framework.
 
@@ -48,7 +47,6 @@ This lab uses a custom built configuration file in json format which has the det
 
 
 ## Setup
-Duration: 5
 
 Clone the repo where you will find the notebook with the steps and ojects which needs to be created in one place. This quickstart will describe about all those steps and objects created [spcs-orchestration-utilit](https://github.com/sfc-gh-praj/spcs-orchestration-utility.git).This repo has the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.
 
@@ -238,7 +236,6 @@ $$
 
 ## Building Container Orchestration Workflow 
 
-Duration: 4
 
 
 ### Creating Containerized Job SP
@@ -503,7 +500,6 @@ $$;
 
 ## Running Container Orchestration Workflow 
 
-Duration: 2
 
 Here we are invoking the orchestration workflow SP which accepts the jobconfig json file (uploaded to Snowflake stage) which has all the details required for the tasks to be created for Fan-Out and Fan-In scenarios.
 
@@ -560,7 +556,6 @@ SELECT top 10 * FROM task_logging_stats ORDER BY CAST(QUERY_START_TIME AS DATETI
 
 ## Simulating Job Failure
 
-Duration: 2
 
 We will simulate a failure usecase where the SPCS job execution will fail and we will validate that the retry happens multiple times before it gracefully exists and logs error details into logging tables we have created.
 
@@ -589,7 +584,6 @@ select top 10 * from jobs_run_stats order by created_date desc;
 
 ## Cleanup
 
-Duration: 2
 
 Below code will create the SP which helps in deleting all the tasks that were created as part of the solution.
 
@@ -643,7 +637,6 @@ DROP ROLE SPCS_DEMO_ROLE;
 
 ## Conclusion & Resources
 
-Duration: 2
 
 ### Conclusion
 
@@ -665,5 +658,5 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 * [Snowpark Container Services Tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-* [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Snowpark Guide for Data Engineers](/resource/the-data-engineers-guide-to-python-for-snowflake/)
 

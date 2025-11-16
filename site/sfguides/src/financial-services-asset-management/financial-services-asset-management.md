@@ -1,17 +1,16 @@
 author: Allen Wong
 id: financial-services-asset-management
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations.
-categories: snowflake, featured, data-engineering
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Financial Services, Asset Management, Data Engineering, SQL, Python, Dashboard
 
 # Build a Financial Services Asset Management P&L Dashboard
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Data silos have been a significant problem in the Financial Services industry. During the Global Financial Crisis of 2008, firms without a Single Version of the Truth (SVOT) made multi-million dollar trading decisions without visibility into their risk, exposure, and the cascading impact of their positions. These data silos led to multi-billion dollar losses and bankruptcies.
 
@@ -44,7 +43,6 @@ This is powered by four SQL Worksheets and a Python Function:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Mount a Free Data Share
 
@@ -52,11 +50,11 @@ First, we need to mount a free data share containing financial market data:
 
 1. Log into your Snowflake account
 2. Navigate to the Marketplace
-3. Search for "Snowflake Data: Finance & Economic Essentials"
+3. Search for "Snowflake Public Data (Free)"
 4. Click "Get" to mount this free share as a database named "Snow_Finance_Share"
 5. Grant the PUBLIC role access to the database
 
-![Figure 3](assets/figure3.jpg)
+![Figure 3](assets/Snowflake_Get.png)
 
 ### Create the Setup Worksheet
 
@@ -107,7 +105,6 @@ use warehouse finservam_devops_wh;
 
 <!-- ------------------------ -->
 ## Data Quality and Preparation
-Duration: 15
 
 ### Create the “Finserv 20 Data Quality” Worksheet
 
@@ -125,7 +122,7 @@ use schema finservam.public;
 
 -- Verify Data Marketplace Share
 select *
-from Snow_Finance_Share.cybersyn.stock_price_timeseries
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries
 where ticker = 'SNOW' and variable = 'post-market_close' order by date;
 
 -- transform.exclude_symbol
@@ -133,7 +130,7 @@ create or replace table transform.exclude_symbol
 comment = 'Exclude Symbols that have ever had a price less than 1 cent or greater than $4500'
 as
 select distinct ticker symbol
-from Snow_Finance_Share.cybersyn.stock_price_timeseries
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries
 where
 variable = 'post-market_close'
 and primary_exchange_name in ('NASDAQ CAPITAL MARKET', 'NEW YORK STOCK EXCHANGE')
@@ -150,7 +147,7 @@ date,
 value close,
 primary_exchange_code exchange,
 asset_class
-from Snow_Finance_Share.cybersyn.stock_price_timeseries k
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries k
 left outer join transform.exclude_symbol e on e.symbol = k.ticker
 where
 variable = 'post-market_close'
@@ -171,7 +168,7 @@ create or replace function fake_py(locale varchar,provider varchar,parameters va
 returns variant
 language python
 volatile
-runtime_version = '3.8'
+runtime_version = '3.9'
 packages = ('faker','simplejson')
 handler = 'fake'
 as
@@ -194,7 +191,6 @@ Run the entire worksheet to create the necessary tables and functions.
 
 <!-- ------------------------ -->
 ## Generate Dataset
-Duration: 20
 
 ### Create the Trades Worksheet
 
@@ -353,7 +349,6 @@ Run the entire worksheet. Note that generating 3 billion trades will take approx
 
 <!-- ------------------------ -->
 ## DevOps in Production
-Duration: 15
 
 ### Create the DevOps Worksheet
 
@@ -421,7 +416,7 @@ select fake_py('zh_CN','name',null)::varchar as FAKE_NAME from table(generator(r
 
 -- Cross-Database Joins
 select *
-from Snow_Finance_Share.cybersyn.stock_price_timeseries s
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries s
 inner join finservam.public.stock_history h on s.ticker = h.symbol and h.date = s.date
 where s.ticker = 'SNOW' and s.variable = 'post-market_close' and s.date = business_date();
 ```
@@ -504,7 +499,6 @@ Run the entire worksheet to demonstrate these features.
 
 <!-- ------------------------ -->
 ## Creating Dashboard Filters
-Duration: 10
 
 Now we'll create filters for our dashboard:
 
@@ -558,7 +552,6 @@ When complete, you should have three custom filters plus the two Snowsight syste
 
 <!-- ------------------------ -->
 ## Building the Dashboard
-Duration: 15
 
 Now we'll create the dashboard with multiple tiles:
 
@@ -674,7 +667,6 @@ For extra credit: You can now drag and drop the tiles to arrange them as desired
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 5
 
 If you want to clean up all the objects created in this guide, you can create a new worksheet named "Finserv 90 reset" with the following SQL:
 
@@ -699,7 +691,6 @@ drop role if exists finservam_admin;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 3
 
 Congratulations! You've successfully built a Financial Services Asset Management demo in Snowflake that handles 3 billion synthetic trades while providing real-time cash and profit/loss calculations. You've learned how to scale compute resources up and down as needed, create interactive dashboards, and implement DevOps practices like zero-copy cloning and time travel.
 
@@ -724,5 +715,5 @@ Documentation:
 - [Snowsight Filters](https://docs.snowflake.com/en/user-guide/ui-snowsight-filters)
 
 Additional Reading:
-- [Snowflake for Asset Management](https://www.snowflake.com/en/solutions/industries/financial-services/asset-management/)
+- [Snowflake for Asset Management](/en/solutions/industries/financial-services/asset-management/)
 - [Asset Management With Snowflake: Real-Time Cash & PnL On 3 Billion Trades](https://youtu.be/HkrRXMHDd-E?si=nf0lAupIKK8HVMuM)

@@ -1,16 +1,15 @@
 author: Allie Fero, James Cha-Earley
 id: build-ml-models-for-customer-conversions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: This hands-on lab will guide you through building a custom machine learning model to predict customer purchase likelihood by analyzing the complex relationship between website experience metrics and product reviews.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering 
 
 # Building ML Models to Crack the Code of Customer Conversions
 
 ## Overview 
-Duration: 5
 
 Will they buy? This hands-on lab will guide you through building a custom machine learning model to predict customer purchase likelihood by analyzing the complex relationship between website experience metrics and product reviews. Using Snowflake's advanced gen AI and machine learning capabilities, you'll work with a carefully constructed synthetic dataset that simulates real-world scenarios, allowing for controlled exploration of various factors affecting purchase decisions.
 
@@ -30,11 +29,10 @@ Will they buy? This hands-on lab will guide you through building a custom machin
 - How to create dynamic visualizations to communicate insights to stakeholders
 
 ### Prerequisites
-- A Snowflake Account. When signing up ensure to select AWS West [Sign up for a 30-day free trial account](https://signup.snowflake.com/).
+- A Snowflake Account. [Sign up for a 30-day free trial account](https://signup.snowflake.com/), make sure to select AWS WEST
 - Familiarity with Python and ML concepts
 
 ## Setup Environment
-Duration: 10
 
 Before diving into Ray and distributed processing, let's set up our environment with the necessary database objects and sample data.
 
@@ -95,7 +93,6 @@ After creating the notebook, you'll need to enable external access for internet 
 Now you're ready to begin building your ML model with Ray for distributed processing.
 
 ## Initialize Ray for Distributed Processing
-Duration: 5
 
 In this section, we'll set up Ray to enable unstructured data ingestion and distributed processing capabilities in Snowflake.
 
@@ -106,7 +103,6 @@ Open a Snowflake Notebook and initialize the environment by importing Ray and co
 Configure the Ray cluster for better performance by scaling the computing resources. We'll set a scale factor of 2 to allocate adequate resources for our machine learning tasks. This ensures efficient processing of our review data and model training.
 
 ## Process Review Text Data
-Duration: 15
 
 Now we'll implement the data processing pipeline to extract insights from customer reviews and prepare them for analysis.
 
@@ -117,7 +113,6 @@ Import the SFStageTextDataSource class from snowflake.ml.ray.datasource and conf
 Create a parsing function that extracts UUID and the review text from each record. The function splits each text entry on a comma delimiter and cleans and formats the extracted fields by removing quotes and other characters. We'll return a dictionary with parsed fields and apply this function to the dataset using Ray's map operation. This structured review data will be crucial for understanding customer sentiment across different market segments.
 
 ## Predict Review Quality
-Duration: 20
 
 In this step, we'll predict the quality of reviews using an open-source pre-trained model via a HuggingFace Pipeline to understand how review content impacts purchase decisions.
 
@@ -133,7 +128,6 @@ Implement batch processing logic to handle multiple reviews efficiently and extr
 Process the entire dataset using Ray's distributed computing capabilities. Use map_batches to apply the model to groups of reviews, configure concurrency to match the cluster scale factor, set an appropriate batch size to optimize performance, and allocate CPU resources for efficient processing. This analysis helps identify which types of reviews are most influential in purchase decisions.
 
 ## Store Processed Data in Snowflake
-Duration: 10
 
 Now we'll save our processed data back to Snowflake tables for further analysis and model building.
 
@@ -144,7 +138,6 @@ Import SnowflakeTableDatasink from snowflake.ml.ray.datasink and configure the d
 Examine the first few rows of processed data using a simple SQL query to confirm the data was successfully stored, including the review quality classifications.
 
 ## Add Sentiment Analysis
-Duration: 10
 
 In this step, we use Snowflake Cortex to enhance our reviews with sentiment analysis, providing additional insights for our model.
 
@@ -158,7 +151,6 @@ Updates the table with sentiment scores ranging from -1 (negative) to 1 (positiv
 This enriches our dataset with quantified emotional data that serves as a critical feature in predictive modeling. Unlike the review quality assessment (which uses our custom ML model), the sentiment analysis is performed using Snowflake's built-in Cortex capabilities, demonstrating how to combine custom ML processing with Snowflake's native AI functions for comprehensive analysis.
 
 ## Prepare Data for Model Training
-Duration: 15
 
 Now we'll join our review data with website performance metrics to prepare for model training, creating a comprehensive view of the customer journey.
 
@@ -172,7 +164,6 @@ Check the dataset to ensure it's ready for modeling by counting the total number
 Prepare categorical features for model training by importing LabelEncoder from snowflake.ml.modeling.preprocessing, identifying categorical columns that need encoding (REVIEW_QUALITY, PRODUCT_LAYOUT), creating encoders for each target column, and applying the fit and transform pattern to convert categories to numeric values. This ensures all data is in a format suitable for our predictive model.
 
 ## Train an XGBoost Model
-Duration: 20
 
 In this step, we'll use a Snowflake distributed XGBEstimator to train an XGBoost model to predict purchase decisions based on both technical and sentiment factors.
 
@@ -191,7 +182,6 @@ Specify the target column (PURCHASE_DECISION) and configure hyperparameters for 
 Create the XGBEstimator with the configured parameters, convert the training dataframe to a compatible format using DataConnector, and fit the model on the training data using the selected input columns and label. The training process runs distributed across the Ray cluster. This model will help identify which factors have the greatest influence on purchase likelihood.
 
 ## Register and Deploy the Model
-Duration: 10
 
 In this section, we'll register our model in Snowflake's model registry to make it available for business applications.
 
@@ -202,7 +192,6 @@ Import the registry module from snowflake.ml.registry and initialize a Registry 
 Run the model's explain function on input data and review the generated explanations to understand feature importance. This reveals the relative importance of technical metrics versus product perception in driving purchases. These insights can help businesses decide whether to allocate resources to technical optimization or product improvement.
 
 ## Create Automated ML Pipeline
-Duration: 15
 
 >aside negative
 > **Note** You will not be able to do these next steps of the Notebook on a Trial Account
@@ -221,7 +210,6 @@ Build an automated workflow using Snowflake's DAG framework by defining the work
 Deploy the defined workflow to your Snowflake account, run the workflow to verify functionality, and monitor execution status to track progress of the deployment. This automation ensures that your ML pipeline runs regularly, keeping your predictions current with the latest data.
 
 ## Setting Up the Streamlit App
-Duration: 15
 
 To create and configure your Streamlit application in Snowflake:
 
@@ -241,7 +229,6 @@ To create and configure your Streamlit application in Snowflake:
 Your Streamlit app will create visualizations showing the relationship between review quality, sentiment, and purchase decisions, helping stakeholders understand key factors in the customer journey.
 
 ## Conclusion and Resources
-Duration: 5
 
 ### Conclusion
 Congratulations! You've successfully built an end-to-end ML workflow in Snowflake ML that processes customer reviews, analyzes sentiment with gen AI, and predicts purchase decisions using XGBoost. You've also created an automated pipeline that handles data processing and model retraining, deployed in the Snowflake ecosystem. This solution shows how to identify which factors have the greatest influence on purchase decisions, helping businesses decide where to allocate resources - whether on improving website performance or enhancing product quality and customer satisfaction.
@@ -256,8 +243,8 @@ Congratulations! You've successfully built an end-to-end ML workflow in Snowflak
 - How to create dynamic visualizations to communicate insights to stakeholders
 
 ### Resources
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 - [Documentation](https://docs.snowflake.com/en/user-guide/snowflake-ml)
-- [Quickstart: Build an End-to-End ML Model in Snowflake](https://quickstarts.snowflake.com/)
-- [Other Related Quickstarts](https://quickstarts.snowflake.com/)
+- [Quickstart: Build an End-to-End ML Model in Snowflake](/en/developers/guides/)
+- [Other Related Quickstarts](/en/developers/guides/)
 - Have a question? Ask in [Snowflake Community](https://community.snowflake.com/)

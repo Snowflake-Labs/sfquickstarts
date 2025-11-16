@@ -1,16 +1,15 @@
 author: Ginu Kuncheria, Segment Solutions Engineer
 id: segment-retl-salesforce
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce
-categories: Getting-Started, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Segment, Salesforce, Reverse ETL
 
 # Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 The nature of iterative development cycles is that you find yourself at some point with multiple systems that need to be integrated. Maybe you built your customer database in Snowflake and your frontend applications are integrated with it, but now that your organization has grown, you’re investing in a CRM like Salesforce. You could eliminate the database and try to sync everything directly to Salesforce, but that’s probably a huge lift. You can’t just leave the systems separate, because having two sources of truth is not a good idea; you’ll introduce endless bugs and mismatches that affect your organization’s reputation and effectiveness. If your data warehouse could sync with your Salesforce, though… you’d be able to run both without the worry about divergent databases! In this recipe we’ll explore how to set up this synchronization so that your systems don’t diverge, and you don’t have extra work to keep them that way.
 
@@ -31,7 +30,6 @@ The nature of iterative development cycles is that you find yourself at some poi
 
 ## Set up the Reverse ETL model
 
-Duration: 10
 
 First we add our Snowflake instance as a Source in Segment (Click the Add Source button and follow the instructions with your Connection information):
 ![Adding a Segment Source](assets/s2.png)
@@ -50,7 +48,6 @@ After saving the model, we will see a summary on the Model Overview screen:
 
 ## Add a Destination for our Model
 
-Duration: 10
 
 On the left side panel, click on Destinations.  You’ll get the following:
 ![Destinations Screen](assets/s7.png)
@@ -87,7 +84,6 @@ Here is the result in our Contacts in Salesforce with matching Extraction / Last
 
 ## Wrapping up
 
-Duration: 1
 
 It’s easy to set up a sync of your customer data from Snowflake to Salesforce using Segment’s Reverse ETL.  And it’s even easier to use Segment to add additional tools to this sync process. How much maintenance time could you save?
 

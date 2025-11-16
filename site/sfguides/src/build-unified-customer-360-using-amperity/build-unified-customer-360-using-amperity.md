@@ -1,16 +1,15 @@
 author: Daniel Perlovsky
 id: build-unified-customer-360-using-amperity
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+language: en
 summary: In this quickstart we will walk through the basic steps to turn raw data into a world class Customer 360 collection of tables in hours instead of months using Amperity.
-categories: Getting-Started,Marketing,Data-Engineering,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Build a Unified Customer 360 Database using Amperity and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Every company gets data from their customers from a constantly growing and evolving collection of sources. Ecommerce, loyalty, point-of-sale, web visits, marketing response data, etc. That data is complex and stored in many different formats, which creates a massive burden for data engineering teams.
 
@@ -47,7 +46,6 @@ In this quickstart we will walk through the basic steps to turn raw data into a 
 
 <!-- ------------------------ -->
 ## Connect
-Duration: 3
 
 Your Amperity account connects to Snowflake via secure data sharing powered by an Amperity platform feature called Bridge. This allows for a zero copy architecture and lets you use data in your Snowflake with the easy UI and data management platform you get from Amperity.
 
@@ -87,7 +85,6 @@ You are ready to go. Time to set up your tags.
 
 <!-- ------------------------ -->
 ## Tag
-Duration: 5
 
 Amperity does have a schema or require you to do a bunch of data modeling to create your Customer 360.
 
@@ -130,7 +127,6 @@ Log into Amperity and navigate to the Sources tab. For each table, do the follow
 Now you should be ready to kick off Stitch and let it do the heavy lifting!
 <!-- ------------------------ -->
 ## Stitch
-Duration: 2
 
 Amperity’s Stitch is the world’s first AI identity resolution algorithm. Historically data teams have been stuck using simple, rules-based algorithms that are complex to configure and result in inaccurate identity. 
 
@@ -166,7 +162,6 @@ Stitch will access your raw data via Snowflake secure data sharing and generate 
 
 <!-- ------------------------ -->
 ## Use
-Duration: 5
 
 Now that you have run Stitch, your Amperity tenant will have a whole new list of domain tables. Most of these are named with the prefix “Unified” and correspond to the library of tags that were used.
 
@@ -209,7 +204,6 @@ You can then begin to explore these models or go into the new database and begin
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Now that you have built your customer 360, you are ready to start connecting it to your marketing tools or share it back to Snowflake for your data teams to start building workflows on it.
 
@@ -222,3 +216,7 @@ Now that you have built your customer 360, you are ready to start connecting it 
 
 ### Related Resources
 - [Amperity Documentation](https://docs.amperity.com/)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/MMDS-Snowflake-Reference-Architecture.pdf)
+- [Read the blog](https://medium.com/snowflake/amperity-snowflake-quickstart-a154611e0160)
+- [Watch the Demo](https://youtu.be/_IQjSSROkJM?list=TLGGtApyaWG82HQyMjA5MjAyNQ)
+  

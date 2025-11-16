@@ -1,17 +1,16 @@
 author: Praveen Padige
 id: airflow-spcs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+language: en
 summary: Running Apache Airflow on SPCS
-categories: data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Apache Airflow 
 
 # Running Apache Airflow on SPCS
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 In this guide, we will be walking you through how to deploy Apache Airflow application with Celery Executor in Snowpark Container Services.
 
@@ -72,7 +71,6 @@ Learn more about [Snowpark Container Services](https://docs.snowflake.com/en/dev
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 10
 
 ### Create Snowflake Objects
 
@@ -170,7 +168,6 @@ CREATE SECRET airflow_redis_pwd
 <!-- ------------------------ -->
 ## SnowGIT and External Access Integration
 
-Duration: 5
 
 1) Create a [SnowGIT integration](https://docs.snowflake.com/en/developer-guide/git/git-setting-up). You will use this integration in the Airflow service to scan for DAG files from the repository. As soon as a DAG file is added or updated in the GitHub repo, it will be made available to the Airflow UI.
 
@@ -244,7 +241,6 @@ GRANT USAGE ON  INTEGRATION airflow_spcs_egress_access_integration to role airfl
 <!-- ------------------------ -->
 ## Build Docker Images
 
-Duration: 15
 
 In this section you will be build the docker images and push them to Snowflake Image Repository.
 
@@ -311,7 +307,6 @@ SHOW IMAGES IN IMAGE REPOSITORY airflow_repository;
 <!-- ------------------------ -->
 ## Create Service Specification files
 
-Duration: 5
 
 In each of the service directory of the cloned repository you will see `.template` files. We rendere these `.template` files by running `render_template.py` script. It uses values from `values.yaml` file. You can modify values in `values.yaml` file to customize the application as per your needs.
 
@@ -336,7 +331,6 @@ put file://~/airflow_spcs/airflow/airflow_worker.yaml @airflow_db.airflow_schema
 <!-- ------------------------ -->
 ## Create Services
 
-Duration: 8
 
 Run below commands in Snowsight to create Redis, Postgres, Airflow services.
 
@@ -444,7 +438,6 @@ GRANT SERVICE ROLE airflow_service!ALL_ENDPOINTS_USAGE TO ROLE <role-name>;
 <!-- ------------------------ -->
 ## Run a DAG
 
-Duration: 5
 
 Once all the services have created successfully and the containers are in running state, run the below command in Snowsight to get the endpoint for Airflow UI.
 
@@ -487,7 +480,6 @@ Task Logs are persisted in Snowflake's internal stage `@airflow_db.airflow_schem
 <!-- ------------------------ -->
 ## Clean up
 
-Duration: 2
 
 Snowflake charges for the Compute Pool nodes that are active for your account. (See [Working With Compute Pools](https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-compute-pool)). To prevent unwanted charges, first stop all services that are currently running on a compute pool. Then, either suspend the compute pool (if you intend to use it again later) or drop it.
 
@@ -518,7 +510,6 @@ DROP STAGE airflow_dags;
 <!-- ------------------------ -->
 ## Additional Consideration
 
-Duration: 5
 
 Steps to Integrate Airflow with Okta for RBAC.
 

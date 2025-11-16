@@ -1,17 +1,16 @@
 id: getting-started-with-snowflake-cortex-ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: This guide provides the instructions for getting started with Snowflake Cortex AI.
-categories: featured,getting-started,app-development,data-science,gen-ai,data-science-&-ai,cortex
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Getting Started With Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Getting started with AI on enterprise data can seem overwhelming, between getting familiar with LLMs, how to perform custom prompt engineering, and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex AI. 
 
@@ -22,7 +21,7 @@ Snowflake offers two broad categories of powerful, intelligent features based on
 
 Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.
 
-Learn more about [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/).
+Learn more about [Snowflake Cortex AI](/en/product/features/cortex/).
 
 ### What You Will Learn
 - How to use Snowflake Cortex AI for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and task-specific LLM functions to perform operations like translate, sentiment scoring, etc
@@ -39,7 +38,6 @@ Learn more about [Snowflake Cortex AI](https://www.snowflake.com/en/product/feat
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 Prior to GenAI, a lot of the information was buried in text format and therefore going underutilized for root cause analysis due to complexities in implementing natural language processing. But with Snowflake Cortex AI it’s as easy as writing a SQL statement! 
 
@@ -92,7 +90,6 @@ COPY into CALL_TRANSCRIPTS
 <!-- ------------------------ -->
 ## Task Specific LLM Functions
 
-Duration: 5
 
 Given the data in `CALL_TRANSCRIPTS` table, let’s see how we can use task specific LLMs functions in Snowflake Cortex. It offers access to industry-leading AI models, without requiring any knowledge of how the AI models work, how to deploy LLMs, or how to manage GPU infrastructure.
 
@@ -145,7 +142,6 @@ select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.co
 <!-- ------------------------ -->
 ## Prompt Engineering
 
-Duration: 5
 
 Being able to pull out the summary is good, but it would be great if we specifically pull out the product name, what part of the product was defective, and limit the summary to 200 words. 
 
@@ -177,7 +173,6 @@ Here we’re selecting the Claude 4 model and giving it a prompt telling it how 
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 10
 
 To put it all together, let's create a Streamlit application in Snowflake.
 
@@ -287,7 +282,6 @@ This is also a good way to quickly and easily compare how different LLMs might p
 <!-- ------------------------ -->
 ## End-to-End Application
 
-Duration: 14
 
 For an end-to-end application experience with Snowflake Cortex AI using SQL and Python APIs, download this [.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Getting%20Started%20With%20Snowflake%20Cortex%20AI%20in%20Snowflake%20Notebooks/dash_snowflake_cortex_ai_101_notebook_app.ipynb) and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account. 
 
@@ -333,7 +327,6 @@ For an end-to-end application experience with Snowflake Cortex AI using SQL and 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed the Getting Started with Snowflake Cortex AI quickstart guide. 
 

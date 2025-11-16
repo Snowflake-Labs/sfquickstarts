@@ -1,23 +1,22 @@
 author: Jon Osborn
 id: hybrid-tables-jmeter-performance-testing
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Execute a simple performance test to evaluate hybrid tables.
-categories: Getting-Started, Unistore, Hybrid Tables
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Hybrid Tables, Unistore
 
 # Hybrid Table Performance Testing with JMeter
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This guide will introduce you to performance testing Snowflake hybrid tables using [JMeter](https://jmeter.apache.org/).
 Hybrid tables provide high concurrency and lower latency than standard Snowflake tables. If
 your use case is response time sensitive, this guide will help you understand the 
 best practices associated with performance testing hybrid tables.
 
-This quickstart assumes you have executed the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables/)
+This quickstart assumes you have executed the [Getting Started with Hybrid Tables](/en/developers/guides/getting-started-with-hybrid-tables/)
 lesson.
 
 While you will be using JMeter for this quickstart, this guide is not a comprehensive JMeter tutorial. The basics
@@ -51,7 +50,6 @@ Proceed to the next step to create Snowflake objects.
 
 <!-- ------------------------ -->
 ## Create Snowflake Database
-Duration: 2
 
 You will need a user and role configured in Snowflake for this test. The user
 must use key based authentication so MFA is not required. 
@@ -87,7 +85,6 @@ Next, we will create our table for testing.
 
 <!-- ------------------------ -->
 ## Create the Hybrid Table
-Duration: 2
 
 For this quickstart, we will create a very generic hybrid table and generate synthetic
 data to use for testing. In this way, you can customize the table and testing
@@ -128,7 +125,6 @@ Next, we will create our user that will execute the test.
 
 <!-- ------------------------ -->
 ## Create the Performance Testing User
-Duration: 3
 
 For the test scenario, the user will need to authenticate without the need for MFA. We do this in
 Snowflake with [key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth). This
@@ -176,7 +172,6 @@ the tables and do the performance testing.
 
 <!-- ------------------------ -->
 ## Download and Configure the JMeter Script
-Duration: 3
 
 For this part of the testing, you will:
 * Download the JMeter script
@@ -249,7 +244,6 @@ are ready for a longer test.
 
 <!-- ------------------------ -->
 ## Run a Full Test
-Duration: 5
 
 Change the configuration to make 250 requests from 4 threads. 
 - `NUMBER_OF_KEYS` = 250
@@ -266,7 +260,6 @@ Congratulations! You've executed a simple JMeter performance test for your hybri
 Explore JMeter graphing and data capabilities to visualize the performance.
 
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 Performance testing hybrid tables can be simple and easy. The method presented here can be expanded
