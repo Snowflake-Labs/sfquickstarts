@@ -12,7 +12,7 @@ author:  Snowflake DevRel Team
 
 ### Overview 
 
-Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [this markdown file](site/sfguides/src/_markdown-template/) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).
 
@@ -31,14 +31,13 @@ Previously, we had Quickstarts and Solutions which are now combined into a singl
 - Components of a Guide
 - Metadata configuration
 - Formatting considerations (including headers, subheaders, code, buttons, links, images and videos)
-- Tags to include (Language and category)
+- Tags to include (Language, industries, content type and category)
 - Converting content to markdown 
 - Submitting your guide for approval
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) installed
-- [Submit a Repository Request](https://docs.google.com/forms/d/1AQ0SOMi0-kAHHluEx9HJDDUctwisHqrSVWo-wvfDMwU/edit#responses) to obtain a repo  in Snowflake Labs GitHub.
+- (OPTIONAL) A Code Editor like [VSCode](https://code.visualstudio.com/download) if you choose to edit locally
 
 
 ### What You’ll Build 
@@ -59,10 +58,10 @@ There are three main sub-headers in a Conclusion step:
 It's also important to remember that by the time a reader has completed a Guide, the goal is that they have actually built something! Guides teach through hands-on examples -- not just explaining concepts.
 
 ### What We've Covered
-- creating steps and setting duration
-- adding code snippets
-- embedding images and videos
-- importing other markdown files
+- Creating steps and setting duration
+- Adding code snippets
+- Embedding images and videos
+- Importing other markdown files
 
 ### Related Resources
 - [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
@@ -81,15 +80,15 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
 ```
 
 - **id**: sample-separated-by-hyphens-not-underscores 
-  - make sure to match the id here with the name of the file, all one word.
+  - Make sure to match the id here with the name of the file, all one word.
 - **language**: pick from list 
-  - pick the appropriate language from the lsit provided.  
+  - Pick the appropriate language from the list provided.  
 - **categories**: Pick from the list
-  - select from the complete list of categories 1, 2 and 3 prrovided.  Please DO NOT create new categories.
+  - Select from the complete list of content type categories, categories 1, 2 and 3 and/or industries categories provided.  Please DO NOT create new categories.
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
   `Published` - implies the guide is active<br>
-  `Hidden` - implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.<br>
-  `Archived` - imlplies the sfguide is out of date and deprecated and no longer available.
+  `Hidden` - this status will no longer be used.  Preview links are generated during the PR submission process and can be used for internal review.<br>
+  `Archived` - implies the sfguide is out of date and deprecated and no longer available.
 - **authors**: Author Full Name (+ author GitHub account)
   - Indicate the author(s) of this specific sfguide.  Including the GitHub Account login helps us notify you of any changes requested in the future.
 
@@ -101,6 +100,8 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
   - **environments**: web 
   - `web` is default. If this will be published for a specific event or  conference, include it here.
   - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
+  - **fork repo link**: add a link to your repo
+  - **open in snowflake**: add a link to the product as a deeplink or a template link
 ---
 
 You can see the source metadata for this guide you are reading now, on [the github repo](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template).
@@ -112,7 +113,7 @@ You can see the source metadata for this guide you are reading now, on [the gith
 
 A single sfguide consists of multiple steps. 
 These steps are defined in Markdown using Header 2 tag `##`. 
-Sub-steps will use a Header 3 tag `###` and so forth.
+Sub-steps will use a Header 3 tag `###` and so forth.  Please avoid going beyond H4 `####`.
 
 ```markdown
 ## Step 1 Title
@@ -130,7 +131,7 @@ All the content for the step goes here.
 
 
 
-> NOTE:  Please add images in Markdown format - not HTML.
+> NOTE:  Please add images and tables in Markdown format - not HTML.
 ```
 
 
@@ -160,19 +161,22 @@ Basic colors can be  added to callouts using "diff" in a code block in between "
 # text in white
 ``` 
 
-
-```
+CODE: 
+``` 
 ```diff
 - text in red
 + text in green
-# text in white
-```
+# text in white ```
+``` 
+
 
 
 
 Multiple colors can also be added for emphasis at times:
 
 $${\color{red}Adding \space \color{lightblue}Different \space \color{orange}Colors}$$
+
+CODE: 
 ```
 $${\color{red}Adding \space \color{lightblue}Different \space \color{orange}Colors}$$  
 
@@ -213,8 +217,8 @@ for (statement 1; statement 2; statement 3) {
 > [!CAUTION]
 > A serious negative or danger message.
 
-```
 CODE:
+```
 > Adding an Info Box:
 > Pick the messages above and use this code.  This will appear as an info box.
 ```
@@ -255,22 +259,23 @@ CODE:
 #### Images
 ![Puppy](assets/puppy.jpg)
 
-Please DO NOT use HTML code for adding images.  
+Please DO NOT use HTML code for adding images. 
 Use this markdown format for images: 
 
 CODE:
 ```
-![](path/to/image.jpg "Optional Title")
+![](my-guide-folder/assets/image-1.jpg "Optional Title of Image")
 ```
 
 **Images should:**
-- have lower case and underscores
-- cannot have $ signs or special characters
-- should have the same correct image file name in the .md file (this is case sensitive)
-- All images should be in the "assets" folder.
+- Have lower case and hyphens
+- Cannot have $ signs or special characters
+- Should have the same correct image file name in the .md file (this is case sensitive)
+- Upload all images should be in the "assets" folder. 
+  Navigage to the folder,  click "Add file"  on top-right and select "Upload files."  Drag-and-drop or "choose your files."
   >Please DO NOT create subfolders inside this folder. 
 - Be sized appropriately (no full res images), and optimized for web (recommend tinypng)
-- Sizes should be 150kb max file size, gifs are an exception but they should also be optimized - large images will slow down the page load
+- Sizes should be 1 MB max file size, gifs are an exception but they should also be optimized - large images will slow down the page load
 
 
 #### Videos
@@ -316,11 +321,21 @@ create new tags if you don't see them in the list.
 
 
 
-## Please pick tags from the 3 categories below.  
+## Pick tags from categories  
 ```diff
 - DO NOT -
 create new tags if you don't see them in the list. 
  ```
+### Content Type:
+
+| Content Type | Taxonomy Path |
+|--------------|---------------|
+| Community Solution | snowflake-site:taxonomy/solution-center/certification/community-sourced |
+| Partner Solution | snowflake-site:taxonomy/solution-center/certification/partner-solution |
+| Certified Solution | snowflake-site:taxonomy/solution-center/certification/certified-solution |
+| Quickstart | snowflake-site:taxonomy/solution-center/certification/quickstart |
+
+
 
 ### Category 1: Product Category
 
@@ -391,7 +406,18 @@ create new tags if you don't see them in the list.
 | Snowpipe Streaming | snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming |
 
 
+### Industries Category
 
+| Industry | Taxonomy Path |
+|-----------|---------------|
+| Advertising, Media & Entertainment | snowflake-site:taxonomy/industry/advertising-media-and-entertainment |
+| Financial Services | snowflake-site:taxonomy/industry/financial-services |
+| Manufacturing & Industrial | snowflake-site:taxonomy/industry/manufacturing |
+| Healthcare & Life Sciences | snowflake-site:taxonomy/industry/healthcare-and-life-sciences |
+| Public Sector | snowflake-site:taxonomy/industry/public-sector |
+| Retail & Consumer Goods | snowflake-site:taxonomy/industry/retail-and-cpg |
+| Sports | snowflake-site:taxonomy/industry/sports |
+| Telecom | snowflake-site:taxonomy/industry/telecom |
 
 
 <!-- ------------------------ -->
@@ -402,10 +428,13 @@ If you have an existing word document that needs to be converted to markdown for
 
 To convert a Word document (.docx) to Markdown using Pandoc:
 
+CODE:
 ```
 brew install pandoc
 pandoc -f docx -t markdown -o output.md input.docx
 ```
+
+You can also use the Google Docs feature of saving to Markdown, however please review your markdown before submission as some formatting options can be different.
 
 > NOTE: Once the document is converted, please review the markdown file to ensure it uses the appropriate formatting mentioned in this guide. 
 
