@@ -1,0 +1,368 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build an AI-Powered Data Processing Pipeline with Modin and Snowflake Cortex</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="process-modin-dataframe-with-cortex"
+                  title="Build an AI-Powered Data Processing Pipeline with Modin and Snowflake Cortex"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Ready to supercharge your data processing with AI, all while working in the familiar environment of pandas.</p>
+<p>This quickstart reveals how you can effortlessly integrate powerful Snowflake Cortex AI capabilities directly into your Modin DataFrames. Get ready to transform, analyze, and visualize your data with unprecedented ease and scale, all within the unified Snowflake ecosystem.</p>
+<p>You&#39;ll embark on a journey to build an end-to-end data processing pipeline that loads product catalog data, applies various AI transformations using Cortex, and visualizes the results with Streamlit. The best part? It all happens effortlessly within the unified Snowflake ecosystem.</p>
+<p>Before we dive deeper into specific AI functions, let&#39;s take a moment to appreciate the comprehensive power of Snowflake Cortex AI. It&#39;s not just a collection of functions; it&#39;s a fully integrated ecosystem designed to bring advanced AI capabilities directly to your data, without the complexity of moving it.</p>
+<p>This diagram illustrates the key components that make up Snowflake Cortex AI, showing how it supports everything from data ingestion and processing to model deployment and governance.</p>
+<p class="image-container"><img alt="image" src="img/9675c1b7fe265392.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li><strong>Seamless Data Ingestion:</strong> Learn to load data from an S3 bucket directly into a Snowflake stage.</li>
+<li><strong>Pandas, Supercharged:</strong> Discover how to read CSV data into a Modin DataFrame, scaling your operations with ease.</li>
+<li><strong>AI at Your Fingertips:</strong> Apply powerful Cortex LLM functions for tasks like text classification, translation, sentiment analysis, and more, directly on your data.</li>
+<li><strong>Data Persistence:</strong> Master writing your newly processed, AI-enriched data back to Snowflake.</li>
+<li><strong>Interactive Insights:</strong> Craft a simple, yet impactful, interactive visualization with Streamlit to showcase your results.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A complete data processing pipeline that transforms product catalog data using AI capabilities and presents insights through an interactive dashboard.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic familiarity with Python and pandas</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <h2 is-upgraded>Retrieve the Notebook</h2>
+<p>Ready to dive in? To follow along with every step of this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Process-Modin-DataFrame-with-Cortex/Process-DataFrame-with-Modin-and-Cortex.ipynb" target="_blank">Process-DataFrame-with-Modin-and-Cortex.ipynb</a> to download the companion Notebook from GitHub.</p>
+<h2 is-upgraded>Required Packages</h2>
+<p>Snowflake Notebooks comes pre-loaded with a fantastic array of common Python libraries for data science and machine learning, including <code>numpy</code>, <code>pandas</code>, and <code>matplotlib</code>. However, for this particular journey into AI-powered data processing, we&#39;ll need to bring in a few specialized tools:</p>
+<ul>
+<li><code>modin</code>: Your secret weapon for scaling those familiar pandas operations to handle larger datasets with ease.</li>
+<li><code>snowflake-ml-python</code>: This is your gateway to unlocking the powerful Cortex LLM functions directly within your Python environment.</li>
+<li><code>snowflake-snowpark-python</code>: Essential for seamless interaction with Snowpark functionality, bridging your Python code with Snowflake&#39;s robust capabilities.</li>
+</ul>
+<p>Adding these packages is a breeze! Just head over to the <strong>Packages</strong> dropdown, located in the top right corner of your Snowflake Notebook interface, and add them there.</p>
+<h2 is-upgraded>Import Prerequisite Libraries</h2>
+<p>Let&#39;s start by importing the necessary libraries and establishing a connection to Snowflake:</p>
+<pre><code language="language-python" class="language-python"># Import Python packages
+import modin.pandas as pd
+import snowflake.snowpark.modin.plugin
+
+# Connecting to Snowflake
+from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+</code></pre>
+<p>This code imports Modin&#39;s pandas implementation and connects to your active Snowflake session.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Data" duration="10">
+        <h2 is-upgraded>Store Data into a Snowflake Stage</h2>
+<p>Before we can unleash the power of AI on our data, we need a place for it to live within Snowflake. Think of a stage as a secure, internal landing zone for your external data.</p>
+<p>We&#39;ll create one to seamlessly bring in our product catalog data from an S3 bucket:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE STAGE AVALANCHE
+    URL = &#39;s3://sfquickstarts/misc/avalanche/csv/&#39;;
+</code></pre>
+<p>You should see the following status message the stage is created successfully:</p>
+<p class="image-container"><img alt="image" src="img/71ae07cc52d091aa.png"></p>
+<h2 is-upgraded>List Stage Contents</h2>
+<p>Just to be sure our data has landed safely and is ready for action, let&#39;s quickly list the contents of our newly created stage. This helps us verify that everything is accessible before we proceed:</p>
+<pre><code language="language-sql" class="language-sql">ls @avalanche/
+</code></pre>
+<p>This command should display the files available in the stage, including our target file <code>product-catalog.csv</code>.</p>
+<p class="image-container"><img alt="image" src="img/c6ef2e2c9c280bd5.png"></p>
+<h2 is-upgraded>Read CSV Data</h2>
+<p>Now for the exciting part! We&#39;ll read that CSV data directly into a Modin DataFrame. This is where your familiar pandas operations get a significant performance boost, thanks to Modin&#39;s scalability.</p>
+<pre><code language="language-python" class="language-python">df = pd.read_csv(&#34;@avalanche/product-catalog.csv&#34;)
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/1fdfafb1f59ac7e2.png"></p>
+<p>Once loaded, your DataFrame will feature three key columns, ready for the forthcoming AI magic:</p>
+<ul>
+<li><code>name</code>: Product name</li>
+<li><code>description</code>: Product description</li>
+<li><code>price</code>: Product price</li>
+</ul>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>Make sure your Snowflake role has the necessary permissions to create stages and access external data</li>
+<li>The path to the CSV file is relative to the stage you created</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Classify Text" duration="10">
+        <h2 is-upgraded>Classify Text with Cortex</h2>
+<p>This is where Snowflake Cortex truly shines! It offers powerful AI capabilities that you can apply directly to your data, transforming raw text into structured insights.</p>
+<p>Let&#39;s use the <code>ClassifyText</code> function to categorize our products:</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import ClassifyText
+
+df[&#34;label&#34;] = df[&#34;name&#34;].apply(ClassifyText, categories=[&#34;Apparel&#34;,&#34;Accessories&#34;])
+df[&#34;label2&#34;] = df[&#34;description&#34;].apply(ClassifyText, categories=[&#34;Apparel&#34;,&#34;Accessories&#34;])
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/ca9f6552f8d6b7c5.gif"></p>
+<p>Did you notice something interesting? We&#39;re classifying products in two distinct ways: once based on the concise product name, and again using the more detailed product description.</p>
+<p>This is a fantastic way to see how different inputs can lead to nuanced classification results, giving you a richer understanding of your data.</p>
+<h2 is-upgraded>Extract Classification Labels</h2>
+<p>Cortex&#39;s <code>ClassifyText</code> function returns its results as dictionaries, which is great for comprehensive output. But for our analysis, we just need the clean category values without the <code>label</code> keys. Let&#39;s quickly extract those values and then tidy up our DataFrame by dropping the intermediate columns:</p>
+<pre><code language="language-python" class="language-python">df[&#34;category&#34;] = df[&#34;label&#34;].apply(lambda x: x.get(&#39;label&#39;))
+df[&#34;category2&#34;] = df[&#34;label2&#34;].apply(lambda x: x.get(&#39;label&#39;))
+
+df.drop([&#34;label&#34;, &#34;label2&#34;], axis=1, inplace=True)
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/184a57c66b6e46f7.gif"></p>
+<p>And just like that, we have beautifully clean category columns, perfectly ready for deeper analysis and visualization. No more manual sorting or tagging!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Translate Text" duration="10">
+        <p>Snowflake Cortex makes language translation incredibly simple. Let&#39;s leverage Cortex&#39;s powerful <code>Translate</code> function to instantly localize our product information from English into German:</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import Translate
+
+df[&#34;name_de&#34;] = df[&#34;name&#34;].apply(Translate, from_language=&#34;en&#34;, to_language=&#34;de&#34;)
+df[&#34;description_de&#34;] = df[&#34;description&#34;].apply(Translate, from_language=&#34;en&#34;, to_language=&#34;de&#34;)
+df[&#34;category_de&#34;] = df[&#34;category&#34;].apply(Translate, from_language=&#34;en&#34;, to_language=&#34;de&#34;)
+df[&#34;category2_de&#34;] = df[&#34;category2&#34;].apply(Translate, from_language=&#34;en&#34;, to_language=&#34;de&#34;)
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/88801a809d5c1d36.gif"></p>
+<p>With just a few lines of code, you can localize your entire product catalog, opening doors to new markets and ensuring your data speaks every language your business needs.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Process Text" duration="15">
+        <h2 is-upgraded>Analyze Sentiment</h2>
+<p>Beyond classification and translation, Cortex offers even more sophisticated text capabilities. Let&#39;s unlock deeper insights from our product descriptions, starting with understanding the emotions they convey.</p>
+<p>Ever wondered how your product descriptions are perceived? Are they overwhelmingly positive, or do they carry a hint of negativity? Let&#39;s use Cortex&#39;s <code>Sentiment</code> function to assign a numerical score to each description, instantly revealing its emotional tone:</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import Sentiment
+
+df[&#34;sentiment_score&#34;] = df[&#34;description&#34;].apply(Sentiment)
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/aad4d80a697b4c50.gif"></p>
+<p>This sentiment score provides a powerful numerical value, giving you an immediate indication of the positivity or negativity embedded within each description. Imagine using this to quickly identify descriptions that might need a rewrite!</p>
+<h2 is-upgraded>Summarize Text</h2>
+<p>Long descriptions can be overwhelming. What if you could get the gist of a product description in a single, concise sentence? Cortex&#39;s <code>Summarize</code> function makes this a reality, helping you distill lengthy text into digestible summaries:</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import Summarize
+
+df[&#34;description_summary&#34;] = df[&#34;description&#34;].apply(Summarize)
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/6f3a1bf42972b213.gif"></p>
+<p>This is incredibly useful for quick reviews or for generating short snippets for other applications.</p>
+<h2 is-upgraded>Extract Specific Information</h2>
+<p>Sometimes, you need to pull out very specific pieces of information from unstructured text. Cortex&#39;s <code>ExtractAnswer</code> function acts like a smart assistant, answering questions directly from your text. Let&#39;s use it to identify the exact product mentioned in each name:</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import ExtractAnswer
+
+df[&#34;product&#34;] = df[&#34;name&#34;].apply(ExtractAnswer, question=&#34;What product is being mentioned?&#34;)
+df[&#34;product&#34;] = [x[0][&#34;answer&#34;] for x in df[&#39;product&#39;]]
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/be53397e9e3ed74.gif"></p>
+<p>This demonstrates how you can use Cortex to extract structured information from unstructured text.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Post-Process Data" duration="5">
+        <p>Our data has been enriched with powerful AI insights, but before we finalize it, a little post-processing goes a long way to ensure accurate and reliable subsequent data analysis and visualization.</p>
+<h2 is-upgraded>Clean Price Data</h2>
+<p>Our <code>price</code> column currently contains dollar signs, which isn&#39;t ideal for numerical calculations. Let&#39;s quickly clean this up by removing the ‘$&#39; symbol and then converting the column to a proper numeric type. This ensures our financial data is ready for any mathematical operations or aggregations.</p>
+<pre><code language="language-python" class="language-python"># For the price column, remove $ symbol and convert to numeric
+df[&#34;price&#34;] = df[&#34;price&#34;].str.replace(&#34;$&#34;, &#34;&#34;, regex=False)
+df[&#34;price&#34;] = pd.to_numeric(df[&#34;price&#34;])
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/42f036a1dd580529.gif"></p>
+<h2 is-upgraded>Convert Column Types</h2>
+<p>To maintain data integrity and ensure compatibility with various tools (especially when writing back to Snowflake), it&#39;s good practice to standardize our column types. Let&#39;s make sure all our text-based columns are explicitly set as string types, while leaving our numerical columns (like <code>price</code> and <code>sentiment_score</code>) as they are.</p>
+<pre><code language="language-python" class="language-python"># Convert all other columns to the string type
+for col_name in df.columns:
+    if col_name != &#34;price&#34; and col_name != &#34;sentiment_score&#34;:
+        df[col_name] = df[col_name].astype(str)
+
+df
+</code></pre>
+<p class="image-container"><img alt="image" src="img/4e5a73fb37f9aae0.gif"></p>
+<p>With these quick clean-up steps, our DataFrame is now perfectly structured and ready for its final destination!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Operations" duration="5">
+        <p>Now that our data is transformed, enriched, and polished, it&#39;s time to persist these valuable insights. The beauty of working within the Snowflake ecosystem is the seamless ability to write your processed data directly back into a Snowflake table, making it available for countless other applications and analyses.</p>
+<h2 is-upgraded>Write to a Snowflake Table</h2>
+<p>Let&#39;s write our processed DataFrame to a Snowflake table:</p>
+<pre><code language="language-python" class="language-python">df.to_snowflake(&#34;avalanche_products&#34;, if_exists=&#34;replace&#34;, index=False)
+</code></pre>
+<h2 is-upgraded>Read Data with SQL</h2>
+<p>Let&#39;s quickly confirm your data is there and looks as expected. We can query our new table using the following SQL query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM CHANINN_DEMO_DATA.PUBLIC.AVALANCHE_PRODUCTS
+</code></pre>
+<h2 is-upgraded>Read Data with Python</h2>
+<p>And of course, if you ever need to pull this data back into a DataFrame for further Python-based analysis or application development, it&#39;s just as straightforward:</p>
+<pre><code language="language-python" class="language-python">pd.read_snowflake(&#34;avalanche_products&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build a Streamlit Dashboard" duration="15">
+        <p>What&#39;s the point of all this incredible AI-powered data processing if you can&#39;t easily share and interact with the insights? This is where Streamlit steps in, allowing you to transform your data into a beautiful, interactive web application with just a few lines of Python code. Let&#39;s build a simple yet powerful dashboard to visualize our newly enriched product data!</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+
+df = pd.read_snowflake(&#34;avalanche_products&#34;)
+
+st.header(&#34;Product Category Distribution&#34;)
+
+# Selectbox for choosing the category column
+selected_category_column = st.selectbox(
+    &#34;Select Category Type:&#34;,
+    (&#34;category&#34;, &#34;category2&#34;)
+)
+
+# Count the occurrences of each category based on the selected column
+category_counts = df[selected_category_column].value_counts().reset_index()
+category_counts.columns = [&#39;Category&#39;, &#39;Count&#39;]
+
+st.bar_chart(category_counts, x=&#39;Category&#39;, y=&#39;Count&#39;, color=&#39;Category&#39;)
+
+st.header(&#34;Product Sentiment Analysis&#34;)
+
+# Calculate metrics
+st.write(&#34;Overall Sentiment Scores:&#34;)
+
+cols = st.columns(4)
+
+with cols[0]:
+    st.metric(&#34;Mean Sentiment&#34;, df[&#39;sentiment_score&#39;].mean() )
+with cols[1]:
+    st.metric(&#34;Min Sentiment&#34;, df[&#39;sentiment_score&#39;].min() )
+with cols[2]:
+    st.metric(&#34;Max Sentiment&#34;, df[&#39;sentiment_score&#39;].max() )
+with cols[3]:
+    st.metric(&#34;Standard Deviation&#34;, df[&#39;sentiment_score&#39;].std() )
+
+# Create a bar chart showing sentiment scores for all products
+st.write(&#34;Individual Product Sentiment Scores:&#34;)
+option = st.selectbox(&#34;Color bar by&#34;, (&#34;name&#34;, &#34;sentiment_score&#34;))
+st.bar_chart(df[[&#39;name&#39;, &#39;sentiment_score&#39;]], x=&#39;name&#39;, y=&#39;sentiment_score&#39;, color=option)
+</code></pre>
+<p>And there you have it! This intuitive Streamlit app instantly provides:</p>
+<ol type="1">
+<li><strong>Dynamic Category Insights:</strong> A clear bar chart showcasing the distribution of product categories, with the flexibility to switch between classification methods.</li>
+</ol>
+<p class="image-container"><img alt="image" src="img/79b45692d1421d66.gif"></p>
+<ol type="1" start="2">
+<li><strong>At-a-Glance Sentiment Metrics:</strong> Key statistical metrics that summarize the overall sentiment across your product descriptions.</li>
+<li><strong>Granular Sentiment Visualization:</strong> A bar chart that lets you explore the sentiment score for each individual product, helping you pinpoint outliers or trends.</li>
+</ol>
+<p class="image-container"><img alt="image" src="img/10967450bfdc4ce7.gif"></p>
+<p>This isn&#39;t just a visualization; it&#39;s an interactive AI-powered data app that empower users to perform self-serve analytics!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve not just followed a tutorial; you&#39;ve successfully engineered a powerful, end-to-end data processing pipeline. You&#39;ve harnessed the scalability of Modin DataFrames and the cutting-edge AI capabilities of Snowflake Cortex to transform raw data into actionable intelligence. From loading external data to applying sophisticated AI transformations like classification, translation, sentiment analysis, and text summarization, you&#39;ve done it all. And to top it off, you&#39;ve brought your insights to life with a dynamic, interactive Streamlit dashboard!</p>
+<p>This quickstart truly showcases the immense power and seamless integration of the Snowflake ecosystem. You&#39;ve seen firsthand how you can perform sophisticated data processing and advanced AI operations without ever needing to move your data outside the platform. This isn&#39;t just about convenience; it&#39;s about unlocking unparalleled performance, robust security, and a streamlined workflow for your data projects.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Loaded data from an S3 bucket into a Snowflake stage</li>
+<li>Processed data using Modin DataFrames for improved performance</li>
+<li>Applied Cortex AI functions for text classification, translation, and sentiment analysis</li>
+<li>Extracted structured information from unstructured text</li>
+<li>Created an interactive dashboard with Streamlit</li>
+<li>Wrote and read data within the Snowflake ecosystem</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Want to dive deeper or explore related topics? Check out these valuable resources:</p>
+<p><strong>Articles:</strong></p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/pandas-on-snowflake" target="_blank">pandas on Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/pandas-on-snowflake#using-snowflake-cortex-llm-functions-with-snowpark-pandas" target="_blank">Using Snowflake Cortex LLM functions with Snowpark pandas</a></li>
+<li><a href="https://www.snowflake.com/en/product/features/cortex/" target="_blank">Snowflake Cortex AI</a></li>
+</ul>
+<p><strong>Documentation:</strong></p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+<li><a href="https://modin.readthedocs.io/" target="_blank">Modin Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

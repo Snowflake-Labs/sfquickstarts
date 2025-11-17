@@ -1,29 +1,29 @@
 authors: Matthias Nicola, Vinay Srihari
-id: horizon_intra_org_sharing
-summary: explore Horizon Access pillar features for intra-company sharing of data and apps
-categories: Data-Sharing
+id: horizon-intra-org-sharing
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
+summary: explore Horizon Collaboration pillar features for sharing of data and apps
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Summit HOL, Data Sharing, Horizon Access
 
-# Horizon Access for Intra-Company Sharing
+# Explore Cross-Cloud Sharing of Data and Applications with Private Listings
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 15
 
 Sharing information between departments, business units and subsidiaries of a company is critical for success, particularly when there are organizational silos in place. A modern data platform must provide decentralized ownership, universal discovery, access control, federated governance, and observability.
 
-**Snowflake Horizon** is a unified suite of governance and discovery capabilities organized into five pillars.
+**Snowflake Horizon Catalog** is a connected catalog for your entire data estate. It allows customers to interoperate more easily across table formats, engines & catalogs. Horizon allows you to manage metadata for all your data & AI assets in one place for easy data discovery and collaboration. 
 
-![Snowflake Horizon Diagram](assets/snowflake_horizon.jpg)
+![Snowflake Horizon Diagram](assets/horizon-catalog.jpg)
 
-This Quickstart is focused on the `Horizon Access` pillar.
+This Quickstart is focused on the `Horizon Collaboration` and `Horizon Discovery` pillars.
 
-The objective of the Access pillar is to make it simple to share, discover, understand/build trust and access listings across any boundary, internal or external to the organization, and to make loose objects discoverable across account boundaries within an organization, supported by the tools necessary to ensure policy compliance, security, and data quality.
+The objective of the Collaboration and Discovery pillars are to make it simple to share, discover, understand/build trust and access listings across any boundary, internal or external to the organization, and to make loose objects discoverable across account boundaries within an organization, supported by the tools necessary to ensure policy compliance, security, and data quality.
 
-In this lab you will experience the latest **Snowflake Horizon Access pillar** features for sharing data and native apps intra-company: organizational listings, unified search & discovery, data quality monitoring, role-based governance policies and programmatic management of data products. We will cover structured and unstructured data that is stored on-platform or on external storage.
+In this lab you will experience the latest Snowflake Horizon Collaboration and Discovery features for sharing data and native apps intra-company: private listings, unified search & discovery, data quality monitoring, role-based governance policies and programmatic management of data products. We will cover structured and unstructured data that is stored on-platform or on external storage.
+
 
 ### What You’ll Learn
 
@@ -182,7 +182,6 @@ snow --info
 <!-- ------------------------ -->
 ## Citations and Terms of Use
 
-Duration: 1
 
 Raw text data provided for this lab is an extract from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/)
 
@@ -204,7 +203,6 @@ Use of this dataset requires that we cite this ACL 2011 paper by Andrew Maas, et
 <!-- ------------------------ -->
 ## Horizon AWS Provider Account Setup
 
-Duration: 10
 
 Clone our [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository to your local machine with `git`:
 
@@ -216,7 +214,7 @@ cd horizon-intra-org-scripts
 ```
 
 If you prefer not to use git, `Download ZIP` from the Lab Scripts [github site](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
-<img src="assets/code-download.jpg" width="400" height="250">
+![assets/code-download.jpg](assets/code-download.jpg)
 
 Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface) - one script per worksheet
 
@@ -225,7 +223,7 @@ Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](htt
 ### Execute Setup SQL Scripts
 
 1. `100_Setup_Data_Model`: create the TastyBytes foundational data model.
-[TastyBytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
+[TastyBytes](/en/developers/guides/tasty-bytes-introduction/) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
 
 - `RAW_CUSTOMER`: raw customer loyalty data with personally identifiable information (PII)
 - `RAW_POS`: raw point-of-sale data denormalized by orders, menu, franchise and country
@@ -282,14 +280,12 @@ snow stage list-files @frostbyte_tasty_bytes.movie_reviews.movie_stage
 Setup is now complete!
 
 <!-- ------------------------ -->
-## Create, Publish and Install a Data Listing
+## Publish a Data Listing
 
-Duration: 20
 
 In this section you will create, publish, consume, alter, and monitor a [listing](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about).
 
 ### Build and Publish a Listing in the Provider Studio UI
-
 1. Navigate to the Provider Studio and click the +Listing button in the top right:
 
     ![ProviderStudio](assets/101_ProviderStudio+Listing.png)
@@ -408,7 +404,6 @@ In this section you will create, publish, consume, alter, and monitor a [listing
 
 ## Listing Management and Monitoring
 
-Duration: 20
 
 ### Use the Listing API to modify listing properties programmatically
 
@@ -536,7 +531,6 @@ FROM stream_daily_weather_changes;
 <!-- ------------------------ -->
 ## Protect Data with Governance Policies
 
-Duration: 20
 
 This section of the lab introduces several capabilities for data providers to restrict the usage of their products by consumers.
 
@@ -906,9 +900,8 @@ FROM analytics.CUSTOMER_LOYALTY_METRICS_V
 WHERE city = 'Melbourne' AND last_name = 'Arellano';
 ```
 
-## Publish and Monitor Data Quality Metrics for Listings
+## Publish Listing with Data Quality Metrics
 
-Duration: 15
 
 In this section the data provider will capture [data quality metrics](https://docs.snowflake.com/en/user-guide/data-quality-intro) and share them with the data consumers. In particular, we want to monitor the data quality in the view ANALYTICS.ORDERS_BY_POSTAL_CODE_V.
 
@@ -1097,9 +1090,8 @@ Take the following 3 steps in the UI:
 ```
 
 <!-- ------------------------ -->
-## Create, Publish and Install a Native Application Listing
+## Publish a Native Application Listing
 
-Duration: 20
 
 The [Snowflake Native Application Framework](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/native-apps/overview) provides developers the ability to create data intensive applications that run _within_ the Snowflake platform with versioning controls.
 
@@ -1178,7 +1170,7 @@ ALTER VIEW app_instance_schema.orders_v
 
 >`frosty_bytes_sis.py` - Streamlit visualization python script that accesses the shared data within the application package.
 
-Refer to the [Getting Started with Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/index.html?index=..%2F..index#0) Quickstart for more details.
+Refer to the [Getting Started with Native Apps](/en/developers/guides/getting-started-with-native-apps/) Quickstart for more details.
 
 ### Create Application Package using Snowflake CLI
 
@@ -1229,7 +1221,7 @@ Navigate to **Provider Studio** (under Data Products) and click on `+ Listing` t
 Now select the `HORIZON_QUICKSTART_PACKAGE` and fill in a brief description using the rich text editor.
 You can use this text to get started, but feel free to get creative!
 
-> _[Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0) is a fictitious global food truck network_
+> _[Tasty Bytes](/en/developers/guides/tasty-bytes-introduction/) is a fictitious global food truck network_
 > _that is on a mission to serve unique food options with high quality items in a safe, convenient and cost effective way._
 > _In order to drive forward on their mission, Tasty Bytes is beginning to leverage the Snowflake Data Cloud._
 >
@@ -1319,13 +1311,12 @@ select distinct primary_city from tasty_bytes_global_sales.app_instance_schema.o
 <!-- ------------------------ -->
 ## Share Snowflake-Managed Iceberg Tables
 
-Duration: 10
 
 Iceberg tables in Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage managed by the customer. Snowflake supports Iceberg tables that use the Apache Parquet file format.
 
 Creating and writing data into a Snowflake Iceberg table is beyond the scope of this lab; we will focus only on the Consumer side of Iceberg table sharing.
 
-Using the method outlined in [Getting Started with Iceberg Tables](https://quickstarts.snowflake.com/guide/getting_started_iceberg_tables/index.html?index=..%2F..index#0) Quickstart, create Iceberg Tables and policies based on what we created in the previous lab section.
+Using the method outlined in [Getting Started with Iceberg Tables](/en/developers/guides/getting-started-iceberg-tables/) Quickstart, create Iceberg Tables and policies based on what we created in the previous lab section.
 
 On the `Provider AWS Account` execute the steps listed in `code/sql/reference/iceberg_provider.sql` cloned from [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository earlier:
 
@@ -1449,9 +1440,8 @@ LIMIT 10
 ```
 
 <!-- ------------------------ -->
-## Share Unstructured Data within and across cloud regions
+## Share Unstructured Data
 
-Duration: 20
 
 We have previously staged 100 movie reviews extracted from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/).
 
@@ -1588,9 +1578,8 @@ Try the same steps on the **Azure Consumer Account**:
 <!-- ------------------------ -->
 ## Conclusion & Resources
 
-Duration: 5
 
-Congratulations, you made it through our Horizon Access journey! You have exercised a broad range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions.
+Congratulations, you made it through our Horizon Collaboration journey! You have exercised a broad range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions.
 
 ### What you Learned
 

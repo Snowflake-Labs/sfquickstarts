@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis",
+  "duration": 35,
+  "title": "NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis/end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "nlp",
+    "snowpark",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis"
+}

@@ -1,0 +1,523 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Accelerating Machine Learning with Snowflake and DataRobot</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="automl_with_snowflake_and_datarobot"
+                  title="Accelerating Machine Learning with Snowflake and DataRobot"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Use Case Overview" duration="5">
+        <p>This guide will take you through the process of performing supervised machine learning by building a binary classification model to help predict whether a customer is likely to churn (that is, no longer be our customer).</p>
+<p>Supervised machine learning is the process of taking a historical dataset with KNOWN outcomes of what we would like to predict, to train a model, that can be used to make future predictions.</p>
+<p>The historical dataset we will be working with today is taken from a fictitious telecommunications company, and contains details about a customers plan usage, spend patterns, issues logged with customer support, geographical information, and a binary value (hence binary classification) indicating whether that person ended their contract with the company (churned). Here is a snippet of the data: <br><br><img src="img/3548324541ffd4cf.png"><br><br> Throughout this process, you will discover the ease at which it is possible to build and deploy machine learning models by leveraging the scale and performance of Snowflake and the automation of the DataRobot platform.</p>
+<p>To showcase the full lifecycle of a deploying machine learning model, we will first load in Snowflake, our data cloud where all of our data lives. Then, we will leverage the DataRobot auto-pilot process to perform exploratory data analysis, and then train, evaluate, and interpret a slew of potential machine learning models. And finally, use the Snowflake-DataRobot prediction integration to score our model against new data, as if the model was in production.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Basic knowledge of SQL, and database concepts and objects</li>
+<li>Basic understanding of data science and machine learning</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create and utilize databases, tables, views, and warehouses</li>
+<li>Load structured data into Snowflake</li>
+<li>Use Snowflake&#39;s &#34;Partner Connect&#34; to seamlessly create a DataRobot trial</li>
+<li>Automatically create, run, and evaluate prediction models in DataRobot</li>
+<li>Write results to Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the <code>ACCOUNTADMIN</code> role, which is required for this lab).</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Snowflake objects, including tables and warehouses, to scale and manage your data</li>
+<li>Over 50+ machine learning models automatically to measure their performance and interpret</li>
+<li>A prediction pipeline to automate scoring new data on your deployed model</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake" duration="5">
+        <p>The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.</p>
+<p><a href="https://snowflake-workshop-lab.s3.amazonaws.com/Snowflake_Datarobot_VHOL_guides.sql" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download .sql File</paper-button></a><br><br></p>
+<p>At this point, log into your Snowflake account and open a new <code>Worksheet</code>. If you have just created a free trial account, you will land in the <code>Learn</code> section. Simply navaigate to the <code>Worksheets</code> tab on the left and click <code>+ Worksheet</code> in the top right hand corner.</p>
+<p class="image-container"><img src="img/3d18f93f9c2fec04.png"><br><br></p>
+<p>To ingest our script in the Snowflake UI, click the down arrow next to the time your notebook was created in the top left hand side of your screen and load our <code>Snowflake_Datarobot_VHOL_guies.sql</code> script using the <code>Import SQL from File</code> button. You can also change the name of this worksheet to &#34;Snowflake-DataRobot VHOL Summit 2022&#34;</p>
+<p class="image-container"><img src="img/433ae8f7dd6aad2e.png"><br><br></p>
+<p>Snowflake provides &#34;worksheets&#34; as the spot for you to execute your code. For each worksheet you create, you will need to set the &#34;context&#34; so the worksheet knows how to behave. A &#34;context&#34; in Snowflake is made up of 4 distinctions that must be set before we can perform any work: the &#34;role&#34; we want to act as, the &#34;database&#34; and &#34;schema&#34; we want to work with, and the &#34;warehouse&#34; we want to perform the work.</p>
+<p>Lets go ahead and set the role we want to act as, which will be <code>ACCOUNTADMIN</code> to begin with. This can either be done manually in the UI or programmatically in a worksheet (<code>ACCOUNTADMIN</code> is the default role for a first time user). Lets do so programmatically in our worksheet by executing our first line of code:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+</code></pre>
+<p>To execute this code, all we need to do is place our cursor on the line we wish to run and then either hit the &#34;run&#34; button at the top left of the worksheet or press <code>Cmd/Ctrl + Enter</code>.</p>
+<p>In addition to traditional SQL statements, Snowflake Data Definition (<a href="https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html" target="_blank">DDL</a>) commands, such as setting the worksheet context, can also be written and executed within the worksheet.</p>
+<p>Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Snowflake Database" duration="0">
+        <p>Duration 10:</p>
+<p>To get started, we are going to create our first Snowflake object and <code>CREATE</code> a database called <code>CUSTOMER_DATA</code> that will be used for loading the structured data for our current example. To get back to our main navigation menu, simply click on the <code>HOME</code> button at the top left hand side of the worksheet.</p>
+<p>From here, click on the &#34;Data&#34; tab and click <code>+ Database</code>, to create a new database object. Every Snowflake trial provides you with two default databases, which is why you already see database objects on your list.</p>
+<p class="image-container"><img src="img/87a828d469544da7.png"><br><br></p>
+<p>Enter <code>CUSTOMER_DATA</code> in the &#34;Name&#34; section, and click &#34;Create&#34;.</p>
+<p class="image-container"><img src="img/1d5db09936cf0339.png"><br><br></p>
+<p>You should now see your new databases add to the list. Lets navigate back to our <code>Snowflake-DataRobot VHOL Summit 2022</code> worksheet. You should see our worksheet with all of the SQL we loaded in the prior step. In the future you can skip this step by executing the following line of code:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE customer_data;
+</code></pre>
+<p>We will continue to set the context for our worksheet. The &#34;role&#34;: <code>ACCOUNTADMIN</code>, we already set earlier. To set our &#34;database&#34;, &#34;schema&#34;, and &#34;warehouse&#34;, execute the following code:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE compute_wh WITH
+  WAREHOUSE_SIZE = &#39;XSMALL&#39;
+  AUTO_SUSPEND = 60
+  AUTO_RESUME = TRUE
+  INITIALLY_SUSPENDED = TRUE;
+
+
+USE DATABASE customer_data;
+USE SCHEMA public;
+USE WAREHOUSE compute_wh;
+</code></pre>
+<p>One thing to note is, we already have already executed some SQL commands without a warehouse attached. So why did they work then? Because the only commands executed so far are DDL commands. These commands are free in Snowflake. Only when you start working with data does a warehouse turn on.</p>
+<p>Continuing, trial accounts automatically come with <code>COMPUTE_WH</code> created for you. If you already had an account that you are using for this lab, you probably didn&#39;t have this warehouse anymore. Whether you did or you didn&#39;t have this warehouse, the <code>OR REPLACE</code> part of the <code>CREATE OR REPLACE WAREHOUSE compute_wh</code> command will simply replace the old warehouse object if it already existed.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Snowflake Table" duration="5">
+        <p>As part of the lab, we are going to create 2 tables:</p>
+<ul>
+<li><code>TRAIN_DATA</code> – The dataset that we will use to train our machine learning model</li>
+<li><code>SCORING_DATA</code> – Out of sample data that we will use to score and validate our model</li>
+</ul>
+<p>We will be using our worksheet exclusively to create the table. You should see the following block of code in your worksheet. Execute the code by highlighting or putting your cursor on the following block of code and press <code>Cmd/Ctrl + Enter</code>.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE train_data (
+    &#34;CUST_ID&#34; NUMBER(38,0),
+    &#34;CHURN&#34; BOOLEAN,
+    &#34;STATE&#34; VARCHAR(16777216),
+    &#34;ACCOUNT_LENGTH&#34; NUMBER(38,0),
+    &#34;AREA_CODE&#34; NUMBER(38,0),
+    &#34;INTERNATIONAL&#34; VARCHAR(16777216),
+    &#34;VOICEMAIL_PLAN&#34; VARCHAR(16777216),
+    &#34;NUM_VM_MESSAGES&#34; NUMBER(38,0),
+    &#34;TOTAL_DAY_MINS&#34; FLOAT,
+    &#34;TOTAL_DAY_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_DAY_CHARGE&#34; FLOAT,
+    &#34;TOTAL_EVE_MINS&#34; FLOAT,
+    &#34;TOTAL_EVE_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_EVE_CHARGE&#34; FLOAT,
+    &#34;TOTAL_NIGHT_MINS&#34; FLOAT,
+    &#34;TOTAL_NIGHT_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_NIGHT_CHARGE&#34; FLOAT,
+    &#34;TOTAL_INT_MINS&#34; FLOAT,
+    &#34;TOTAL_INT_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_INT_CHARGE&#34; FLOAT,
+    &#34;CUSTOMER_SERVICE_CALLS&#34; NUMBER(38,0),
+    &#34;TARRIF_PLAN_CONDS&#34; VARCHAR(16777216)
+);
+</code></pre>
+<p>Verify that your table <code>TRAIN_DATA</code> has been created. At the bottom of the worksheet you should see a &#34;Results&#34; section which says &#34;Table TRAIN_DATA successfully created.&#34;</p>
+<p>Now let&#39;s do the same to create the <code>SCORING_DATA</code> table. Run the following:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE scoring_data (
+    &#34;CUST_ID&#34; NUMBER(38,0),
+    &#34;CHURN&#34; BOOLEAN,
+    &#34;STATE&#34; VARCHAR(16777216),
+    &#34;ACCOUNT_LENGTH&#34; NUMBER(38,0),
+    &#34;AREA_CODE&#34; NUMBER(38,0),
+    &#34;INTERNATIONAL&#34; VARCHAR(16777216),
+    &#34;VOICEMAIL_PLAN&#34; VARCHAR(16777216),
+    &#34;NUM_VM_MESSAGES&#34; NUMBER(38,0),
+    &#34;TOTAL_DAY_MINS&#34; FLOAT,
+    &#34;TOTAL_DAY_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_DAY_CHARGE&#34; FLOAT,
+    &#34;TOTAL_EVE_MINS&#34; FLOAT,
+    &#34;TOTAL_EVE_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_EVE_CHARGE&#34; FLOAT,
+    &#34;TOTAL_NIGHT_MINS&#34; FLOAT,
+    &#34;TOTAL_NIGHT_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_NIGHT_CHARGE&#34; FLOAT,
+    &#34;TOTAL_INT_MINS&#34; FLOAT,
+    &#34;TOTAL_INT_CALLS&#34; NUMBER(38,0),
+    &#34;TOTAL_INT_CHARGE&#34; FLOAT,
+    &#34;CUSTOMER_SERVICE_CALLS&#34; NUMBER(38,0),
+    &#34;TARRIF_PLAN_CONDS&#34; VARCHAR(16777216)
+);
+</code></pre>
+<p>At the top of the worksheet, go click on the &#34;home&#34; tab, click on the &#34;data&#34; tab, click on the  <code>CUSTOMER_DATA</code> database, click on the <code>PUBLIC</code> schema, and click on &#34;Tables&#34;. You should see your newly created <code>TRAIN_DATA</code> and <code>SCORING_DATA</code> tables.</p>
+<p class="image-container"><img src="img/3a6c4662b3a2be87.png"><br><br></p>
+<p>You can go one level deeper here and look at the column definitions for each table by clicking on the table name and then &#34;Columns&#34;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Snowflake External Stage" duration="5">
+        <p><a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html" target="_blank">Stages</a> in snowflake are places that you can land your data before it is uploaded to a Snowflake table. You might have a batch of CSV files living on a disk driver somewhere, and, in order to start querying the data via a table, the data must be landed within the Snowflake environment for a data upload to be possible.</p>
+<p>In the exercise, we will be working with structured, comma-delimited data that has already been staged in a public, external AWS bucket. Before we can use this data, we first need to create a <code>Stage</code> that specifies the location of our external bucket.</p>
+<p>Let&#39;s create the &#34;stage&#34; object. &#34;Stages&#34; are typically created by Storage Administrators, but for the purposes of this lab, YOU will be creating this object. Again, lets click back on &#34;Worksheets&#34; tab  on the left hand side and find our way back to our <code>Snowflake-DataRobot VHOL Summit 2022</code> worksheet, and excute the next following lines of code:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE STAGE sf_dr_stage
+  URL = &#39;s3://snowflake-workshop-lab/telecoms&#39;;
+</code></pre>
+<p>We also can take a look at the contents of the <code>sf_dr_stage</code> by executing the follow:</p>
+<pre><code language="language-bash" class="language-bash">ls @sf_dr_stage;
+</code></pre>
+<p>You should see the output in the &#34;Results&#34; window in the bottom pane:</p>
+<p class="image-container"><img src="img/51058cf55608e495.png"></p>
+<p>Here is the two csv files we will be using for our example project today.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Snowflake File Format" duration="5">
+        <p><a href="https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html" target="_blank">File Formats</a> tell Snowflake the structure of the data coming in. The last thing that we need to do before we can load the data into our Snowflake tables is: we have to create a <code>File Format</code> that matches the data structure of the local files we want to upload. As smart as Snowflake is, its not THAT smart.</p>
+<p>For our example, our data has header columns in the CSV, so we want to skip those. A comma delimiter is the default way to delimit CSV files (hence the name), but sometimes you can choose another character. We need to give Snowflake all the details on how we have organized our data in the files we want to load in. Please execute the following code:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FILE FORMAT churndata_ff
+  TYPE = &#39;CSV&#39;
+  COMPRESSION = &#39;AUTO&#39;
+  FIELD_DELIMITER = &#39;,&#39;
+  RECORD_DELIMITER = &#39;\n&#39;
+  SKIP_HEADER = 1
+  FIELD_OPTIONALLY_ENCLOSED_BY = &#39;NONE&#39;
+  TRIM_SPACE = FALSE
+  ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE
+  ESCAPE = &#39;NONE&#39;
+  ESCAPE_UNENCLOSED_FIELD = &#39;\134&#39;
+  DATE_FORMAT = &#39;AUTO&#39;
+  TIMESTAMP_FORMAT = &#39;AUTO&#39;
+  NULL_IF = (&#39;\\N&#39;);
+</code></pre>
+<p class="image-container"><img src="img/951da99cf85133a5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Loading Data into Snowflake" duration="15">
+        <p>In this section, we will use a virtual <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview.html" target="_blank">warehouse</a> and the <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html" target="_blank">COPY command</a> to initiate bulk loading of the CSV file sitting in our AWS external stage, moving it into the Snowflake table we just created.</p>
+<p>Snowflake Warehouses are where the innovation of cloud computing comes to life, allowing scale across both workload dimensions. For situations in which your data size has outgrown your infrastructure, Snowflake allows you to scale up (literally make bigger) the warehouse size to meet the computational demands of your query. As the demand for your data grows, Snowflake allows you to scale out (literally add more compute workers) the number of servers to meet the concurrency demands of your increasing influx of users. This is all billed at a per-second level granularity granting you the ability to truly only pay for what you use.</p>
+<p class="image-container"><img src="img/a73118223453e418.png"><br><br></p>
+<p>Common workloads are data loading, running a query, or performing a Data Manipulation Language (<a href="https://docs.snowflake.com/en/sql-reference/sql-dml.html#general-dml" target="_blank">DML</a>) operation. Each workload can have its own virtual warehouse so it doesn&#39;t compete for resource with other workloads.</p>
+<p>In section 3, when we were setting up our context, we used the default warehouse <code>COMPUTE_WH(XS)</code> that came with a trial account (or created it if we were using a different account)</p>
+<p>Lets go ahead and instantaneously scale up the size of our warehouse to better match the size of our data. We can go from an <code>XSMALL</code> warehouse and double our available compute to a <code>SMALL</code> warehouse by running the following command:</p>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE compute_wh SET
+  WAREHOUSE_SIZE = &#34;SMALL&#34;;
+</code></pre>
+<p>Early when we created our warehouse, we gave it some additional parameters to consider. <code>AUTO_SUSPEND = 60</code> tells the warehouse that after a query has finished running, stay alive for exactly 1 more minute in case new queries are going to come and take advantage Snowflake&#39;s data caching abilities. 60 seconds is the MIN and can be adjusted upwards. <code>AUTO_RESUME = TRUE</code> tells the warehouse to turn back on once the user begins submitting queries to the warehouse. And lastly, <code>INITIALLY_SUSPENDED = TRUE</code> tells the warehouse to initially not turn on when the warehouse is completed. What these parameters enable is a true pay for what you consume billing pattern. With that, we can be assured that even if we walk away from the computer, we have peace of mind we aren&#39;t accruing idle compute costs.</p>
+<p>Now we can run a COPY command to load the data into the <code>CUSTOMER_DATA</code> table we created earlier. Go ahead and execute the next set of statements in the worksheet to load the staged data into the table:</p>
+<pre><code language="language-sql" class="language-sql">COPY INTO train_data FROM @sf_dr_stage/Churn_Telecomms_training.csv
+  FILE FORMAT = (FORMAT_NAME = churndata_ff);
+
+COPY INTO scoring_data FROM @sf_dr_stage/Churn_Telecomms_scoring.csv
+  FILE FORMAT = (FORMAT_NAME = churndata_ff);
+</code></pre>
+<p>In the Results window, you should see the status of the load:</p>
+<p class="image-container"><img src="img/9c75256da4c21f14.png"><br><br></p>
+<p>We now finally have data inside a Snowflake table that is ready to be queried on demand. We can see a sample of what data lies within our table by execute the following:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM train_data LIMIT 10;
+</code></pre>
+<p>You should see something like this. Note we have our <code>HURN</code> column. This will be the key column that we will go and build a supervised machine learning model on.</p>
+<p class="image-container"><img src="img/319f6fba5ec6ec34.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connecting Snowflake with DataRobot" duration="10">
+        <p>At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer machine learning capabilities, and therefore, happily partners with the leading data science and machine learning partners in the industry. We are on a mission to help us figure out which of our customers are most likely to churn and DataRobot can help us build a machine learning model to answer that question.</p>
+<p>Snowflake&#39;s Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible. To get here, click our &#34;Home&#34; button and then navigate to &#34;Admin&#34; and then &#34;Partner Connect&#34;. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. Click the &#34;Data Science &amp; ML&#34; category and click &#34;DataRobot&#34;.</p>
+<p class="image-container"><img src="img/c3f851356c2e5e13.png"><br><br></p>
+<p>We have all the Snowflake objects we need created already, so press &#34;Connect&#34;.</p>
+<p class="image-container"><img src="img/e68414366d2fa097.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with DataRobot" duration="10">
+        <p>Go to your email, and verify your account, you will be redirected to the DataRobot account registration page.</p>
+<p class="image-container"><img src="img/973297fa5bd1f6e6.png"></p>
+<p>DataRobot is software-as-a-service (SaaS) application deployed on the cloud for your convenience, allowing you to build machine learning models without having to provision and manage any compute infrastructure. Go ahead and enter your name and password, and then click &#34;Sign Up&#34; for us to proceed.</p>
+<p class="image-container"><img src="img/e32d3db086cf983.png"><br><br></p>
+<p>The next screen will ask us a few more questions to tailor our onboarding experience. For the purposes of this lab, we are going to stick with the theme that we are a data scientist working in the telecom industry, but feel free to choose the options that you identify with best. Go ahead and choose &#34;Data Scientist&#34; as our role, and &#34;Telecom&#34; as our industry. Then hit &#34;Next.&#34;</p>
+<p class="image-container"><img src="img/e872c171ef15958d.png"><br><br></p>
+<p>We are interested in developing models, so lets go ahead and choose &#34;Create AI Models.&#34; Then hit &#34;Start.&#34;</p>
+<p class="image-container"><img src="img/a171c30eadf71139.png"><br><br></p>
+<p>We will now land on the DataRobot main home page. Feel free to take a peak around. You can always get back to this screen by clicking on the &#34;DataRobot&#34; icon at the top left of the screen. On the top right of the screen, you will see a bunch of orange icons. On the very right, you should see the &#34;people&#34; icon. It will take us to a bunch of options regarding our account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a DataRobot Data Connection" duration="15">
+        <p>To start a new ML project - on the top right click on the button ‘+ Create new project&#39; </p>
+<p class="image-container"><img src="img/f04b3d277be2977f.png"><br><br></p>
+<p>To import the data for the ML project click the button ‘Data Source&#39; - We will be creating the connection that maps to the context we were using when in the Snowflake platform.</p>
+<p class="image-container"><img src="img/121ede6c29ec6fd1.png"><br><br></p>
+<p>Next we can go ahead and click &#34;Add new data connection&#34; on the near top left hand side of the screen. Right above where you see your pre-configured data connection.</p>
+<p class="image-container"><img src="img/c1c8c8f97b89243.png"><br><br></p>
+<p>You&#39;ll then be asked to choose what type of connection you want to create. DataRobot supports connections to many types of databases. Lets go ahead and choose Snowflake.</p>
+<p class="image-container"><img src="img/fed2978de4894902.png"><br><br></p>
+<p>We now will have a bunch of fields to fill in. The first is &#34;Data connection name.&#34; I just called mine <code>Snowflake HOL</code> given this is a &#34;Snowflake DataRobot Hands On Lab.&#34; For the driver dropdown, go ahead and choose the recommanded one Next, paste the url we just copied into the &#34;address&#34; box (without the ‘http://&#39;). Our &#34;db&#34; will be <code>CUSTOMER_DATA</code> and the &#34;warehouse&#34; is <code>COMPUTE_WH</code>. Finally, lets go ahead and add two more parameters. By clicking the &#34;Add parameter box,&#34; let search for the &#34;role&#34; parameter and set it to <code>ACCOUNTADMIN</code> and then &#34;schema&#34; and set it to <code>PUBLIC</code>. Click &#34;Add data connection&#34;</p>
+<p class="image-container"><img src="img/4850e35b3700b6b8.png"><br><br></p>
+<p>From here you will now see your new data connection. We now need to associate our Snowflake login to this connection. If we didnt, anyone with the deployment URL could use the connection string!</p>
+<p>Choose ‘Basic&#39; and enter your credentials - user name and password and click ‘Save and sign in&#39;</p>
+<p>Once the connection succeeded click on ‘Add new data source&#39;</p>
+<p class="image-container"><img src="img/d3194b4cf56b8562.png"><br><br></p>
+<p>Once the connection succeeded click on ‘Add new data source&#39;</p>
+<p class="image-container"><img src="img/d0b616304bf16862.png"><br><br></p>
+<p>On the Search by: choose Tables and type ‘train&#39; - you will see the table ‘TRAIN_DATA&#39;, select this table and click ‘Create project&#39;</p>
+<p class="image-container"><img src="img/fa3311ac78f724c0.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up a DataRobot Project" duration="10">
+        <p>When we want to take some data and leave with a model to deploy, the culmination of all these steps are stored in a DataRobot &#34;project.&#34; A new project is kicked off as soon as you load your data into the system, just like we did. When your data is upload, DataRobot then begins performing exploratory data analysis (EDA), the first step in a typical machine learning lifecycle. This is a combination of detecting the data types and showing the number of unique, missing, mean, median, standard deviation, and minimum and maximum values. This information is helpful for getting a sense of the data shape and distribution.</p>
+<p>If we scroll down we can see that automated data quality check:</p>
+<p class="image-container"><img src="img/2a26b3a7fadaf48b.png"><br><br></p>
+<p>And underneath, we can see all of the columns that were present in our raw dataset.</p>
+<p>Click on the feature called <code>TOTAL_DAY_MINS</code> and you will see the following histogram:</p>
+<p class="image-container"><img src="img/438ba12cb786cac8.png"><br><br></p>
+<p>Here we see user counts by bucket based on how long they talk on the phone during the day. The reason a plot like this is useful is to spot outliers, data that is far away from the main distribution. This can clue you in to whether your dataset is clean of any possible data collection errors.</p>
+<p>Next, we can scroll back up and select a target. This is the feature that answers the question: what do you want to predict. In our case, is did customer stay or leave (CHURN), this is the feature you want the model to predict. You can type in the name of the prediction target or click &#34;U​se as target​ next&#34; to the name in the feature list. Upon this selection, DataRobot will analyze your target variable and automatically determine the type of machine learning problem we will be performing today (in this case, binary classification). DataRobot will also choose what optimization it thinks is best based off the distribution of our target variable.</p>
+<p>Once you select the name of the target, you should see the following screen:</p>
+<p class="image-container"><img src="img/41a4d72c1d668c99.png"><br><br></p>
+<p>If you want to customize the model building process, you can modify a variety of advanced parameters, optimization metrics, feature lists, transformations, partitioning, and sampling options. The default modeling mode is &#34;Quick&#34;. For more control over which algorithms DataRobot runs, there are manual, Autopilot and comprehensive options.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Starting DataRobot Quick Autopilot" duration="10">
+        <p>Lets get to building models automatically. Go ahead and click the &#34;Start​&#34; button to kick off DataRobots Autopilot process. DataRobot will continue to compute a variety of different statistics to help aid our machine learning problem. One of these steps is computing a feature&#39;s &#34;Alternating Conditional Expectation.&#34; This is in essence an &#34;Importance&#34; grade that  tells you how much a given feature helps predict what you are looking to predict in an isolated fashion.</p>
+<p class="image-container"><img src="img/151d032a33b8aa50.png"><br><br></p>
+<p>You can again drill down on features in our feature list to view distributions, but this time, with the target variable overlaid on the image. In this case, the greater the number of customer service calls, the higher the probability of that customer churning, which intuitively makes sense.</p>
+<p class="image-container"><img src="img/727fd75c92f88a64.png"><br><br></p>
+<p>Moving over to the &#34;Models&#34; tab, DataRobot supports popular open source software frameworks, including software available in programming languages like Python and R and libraries such as XGBoost and more. During the automated modeling process, DataRobot analyzes the characteristics of the training data and the selected prediction target, and selects the most appropriate machine learning algorithms to apply, also known as a DataRobot &#34;Blueprint&#34;. DataRobot blueprints is a collection of preprocessing steps plus the algorithm, and includes operations like one-hot encoding, missing value imputation, text mining, etc.</p>
+<p>DataRobot streamlines model development, in a leaderboard type fashion, by automatically ranking models (or ensembles of models) based on the techniques advanced data scientists use, including boosting, bagging, random forests, kernel-based methods, generalized linear models, deep learning, and many others. By cost-effectively evaluating a near-infinite combination of data transformations, features, algorithms, and tuning parameters in parallel across a large cluster of servers, DataRobot delivers the best predictive model in the shortest amount of time.</p>
+<p>And of course, recommends a model for deployment.</p>
+<p class="image-container"><img src="img/8ccf27340bf104d7.png"><br><br></p>
+<p>Let&#39;s take a 7 min break, and when we come back, we will analyze the results.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Evaluating the &#34;Recommended For Deployment&#34; Model" duration="10">
+        <p>Let&#39;s ‘star&#39; the first model in the leadeboard. This is the model that was the most optimal given our chosen optimization metric. Let&#39;s star it. To start evaluating it, we can click on the model which will present use with the following options: Evaluate, Understand, Describe, and Predict (​additional tabs may be present based on extra features that are enabled).</p>
+<p>Before we deep dive on each tab let&#39;s go to the Understand tab &gt; Feature Effects and click ‘Compute Feature Effects&#39;</p>
+<p>DataRobot offers superior transparency, interpretability, and explainability to help you better understand how models were built and give you the confidence to explain to others why a model made the predictions it did. If we go back and click the &#34;D​escribe&#34;​ tab, you can view the end-to-end model blueprint containing details of the specific feature engineering tasks and algorithms DataRobot used to run the model. In addition to an automated compliance report (In non trial accounts)</p>
+<p>In non trial accounts this flow can be customized - Composable ML provides a full-flexibility approach to model building, allowing you to direct your data science and subject matter expertise to the models you build. With Composable ML, you build blueprints that best suit your needs using built-in tasks and custom Python/R code.</p>
+<p class="image-container"><img src="img/15636767b87bbc2d.png"><br><br></p>
+<p>Click on &#34;Evaluate&#34;. The &#34;Evaluate&#34; option includes: Lift Chart, ROC Curve (for classification models), Confusion Matrix, Feature Fit, and Advanced Tuning.</p>
+<p>The Lift Chart depicts how well a model segments the target population and how capable it is of predicting the target, letting you visualize the model&#39;s effectiveness. Looking at the Lift Chart, the left side of the curve indicates where the model predicted a low score on one section of the population while the right side of the curve indicates where the model predicted a high score. In general, the steeper the actual line is, and the more closely the predicted line matches the actual line, the better the model is. A consistently increasing line is another good indicator.</p>
+<p class="image-container"><img src="img/cc01642934dedd20.png"><br><br></p>
+<p>The ROC Curve tab helps to explore classification, performance, and statistics related to the selected model at any point on the probability scale. What that means is, at what probability of someone leaving do we raise an alarm? 30% chance? 50% chance? By play with different scenarios, we let get to see the outcomes of different scenarios. This tab contains a set of interactive graphical displays that include an ROC curve, a prediction distribution, cumulative charts, and a confusion matrix. There is also a display of summary statistics that describe model performance at the selected threshold. Each of these components combine to provide an interactive snapshot of the behavior of a model&#39;s classification power.</p>
+<p class="image-container"><img src="img/120533c036b636c.png"><br><br></p>
+<p>In the &#34;U​nderstand&#34;​ tab, popular exploratory capabilities include Feature Impact, Feature Effects, Prediction Explanations, and Word Cloud (depending on the features in the dataset). These all help enlighten you on what drives a model&#39;s predictions.</p>
+<p>DataRobot uses permutation importance to estimate feature impact. &#34;Feature Impact&#34; measures how much each feature contributes to the overall accuracy of the model. For this example, we can see that the most impactful reason a person is likely to stay as a customer or leave is the number of <code>CUSTOMER_SERVICE_CALLS</code>. The real question is, now how do we go reduce that number :) so that less people leave. This is just another way to take information from the machine learning lifecycle to add value to a business.</p>
+<p class="image-container"><img src="img/bdd99e0f8fa861e6.png"><br><br></p>
+<p>The &#34;Feature Effects&#34; chart displays model details on a per-feature basis (a feature&#39;s effect on the overall prediction). This gives you insight into understanding the relationship between each variable and the target. The insight is communicated in terms of partial dependence, which illustrates how a change in a feature&#39;s value, while keeping all other features as they were, impacts a model&#39;s predictions. Here we can see that once the number of <code>CUSTOMER_SERVICE_CALLS</code> goes above 3, the likelihood of the customer leaving rapidly increases.</p>
+<p class="image-container"><img src="img/ecfe4ebd9f16be41.png"><br><br></p>
+<p>&#34;Prediction Explanations&#34; reveal the reasons why DataRobot generated a particular prediction for a certain data point. This gives you can ammunition to back up decisions with specific details. They provide a quantitative indicator of a variable&#39;s effect on an individual prediction.</p>
+<p class="image-container"><img src="img/5c7d75acf6e2d273.png"><br><br></p>
+<p>Lastly, DataRobot&#39;s &#34;Insights&#34; tab at the top provides more graphical representations of your model. There are tree-based variable rankings, hotspots, variable effects to illustrate the magnitude and direction of a feature&#39;s effect on a model&#39;s predictions, text mining charts, anomaly detection, and a word cloud of keyword relevancy.</p>
+<p class="image-container"><img src="img/fc14f235eaab0ae5.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying our model and using Job Defintions with Snowflake" duration="10">
+        <p>Every model built in DataRobot is immediately ready for deployment. And there a several methods of scoring new data against this Deployment</p>
+<p>You can: upload a new dataset to be scored in batch, create a REST API endpoint to score data directly from applications, export the model for in-place database scoring, or use a partner integration. Today we will use the Job Definitions feature.</p>
+<p>If you click the number in the &#34;Prediction Threshold&#34; box, you can see a few different easy options to set your threshold. Again, at what probability do we say, &#34;Yes this person is going to churn.&#34; Choose &#34;Maximize F1&#34;. Then click on the &#34;Deploy Model&#34; button.</p>
+<p class="image-container"><img src="img/3d1639fd2c710df3.png"><br><br></p>
+<p>Here we are presented with a bunch of options to tweak our deployment. The model can be deploy to any prediction server - even deploy to Snowflake</p>
+<p>Scroll down to the main section &#34;Association ID.&#34; Here we want to type in <code>CUST_ID</code>. This is going to allow use to track predictions by customer when we go to monitor our model.</p>
+<p>Then go ahead and toggle the &#34;Require association ID in prediction requests&#34; and the 4 other option all under &#34;Data Drift.&#34;&#34;</p>
+<p class="image-container"><img src="img/6ea35c040e00cc2.png"><br><br></p>
+<p>Scroll back up. We will see all of our boxes are green except for ‘Continuous AI&#39; <img src="img/cc3ec1873985471.png"><br><br></p>
+<p>To maintain model performance after deployment without extensive manual work, DataRobot provides an automatic retraining capability for deployments. (we won&#39;t test it today)</p>
+<p>Click &#34;Create Deployment&#34;</p>
+<p>This will present us with a screen to give a priority setting to this deployment. We can skip and click &#34;Create deployment.&#34; This may take a couple of minutes to create the deployment.</p>
+<p class="image-container"><img src="img/22107b4a97574430.png"><br><br></p>
+<p>After creating the new deployment - click on ‘return to deployments&#39;</p>
+<p class="image-container"><img src="img/37439499039237ef.png"><br><br></p>
+<p>The Deployments Inventory shows the real-time status of all deployed models, regardless of how they were created or when and where they were deployed.. Here you can manage, monitor, and govern your deployed models and seeing at a glance which models are stale, preventing risk to your business.</p>
+<p>And now we have one active deployment. Go ahead and click on it.</p>
+<p class="image-container"><img src="img/f1fd70409cc3ea8d.png"><br><br></p>
+<p>We have different capabilities as part of MLOps, including service health, data drift, accuracy, Embedded Governance, Humility, Fairness and more, that we won&#39;t cover today.</p>
+<p>Go to the &#34;Predictions&#34; tab then &#34;Job Definitions&#34; tab and click on &#34;+Add job definition&#34;.</p>
+<p class="image-container"><img src="img/b82625a79e6cd3b4.png"><br><br></p>
+<p>We will start setting up our job definition.</p>
+<p>click on ‘+ Define connection&#39; next to the Prediction source and choose the ‘Snowflake HOL&#39; connection and your user. On the Search by: choose Tables and type ‘scoring&#39; - you will see the table ‘SCORING_DATA&#39;, select this table and click ‘Save connection&#39;</p>
+<p class="image-container"><img src="img/c38d851f0f6c18f1.png"><br><br></p>
+<p>The &#34;Prediction Source&#34; is now complete. You can adjust the prediction options if needed, for this walkthrough we&#39;re going to stick with the defaults.</p>
+<p class="image-container"><img src="img/6bdafd9c0475b18c.png"><br><br></p>
+<p>The last section to complete is the &#34;Prediction Destination&#34;. Go ahead and leave the Destination Type as &#34;JDBC&#34;, and click &#34;+ Define Connection&#34;.</p>
+<p class="image-container"><img src="img/86a24cba3af216f1.png"><br><br></p>
+<p>Repeat the process as before in the &#34;Prediction Source&#34; (choose the data connection) and on tables create a new table</p>
+<p class="image-container"><img src="img/a41879978d0a53de.png"><br><br></p>
+<p>Go ahead and click &#34;Create a table&#34; Schema: ‘CUSTOMER_DATA.PUBLIC&#39; name: SCORED_DATA&#39; and click ‘Save connection&#39;</p>
+<p class="image-container"><img src="img/13bc564405ad3837.png"><br><br></p>
+<p>Change the write strategy to ‘Insert&#39;.</p>
+<p>At the bottom you can schedule this job to run on a Schedule, or just run it manually. Go ahead and click &#34;Save Prediction job definition&#34; in the bottom left, then click on &#34;View all Job Definitions&#34; in the upper left. Click the hamburger icon on the right side of the job definition you just made, and click &#34;Run now&#34;.</p>
+<p class="image-container"><img src="img/f8505f3da9214ef8.png"><br><br></p>
+<p>If you click the hamburger icon again and go to &#34;View job history&#34; you can see its status. Once it&#39;s finished you should see the green &#34;Succeeded&#34; message under status.</p>
+<p class="image-container"><img src="img/b96feda594aa7990.png"><br><br></p>
+<p>We can now finally head back to our Snowflake tab. If you hit the refresh icon near the top left of our screen by your databases, you should see the <code>SCORED_DATA</code> table that was created once we kicked off our prediction job. If you excecute the query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    *
+FROM
+    customer_data.public.scored_data;
+</code></pre>
+<p>You will see our data with three new columns: ‘CHURN_True_Prediction&#39;, ‘CHURN_False_Prediction&#39; showing the likelihood that each person is likely to churn or stay, and the decision in the column ‘CHURN_PREDICTION&#39;</p>
+<p>Click on the ‘CHURN_PREDICTION&#39;column, on the right side, we can see that snowflake snowsight presents statistics - In this case, looks like 430 (which is 17.5%) of the customers for this dataset are likely to churn. It also offers additional charts for further analysis.</p>
+<p class="image-container"><img src="img/d2ab8a4cf57f0df1.png"><br><br></p>
+<p>And as they say, that is all folks!</p>
+<p>For the advanced python users you can keep the lab to see how to use python for snowpark togetehr with DataRobot.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Extra) Connecting Snowflake with Zepl - DataRobot notebooks in the cloud" duration="2">
+        <p>Go back to the partner connect section in Snowflake and click the &#34;Data Science &amp; ML&#34; category and click &#34;Zepl&#34;</p>
+<p class="image-container"><img src="img/c3f851356c2e5e13.png"><br><br></p>
+<p>This will present you with a screen to connect to Zepl. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can click &#34;Connect&#34; .</p>
+<p class="image-container"><img src="img/4bf6df95fffea9cb.png"><br><br></p>
+<p>You then will be prompted to activate your account now, click the blue &#34;Activate&#34; button to do so.</p>
+<p class="image-container"><img src="img/460e09a24ee12053.png"></p>
+<p>This will launch a new tab to the Zepl platform.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with Zepl - DataRobot notebooks in the cloud" duration="2">
+        <p>DataRobot Zepl the cloud data science notebook solution that enables advanced data scientists to do exploratory, code-centric work in Python, R, and Scala with enterprise features such as collaboration, versioning, and security.</p>
+<p>In this exercise, we will use snowpark python and datarobot zepl notebook to do some EDA and visualizatoion</p>
+<p>First, let&#39;s configure Zepl: After creating your zepl account through the partner connect download the following notebook:</p>
+<p><a href="https://app.zepl.com/viewer/notebooks/bm90ZTovL2F0YWxpYS5ob3JlbnNodGllbkBkYXRhcm9ib3QuY29tLzAxYjY3NjdiMDk0ZDQwZjE5YmI1Njg1MjJlODI2MDJjL25vdGUuanNvbg" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download the notebook</paper-button></a></p>
+<p>Click on my My Notebooks</p>
+<p class="image-container"><img src="img/14b96b9a9e1ba19c.png"><br><br></p>
+<p>Import the notebook: click import on the right side, upload the notebook that was preshared and once the notebook appears in your screen click on the notebook name: Snowflake_HOL</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Zepl Data Connection" duration="2">
+        <p>To create a data connection from a notebook do the following:</p>
+<ol type="1">
+<li>Open the data sources sidebar by clicking the data sources icon on the right side of the notebook</li>
+<li>Click the Add new button at the top of the sidebar and select ‘Secret store&#39;</li>
+</ol>
+<p class="image-container"><img src="img/cbb7db492ca574f9.png"><br><br></p>
+<ol type="1" start="3">
+<li>Fill in the fields:</li>
+</ol>
+<p>a. NAME: ‘Snowflake_DR_HOL&#39;</p>
+<p>b. KEY VALUES:</p>
+<p>Key: ‘password&#39;</p>
+<p>Value: your snowflake account password</p>
+<p>And click on the button ‘Add&#39;</p>
+<p class="image-container"><img src="img/c2591b9a60c05523.png"><br><br></p>
+<p>You will see the new secret under the ‘Attached to this notebook&#39;</p>
+<p class="image-container"><img src="img/4822790af7036766.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect to Snowflake Snowpark" duration="5">
+        <p>Download the Snowpark library: <a href="https://drive.google.com/file/d/15kVt0XtGIKl7CrN27jpUHwcW4MvdIdiA/view?usp=sharin" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download the Snowpark library</paper-button></a></p>
+<p>To import the Snowpark library:</p>
+<ol type="1">
+<li>Open the folder sidebar by clicking the folder icon on the right side of the notebook</li>
+<li>Import the Snowpark library that was preshared</li>
+<li>When you see the file, hover on the file and click the symbol ‘&lt;/&gt;&#39; and copy the path</li>
+</ol>
+<p class="image-container"><img src="img/cc56c505e2b6e679.png"><br><br></p>
+<ol type="1" start="4">
+<li>Modify Section1:</li>
+</ol>
+<p>-Replace the path in line1 with the copied path</p>
+<p>-Change the id number in line2 - the line id is teh id from the path</p>
+<p>Now you can run in the notebook Sections 1-2:</p>
+<p>Section 1 will download and install the snowpark python package</p>
+<p>Section 2 will import the necessery packages</p>
+<ol type="1" start="5">
+<li>Modify Section3:</li>
+</ol>
+<p>account: change to your Snowflake account name (WITHOUT snowflakecomputing.com)</p>
+<p>user: change to your user name</p>
+<p>Now you can run Sections 3-4:</p>
+<p>Section 3 will connect to snowflake where we created the training table</p>
+<p class="image-container"><img src="img/9595d79bfb0406d9.png"><br><br></p>
+<p>Section 4 will present the data in the training table we created in snowflake, query is running in Snowflake</p>
+<p class="image-container"><img src="img/e1f7492d001a2efe.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="EDA on Zepl notebook using python for snowpark" duration="2">
+        <p>In the notebook, run Section 5 This section will create a new feature to identify if a user is more active at night or day. That can contribute to our model, yo understand things like - why this user churn, when to send this use promotions, etc. using python for snowpark, using the snowflake compute. The results will be overwrtie the train table in Snowflake</p>
+<p>Go back to your snowflake account and run again the sql:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    *
+FROM
+    train_data
+LIMIT 10;
+</code></pre>
+<p class="image-container"><img src="img/714e7189b69359df.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

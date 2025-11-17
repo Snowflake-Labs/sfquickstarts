@@ -1,0 +1,499 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Cost-Effective Data Streaming in Apache Iceberg™ Format and Snowflake Open Catalog Integration with StreamNative</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="streamnative_snowflake_open_catalog_integration"
+                  title="Cost-Effective Data Streaming in Apache Iceberg™ Format and Snowflake Open Catalog Integration with StreamNative"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>StreamNative is partnering with Snowflake to provide you with cost-effective real-time data streaming to Snowflake. This means providing you with best-in-class data ingestion methods tailored to meet your specific needs. This guide focuses on creating a <strong>Streaming Augmented Lakehouse</strong> using <strong>StreamNative&#39;s Ursa Engine</strong> with built-in support for <strong>Apache Iceberg™ and Snowflake Open Catalog</strong>. Apache Kafka® messages published to the StreamNative Ursa Cluster will be stored in object storage in Iceberg format. Without copying over the data through connectors, you can directly access data from Snowflake Open Catalog and start analyzing the data. To learn more about cost savings when using the StreamNative Ursa Engine to ingest data to Snowflake, visit this <a href="https://streamnative.io/blog/leaderless-architecture-and-lakehouse-native-storage-for-reducing-kafka-cost" target="_blank">link</a>.</p>
+<p>StreamNative also supports ingesting data into Snowflake using <strong>Snowpipe or Snowpipe Streaming</strong> with <strong>Kafka or Pulsar Connectors</strong> that will not be discussed in this tutorial. For more information on using Connectors to ingest data into Snowflake, follow this <a href="https://courses.streamnative.io/courses/streamnative-snowflake-streaming-augmented-lakehouse-and-connectors/lessons/introduction-to-uniconn-kafka-and-pulsar-io-connectors/" target="_blank">link</a>.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A Streaming Augmented Lakehouse powered by a Kafka-compatible StreamNative BYOC Ursa Cluster integrated with Snowflake Open Catalog.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create a Snowflake Open Catalog</li>
+<li>How to deploy a StreamNative BYOC Ursa Cluster integrated with Snowflake Open Catalog</li>
+<li>How to publish Kafka messages to the StreamNative Ursa Cluster using Kafka Java Client</li>
+<li>How to query tables visible in Snowflake Open Catalog in Snowflake AI Data Cloud</li>
+</ul>
+<h2 is-upgraded>Prerequisites or What You Will Need</h2>
+<ul>
+<li>Familiarity with Terraform and Java.</li>
+<li>Familiarity with creating policies, roles and s3 buckets in AWS.</li>
+<li>A StreamNative account available at <a href="https://www.streamnative.io" target="_blank">streamnative.io</a>. Your account will come with $200 in free credits, sufficient for following this tutorial. No credit card is necessary.</li>
+<li>AWS Account for deploying the StreamNative BYOC Ursa Cluster. BYOC clusters are deployed into your cloud provider. These resources will incur AWS charges that are not covered by StreamNative.</li>
+<li>Permissions to create policies, roles, and s3 buckets in AWS, as well as apply the StreamNative Terraform <a href="https://docs.streamnative.io/docs/byoc-aws-access" target="_blank">vendor access module</a>.</li>
+<li>Access to <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a> and ability to create a Snowflake Open Catalog account.</li>
+<li>Environment for executing Terraform modules and Java code.</li>
+</ul>
+<p>Apache®, Apache Iceberg™, and Apache Kafka® are either registered trademarks or trademarks of Apache Software Foundation in the United States and/or other countries.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Catalog and Permissions" duration="30">
+        <p>Before initiating the integration of Snowflake Open Catalog with StreamNative Cloud, please ensure the following steps are completed. The following video will also guide you through this process. </p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/R0uPsIIVmO8?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h2 is-upgraded>Create a Snowflake AI Data Cloud Account</h2>
+<p>Create a Snowflake AI Data Cloud Account. The homepage will look as follows.</p>
+<p class="image-container"><img alt="Create Snowflake AI Data Cloud Account" src="img/9ee995f056eb9ce4.png"></p>
+<h2 is-upgraded>Create Snowflake Open Catalog Account</h2>
+<p>To access the Snowflake Open Catalog console, a specialized Open Catalog Account must be created. This account type is specifically designed for managing Open Catalog features and functionality.</p>
+<p>Enter <strong>Admin → Accounts → Toggle → Create Snowflake Open Catalog Account</strong>.</p>
+<p class="image-container"><img alt="Create Snowflake Open Catalog Account" src="img/a818f13f7a733be5.png"></p>
+<p>Configure the Snowflake Open Catalog Account.</p>
+<ul>
+<li>Cloud: AWS</li>
+<li>Region: region to place the Snowflake Open Catalog Account</li>
+<li>Edition: any</li>
+</ul>
+<aside class="special"><p>IMPORTANT: The Snowflake Open Catalog Account, s3 bucket, and StreamNative BYOC Ursa Cluster should be in the same region. Snowflake Open Catalog doesn&#39;t support cross-region buckets. To avoid costs associated with cross-region traffic, we highly recommend your s3 bucket and StreamNative BYOC Ursa Cluster are in the same region.</p>
+</aside>
+<p class="image-container"><img alt="Create Snowflake Open Catalog Account Dialog" src="img/877ba9a1d0d151ce.png"></p>
+<p>Next, input a Snowflake Open Catalog Account Name, User Name, Password, and Email. This will create a new user for use specifically with the Snowflake Open Catalog Account.</p>
+<p class="image-container"><img alt="Create Snowflake Open Catalog Account Details" src="img/a5dd8ebd4672401a.png"></p>
+<p>Click <strong>Create Account</strong>. You will see the following if account creation is successful. We highly recommend taking a screenshot of this confirmation message. This Account URL and Account Locator URL will be used in later steps.</p>
+<p class="image-container"><img alt="Create Snowflake Open Catalog Account Success" src="img/222631dfc8aaa8d8.png"></p>
+<p>Click the <strong>Account URL</strong> and sign into your Open Catalog Account with the User Name and Password you created for this account. You will enter the Snowflake Open Catalog console.</p>
+<p class="image-container"><img alt="Snowflake Open Catalog Account Page" src="img/24b5a7c8781ee734.png"></p>
+<p>If you need the <strong>Account URL</strong> of your Snowflake Open Catalog Account in the future, navigate to <strong>Admin → Accounts → ... → Manage URLs</strong> of your Snowflake Open Catalog Account. This page is available in your Snowflake AI Data Cloud Account.</p>
+<p class="image-container"><img alt="Snowflake Open Catalog Account URL" src="img/d6ed94c25e63e72a.png"></p>
+<h2 is-upgraded>Setup storage bucket with permissions for StreamNative</h2>
+<p>Next we must choose the bucket location for the backend of our StreamNative BYOC Ursa Cluster and grant access to StreamNative Cloud. You have two choices to setup a s3 storage bucket for the StreamNative Ursa Cluster backend. This is where data will be stored in Iceberg format and accessed by Snowflake Open Catalog and Snowflake AI Data Cloud.</p>
+<aside class="special"><p>IMPORTANT: The Snowflake Open Catalog Account, s3 bucket, and StreamNative BYOC Ursa Cluster should be in the same region. Snowflake Open Catalog doesn&#39;t support cross-region buckets. To avoid costs associated with cross-region traffic, we highly recommend your s3 bucket and StreamNative BYOC Ursa Cluster are in the same region.</p>
+</aside>
+<p><strong>Option 1: Use your own bucket (recommended)</strong></p>
+<p>If you choose this option, you need to create your own storage bucket, with the option to create a bucket path. When using your own bucket, the resulting path you will use for creation of the Snowflake Open Catalog will be as follows. The compaction folder will be created automatically by the StreamNative cluster.</p>
+<pre><code language="language-markdown" class="language-markdown">s3://&lt;your-bucket-name&gt;/&lt;your-bucket-path&gt;/compaction
+</code></pre>
+<p>StreamNative will require access to this storage bucket. To grant access, execute the following Terraform module.</p>
+<ul>
+<li>external_id: StreamNative organization, directions after terraform module for finding your StreamNative organization</li>
+<li>role: the name of the role that will be created in AWS IAM, arn needed when creating cluster</li>
+<li>buckets: bucket name and path</li>
+<li>account_ids: AWS account id</li>
+</ul>
+<pre><code>module &#34;sn_managed_cloud&#34; {
+  source = &#34;github.com/streamnative/terraform-managed-cloud//modules/aws/volume-access?ref=v3.19.0&#34;
+
+  external_id = &#34;&lt;your-organization-name&gt;&#34;
+  role = &#34;&lt;your-role-name&gt;&#34;
+  buckets = [
+    &#34;&lt;your-bucket-name&gt;/&lt;your-bucket-path&gt;&#34;,
+  ]
+
+  account_ids = [
+    &#34;&lt;your-aws-account-id&gt;&#34;
+  ]
+}
+</code></pre>
+<p>You can find your organization name in the StreamNative console, as shown below.</p>
+<p class="image-container"><img alt="StreamNative Organization" src="img/f5eb20998c42e567.png"></p>
+<p>Before executing the Terraform module, you must define the following environment variables. These variables are used to grant you access to the AWS account where the s3 bucket is located.</p>
+<pre><code language="language-markdown" class="language-markdown">export AWS_ACCESS_KEY_ID=&#34;&lt;YOUR_AWS_ACCESS_KEY_ID&gt;&#34;
+export AWS_SECRET_ACCESS_KEY=&#34;&lt;YOUR_AWS_SECRET_ACCESS_KEY&gt;&#34;
+export AWS_SESSION_TOKEN=&#34;&lt;YOUR_AWS_SESSION_TOKEN&gt;&#34;
+</code></pre>
+<p>Run the Terraform module</p>
+<pre><code language="language-markdown" class="language-markdown">terraform init
+terraform plan
+terraform apply
+</code></pre>
+<p><strong>Option 2: Use StreamNative provided bucket</strong></p>
+<p>This process requires you to deploy the StreamNative BYOC Cloud Connection, Cloud Environment, and beginning the process of deploying the StreamNative BYOC Ursa Cluster to obtain the cluster id before moving forward. StreamNative will automatically assign the necessary permissions to this bucket.</p>
+<p>To proceed, you will need to first complete the steps for <a href="https://docs.streamnative.io/docs/byoc-overview" target="_blank">granting vendor access, creating a Cloud Connection, and setting up the Cloud Environment</a>. This process will grant StreamNative permissions into your cloud provider and deploy the required infrastructure before you begin the process of deploying a StreamNative BYOC Ursa Cluster. <a href="https://youtu.be/vsHjaQNKFRk?si=2pUJXE_s0LfzH3At" target="_blank">This video</a> provides an overview of this process with detailed videos available in this <a href="https://www.youtube.com/playlist?list=PL7-BmxsE3q4W5QnrusLyYt9_HbX4R7vEN" target="_blank">playlist</a>.</p>
+<p>Next, begin the process of deploying the StreamNative BYOC Ursa Cluster to obtain the cluster id. This process is outlined in the step <strong>Create StreamNative BYOC Ursa Cluster</strong> with directions on obtaining the cluster id.</p>
+<p>When using a StreamNative-provided bucket, the resulting path you will use for creation of the Snowflake Open Catalog will be as follows. The cloud environment id will be created during the deployment of the Cloud Environment. The cluster id is assigned when starting the cluster creation process in the StreamNative Console.</p>
+<pre><code language="language-markdown" class="language-markdown">s3://&lt;your-cloud-environment-id&gt;/&lt;your-cluster-id&gt;/compaction
+</code></pre>
+<h2 is-upgraded>Configure AWS Account for Snowflake Open Catalog Access</h2>
+<p>Next we create an IAM policy and role for Snowflake Open Catalog Access.</p>
+<p>In the AWS console, enter <strong>Access management → Policies → Create policy</strong>.</p>
+<p class="image-container"><img alt="Create AWS Policy" src="img/65f0b7331b22fcba.png"></p>
+<p>Then choose the JSON format. Enter the rule as follows, replacing your-bucket-name and your-bucket-path based on if you are using a user provided bucket or StreamNative provided bucket. Do not include the compaction folder in the bucket path.</p>
+<pre><code language="language-javascript" class="language-javascript">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:PutObject&#34;,
+                &#34;s3:GetObject&#34;,
+                &#34;s3:GetObjectVersion&#34;,
+                &#34;s3:DeleteObject&#34;,
+                &#34;s3:DeleteObjectVersion&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;your-bucket-name&gt;/&lt;your-bucket-path&gt;/*&#34;
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:ListBucket&#34;,
+                &#34;s3:GetBucketLocation&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;your-bucket-name&gt;/&lt;your-bucket-path&gt;&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringLike&#34;: {
+                    &#34;s3:prefix&#34;: [
+                        &#34;*&#34;
+                    ]
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+<p>Click <strong>Next</strong>.</p>
+<p class="image-container"><img alt="Add Snowflake Open Catalog Permissions" src="img/f8b625026666f76b.png"></p>
+<p>Provide a policy name and click <strong>Create policy</strong>.</p>
+<p class="image-container"><img alt="Create Policy" src="img/b940cd36aa4f3d49.png"></p>
+<p>Next we an Create IAM role.</p>
+<p>In the AWS console, enter <strong>Access management → Roles → Create role</strong>.</p>
+<p class="image-container"><img alt="Create Role" src="img/fc006baab8ed3579.png"></p>
+<ul>
+<li>Trusted entity type: AWS account</li>
+<li>An AWS account: this account</li>
+<li>Enable External ID</li>
+<li>Set External ID: training_test (will be used when creating catalog)</li>
+</ul>
+<p>Click <strong>Next</strong>.</p>
+<p class="image-container"><img alt="Set External ID" src="img/c5e6d5b30ba21226.png"></p>
+<p>Select the policy created in the previous step. Then click <strong>Next</strong></p>
+<p class="image-container"><img alt="Select Policy" src="img/531ae7fbf5eb9f0f.png"></p>
+<p>Input a role name and click <strong>Create role</strong>.</p>
+<p class="image-container"><img alt="Create Role" src="img/2c3c17d37a2d4d11.png"></p>
+<p>View the detailed role information and record the ARN.</p>
+<p class="image-container"><img alt="Record ARN" src="img/c1c5a3f353da0ceb.png"></p>
+<p>This policy and role are used for Snowflake Open Catalog access to the s3 bucket.</p>
+<h2 is-upgraded>Create Snowflake Open Catalog</h2>
+<p>Next we create the Snowflake Open Catalog. Click <strong>+ Create</strong> next to <strong>Manage Catalogs</strong>.</p>
+<p class="image-container"><img alt="Create New Catalog" src="img/a07b76e324b9a1b3.png"></p>
+<ul>
+<li>Name: streamnative</li>
+<li>External: disabled</li>
+<li>Storage provider: S3</li>
+<li>Default base location:</li>
+</ul>
+<pre><code language="language-markdown" class="language-markdown">User provided bucket:
+s3://&lt;your-bucket-name&gt;/&lt;your-bucket-path&gt;/compaction
+
+StreamNative provided bucket:
+s3://&lt;your-cloud-environment-id&gt;/&lt;your-cluster-id&gt;/compaction
+</code></pre>
+<ul>
+<li>Additional locations: not configured</li>
+<li>S3 role ARN: arn copied from previous step</li>
+<li>External ID: external id created in previous step (training_test)</li>
+</ul>
+<p class="image-container"><img alt="Create Catalog Dialog" src="img/4b5e7d27bc01d9b8.png"></p>
+<p>Click <strong>Create</strong> and you will see the catalog streamnative created.</p>
+<p>Select the Catalog Details tab and record the value of the IAM user arn. The Snowflake Open Catalog will use this arn to access our s3 bucket.</p>
+<p class="image-container"><img alt="Snowflake Open Catalog ARN" src="img/2c75f7d23fc076eb.png"></p>
+<p>Next we trust the Snowflake Open Catalog Iam user arn.</p>
+<p>In the AWS console, enter <strong>Access management → Roles</strong>, and search for the role we created before.</p>
+<p class="image-container"><img alt="Trust Snowflake Open Catalog ARN" src="img/21f4b21502bf9b2d.png"></p>
+<p>Then click <strong>Trust relationships → Edit trust policy</strong>.</p>
+<p>Change the value of Principal:AWS to the Snowflake Open Catalog IAM user arn</p>
+<p class="image-container"><img alt="Change AWS Principal" src="img/1fb88097d3081eae.png"></p>
+<p>Then click <strong>Update policy</strong> and the Snowflake Open Catalog can access the s3 bucket.</p>
+<h2 is-upgraded>Provide StreamNative Access to Snowflake Open Catalog</h2>
+<p>Our StreamNative BYOC Ursa Cluster will need a connection to access the Snowflake Open Catalog. We will also reuse this connection for Snowflake AI Data Cloud to access Snowflake Open Catalog.</p>
+<p>Click <strong>+ Create</strong> next to <strong>Set Up Connections</strong>.</p>
+<p class="image-container"><img alt="Create Snowflake Open Catalog Connection" src="img/e4f4bb70d83ed9cb.png"></p>
+<ul>
+<li>Name: streamnativeconnection</li>
+<li>Query Engine: not configured</li>
+<li>Create new principal role: enable</li>
+<li>Principal Role Name: streamnativeprincipal</li>
+</ul>
+<p class="image-container"><img alt="Configure Service Connection" src="img/d418a40af79dd657.png"></p>
+<p>Then click <strong>Create</strong>, and you will see a pane. Record the Client ID and Client Secret for this connection as <strong>CLIENT ID:SECRET</strong>. The StreamNative BYOC Ursa Cluster needs it to access the Snowflake Open Catalog.</p>
+<p class="image-container"><img alt="Service Connection Credential" src="img/82870a3143eb56bd.png"></p>
+<p>We now have a Service Connection called <strong>streamnativeconnection</strong> linked to the Principal Role <strong>streamnativeprincipal</strong>.</p>
+<p>Next we create a Snowflake Catalog Role and link this to the Principal Role.</p>
+<p>Enter <strong>Catalogs → Select streamnative Catalog → Roles → + Catalog Role</strong>.</p>
+<ul>
+<li>Name: streamnativeopencatalog</li>
+<li>Privileges:</li>
+</ul>
+<pre><code language="language-markdown" class="language-markdown">NAMESPACE_CREATE
+NAMESPACE_LIST
+TABLE_CREATE
+TABLE_LIST
+TABLE_READ_DATA
+TABLE_WRITE_DATA
+TABLE_READ_PROPERTIES
+TABLE_WRITE_PROPERTIES
+NAMESPACE_READ_PROPERTIES
+NAMESPACE_WRITE_PROPERTIES
+</code></pre>
+<p>Click <strong>Create</strong>.</p>
+<p class="image-container"><img alt="Catalog Role Permissions" src="img/afe49ad8ccbafb28.png"></p>
+<p>Then click <strong>Grant to Principal Role</strong>.</p>
+<p class="image-container"><img alt="Grant Principal Role" src="img/d42ae661d867bb6d.png"></p>
+<ul>
+<li>Catalog role to grant: streamnative_open_catalog_role</li>
+<li>Principal role to receive grant: streamnativeprincipal</li>
+</ul>
+<p>Then click <strong>Grant</strong>.</p>
+<p class="image-container"><img alt="Grant Catalog Role" src="img/7b5b2d05027d64a9.png"></p>
+<p>The catalog role <strong>streamnative_open_catalog_role</strong> now has the 10 required permissions on catalog streamnative. The catalog role <strong>streamnative_open_catalog_role</strong> is now linked to principal <strong>streamnativeprincipal</strong>.</p>
+<p>We will resuse the connection when connecting Snowflake AI Data Cloud to Snowflake Open Catalog.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create StreamNative Cluster" duration="90">
+        <p>To proceed, you will need to first complete the steps for <a href="https://docs.streamnative.io/docs/byoc-overview" target="_blank">granting vendor access, creating a Cloud Connection, and setting up the Cloud Environment</a>. This process will grant StreamNative permissions into your cloud provider and deploy the required infrastructure before you begin the process of deploying a StreamNative BYOC Ursa Cluster. <a href="https://youtu.be/vsHjaQNKFRk?si=2pUJXE_s0LfzH3At" target="_blank">This video</a> provides an overview of this process with detailed videos available in this <a href="https://www.youtube.com/playlist?list=PL7-BmxsE3q4W5QnrusLyYt9_HbX4R7vEN" target="_blank">playlist</a>.</p>
+<p>Once this process is complete, the following video will also guide you through the process of deploying the StreamNative BYOC Ursa Cluster following the directions below.</p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/UQoyYSSSaDc?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h2 is-upgraded>Create a StreamNative BYOC Ursa Cluster in StreamNative Cloud Console</h2>
+<p>In this section we create and set up a cluster in StreamNative Cloud. Login to StreamNative Cloud at <a href="https://streamnative.io" target="_blank">streamnative.io</a> and click on <strong>Create an instance and deploy cluster</strong> or <strong>+ New</strong> in the <strong>Select an instance</strong> pane.</p>
+<p class="image-container"><img alt="Create StreamNative Instance" src="img/293305c7df25fb37.png"></p>
+<p>Click on <strong>Deploy BYOC</strong>.</p>
+<p class="image-container"><img alt="Deploy BYOC" src="img/961550cae8eb74c1.png"></p>
+<p>Enter <strong>Instance Name</strong>, select your <strong>Cloud Connection</strong>, select <strong>URSA Engine</strong> and click on <strong>Cluster Location</strong>.</p>
+<p class="image-container"><img alt="Enter Instance Name" src="img/a72f1ed6c0a50a6f.png"></p>
+<p>Enter <strong>Cluster Name</strong>, select your <strong>Cloud Environment</strong>, select <strong>Multi AZ</strong> and click on <strong>Lakehouse Storage Configuration</strong>.</p>
+<p class="image-container"><img alt="Enter Cluster Name" src="img/62b260092f97a65d.png"></p>
+<p>To configure <strong>Storage Location</strong> there are two options as previously discussed.</p>
+<p>Option 1: Select <strong>Use Your Own Bucket</strong> (recommended) to choose your own storage bucket by entering the following details.</p>
+<ul>
+<li>AWS role arn (already created with Terraform module, obtain arn from AWS IAM)</li>
+<li>Region</li>
+<li>Bucket name</li>
+<li>Bucket path</li>
+<li>Confirm that StreamNative has been granted the necessary permissions to access your S3 bucket. The required permissions were granted by running a Terraform module.</li>
+</ul>
+<p class="image-container"><img alt="Enter Lakehouse Storage Configuration for User Bucket" src="img/1c46dae6220d46c4.png"></p>
+<p>Option 2: Select <strong>Use Existing BYOC Bucket</strong> to choose the bucket created by StreamNative.</p>
+<p class="image-container"><img alt="Enter Lakehouse Storage Configuration for Default Bucket" src="img/3215551d303c86a3.png"></p>
+<p>If using the Streamnative povided bucket, the UI will present you with the SN Bucket Location in this format to be used when creating the Snowflake Open Catalog.</p>
+<pre><code language="language-markdown" class="language-markdown">s3://&lt;your-cloud-environment-id&gt;/&lt;your-cluster-id&gt;/compaction
+e.g.
+s3://aws-usw2-test-rni68-tiered-storage-snc/o-naa2l-c-vo06zqe-ursa/compaction
+</code></pre>
+<aside class="special"><p>IMPORTANT : If you are using the StreamNative provided bucket, do not close the browser while creating the catalog. This will cause StreamNative to create a new cluster id. Once a catalog is created in Snowflake Open Catalog, the base location and additional locations cannot be changed. If the cluster id changes, you would need to create a new catalog.</p>
+</aside>
+<p>To integrate with Snowflake Open Catalog, Enable Catalog Integration and select Snowflake Open Catalog.</p>
+<ul>
+<li><strong>Warehouse:</strong> catalog created in Snowflake Open Catalog</li>
+<li><strong>URI:</strong> Account URL when creating Snowflake Open Catalog. Append <strong><em>&#39;/polaris/api/catalog&#39;</em></strong> to the URI. See screenshot below.</li>
+<li><strong>Select Authentication Type/OAuth2:</strong> create a new secret in StreamNative using Snowflake Open Catalog Service Connection &#34;CLIENT ID:SECRET&#34;</li>
+</ul>
+<p class="image-container"><img alt="Enable Snowflake Open Catalog Integration" src="img/9b17aa297821b046.png"></p>
+<p>Clicking <strong>Cluster Size</strong> will test the connection to the s3 bucket and the Snowflake Open Catalog.</p>
+<p class="image-container"><img alt="Test Connection" src="img/fa437c8decf3a7f.png"></p>
+<p>Click <strong>Continue</strong> to begin sizing your cluster.</p>
+<p>For this example, we deploy using the smallest cluster size. Click <strong>Finish</strong> to start deploying the StreamNative BYOC Ursa Cluster into your Cloud Environment.</p>
+<p class="image-container"><img alt="Cluster Sizing" src="img/47e708bc8b18809d.png"></p>
+<p>When cluster deployment is complete, it will appear on the Organization Dashboard with a green circle.</p>
+<p class="image-container"><img alt="View Deployed Cluster" src="img/b9c20fa7f433d7d8.png"></p>
+<p>The Lakehouse Storage configuration can be viewed by clicking on the Instance on the Organization Dashboard and selecting Configuration in the left pane.</p>
+<p class="image-container"><img alt="View Lakehouse Storage Configuration" src="img/8badb0263ef37a89.png"></p>
+<h2 is-upgraded>Produce Kafka Messages to Topic with AVRO Schema</h2>
+<p>We will use the Kafka Java Client to produce Kafka messages with an AVRO schema to a topic.</p>
+<p>To obtain Kafka Java Client code for publishing messages to the server, navigate to <strong>Kafka Clients</strong> page in StreamNative UI. After selecting <strong>Java</strong>, click <strong>Next</strong>.</p>
+<p class="image-container"><img alt="Kafka Clients Page" src="img/1b26593b2ae1f5f4.png"></p>
+<p>Under Select service account, open the dropdown and select <strong>+ Create Service Account</strong> and follow the prompts to create a new service account.</p>
+<p class="image-container"><img alt="Create Service Account" src="img/d94fff3c4409ffc1.png"></p>
+<p>Under Select authentication type, select <strong>API Key</strong> and click <strong>+ Create API Key</strong>.</p>
+<p class="image-container"><img alt="Select Authentication Type" src="img/aa8fed1bf379efe1.png"></p>
+<p>Provide a name for the API Key. Be sure to select the Instance of our newly-created StreamNative BYOC Instance. API Keys are associated with a specific Instance.</p>
+<p class="image-container"><img alt="Create New API Key" src="img/7e3095b47a8a9734.png"></p>
+<p>Copy the API Key in case you need it for later use. It will be automatically populated in the producer code we obtain from the UI.</p>
+<p class="image-container"><img alt="Copy API Key" src="img/4f56637e0ccbe832.png"></p>
+<p>Select the <strong>default</strong> endpoint of our cluster and click <strong>Next</strong>. Most likely you will only have the default endpoint.</p>
+<p class="image-container"><img alt="Select default Endpoint" src="img/ef99ffe0ece4659e.png"></p>
+<p><strong>Enable</strong> schema registry and click <strong>Next</strong>.</p>
+<p class="image-container"><img alt="Enable Schema Registry" src="img/5e55519ae7ee4d76.png"></p>
+<p>Copy the dependencies for your Maven project for use in the pom.xml and click <strong>Next</strong>.</p>
+<p class="image-container"><img alt="Copy Maven Dependencies and Repositories" src="img/4d13560d25182cce.png"></p>
+<p>Select the <strong>public</strong> tenant and <strong>default</strong> namespace. Select the topic dropdown and click <strong>+ Create topic</strong> to create a new topic.</p>
+<p class="image-container"><img alt="Select Tenant, Namepsace, and Topic" src="img/ac84cedb6eb24ca3.png"></p>
+<p>Provide a topic name and click <strong>New Topic</strong>.</p>
+<p class="image-container"><img alt="Create New Topic" src="img/342349ee7673aa4.png"></p>
+<p>The producer code is configured to use an AVRO schema, prepopulated with the API key, tenant name, namespace, topic name, and cluster endpoints for the both producing messages and registering the schema. Copy the producer code for use in your Java IDE.</p>
+<p class="image-container"><img alt="Copy Producer Code" src="img/6211376ba523356c.png"></p>
+<p>In this example we created a new project in IntelliJ. We have pasted in the dependencies and repositories into the pom.xml and reloaded the project to download the dependencies.</p>
+<p class="image-container"><img alt="Edit POM File" src="img/1fd4c93642b6bce2.png"></p>
+<p>We created a new class called SNCloudTokenProducer and pasted in the Kafka Java Client code from the StreamNative UI. After executing the Kafka Java Client code, the terminal prints the following:</p>
+<pre><code>Send hello to kafkaschematopic4-0@0
+</code></pre>
+<p class="image-container"><img alt="Successfully Run Java Code" src="img/36f445d078d27eab.png"></p>
+<h2 is-upgraded>Review s3 bucket</h2>
+<p>Navigate to the user provided or StreamNative provided s3 bucket. In this example the user provided bucket is s3://streamnativeopencatalog/test. A storage folder and compaction folder have been created by the cluster.</p>
+<p class="image-container"><img alt="Review S3 Bucket" src="img/573de23744714a45.png"></p>
+<p>We published messages to multiple topics in the public/default tenant/namespace. We see folders for the tenant, namespace, and each topic inside the compaction folder.</p>
+<p class="image-container"><img alt="View Topics in S3 Bucket" src="img/6f43ef9fb32e43c.png"></p>
+<p>Inside each topic folder, we find partition and metadata folders.</p>
+<p class="image-container"><img alt="View Partitions and Metadata" src="img/d9be0cc64b4ba8de.png"></p>
+<h2 is-upgraded>Verify Tables and Schema are Visible in Snowflake Open Catalog</h2>
+<p>Once the compaction folder has been created in the s3 bucket, we can verify the tables and schemas are visible in Snowflake Open Catalog. We can see the resulting tables created in streamnative/public/default with a registered schema.</p>
+<p class="image-container"><img alt="Verify Tables and Schema" src="img/fea273520da6b2f3.png"></p>
+<p>The data is now queryable through Snowflake Open Catalog. In the following step we will configure Snowflake AI Data Cloud to query tables from Snowflake Open Catalog.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Tables with Snowflake" duration="30">
+        <p>Querying a table in Snowflake Open Catalog using Snowflake AI Data Cloud requires completing the following <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog-query" target="_blank">from the Snowflake documentation</a>.</p>
+<p>This video shows detailed queries for our example. Exact queries used are also available below. Please refer to Snowflake documentation for any changes in creating an external volume, creating a catalog integration, and creating an externally managed table.</p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/658ZV78lyew?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h2 is-upgraded>Create an external volume in Snowflake</h2>
+<p>Please refer to the <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3" target="_blank">Snowflake documentation here</a> for the latest code samples for creating an external volume.</p>
+<p>The video includes the following details from our example:</p>
+<ul>
+<li>When creating the new policy for Snowflake to access the s3 bucket, use root of the s3 bucket to avoid a list error when verifying storage access.</li>
+<li>When creating an external volume in Snowflake, for STORAGE_BASE_URL use the complete bucket path with s3://&lt;&gt;/&lt;&gt;/compaction.</li>
+</ul>
+<p>The following query was used to create the external volume.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE EXTERNAL VOLUME streamnative_external_volume
+   STORAGE_LOCATIONS =
+      (
+         (
+            NAME = &#39;my_streamnative_external_volume&#39;
+            STORAGE_PROVIDER = &#39;S3&#39;
+            STORAGE_BASE_URL = &#39;s3://streamnativeopencatalog/test/compaction/&#39;
+            STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::180941968709:role/streamnativeopencatalogaccessrole3&#39;
+            STORAGE_AWS_EXTERNAL_ID = &#39;training_test&#39;
+         )
+      );
+</code></pre>
+<p>The following query was used to describe the external volume to obtain the IAM role arn used by Snowflake AI Data Cloud to query the s3 bucket.</p>
+<pre><code language="language-sql" class="language-sql">DESC EXTERNAL VOLUME streamnative_external_volume;
+</code></pre>
+<p>The following query was used to verify Snowflake AI Data Cloud has access to the s3 bucket.</p>
+<pre><code language="language-sql" class="language-sql">SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME(&#39;streamnative_external_volume&#39;);
+</code></pre>
+<h2 is-upgraded>Create a catalog integration for Open Catalog</h2>
+<p>Please refer to the <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog-query" target="_blank">Snowflake documentation here</a> for the latest code samples.</p>
+<p>The video includes the following details from our example:</p>
+<ul>
+<li>The CATALOG_NAMESPACE refers to the tenant.namespace in our StreamNative Cluster. Since we published messages to public.default, use public.default as the CATALOG_NAMESPACE.</li>
+<li>We can resuse the CLIENT ID:SECRET for Snowflake Open Catalog to allow access for Snowflake. The CLIENT ID refers to OAUTH_CLIENT_ID and SECRET refers to OAUTH_CLIENT_SECRET.</li>
+</ul>
+<p>The following query is used to create a catalog integration for public.default.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE CATALOG INTEGRATION oc_int
+  CATALOG_SOURCE = POLARIS
+  TABLE_FORMAT = ICEBERG
+  CATALOG_NAMESPACE= &#39;public.default&#39;
+  REST_CONFIG = (
+    CATALOG_URI = &#39;https://a9727308406271-trainingopencatalog.snowflakecomputing.com/polaris/api/catalog&#39;
+    WAREHOUSE = &#39;streamnative&#39;
+  )
+  REST_AUTHENTICATION = (
+    TYPE = OAUTH
+    OAUTH_CLIENT_ID = &#39;&lt;client id&gt;&#39;
+    OAUTH_CLIENT_SECRET = &#39;&lt;client secret&gt;&#39;
+    OAUTH_ALLOWED_SCOPES = ( &#39;PRINCIPAL_ROLE:ALL&#39; )
+  )
+ ENABLED = TRUE;
+</code></pre>
+<p>You will need to create a new catalog integration for each tenant.namespace.</p>
+<h2 is-upgraded>Create an externally managed table</h2>
+<p>Please refer to the <a href="https://docs.streamnative.io/docs/integrate-with-snowflake-open-catalog" target="_blank">Snowflake documentation here</a> for the latest code samples.</p>
+<p>The video includes the following details from our example:</p>
+<ul>
+<li>A Snowflake Open Catalog warehouse.schema.table (e.g. streamnative.public.default.kafkaschematopic) is mapped to a Snowflake database.schema.table (e.g. training.public.kafkaschematopic)</li>
+<li>Use AUTO_REFRESH = TRUE; in CREATE ICEBERG TABLE to ensure new data is viewable in Snowflake.</li>
+</ul>
+<p>The following query was used to create an externally managed table.</p>
+<pre><code language="language-sql" class="language-sql">CREATE ICEBERG TABLE kafkaschematopic
+CATALOG = &#39;oc_int&#39;
+EXTERNAL_VOLUME = &#39;streamnative_external_volume&#39;
+CATALOG_TABLE_NAME = &#39;kafkaschematopic&#39;
+AUTO_REFRESH = TRUE;
+</code></pre>
+<p>You will need to create a new externally managed table for each topic.</p>
+<p>Once completing these steps, you will be able to query the Iceberg Table registered in Snowflake Open Catalog through Snowflake AI Data Cloud.</p>
+<p>The following are example queries for viewing the data in Snowflake AI Data Cloud.</p>
+<pre><code language="language-sql" class="language-sql">select * FROM TRAINING.PUBLIC.kafkaschematopic LIMIT 10
+
+select COUNT(*) FROM TRAINING.PUBLIC.kafkaschematopic
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations on creating a Streaming Augmented Lakehouse powered by StreamNative&#39;s Ursa Engine with built-in support for Iceberg and Snowflake Open Catalog. <a href="https://streamnative.io/contact" target="_blank">Contact StreamNative</a> to learn more.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create a Snowflake Open Catalog</li>
+<li>How to deploy a StreamNative BYOC Ursa Cluster integrated with Snowflake Open Catalog</li>
+<li>How to publish Kafka messages to the StreamNative Ursa Cluster using Kafka Java Client</li>
+<li>How to query tables visible in Snowflake Open Catalog in Snowflake AI Data Cloud</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.streamnative.io/docs/integrate-with-snowflake-open-catalog" target="_blank">Streamnative Snowflake Open Catalog Documentation</a></li>
+<li><a href="https://streamnative.io/dev-portal" target="_blank">StreamNative Developer Portal</a></li>
+<li><a href="https://www.youtube.com/@streamnativeacademy8484" target="_blank">StreamNative Academy YouTube Channel</a></li>
+<li><a href="https://courses.streamnative.io/" target="_blank">StreamNative Academy Courses</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

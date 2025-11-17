@@ -1,0 +1,336 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Developing React Native Data Application with SQL API</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="developing_tasty_bytes_react_native_application_with_snowflake_sql_api"
+                  title="Tasty Bytes - Developing React Native Data Application with SQL API"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img src="img/82e3f493a86ab504.png"></p>
+<p>In today&#39;s data-driven landscape, the majority of applications have evolved to become highly data intensive. However, developing successful data applications can be challenging, particularly as user numbers grow and the volume and complexity of data increase. Snowflake is the driving force behind numerous data applications, empowering software teams to enhance their engineering velocity and create scalable applications without the burden of operational complexities. With its focus on increasing engineering speed, Snowflake offers exceptional performance and scalability for applications.</p>
+<p>To expedite the development of Data Apps, Snowflake offers the SQL API, a RESTful API that enables seamless access and manipulation of data within the Snowflake Database. The SQL API serves as a bridge between your application and Snowflake, allowing you to retrieve and update data programmatically.</p>
+<p>In this tutorial, the application you are building helps fictitious food truck company, Tasty Bytes and it&#39;s Truck drivers to view the Orders placed by the customers and truck driver can complete the orders upon delivery. This tutorial will guide you through the process of utilizing the SQL API to develop a React Native application for Truck Drivers.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Ability to install and run software on your computer</li>
+<li>Basic experience using git</li>
+<li>Intermediate knowledge of SQL</li>
+<li>Access to run SQL in the Snowflake</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to develop Data Applications using Snowflake and SQL API</li>
+<li>Authenticating with Snowflake using Key Pair Authentication</li>
+<li>How to generate JWT token in Javascript</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed or any IDE of your preference</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Data Applcation using SQL API</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Data in Snowflake" duration="3">
+        <p>We are using Tasty Bytes Orders data for this demo. Using the Orders data, you will be building an application for Truck drivers with following capabilities.</p>
+<ul>
+<li>Truck Driver can see the Orders in their Queue</li>
+<li>Driver can complete the order once Ready by updating Order Status in Snowflake</li>
+<li>Driver can see the completed orders.</li>
+</ul>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to:</p>
+<ul>
+<li>Create Snowflake objects (warehouse, database, schema)</li>
+<li>Ingest data from S3</li>
+<li>Create Views by joining Data</li>
+</ul>
+<h2 is-upgraded>Creating Objects, Loading Data, and Joining Data</h2>
+<p>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</p>
+<p>Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema), ingest raw orders data from S3, and model it for downstream usage.</p>
+<pre><code language="language-sql" class="language-sql">-- use our accountadmin role
+USE ROLE accountadmin;
+
+-- create our database
+CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_app;
+
+-- create raw, harmonized, and analytics schemas
+-- raw zone for data ingestion
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_app.raw;
+
+-- harmonized zone for data processing
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_app.harmonized;
+
+-- analytics zone for data driven insights
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_app.analytics;
+
+-- create csv file format
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_app.raw.csv_ff 
+type = &#39;csv&#39;;
+
+-- create an external stage pointing to S3
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes_app.raw.s3load
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39;
+url = &#39;s3://sfquickstarts/frostbyte_tastybytes/app/app_orders/&#39;
+file_format = frostbyte_tasty_bytes_app.raw.csv_ff;
+
+-- create our raw.app_order_header table
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_app.raw.app_order_header
+(
+  order_id NUMBER(19,0),
+    month NUMBER(2,0),
+    day NUMBER(2,0),
+    hour NUMBER(2,0),
+    minute NUMBER(2,0),
+    second NUMBER(2,0),
+    order_total NUMBER(19,3),
+    order_tax_amount NUMBER(2,0),
+    first_name VARCHAR,
+    last_name VARCHAR,
+    gender VARCHAR,
+    order_status VARCHAR
+);
+
+-- create our raw.order_detail table
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_app.raw.app_order_detail
+(
+  order_id NUMBER(19,0),
+  order_detail_id NUMBER(19,0),
+  menu_item_name VARCHAR,
+  quantity NUMBER(2,0),
+  unit_price NUMBER(19,3)
+);
+
+-- create our virtual warehouse
+CREATE OR REPLACE WAREHOUSE tasty_app_wh AUTO_SUSPEND = 60;
+
+-- use our TASTY_APP_WH virtual warehouse so we can load our data
+USE WAREHOUSE tasty_app_wh;
+
+-- ingest from S3 into the app_order_header table
+COPY INTO frostbyte_tasty_bytes_app.raw.app_order_header
+FROM @frostbyte_tasty_bytes_app.raw.s3load/app_order_header.csv.gz;
+
+-- ingest from S3 into the app_order_detail table
+COPY INTO frostbyte_tasty_bytes_app.raw.app_order_detail
+FROM @frostbyte_tasty_bytes_app.raw.s3load/app_order_detail.csv.gz;
+
+-- create our harmonized.data_app_orders_v view
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_app.harmonized.data_app_orders_v
+  AS
+SELECT 
+    oh.order_id,
+    TIMESTAMP_NTZ_FROM_PARTS(YEAR(CURRENT_DATE()),oh.month,oh.day,oh.hour,oh.second, 0) AS order_ts,
+    oh.order_total,
+    oh.order_tax_amount,
+    oh.first_name,
+    oh.last_name,
+    oh.gender,
+    oh.order_status,
+    od.order_detail_id,
+    od.menu_item_name,
+    od.quantity,
+    od.unit_price
+FROM frostbyte_tasty_bytes_app.raw.app_order_header oh
+JOIN frostbyte_tasty_bytes_app.raw.app_order_detail od
+ON oh.order_id = od.order_id;
+
+-- promote our view to analytics
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_app.analytics.data_app_orders_v
+  AS
+SELECT * FROM frostbyte_tasty_bytes_app.harmonized.data_app_orders_v;
+
+-- view orders data
+SELECT * FROM frostbyte_tasty_bytes_app.analytics.data_app_orders_v;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create User for the Application" duration="5">
+        <p>To ensure robust security measures, it is essential to establish a dedicated user account for the application, separate from your personal account. This new account will be utilized for querying Snowflake. Following best security practices, the account will employ key-pair authentication and be granted restricted access within the Snowflake environment.</p>
+<h2 is-upgraded>Step 1: Generate Public and Private key for Authentication</h2>
+<p>Run the following commands to create a private and public key. These keys are necessary to authenticate the user with Snowflake.</p>
+<pre><code language="language-Shell" class="language-Shell">$ cd ~/.ssh
+$ openssl genrsa -out snowflake_app_key 4096
+$ openssl rsa -in snowflake_app_key -pubout -out snowflake_app_key.pub
+</code></pre>
+<h2 is-upgraded>Step 2: Create the User and Role in Snowflake and Grant data access to this new Role</h2>
+<p>Execute the following SQL statements to create the user account and grant access to the data needed for the application.</p>
+<pre><code language="language-SQL" class="language-SQL">-- use our securityadmin role
+USE ROLE securityadmin;
+
+-- create the tasty_bytes_data_app_demo role
+CREATE OR REPLACE ROLE tasty_bytes_data_app_demo;
+
+-- use our securityadmin role
+USE ROLE accountadmin;
+
+-- grant privileges to our tasty_bytes_data_app_demo role
+GRANT USAGE ON WAREHOUSE tasty_app_wh TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_app TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_app.analytics TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_app.harmonized TO ROLE tasty_bytes_data_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_app.raw TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_app.analytics TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_app.harmonized TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_app.analytics TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_app.harmonized TO ROLE tasty_bytes_data_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_app.raw TO ROLE tasty_bytes_data_app_demo;
+GRANT UPDATE ON TABLE frostbyte_tasty_bytes_app.raw.app_order_header TO ROLE tasty_bytes_data_app_demo;
+
+-- use our useradmin role
+USE ROLE useradmin;
+
+-- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE. Make sure to remove the additinal spaces. It should be a single line string.
+CREATE OR REPLACE USER data_app_demo
+RSA_PUBLIC_KEY=&#39;&lt;INSERT_RSA_PUBLIC_KEY_HERE&gt;&#39; 
+DEFAULT_ROLE=frostbyte_tasty_bytes_app 
+DEFAULT_WAREHOUSE=tasty_app_wh 
+MUST_CHANGE_PASSWORD=false;
+
+-- use our securityadmin role
+USE ROLE securityadmin;
+GRANT ROLE tasty_bytes_data_app_demo TO USER data_app_demo;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Application with SQL API" duration="10">
+        <p>The application you will be running is written in React Native.</p>
+<h2 is-upgraded>Step 1: Get the Source Code</h2>
+<ol type="1">
+<li>Clone the repo using <code>git clone https://github.com/sf-gh-sjasti/TastyBytesReactNativeAppWithSnowflake-SQL_API.git reactNativeApp</code></li>
+<li>Navigate to the folder, <code>cd reactNativeApp</code></li>
+<li>Run <code>npm install</code> to install dependancies</li>
+</ol>
+<h2 is-upgraded>Step 2: Configure the application</h2>
+<ol type="1">
+<li>Open the <code>reactNativeApp</code> folder in VS Code or IDE of your choice.</li>
+<li>Open the <code>.env</code> file and update <code>PRIVATE_KEY</code> value with the private key. Copy and paste the whole private key from <code>~/.ssh/snowflake_app_key</code> including header(<code>-----BEGIN RSA PRIVATE KEY-----</code>) and footer(<code>-----END RSA PRIVATE KEY-----</code>).</li>
+<li>If you are located in us-west region, Update <code>SNOWFLAKE_ACCOUNT_IDENTIFIER</code> with your Snowflake Account locator. If you are located outside the us-west region, Update <code>SNOWFLAKE_ACCOUNT_IDENTIFIER</code> as <code>SNOWFLAKE_ACCOUNT_LOCATOR.CLOUD_REGION</code>. You can get the Account Identifier from the Account URL.</li>
+<li>Update <code>SNOWFLAKE_ACCOUNT</code> with your Snowflake Account Locator.</li>
+<li>Update <code>PUBLIC_KEY_FINGERPRINT</code> with your user Public Key FingerPrint. To get Public Key Fingerprint, Run the following SQL in Snowsight  <code>DESCRIBE USER data_app_demo</code>  and get RSA_PUBLIC_KEY_FP property value.</li>
+</ol>
+<h2 is-upgraded>Step 3: Review the Source Code</h2>
+<p>We are using Key Pair Authentication to authenticate with Snowflake using SQL API. You can refer to the <code>Tokens.js</code> to understand how we are generating the JWT token. <code>Orders.js</code> has the source code to render Orders screen. You can also refer to this file to find out how to initiate a SQL API call and the headers needed. <code>OrderDetails.js</code> has the source code to render Order Details Screen.</p>
+<h2 is-upgraded>Step 4: Test the application</h2>
+<ol type="1">
+<li>Run <code>npx expo start --clear</code> and hit <code>w</code> key to run the app in a web browser. If you are encountering &#34;Error: error:0308010C:digital envelope routines::unsupported&#34;, Run <code>export NODE_OPTIONS=--openssl-legacy-provider</code></li>
+<li>This launches the app in Web Browser</li>
+<li>Upon Launch, You can see the InQueue Orders Screen,</li>
+</ol>
+<p class="image-container"><img src="img/c928200bb658c55a.png"></p>
+<ol type="1" start="4">
+<li>Now Click on View Order button to see the Order Details.</li>
+</ol>
+<p class="image-container"><img src="img/c9419f92b09eeeca.png"></p>
+<ol type="1" start="5">
+<li>Click on ORDER READY button to complete the order. This action updates the Order Status value to Completed for this Order and take you back to the InQueue Orders Screen</li>
+<li>Now, Click on Order History tab to see the completed orders.</li>
+</ol>
+<p class="image-container"><img src="img/8a3bc29cdf337304.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="1">
+        <p>Navigate to Snowsight Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;. Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+DROP DATABASE frostbyte_tasty_bytes_app;
+DROP WAREHOUSE tasty_app_wh;
+
+USE ROLE securityadmin;
+DROP USER data_app_demo;
+DROP ROLE tasty_bytes_data_app_demo;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p><strong>You did it!</strong> You have successfully completed the Tasty Bytes - Developing React Native Data Application with SQL API Quickstart.</p>
+<p>By doing so you have learned:</p>
+<ul>
+<li>Developed Data application using Snowflake and SQL API</li>
+<li>Authenticated with Snowflake using Key Pair Authentication</li>
+<li>Generated JWT token in Javascript</li>
+</ul>
+<h2 is-upgraded>Next Steps</h2>
+<p>To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes - Quickstarts available to you.</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html" target="_blank">Powered by Tasty Bytes - Quickstarts Table of Contents</a></h2>
+</li>
+<li><a href="https://developers.snowflake.com/demos/mobile-data-applications-with-snowflake/" target="_blank">Demo on Snowflake Demo Hub</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

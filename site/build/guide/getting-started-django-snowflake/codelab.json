@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-django-snowflake",
+  "duration": 24,
+  "title": "Getting Started with Snowflake as a backend for Django",
+  "summary": "How to get started with Snowflake as a backend for Django.",
+  "source": "getting-started-django-snowflake/getting-started-django-snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "django",
+    "django-snowflake",
+    "gettingstarted",
+    "snowflake",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-django-snowflake"
+}

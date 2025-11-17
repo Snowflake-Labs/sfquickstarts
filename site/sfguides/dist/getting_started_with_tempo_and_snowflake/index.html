@@ -1,0 +1,252 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with TEMPO and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_tempo_and_snowflake"
+                  title="Getting Started with TEMPO and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Model invented by DeepTempo.  These models are similar to their more familiar cousins, LLMs such as Anthropic&#39;s Claude and LLama. Like LLMs, LogLMs are Foundation Models that apply their understanding across very different environments and in response to differing inputs. However, Tempo was pre-trained using enormous quantities of logs. Tempo is focused on the pattern of events, including relative and absolute time. Tempo has been shown to be extremely accurate, with a low false positive and false negative rate.</p>
+<p>This guide will walk you through the process of setting up and using the TEMPO Native App in your Snowflake environment with provided sample data (<a href="https://www.unb.ca/cic/datasets/ids-2017.html" target="_blank">CIC Dataset</a>).</p>
+<p>The data that is provided comes from the Canadian Institute for Cybersecurity.  You can see the data set - and an explanation of the attacks discerned by Tempo <a href="https://www.unb.ca/cic/datasets/ids-2017.html" target="_blank">here</a></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to run Tempo on sample data (<a href="https://www.unb.ca/cic/datasets/ids-2017.html" target="_blank">CIC Dataset</a>)</li>
+<li>How to check to see if Tempo is accurate in flagging attacks</li>
+<li>Optional - How to view the output in Splunk</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/login/" target="_blank">Snowflake</a> Account</li>
+<li>Optional - A <a href="https://www.splunk.com/" target="_blank">Splunk</a> Account or instance</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A working LogLM alerting dashboard</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install the TEMPO Native App" duration="2">
+        <ol type="1">
+<li>Find The App</li>
+</ol>
+<p>In the Snowflake app Marketplace you can find the Tempo app or simply click <a href="https://app.snowflake.com/marketplace/listing/GZTYZOYXHP3" target="_blank">Here</a>.</p>
+<ol type="1" start="2">
+<li>If you are running on your own data you will have the select the storage before clicking the launch app button in the deployment phase. To select your table please click <code>add</code> next to the <code>on Incident Inference Logs</code> section. In the popup after clicking the <code>add</code> button click the <code>+Select Data</code> button and find the table you want to use on the dropdown.  Select it and click <code>Save</code>.</li>
+</ol>
+<p>Note: If you are running with the demo data simply skip this step and continue.</p>
+<ol type="1" start="3">
+<li>Snowflake will require you to grant permissions to run this app.  For a smooth experience make sure you do this in the initial setup though the Snowflake UI.</li>
+<li>Go to the <code>Projects>Worksheets</code> console in Snowflake. Here you should see a <code>+</code> sign in the top right corner of the screen.  We will use this to create our own worksheets. Go ahead and click it now.</li>
+<li>From the top of the worksheet there should be a dropdown called <code>Select Databases</code>.  This is what you will use to attach our database to this worksheet.  If you are using demo data select the option with TEMPO at the beginning of it&#39;s name.</li>
+</ol>
+<h2 is-upgraded>The default resources created by the tempo app are as follows.</h2>
+<h3 is-upgraded>TEMPO_WH</h3>
+<ul>
+<li><strong>Type</strong>: Snowpark Optimized</li>
+<li><strong>Size</strong>: Medium</li>
+<li><strong>Auto Suspend</strong>: 120 seconds</li>
+<li><strong>Auto Resume</strong>: Enabled</li>
+<li><strong>Initial State</strong>: Active</li>
+</ul>
+<h3 is-upgraded>TEMPO_COMPUTE_POOL</h3>
+<ul>
+<li><strong>Node Configuration</strong>: <ul>
+<li><strong>Minimum Nodes</strong>: 1</li>
+<li><strong>Maximum Nodes</strong>: 1</li>
+</ul>
+</li>
+<li><strong>Auto Suspend</strong>: 360 seconds</li>
+<li><strong>Instance Family</strong>: GPU_NV_S</li>
+<li><strong>Auto Resume</strong>: Enabled</li>
+<li><strong>Initial State</strong>: Active</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Start the app" duration="2">
+        <p>In the new worksheet we now need to setup our procedures. We will start with initializing the container resources. Throughout this guide we will provide you with statements to run.  Please add them to the sheet. You can do these one by one or add them all to a single worksheet.</p>
+<ol type="1">
+<li>Initialize Application Resources</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CALL management.create_resources();
+</code></pre>
+<p>Purpose: Initializes the application by loading required model weights and configurations Required Permissions: Warehouse, compute pool, and task management access</p>
+<p>It is recommended that you run this command prior to running the sheet as a whole.  It can take some time for the resources to spin up.  If you are the account admin you can monitor resources using <code>SHOW COMPUTE POOLS IN ACCOUNT;</code>. Once the compute pools are idle you may continue with the rest of the worksheet.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Static Inference" duration="6">
+        <pre><code language="language-sql" class="language-sql">CALL static_detection.inference(&#39;your_service_name&#39;);
+</code></pre>
+<p>Parameters:</p>
+<ul>
+<li><code>your_service_name</code>: Name of the service to analyze (string).  This is set by you and should be unique to each run. Purpose: Executes inference on specified service data</li>
+</ul>
+<p>If you want to use the demo feel free to name it something like <code>demorun</code> for the <code>your_service_name</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deep Dive Analysis in Snowflake" duration="5">
+        <pre><code language="language-sql" class="language-sql">CALL inspect.deepdive(sequence_id);
+</code></pre>
+<p>Parameters:</p>
+<ul>
+<li><code>sequence_id</code>: Identifier of the sequence to analyze (integer). This ID can be used down the road if any anomalies are detected to run deeper investigation on suspicious interactions. Purpose: Investigates specific sequences flagged as anomalies</li>
+</ul>
+<p>Note: If running on demo data lets use 2 as the id (valid IDs 1-1200)</p>
+<p>The results will be collections of related events making up Suspicious and Anomalous activities.  These are the events your security team would want verify as actuall intrusion events.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Viewing Results in Splunk" duration="2">
+        <p>This optional section guides you through setting up Splunk Enterprise to analyze the output from the Snowflake TEMPO project.  This step is optional and intended for Splunk users who want a visualization of the output.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case, you will likely use the Snowflake Splunk connector, DBConnect, as explained in the Snowflake documentation [here]: (https://community.snowflake.com/s/article/Integrating-Snowflake-and-Splunk-with-DBConnect)</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>An Amazon EC2 instance running Amazon Linux or another compatible Linux distribution</li>
+<li>Root or sudo access</li>
+<li>Splunk Enterprise installer tarball (<code>.tgz</code> file)</li>
+<li><code>anomaly_hub.xml</code> dashboard file</li>
+</ul>
+<h2 is-upgraded>Install Splunk Enterprise</h2>
+<ol type="1">
+<li>Clone the installation repository:<pre><code language="language-bash" class="language-bash">git clone https://github.com/your-username/splunk-tempo-dashboard-installer.git
+cd splunk-tempo-dashboard-installer
+</code></pre>
+</li>
+<li>Place the Splunk Enterprise tarball in the same directory as the script.</li>
+<li>Edit the script to set your desired credentials:<pre><code language="language-bash" class="language-bash">vi splunk_tempo_install.sh
+</code></pre>
+</li>
+<li>Make the script executable and run it:<pre><code language="language-bash" class="language-bash">chmod +x splunk_tempo_install.sh
+sudo ./splunk_tempo_install.sh
+</code></pre>
+</li>
+</ol>
+<h2 is-upgraded>Configure Splunk and Load Data</h2>
+<ol type="1">
+<li>Access Splunk at <code>http://your_ip:8000</code> and log in with the credentials you set.</li>
+<li>Download the CSV file from the TEMPO Snowflake app output.</li>
+<li>In Splunk, go to Settings &gt; Add Data &gt; Upload &gt; select your CSV file.</li>
+<li>Follow the prompts to load the CSV, using default options.</li>
+</ol>
+<h2 is-upgraded>Create the Dashboard</h2>
+<ol type="1">
+<li>After loading the CSV, click &#34;Build Dashboards&#34; &gt; &#34;Create New Dashboard&#34;.</li>
+<li>Select &#34;Classic Dashboard Builder&#34; and create the dashboard.</li>
+<li>In the dashboard editor, switch to &#34;Source&#34; view.</li>
+<li>Copy the XML from <code>anomaly_hub.xml</code> and paste it into the Source view.</li>
+<li>Save the Dashboard<ul>
+<li>After the dashboard is saved, you will now have to create a Tempo Splunk macro</li>
+</ul>
+</li>
+<li>Create a Tempo macro in Splunk<ul>
+<li>In splunk create a new Splunk macro by going to <code>Settings</code> &gt; <code>Advanced Search</code> &gt; <code>+ Add New</code></li>
+<li>Keep Destination app as <code>search</code></li>
+<li>Name the macro <code>TempoDataLocation</code></li>
+<li>Define the macro as your Splunk path to Tempo&#39;s csv output. Will look something like this</li>
+</ul>
+<pre><code language="language-xml" class="language-xml">source=&#34;your-filename.csv&#34; host=&#34;Your Name&#34; sourcetype=&#34;csv&#34;
+</code></pre>
+<ul>
+<li>You can leave the rest of the macro creation blank.</li>
+<li>Save the macro</li>
+</ul>
+</li>
+</ol>
+<p>You should now be able to see the incidents - or anomalies - in your new dashboard.  This enables Security Operations teams to click through on the context provided by Tempo.  For example, you can see all transactions to and from a specific IP address, or across given ports, as a part of investigating the incidents that have been identified.</p>
+<p>Note that as a default, only the incidents are uploaded.  Not also transferring and loading the entire dataset of logs simplifies the work of the Security Operator and also can translate into significant cost savings, as Splunk and most security operations solutions tend to charge by data ingested.</p>
+<h2 is-upgraded>Important Notes</h2>
+<ul>
+<li>Set strong passwords for all user accounts.</li>
+<li>Ensure sufficient disk space (minimum 10GB recommended).</li>
+<li>Keep your EC2 instance and Splunk Enterprise updated with the latest security patches.</li>
+</ul>
+<h2 is-upgraded>Troubleshooting</h2>
+<ul>
+<li>If the script fails to find the Splunk tarball, confirm that it&#39;s in the correct directory.</li>
+<li>For user creation issues, check Splunk server logs and verify authentication credentials.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations, you just ran the world&#39;s first purpose-built LogLM available as a Snowflake NativeApp.  In the weeks to come DeepTempo will launch a range of additional easy-to-use options and extensions as NativeApps, including tooling to simplify the process of using your own data with Tempo and upgrades to the power of Tempo including scale out multi-GPU usage.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to run Tempo on Snowflake as a NativeApp</li>
+<li>How to monitor Tempo</li>
+<li>How to see incidents and relevant context identified by Tempo in Splunk</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>To try the app please follow <a href="https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo" target="_blank">This Link</a><a href="https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/" target="_blank">Snowflake Native Apps </a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

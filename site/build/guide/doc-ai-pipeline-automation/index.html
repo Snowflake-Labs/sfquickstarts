@@ -1,0 +1,293 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Document AI Pipeline Automation</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="doc-ai-pipeline-automation"
+                  title="Document AI Pipeline Automation"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="30">
+        <p>This QuickStart help you understand and build the Snowflake Document AI Data Extraction &amp; Validation Pipeline, designed for seamless and reusable document processing. The pipeline enables users to load their files into a Snowflake stage and leverages streams, tasks, and Python-based procedures for efficient data extraction, validation, and downstream integration. It can be easily adapted to work with multiple Document AI models by creating an appropriate end table to capture the final data points.</p>
+<p class="image-container"><img alt="DataFlow" src="img/f72d7ed646a0dc52.png"></p>
+<p>The pipeline ensures that documents meet business expectations through pre-processing checks, feeds suitable documents into a DOC AI model for data extraction, validates the extracted data against business-specific accuracy thresholds, and routes clean data to downstream systems. Additionally, the Streamlit UI provides a live view of the data flow and key performance metrics, enabling real-time monitoring and insights into pipeline performance. This flexible, automated solution is ideal for handling diverse document processing requirements.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL and Python</li>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a>. If you do not have a Snowflake account, you can register for a free trial account.</li>
+<li>A Snowflake account login with a role that has the ability to create role, database, schema, tables, stages and assign permissions. If not, you will need to register for a free trial or use a different role.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to set up and automate Document AI pipeline with mutiple Doc AI models.</li>
+<li>How to validate and pre-process documents for specific requirements.</li>
+<li>How to integrate Snowflake with a Document AI model for data extraction.</li>
+<li>How to apply score-based validation criteria to extracted data.</li>
+<li>How to manage and route documents through different stages.s</li>
+<li>How to monitor and enhance the pipeline using Streamlit UI.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Files from <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake" target="_blank">GitHub</a></li>
+<li>A Snowflake instance</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A robust document processing pipeline leveraging Snowflake&#39;s advanced features and DOC AI capabilities. By the end of this guide, you will have a fully functional system that:</li>
+<li>Automatically ingests and validates documents.</li>
+<li>Routes documents to appropriate stages (e.g., Manual Review or Processing).</li>
+<li>Extracts key data fields from documents using DOC AI models.</li>
+<li>Validates extracted data points against predefined business thresholds.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pre-Processing" duration="2">
+        <p>The pre-processing stage validates document attributes such as size and page count to ensure only processable documents proceed further. Criteria can be customized to align with business needs and Document AI guidelines, as outlined in the <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/preparing-documents" target="_blank">Snowflake Documentation</a> Files failing these checks are routed to a &#34;Manual Review&#34; stage, where users can review and, if necessary, resend documents for processing via a Streamlit app.</p>
+<p class="image-container"><img alt="Pre-Process" src="img/4c88f8f5ace0a99e.png"></p>
+<p>Documents are ingested from the Internal Stage and processed through a stream. A Python-based UDF evaluates the attributes, storing results in a pre-filter table. Documents passing the validation move to the DOC AI Data Extraction, while invalid ones are redirected for manual review.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Tables, Stages &amp; Metadata" duration="2">
+        <p>The <code>DOC_AI_QuickStart.SQL</code> script is designed to set up the necessary environment for the Document AI pipeline. When executed in your Snowflake account, it will:</p>
+<ul>
+<li>Create a new database named <strong>DS_DEV_DB</strong>.</li>
+<li>Establish a schema called <strong>DOC_AI_SCHEMA</strong> within this database.</li>
+<li>Set up a warehouse named <strong>DOC_AI_WH</strong> for processing tasks.</li>
+<li>Define internal stages for document storage and management.</li>
+<li>Create tables, views, streams, stored procedures, and tasks essential for the pipeline&#39;s operation.</li>
+</ul>
+<h2 is-upgraded>Setup Instructions</h2>
+<p>To set up your environment, copy the code from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/DOC_AI_QuickStart.SQL" target="_blank"><code>DOC_AI_QuickStart.SQL</code></a> script available in the GitHub repository and execute it in your Snowflake account.</p>
+<p>This will configure the necessary infrastructure to support document ingestion, preprocessing, extraction, and validation, ensuring a seamless Document AI pipeline execution.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Document AI Model Training" duration="0">
+        <p>Download sample documents from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs" target="_blank">GitHub repository</a>. These AI-generated sample invoices will be used to demonstrate processing multiple Document AI models in a single pipeline.</p>
+<p>We will use two Document AI models for this demonstration, but you can add more as needed. The pipeline will process all models sequentially.</p>
+<h2 is-upgraded>Create Document AI Models</h2>
+<ol type="1">
+<li><strong>Go to Snowsight:</strong> Navigate to <strong>AI &amp; ML → Document AI</strong>.</li>
+<li><strong>Create First Model:</strong> Click the <code>+ Build</code> button and fill in:<ul>
+<li><strong>Build Name: </strong><code>INVOICE_MODEL</code></li>
+<li><strong>Location: </strong><code>DS_DEV_DB</code></li>
+<li><strong>Schema: </strong><code>DOC_AI_SCHEMA</code></li>
+</ul>
+</li>
+<li><strong>Train the Model:</strong><ul>
+<li>Upload a few documents from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs" target="_blank">sample dataset</a>.</li>
+<li>In production, training with at least 20 varied documents ensures higher accuracy.</li>
+<li>Click on a document and add <strong>Values</strong> (labels/columns to extract).</li>
+<li>Enter a <strong>Prompt/Question</strong> for the LLM model to extract relevant data.</li>
+<li>Use the following values and prompts for this QuickStart:</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Value Name</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Prompt</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>PO_NUMBER</code></p>
+</td><td colspan="1" rowspan="1"><p>What is the purchase order number (P.O)?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ORDER_DATE</code></p>
+</td><td colspan="1" rowspan="1"><p>What is the invoice order date?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>DELIVERY_DATE</code></p>
+</td><td colspan="1" rowspan="1"><p>What is the delivery date?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>TOTAL_AMOUNT</code></p>
+</td><td colspan="1" rowspan="1"><p>What is the total?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>SUB_TOTAL</code></p>
+</td><td colspan="1" rowspan="1"><p>What is the sub-total amount?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>TAX_AMOUNT</code></p>
+</td><td colspan="1" rowspan="1"><p>What is the amount withheld (3%) as tax?</p>
+</td></tr>
+</table>
+<ul>
+<li>Review and correct extracted values if needed. Accept corrections to improve accuracy.</li>
+<li>Click <strong>Accept All and Close</strong> after reviewing all documents.</li>
+</ul>
+</li>
+<li><strong>Create the Second Model:</strong> Repeat the steps for another model.<ul>
+<li><strong>Build Name: </strong><code>PURCHASE_MODEL</code></li>
+<li><strong>Location: </strong><code>DS_DEV_DB</code></li>
+<li><strong>Schema: </strong><code>DOC_AI_SCHEMA</code></li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Doc_AI" src="img/eb71dccd9309b8a5.png"></p>
+<p>Once both models are trained, they will be processed sequentially through the pipeline. Continue with the next steps to configure and execute the pipeline.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Inference" duration="0">
+        <p>Once the models are trained, publish them in the <strong>Document AI Model Training</strong> screen.</p>
+<p>To test model results, copy and execute the SQL queries listed under <strong>Extracting Query</strong>: <img alt="Doc_AI_1" src="img/b0c4a538917ec9a4.png"></p>
+<h2 is-upgraded>For a Single Document</h2>
+<pre><code language="language-sql" class="language-sql">SELECT DS_DEV_DB.DOC_AI_SCHEMA.INVOICE_MODEL!PREDICT(
+    GET_PRESIGNED_URL(@&lt;stage_name&gt;, &lt;relative_file_path&gt;), 1
+);
+</code></pre>
+<h2 is-upgraded>For a Batch of Files in Stage</h2>
+<pre><code language="language-sql" class="language-sql">SELECT DS_DEV_DB.DOC_AI_SCHEMA.INVOICE_MODEL!PREDICT(
+    GET_PRESIGNED_URL(@&lt;stage_name&gt;, RELATIVE_PATH), 1
+)
+FROM DIRECTORY(@&lt;stage_name&gt;);
+</code></pre>
+<p>Here, the number <code>1</code> represents the model version. Ensure you replace &lt;stage_name&gt; and &lt;relative_file_path&gt; with actual values from your setup before execution.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit App" duration="0">
+        <h2 is-upgraded>Deploying the Streamlit App</h2>
+<p>The final step is to create a Streamlit app to visualize the pipeline in action.</p>
+<ol type="1">
+<li><strong>Open Snowsight</strong>: Navigate to <strong>Projects → Streamlit</strong> on the left panel.</li>
+<li><strong>Create a New App</strong>: Click the <code>+ Streamlit App</code> blue button in the top right corner.</li>
+<li><strong>Configure the App</strong>: <ul>
+<li>Name your app.</li>
+<li>Select the <strong>Database</strong>, <strong>Schema</strong>, and <strong>Warehouse</strong> created earlier in this QuickStart.</li>
+<li>Click <strong>Create</strong>.</li>
+</ul>
+</li>
+<li><strong>Replace Default Code</strong>: <ul>
+<li>Remove the default Python code.</li>
+<li>Copy and paste the code from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/Streamlit-in-Snowflake.py" target="_blank">Streamlit-in-Snowflake.py</a> file.</li>
+</ul>
+</li>
+<li><strong>Add Required Packages</strong>: <ul>
+<li>In the <strong>Packages</strong> dropdown, select: <ul>
+<li><code>plotly</code></li>
+<li><code>pypdfium2</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Run the App</strong>: Click <strong>Run</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Python" src="img/73a016a438f964e9.png"></p>
+<h2 is-upgraded>Streamlit App Features</h2>
+<p>The Streamlit app provides full control over the pipeline and enables real-time monitoring. It shows:</p>
+<ul>
+<li>Live tracking of documents as they progress through each step in the pipeline.</li>
+<li>Key metrics, such as the average time taken to process a document.</li>
+</ul>
+<h2 is-upgraded>Testing the Pipeline in Action</h2>
+<ol type="1">
+<li><strong>Load Sample Documents</strong>: <ul>
+<li>Upload all sample documents from <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs" target="_blank">GitHub Sample Docs</a> to your <code>INVOICE_DOCS</code> stage under the folder <code>Invoice</code>.</li>
+<li>For this QuickStart, load the same set of files into another folder called <code>Purchase</code>.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Stage" src="img/99a34e39fb76a87f.png"></p>
+<ol type="1" start="2">
+<li><strong>Monitor the Pipeline in Streamlit</strong>: <ul>
+<li>Open the Streamlit UI.</li>
+<li>Select the Document AI model.</li>
+<li>Observe the documents flowing through the pipeline in real time.</li>
+</ul>
+</li>
+</ol>
+<p>This step completes the setup, allowing you to see the automated document processing pipeline in action!</p>
+<p class="image-container"><img alt="Streamlit" src="img/5b06af6418b2032.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Validation" duration="0">
+        <p>Once extracted, data is validated to ensure accuracy. Key data points, such as the <strong>invoice number</strong>, are assigned high validation scores since incorrect values impact downstream processes. Validation rules help maintain data integrity and ensure only high-quality data is processed. <img alt="Validation" src="img/650c3f4b27311b79.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="0">
+        <p>Remember to clean up the objects you created after completing this QuickStart. Run the cleanup script available at:<br><a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/Cleanup.sql" target="_blank">Cleanup</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <h2 is-upgraded>Conclusion</h2>
+<p>This QuickStart provides an introduction to automating a Document AI pipeline that processes multiple models and pre-processes documents efficiently. In real-world scenarios, pre-processing logic can be customized, batch processing can be optimized, and validation rules can be enhanced to improve accuracy. This pipeline serves as a foundation for scalable, AI-powered document processing solutions.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to automate document processing using Snowflake Document AI.</li>
+<li>How to pre-process, extract, validate, and monitor document data efficiently.</li>
+<li>How to integrate multiple Document AI models within a single pipeline.</li>
+<li>How to use Streamlit for real-time tracking and visualization of document workflows.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview" target="_blank">Snowflake Document AI Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/limitations" target="_blank">Known Limitations of Document AI</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake" target="_blank">Sample Scripts and Pipelines (GitHub)</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

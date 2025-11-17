@@ -1,0 +1,220 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>An Introduction to the Mendix Data Loader</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="mendix_data_loader"
+                  title="An Introduction to the Mendix Data Loader"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this tutorial you will learn how to ingest data from a Mendix application. In the following steps you will learn how to configure the Mendix Data Loader component, a Snowflake application that is deployed in your Snowflake environment that ingests your Mendix data.</p>
+<p><a href="https://www.mendix.com" target="_blank">Mendix</a> is a leading platform in the low-code application development domain. The data structure for the application is retrieved and the transient target tables for the data ingestion are created dynamically.</p>
+<p class="image-container"><img alt="Architecture diagram" src="img/6c7bfd360071c217.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Optional: How to deploy a Mendix application into a free cloud node</li>
+<li>How to ingest operational Mendix application data into Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Optional: Deploying a Mendix application with a pre-created data set to extract</li>
+<li>Deploy the Mendix Data Loader to load the data into Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Mendix account, if you don&#39;t have one sign up <a href="https://signup.mendix.com/" target="_blank">here</a></li>
+<li>Mendix Studio Pro (<a href="https://marketplace.mendix.com/link/studiopro/10.12.0" target="_blank">10.12</a> or later)</li>
+<li>A Snowflake account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.</li>
+</ul>
+<p>If you already have a Mendix application and just want to connect to that application you can skip to step 3.</p>
+<aside class="special"><p> IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started" target="_blank">here</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Optional) Setting Up Your Mendix Application" duration="15">
+        <h2 is-upgraded>Mendix</h2>
+<p>Mendix stands as a leading low-code platform for developing enterprise-grade applications, offering unmatched speed, flexibility, and scalability. Mendix&#39;s seamless integration with Snowflake&#39;s enterprise data environment makes it an essential tool for building robust, data-driven applications. The platform&#39;s intuitive visual development environment accelerates the creation of complex applications, significantly reducing development time while maintaining high standards of quality and performance.</p>
+<p>Furthermore, Mendix offers extensive customization through its rich ecosystem of components, including marketplace offerings that facilitate direct integration with Snowflake. This allows Mendix applications to easily connect, query, and visualize Snowflake data, unlocking deeper insights and driving informed decision-making across the organization.</p>
+<p>With Mendix, data engineers can focus on what truly matters—maximizing the power of their data within Snowflake—while relying on a platform that ensures enterprise-level security, compliance, and scalability.</p>
+<h2 is-upgraded>Deploy Your First Mendix Application</h2>
+<ul>
+<li>Download the latest Snowflake Showcase App for Mendix Studio Pro version 10.12 from the <a href="https://marketplace.mendix.com/link/component/225845" target="_blank">Mendix Marketplace</a></li>
+<li>Once downloaded, execute the file titled <code>SFShowcase.mpk</code>, a window prompt should appear</li>
+<li>Create a new folder and select it to unpack the project files. After unpacking, the project should appear in Mendix Studio Pro version 10.12</li>
+<li>Inside Mendix Studio Pro, navigate to <code>Version Control</code>, then click <code>Upload to Version Control Server...</code> and confirm by clicking <code>OK</code>. A window titled Upload App to Team Server should appear</li>
+<li>After the project has been uploaded to version control server, click <code>Publish</code></li>
+<li>After a while a snackbar notification is displayed <code>Your application is published</code></li>
+<li>Click <code>View App</code> to see the login screen for your Mendix application <ul>
+<li>(Optional) To log into your Mendix application <ul>
+<li>Use the username <code>demo_user</code></li>
+<li>To retrieve the password for this user inside Mendix Studio Pro, navigate to <code>App 'SFShowcase'</code> -&gt; <code>Security</code> -&gt; <code>Demo users</code> -&gt; <code>demo_user</code> and then click the link that reads <code>Copy password to clipboard</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Save the endpoint of your Mendix application, you&#39;ll need it later <ul>
+<li>Save <code>https://sfshowcase101-sandbox.mxapps.io/</code> if your endpoint is <code>https://sfshowcase101-sandbox.mxapps.io/login.html?profile=Responsive</code></li>
+</ul>
+</li>
+<li>You have successfully deployed the Snowflake Showcase App onto a free cloud sandbox environment!</li>
+</ul>
+<p class="image-container"><img alt="Deploying your Mendix application" src="img/f4a981974cf65933.png"></p>
+<h2 is-upgraded>About this Mendix Application</h2>
+<p>The application you just downloaded, uploaded to Mendix&#39; version control server and deployed on a free cloud sandbox environment is a free application available on the <a href="https://marketplace.mendix.com/" target="_blank">Mendix Marketplace</a>. Its purpose is to enable, aid and inspire its users on how to tackle integration with Snowflake from the Mendix domain. This application has some pre-installed operational data to showcase the Mendix Data Loader. The pre-installed data is about movies and reviews corresponding to the movies.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install the Mendix Data Loader" duration="5">
+        <ul>
+<li>Download the Mendix Data Loader from the <a href="https://app.snowflake.com/marketplace/listing/GZTDZHHIE0/mendix-mendix-data-loader" target="_blank">Snowflake Marketplace</a></li>
+<li>Once a window displaying &#34;successfully Installed&#34; appears, click <code>Close</code>, navigate to <code>Data Products</code> -&gt; <code>Apps</code> -&gt; <code>Mendix Data Loader</code>, a documentation page titled <code>Mendix Data Loader</code> should appear</li>
+<li>You have successfully deployed the Mendix Data Loader into your Snowflake environment!</li>
+</ul>
+<h2 is-upgraded>How Will the Mendix Data Loader Interact With the Mendix application?</h2>
+<p>The Mendix application has a <a href="https://docs.mendix.com/refguide/published-odata-services/" target="_blank">published OData service</a> that exposes the application data for the entities (class definitions) captioned <code>Movie</code> and <code>Review</code> which are linked to one another through an association. The OData resource for this application can be found along the following path: <code>Showcase_DataLoader</code> -&gt; <code>Resources</code> -&gt; <code>Published OData</code> -&gt; <code>POS_Movies</code>. If you are planning to use your own custom application for this quickstart you will use the exposed OData service that you have set up yourself.</p>
+<p>In the OData resource, the <code>General</code> tab contains information about the exposed service and the entities that are exposed in the service. Each entity has an endpoint from where the values can be retrieved after authentication. In the <code>Settings</code> tab, the metadata endpoint contains information about the exposed data structure of the OData resource. Additional endpoints are exposed for each exposed set configured in the <code>General</code> tab.</p>
+<p>The Mendix Data Loader retrieves the exposed data structure from the metadata endpoint. After which the application will start to provision the application with transient target tables. Then the application retrieves the data from the service feed for each exposed entity found in the metadata. The Mendix Data Loader is developed for the extraction and loading of Mendix data, any data transformation and integration should be performed outside the scope of the Mendix Data Loader&#39;s objects.</p>
+<p>All the exposed data will be ingested into Snowflake. To retrieve a subset of the exposed data you can use the filter query option, for more information refer to <a href="https://www.odata.org/getting-started/basic-tutorial/" target="_blank">OData&#39;s Basic Tutorial</a>.</p>
+<p>Should any data reside in the specified database and schema from prior ingestion jobs, this data will be lost. For ingestions of multiple sources, we recommend using the same database with a different schema.</p>
+<p class="image-container"><img alt="Architecture diagram" src="img/6c7bfd360071c217.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Mendix Data Loader Configuration" duration="5">
+        <h2 is-upgraded>Starting the Application</h2>
+<p>Upon starting the application, a documentation page that includes usage instructions is displayed. To start the application, click the <code>MENDIX_DATA_LOADER</code> hyperlink in the header.</p>
+<h2 is-upgraded>Creating Data sources</h2>
+<p>The home page, titled <code>Data Source Overview</code>, displays all your existing data sources. To create a new one, click the <code>Create</code> button to access the <code>Create New Data Source</code> page. Here, you will provide the following information:</p>
+<ul>
+<li><code>Name</code>: A unique identifier for your data source.</li>
+<li><code>API endpoint</code>: The URL of your published OData resource, <code>&#123;&#123;YOUR_SAVED_ENDPOINT}}/odata/&#123;&#123;ODATA_NAME}}/v1/</code> e.g., <code>https://sfshowcase101-sandbox.mxapps.io/odata/MoviesBasic/v1/</code></li>
+</ul>
+<p>When you press <code>Save</code> for the first time, a popup will appear requesting permissions to grant the application the following privileges:</p>
+<ol type="1">
+<li><code>CREATE DATABASE</code>: To create the target database where ingested data will be stored.</li>
+<li><code>EXECUTE TASK</code>: To enable the scheduling of ingestion jobs.</li>
+</ol>
+<p>In the modal window, click <code>Grant Privileges</code> to approve the request. Once privileges are granted, press <code>Save</code> again to save your data source. You will then be redirected to its details page.</p>
+<h2 is-upgraded>Configuring Authentication</h2>
+<p>To set up authentication, navigate to the <code>Authentication Configuration</code> tab and click the <code>Edit</code> button to open the <code>Edit Authentication Config</code> page. To start, there are two options, Basic credential authentication and OAuth. For this quickstart we will guide you through the basic credentials authentication configuration.</p>
+<p>Choose the <code>Basic</code> option in the presented dropdown field and specify the following fields:</p>
+<ul>
+<li><code>Username</code>: For example, SFDataLoaderUser (or any user with access to your OData resource).</li>
+<li><code>Password</code>: For example, MendixSnowflake123 (or the corresponding password for the user).</li>
+</ul>
+<h2 is-upgraded>Configure the Staging Area</h2>
+<p>The final step before data ingestion is to configure the staging area. The staging area consists of a target database and target schema where data will temporarily reside before you transport/process it into a database owned by your organization.</p>
+<ul>
+<li><code>Target database name</code>: For example, MOVIE_DB</li>
+<li><code>Target schema name</code>: For example, MOVIE_APP</li>
+</ul>
+<p class="image-container"><img alt="Architecture diagram" src="img/e3f7d8a89b049a19.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Mendix Data Loader Data Ingestion" duration="5">
+        <h2 is-upgraded>Start a Single Ingestion</h2>
+<p>Navigate to the <code>Data Ingestion</code> tab ands click the <code>Ingest Now</code> Button. When the ingestion has finished you are presented with success or error message.</p>
+<p class="image-container"><img alt="Architecture diagram" src="img/4ebdb4f212b37b7c.png"></p>
+<h2 is-upgraded>Creating a Task to Schedule Ingestion Jobs</h2>
+<p>Navigate to the <code>Data Ingestion</code> tab and click the <code>New Task</code> button to start configuring a task for scheduling ingestion jobs. The following fields are mandatory:</p>
+<ul>
+<li><code>When should the ingestion task run?</code> : Choose one of the following options <ul>
+<li><code>Custom CRON expression</code>, If you choose <code>Custom CRON expression</code> then the <code>Custom CRON expression</code> field is also mandatory.</li>
+<li><code>Every day at 00:00 AM UTC</code></li>
+<li><code>Every Monday on 00:00 AM UTC</code></li>
+<li><code>Every first day of the month at 00:00 AM UTC</code></li>
+</ul>
+</li>
+</ul>
+<p>The other task configuration fields are optional:</p>
+<ul>
+<li><code>Time out</code>: This is an optional setting that can be used to change after how much time (in ms) a timeout exception should happen.</li>
+<li><code>Number of retry attempts</code> : This setting sets how many retries should be performed if an ingestion job fails.</li>
+<li><code>Suspend task after number of failures</code> : This setting sets the number of times a task is allowed to consecutively fail before suspending the task.</li>
+</ul>
+<p>Now press the <code>Schedule Ingestion Task</code> button. The first time you configure a task you will be prompted to grant the <code>USAGE</code> permission on a warehouse you want to use for all tasks created by the Mendix Data Loader. You can view details of the created task on the <code>Data Ingestion</code> tab where you can also view its performed ingestion jobs, suspend/enable the task, and drop the task.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations! You&#39;ve successfully installed Mendix Data Loader app and moved data from Mendix application onto Snowflake.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to quickly deploy a Snowflake showcase Mendix app on free cloud</li>
+<li>How to pull data from an existing Mendix application into Snowflake using our Mendix Data Loader Native Application</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.mendix.com/appstore/modules/snowflake/mendix-data-loader/" target="_blank">Mendix Data Loader documentation</a></li>
+<li><a href="https://www.mendix.com/" target="_blank">What is Mendix</a></li>
+<li><a href="https://app.snowflake.com/marketplace/listing/GZTDZHHIE0/mendix-mendix-data-loader" target="_blank">Mendix Data Loader Listing</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

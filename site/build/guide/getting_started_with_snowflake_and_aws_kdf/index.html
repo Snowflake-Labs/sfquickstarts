@@ -1,0 +1,476 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake and Amazon Data Firehose (ADF)</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowflake_and_aws_kdf"
+                  title="Getting Started with Snowflake and Amazon Data Firehose (ADF)"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Snowflake&#39;s Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency. It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake without requiring files with a more attractive cost/latency profile.</p>
+<p>Here are some of the use cases that can benefit from this integration:</p>
+<ul>
+<li>IoT time-series data ingestion</li>
+<li>CDC streams from OLTP systems</li>
+<li>Log ingestion from SIEM systems</li>
+<li>Ingestion into ML feature stores</li>
+</ul>
+<p>In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the <a href="https://opensky-network.org" target="_blank">Opensky Network</a> to illustrate the solution leveraging the <a href="https://aws.amazon.com/about-aws/whats-new/2024/01/stream-data-snowflake-kinesis-data-firehose-snowpipe-streaming-preview/" target="_blank">native integration</a> between Snowflake and <a href="https://aws.amazon.com/firehose/" target="_blank">ADF (Amazon Data Firehose)</a>.</p>
+<p>The architecture diagram below shows the deployment. A Linux EC2 instance (jumphost) will be provisioned in the subnet of an AWS VPC. The Linux jumphost will host the data producer that ingests real-time flight data into the Firehose delivery stream.</p>
+<p>The data producer calls the data sources&#39; REST API and receives time-series data in JSON format. This data is then ingested into the Firehose delivery stream and delivered to a Snowflake table. The data in Snowflake table can be visualized in real-time with <a href="https://aws.amazon.com/grafana/" target="_blank">AMG (Amazon Managed Grafana)</a> and <a href="https://streamlit.io" target="_blank">Streamlit</a> The historical data can also be analyzed by BI tools like <a href="https://aws.amazon.com/quicksight/?trk=56601b48-df3f-4cb4-9ef7-9f52efa1d0b8&sc_channel=ps&ef_id=Cj0KCQiA_bieBhDSARIsADU4zLebWWM6ZmxRODjR9Xlc7ztNm5JGwqEMSi0EjCLZ9CXYa1YvXL3LMYYaAnV_EALw_wcB:G:s&s_kwcid=AL!4422!3!629393324770!!!g!!" target="_blank">Amazon Quicksight</a>. Please note that in the demo, we are not demonstrating the visualization aspect. We will have a future Quickstart demo that focuses on visualization.</p>
+<p class="image-container"><img alt="Architecture diagram for the Demo" src="img/697d006277a86e7d.png"></p>
+<p class="image-container"><img alt="Data visualization" src="img/bc685d6756700e6d.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects</li>
+<li>Familiarity with AWS Services (e.g. EC2, ADF, etc), Networking and the Management Console</li>
+<li>Basic knowledge of Python and Linux shell scripting</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need Before the Lab</h2>
+<p>To participate in the virtual hands-on lab, attendees need the following resources.</p>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Enterprise Account on preferred AWS region</a> with <code>ACCOUNTADMIN</code> access</li>
+<li>An <a href="https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/" target="_blank">AWS Account</a> with <code>Administrator Access</code></li>
+<li>Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. <ul>
+<li>In the AWS account, <a href="https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html" target="_blank">create a VPC</a>, preferably in the same region as the Snowflake account</li>
+<li>In the VPC, <a href="https://docs.aws.amazon.com/vpc/latest/userguide/working-with-subnets.html" target="_blank">create subnets</a> and attach an <a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html" target="_blank">internet gateway</a> to allow egress traffic to the internet by using a routing table and security group for outbound traffic. Note that the subnets can be public or private, for private subnets, you will need to attach a <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank">NAT gateway</a> to allow egress traffic to the internet. Public subnets are sufficient for this lab.</li>
+<li>If you have decided to create your own VPC/subnets, for your convenience, click <a href="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake-VPC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/MyFullVPC-2pub-2priv.json" target="_blank">here</a> to deploy a VPC with a pair of public and private subnets, internet gateway and NAT gateway for you. Note that you must have network administrator permissions to deploy these resources.</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Using <a href="https://aws.amazon.com/firehose/" target="_blank">ADF (Amazon Data Firehose)</a></li>
+<li>Connecting to EC2 instances with <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html" target="_blank">Amazon System Session Manager</a>, this is an alternative to SSH if your instance is in a private subnet</li>
+<li>Using <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL</a>, the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.</li>
+<li>Using Snowflake to query tables populated with time-series data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Create an <a href="https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html" target="_blank">ADF delivery stream</a></li>
+<li>Setup <code>Direct Put</code> as the source for the ADF delivery stream</li>
+<li>Setup <code>Snowflake</code> as the destination for the ADF delivery stream</li>
+<li>Optionally, secure the connection between Snowflake and ADF with <a href="https://aws.amazon.com/privatelink" target="_blank">Privatelink</a>. Note <a href="https://docs.snowflake.com/en/user-guide/intro-editions#security-governance-and-data-protection" target="_blank">Snowflake Business Critical Edition</a> and above is a pre-requisite for Privatelink.</li>
+<li>A Snowflake database and table for hosting real-time flight data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provision a Linux jumphost in AWS" duration="10">
+        <h3 is-upgraded>1. Create an EC2 instance</h3>
+<p>First, click <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ADF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json" target="_blank">here</a> to launch an EC2 instance(jumphost) with Cloudformation. Note the default AWS region is <code>us-west-2 (Oregon)</code>, at the time of writing this quickstart, three regions are available for this integration preview: <code>us-east-1</code>, <code>us-west-2</code>, and <code>eu-west-1</code>.</p>
+<p>For <code>Subnet1</code>, in the drop-down menu, pick an existing subnet, it can be either public or private subnets depending on the network layout of your VPC.</p>
+<p>For <code>InstanceSecurityGroupId</code>, we recommend using the default security group in your VPC, if you do not have the default security group, create one on your own before moving forward.</p>
+<p>Click Next at the Create stack page. Set the Stack name or modify the default value to customize it to your identity.</p>
+<p>See below sample screen capture for reference.</p>
+<p class="image-container"><img src="img/b1d67ed6bd2d7b96.png"></p>
+<p>Leave everything as default in the <code>Configure stack options</code> page and click <code>Next</code>. In the <code>Review</code> page, click <code>Submit</code>.</p>
+<p>In about 5 minutes, the Cloudformation template provisions a Linux EC2 instance in the subnet you selected. We will then use it to run the ADF producer for data ingestion.</p>
+<h3 is-upgraded>2. Configure the Linux session for timeout and default shell</h3>
+<p>In this step we need to connect to the EC2 instance in order to ingest the real-time data.</p>
+<p>Go to the AWS <a href="https://us-west-2.console.aws.amazon.com/systems-manager/home" target="_blank">Systems Manager</a> console in the same region where you setup the EC2 instance, Click <code>Session Manager</code> on the left pane.</p>
+<p class="image-container"><img src="img/f1625af9fff73b45.png"></p>
+<p>Next, we will set the preferred shell as bash.</p>
+<p>Click the <code>Preferences</code> tab. <img src="img/bb9a12f7155b64fc.png"></p>
+<p>Click the <code>Edit</code> button. <img src="img/e20b6a8ce135c1d4.png"></p>
+<p>Go to <code>General preferences</code> section, type in 60 minutes for idle session timeout value.</p>
+<p class="image-container"><img src="img/1b83cece69e1650f.png"></p>
+<p>Further scroll down to <code>Linux shell profile</code> section, and type in <code>/bin/bash</code> before clicking <code>Save</code> button.</p>
+<p class="image-container"><img src="img/b88863e27392a2de.png"></p>
+<h3 is-upgraded>3. Connect to the Linux EC2 instance console</h3>
+<p>Now go back to the <code>Session</code> tab and click the <code>Start session</code> button. <img src="img/6a05c2c6089304a0.png"></p>
+<p>Now you should see the EC2 instance created by the Cloudformation template under <code>Target instances</code>. Its name should be <code><Cloudformation stack name>-jumphost</code>, select it and click <code>Start session</code>.</p>
+<p class="image-container"><img src="img/a0f3cc55c1fecaef.png"></p>
+<h3 is-upgraded>4. Create a key-pair to be used for authenticating with Snowflake</h3>
+<p>Create a key pair in AWS Session Manager console by executing the following commands. You will be prompted to give an encryption password, remember this phrase, you will need it later.</p>
+<pre><code language="language-commandline" class="language-commandline">cd $HOME
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/71780971351526bb.png"></p>
+<p>Next we will create a public key by running following commands. You will be prompted to type in the phrase you used in above step.</p>
+<pre><code>openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+</code></pre>
+<p>see below example screenshot:</p>
+<p class="image-container"><img src="img/63a114806cbeec31.png"></p>
+<p>Next we will print out the public and private key string in a correct format that we can use for configuration later.</p>
+<pre><code>grep -v KEY rsa_key.pub | tr -d &#39;\n&#39; | awk &#39;{print $1}&#39; &gt; pub.Key
+cat pub.Key
+
+grep -v KEY rsa_key.p8 | tr -d &#39;\n&#39; | awk &#39;{print $1}&#39; &gt; priv.Key
+cat priv.Key
+</code></pre>
+<p>see below example screenshot:</p>
+<p class="image-container"><img src="img/569ba68bc98a143d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare the Snowflake account for streaming" duration="15">
+        <h3 is-upgraded>1. Creating user, role, and database</h3>
+<p>First login to your Snowflake account as a power user with ACCOUNTADMIN role. Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.</p>
+<pre><code>-- Set default value for multiple variables
+-- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
+-- You should change them after the workshop
+SET PWD = &#39;Test1234567&#39;;
+SET USER = &#39;STREAMING_USER&#39;;
+SET DB = &#39;ADF_STREAMING_DB&#39;;
+SET WH = &#39;ADF_STREAMING_WH&#39;;
+SET ROLE = &#39;ADF_STREAMING_RL&#39;;
+
+USE ROLE ACCOUNTADMIN;
+
+-- CREATE USERS
+CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT=&#39;STREAMING USER&#39;;
+
+-- CREATE ROLES
+CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
+
+-- CREATE DATABASE AND WAREHOUSE
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
+USE IDENTIFIER($DB);
+CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = &#39;SMALL&#39;;
+
+-- GRANTS
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
+GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
+GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
+
+-- SET DEFAULTS
+ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
+ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
+
+-- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
+-- IT WILL BE SOMETHING LIKE &lt;organization_name&gt;-&lt;account_name&gt;
+-- e.g. ykmxgak-wyb52636
+
+WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,&#39;.snowflakecomputing.com&#39;,&#39;&#39;) AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = &#39;SNOWFLAKE_DEPLOYMENT_REGIONLESS&#39;;
+</code></pre>
+<p>Please write down the Account Identifier, we will need it later. <img src="img/f5a3bbf6be8a8907.png"></p>
+<p>We need to retrieve the <code>Snowflake private account URL</code> for use later, run below SQL command now and record the output, e.g. <code>https://xyz12345.us-west-2.privatelink.snowflakecomputing.com</code></p>
+<pre><code language="language-sql" class="language-sql">with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = &#39;privatelink-account-url&#39;)
+SELECT concat(&#39;https://&#39;|| REPLACE(VALUE,&#39;&#34;&#39;,&#39;&#39;)) AS SNOWFLAKE_PRIVATE_ACCOUNT_URL
+from PL;
+</code></pre>
+<p>Now we need to retrieve the value of <code>VPCE ID</code> for use later, run below SQL command now and record the output, e.g. <code>com.amazonaws.vpce.us-west-2.vpce-svc-xyzabce999777333f1</code>.</p>
+<pre><code language="language-sql" class="language-sql">with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = &#39;privatelink-vpce-id&#39;)
+SELECT REPLACE(VALUE,&#39;&#34;&#39;,&#39;&#39;) AS PRIVATE_LINK_VPCE_ID
+from PL;
+</code></pre>
+<p>Next we need to configure the public key for the streaming user to access Snowflake programmatically.</p>
+<p>First, in the Snowflake worksheet, replace &lt; pubKey &gt; with the content of the file <code>/home/azureuser/pub.Key</code> (see <code>step 4</code> in <code>section #2 Provision a Linux jumphost in AWS</code> located in the left pane) in the following SQL command and execute.</p>
+<pre><code language="language-commandline" class="language-commandline">use role accountadmin;
+alter user streaming_user set rsa_public_key=&#39;&lt; pubKey &gt;&#39;;
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/c79825052b51e8bb.png"></p>
+<p>Now logout of Snowflake, sign back in as the default user <code>streaming_user</code> we just created with the associated password (default: Test1234567). Run the following SQL commands in a worksheet to create a schema (e.g. <code>ADF_STREAMING_SCHEMA</code>) in the default database (e.g. <code>ADF_STREAMING_DB</code>):</p>
+<pre><code language="language-commandline" class="language-commandline">SET DB = &#39;ADF_STREAMING_DB&#39;;
+SET SCHEMA = &#39;ADF_STREAMING_SCHEMA&#39;;
+
+USE IDENTIFIER($DB);
+CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
+</code></pre>
+<h3 is-upgraded>2. Install SnowSQL (optional but highly recommended)</h3>
+<p><a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL</a> is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.</p>
+<p>To install SnowSQL. Execute the following commands on the Linux Session Manager console:</p>
+<pre><code language="language-commandline" class="language-commandline">curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
+echo -e &#34;~/bin \n y&#34; &gt; /tmp/ans
+bash /tmp/snowsql-1.2.24-linux_x86_64.bash &lt; /tmp/ans
+
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/52a8e9b66a7d335d.png"></p>
+<p>Next set the environment variable for Snowflake Private Key Phrase:</p>
+<pre><code language="language-commandline" class="language-commandline">export SNOWSQL_PRIVATE_KEY_PASSPHRASE=&lt;key phrase you set up when running openssl previously&gt;
+</code></pre>
+<p>Note that you should add the command above in the ~/.bashrc file to preserve this environment variable across sessions.</p>
+<pre><code language="language-commandline" class="language-commandline">echo &#34;export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE&#34; &gt;&gt; ~/.bashrc
+</code></pre>
+<p>Now you can execute this command to interact with Snowflake:</p>
+<pre><code language="language-commandline" class="language-commandline">$HOME/bin/snowsql -a &lt;The Account Identifier that you recorded earlier&gt; -u streaming_user --private-key-path $HOME/rsa_key.p8 -d adf_streaming_db -s adf_streaming_schema
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/28aee26c42c12a1b.png"></p>
+<p>Type <code>Ctrl-D</code> to get out of SnowSQL session.</p>
+<p>You can edit the <a href="https://docs.snowflake.com/en/user-guide/snowsql-config.html#snowsql-config-file" target="_blank"><code>~/.snowsql/config</code></a> file to set default parameters and eliminate the need to specify them every time you run snowsql.</p>
+<p>At this point, the Snowflake setup is complete.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an ADF delivery stream" duration="15">
+        <p>In this step, we are going to create an ADF delivery stream for data streaming.</p>
+<p>Navigate to the <a href="https://console.aws.amazon.com/firehose/home?streams" target="_blank">ADF console</a> and click <code>Create delivery stream</code>.</p>
+<p>In the <code>Source</code> section, select <code>Direct PUT</code> from the drop-down menu. Optionally, you can pick <code>Kinesis Data Streams</code> as the source, but we will focus on <code>Direct Put</code> in this workshop.</p>
+<p>In the <code>Destination</code> section, select <code>Snowflake</code> from the drop-down menu.</p>
+<p>Type in a name for the <code>Firehose stream name</code>.</p>
+<p class="image-container"><img src="img/a5cf6339c25f2ce9.png"></p>
+<p>Skip <code>Transform records</code> setup.</p>
+<p>For <code>Snowflake account URL</code>, enter the URL you recorded previously from step 1 in Chapter 3, e.g. <code>https://xyz12345.us-west-2.privatelink.snowflakecomputing.com</code>.</p>
+<p>Note here we are going to use Amazon PrivateLink (Note, <a href="https://docs.snowflake.com/en/user-guide/intro-editions#security-governance-and-data-protection" target="_blank">Snowflake Business Critical Edition</a> or above is required) to secure the communication between Snowflake and ADF, so the URL is a private endpoint with <code>privatelink</code> as a substring.</p>
+<p>Alternatively, you can use the public endpoint without the <code>privatelink</code> substring, e.g. <code>https://xyz12345.us-west-2.snowflakecomputing.com</code>, if this is the case, also leave the <code>VPCE ID</code> field blank below.</p>
+<p>For <code>User</code>, type in <code>STREAMING_USER</code>.</p>
+<p>For <code>Private key</code>, go back to your EC2 console in Systems Manager and run</p>
+<pre><code language="language-commandline" class="language-commandline">cat ~/priv.key
+</code></pre>
+<p>Copy the output string and paste into the <code>Private key</code> field.</p>
+<p>For <code>Passphrase</code>, type in the phrase you used when generating the public key with openssl earlier.</p>
+<p class="image-container"><img src="img/840b816e18f4570.png"></p>
+<p>For <code>Role</code>, select <code>Use custom Snowflake role</code> and type in <code>ADF_STREAMING_RL</code>.</p>
+<p>For <code>VPCE ID</code>, enter the value you recorded from step 1 in Chapter 3, e.g. <code>com.amazonaws.vpce.us-west-2.vpce-svc-xyzabce999777333f1</code>.</p>
+<p>For <code>Snowflake database</code>, type in <code>ADF_STREAMING_DB</code>.</p>
+<p>For <code>Snowflake Schema</code>, type in <code>ADF_STREAMING_SCHEMA</code>.</p>
+<p>For <code>Snowflake table</code>, type in <code>ADF_STREAMING_TBL</code>.</p>
+<p>For <code>Data loading options for your Snowflake table</code>, select <code>Use JSON keys as table column names</code>.</p>
+<p class="image-container"><img src="img/c5da56d47e82a699.png"></p>
+<p>For <code>S3 backup bucket</code>, pick an existing S3 bucket where you want to save the logs or error messages. <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html" target="_blank">Create a S3 bucket</a> if you don&#39;t have one.</p>
+<p class="image-container"><img src="img/d6d320abb67f9325.png"></p>
+<p>Leave everything else as default and click <code>Create delivery stream</code>.</p>
+<p>Your delivery stream will be generated in about 5 minutes.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ingest and Query data in Snowflake" duration="10">
+        <p>Now, switch back to the Snowflake console and make sure that you signed in as the default user <code>streaming_user</code>. The data should have been streamed into a table, ready for further processing.</p>
+<h3 is-upgraded>1. Create a destination table in Snowflake</h3>
+<p>Run the following SQL command to create the table <code>ADF_STREAMING_TBL</code> we specified when provisioning the delivery stream. Note that here we use varchar type for most of the columns, we will generate a view later to transform them into the correct types.</p>
+<pre><code language="language-commandline" class="language-commandline">use ADF_STREAMING_DB;
+use schema ADF_STREAMING_SCHEMA;
+create or replace TABLE ADF_STREAMING_TBL (
+	ORIG VARCHAR(20),
+	UTC NUMBER(38,0),
+	ALT VARCHAR(20),
+	ICAO VARCHAR(20),
+	LON VARCHAR(20),
+	ID VARCHAR(20),
+	DEST VARCHAR(20),
+	LAT VARCHAR(20)
+);
+</code></pre>
+<h3 is-upgraded>2. Ingest real-time data</h3>
+<p>Go to the EC2 console, and run the following command.</p>
+<pre><code language="language-commandline" class="language-commandline">python3 /tmp/adf-producer.py &lt;ADF delivery stream name&gt;
+</code></pre>
+<p>The Python script gets the raw flight data from a <a href="http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky" target="_blank">real-time source</a> and streams into the delivery stream. You should see the flight data being ingested continuously to the ADF delivery stream in json format.</p>
+<p class="image-container"><img src="img/3c55cc912b249418.png"></p>
+<h3 is-upgraded>3. Query the raw data in Snowflake</h3>
+<p>To verify that data has been streamed into Snowflake, execute the following SQL commands.</p>
+<p>Now run the following query on the table.</p>
+<pre><code>select * from adf_streaming_tbl;
+</code></pre>
+<p>Here is the screen capture of the sample output.</p>
+<p class="image-container"><img src="img/291bfd3de80ef09.png"></p>
+<h3 is-upgraded>2. Convert the raw data table into a view with correct data types</h3>
+<p>Now execute the following SQL command.</p>
+<pre><code language="language-commandline" class="language-commandline">create or replace view flights_vw
+  as select
+    utc::timestamp_ntz ts_utc,
+    CONVERT_TIMEZONE(&#39;UTC&#39;,&#39;America/Los_Angeles&#39;,ts_utc::timestamp_ntz) as ts_pt,
+    alt::integer alt,
+    dest::string dest,
+    orig::string orig,
+    id::string id,
+    icao::string icao,
+    lat::float lat,
+    lon::float lon,
+    st_geohash(to_geography(st_makepoint(lon, lat)),12) geohash,
+    st_distance(st_makepoint(-122.366340, 37.616245), st_makepoint(lon, lat))/1609::float dist_to_sfo,
+    year(ts_pt) yr,
+    month(ts_pt) mo,
+    day(ts_pt) dd,
+    hour(ts_pt) hr
+FROM adf_streaming_tbl;
+</code></pre>
+<p>The SQL command creates a view, converts timestamps to different time zones, and use Snowflake&#39;s <a href="https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html" target="_blank">Geohash function</a> to generate geohashes that can be used in time-series visualization tools such as Grafana. You can also easily calculate the distance in miles between two geo locations. In above example, the <code>st_distance</code> function is used to calculate the distance between an airplane and San Francisco Airport.</p>
+<p>Let&#39;s query the view <code>flights_vw</code> now.</p>
+<pre><code language="language-sql" class="language-sql">select * from flights_vw;
+</code></pre>
+<p>As a result, you will see a nicely structured output with columns derived from the JSONs at the <a href="http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky" target="_blank">source</a>. <img src="img/d37de6b54568c72f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Copilot to interact with your data in natural language" duration="5">
+        <p><a href="https://docs.snowflake.com/en/user-guide/snowflake-copilot" target="_blank">Snowflake Copilot</a> is an LLM-powered assistant that simplifies data analysis while maintaining robust data governance, and seamlessly integrates into your existing Snowflake workflow. You can gain insights from your data stored in Snowflake by using natural language.</p>
+<p>To get started, on the console, click ‘Ask Copilot&#39; button located at the bottom.</p>
+<p class="image-container"><img src="img/4088e6ae083407cb.png"></p>
+<p>In the conversation window, type in a question like the following:</p>
+<pre><code>show me the unique flights from KLAX arriving at KSFO between 2000 to 4000 feet altitude?
+</code></pre>
+<p>Copilot will then analyze the question and show you its thinking process step-by-step and give you the SQL command to get the answer.</p>
+<p class="image-container"><img src="img/45a10489c69c7492.gif"></p>
+<p>Let&#39;s ask Copilot another question that uses Snowflake&#39;s geo-spatial functions to calculate the distance between two locations.</p>
+<p>Ask a question like the following.</p>
+<pre><code>if the lattitude and longitude for KSFO is 37.619254,-122.4491623 respectively, calculate the distance (in miles) between the flights and KSFO with Snowflake&#39;s geo-spatial functions, also show the related flight ids, original and destination airports
+</code></pre>
+<p>Again, Copilot gives the SQL command which you can execute to get the distance between all flights to San Francisco internation airport.</p>
+<p class="image-container"><img src="img/eafb87c319d9bf3c.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Amazon Managed Service for Flink for real-time analytics - Optional" duration="20">
+        <p>Note that you will need to complete the base workshop first without cleaning up the resources in order to proceed.</p>
+<p>Apache Flink is a powerful stream processing framework with a wide range of use cases across industries. Some common applications include Real-time analytics, Fraud detection, Sendor data process, Supply chain optimization, and many more.</p>
+<p>Here we will show you how to integrate our current demo with <a href="https://aws.amazon.com/managed-service-apache-flink/" target="_blank">Amazon Managed Service for Apache Flink</a> and <a href="https://aws.amazon.com/kinesis/data-streams/" target="_blank">Kinesis Data Streams (KDS)</a> to do real-time analytics.</p>
+<p>The schematic diagram below illustrates the flow of data from the source, which is streamed into an input Kinesis stream. The data is then processed by <a href="https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create" target="_blank">Flink Studio notebook</a> in real-time, before being ingested into an output Kinesis stream, it is picked up by Data Firehose and ultimately lands in Snowflake. <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html" target="_blank">AWS Glue Data Catalog</a> serves as a metadata store for Flink Studio notebook tables.</p>
+<p class="image-container"><img src="img/f20ea9bc2856db4c.png"></p>
+<p>We will be focusing on using Flink Studio notebook for this demo. Optionally, if you are writing Flink applications instead of using the Flink Studio notebook, you can use the <a href="https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create" target="_blank">Firehose Producer</a> to bypass the output Kinesis stream.</p>
+<h3 is-upgraded>1. Create a table in Snowflake to receive Flink-filtered data</h3>
+<p>Log into the Snowflake account as <code>streaming_user</code>. Run the following SQL commands to generate a table for capturing the filtered streams.</p>
+<pre><code language="language-sql" class="language-sql">use ADF_STREAMING_DB;
+use schema ADF_STREAMING_SCHEMA;
+create or replace TABLE ADF_FLINK_TBL (
+	ORIG VARCHAR(5),
+	UTC VARCHAR(20),
+	ALT INTEGER,
+	ICAO VARCHAR(20),
+	LON FLOAT,
+	ID VARCHAR(10),
+	DEST VARCHAR(5),
+	LAT FLOAT
+);
+</code></pre>
+<h3 is-upgraded>2. Deploy Flink Studio notebook and Kinesis Data Streams</h3>
+<p>To make the process of deploying necessary resources easier, click <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/flink-kds-cfn.json" target="_blank">here</a> to deploy necessary resources including a <a href="https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html" target="_blank">Flink Studio notebook</a>, a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One Kinesis stream serves as the input stream to Flink and the other one serves as the output stream.</p>
+<p>Please enter appropriate values into the empty fields where you entered(i.e. bucket, private key, keyphrase, etc.) in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.</p>
+<p>The Cloudformant template will be deployed in about 5 minutes, navigate to the</p>
+<h3 is-upgraded>3. Configure Flink Studio notebook</h3>
+<p>Navigate to the <a href="https://console.aws.amazon.com/flink/home#/list/notebooks" target="_blank">Studio notebook console</a>, you should see that your notebook status is ready. Check the notebook and click <code>Run</code> button at the top. The notebook status should change to <code>Running</code> in about 5 minutes.</p>
+<p class="image-container"><img src="img/6a7bb477c64db401.png"></p>
+<p>Navigate to the CloudFormation stack that we successfully deployed (e.g.<code>amf_snowflake</code>) and click on the <code>Outputs</code> tab to record the values for <code>KinesisDataInputStream</code> and <code>KinesisDataOutputStream</code>, we will need them later.</p>
+<p class="image-container"><img src="img/835fac3d77f95f6.png"></p>
+<p>You will also notice notice that a Glue database is also created. Navigate to the <a href="https://us-west-2.console.aws.amazon.com/glue/home#/v2/data-catalog/databases" target="_blank">Glue console</a> to verify.</p>
+<h3 is-upgraded>4. Configure Zeppelin notebook</h3>
+<p>Click <code>Open Apache Zeppelin</code> when the notebook is running. <img src="img/43e6b2bde1c1d03d.png"></p>
+<p>Download a Zeppelin note from <a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/Flink-nb.zpln" target="_blank">here</a>, and save it to your desktop.</p>
+<p>In Zeppelin, click <code>import note</code>.</p>
+<p class="image-container"><img src="img/2ad92ed8070f3485.png"></p>
+<p>Give the note a name, i.e. <code>myNote</code>. Select <code>Select JSON File/IPYNB File</code> when prompted. <img src="img/8cc49c2f73dd5a0b.png"></p>
+<p>Pick the <code>Flink-nb.zpln</code> file you just dowonloaded. You should now see the note name in the browser window, click the note to open.</p>
+<h3 is-upgraded>5. Run Flink notebook</h3>
+<p>In the left cell, type in the value for <code>KinesisDataInputStream</code> you recorded from step 3 above, change <code>aws.region</code> to your local region. Highlight the content of the left cell, then click the triangle play button at the top. You should see the status changing from <code>Pending</code> to <code>Running</code> to <code>Finished</code>. This creates a Flink input table which maps to the input Kinesis data stream.</p>
+<p>Do the same thing for the right cell. A Flink output table is also created.</p>
+<p class="image-container"><img src="img/d6f0bb8ed74e3f8f.png"></p>
+<p>Now, scroll down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of each cell.</p>
+<p>First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results.</p>
+<p class="image-container"><img src="img/dff3be6c5b86c82c.png"></p>
+<p>Leave your Flink notebook window open.</p>
+<h3 is-upgraded>6. Start ingesting live data to the input Kinesis data stream</h3>
+<p>We are ready to ingest data now. Go to your EC2 console via <a href="https://console.aws.amazon.com/systems-manager/session-manager" target="_blank">Session Manager</a> as instructed in step 3 of Chapter 2.</p>
+<p>Kick off the ingestion by executing below shell command, replace <code><your input Kinesis stream></code> with the name of your input Kinesis stream.</p>
+<pre><code language="language-shell" class="language-shell">curl -s https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/kds-producer.py | python3 - &lt;your input Kinesis stream name&gt;
+</code></pre>
+<p class="image-container"><img src="img/ec284c7ac73f9468.gif"></p>
+<p>In a short moment, you will see some filtered data appearing in the Flink notebook monitoring cell and they are all UA airplanes flying below 7000 feet.</p>
+<p class="image-container"><img src="img/5a5dc7813f965fe4.gif"></p>
+<h3 is-upgraded>7. Verify the results in Snowflake</h3>
+<p>Now go back to your Snowflake account as user ‘streaming_user&#39;, and run the following SQL commands:</p>
+<pre><code language="language-sql" class="language-sql">USE ADF_STREAMING_DB;
+USE SCHEMA ADF_STREAMING_SCHEMA;
+SELECT * from ADF_FLINK_TBL;
+</code></pre>
+<p>You should see the filtered flight tracks are captured in table <code>ADF_FLINK_TBL</code>.</p>
+<p class="image-container"><img src="img/535f316f6c9b73ef.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="5">
+        <p>When you are done with the demo, to tear down the AWS resources, simply go to the <a href="https://console.aws.amazon.com/cloudformation/home?stacks" target="_blank">Cloudformation</a> console. Select the Cloudformation template you used to deploy the jumphost at the start of the demo, also the template for Amazon Managed Flink if you optionally deployed it, then click the <code>Delete</code> tab.</p>
+<p>See example screen capture below.</p>
+<p class="image-container"><img src="img/2291f2d8c284fa7a.png"></p>
+<p>Navigate to the <a href="https://console.aws.amazon.com/ec2/home#Instances:instanceState=running" target="_blank">EC2 console</a> and delete the jumphost.</p>
+<p>You will also need to delete the Firehose delivery stream. Navigate to the <a href="https://console.aws.amazon.com/firehose/home?streams" target="_blank">ADF Console</a>, select the delivery stream you created, and select <code>Delete</code> button at the top.</p>
+<p class="image-container"><img src="img/f2985039e4852fe8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="5">
+        <p>In this lab, we built a demo to show how to ingest real-time data using Amazon Data Firehose with low latency. We demonstrated this using an ADF connector on an EC2 instance. Alternatively, if you have infrastructure supported by either <a href="https://aws.amazon.com/eks/" target="_blank">Amazon EKS</a> or <a href="https://aws.amazon.com/ecs/" target="_blank">Amazon ECS</a>, you can use them to host your containerized ADF producers as well.</p>
+<p>For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this <a href="https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/" target="_blank">quickstart</a> to continue.</p>
+<p>Related Resources</p>
+<ul>
+<li><a href="https://aws.amazon.com/blogs/big-data/uplevel-your-data-architecture-with-real-time-streaming-using-amazon-data-firehose-and-snowflake/" target="_blank">Uplevel your data architecture with real- time streaming using Amazon Data Firehose and Snowflake</a></li>
+<li><a href="https://medium.com/snowflake/unleashing-the-full-potential-of-real-time-streaming-with-amazon-kinesis-data-firehose-and-snowpipe-0283fb599364#Snowflake" target="_blank">Unleashing the Full Potential of Real-Time Streaming with Amazon Kinesis Data Firehose and Snowpipe Streaming</a></li>
+<li><a href="https://aws.amazon.com/firehose/" target="_blank">Amazon Data Firehose (ADF)</a></li>
+<li><a href="https://aws.amazon.com/managed-service-apache-flink/" target="_blank">Amazon Managed Service for Apache Flink</a></li>
+<li><a href="https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c" target="_blank">Snowpipe Streaming Demystified</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/" target="_blank">Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding</a></li>
+<li><a href="https://quickstarts.snowflake.com/" target="_blank">Getting started with Snowflake</a></li>
+<li><a href="https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347" target="_blank">Snowflake on AWS Marketplace</a></li>
+<li><a href="https://www.snowflake.com/Workloads/data-sharing/" target="_blank">Snowflake for Data Sharing</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/marketplace/" target="_blank">Snowflake Marketplace</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

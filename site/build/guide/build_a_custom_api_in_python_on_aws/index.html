@@ -1,0 +1,238 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Custom API in Python on AWS</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_a_custom_api_in_python_on_aws"
+                  title="Build a Custom API in Python on AWS"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Many builders want to share some of the data stored in Snowflake over an http API. Modern mobile and web applications often want to retrieve that data through http APIs. This tutorial will go through how to build, deploy, and host a custom API Powered by Snowflake.</p>
+<p>This API consists of reporting endpoints from data stored in Snowflake. <a href="https://www.serverless.com/" target="_blank">Serverless Framework</a> was used to build and deploy the application for simplicity of operation and ease of scaling.</p>
+<p>After completing this guide, you will have built, tested, and deployed a custom API built with <a href="https://flask.palletsprojects.com/en/2.0.x/" target="_blank">Python Flask</a>, <a href="https://www.serverless.com/" target="_blank">Serverless Framework</a>, and <a href="https://aws.amazon.com/" target="_blank">AWS</a> Lambda/API Gateway.</p>
+<p>The dataset is the same as used in the <a href="https://quickstarts.snowflake.com/guide/data_app/index.html" target="_blank">Building a Data Application</a> guide.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Privileges necessary to create an API Gateway and Lambda in Amazon Web Services</li>
+<li>Ability to install and run software on your computer</li>
+<li>Basic experience using git and editing yml</li>
+<li>Intermediate knowledge of Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to configure and build a custom API Powered by Snowflake</li>
+<li>How to deploy a custom API on AWS serverless technologies</li>
+<li>How to test and monitor the API</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://aws.amazon.com" target="_blank">AWS</a> Account</li>
+<li><a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li><a href="https://serverless.com" target="_blank">Serverless.com</a> Account</li>
+<li><a href="https://docs.docker.com/get-docker/" target="_blank">Docker</a> Installed</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+<li>DATA_APPS_DEMO database and key pair for service user DATA_APPS_DEMO from first 4 steps of <a href="https://quickstarts.snowflake.com/guide/data_app/index.html" target="_blank">Building a Data Application</a></li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+<li><a href="https://www.serverless.com/framework/docs/providers/aws/guide/installation" target="_blank">Serverless Framework</a> Installed</li>
+<li><a href="https://www.python.org/" target="_blank">Python 3</a> Installed</li>
+<li><a href="https://virtualenv.pypa.io/en/latest/installation.html" target="_blank">Virtualenv</a> Installed</li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">AWS CLI</a> Installed and <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html" target="_blank">Configured</a></li>
+<li><a href="https://stedolan.github.io/jq/" target="_blank">jq</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>API Powered by Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Downloading the Code" duration="3">
+        <p>The code used in this guide is hosted in github. You can download the code as a ZIP from <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-python-api" target="_blank">GitHub</a> or use the following git command to clone the repository.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-snowflake-python-api.git
+</code></pre>
+<p>After downloading you will have a folder sfguide-snowflake-python containing all the code needed for the API. Open the folder in VSCode to review the project.</p>
+<p>The connector.py contains all the entrypoints for the API endpoints using the Snowflake Python connector. The get_trips_monthly function is one of the API endpoints we needed for this API which pulls the trips completed aggregated by month. Review the code and the SQL needed to retrieve the data from Snowflake and serialize it to JSON for the response. This endpoint also takes 2 optional query string parameters start_range and end_range.</p>
+<pre><code language="language-python" class="language-python">@connector.route(&#34;/trips/monthly&#34;)
+@api_response
+def get_trips_monthly():
+    start_range = request.args.get(&#39;start_range&#39;)
+    end_range = request.args.get(&#39;end_range&#39;)
+    if start_range and end_range and params_valid(start_range, end_range):
+        sql = f&#34;select COUNT(*) as trip_count, MONTHNAME(starttime) as month from demo.trips where starttime between &#39;{start_range}&#39; and &#39;{end_range}&#39; group by MONTH(starttime), MONTHNAME(starttime) order by MONTH(starttime);&#34;
+        return exec_and_fetch(sql)
+    sql = &#34;select COUNT(*) as trip_count, MONTHNAME(starttime) as month from demo.trips group by MONTH(starttime), MONTHNAME(starttime) order by MONTH(starttime);&#34;
+    return exec_and_fetch(sql)
+</code></pre>
+<p>You can also review the other endpoints in <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-python-api/blob/main/connector.py" target="_blank">connector.py</a> to see how simple it is to host multiple endpoints.</p>
+<p>If you would also like to see how to build endpoints using the Snowflake SQL API, review <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-python-api/blob/main/sqlapi.py" target="_blank">sqlapi.py</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring the Application" duration="3">
+        <p>The config.py file is setup to configure the application from environment variables. These environment variables will be set for the lambda in AWS by the Serverless Framework automatically.</p>
+<p>Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to name your service by replacing &lt;NAME_OF_YOUR_SERVICE&gt; and update your Snowflake account in both places that have  (SNOWFLAKE_ACCOUNT and SNOWFLAKE_PRIVATE_KEY). This Snowflake account must be the same one used for the <a href="https://quickstarts.snowflake.com/guide/data_app/index.html" target="_blank">Building a Data Application</a> guide as we will be using the same database and user. If you haven&#39;t completed the first 4 steps of that guide, do so before continuing.</p>
+<p>Modify the region in the serverless.yml (line 17) to the same region as your credentials.</p>
+<pre><code language="language-bash" class="language-bash">aws configure get region
+</code></pre>
+<p>This project expects the private key to be stored in SSM. To upload the private key, run the following replacing  with the same Snowflake account used in serverless.yml:</p>
+<pre><code language="language-bash" class="language-bash">aws ssm put-parameter --name &lt;ACCOUNT&gt;.DATA_APPS_DEMO --type &#34;String&#34; --value &#34;`cat ~/.ssh/snowflake_demo_key`&#34;
+</code></pre>
+<p>Verify the private key was uploaded correctly:</p>
+<pre><code language="language-bash" class="language-bash">aws ssm get-parameter --name &lt;ACCOUNT&gt;.DATA_APPS_DEMO
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring, Packaging, and Testing" duration="5">
+        <p>Serverless login will open a browser to authenticate the serverless tool. When running serverless, it will ask you what org to add it to. You can choose the default or any org you have setup in serverless.com. You can also keep the original snowflake-python-api name for the application or give it a new name. When asked to deploy the application, choose No.</p>
+<pre><code language="language-bash" class="language-bash">npm install
+serverless login
+serverless
+</code></pre>
+<p>After this is complete, Serverless Framework is configured for use.</p>
+<p>Before we deploy the application, we should test locally. For local development, we will isolate the python dependencies in user space using virtualenv.</p>
+<p>Create a virtualenv locally and install python packages.</p>
+<pre><code language="language-bash" class="language-bash">virtualenv venv --python=python3
+source ./venv/bin/activate
+pip install -r requirements.txt
+</code></pre>
+<p>You can now start the local serverless server which hosts the API. Replace YOUR_ACCOUNT with your Snowflake account in the commands.</p>
+<pre><code language="language-bash" class="language-bash">export SNOWFLAKE_PRIVATE_KEY=`cat ~/.ssh/snowflake_demo_key`
+export SNOWFLAKE_ACCOUNT=YOUR_ACCOUNT
+export SNOWFLAKE_USER=DATA_APPS_DEMO
+export SNOWFLAKE_DATABASE=DATA_APPS_DEMO
+export SNOWFLAKE_SCHEMA=DEMO
+export SNOWFLAKE_WAREHOUSE=DATA_APPS_DEMO
+
+flask --app app run -h localhost -p 5001
+</code></pre>
+<p>To verify the API is working properly you can hit the 3 API endpoints:</p>
+<pre><code language="language-bash" class="language-bash">curl &#34;http://localhost:5001/trips/monthly&#34; | jq
+curl &#34;http://localhost:5001/trips/day_of_week&#34; | jq
+curl &#34;http://localhost:5001/trips/temperature&#34; | jq
+</code></pre>
+<p>To test the query string parameters you can use the following:</p>
+<pre><code language="language-bash" class="language-bash">curl &#34;http://localhost:5001/trips/monthly?start_range=2013-06-01&amp;end_range=2013-07-31&#34; | jq
+</code></pre>
+<p>These curl commands will return data in JSON format which was pulled from Snowflake using the SQL queries in app.py.</p>
+<p>You can also open these uris in a browser if that&#39;s preferred.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying the API" duration="3">
+        <p>Now that the application and configuration is verfied to be working, you can deploy it to AWS by running the following command:</p>
+<pre><code language="language-bash" class="language-bash">serverless deploy
+</code></pre>
+<p>After the completion of deployment, serverless info will give you the URI where your API is now hosted.</p>
+<pre><code language="language-bash" class="language-bash">serverless info
+</code></pre>
+<p>You can now do the same tests you did locally on the now publicly available API. Replace the server uri with your API location.</p>
+<pre><code language="language-bash" class="language-bash">curl &#34;http://&lt;DEPLOYMENT&gt;.execute-api.&lt;REGION&gt;/dev/trips/monthly&#34; | jq
+curl &#34;http://&lt;DEPLOYMENT&gt;.execute-api.&lt;REGION&gt;/dev/trips/day_of_week&#34; | jq
+curl &#34;http://&lt;DEPLOYMENT&gt;.execute-api.&lt;REGION&gt;/dev/trips/temperature&#34; | jq
+</code></pre>
+<p>To test the query string parameters you can use the following:</p>
+<pre><code language="language-bash" class="language-bash">curl &#34;http://&lt;DEPLOYMENT&gt;.execute-api.&lt;REGION&gt;/dev/trips/monthly?start_range=2013-06-01&amp;end_range=2013-07-31&#34; | jq
+</code></pre>
+<p>Your api is now available for use by your mobile and web applications.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring your API with Serverless Framework" duration="3">
+        <p>You can monitor your application directly by logging into serverless.</p>
+<pre><code language="language-bash" class="language-bash">sls login
+</code></pre>
+<p>The serverless console allows you to easily view requests to the API as well as errors. The overview and api endpoints tabs allow you to view requests, errors, and latencies for your API. The explorer is useful to look at logs of each request.</p>
+<p>If you are more familiar with the AWS Console this same information is available in Cloudwatch Metrics and Logs.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>If you are done with this exercise you can remove all aws resources by having Serverless Framework cleanup.</p>
+<pre><code language="language-bash" class="language-bash">serverless remove
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>You&#39;ve successfully built, tested, and deployed a custom API on AWS Powered by Snowflake. The serverless stack from AWS is a great way to quickly and easily build a powerful API with little operational overhead. It&#39;s also very cost effective for most uses.</p>
+<p>Right now this is a public API and is accessible to anyone on the internet. If you have a need to authenticate your users you should check out <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html" target="_blank">Amazon Cognito</a>. You can also use <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html" target="_blank">custom authorizers</a> in lambda or <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/permissions.html" target="_blank">AWS IAM</a> to restrict access.</p>
+<p>To get more comfortable with this solution, implement new endpoints pointing to the sample dataset provided or other datasets.</p>
+<p>We will be posting more guides in the future on building custom APIs, Powered by Snowflake, in other languages and other cloud providers. Please check back for more guides.</p>
+<p>Code for this project is available at <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-python-api" target="_blank">https://github.com/Snowflake-Labs/sfguide-snowflake-python-api</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to build, configure and package a custom API Powered by Snowflake</li>
+<li>How to test the API locally</li>
+<li>How to deploy a custom API on AWS serverless technologies</li>
+<li>How to test and monitor the API in AWS</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting-started-with-snowflake-cli",
+  "duration": 75,
+  "title": "Getting Started with Snowflake CLI",
+  "summary": "Getting Started with Snowflake CLI",
+  "source": "getting_started_with_snowflake_cli/getting_started_with_snowflake_cli.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "snowsql",
+    "sql",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-snowflake-cli"
+}

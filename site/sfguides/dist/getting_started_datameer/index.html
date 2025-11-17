@@ -1,0 +1,289 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Datameer</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_datameer"
+                  title="Getting Started with Datameer"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Datameer provides users with data discovery &amp; transformation capabilities to visually explore and transform their data to identify the key insights for improving data driven decisions. Users can transform their data using a variety of no-code, low-code and SQL transformation recipes and then quickly publish this data back into Snowflake to support the development of BI dashboards, reports and data science driven insights in your organization. All this can be delivered without the need for IT assistance or formal training and without leaving a single user interface.</p>
+<p class="image-container"><img alt="Architecture" src="img/e2a41c4701bd5a30.png"></p>
+<p>In this training lab you will learn how to model and transform your data, create highly valuable datasets, and publish the data into Snowflake. No coding skills are necessary using our no-code tools or writing code using our SQL toolset. Or even use both! We will provide you with a test Datameer &amp; Snowflake instance for this hands-on lab.</p>
+<h2 is-upgraded>Lab Overview</h2>
+<p>This entry-level lab introduces you to the user interface and basic capabilities of Datameer. When done with the lab you should be ready to create your own data transformations against your own Snowflake data.</p>
+<h2 is-upgraded>Target Audience</h2>
+<p>Anyone who will be exploring &amp; transforming data in Snowflake. Includes technical roles like members of an Analytics &amp; BI team, data engineers to non-technical business users in the various lines of business. No SQL or technical skills are needed to do this lab.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll learn</h2>
+<p>In this workshop lab, you will experience the following capabilities in Datameer:</p>
+<ul>
+<li>Search and discover your Snowflake inventory</li>
+<li>Prepare and curate your data sets</li>
+<li>Explore and analyze your data sets</li>
+<li>Share and deploy your data sets</li>
+<li>Document and catalog your new datasets</li>
+</ul>
+<h2 is-upgraded>Business Use Case</h2>
+<p>For the purposes of this workshop, you play the role of a loans analyst. Throughout this lab we will be working with some current and historical loans data from our fictitious loans company. We will begin with looking at our current loans data only, but throughout the course of the lab will incorporate some geographical information to transform &amp; understand our loan portfolio by state/region being able to spot business opportunities in these regions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Lab Environment" duration="2">
+        <p>Click the link below to get to the trial setup:</p>
+<p><a href="https://www.datameer.com/trial" target="_blank">Datameer Trial</a></p>
+<p class="image-container"><img alt="Login" src="img/9eaa31b1982d7d35.png"></p>
+<p>The first time you login to Datameer you can choose to be taken directly to a Project, supported by an onboarding checklist which guides you though essential Datameer features. We will begin exploring and transforming data in the next module.</p>
+<p class="image-container"><img alt="Login" src="img/f2063479bd8a7e9f.png"></p>
+<p>But before, let&#39;s have a quick look at the Datameer Workbench UI:</p>
+<p class="image-container"><img alt="Login" src="img/d612509e1e834e2e.png"></p>
+<ul>
+<li><strong>Data Browser</strong> - provides all available Snowflake schemas and datasets, and the ‘File Upload&#39; feature as well as browsing your data</li>
+<li><strong>Flow Area</strong> - visually represents your whole transformation pipeline, including data sources, transformations as well as deployed data sets</li>
+<li><strong>Data Grid</strong> - provides a data preview, allows you to explore columns of a dataset, calculates column metrics, and provides SQL query for further usage; individual explorations can be executed to visualize your data</li>
+<li><strong>Inspector</strong> - presents all information such as ‘Source&#39;, ‘Description&#39; or ‘Owner&#39; about the currently selected dataset/ Project or schema that is selected</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Exploration" duration="8">
+        <p>Let&#39;s add our first data source by clicking the <strong>+</strong> button next to the <code>LOANS</code> table from the Data Browser. This will add the table to our Workbench for discovery and transformation.</p>
+<p class="image-container"><img alt="Login" src="img/f2063479bd8a7e9f.png"></p>
+<p>We can explore this dataset in three different ways:</p>
+<ul>
+<li><strong>Preview</strong> - Under the ´Preview´ tab you can see the actual data values and total number of records.  Datameer also utilizes Snowflake&#39;s native sampling when transforming large tables. This will be indicated in the ´Preview´ tab with the ‘Sampled&#39; label.</li>
+<li><strong>Columns</strong> - This tab contains the column names, data types, and descriptions.</li>
+<li><strong>Profile</strong> - You can view column metrics within this tab, by clicking on the ´Calculate´ button for the desired column. Click on the  <strong>Calculate</strong> button for the <code>GRADE</code> column, and you can see the number of values, empty values, uniques, nulls, and the distribution of values.</li>
+</ul>
+<p class="image-container"><img alt="Login" src="img/19ea7f4246dfa92b.png"></p>
+<p>Let&#39;s now add another dataset to this Project - this time by adding the <code>ZIPCODE</code> dataset by selecting the <strong>+</strong> button next to the table. You should see both added datasets in your Flow Area.</p>
+<p class="image-container"><img alt="Login" src="img/c6136e2147bc4312.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="No-Code Transformations" duration="10">
+        <p>Click on the <strong>LOANS</strong> node and select the <strong>+</strong> button to bring up the list of no-code transformations.</p>
+<p class="image-container"><img alt="Login" src="img/903ce073eea8bf0b.png"></p>
+<p>Let&#39;s apply a filter by doing the following:</p>
+<ol type="1">
+<li>Click <strong>Filter</strong> in the popup context menu.</li>
+<li>Select <strong>LOAN_STATUS</strong> as the column to filter by.</li>
+<li>Leave <strong>Equals</strong> as the operator.</li>
+<li>Enter <strong>Current</strong> (case sensitive) as the value to search by.</li>
+<li>Click <strong>Apply</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Login" src="img/6ab48ccdbfb21b30.png"></p>
+<p>Here we can see a Filter condition in the UI with a Recipe step on the right hand side. You may see another purple hint appear on the screen informing you that you have created your first Receipe.</p>
+<p class="image-container"><img alt="Filter loan status" src="img/76e998113bbdece9.png"></p>
+<p>Let&#39;s apply another transformation. The ´Extract´ operation allows us to extract a certain number of characters from one field to a new column name. In our example we want to extract the first 3 digits from our <code>ZIP_CODE</code> column and populate this in a new column name called <code>ZIP</code>.  (Please note we use an INDEX value starting at 0 and extract 3 characters from this position to get the first 3 characters from this column.)</p>
+<p>Here are the steps for an Extract:</p>
+<ol type="1">
+<li>Click the <strong>+</strong> button next to the ´Filter´ node and select <strong>Extract</strong>.</li>
+<li>Select <strong>ZIP_CODE</strong> for the source column.</li>
+<li>Enter <strong>ZIP</strong> for the new column name.</li>
+<li>Enter <strong>0</strong> for a start index and <strong>3</strong> for length.</li>
+<li>Click <strong>Apply</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Login" src="img/cc796db2b15011b1.png"></p>
+<p>You should now see the following flow:</p>
+<p class="image-container"><img alt="Login" src="img/9428275778df6ba1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Low-Code Transformations" duration="17">
+        <p>The Formula Builder can be used to enter low-code formulas on a columnar basis. All functions can be found on the right hand side, grouped together by different categories (STRING, NUMERIC, DATE &amp; TIME, CONVERSION, CONTEXT &amp; CONDITIONAL) - selecting a category allows you to browse the Snowflake functions and obtain help on how to use these against your data. Inside the Formula Builder we can select a field to transform using a variety of functions or we can select the <strong>+</strong> button to add a new column.</p>
+<p class="image-container"><img alt="Formula Builder" src="img/eff08ef39d16e5c0.png"></p>
+<p>Let&#39;s apply a formula to concatenate the first 4 characters from the <code>LOAD_ID</code> column with the <code>MEMBER_ID</code> column and put a <code>-</code> separator between the two values:</p>
+<ol type="1">
+<li>Click on the <strong>+</strong> button next to the Extract node, and select the <strong>Formula Builder</strong> option.</li>
+<li>Select the <strong>LOAN_ID</strong> column.</li>
+<li>Enter the following formula:<pre><code language="language-sql" class="language-sql">CONCAT(LEFT(Source.LOAN_ID,4),&#39;-&#39;,MEMBER_ID) 
+</code></pre>
+</li>
+<li>Click <strong>Apply Formula</strong> to validate the formula, and then <strong>Apply</strong>.</li>
+</ol>
+<p>You will see the following screen after entering the formula described in Step 3 above.</p>
+<p class="image-container"><img alt="Formula Editor" src="img/9309c317851f7c50.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Joining Data Together" duration="0">
+        <p><code>LOANS</code> data with our <code>ZIPCODE</code> (POSTCODE) dataset. Let&#39;s apply a join:</p>
+<ol type="1">
+<li>Click the <strong>+</strong> button next to the ´Formula node and select <strong>Join</strong>.</li>
+<li>Select the <strong>ZipCode</strong> dataset in the ´Source´ dropdown.</li>
+<li>Leave Join Mode as it is as ´Outer Left´.</li>
+<li>Click <strong>Get Suggestions</strong>.</li>
+<li>Select the <strong>Zip-Zip</strong> suggestion.</li>
+<li>Click <strong>Apply</strong> Button.</li>
+</ol>
+<p>Join configuration:</p>
+<p class="image-container"><img alt="Login" src="img/9453d183bec2f4ff.png"></p>
+<p>The resultant flow:</p>
+<p class="image-container"><img alt="Login" src="img/a795f3bdaf3b6fbf.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploring the Data" duration="16">
+        <p>Datameer provides functionality to perform exploration of datasets through dimensions and measures without having to export to a BI tool. For example, to calculate the average interest rate by loan grade and purpose, perform the following steps:</p>
+<ol type="1">
+<li>Click the <strong>Join</strong> node.</li>
+<li>Select the <strong>Explore</strong> tab in the ´Data Grid´ and click on <strong>Explore</strong>.</li>
+<li>Click <strong>Aggregate</strong>.</li>
+<li>Choose <strong>GRADE</strong> for the dimension column.</li>
+<li>Add a second dimension <strong>PURPOSE</strong>.</li>
+<li>For Measure, choose <strong>INT_RATE</strong>.</li>
+<li>For Function, select <strong>AVERAGE</strong>.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Configuration of aggregated Exploration" src="img/db07925d07c00e9d.png"></p>
+<p>You will then see the aggregated results, which are always calculated based on the full data set. Additionally users can filter and sort the explorations. The explorations are tied to the nodes, and can be retrieved by clicking on the saved <strong>Explore</strong> tab. Currently the explorations are saved in the browser&#39;s cache, with future plans to persist them as nodes, as well as to provide visual exploration. You can also visualize the results by clicking on the bar chart icon.</p>
+<p class="image-container"><img alt="Login" src="img/71b83bc19d38a45c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Aggregating Data" duration="10">
+        <p>Users can create persistent aggregation and pivot nodes. For example, we can create an aggregation of the interest rate by the state:</p>
+<ol type="1">
+<li>Click the <strong>+</strong> button next to the ´Join´ node and select <strong>Aggregate</strong>.</li>
+<li>Select <strong>ADDR_STATE</strong> for the ´Group By´ field.</li>
+<li>Select <strong>INT_RATE</strong> for the ´Measure´.</li>
+<li>Select <strong>Average</strong> for the ´Aggregation Function´.</li>
+<li>Click the <strong>Apply</strong> button.</li>
+</ol>
+<p>Aggregate configuration:</p>
+<p class="image-container"><img alt="Login" src="img/6b7121d543451d90.png"></p>
+<p>The updated pipeline flow:</p>
+<p class="image-container"><img alt="Login" src="img/f9a862e171dbddf1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying Assets" duration="8">
+        <p>We now want to deploy our newly transformed joined and aggregated data back into Snowflake:</p>
+<ol type="1">
+<li>Select the <strong>AGGREGATION</strong> node and click <strong>DEPLOY TO SNOWFLAKE</strong>.</li>
+<li>Select the <strong>Table</strong> option.</li>
+<li>Name the table <strong>LOAN_AGGREGATION</strong>.</li>
+<li>Select the <strong>PUBLIC</strong> schema under <strong>PRIVATE_DB_&lt;DB_NAME&gt;</strong>.</li>
+<li>Select <strong>Deploy Data</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Login" src="img/775b7207d831d84.png"></p>
+<p>Your transformations are now deployed to Snowflake as a table!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Uploading Files" duration="5">
+        <p>Users can upload files through Datameer which are then materialized as Snowflake tables. You can download a sample CSV file <a href="https://datameer.box.com/s/0wfvv4gue31ng2311c81i6fq8lzivfzk" target="_blank">here</a>.</p>
+<p>To upload a file, perform the following:</p>
+<ol type="1">
+<li>Click <strong>Upload CSV</strong> in the ´Data Browser´.</li>
+<li>Drag <strong>loans.csv</strong> into the upload window (or browse to the file).</li>
+<li>Name the new table <strong>LOAN_GRADES</strong>.</li>
+<li>Select the <strong>PUBLIC</strong> schema under <strong>PRIVATE_DB_&lt;DB_NAME&gt;</strong>.</li>
+<li>Click <strong>Upload</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Login" src="img/28c52f1ee7fdda37.png"></p>
+<p>The file is now materialized as a table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SQL Transformations" duration="10">
+        <p>Users can also add SQL nodes as part of the overall transformation process. SQL nodes can be combined with no- or low-code nodes. We can try the following to insert a SQL node into our pipeline:</p>
+<ol type="1">
+<li>Click the <strong>LOANS</strong> node.</li>
+<li>Click <strong>New SQL Editor</strong>.</li>
+<li>Enter the following SQL:<pre><code language="language-SQL" class="language-SQL">        SELECT 
+            LOAN_ID, MEMBER_ID, LOAN_AMNT, LEFT(TERM, 2)   
+        FROM LOANS 
+        WHERE  
+            LOAN_AMNT &lt; 10000 AND LOAN_STATUS = &#39;Current&#39;  
+</code></pre>
+</li>
+<li>Click <strong>Apply</strong>.</li>
+</ol>
+<p>You can now see the SQL node in your Flow Area:</p>
+<p class="image-container"><img alt="Login" src="img/c8d216561a72fd9a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Next Steps" duration="2">
+        <h2 is-upgraded>Summary</h2>
+<p>This training was designed to be an introduction in how to use Datameer for data transformation geared towards a business user or analyst. Through this lab we have walked through how the Datameer Project Workbench enables us to quickly explore &amp; transform Snowflake data in a self-service manner using a no-code, low-code and SQL based approach. Because Datameer is SaaS and pushes all queries to Snowflake for execution, Datameer can combine its user interface and the unlimited power of Snowflake to give users a quick &amp; easy way to transform your data, but with no limit on the amount of data you wish to analyze. Unlock the value of all your data and users!</p>
+<h2 is-upgraded>Still have Questions?</h2>
+<p>We&#39;re happy to help with whatever questions you have! Reach out to us using our support address at support@datameer.com</p>
+<h2 is-upgraded>Other Resources</h2>
+<p>Documentation: 		         <a href="https://documentation.datameer.com/datameer/" target="_blank">https://documentation.datameer.com/datameer/</a></p>
+<p>Knowledge Base:		         <a href="https://help.datameer.com/hc/en-us" target="_blank">https://help.datameer.com/hc/en-us</a></p>
+<p>Datameer Blog: 		         <a href="https://www.datameer.com/blog/" target="_blank">https://www.datameer.com/blog/</a></p>
+<p>Resources/Case Studies:         <a href="https://www.datameer.com/resources/" target="_blank">https://www.datameer.com/resources/</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

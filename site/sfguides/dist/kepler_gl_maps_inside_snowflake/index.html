@@ -1,0 +1,307 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Creating Interactive Maps with Kepler.gl in Snowflake Using Dekart</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="kepler_gl_maps_inside_snowflake"
+                  title="Creating Interactive Maps with Kepler.gl in Snowflake Using Dekart"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This guide will help you create interactive maps directly within Snowflake using <a href="https://kepler.gl" target="_blank">Kepler.gl</a>, powered by <a href="https://dekart.xyz/docs/snowflake-snowpark/about/" target="_blank">Dekart Snowpark Application</a>. With this approach, you can analyze and visualize geospatial data from public datasets, all within Snowflake, avoiding external data transfers and approvals.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<p>A map that visualizes UK highways with color-coded density of nearby EV charging stations.</p>
+<p class="image-container"><img alt="UK highways with color-coded density of nearby EV charging stations" src="img/270eeb9523ce536d.png"></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create interactive maps within Snowflake using Kepler.gl and Dekart.</li>
+<li>How to access and use Overture Maps data to build your map.</li>
+<li>How to construct SQL queries for extracting, filtering, and visualizing geospatial data.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<p><a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a> with <code>ACCOUNTADMIN</code> role for managing permissions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install Dekart for Snowflake" duration="12">
+        <p><a href="https://dekart.xyz" target="_blank">Dekart</a> is an open-source application that integrates <a href="https://kepler.gl" target="_blank">Kepler.gl</a> with Snowflake. With <a href="https://dekart.xyz/docs/snowflake-snowpark/about/" target="_blank">Dekart Snowpark Application</a>, you can create maps directly in Snowflake, without any data transfers outside of your Snowflake account.</p>
+<ol type="1">
+<li><strong>Navigate to the Marketplace</strong> in Snowsight.</li>
+<li><strong>Search for &#34;Dekart&#34;</strong></li>
+</ol>
+<p class="image-container"><img alt="Install Dekart for Snowflake" src="img/4ab52030abb9282e.png"></p>
+<ol type="1" start="3">
+<li>Start a <strong>30-day free trial</strong>.</li>
+</ol>
+<p><strong>Note</strong>: Dekart is open-source, meaning you can opt for a self-hosted setup if preferred. Once configured, Dekart runs as a Snowpark Container Application within your Snowflake account, ensuring security and direct data access.</p>
+<p class="image-container"><img alt="Dekart Free Trial" src="img/f60c79e74c05b153.png"></p>
+<ol type="1" start="4">
+<li>Follow the installation instructions as displayed in the Snowflake interface.</li>
+</ol>
+<p class="image-container"><img alt="Dekart Installation Instructions" src="img/39a7bb914313675e.png"></p>
+<ol type="1" start="5">
+<li>Grant Account Privileges to Dekart.</li>
+</ol>
+<p><strong>Note</strong>: Dekart creates single node <code>CPU_X64_XS</code> copmute pool and <code>XSMALL</code> warehouse.</p>
+<p class="image-container"><img alt="Grant Permissions to Dekart" src="img/bfc9f6fcf8a2af48.png"></p>
+<ol type="1" start="6">
+<li>Allow connections to the Mapbox API.</li>
+</ol>
+<p>Dekart uses Mapbox for rendering maps. No user data is sent to Mapbox.</p>
+<p class="image-container"><img alt="Allow Mapbox API Connections" src="img/f97d23e93d938658.png"></p>
+<ol type="1" start="7">
+<li>Activate Dekart.</li>
+</ol>
+<p>This step may take around 10 minutes on Snowflake&#39;s end.</p>
+<p class="image-container"><img alt="Activate Dekart" src="img/c26bdbd0f8bd6661.png"></p>
+<h2 is-upgraded>Step-by-Step Video Guide</h2>
+<p>Watch this video for a detailed walkthrough of the Dekart installation process.</p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/KusNayeGFaI?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Access Overture Maps" duration="2">
+        <p>To build our map, we need geospatial datasets from Overture Maps, available in the Snowflake Marketplace.</p>
+<ol type="1">
+<li><strong>Go to Snowsight</strong> (Snowflake&#39;s web interface) and select <strong>Marketplace</strong>.</li>
+<li><strong>Search for &#34;Overture Maps&#34;</strong> to find geospatial datasets.</li>
+<li>Add <strong>Overture Maps Divisions, Places, and Transportation datasets</strong> to your Snowflake account.<ul>
+<li>These datasets include information on administrative divisions, transportation routes, and points of interest. The <a href="https://docs.overturemaps.org/schema/reference/" target="_blank">Overture Maps Schema Reference</a> is an excellent resource to understand the structure and details of each dataset.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Note</strong>: You&#39;ll need access to these tables to use them within Snowflake. Adding them from the Marketplace will ensure they&#39;re ready for querying.</p>
+<p class="image-container"><img alt="Access Free Overture Maps Data" src="img/8582b8d952c64311.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Permissions to Data" duration="2">
+        <p>Since Dekart operates within your Snowflake account, it requires permissions to access the Overture Maps datasets. This ensures that Dekart can read and visualize the data within Snowflake without transferring it externally.</p>
+<p>Execute the following SQL commands in Snowflake (make sure you have the <code>ACCOUNTADMIN</code> role for these operations):</p>
+<pre><code language="language-sql" class="language-sql">-- Run as ACCOUNTADMIN
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__TRANSPORTATION TO application DEKART_APP_NAME;
+
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__DIVISIONS TO application DEKART_APP_NAME;
+
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__PLACES TO application DEKART_APP_NAME;
+</code></pre>
+<ul>
+<li>Note: application name <code>DEKART_APP_NAME</code> is selected by user during Dekart installation. If you have chosen a different name, replace <code>DEKART_APP_NAME</code> with your application name.</li>
+<li>Run <code>SHOW APPLICATIONS;</code> to list all applications in your account and find the name of your Dekart application.</li>
+</ul>
+<p>These commands authorize Dekart to access the specific tables within the Overture Maps datasets, allowing it to query and display data on your map.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Maps with SQL in Snowflake" duration="2">
+        <p>Now we&#39;re ready to start creating maps! Dekart allows you to visualize data directly from SQL queries, which means you can write custom queries to shape the data as you like.</p>
+<ol type="1">
+<li><strong>Open the Dekart App</strong> within Snowsight by going to <strong>Apps</strong> and selecting <strong>Dekart</strong>.</li>
+<li><strong>Authorize the Dekart App</strong> with your Snowflake account.</li>
+<li>In the Dekart interface, click <strong>Create Report</strong> to start building your map.</li>
+</ol>
+<p class="image-container"><img alt="Create Report in Dekart" src="img/6cfa9e5c0458eba4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Map in Dekart" duration="5">
+        <p>Let&#39;s construct a map that visualizes UK highways with color-coded density of nearby EV charging stations. We&#39;ll use SQL queries to filter and aggregate data from Overture Maps, focusing on major roads and charging infrastructure.</p>
+<p class="image-container"><img alt="Calculate Charging Station Density Near Roads" src="img/270eeb9523ce536d.png"></p>
+<h2 is-upgraded>Define the UK Boundary</h2>
+<p>To create a map specific to the UK, we need to define the boundaries of the UK region. This can be done using the <strong>DIVISION_AREA</strong> table from Overture Maps, which contains geographic boundaries for different regions.</p>
+<p class="image-container"><img alt="Define UK Boundary" src="img/71960fa6f6c9e73e.png"></p>
+<pre><code language="language-sql" class="language-sql">-- Define the UK boundary as a geographic region
+SELECT ST_ASWKT(GEOMETRY) AS GEOMETRY_WKT
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = &#39;GB&#39; AND SUBTYPE = &#39;country&#39;;
+</code></pre>
+<p>Explanation:</p>
+<ul>
+<li><code>ST_ASWKT(GEOMETRY)</code>: Converts the geometric shape of the UK boundary into a format compatible with Kepler.gl.</li>
+<li>This query filters by <code>COUNTRY = 'GB'</code> to select only boundaries relevant to the United Kingdom and limits results to the outer boundary using <code>SUBTYPE = 'country'</code>.</li>
+</ul>
+<h2 is-upgraded>Select Major Road Segments</h2>
+<p>To focus on major roads, such as highways and trunk roads, we&#39;ll query the <strong>SEGMENT</strong> table from Overture Maps. This will limit the map to primary roadways that are most relevant to our EV charging station analysis.</p>
+<p class="image-container"><img alt="Select Major Road Segments" src="img/c9c42368b13bd410.png"></p>
+<pre><code language="language-sql" class="language-sql">WITH uk_boundary AS (
+    SELECT GEOMETRY
+    FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+    WHERE COUNTRY = &#39;GB&#39;
+    AND SUBTYPE = &#39;country&#39;
+)
+SELECT ST_ASWKT(s.GEOMETRY) AS GEOMETRY_WKT, s.NAMES, s.ID
+FROM OVERTURE_MAPS__TRANSPORTATION.CARTO.SEGMENT s, uk_boundary ub
+WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY) AND s.CLASS IN (&#39;motorway&#39;, &#39;trunk&#39;);
+</code></pre>
+<p>Explanation:</p>
+<ul>
+<li>This query uses <code>ST_INTERSECTS</code> to find road segments that lie within the defined UK boundary.</li>
+<li>We filter to include only major roads, such as <code>motorway</code> and <code>trunk</code> roads, for a focused map of primary road infrastructure.</li>
+</ul>
+<h2 is-upgraded>Select EV Charging Stations</h2>
+<p>Next, we&#39;ll locate EV charging stations within the UK boundary. Using the <strong>PLACES</strong> table, we can filter for points of interest categorized as charging stations.</p>
+<p class="image-container"><img alt="Select EV Charging Stations" src="img/9f771e4a4f1bf10c.png"></p>
+<pre><code language="language-sql" class="language-sql">WITH uk_boundary AS (
+    SELECT GEOMETRY
+    FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+    WHERE COUNTRY = &#39;GB&#39;
+    AND SUBTYPE = &#39;country&#39;
+)
+SELECT ST_ASWKT(p.GEOMETRY) GEOMETRY
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE p, uk_boundary ub
+WHERE ST_CONTAINS(ub.GEOMETRY, p.GEOMETRY) AND p.CATEGORIES::TEXT ILIKE &#39;%charging%&#39;;
+</code></pre>
+<p>Explanation:</p>
+<ul>
+<li><code>ST_CONTAINS</code>: Ensures that only charging stations within the UK boundary are selected.</li>
+<li><code>ILIKE '%charging%'</code>: Filters points of interest to include only those that contain &#34;charging&#34; in their category, ensuring relevance to EV infrastructure.</li>
+</ul>
+<h2 is-upgraded>Complete query: calculate Charging Station Density Near Roads</h2>
+<p>We&#39;ll calculate the density of charging stations within a 50-kilometer radius of each road segment. This helps identify areas along highways with higher or lower access to charging facilities.</p>
+<pre><code language="language-sql" class="language-sql">-- Step 1: Define the UK boundary as a geographic region
+WITH uk_boundary AS (
+    SELECT GEOMETRY
+    FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+    WHERE COUNTRY = &#39;GB&#39;  -- Filter to select only the boundaries of the UK
+    AND SUBTYPE = &#39;country&#39;  -- Assuming &#39;SUBTYPE&#39; helps filter specifically the outer boundary of the country
+),
+
+-- Step 2: Select major road segments (e.g., motorways, trunk roads) that intersect the UK boundary
+road_segments AS (
+    SELECT s.GEOMETRY, s.NAMES, s.ID  -- Select geometry, names, and unique road ID
+    FROM OVERTURE_MAPS__TRANSPORTATION.CARTO.SEGMENT s, uk_boundary ub
+    WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY)  -- Check if road segments intersect with the UK boundary
+    AND s.CLASS IN (&#39;motorway&#39;, &#39;trunk&#39;)  -- Filter to include only major roads like motorways and trunk roads
+),
+
+-- Step 3: Select EV charging stations that are contained within the UK boundary
+charging_stations AS (
+    SELECT p.GEOMETRY
+    FROM OVERTURE_MAPS__PLACES.CARTO.PLACE p, uk_boundary ub
+    WHERE ST_CONTAINS(ub.GEOMETRY, p.GEOMETRY)  -- Ensure the charging stations are within the UK boundary
+    AND p.CATEGORIES::TEXT ILIKE &#39;%charging%&#39;  -- Filter places categorized as EV charging stations
+),
+
+-- Step 4: Count the number of charging stations within a 50 km radius of each road segment
+charging_count AS (
+    SELECT r.ID AS road_id,  -- Use road ID for grouping
+           r.NAMES AS road_name,  -- Include the road name for context
+           COUNT(cs.GEOMETRY) AS num_charging_stations  -- Count the number of charging stations near the road
+    FROM road_segments r
+    LEFT JOIN charging_stations cs
+        ON ST_DISTANCE(r.GEOMETRY, cs.GEOMETRY) &lt;= 50000  -- Check if charging stations are within 50 km of the road
+    GROUP BY r.ID, r.NAMES  -- Group by road ID and name to aggregate the count of charging stations
+)
+
+-- Step 5: Return the final results, including road ID, name, geometry, and the number of nearby charging stations
+SELECT r.ID, r.NAMES, ST_ASWKT(r.GEOMETRY) as GEOMETRY, cc.num_charging_stations
+FROM road_segments r
+JOIN charging_count cc
+ON r.ID = cc.road_id;  -- Join with the previous result set to match road details with charging station counts
+</code></pre>
+<p>Explanation:</p>
+<ul>
+<li><code>ST_DISTANCE</code>: Calculates the distance between road segments and charging stations.</li>
+<li>This query counts the number of charging stations within 50 km of each road segment, using <code>GROUP BY</code> to aggregate by road ID and name.</li>
+</ul>
+<h2 is-upgraded>Style the Map in Dekart</h2>
+<ul>
+<li><strong>Select Layer</strong>: Click your data layer (e.g., <strong>Query 1</strong>) to open <strong>Layer Configuration</strong>.</li>
+<li><strong>Stroke Color</strong>:<ul>
+<li>Choose a color gradient to represent EV station density (e.g., light to dark/red).</li>
+<li>Set <strong>Stroke Color Based On</strong> to <strong>NUM_CHARGING_STATIONS</strong>.</li>
+<li>Use <strong>quantile</strong> for <strong>StrokeColor Scale</strong> to balance color distribution.</li>
+</ul>
+</li>
+<li><strong>Opacity and Width</strong>:<ul>
+<li>Set <strong>Opacity</strong> to 0.8 for transparency.</li>
+<li>Adjust <strong>Stroke Width</strong> as needed for visibility.</li>
+</ul>
+</li>
+</ul>
+<p>This will color-code road segments based on EV station density.</p>
+<p class="image-container"><img alt="Build Map in Dekart" src="img/afa31ae57edf278c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p>In this guide, you created an interactive, real-time map within Snowflake, using Dekart and the Overture Maps datasets. You explored UK highway infrastructure with a focus on EV charging station density.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Creating interactive maps directly within Snowflake using Kepler.gl and Dekart.</li>
+<li>Accessing and using public Overture Maps data to create meaningful geospatial visualizations.</li>
+<li>Writing SQL queries for filtering, calculating, and mapping geospatial data.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://dekart.xyz/docs/about/snowflake-kepler-gl-examples/" target="_blank">Snowflake Kepler.gl Maps Examples</a>: Explore more examples and use cases for Kepler.gl in Snowflake.</li>
+<li><a href="https://dekart.xyz/docs/snowflake-snowpark/about/" target="_blank">Dekart Snowpark Application Documentation</a>: Learn more about Dekart and its capabilities.</li>
+<li><a href="https://docs.overturemaps.org/schema/reference/" target="_blank">Overture Maps Schema Reference</a>: For more details on available tables and fields.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

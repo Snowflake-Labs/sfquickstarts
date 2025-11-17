@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "resource_optimization_performance_optimization",
+  "duration": 0,
+  "title": "Resource Optimization: Performance",
+  "authors": "Praveen Purushothaman",
+  "summary": "This guide can be used to help customers setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.",
+  "source": "resource_optimization_performance_optimization/resource_optimization_performance_optimization.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "resource-optimization"
+  ],
+  "tags": [
+    "costoptimization",
+    "monitoring",
+    "optimization",
+    "performance",
+    "performanceoptimization",
+    "resourceoptimization",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "resource_optimization_performance_optimization"
+}

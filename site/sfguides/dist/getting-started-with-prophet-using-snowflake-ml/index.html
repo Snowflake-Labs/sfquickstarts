@@ -1,0 +1,186 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Prophet Model using Snowflake ML</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-prophet-using-snowflake-ml"
+                  title="Getting Started with Prophet Model using Snowflake ML"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p>This guide shows how to create and log a Prophet forecasting model using Snowflake ML.</p>
+<p>Snowflake also lets you log models beyond the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/built-in-models/overview" target="_blank">built-in</a> types like Prophet model , as long as they&#39;re serializable and extend the CustomModel class from snowflake.ml.model.</p>
+<p>You can get more information <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types" target="_blank">here</a></p>
+<h2 is-upgraded>What is Prophet</h2>
+<p>The Prophet model is a time series forecasting tool developed by Facebook, designed to handle seasonality, holidays, and trend changes in data. It&#39;s especially useful for business time series (like sales or traffic) and is robust to missing data and outliers.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to <a href="https://signup.snowflake.com/" target="_blank">snowflake account</a> with ACCOUNTADMIN role</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to build a time series forecasting model using Facebook Prophet</li>
+<li>How to wrap the model using Snowflake&#39;s CustomModel class</li>
+<li>How to log and register the model in Snowflake ML</li>
+<li>How to run predictions using the logged model directly in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Prophet model for time series forecasting, developed in a Snowflake Notebook</li>
+<li>Model training and inference running directly in a Snowflake warehouse</li>
+<li>The model logged and registered in the Snowflake ML registry for future use</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p><strong>Step 1.</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom.</p>
+<p><strong>Step 2.</strong> Download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/SNF_PROPHET_FORECAST_MODEL.ipynb" target="_blank">SNF_PROPHET_FORECAST_MODEL.ipynb</a> and <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/PROPHET_PREDICTION.ipynb" target="_blank">PROPHET_PREDICTION.ipynb</a></p>
+<p><strong>Step 3.</strong>  In Snowsight , switch to the FR_SCIENTIST role and import the notebook file downloaded in step 2. Use Database as ML_MODELS , schema as DS and warehouse as ML_FS_WH</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Notebook" duration="0">
+        <ol type="1">
+<li><strong>Set up environment and import libraries<br></strong> After importing the necessary libraries and setting up the environment, create synthetic data.</li>
+<li><strong>Train the model on synthetic data<br></strong> Train the Prophet model using the synthetic dataset.</li>
+<li><strong>Pickle the trained model and upload it to the stage<br></strong> Serialize the trained model using <code>pickle</code> and upload it to a Snowflake stage.</li>
+</ol>
+<pre><code language="language-pickle.dump(my_forcast_model," class="language-pickle.dump(my_forcast_model,">## Uplad the model into stage
+session.file.put(&#34;ProphetModel.pkl&#34;, f&#34;@{stage_nm}/&#34;, auto_compress=False)
+</code></pre>
+<ul>
+<li>Create the custom model</li>
+</ul>
+<pre><code># Initialize ModelContext with keyword arguments
+# my_model can be any supported model type
+# my_file_path is a local pickle file path
+
+mc = custom_model.ModelContext(
+    artifacts={
+        &#39;config&#39;: &#39;ProphetModel.pkl&#39;
+    }
+)
+
+
+# Define a custom model class that utilizes the context
+class MyProphetModel(custom_model.CustomModel):
+
+    def __init__(self,context:custom_model.ModelContext) -&gt; None:
+        super().__init__(context)
+        ## use &#39;file_path to load the piecked object
+        with open(self.context[&#39;config&#39;],&#39;rb&#39;) as f:
+            self.model =pickle.load(f)
+    @custom_model.inference_api
+    def predict(self,X:pd.DataFrame) -&gt; pd.DataFrame:
+        X_copy = X.copy()
+        X_copy[&#39;ds&#39;]=pd.to_datetime(X_copy[&#39;ds&#39;])# ensure correrct datetime
+        forecast = self.model.predict(X_copy)
+        res_df = forecast[[&#34;ds&#34;, &#34;yhat&#34;, &#34;yhat_lower&#34;, &#34;yhat_upper&#34;]]
+        return res_df
+</code></pre>
+<ul>
+<li>Model registry</li>
+</ul>
+<pre><code language="language-reg" class="language-reg">custom_mv = reg.log_model(
+   forecast_model,
+    model_name=&#34;Prophet_forcast_model&#34;,
+    version_name=&#34;v1&#34;,
+    conda_dependencies=[&#34;prophet&#34;],
+    sample_input_data= df_1,
+    options={&#39;relax_version&#39;: False},
+    comment = &#39;My Prophet forcast experiment using the CustomModel API&#39;
+)
+</code></pre>
+<ul>
+<li>Inference Notebook use the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/PROPHET_PREDICTION.ipynb" target="_blank">PROHPET_PREDICTION</a> notebook</li>
+</ul>
+<pre><code>reg = Registry(session,database_name = db,schema_name= schema)
+model_name=&#39;PROPHET_FORCAST_MODEL&#39;
+version = &#39;V1&#39;
+mv = reg.get_model(&#39;PROPHET_FORCAST_MODEL&#39;).version(&#39;VERSION_2&#39;)
+predicted_sales = mv.run(forecast_dates)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully built a Prophet forecasting model in a Snowflake Notebook and logged the trained model to the Snowflake ML registry, making it ready for inference and future use.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build a time series forecasting model using Facebook Prophet</li>
+<li>How to develop and run the model directly in a Snowflake Notebook</li>
+<li>How to wrap the model using Snowflake&#39;s CustomModel class</li>
+<li>How to log and register the model in the Snowflake ML registry</li>
+<li>How to run predictions on new data using the registered model within Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml" target="_blank">GitHub Repo</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types" target="_blank">Snowflake Logging Custom Models</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a></li>
+<li><a href="https://facebook.github.io/prophet/docs/quick_start.html" target="_blank">Prophet Forecast Model</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

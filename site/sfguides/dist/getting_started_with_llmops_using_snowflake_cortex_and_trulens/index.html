@@ -1,0 +1,571 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with LLMOps using Snowflake Cortex and TruLens</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_llmops_using_snowflake_cortex_and_trulens"
+                  title="Getting Started with LLMOps using Snowflake Cortex and TruLens"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM Functions</a> and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a>, and then using <a href="https://www.trulens.org/" target="_blank">TruLens</a> to add observability and guardrails.</p>
+<p>Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the <a href="https://www.trulens.org/reference/trulens/providers/cortex/" target="_blank">feedback provider</a>, and how to <a href="https://www.trulens.org/trulens/tracking/logging/where_to_log/log_in_snowflake/" target="_blank">log TruLens traces and evaluation metrics to a Snowflake table</a>. Last, we&#39;ll show how to use <a href="https://www.trulens.org/trulens/guardrails/" target="_blank">TruLens guardrails</a> for filtering retrieved context and reducing hallucination.</p>
+<p>Here is a summary of what you will be able to learn in each step by following this quickstart:</p>
+<ul>
+<li><strong>Setup Environment</strong>: Create a session to use Snowflake Cortex capabilities.</li>
+<li><strong>Cortex Complete</strong>: Use Cortex <code>Complete()</code> to call Mistral Large.</li>
+<li><strong>Add Data</strong>: Load and preprocess raw documentation from GitHub, and load to Cortex Search.</li>
+<li><strong>Search</strong>: Search over the data loaded to Cortex Search.</li>
+<li><strong>Create a RAG</strong>: Create a RAG with Cortex Search and Complete and add TruLens instrumentation.</li>
+<li><strong>Feedback Functions</strong>: Add context relevance, groundedness and answer relevance evaluations to the RAG.</li>
+<li><strong>Application Testing</strong>: Understand the performance of your RAG across a test set.</li>
+<li><strong>Guardrails</strong>: Add context filter guardrails to reduce hallucinations.</li>
+<li><strong>Measure Improvement</strong>: See the improved evaluation results after adding guardrails.</li>
+</ul>
+<h2 is-upgraded>What are Cortex LLM Functions?</h2>
+<p>Snowflake Cortex gives you instant access to industry-leading large language models (LLMs) trained by researchers at companies like Mistral, Reka, Meta, and Google, including Snowflake Arctic, an open enterprise-grade model developed by Snowflake.</p>
+<h2 is-upgraded>What is Cortex Search?</h2>
+<p>Cortex Search enables low-latency, high-quality search over your Snowflake data. Cortex Search powers a broad array of search experiences for Snowflake users including Retrieval Augmented Generation (RAG) applications leveraging Large Language Models (LLMs).</p>
+<h2 is-upgraded>What is TruLens?</h2>
+<p><a href="https://www.trulens.org/" target="_blank">TruLens</a> is a library for tracking and evaluating Generative AI applications. It provides an extensive set of feedback functions to systematically measure the quality of your LLM based applications. It also traces the internal steps of your application, and allows you to run feedback functions on any internal step. Feedback function results can be examined in a TruLens dashboard, or used at runtime as guardrails.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to build a RAG with Cortex Search and Cortex LLM Functions.</li>
+<li>How to use TruLens Feedback Functions and Tracing.</li>
+<li>How to log TruLens Evaluation Results and Traces to Snowflake.</li>
+<li>How to use TruLens Feedback Functions as Guardrails to reduce hallucination.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A retrieval-augmented generation (RAG) app</li>
+<li>An LLMOps pipeline</li>
+<li>Context filter guardrails</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with Cortex LLM Functions and Cortex Search enabled.  If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=yYZEVo4S&_fsi=yYZEVo4S" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="8">
+        <p>In a new SQL worksheet, run the following SQL commands to create the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html" target="_blank">warehouse</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database.html" target="_blank">database</a> and <a href="https://docs.snowflake.com/en/sql-reference/sql/create-schema.html" target="_blank">schema</a>.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE WAREHOUSE LLMOPS_WH_M WAREHOUSE_SIZE=MEDIUM;
+CREATE OR REPLACE DATABASE LLMOPS_DB;
+CREATE OR REPLACE SCHEMA LLMOPS_SCHEMA;
+
+USE LLMOPS_DB.LLMOPS_SCHEMA;
+</code></pre>
+<p>For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. If you don&#39;t have a GitHub PAT Token already, you can get one by following the instructions <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token" target="_blank">here</a>.</p>
+<p>In your development environment, create a new <code>.env</code> file that looks like this with your username, password and <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">account</a> filled in:</p>
+<pre><code language="language-bash" class="language-bash"># Loading data from github
+GITHUB_TOKEN=
+
+# Snowflake details
+SNOWFLAKE_USER=
+SNOWFLAKE_USER_PASSWORD=
+SNOWFLAKE_ACCOUNT=
+SNOWFLAKE_DATABASE=LLMOPS_DB
+SNOWFLAKE_SCHEMA=LLMOPS_SCHEMA
+SNOWFLAKE_WAREHOUSE=LLMOPS_WH_M
+SNOWFLAKE_ROLE=ACCOUNTADMIN
+SNOWFLAKE_CORTEX_SEARCH_SERVICE=LLMOPS_CORTEX_SEARCH_SERVICE
+</code></pre>
+<aside class="special"><p> You will later create a cortex search service with the name <strong><em>LLMOPS_CORTEX_SEARCH_SERVICE</em></strong>. You are welcome to set that now..</p>
+</aside>
+<p>Next create a new conda environment and install the packages required with the following commands in your terminal:</p>
+<pre><code language="language-bash" class="language-bash">conda create -n getting_started_llmops python=3.11
+conda activate getting_started_llmops
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python snowflake.core notebook ipykernel
+
+pip install trulens-core trulens-providers-cortex trulens-connectors-snowflake llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
+</code></pre>
+<p>Once we have an environment with the right packages installed, we can load our credentials and set our Snowflake connection in a jupyter notebook notebook.</p>
+<p>To open the jupyter notebook, you can follow the following steps:</p>
+<ol type="1">
+<li>In a terminal window, browse to this folder and run <code>jupyter notebook</code> at the command line. (You may also use other tools and IDEs such Visual Studio Code.)</li>
+<li>Open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-llmops-using-snowflake-cortex-and-trulens/blob/main/snowflake_llmops_quickstart.ipynb" target="_blank">snowflake_llmops_quickstart.ipynb</a> to download the Notebook from GitHub. <strong><em>(NOTE: Do NOT right-click to download.)</em></strong></li>
+</ol>
+<aside class="special"><p> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to <strong><em>getting_started_llmops</em></strong> – which is the name of the environment created in the previous step.</p>
+</aside>
+<pre><code language="language-python" class="language-python">from dotenv import load_dotenv
+from snowflake.snowpark.session import Session
+import os
+
+load_dotenv()
+
+connection_params = {
+  &#34;account&#34;:  os.getenv[&#34;SNOWFLAKE_ACCOUNT&#34;],
+  &#34;user&#34;: os.getenv[&#34;SNOWFLAKE_USER&#34;],
+  &#34;password&#34;: os.getenv[&#34;SNOWFLAKE_USER_PASSWORD&#34;],
+  &#34;role&#34;: os.getenv[&#34;SNOWFLAKE_ROLE&#34;],
+  &#34;database&#34;: os.getenv[&#34;SNOWFLAKE_DATABASE&#34;],
+  &#34;schema&#34;: os.getenv[&#34;SNOWFLAKE_SCHEMA&#34;],
+  &#34;warehouse&#34;: os.getenv[&#34;SNOWFLAKE_WAREHOUSE&#34;]
+}
+
+snowpark_session = Session.builder.configs(connection_params).create()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex Complete" duration="3">
+        <p>With the snowpark session set, we have what we need to try out Snowflake Cortex LLM:</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import Complete
+
+print(Complete(&#34;mistral-large&#34;, &#34;how do snowflakes get their unique patterns?&#34;))
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Data" duration="12">
+        <p>Next, we&#39;ll turn to the retrieval component of our RAG and set up Cortex Search.</p>
+<p>This requires three steps:</p>
+<ol type="1">
+<li>Read and preprocess unstructured documents.</li>
+<li>Embed the cleaned documents with Arctic Embed.</li>
+<li>Call the Cortex search service.</li>
+</ol>
+<h2 is-upgraded>Read and preprocess unstructured documents</h2>
+<p>For this example, we want to load Cortex Search with documentation from GitHub about a popular open-source library, Streamlit. To do so, we&#39;ll use a GitHub data loader available from LlamaHub.</p>
+<p>Here we&#39;ll also expend some effort to clean up the text so we can get better search results.</p>
+<pre><code language="language-python" class="language-python">from llama_index.readers.github import GithubRepositoryReader, GithubClient
+import os
+import re
+import nest_asyncio
+
+nest_asyncio.apply()
+
+github_token = os.getenv[&#34;GITHUB_TOKEN&#34;]
+client = GithubClient(github_token=github_token, verbose=False)
+
+reader = GithubRepositoryReader(
+    github_client=client,
+    owner=&#34;streamlit&#34;,
+    repo=&#34;docs&#34;,
+    use_parser=False,
+    verbose=True,
+    filter_directories=(
+        [&#34;content&#34;],
+        GithubRepositoryReader.FilterType.INCLUDE,
+    ),
+    filter_file_extensions=(
+        [&#34;.md&#34;],
+        GithubRepositoryReader.FilterType.INCLUDE,
+    ),
+)
+
+documents = reader.load_data(branch=&#34;main&#34;)
+
+
+def clean_up_text(content: str) -&gt; str:
+    &#34;&#34;&#34;
+    Remove unwanted characters and patterns in text input.
+
+    :param content: Text input.
+
+    :return: Cleaned version of original text input.
+    &#34;&#34;&#34;
+
+    # Fix hyphenated words broken by newline
+    content = re.sub(r&#34;(\w+)-\n(\w+)&#34;, r&#34;\1\2&#34;, content)
+
+    unwanted_patterns = [&#34;---\nvisible: false&#34;, &#34;---&#34;, &#34;#&#34;, &#34;slug:&#34;]
+    for pattern in unwanted_patterns:
+        content = re.sub(pattern, &#34;&#34;, content)
+
+    # Remove all slugs starting with a \ and stopping at the first space
+    content = re.sub(r&#34;\\slug: [^\s]*&#34;, &#34;&#34;, content)
+
+    # normalize whitespace
+    content = re.sub(r&#34;\s+&#34;, &#34; &#34;, content)
+    return content
+
+
+cleaned_documents = []
+
+for d in documents:
+    cleaned_text = clean_up_text(d.text)
+    d.text = cleaned_text
+    cleaned_documents.append(d)
+</code></pre>
+<h2 is-upgraded>Process the documents with Semantic Splitting</h2>
+<p>We&#39;ll use Snowflake&#39;s Arctic Embed model available from HuggingFace to embed the documents. We&#39;ll also use Llama-Index&#39;s <code>SemanticSplitterNodeParser</code> for processing.</p>
+<pre><code language="language-python" class="language-python">from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core.node_parser import SemanticSplitterNodeParser
+
+embed_model = HuggingFaceEmbedding(&#34;Snowflake/snowflake-arctic-embed-m&#34;)
+
+splitter = SemanticSplitterNodeParser(
+    buffer_size=1, breakpoint_percentile_threshold=85, embed_model=embed_model
+)
+</code></pre>
+<p>With the embed model and splitter, we can execute them in an ingestion pipeline</p>
+<pre><code language="language-python" class="language-python">from llama_index.core.ingestion import IngestionPipeline
+
+cortex_search_pipeline = IngestionPipeline(
+    transformations=[
+        splitter,
+    ],
+)
+
+results = cortex_search_pipeline.run(show_progress=True, documents=cleaned_documents)
+</code></pre>
+<h2 is-upgraded>Load data to Cortex Search</h2>
+<p>Now that we&#39;ve embedded our documents, we&#39;re ready to load them to Cortex Search.</p>
+<p>Here we can use the same connection details as we set up for Cortex Complete.</p>
+<pre><code language="language-python" class="language-python">import os
+import snowflake.connector
+from tqdm.auto import tqdm
+
+snowflake_connector = snowflake.connector.connect(**connection_params)
+
+cursor = snowflake_connector.cursor()
+
+cursor.execute(&#34;CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)&#34;)
+for curr in tqdm(results):
+    cursor.execute(&#34;INSERT INTO streamlit_docs VALUES (%s)&#34;, curr.text)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Search" duration="5">
+        <p>First we need to create a <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a> Service in Snowflake. To do so, you can opena SQL Worksheet in your Snowflake instance, and run the following SQL command:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE CORTEX SEARCH SERVICE LLMOPS_CORTEX_SEARCH_SERVICE
+  ON doc_text
+  WAREHOUSE = LLMOPS_WH_M
+  TARGET_LAG = &#39;1 hour&#39;
+AS (
+  SELECT
+      doc_text
+  FROM LLMOPS_DB.LLMOPS_SCHEMA.streamlit_docs
+);
+</code></pre>
+<p>Next, we can go back to our python notebook and create a <code>CortexSearchRetreiver</code> class to connect to our cortex search service and add the <code>retrieve</code> method that we can leverage for calling it.</p>
+<pre><code language="language-python" class="language-python">import os
+from snowflake.core import Root
+from typing import List
+
+
+class CortexSearchRetriever:
+
+    def __init__(self, snowpark_session: Session, limit_to_retrieve: int = 4):
+        self._snowpark_session = snowpark_session
+        self._limit_to_retrieve = limit_to_retrieve
+
+    def retrieve(self, query: str) -&gt; List[str]:
+        root = Root(self._snowpark_session)
+        cortex_search_service = (
+            root.databases[os.getenv[&#34;SNOWFLAKE_DATABASE&#34;]]
+            .schemas[os.getenv[&#34;SNOWFLAKE_SCHEMA&#34;]]
+            .cortex_search_services[os.getenv[&#34;SNOWFLAKE_CORTEX_SEARCH_SERVICE&#34;]]
+        )
+        resp = cortex_search_service.search(
+            query=query,
+            columns=[&#34;doc_text&#34;],
+            limit=self._limit_to_retrieve,
+        )
+
+        if resp.results:
+            return [curr[&#34;doc_text&#34;] for curr in resp.results]
+        else:
+            return []
+</code></pre>
+<p>Once the retriever is created, we can test it out. Now that we have grounded access to the Streamlit docs, we can ask questions about using Streamlit, like &#34;How do I launch a streamlit app&#34;.</p>
+<pre><code language="language-python" class="language-python">retriever = CortexSearchRetriever(snowpark_session=snowpark_session, limit_to_retrieve=4)
+
+retrieved_context = retriever.retrieve(query=&#34;How do I launch a streamlit app?&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a RAG" duration="5">
+        <p>Now that we&#39;ve set up the components we need from Snowflake Cortex, we can build our RAG.</p>
+<p>We&#39;ll do this by creating a custom python class with each the methods we need. We&#39;ll also add TruLens instrumentation with the <code>@instrument</code> decorator to our app.</p>
+<p>The first thing we need to do however, is to <a href="https://www.trulens.org/trulens/tracking/logging/where_to_log/log_in_snowflake/" target="_blank">set the database connection to Snowflake</a> where we&#39;ll log the traces and evaluation results from our application. This way we have a stored record that we can use to understand the app&#39;s performance. This is done when initializing <code>Tru</code>.</p>
+<pre><code language="language-python" class="language-python">from trulens.core import TruSession
+from trulens.connectors.snowflake import SnowflakeConnector
+
+tru_snowflake_connector = SnowflakeConnector(snowpark_session=snowpark_session)
+
+tru_session = TruSession(connector=tru_snowflake_connector)
+</code></pre>
+<p>Now we can construct the RAG.</p>
+<pre><code language="language-python" class="language-python">from trulens.apps.custom import instrument
+
+
+class RAG_from_scratch:
+
+    def __init__(self):
+        self.retriever = CortexSearchRetriever(snowpark_session=snowpark_session, limit_to_retrieve=4)
+
+    @instrument
+    def retrieve_context(self, query: str) -&gt; list:
+        &#34;&#34;&#34;
+        Retrieve relevant text from vector store.
+        &#34;&#34;&#34;
+        return self.retriever.retrieve(query)
+
+    @instrument
+    def generate_completion(self, query: str, context_str: list) -&gt; str:
+        &#34;&#34;&#34;
+        Generate answer from context.
+        &#34;&#34;&#34;
+        prompt = f&#34;&#34;&#34;
+          You are an expert assistant extracting information from context provided.
+          Answer the question based on the context. Be concise and do not hallucinate.
+          If you don´t have the information just say so.
+          Context: {context_str}
+          Question:
+          {query}
+          Answer:
+        &#34;&#34;&#34;
+        return Complete(&#34;mistral-large&#34;, prompt)
+
+    @instrument
+    def query(self, query: str) -&gt; str:
+        context_str = self.retrieve_context(query)
+        return self.generate_completion(query, context_str)
+
+
+rag = RAG_from_scratch()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feedback Functions" duration="5">
+        <p>After constructing the RAG, we can set up the feedback functions we want to use to evaluate the RAG.</p>
+<p>Here, we&#39;ll use the <a href="https://www.trulens.org/trulens/getting_started/core_concepts/rag_triad/" target="_blank">RAG Triad</a>. The RAG triad is made up of 3 evaluations along each edge of the RAG architecture: context relevance, groundedness and answer relevance.</p>
+<p class="image-container"><img alt="RAG Triad" src="img/a3d4394665d8ee74.jpg"></p>
+<p>Satisfactory evaluations on each provides us confidence that our LLM app is free from hallucination.</p>
+<p>We will also use <a href="https://arxiv.org/abs/2306.05685" target="_blank">LLM-as-a-Judge</a> evaluations, using Mistral Large on <a href="https://www.trulens.org/reference/trulens/providers/cortex/" target="_blank">Snowflake Cortex</a> as the LLM.</p>
+<pre><code language="language-python" class="language-python">from trulens.providers.cortex.provider import Cortex
+from trulens.core import Feedback
+from trulens.core import Select
+import numpy as np
+
+provider = Cortex(snowpark_session.connection, &#34;llama3.1-8b&#34;)
+
+f_groundedness = (
+    Feedback(provider.groundedness_measure_with_cot_reasons, name=&#34;Groundedness&#34;)
+    .on(Select.RecordCalls.retrieve_context.rets[:].collect())
+    .on_output()
+)
+
+f_context_relevance = (
+    Feedback(provider.context_relevance, name=&#34;Context Relevance&#34;)
+    .on_input()
+    .on(Select.RecordCalls.retrieve_context.rets[:])
+    .aggregate(np.mean)
+)
+
+f_answer_relevance = (
+    Feedback(provider.relevance, name=&#34;Answer Relevance&#34;)
+    .on_input()
+    .on_output()
+    .aggregate(np.mean)
+)
+</code></pre>
+<p>After defining the feedback functions to use, we can just add them to the application along with giving the application an ID.</p>
+<pre><code language="language-python" class="language-python">from trulens.apps.custom import TruCustomApp
+
+tru_rag = TruCustomApp(
+    rag,
+    app_name=&#34;RAG&#34;,
+    app_version=&#34;simple&#34;,
+    feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
+    )
+)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Testing" duration="3">
+        <p>Now that the application is ready, we can run it on a test set of questions about streamlit to measure its performance.</p>
+<pre><code language="language-python" class="language-python">prompts = [
+    &#34;How do I launch a streamlit app?&#34;,
+    &#34;How can I capture the state of my session in streamlit?&#34;,
+    &#34;How do I install streamlit?&#34;,
+    &#34;How do I change the background color of a streamlit app?&#34;,
+    &#34;What&#39;s the advantage of using a streamlit form?&#34;,
+    &#34;What are some ways I should use checkboxes?&#34;,
+    &#34;How can I conserve space and hide away content?&#34;,
+    &#34;Can you recommend some resources for learning Streamlit?&#34;,
+    &#34;What are some common use cases for Streamlit?&#34;,
+    &#34;How can I deploy a streamlit app on the cloud?&#34;,
+    &#34;How do I add a logo to streamlit?&#34;,
+    &#34;What is the best way to deploy a Streamlit app?&#34;,
+    &#34;How should I use a streamlit toggle?&#34;,
+    &#34;How do I add new pages to my streamlit app?&#34;,
+    &#34;How do I write a dataframe to display in my dashboard?&#34;,
+    &#34;Can I plot a map in streamlit? If so, how?&#34;,
+    &#34;How do vector stores enable efficient similarity search?&#34;,
+]
+</code></pre>
+<pre><code language="language-python" class="language-python">with tru_rag as recording:
+    for prompt in prompts:
+        rag.query(prompt)
+
+tru_session.get_leaderboard()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Guardrails" duration="7">
+        <p>In addition to making informed iteration, we can also directly use feedback results as guardrails at inference time. In particular, here we show how to use the context relevance score as a guardrail to filter out irrelevant context before it gets passed to the LLM. This both reduces hallucination and improves efficiency.</p>
+<p class="image-container"><img alt="Context Filter Guardrails" src="img/c55fe1a26be89b79.png"></p>
+<p>To do so, we&#39;ll rebuild our RAG using the <code>@context-filter</code> decorator on the method we want to filter, and pass in the feedback function and threshold to use for guardrailing.</p>
+<pre><code language="language-python" class="language-python">from trulens.core.guardrails.base import context_filter
+
+# note: feedback function used for guardrail must only return a score, not also reasons
+f_context_relevance_score = Feedback(
+    provider.context_relevance, name=&#34;Context Relevance&#34;
+)
+
+
+class filtered_RAG_from_scratch(RAG_from_scratch):
+
+    @instrument
+    @context_filter(f_context_relevance_score, 0.75, keyword_for_prompt=&#34;query&#34;)
+    def retrieve_context(self, query: str) -&gt; list:
+        &#34;&#34;&#34;
+        Retrieve relevant text from vector store.
+        &#34;&#34;&#34;
+        return self.retriever.retrieve(query)
+
+
+filtered_rag = filtered_RAG_from_scratch()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Measure Improvement" duration="7">
+        <p>We can combine the new version of our app with the feedback functions we already defined.</p>
+<pre><code language="language-python" class="language-python">from trulens.apps.custom import TruCustomApp
+
+tru_filtered_rag = TruCustomApp(
+    filtered_rag,
+    app_name=&#34;RAG&#34;,
+    app_version=&#34;filtered&#34;,
+    feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
+)
+</code></pre>
+<p>Then we run it on a test set of questions about streamlit to measure its performance.</p>
+<pre><code language="language-python" class="language-python">prompts = [
+    &#34;How do I launch a streamlit app?&#34;,
+    &#34;How can I capture the state of my session in streamlit?&#34;,
+    &#34;How do I install streamlit?&#34;,
+    &#34;How do I change the background color of a streamlit app?&#34;,
+    &#34;What&#39;s the advantage of using a streamlit form?&#34;,
+    &#34;What are some ways I should use checkboxes?&#34;,
+    &#34;How can I conserve space and hide away content?&#34;,
+    &#34;Can you recommend some resources for learning Streamlit?&#34;,
+    &#34;What are some common use cases for Streamlit?&#34;,
+    &#34;How can I deploy a streamlit app on the cloud?&#34;,
+    &#34;How do I add a logo to streamlit?&#34;,
+    &#34;What is the best way to deploy a Streamlit app?&#34;,
+    &#34;How should I use a streamlit toggle?&#34;,
+    &#34;How do I add new pages to my streamlit app?&#34;,
+    &#34;How do I write a dataframe to display in my dashboard?&#34;,
+    &#34;Can I plot a map in streamlit? If so, how?&#34;,
+    &#34;How do vector stores enable efficient similarity search?&#34;,
+]
+</code></pre>
+<p>Last, we can use <code>get_leaderboard()</code> to see the performance of the two application versions head to head.</p>
+<pre><code language="language-python" class="language-python">with tru_rag as recording:
+    for prompt in prompts:
+        rag.query(prompt)
+
+tru_session.get_leaderboard()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations! You&#39;ve successfully built a RAG by combining Cortex Search and LLM Functions, adding in TruLens Feedback Functions as Observability. You also set up logging for TruLens to Snowflake, and added TruLens Guardrails to reduce hallucination.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build a RAG with Cortex Search and Cortex LLM Functions.</li>
+<li>How to use TruLens Feedback Functions and Tracing.</li>
+<li>How to log TruLens Evaluation Results and Traces to Snowflake.</li>
+<li>How to use TruLens Feedback Functions as Guardrails to reduce hallucination.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/guides-overview-ai-features" target="_blank">Snowflake Cortex Documentation</a></li>
+<li><a href="https://trulens.org/" target="_blank">TruLens Documentation</a></li>
+<li><a href="https://github.com/truera/trulens" target="_blank">TruLens GitHub Repository</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

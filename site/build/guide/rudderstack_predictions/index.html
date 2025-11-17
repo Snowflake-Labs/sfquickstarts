@@ -1,0 +1,777 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build predictive features without MLOps using RudderStack and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="rudderstack_predictions"
+                  title="Build predictive features without MLOps using RudderStack and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Predictive features like future LTV and churn propensity can be game changing for a business. If your marketing, customer success, and other teams want to use them, though, your company often faces a binary choice: use a one-size-fits-all solution within an existing SaaS platform (i.e., marketing automation tool), or build out ML and MLOps capabilities internally.</p>
+<p>Both options have significant drawbacks. First, templated SaaS-based solutions can&#39;t leverage all of your customer data and aren&#39;t configurable, which results in low accuracy and impact. On the other hand, hiring data scientists and setting up MLOps is expensive and complex.</p>
+<p>Modern data teams need an option in the middle: the ability to deploy model templates on all of their customer data, but without additional tooling, processes and headcount.</p>
+<p>With RudderStack Predictions and Snowflake, you can create predictive features directly in your warehouse, without the need to set up MLOps processes and infrastructure. Predictions leverages the full power of Snowpark to run ML models within your existing data engineering workflow.</p>
+<p>In this quickstart we will go through the two ways you can build predictive features in RudderStack Predictions:</p>
+<ol type="1">
+<li>Set up automated features in the RudderStack UI</li>
+<li>Code your own custom predictions</li>
+</ol>
+<p>It&#39;s important to note that Predictions runs on top of RudderStack <a href="https://www.rudderstack.com/docs/profiles/overview/" target="_blank">Profiles</a>, a product that automates identity resolution and user feature development in Snowflake.</p>
+<p>Predictions leverages the Profiles identity graph to train and run ML models. Because Predictions is part of Profiles, project outputs include an identity graph, standard user features (i.e., <code>last_seen</code>) and predictive user features (i.e., <code>percentile_churn_score_30_days</code>). Both types of features are built using RudderStack data sources and standardized feature definitions.</p>
+<p>For automated features, you perform the setup and run the jobs within the RudderStack UI. This process makes it easy for less technical users to implement basic predictive features. In this guide, we will show you how to set up an automated churn prediction feature.</p>
+<p>Predictions also supports a code-based approach that gives technical users full control to define custom predictive features that match their unique business logic, which we will cover in the second part of the guide.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>By completing this guide you will create predictive models and features using RudderStack Predictions, Snowflake, and Snowpark. In the process you will learn:</p>
+<ul>
+<li>To build a basic event stream pipeline in RudderStack</li>
+<li>To build a basic Profiles project in RudderStack</li>
+<li>To create custom features within RudderStack Profiles</li>
+<li>To create custom predictive features using RudderStack Predictions</li>
+<li>To create a Predictions project in the RudderStack UI</li>
+<li>To update the project in using the RudderStack Profiles CLI tool (<code>PB</code>)</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>An automated 30-day churn score in the RudderStack UI</li>
+<li>A custom feature in the RudderStack UI</li>
+<li>A code-based feature</li>
+<li>A code-based predictive feature</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://www.python.org/downloads/" target="_blank">Python 3.10</a> installed</li>
+<li>A RudderStack account, if you do not have an account you can crate a <a href="https://app.rudderstack.com/signup?type=freetrial" target="_blank">free account</a></li>
+<li>Predictions access. Once you set up your RudderStack account, <a href="mailto:support@rudderstack.com?subject=I%20would%20like%20access%20to%20your%20Predictions%20feature" target="_blank">reach out to our support team</a> to request access to our Predictions feature.</li>
+<li>A Snowflake account, if you do not have an account you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a></li>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="15">
+        <h2 is-upgraded>Setting up Snowflake for Event Stream Data</h2>
+<p>Because Predictions is designed to run in a production environment, you need to perform some basic set up in Snowflake (and later, your RudderStack workspace) to simulate the pipelines you would run when collecting user event data.</p>
+<h3 is-upgraded>Create a New Role and User in Snowflake</h3>
+<p>In your Snowflake console, run the following commands to create the role <code>QUICKSTART</code>.</p>
+<pre><code language="language-sql" class="language-sql">CREATE ROLE QUICKSTART;
+</code></pre>
+<p>Verify the role <code>QUICKSTART</code> was successfully created.</p>
+<pre><code language="language-sql" class="language-sql">SHOW ROLES;
+</code></pre>
+<p>Create a new user QUICKSTART_USER with a password <code><strong_unique_password></code>.</p>
+<pre><code language="language-sql" class="language-sql">CREATE USER QUICKSTART_USER PASSWORD = &#39;&lt;strong_unique_password&gt;&#39; DEFAULT_ROLE = &#39;QUICKSTART&#39;;
+</code></pre>
+<p>Verify the user <code>QUICKSTART_USER</code> was successfully created.</p>
+<pre><code language="language-sql" class="language-sql">SHOW USERS;
+</code></pre>
+<h3 is-upgraded>Create RudderStack Schema and Grant Permissions to Role</h3>
+<p>Create a dedicated schema <code>_RUDDERSTACK</code> in your database.</p>
+<p><strong>Replace </strong></p>
+<p><strong><code><YOUR_DATABASE></code></strong></p>
+<p><strong> in all queries with your actual database name.</strong></p>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;_RUDDERSTACK&#34;;
+</code></pre>
+<p>Grant full access to the schema _RUDDERSTACK for the previously created role <code>QUICKSTART</code>.</p>
+<pre><code language="language-sql" class="language-sql">GRANT ALL PRIVILEGES ON SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;_RUDDERSTACK&#34; TO ROLE QUICKSTART;
+</code></pre>
+<h3 is-upgraded>Grant Permissions on the Warehouse, Database, Schema, and Table</h3>
+<p>Enable the user <code>QUICKSTART_USER</code> to perform all operations allowed for the role <code>QUICKSTART</code> (via the privileges granted to it).</p>
+<pre><code language="language-sql" class="language-sql">GRANT ROLE QUICKSTART TO USER QUICKSTART_USER;
+</code></pre>
+<p>Run the following commands to allow the role <code>QUICKSTART</code> to look up the objects within your warehouse, database, schema, and the specific table or view:</p>
+<pre><code language="language-sql" class="language-sql">GRANT USAGE ON WAREHOUSE &#34;&lt;YOUR_WAREHOUSE&gt;&#34; TO ROLE QUICKSTART;
+GRANT USAGE ON DATABASE &#34;&lt;YOUR_DATABASE&gt;&#34; TO ROLE QUICKSTART;
+GRANT USAGE ON SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;_RUDDERSTACK&#34; TO ROLE QUICKSTART;
+GRANT SELECT ON ALL TABLES IN SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;_RUDDERSTACK&#34; TO ROLE  QUICKSTART;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;_RUDDERSTACK&#34; TO ROLE QUICKSTART;
+GRANT SELECT ON ALL VIEWS IN SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;_RUDDERSTACK&#34; TO ROLE QUICKSTART;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;_RUDDERSTACK&#34; TO ROLE QUICKSTART;
+</code></pre>
+<p><strong>Replace </strong></p>
+<p><strong><code><YOUR_DATABASE></code></strong></p>
+<p><strong> with the exact Snowflake database name.</strong></p>
+<h2 is-upgraded>Importing RudderStack Event Data from the Snowflake Marketplace</h2>
+<p>To set up automated features, you will need RudderStack event data in your Snowflake warehouse. If you already use RudderStack and have the following tables (see below), you can skip to the <a href="#profiles-schema-and-permissions" target="_blank">Profiles Schema and Permissions</a> section. For the purposes of following this guide, though, it is recommended that you use the provided sample data.</p>
+<ul>
+<li><code>TRACKS</code></li>
+<li><code>IDENTIFIES</code></li>
+<li><code>PAGES</code></li>
+<li><code>ORDER_COMPLETED</code></li>
+</ul>
+<h3 is-upgraded>Get Sample Data</h3>
+<p>If you are setting up RudderStack for the first time go to the <a href="https://app.snowflake.com/marketplace/listing/GZT0Z856CMJ/rudderstack-inc-rudderstack-event-data-for-quickstart" target="_blank">Snowflake Marketplace</a> and add RudderStack Event Data for Quickstart to your Snowflake account for free. This will add a database with the needed tables to your Snowflake warehouse with no additional storage cost for you.</p>
+<p class="image-container"><img alt="Marketplace" src="img/8a5f8d9f2390f18f.png"></p>
+<p>At the next screen open options and add role <code>QUICKSTART</code> to have access to this database.</p>
+<h3 is-upgraded>Create Schema for Sample Data</h3>
+<p>The database with the sample data is read only so you will need to copy it to a new schema to be able to create a valid event stream pipeline (and run a Predictions job on the data).</p>
+<p>Create a new schema in the database you already set up. Name the schema &#34;EVENTS&#34;.</p>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;EVENTS&#34;;
+</code></pre>
+<p>Give permission to the <code>QUICKSTART</code> to create new tables in that schema.</p>
+<pre><code language="language-sql" class="language-sql">GRANT ALL PRIVILEGES ON SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;EVENTS&#34; FOR ROLE QUICKSTART;
+</code></pre>
+<p>Copy the sample data into the newly create schema.</p>
+<pre><code language="language-sql" class="language-sql">CREATE TABLE &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;EVENTS&#34;.&#34;TRACKS&#34; AS SELECT * FROM &#34;SNOWFLAKE_QUICKSTART&#34;.&#34;PUBLIC&#34;.&#34;TRACKS&#34;;
+CREATE TABLE &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;EVENTS&#34;.&#34;IDENTIFIES&#34; AS SELECT * FROM &#34;SNOWFLAKE_QUICKSTART&#34;.&#34;PUBLIC&#34;.&#34;IDENTIFIES&#34;;
+CREATE TABLE &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;EVENTS&#34;.&#34;PAGES&#34; AS SELECT * FROM &#34;SNOWFLAKE_QUICKSTART&#34;.&#34;PUBLIC&#34;.&#34;PAGES&#34;;
+CREATE TABLE &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;EVENTS&#34;.&#34;ORDER_COMPLETED&#34; AS SELECT * FROM &#34;SNOWFLAKE_QUICKSTART&#34;.&#34;PUBLIC&#34;.&#34;ORDER_COMPLETED&#34;;
+</code></pre>
+<p>Now you are ready to create a pipeline connection in RudderStack.</p>
+<h2 is-upgraded>Create JavaScript Source</h2>
+<p>RudderStack&#39;s Profiles and Predictions products require a warehouse destination with an active sync from a source (a data pipeline). Therefore we will create a JavaScript source that can send a test event to Snowflake.</p>
+<p>After logging into RudderStack, navigate to the Directory from the sidebar on the left, then select the JavaScript source from the list of sources.</p>
+<p class="image-container"><img alt="JS" src="img/b2691d446c5ae303.png"></p>
+<p>Enter &#34;QuickStart Test Site&#34; for the source name and click <code>Continue</code>. You have successfully added a source!</p>
+<p>Note at the bottom of the JavaScript Source page is a <code>Write Key</code>. You will needs this for sending a test event after connecting the Snowflake destination.</p>
+<h2 is-upgraded>Create Snowflake Destination</h2>
+<p>Navigate to the &#34;Overview&#34; tab in the JavaScript source view and click on <code>Add Destination</code>.</p>
+<p class="image-container"><img alt="add-destination" src="img/a9cefa23d833a77a.png"></p>
+<p>Select the Snowflake destination from the list, then on the next page give it the name &#34;Snowflake QuickStart&#34; and click <code>Continue</code>.</p>
+<p class="image-container"><img alt="select-snowflake" src="img/3199f9e97fc925de.png"></p>
+<p>Add in your Snowflake connection credentials:</p>
+<ul>
+<li><strong>Account</strong>: Your Account name</li>
+<li><strong>Database</strong>: Your Database name that you used in the previous steps for <code>QUICKSTART</code></li>
+<li><strong>Warehouse</strong>: Your Warehouse that you granted usage to <code>QUICKSTART</code></li>
+<li><strong>User</strong>: <code>QUICKSTART_USER</code></li>
+<li><strong>Role</strong>: <code>QUICKSTART</code></li>
+<li><strong>Password</strong>: Password for <code>QUICKSTART_USER</code></li>
+<li><strong>Namespace</strong>: <code>EVENTS</code></li>
+</ul>
+<p class="image-container"><img alt="snowflake-config" src="img/3f4cc4e4e3d59822.png"></p>
+<p>At the bottom under &#34;Object Storage Configuration&#34; toggle &#34;Use RudderStack managed object storage&#34; ON.</p>
+<p class="image-container"><img alt="toggle-on" src="img/4ae796ffb3bc56bf.png"></p>
+<p>Leave the defaults for all other settings and click <code>Continue</code>. RudderStack will verify credentials and that it has the needed permissions.</p>
+<p>You have now created a pipeline connection in RudderStack!</p>
+<h2 is-upgraded>Send Test Event</h2>
+<p>Now we are ready to send a test event.</p>
+<p>We will use a test site to send a <code>connection_setup</code> event. This will not effect the sample data tables. But first we need to get a few pieces of configuration data from RudderStack:</p>
+<ul>
+<li>RudderStack Data Plane URL</li>
+<li>JavaScript Source Write Key</li>
+</ul>
+<h3 is-upgraded>Data Plane URL</h3>
+<p>Go to the Connections page in the RudderStack app and copy the Data Plane URL at the top of the page.</p>
+<p class="image-container"><img alt="data-plane" src="img/1c23b12a5f1f9ef0.png"></p>
+<h3 is-upgraded>Write Key</h3>
+<p>Go into your JavaScript source in RudderStack and on the <code>Setup</code> tab scroll down and copy the write key.</p>
+<p class="image-container"><img alt="write-key" src="img/8d7ce331467f5442.png"></p>
+<h3 is-upgraded>Test Event</h3>
+<p>Go to RudderStack&#39;s <a href="https://ryanmccrary.github.io/rudderstackdemo/" target="_blank">test website</a> and copy your Data Plane URL and Write Key into the top fields and press <code>Submit</code>.</p>
+<p class="image-container"><img alt="test-site-setup" src="img/767fefc92fa43611.png"></p>
+<p>Enter <code>connection_setup</code> into the <code>event_name</code> field next to <code>Send Custom Event</code> and then click on <code>Send Custom Event</code>.</p>
+<p class="image-container"><img alt="test-site-event" src="img/eb1200c9da0d913f.png"></p>
+<p>You can check the event using RudderStack&#39;s <a href="https://www.rudderstack.com/docs/dashboard-guides/live-events/" target="_blank">&#34;Live events&#34; view</a> or check the <code>Syncs</code> tab in the Snowflake QuickStart destination.</p>
+<p><strong>Note that the test event needs to be delivered to Snowflake to validate the pipeline.</strong> If needed, you can run a manual sync by clicking &#34;Sync now&#34; in the Syncs tab of the Snowflake destination view in RudderStack.</p>
+<h2 is-upgraded>Profiles Schema and Permissions</h2>
+<p>Remember that Predictions automatically runs a Profiles job to create an identity graph. In this step, we are going to create a new schema where the identity graph and the related tables and views will be generated.</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE SCHEMA &#34;&lt;YOUR_DATABASE&gt;&#34;.&#34;PROFILES&#34;;
+</code></pre>
+<p>Now we need to grant permissions to the <code>QUICKSTART</code> role.</p>
+<p>Profiles will need the following permissions to run:</p>
+<ul>
+<li>Read access to all input tables to the model (already complete if you followed the previous setup steps)</li>
+<li>Write access to the schemas and common tables that the Profiles project creates.</li>
+</ul>
+<p>For the write access run the following statements:</p>
+<pre><code language="language-sql" class="language-sql">GRANT ALL PRIVILEGES ON SCHEMA PROFILES_QUICKSTART.PROFILES TO ROLE QUICKSTART;
+GRANT SELECT ON ALL TABLES IN SCHEMA PROFILES_QUICKSTART.PROFILES TO ROLE QUICKSTART;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA PROFILES_QUICKSTART.PROFILES TO ROLE QUICKSTART;
+GRANT SELECT ON ALL VIEWS IN SCHEMA PROFILES_QUICKSTART.PROFILES TO ROLE QUICKSTART;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA PROFILES_QUICKSTART.PROFILES TO ROLE QUICKSTART;
+</code></pre>
+<p>You are now ready to run Profiles and Predictions projects in the RudderStack UI!</p>
+<h2 is-upgraded>Profiles CLI setup</h2>
+<p>Before you start building automated features, you need to perform some additional setup steps so that you can transition seamlessly from the UI-based workflow to the code-based workflow in the second part of the guide.</p>
+<p>To build custom features with code, you will need Python3 and the RudderStack Profiles CLI tool (<code>PB</code>, for Profiles Builder) installed on your machine. If you do not have <code>PB</code> installed, follow the instructions below. This includes authentication for your Snowflake environment. <strong>Use the warehouse, database, and schema setup in the previous steps.</strong> This authentication will be used for accessing your Snowflake warehouse and running Snowpark. For more information about Profiles CLI tool see <a href="https://www.rudderstack.com/docs/profiles/get-started/profile-builder/" target="_blank">documentation</a>.</p>
+<h3 is-upgraded>Install Profile Builder Tool</h3>
+<p>Open a console window and install the Profile Builder <code>PB</code> tool.</p>
+<pre><code language="language-bash" class="language-bash">pip3 install profiles-rudderstack
+</code></pre>
+<p>Check the version to make sure it is at least <code>0.10.5</code></p>
+<pre><code language="language-bash" class="language-bash">pb version
+</code></pre>
+<h3 is-upgraded>Install ML Dependency</h3>
+<p>In order to run ML models you will need the python package <code>profiles-multieventstream-features</code> installed. Run the following command to install it.</p>
+<pre><code language="language-bash" class="language-bash">pip install git+https://github.com/rudderlabs/profiles-pycorelib
+</code></pre>
+<p>Now ensure you have the following python packages installed. These are required to use the <code>rudderstack-profiles-classifier</code> package to train classification models for predictive features.</p>
+<pre><code language="language-text" class="language-text">cachetools&gt;=4.2.2
+hyperopt&gt;=0.2.7
+joblib&gt;=1.2.0
+matplotlib&gt;=3.7.1
+seaborn&gt;=0.12.0
+numpy&gt;=1.23.1
+pandas&gt;=1.4.3
+PyYAML&gt;=6.0.1
+snowflake_connector_python&gt;=3.1.0
+snowflake-snowpark-python[pandas]&gt;=0.10.0
+scikit_learn&gt;=1.1.1
+scikit_plot&gt;=0.3.7
+shap&gt;=0.41.0
+platformdirs&gt;=3.8.1
+xgboost&gt;=1.5.0
+redshift-connector
+</code></pre>
+<h3 is-upgraded>Create Warehouse Connection</h3>
+<p>Initiate a warehouse connection:</p>
+<pre><code language="language-bash" class="language-bash">pb init connection
+</code></pre>
+<p>Follow the prompts and enter the details for your Snowflake warehouse/database/schema/user.</p>
+<pre><code language="language-bash" class="language-bash">Enter Connection Name: quickstart
+Enter target:  (default:dev)  # Press enter, leaving it to default
+Enter account: &lt;YOUR_ACCOUNT&gt;
+Enter warehouse: &lt;YOUR_WAREHOUSE&gt;
+Enter dbname: &lt;YOUR_DATABASE&gt;
+Enter schema: PROFILES
+Enter user: QUICKSTART_USER
+Enter password: &lt;password&gt;
+Enter role: QUICKSTART
+Append to /Users/&lt;user_name&gt;/.pb/siteconfig.yaml? [y/N]
+y
+</code></pre>
+<h3 is-upgraded>Enable ML Models</h3>
+<p>Finally we need to enable ML models within <code>siteconfig.yaml</code>.</p>
+<p>Open the file <code>/Users/<user_name>/.pb/siteconfig.yaml</code> in a text editor.</p>
+<p>At the bottom of the file there is a <code>py_models</code> section. Update it to look like this:</p>
+<pre><code language="language-yaml" class="language-yaml">py_models:
+    enabled: true
+    python_path: $(which python3)
+    credentials_presets: null
+    allowed_git_urls_regex: &#34;&#34;
+</code></pre>
+<h2 is-upgraded>Snowpark</h2>
+<p>Predictive features utilizes Snowpark within your Snowflake environment. It uses the same authentication as Snowflake and is able to run jobs within Snowflake.</p>
+<p>This will run python code in a virtual warehouse in Snowflake and will incur compute costs. These costs vary depending on the type of model and the quantity of data used in training and prediction. For more general information on Snowflake compute costs see <a href="https://docs.snowflake.com/en/user-guide/cost-understanding-compute" target="_blank">Understanding Compute Costs</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Automated Features in the RudderStack UI - Setup" duration="5">
+        <p>Setting up automated features in the RudderStack UI is a straight-forward process. Predictive features are configured within a Profiles project and automatically added to the feature table output when the project is run.</p>
+<p>Follow the steps below to set up a project and predictive features.</p>
+<h2 is-upgraded>Log into RudderStack</h2>
+<p>You can log-in <a href="https://app.rudderstack.com/login" target="_blank">here</a>.</p>
+<h2 is-upgraded>Navigate to Profiles Screen</h2>
+<p class="image-container"><img alt="Profiles" src="img/151c6926e560361e.png"></p>
+<h2 is-upgraded>Enter a Name and Description for the Profiles Project</h2>
+<p>Enter in a unique name and description for the Profiles Project where you will build your predictive features.</p>
+<p class="image-container"><img alt="Name" src="img/996a4368fff3c996.png"></p>
+<h2 is-upgraded>Select Sources</h2>
+<p class="image-container"><img alt="Source" src="img/71cf07ca1923d44e.png"></p>
+<p>Select your Snowflake warehouse. If you do not have your Snowflake warehouse configured, please set up an event stream connection to Snowflake in RudderStack (<a href="https://www.rudderstack.com/docs/destinations/warehouse-destinations/snowflake/" target="_blank">see details here</a>) and refer to the setup steps above.</p>
+<p>Once you select your warehouse, you will be able to choose from RudderStack event sources that are connected to Snowflake. In this example, you can see that we are reading from JavaScript source we created. Because that source is writing to the same schema as the sample data, Profiles will use the <code>PAGES</code>, <code>TRACKS</code>, <code>IDENTIFIES</code>, and <code>ORDER_COMPLETED</code> tables from that schema to build automated and predictive features.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Map ID Fields" duration="5">
+        <p class="image-container"><img alt="MapID" src="img/6b62f8adc11fe35a.png"></p>
+<p>Map the fields from the source table(s) to the correct type of ID. The standard types of ID are:</p>
+<ul>
+<li><code>user_id</code></li>
+<li><code>anonymous_id</code></li>
+<li><code>email</code></li>
+</ul>
+<p><strong>Note that for RudderStack event sources, standard ID column names will be mapped for you automatically</strong>. If you have included additional identifiers in your payloads, you can map those custom column names to standard identifiers by clicking <code>Add mapping</code> at the bottom of the table.</p>
+<h2 is-upgraded>Map Order_Completed Table</h2>
+<p>Click on <code>Add mapping</code> and map the <code>USER_ID</code> and <code>ANONYMOUS_ID</code> columns to standard identifiers to include the <code>ORDER_COMPLETED</code> table as a source for the identity graph and user features.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Source</p>
+</td><td colspan="1" rowspan="1"><p>Event</p>
+</td><td colspan="1" rowspan="1"><p>Property</p>
+</td><td colspan="1" rowspan="1"><p>ID Type</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>QuickStart Test Site</p>
+</td><td colspan="1" rowspan="1"><p>ORDER_COMPLETED</p>
+</td><td colspan="1" rowspan="1"><p>USER_ID</p>
+</td><td colspan="1" rowspan="1"><p>user_id</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>QuickStart Test Site</p>
+</td><td colspan="1" rowspan="1"><p>ORDER_COMPLETED</p>
+</td><td colspan="1" rowspan="1"><p>ANONYMOUS_ID</p>
+</td><td colspan="1" rowspan="1"><p>anonymous_id</p>
+</td></tr>
+</table>
+<p class="image-container"><img alt="map-orders-completed" src="img/4b1f8d5794f4b961.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Default Features in the UI" duration="5">
+        <p>There are two types of automated features you can define in the UI:</p>
+<ol type="1">
+<li>Default features</li>
+<li>Custom features</li>
+</ol>
+<p>We will go over both types of features, but this guide will focus on the default features that are automatically generated.</p>
+<h2 is-upgraded>Setting up Default Features</h2>
+<p>Default features are features commonly used in Profiles projects. RudderStack provides a template library for these features to make them easy to add to your project. Templated features give you access to over 40 different standard and predictive features, which are generated in Snowflake automatically.</p>
+<p class="image-container"><img alt="categories" src="img/a5037df329864bbf.png"></p>
+<p>Default features are divided into 4 categories:</p>
+<ul>
+<li><strong>Attribution</strong> - campaign, source, and churn features</li>
+<li><strong>Demographics</strong> - user trait features</li>
+<li><strong>Engagement</strong> - user activity features</li>
+<li><strong>Predictive ML Features</strong> - predictive features</li>
+</ul>
+<p>You can open the drop down menu for each category and select as many as you would like for your project.</p>
+<p class="image-container"><img alt="attribution" src="img/26ce32e8998d5831.png"></p>
+<p>For this quickstart select:</p>
+<ul>
+<li>Attribution <ul>
+<li><code>first_source_name</code></li>
+<li><code>is_churned_30_days</code></li>
+<li><code>is_churned_90_days</code></li>
+</ul>
+</li>
+<li>Demographics <ul>
+<li><code>first_name</code></li>
+<li><code>last_name</code></li>
+<li><code>state</code></li>
+</ul>
+</li>
+<li>Engagement <ul>
+<li><code>first_date_seen</code></li>
+<li><code>last_date_seen</code></li>
+<li><code>total_sessions_90_days</code></li>
+<li><code>total_sessions_last_week</code></li>
+</ul>
+</li>
+<li>Predictive ML Features <ul>
+<li><code>percentile_churn_score_30_days</code></li>
+</ul>
+</li>
+</ul>
+<p>It is important to remember that RudderStack runs all of the feature-generation code transparently in Snowflake. For any of the default features, other than Predictive ML Features, you can click on <code>Preview Code</code> and get a yaml code snippet defining that feature (the yaml definition is used to generate SQL). This is helpful for technical users who want a deeper understanding of feature logic (and a running start for coding their own features).</p>
+<p class="image-container"><img alt="churn-snippet" src="img/3e3e95ef3cb4f496.png"></p>
+<h3 is-upgraded>Churn definition</h3>
+<p>RudderStack Predictions automatically generates a binary churn value for every user based on inactivity over a 7, 30, or 90-day period.</p>
+<p>For example, to calculate the <code>is_churned_7_days</code> value, RudderStack looks for any activity timestamp for a particular user in the <code>TRACKS</code> and <code>PAGES</code> tables  over the previous 7 day period. Practically, this means that RudderStack executes a ‘max timestamp&#39; query against those tables to see if users have viewed a page or performed other tracked actions (like clicks, form submits, add to carts, etc.) and then calculates the difference from today. If the query returns 7 or more, that means they haven&#39;t performed any activity over the last 7 days and their <code>is_churned_7_days</code> trait is set to <code>1</code>.</p>
+<h3 is-upgraded>How Predictions models percentile churn scores</h3>
+<p>Using the standard definition (no activity over a defined period), RudderStack Predictions automatically runs a python-based churn model in Snowpark that predicts whether users will become inactive (churn) over the next 7, 30, or 90-day period. This model is trained on existing user data, using the Profiles identity graph, so it is recommended that you have a minimum of 5,000-10,000 unique users to achieve accurate output for business use cases.</p>
+<p><strong>How Predictions automates ML with Snowpark</strong></p>
+<p>Predictions streamlines integration with Snowpark by using the authentication from your existing Snowflake integration in RudderStack.</p>
+<p>In order to run models in Snowpark, there is one additional set of permissions required. To run Predictions jobs, you must have permission to create stages within your schema. For more information see the <code>CREATE STAGE</code> <a href="https://docs.snowflake.com/en/sql-reference/sql/create-stage#access-control-requirements" target="_blank">documentation</a>.</p>
+<p>Once permissions are granted, you will be able to run jobs that produce predictive features. <strong>If you followed the steps in Prerequisites that permission has already been granted.</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Custom Features in the UI" duration="5">
+        <p>If a needed feature is not in the template library, you can define a custom feature in the UI. Custom features can be standard or predictive features.</p>
+<h2 is-upgraded>Add Custom Features</h2>
+<p class="image-container"><img alt="custom-feature" src="img/1b0f87582431aebd.png"></p>
+<p>Click on <code>Add a custom feature</code> at the top of the page.</p>
+<p>We will build an <code>average_order</code> feature with the following values:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Field</p>
+</td><td colspan="1" rowspan="1"><p>Value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Name</strong></p>
+</td><td colspan="1" rowspan="1"><p>average_order</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td><td colspan="1" rowspan="1"><p>Average Order Size including shipping, taxes, and discounts</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Function Type</strong></p>
+</td><td colspan="1" rowspan="1"><p>AGGREGATE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Function</strong></p>
+</td><td colspan="1" rowspan="1"><p>AVG</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Event</strong></p>
+</td><td colspan="1" rowspan="1"><p>EVENTS.ORDER_COMPLETED</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Property or Trait</strong></p>
+</td><td colspan="1" rowspan="1"><p>TOTAL</p>
+</td></tr>
+</table>
+<p class="image-container"><img alt="define-feature" src="img/129fb5bec8746f52.png"></p>
+<p>Once complete click <code>Save</code>. The custom feature will be added to the top of the page.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Schedule" duration="5">
+        <p>There are three options to set a schedule for how often the feature generation job runs:</p>
+<ul>
+<li>Basic</li>
+<li>Cron</li>
+<li>Manual</li>
+</ul>
+<h2 is-upgraded>Basic</h2>
+<p class="image-container"><img alt="basic" src="img/4a524bfd5ff8e2a6.png"></p>
+<p>Schedule on a predetermined interval.</p>
+<p>The frequency can be every:</p>
+<ul>
+<li>30 minutes</li>
+<li>1 hour</li>
+<li>3 hours</li>
+<li>6 hours</li>
+<li>12 hours</li>
+<li>24 hours</li>
+</ul>
+<p>Then select a starting time for the initial sync</p>
+<h2 is-upgraded>Cron</h2>
+<p class="image-container"><img alt="cron" src="img/76deedf05e250feb.png"></p>
+<p>Schedule using cron expressions for more specific scheduling (i.e. Daily on Tuesdays and Thursdays).</p>
+<p>If you are not familiar with cron expressions you can use the builder in the UI.</p>
+<h2 is-upgraded>Manual</h2>
+<p>Only run when manually triggered within the UI.</p>
+<p>For this guide, select Manual.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Save, Review, and Create Project" duration="3">
+        <h2 is-upgraded>Save Project</h2>
+<p class="image-container"><img alt="save" src="img/2b4f104232406d2a.png"></p>
+<p>Fill in the Schema field with <code>PROFILES</code> (to match what we created earlier). This is where the feature table will be written to in Snowflake.</p>
+<h2 is-upgraded>Review and Create Project</h2>
+<p class="image-container"><img alt="review" src="img/ba0fbecf92fdbf3a.png"></p>
+<p>Finally review all the settings and when ready click <code>Create user 360</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Review Created Features" duration="5">
+        <p>Once the initial project run is initiated, it may take up to 25-30 minutes to complete. Once the job is done, you are able to explore the data in RudderStack&#39;s UI, including model fit charts for predictive features and individual user records with all features.</p>
+<p class="image-container"><img alt="ui-predictive-review" src="img/41985c613326a4cd.png"><img alt="ui-predictive-graphs" src="img/6fc233023e329a13.png"><img alt="ui-review" src="img/598f1dae4b2755.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Code Your Own Custom Predictive Features" duration="15">
+        <h2 is-upgraded>Use Case</h2>
+<p>While automated features are incredibly useful for quickly deploying activity-based churn scores, data teams inevitably want to go deeper and define custom predictions that match their unique business logic and KPIs.</p>
+<p>Basic customization is possible in the UI as we covered above, but Predictions also supports a code-based workflow that gives technical users full control and complete customizability, as well as the ability to integrate the process into their existing development workflow.</p>
+<p>For example, if you are an eCommerce company, it can be helpful to predict whether or not a user will make a purchase over a certain dollar amount, over the next <code>n</code> days.</p>
+<p>RudderStack makes it easy to migrate from the UI-based workflow to the code-based workflow to build these more complex use cases.</p>
+<h2 is-upgraded>Download Project Files</h2>
+<p>On the Profiles screen, find your project and click the &#34;Download this Project&#34; button in the upper right. This will download all the files for that Profiles project in a compressed (zip) file including the modeling files.</p>
+<p class="image-container"><img alt="download" src="img/d540060bd368b88b.png"></p>
+<p>Inside the Profiles folder you will find <code>pb_project.yaml</code> and a <code>models</code> folder with <code>resources.yaml</code>.</p>
+<pre><code language="language-text" class="language-text">RudderStack QuickStart
+├── pb_project.yaml
+├── models
+│   ├── resources.yaml
+</code></pre>
+<h2 is-upgraded>pb_project.yaml</h2>
+<p><code>pb_project.yaml</code> is the main configuration file for the Profiles project. The top section defines the <code>name</code>, <code>schema_version</code>, <code>connection</code>, and <code>model_folder</code> (where the files that define the details of the Profiles project can be found).</p>
+<p>We need to update two of the values:</p>
+<ul>
+<li><code>name</code> to <code>Profile-Quickstart</code> to match the name in the UI.</li>
+<li><code>connection</code> to <code>QUICKSTART</code> to match the database connection we made in the Prerequisites section.</li>
+</ul>
+<pre><code language="language-yaml" class="language-yaml">name: Profile-QuickStart
+schema_version: 49 # Or most recent version
+connection: QUICKSTART
+model_folders:
+    - models
+</code></pre>
+<p>Below there is an <code>entities</code> section that defines our entities and what kinds of ID&#39;s make up that entity. An entity is a business concept or unit that will be used to build the identity graph and features. Projects can contain multiple entities like user, household, and organization.</p>
+<p>For this project we have one entity called <code>user</code> with 5 different types of IDs. An ID type maps which ID fields can be joined together. For example if you have two tables with <code>user_id</code> columns called <code>id</code> and <code>userid</code>, by giving each the type <code>user_id</code> Profiles knows to join those tables on those columns.</p>
+<p>These were the types that we mapped our ID fields to in the UI. Nothing needs to be updated in this section.</p>
+<pre><code language="language-yaml" class="language-yaml">entities:
+    - name: user
+      serve_traits:
+        - id_served: user_id
+        - id_served: anonymous_id
+        - id_served: email
+        - id_served: cart_token
+        - id_served: user_main_id
+</code></pre>
+<p>Finally there is a <code>packages</code> section. This section allows you to import a Profiles project from GitHub and use the feature definitions from that project in this one. The project we are importing provides the definitions for the standard features we selected in the UI. Nothing needs to be updated in this section.</p>
+<pre><code language="language-yaml" class="language-yaml">packages:
+    - name: base_features
+      url: https://github.com/rudderlabs/rudderstack-profiles-multieventstream-features
+      inputsMap: # These are the tables automatically mapping in the UI (TRACKS, PAGES, IDENTIFIES)
+        rsIdentifies_1: inputs/rsIdentifies_1
+        rsIdentifies_2: nil
+        rsIdentifies_3: nil
+        rsPages_1: inputs/rsPages_1
+        rsPages_2: nil
+        rsPages_3: nil
+        rsTracks_1: inputs/rsTracks_1
+        rsTracks_2: nil
+        rsTracks_3: nil
+      overrides: # By default all features are imported from the project, therefore the features we did not select need to be disabled
+        - requested_enable_status: disabled
+          models:
+            - entity/user/active_days_in_past_365_days
+            - entity/user/active_days_in_past_7_days
+            - entity/user/avg_session_length_in_sec_365_days
+            - entity/user/avg_session_length_in_sec_last_week
+            - entity/user/avg_session_length_in_sec_overall
+            - entity/user/campaign_sources
+            - entity/user/campaigns_list
+            - models/churn_7_days_model
+            - models/churn_90_days_model
+            - entity/user/country
+            - entity/user/currency
+            - entity/user/days_since_account_creation
+            - entity/user/days_since_last_seen
+            - entity/user/first_campaign_name
+            - entity/user/is_churned_7_days
+            - entity/user/last_campaign_name
+            - entity/user/last_source_name
+            - entity/user/max_timestamp_bw_tracks_pages
+            - entity/user/mediums_list
+            - entity/user/sources_list
+            - entity/user/total_sessions_365_days
+            - entity/user/total_sessions_till_date
+</code></pre>
+<h2 is-upgraded>resource.yaml</h2>
+<p><code>resources.yaml</code> contains two main sections: <code>inputs</code> and <code>var_groups</code>.</p>
+<p>The <code>inputs</code> section defines what ID&#39;s are in each table and their mapping. Currently these are all the tables and mappings that were defined in the UI. These tables are used for creating an identity graph and all features related to it.</p>
+<p>If you wanted to add another table in the future, the table and ID mappings would be added here. Below is an example of what it looks like using the <code>ORDER_COMPLETED</code> table we manually mapped in the UI. It consists of the following fields:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Field</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>name</p>
+</td><td colspan="1" rowspan="1"><p>alias for the table; the primary reference in the rest of the yaml files</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>table</p>
+</td><td colspan="1" rowspan="1"><p><code><SCHEMA>.<TABLE_NAME></code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>select</p>
+</td><td colspan="1" rowspan="1"><p>column with ID</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>type</p>
+</td><td colspan="1" rowspan="1"><p>what kind of ID it is</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>entity</p>
+</td><td colspan="1" rowspan="1"><p>what entity the id should be mapped to</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>to_default_stitcher</p>
+</td><td colspan="1" rowspan="1"><p><code>true</code> unless you decide you use a different ID stitcher</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>remapping</p>
+</td><td colspan="1" rowspan="1"><p>leave as <code>null</code></p>
+</td></tr>
+</table>
+<pre><code language="language-yaml" class="language-yaml">- name: rs_EVENTS_ORDER_COMPLETED
+  app_defaults:
+    table: EVENTS.ORDER_COMPLETED
+    ids:
+        - select: USER_ID
+          type: user_id
+          entity: user
+          to_default_stitcher: true
+        - select: ANONYMOUS_ID
+          type: anonymous_id
+          entity: user
+          to_default_stitcher: true
+  remapping: null
+</code></pre>
+<p>The <code>var_groups</code> section is where custom features are defined, both custom features created in the UI and those added via code in this file. Custom features are organized into groups by entity (in our case only <code>user</code>). The entity is like the <code>group by</code> variable in a SQL query.</p>
+<p>Below that custom features are defined in the <code>vars</code> subsection. Here is the <code>average_order</code> feature we created in the UI.</p>
+<pre><code language="language-yaml" class="language-yaml">- entity_var:
+    is_feature: true
+    name: average_order
+    description: Average Order Size including shipping, taxes, and discounts
+    select: AVG(TOTAL)
+    from: inputs/rs_EVENTS_ORDER_COMPLETED
+
+</code></pre>
+<p>A name and description are need for the custom feature and then it is defined using declarative SQL syntax. This allows you to define the custom feature the same way you would if creating a new table with SQL.</p>
+<h2 is-upgraded>Creating a Custom Predictive Feature</h2>
+<p>Just like in the UI workflow, you must already have defined the feature you want to predict. Therefore we are going to add a new custom feature for large purchases in the last 90 days. <strong>NOTE: currently predictive features can only be binary (i.e. 1/0)</strong></p>
+<p>We will define a large order as any order with a <code>TOTAL</code> of &gt; $100.</p>
+<p>At the bottom of the <code>resources.yaml</code> add the name and definition for <code>large_purchase_last_90</code>.</p>
+<pre><code language="language-yaml" class="language-yaml">- entity_var:
+  name: large_purchase_last_90
+  description: Customer that made a purchase of &gt;$100 in the last 90 days.
+  select: CASE WHEN MAX(TOTAL) &gt; 100 THEN 1 ELSE 0 END
+  from: inputs/re_EVENTS_ORDER_COMPLETED
+  where: DATEDIFF(days, TIMESTAMP, CURRENT_DATE) &lt;= 90
+</code></pre>
+<p>You will notice that we are able to use SQL functions and key words in our definition. Specifically we are using a <code>CASE</code> statement in the select statement and are able to add a <code>where</code> statement and use the <code>DATEDIFF</code> function. We also used the alias for the <code>ORDER_COMPLETED</code> table in the <code>from</code> statement.</p>
+<p>For more details on Profiles and project file structure, you can review the Profiles <a href="https://www.rudderstack.com/docs/profiles/overview/" target="_blank">documentation</a>.</p>
+<h2 is-upgraded>Organize the Project into Two Files (<strong>OPTIONAL</strong>)</h2>
+<p>Profiles does not need specific yaml files in the <code>models</code> folder in order to run. That allows you to organize your code as you feels is best. You can keep it all in one file or you can split it over multiple files.</p>
+<p>We are going to split the <code>resources.yaml</code> file into <code>inputs.yaml</code> and <code>profiles.yaml</code>. Create the two yaml files. Then copy everything in the <code>inputs</code> section into <code>inputs.yaml</code> and <code>var_groups</code> into <code>profiles.yaml</code>.</p>
+<p>Once you are done you can delete <code>resources.yaml</code>.</p>
+<h2 is-upgraded>Adding a Custom Predictive Feature</h2>
+<p>Now we are going to create 2 new custom predictive features from <code>large_purchase_last_90</code> called <code>likelihood_large_purchase_90</code> (raw score) and <code>percentile_large_purchase_90</code>(percentile score).</p>
+<h3 is-upgraded>Add Python ML Requirement</h3>
+<p>In order to add custom predictive features we need to add the <code>profiles-pycorelib</code> package to our project requirements. At the bottom of <code>pb_project.yaml</code> add the following code to <code>pb_project.yaml</code>.</p>
+<pre><code language="language-yaml" class="language-yaml">python_requirements:
+  - profiles-pycorelib==0.2.1
+</code></pre>
+<h3 is-upgraded>Create ml_models.yaml</h3>
+<p>Now we need to create a new file and name it <code>ml_models.yaml</code>. This file is where we will define our 2 new custom predictive features and how the ML model will be trained. The code for our new predictive features is below. We will go over the general structure, but details can be found in the comments in the code.</p>
+<p>This file is organized by the predictive model created for predictive features, not the individual features. The top level consists of:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Field/Section</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>name</code></p>
+</td><td colspan="1" rowspan="1"><p>Name of the model (not feature)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>model_type</code></p>
+</td><td colspan="1" rowspan="1"><p><code>python_model</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>model_spec</code></p>
+</td><td colspan="1" rowspan="1"><p>All of the model specifications</p>
+</td></tr>
+</table>
+<p><code>model_spec</code> sections:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Section</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>train</code></p>
+</td><td colspan="1" rowspan="1"><p>training configuration</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>predict</code></p>
+</td><td colspan="1" rowspan="1"><p>scoring configuration</p>
+</td></tr>
+</table>
+<pre><code language="language-yaml" class="language-yaml">models:
+    - name: &amp;model_name large_purchase_90_model
+      model_type: python_model
+      model_spec:
+        occurred_at_col: insert_ts
+        entity_key: user
+        validity_time: 24h
+        py_repo_url: git@github.com:rudderlabs/rudderstack-profiles-classifier.git # Model training and scoring repo
+
+        train:
+          file_extension: .json
+          file_validity: 2160h # 90 days; when the model will be retrained
+          inputs: &amp;inputs
+            - packages/base_features/models/rudder_user_base_features # location of the base features created in the UI
+            - packages/large_purchase_last_90 # custom feature created in var_groups
+            - models/average_order # custom feature we created in the UI
+          config:
+            data: &amp;model_data_config
+              package_name: feature_table
+              label_column: large_purchase_last_90 # target feature
+              label_value: 1 # target feature value predicting
+              prediction_horizon_days: 90 # how far into the future
+              features_profiles_model:  &#39;rudder_user_base_features&#39; #taken from inputs
+              output_profiles_ml_model: *model_name
+              eligible_users: &#39;large_purchase_last_90 is not null&#39; # limit training data to those with non-null values
+              inputs: *inputs
+            preprocessing: &amp;model_prep_config
+              ignore_features: [first_name, last_name, state] # features we do not used in a model
+
+        predict:
+          inputs: *inputs # copy from train
+          config:
+            data: *model_data_config # copy from train
+            preprocessing: *model_prep_config # copy from train
+            outputs:
+              column_names:
+                percentile: &amp;percentile percentile_large_purchase_90 # name of percentile feature
+                score: &amp;raw_score likelihood_large_purchase_90 # name of raw likelihood feature
+              feature_meta_data: &amp;feature_meta_data
+                features:
+                  - name: *percentile
+                    description: &#39;Percentile of likelihood score. Higher the score the more likely to make a larger purchase&#39;
+                  - name: *raw_score
+                    description: &#39;Raw likelihood score. Higher the score the more likely to make a larger purchase&#39;
+
+        &lt;&lt;: *feature_meta_data
+</code></pre>
+<h2 is-upgraded>Compile and Run</h2>
+<p>Save all files. Now compile the project, this will make sure all SQL and python files are able to be created.</p>
+<pre><code language="language-bash" class="language-bash">pb compile
+</code></pre>
+<p>Finally we will run the project. This will generate the same files as <code>compile</code> and then execute them in Snowflake. The first run can take at least 30 minutes because of training ML models.</p>
+<pre><code language="language-bash" class="language-bash">pb run
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Final Table" duration="1">
+        <p>The final predictive features can be found in your Snowflake environment together in the same table. The table will provide you with the unified user id, created by RudderStack, when the features are valid as of (i.e. when the model was last run to create these features), and model ID, and your predictive features.</p>
+<p class="image-container"><img alt="final-table" src="img/74a4fd4fdb3dae79.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>In this quickstart we created a project that leveraged RudderStack data and the power of Snowpark to generate predictive features directly in the Snowflake environment.</p>
+<p>All of this was accomplished without any additional MLOps infrastructure. Being able to create predictive features in a warehouse environment opens up ML modeling to Data Engineers, Analytical Engineers, and Data Analysts. It also allows businesses to significantly cut the time to data activation and positive ROI.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create a basic event stream pipeline in RudderStack</li>
+<li>How to create an identity graph and feature table using RudderStack Profiles</li>
+<li>How to automatically create predictive models and features using RudderStack Predictions</li>
+<li>How to download a Profiles project and update it using the CLI tool <code>PB</code></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.rudderstack.com/blog/your-aiml-success-starts-with-data-quality/" target="_blank">AI/ML Success Starts with Data Quality</a></li>
+<li><a href="https://www.rudderstack.com/blog/how-analytics-engineers-can-unlock-practical-ml-to-drive-business-value/" target="_blank">How Analytics Engineers can Unlock Practical ML to Drive Business Value</a></li>
+<li><a href="https://github.com/rudderlabs/rudderstack-profiles-shopify-churn" target="_blank">Shopify Churn Score on GitHub</a></li>
+<li><a href="https://www.rudderstack.com/docs/profiles/get-started/" target="_blank">Getting Started with Profiles</a></li>
+<li><a href="https://www.rudderstack.com/docs/profiles/predictions/" target="_blank">Predictions Guide</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

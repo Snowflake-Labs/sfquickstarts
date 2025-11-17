@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "tasty_bytes_zero_to_snowflake_collaboration_es",
+  "duration": 10,
+  "title": "Tasty Bytes - De cero a Snowflake - Colaboración",
+  "summary": "Tasty Bytes - De cero a Snowflake - Colaboración",
+  "source": "tasty_bytes_zero_to_snowflake_collaboration_es/tb_zts_collaboration_es.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured"
+  ],
+  "tags": [
+    "deceroasnowflake",
+    "es",
+    "gettingstarted",
+    "introducción",
+    "tastybytes",
+    "web",
+    "zerotosnowflake"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_zero_to_snowflake_collaboration_es"
+}

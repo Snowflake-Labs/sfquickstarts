@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "kgqa_using_relationalai",
+  "duration": 65,
+  "title": "KGQA: Question Answering on Knowledge Graphs Using RelationalAI and Snowflake Cortex AI",
+  "summary": "This guide shows how to use RelationalAI and Snowflake to create a system that lets a user ask and answer natural language questions on a custom knowledge graph.",
+  "source": "question_answering_on_kg_using_relationalai_and_snowflake/question_answering_on_kg.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "graph-analysis",
+    "relationalai",
+    "generativeai"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/RelationalAI/QuestionAnsweringKG/issues",
+  "url": "kgqa_using_relationalai"
+}

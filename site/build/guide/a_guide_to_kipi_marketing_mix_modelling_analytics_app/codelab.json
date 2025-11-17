@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "a_guide_to_kipi_marketing_mix_modelling_analytics_app",
+  "duration": 55,
+  "title": "A Guide to Kipi Marketing Mix Modelling and Analytics App",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "a_guide_to_kipi_marketing_mix_modelling_and_analytics_app/a_guide_to_kipi_marketing_mix_modelling_and_analytics_app.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "applications\u0026collaboration",
+    "apps\u0026collab:externalcollaboration",
+    "ai-snowflakeml",
+    "apps\u0026collab-nativeapps"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "marketing",
+    "mmm",
+    "nativeapps",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "a_guide_to_kipi_marketing_mix_modelling_analytics_app"
+}

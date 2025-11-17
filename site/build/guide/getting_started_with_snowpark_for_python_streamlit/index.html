@@ -1,0 +1,416 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started With Snowpark for Python and Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpark_for_python_streamlit"
+                  title="Getting Started With Snowpark for Python and Streamlit"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This guide provides the instructions for building a Streamlit application using Snowpark for Python and data from the Snowflake Marketplace.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<p>A Streamlit application that loads and visualizes daily <strong>stock performance</strong> and <strong>foreign exchange (FX) rate</strong> data loaded from the Snowflake Marketplace using Snowpark for Python.</p>
+<p class="image-container"><img alt="App" src="img/713adca1d99c36bb.gif"></p>
+<h2 is-upgraded>What is Snowpark?</h2>
+<p>The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.</p>
+<p><strong>Familiar Client Side Libraries</strong> - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).</p>
+<p><strong>Flexible Runtime Constructs</strong> - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.</p>
+<p>Learn more about <a href="https://www.snowflake.com/snowpark/" target="_blank">Snowpark</a>.</p>
+<p class="image-container"><img alt="App" src="img/9f7d4fd72f4d8a3f.png"></p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit enables data scientists and Python developers to combine Streamlit&#39;s component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.</p>
+<p>Learn more about <a href="https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/" target="_blank">Streamlit</a>.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to access current Session object in Streamlit</li>
+<li>How to load data from the Snowflake Marketplace</li>
+<li>How to create Snowpark DataFrames and perform transformations</li>
+<li>How to create and display interactive charts in Streamlit</li>
+<li>How to run Streamlit in Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> account</li>
+<li>Access to the <strong>Financial &amp; Economic Essentials</strong> dataset <ul>
+<li>In the <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/snowflake-data-finance-economics?_fsi=QrmINNI3" target="_blank">Snowflake Marketplace</a>, click on <strong>Get Data</strong> and follow the instructions to gain access. In particular, we will use data from tables <strong>STOCK_PRICE_TIMESERIES</strong> and <strong>FX_RATES_TIMESERIES</strong>.</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get Started" duration="5">
+        <p>Follow these steps to start building Streamlit application in Snowsight.</p>
+<p><strong>Step 1.</strong> Click on <strong>Streamlit</strong> on the left navigation menu</p>
+<p><strong>Step 2.</strong> Click on <strong>+ Streamlit App</strong> on the top right</p>
+<p><strong>Step 3.</strong> Enter <strong>App name</strong></p>
+<p><strong>Step 4.</strong> Select <strong>Warehouse</strong> (X-Small) and <strong>App location</strong> (Database and Schema) where you&#39;d like to create the Streamlit applicaton</p>
+<p><strong>Step 5.</strong> Click on <strong>Create</strong></p>
+<ul>
+<li>At this point, you will be provided code for an example Streamlit application</li>
+</ul>
+<p><strong>Step 6.</strong> Replace sample application code displayed in the code editor on the left by following instructions in the subsequent steps</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Setup" duration="2">
+        <p>Delete existing sample application code in the code editor on the left and add the following code snippet at the very top.</p>
+<pre><code language="language-python" class="language-python"># Import libraries
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
+import altair as alt
+import streamlit as st
+import pandas as pd
+
+# Set page config
+st.set_page_config(layout=&#34;wide&#34;)
+
+# Get current session
+session = get_active_session()
+</code></pre>
+<p>In the above code snippet, we&#39;re importing the required libraries, setting the application&#39;s page config to use full width of the browser window, and gaining access to the current session.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load and Transform Data" duration="5">
+        <p>Now add the following Python function that loads and caches data from the <code>FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES</code> and <code>FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES</code> tables.</p>
+<pre><code language="language-python" class="language-python">@st.cache_data()
+def load_data():
+    # Load and transform daily stock price data.
+    snow_df_stocks = (
+        session.table(&#34;FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES&#34;)
+        .filter(
+            (col(&#39;TICKER&#39;).isin(&#39;AAPL&#39;, &#39;MSFT&#39;, &#39;AMZN&#39;, &#39;GOOGL&#39;, &#39;META&#39;, &#39;TSLA&#39;, &#39;NVDA&#39;)) &amp; 
+            (col(&#39;VARIABLE_NAME&#39;).isin(&#39;Nasdaq Volume&#39;, &#39;Post-Market Close&#39;)))
+        .groupBy(&#34;TICKER&#34;, &#34;DATE&#34;)
+        .agg(
+            max(when(col(&#34;VARIABLE_NAME&#34;) == &#34;Nasdaq Volume&#34;, col(&#34;VALUE&#34;))).alias(&#34;NASDAQ_VOLUME&#34;),
+            max(when(col(&#34;VARIABLE_NAME&#34;) == &#34;Post-Market Close&#34;, col(&#34;VALUE&#34;))).alias(&#34;POSTMARKET_CLOSE&#34;)
+        )
+    )
+    
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy(&#34;TICKER&#34;).orderBy(&#34;DATE&#34;)
+    snow_df_stocks_transformed = snow_df_stocks.withColumn(&#34;DAY_OVER_DAY_CHANGE&#34;, 
+        (col(&#34;POSTMARKET_CLOSE&#34;) - lag(col(&#34;POSTMARKET_CLOSE&#34;), 1).over(window_spec)) /
+        lag(col(&#34;POSTMARKET_CLOSE&#34;), 1).over(window_spec)
+    )
+
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table(&#34;FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES&#34;).filter(
+        (col(&#39;BASE_CURRENCY_ID&#39;) == &#39;EUR&#39;) &amp; (col(&#39;DATE&#39;) &gt;= &#39;2019-01-01&#39;)).with_column_renamed(&#39;VARIABLE_NAME&#39;,&#39;EXCHANGE_RATE&#39;)
+    
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
+
+# Load and cache data
+df_stocks, df_fx = load_data()
+</code></pre>
+<p>In the above code snippet, we&#39;re leveraging several Snowpark DataFrame functions to load and transform data. For example, <code>filter()</code>, <code>group_by()</code>, <code>agg()</code>, <code>sum()</code>, <code>alias()</code> and <code>isin()</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Daily Stock Performance" duration="5">
+        <p>Now add the following Python function that displays daily stock performance. Create selection dropdowns for date, stock ticker, and metric to be visualized.</p>
+<pre><code language="language-python" class="language-python">def stock_prices():
+    st.subheader(&#39;Stock Performance on the Nasdaq for the Magnificent 7&#39;)
+    
+    df_stocks[&#39;DATE&#39;] = pd.to_datetime(df_stocks[&#39;DATE&#39;])
+    max_date = df_stocks[&#39;DATE&#39;].max()  # Most recent date
+    min_date = df_stocks[&#39;DATE&#39;].min()  # Earliest date
+    
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
+
+    # Use the adjusted default start date in the &#39;date_input&#39; widget
+    start_date, end_date = st.date_input(&#34;Date range:&#34;, [default_start_date, max_date], min_value=min_date, max_value=max_date, key=&#39;date_range&#39;)
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks[&#39;DATE&#39;] &gt;= start_date_ts) &amp; (df_stocks[&#39;DATE&#39;] &lt;= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered[&#39;TICKER&#39;].unique().tolist()
+    default_tickers = [ticker for ticker in [&#39;AAPL&#39;, &#39;MSFT&#39;, &#39;AMZN&#39;, &#39;GOOGL&#39;, &#39;META&#39;, &#39;TSLA&#39;, &#39;NVDA&#39;] if ticker in unique_tickers]
+    selected_tickers = st.multiselect(&#39;Ticker(s):&#39;, unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered[&#39;TICKER&#39;].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox(&#39;Metric:&#39;,(&#39;DAY_OVER_DAY_CHANGE&#39;,&#39;POSTMARKET_CLOSE&#39;,&#39;NASDAQ_VOLUME&#39;), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x=&#39;DATE&#39;,
+        y=alt.Y(metric, title=metric),
+        color=&#39;TICKER&#39;,
+        tooltip=[&#39;TICKER&#39;,&#39;DATE&#39;,metric]
+    ).interactive()
+    st.altair_chart(line_chart, use_container_width=True)
+</code></pre>
+<p>In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the <code>df_stocks</code> dataframe filtered by ticker, date, and metric using Streamlit&#39;s built in components. This enhances the customizability of the visualization.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="EUR Exchange (FX) Rates" duration="5">
+        <p>Next, add the following Python function that displays a currency selection dropdown and a chart to visualize euro exchange rates over time for the selected quote currencies.</p>
+<pre><code language="language-python" class="language-python">def fx_rates():
+    st.subheader(&#39;EUR Exchange (FX) Rates by Currency Over Time&#39;)
+
+    # GBP, CAD, USD, JPY, PLN, TRY, CHF
+    currencies = [&#39;British Pound Sterling&#39;,&#39;Canadian Dollar&#39;,&#39;United States Dollar&#39;,&#39;Japanese Yen&#39;,&#39;Polish Zloty&#39;,&#39;Turkish Lira&#39;,&#39;Swiss Franc&#39;]
+    selected_currencies = st.multiselect(&#39;&#39;, currencies, default = [&#39;British Pound Sterling&#39;,&#39;Canadian Dollar&#39;,&#39;United States Dollar&#39;,&#39;Swiss Franc&#39;,&#39;Polish Zloty&#39;])
+    st.markdown(&#34;___&#34;)
+
+    # Display an interactive chart to visualize exchange rates over time by the selected currencies
+    with st.container():
+        currencies_list = currencies if len(selected_currencies) == 0 else selected_currencies
+        df_fx_filtered = df_fx[df_fx[&#39;QUOTE_CURRENCY_NAME&#39;].isin(currencies_list)]
+        line_chart = alt.Chart(df_fx_filtered).mark_line(
+            color=&#34;lightblue&#34;,
+            line=True,
+        ).encode(
+            x=&#39;DATE&#39;,
+            y=&#39;VALUE&#39;,
+            color=&#39;QUOTE_CURRENCY_NAME&#39;,
+            tooltip=[&#39;QUOTE_CURRENCY_NAME&#39;,&#39;DATE&#39;,&#39;VALUE&#39;]
+        )
+        st.altair_chart(line_chart, use_container_width=True)
+</code></pre>
+<p>In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the <code>df_fx</code> dataframe filtered by the currencies selected via Streamlit&#39;s <code>multiselect()</code> user input component.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Components" duration="5">
+        <p>Add the following code snippet to display application header, create a sidebar, and map <code>stock_prices()</code> and <code>fx_rates()</code> functions to <strong>Daily Stock Performance</strong> and <strong>Exchange (FX) Rates</strong> options respectively in the sidebar.</p>
+<pre><code language="language-python" class="language-python"># Display header
+st.header(&#34;Financial &amp; Economic Essentials&#34;)
+
+# Create sidebar and load the first page
+page_names_to_funcs = {
+    &#34;Daily Stock Performance&#34;: stock_prices,
+    &#34;Exchange (FX) Rates&#34;: fx_rates
+}
+selected_page = st.sidebar.selectbox(&#34;Select&#34;, page_names_to_funcs.keys())
+page_names_to_funcs[selected_page]()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Application" duration="5">
+        <p>The fun part! Assuming your code is free of syntax and other errors, you&#39;re ready to run the Streamlit application.</p>
+<h2 is-upgraded>Code</h2>
+<p>Here&#39;s what the entire application code should look like.</p>
+<pre><code language="language-python" class="language-python"># Import libraries
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
+import altair as alt
+import streamlit as st
+import pandas as pd
+
+# Set page config
+st.set_page_config(layout=&#34;wide&#34;)
+
+# Get current session
+session = get_active_session()
+
+@st.cache_data()
+def load_data():
+    # Load and transform daily stock price data.
+    snow_df_stocks = (
+        session.table(&#34;FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES&#34;)
+        .filter(
+            (col(&#39;TICKER&#39;).isin(&#39;AAPL&#39;, &#39;MSFT&#39;, &#39;AMZN&#39;, &#39;GOOGL&#39;, &#39;META&#39;, &#39;TSLA&#39;, &#39;NVDA&#39;)) &amp; 
+            (col(&#39;VARIABLE_NAME&#39;).isin(&#39;Nasdaq Volume&#39;, &#39;Post-Market Close&#39;)))
+        .groupBy(&#34;TICKER&#34;, &#34;DATE&#34;)
+        .agg(
+            max(when(col(&#34;VARIABLE_NAME&#34;) == &#34;Nasdaq Volume&#34;, col(&#34;VALUE&#34;))).alias(&#34;NASDAQ_VOLUME&#34;),
+            max(when(col(&#34;VARIABLE_NAME&#34;) == &#34;Post-Market Close&#34;, col(&#34;VALUE&#34;))).alias(&#34;POSTMARKET_CLOSE&#34;)
+        )
+    )
+    
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy(&#34;TICKER&#34;).orderBy(&#34;DATE&#34;)
+    snow_df_stocks_transformed = snow_df_stocks.withColumn(&#34;DAY_OVER_DAY_CHANGE&#34;, 
+        (col(&#34;POSTMARKET_CLOSE&#34;) - lag(col(&#34;POSTMARKET_CLOSE&#34;), 1).over(window_spec)) /
+        lag(col(&#34;POSTMARKET_CLOSE&#34;), 1).over(window_spec)
+    )
+
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table(&#34;FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES&#34;).filter(
+        (col(&#39;BASE_CURRENCY_ID&#39;) == &#39;EUR&#39;) &amp; (col(&#39;DATE&#39;) &gt;= &#39;2019-01-01&#39;)).with_column_renamed(&#39;VARIABLE_NAME&#39;,&#39;EXCHANGE_RATE&#39;)
+    
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
+
+# Load and cache data
+df_stocks, df_fx = load_data()
+
+def stock_prices():
+    st.subheader(&#39;Stock Performance for the Magnificent 7&#39;)
+    
+    df_stocks[&#39;DATE&#39;] = pd.to_datetime(df_stocks[&#39;DATE&#39;])
+    max_date = df_stocks[&#39;DATE&#39;].max()  # Most recent date
+    min_date = df_stocks[&#39;DATE&#39;].min()  # Earliest date
+    
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
+
+    # Use the adjusted default start date in the &#39;date_input&#39; widget
+    start_date, end_date = st.date_input(&#34;Date range:&#34;, [default_start_date, max_date], min_value=min_date, max_value=max_date, key=&#39;date_range&#39;)
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks[&#39;DATE&#39;] &gt;= start_date_ts) &amp; (df_stocks[&#39;DATE&#39;] &lt;= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered[&#39;TICKER&#39;].unique().tolist()
+    default_tickers = [ticker for ticker in [&#39;AAPL&#39;, &#39;MSFT&#39;, &#39;AMZN&#39;, &#39;GOOGL&#39;, &#39;META&#39;, &#39;TSLA&#39;, &#39;NVDA&#39;] if ticker in unique_tickers]
+    selected_tickers = st.multiselect(&#39;Ticker(s):&#39;, unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered[&#39;TICKER&#39;].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox(&#39;Metric:&#39;,(&#39;DAY_OVER_DAY_CHANGE&#39;,&#39;POSTMARKET_CLOSE&#39;,&#39;NASDAQ_VOLUME&#39;), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x=&#39;DATE&#39;,
+        y=alt.Y(metric, title=metric),
+        color=&#39;TICKER&#39;,
+        tooltip=[&#39;TICKER&#39;,&#39;DATE&#39;,metric]
+    ).interactive()
+    st.altair_chart(line_chart, use_container_width=True)
+
+def fx_rates():
+    st.subheader(&#39;EUR Exchange (FX) Rates by Currency Over Time&#39;)
+
+    # GBP, CAD, USD, JPY, PLN, TRY, CHF
+    currencies = [&#39;British Pound Sterling&#39;,&#39;Canadian Dollar&#39;,&#39;United States Dollar&#39;,&#39;Japanese Yen&#39;,&#39;Polish Zloty&#39;,&#39;Turkish Lira&#39;,&#39;Swiss Franc&#39;]
+    selected_currencies = st.multiselect(&#39;&#39;, currencies, default = [&#39;British Pound Sterling&#39;,&#39;Canadian Dollar&#39;,&#39;United States Dollar&#39;,&#39;Swiss Franc&#39;,&#39;Polish Zloty&#39;])
+    st.markdown(&#34;___&#34;)
+
+    # Display an interactive chart to visualize exchange rates over time by the selected currencies
+    with st.container():
+        currencies_list = currencies if len(selected_currencies) == 0 else selected_currencies
+        df_fx_filtered = df_fx[df_fx[&#39;QUOTE_CURRENCY_NAME&#39;].isin(currencies_list)]
+        line_chart = alt.Chart(df_fx_filtered).mark_line(
+            color=&#34;lightblue&#34;,
+            line=True,
+        ).encode(
+            x=&#39;DATE&#39;,
+            y=&#39;VALUE&#39;,
+            color=&#39;QUOTE_CURRENCY_NAME&#39;,
+            tooltip=[&#39;QUOTE_CURRENCY_NAME&#39;,&#39;DATE&#39;,&#39;VALUE&#39;]
+        )
+        st.altair_chart(line_chart, use_container_width=True)
+
+# Display header
+st.header(&#34;Financial &amp; Economic Essentials&#34;)
+
+# Create sidebar and load the first page
+page_names_to_funcs = {
+    &#34;Daily Stock Performance&#34;: stock_prices,
+    &#34;Exchange (FX) Rates&#34;: fx_rates
+}
+selected_page = st.sidebar.selectbox(&#34;Select&#34;, page_names_to_funcs.keys())
+page_names_to_funcs[selected_page]()
+</code></pre>
+<h2 is-upgraded>Run</h2>
+<p>To run the application, click on <strong>Run</strong> button located at the top right corner. If all goes well, you should see the application running as shown below.</p>
+<p class="image-container"><img alt="App" src="img/713adca1d99c36bb.gif"></p>
+<p>In the application:</p>
+<ol type="1">
+<li>Select <strong>Daily Stock Performance Data</strong> or <strong>Exchange (FX) Rates</strong> option from the sidebar.</li>
+<li>Select or unselect currencies to visualize euro exchange rates over time for select currencies.</li>
+<li>Select a different stock price metric and date range to visualize additional metrics for stock performance evaluation.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully completed the Getting Started with Snowpark for Python and Streamlit with data from the Snowflake Marketplace.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to access current Session object in Streamlit</li>
+<li>How to load data from the Snowflake Marketplace</li>
+<li>How to create Snowpark DataFrames and perform transformations</li>
+<li>How to create and display interactive charts in Streamlit</li>
+<li>How to run Streamlit in Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark for Python Developer Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html" target="_blank">Snowpark for Python API Reference</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

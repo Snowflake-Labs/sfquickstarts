@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "tasty_bytes_zero_to_snowflake_collaboration_kr",
+  "duration": 10,
+  "title": "Tasty Bytes - 제로부터 Snowflake까지 - 협업",
+  "summary": "Tasty Bytes - Zero to Snowflake - Collaboration Quickstart",
+  "source": "tasty_bytes_zero_to_snowflake_collaboration_kr/tb_zts_collaboration_kr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured"
+  ],
+  "tags": [
+    "gettingstarted",
+    "kr",
+    "tastybytes",
+    "web",
+    "zerotosnowflake"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_zero_to_snowflake_collaboration_kr"
+}

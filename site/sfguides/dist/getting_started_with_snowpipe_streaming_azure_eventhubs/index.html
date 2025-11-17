@@ -1,0 +1,527 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowpipe Streaming and Azure Event Hubs</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpipe_streaming_azure_eventhubs"
+                  title="Getting Started with Snowpipe Streaming and Azure Event Hubs"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Snowflake&#39;s Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency. It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake without requiring files with a more attractive cost/latency profile.</p>
+<p>Here are some of the use cases that can benefit from Snowpipe streaming:</p>
+<ul>
+<li>IoT time-series data ingestion</li>
+<li>CDC streams from OLTP systems</li>
+<li>Log ingestion from SIEM systems</li>
+<li>Ingestion into ML feature stores</li>
+</ul>
+<p>In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the <a href="https://opensky-network.org" target="_blank">Opensky Network</a> to illustrate the solution using Snowflake&#39;s Snowpipe streaming and <a href="https://azure.microsoft.com/en-us/products/event-hubs" target="_blank">Azure Event Hubs</a>.</p>
+<p>The architecture diagram below shows the deployment. An Azure Event Hub and an <a href="https://azure.microsoft.com/en-us/products/virtual-machines" target="_blank">Azure Linux Virtual Machine</a> (jumphost) will be provisioned in an <a href="https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview" target="_blank">Azure Virtual Network</a>. The Linux jumphost will host the Kafka producer and Snowpipe streaming via <a href="https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html" target="_blank">Kafka Connect</a>.</p>
+<p>The Kafka producer calls the data sources&#39; REST API and receives time-series data in JSON format. This data is then ingested into the Kafka cluster before being picked up by the <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-kafka" target="_blank">Snowflake Connector for Kafka</a> and delivered to a Snowflake table. The data in Snowflake table can be visualized in real-time with <a href="https://azure.microsoft.com/en-us/products/managed-grafana" target="_blank">Azure Managed Grafana</a> and <a href="https://streamlit.io" target="_blank">Streamlit</a> The historical data can also be analyzed by BI tools like <a href="https://azure.microsoft.com/en-us/products/power-bi" target="_blank">Microsoft Power BI on Azure</a>.</p>
+<p class="image-container"><img alt="Architecture diagram for the Demo" src="img/dbed7a51467ed989.png"></p>
+<p class="image-container"><img alt="Data visualization" src="img/9bb190373ecdb48.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects</li>
+<li>Familiarity with Azure Services, Networking and the Management Console</li>
+<li>Basic knowledge of Python and Linux shell scripting</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need Before the Lab</h2>
+<p>To participate in the virtual hands-on lab, attendees need the following resources.</p>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Enterprise Account on Azure</a> with <code>ACCOUNTADMIN</code> access</li>
+<li>An <a href="https://learn.microsoft.com/en-us/dotnet/azure/create-azure-account" target="_blank">Azure Account</a> with administrator privileges.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Using <a href="https://azure.microsoft.com/en-us/products/event-hubs" target="_blank">Azure Event Hubs</a>.</li>
+<li>Using <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL</a>, the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.</li>
+<li>Using Snowflake to query tables populated with time-series data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create" target="_blank">Create an Azure Event Hub</a></li>
+<li>Create Kafka producers and connectors</li>
+<li>Create an Event hub (Kafka topic) for data streaming</li>
+<li>A Snowflake database to receive real-time flight data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an Event Hub and a VM in Azure" duration="25">
+        <h3 is-upgraded>1. Create a resource group</h3>
+<p>Follow this <a href="https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal" target="_blank">Azure doc</a> to create a resource group, say <code>Streaming</code>.</p>
+<p class="image-container"><img src="img/ce4afdb2ab114813.png"></p>
+<h3 is-upgraded>2. Create an Event Hub in the resource group</h3>
+<p>Go to the newly created resource group, and click <code>+ Create</code> tab to create an event hub by following this <a href="https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create" target="_blank">Azure doc</a>. Select the <code>Standard</code> <a href="https://azure.microsoft.com/en-us/pricing/details/event-hubs/" target="_blank">pricing tier</a> to use Apache Kafka. Make sure that you select public access to the Event Hub in the networking setting.</p>
+<p>See below sample screen capture for reference, here we have created a namespace called <code>SnowflakeTest</code>.</p>
+<p class="image-container"><img src="img/dee7e1962e69cd49.png"></p>
+<h3 is-upgraded>3. Create a Linux VM</h3>
+<p>In the same resource group, create a Linux(Red Hat enterprise) virtual machine by following this <a href="https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu" target="_blank">doc</a>. Choose <code>Redhat Enterprise</code> as the image. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can select Ubuntu or other Linux distributions but will need to modify the scripts.</p>
+<p>Also make sure that you allow ssh access to the VM in the network rule setting.</p>
+<p>Download and save the private key for use in the next step.</p>
+<p>Once the VM is provisioned, we will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer. We will be using the default VM user <code>azureuser</code> for this workshop.</p>
+<p>Here is a screen capture of the VM overview for reference.</p>
+<p class="image-container"><img src="img/c967382dc6094776.png"></p>
+<h3 is-upgraded>4. Connect to the Linux VM console</h3>
+<p>From you local machine, either using a ssh application such as <a href="https://www.putty.org/" target="_blank">Putty</a> if you have a Windows PC or simply the ssh CLI (<code>ssh -i <your private_key for the VM> <VM's public IP address> -l azureuser)</code> for Linux or Mac based systems.</p>
+<h3 is-upgraded>5. Create a key-pair to be used for authenticating with Snowflake</h3>
+<p>Create a key pair in the VM console by executing the following commands. You will be prompted to give an encryption password, remember this phrase, you will need it later.</p>
+<pre><code language="language-commandline" class="language-commandline">cd $HOME
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/8b8cea35eec17d36.png"></p>
+<p>Next we will create a public key by running following commands. You will be prompted to type in the phrase you used in above step.</p>
+<pre><code>openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+</code></pre>
+<p>see below example screenshot:</p>
+<p class="image-container"><img src="img/a54a07a4319c11f0.png"></p>
+<p>Next we will print out the public key string in a correct format that we can use for Snowflake.</p>
+<pre><code>grep -v KEY rsa_key.pub | tr -d &#39;\n&#39; | awk &#39;{print $1}&#39; &gt; pub.Key
+cat pub.Key
+</code></pre>
+<p>see below example screenshot:</p>
+<p class="image-container"><img src="img/bceeb1ea014b89a1.png"></p>
+<h3 is-upgraded>6. Install the Kafka connector for Snowpipe streaming</h3>
+<p>Run the following command to install the Kafka connector and Snowpipe streaming SDK</p>
+<pre><code language="language-commandline" class="language-commandline">passwd=changeit  # Use the default password for the Java keystore, you should change it after finishing the lab
+directory=/home/azureuser/snowpipe-streaming # Installation directory
+
+cd $HOME
+mkdir -p $directory
+cd $directory
+pwd=`pwd`
+sudo yum clean all
+sudo yum -y install openssl vim-common java-1.8.0-openjdk-devel.x86_64 gzip tar jq python3-pip
+wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
+tar xvfz kafka_2.12-2.8.1.tgz -C $pwd
+rm -rf $pwd/kafka_2.12-2.8.1.tgz
+cd /tmp &amp;&amp; cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
+cd /tmp &amp;&amp; keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname &#34;CN=snowflake.com&#34; -alias snowflake -storetype pkcs12
+
+#Snowflake kafka connector
+wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.2.1/snowflake-kafka-connector-2.2.1.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-2.2.1.jar
+
+#Snowpipe streaming SDK
+wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/2.1.0/snowflake-ingest-sdk-2.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-2.1.0.jar
+wget https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/3.14.5/snowflake-jdbc-3.14.5.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-jdbc-3.14.5.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
+
+</code></pre>
+<p>Note that the version numbers for Kafka, the Snowflake Kafka connector, and the Snowpipe Streaming SDK are dynamic, as new versions are continually published. We are using the version numbers that have been validated to work.</p>
+<h3 is-upgraded>7. Retrieve the connection string</h3>
+<p>Go to the Event Hubs console, select the namespace you just created, then select <code>Settings</code> and <code>Shared access policies</code> on the left pane and click <code>RootManageSharedAccessKey</code> policy. Then copy the <code>Connection string-primary key</code>, see screenshot below.</p>
+<p>See example screenshot below.</p>
+<p class="image-container"><img src="img/a9eea137cec87286.png"></p>
+<p>Now switch back to the VM console and execute the following command by replacing <code><connection string></code> with the copied values. DO NOT forget to include the double quotes.</p>
+<pre><code language="language-commandline" class="language-commandline">export CS=&#34;&lt;connection string&gt;&#34;
+</code></pre>
+<p>see the example screen capture below. <img src="img/5b6119dcde87374b.png"></p>
+<p>We also need to extract the kafka broker string(BS) from the connection string by running this command:</p>
+<pre><code>export BS=`echo $CS | awk -F\/ &#39;{print $3&#34;:9093&#34;}&#39;`
+</code></pre>
+<p>Now run the following command to add <code>CS</code> as an environment variable so it is recognized across the Linux sessions.</p>
+<pre><code>echo &#34;export CS=\&#34;$CS\&#34;&#34; &gt;&gt; ~/.bashrc
+echo &#34;export BS=$BS&#34; &gt;&gt; ~/.bashrc
+
+</code></pre>
+<h3 is-upgraded>8. Create a configuration file for the Kafka connector</h3>
+<p>Run the following commands to generate a configuration file <code>connect-standalone.properties</code> in directory <code>/home/azureuser/snowpipe-streaming/scripts</code> for the client to authenticate with the Event hubs namespace.</p>
+<pre><code language="language-commandline" class="language-commandline">dir=/home/azureuser/snowpipe-streaming/scripts
+mkdir -p $dir &amp;&amp; cd $dir
+cat &lt;&lt; EOF &gt; $dir/connect-standalone.properties
+#************CREATING SNOWFLAKE Connector****************
+bootstrap.servers=$BS
+
+#************SNOWFLAKE VALUE CONVERSION****************
+key.converter=org.apache.kafka.connect.storage.StringConverter
+value.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
+key.converter.schemas.enable=true
+value.converter.schemas.enable=true
+#************SNOWFLAKE ****************
+
+offset.storage.file.filename=/tmp/connect.offsets
+# Flush much faster than normal, which is useful for testing/debugging
+offset.flush.interval.ms=10000
+
+# required EH Kafka security settings
+security.protocol=SASL_SSL
+sasl.mechanism=PLAIN
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=&#34;\$ConnectionString&#34; password=&#34;$CS&#34;;
+consumer.security.protocol=SASL_SSL
+consumer.sasl.mechanism=PLAIN
+consumer.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=&#34;\$ConnectionString&#34; password=&#34;$CS&#34;;
+plugin.path=/home/azureuser/snowpipe-streaming/kafka_2.12-2.8.1/libs
+EOF
+
+</code></pre>
+<p>A configuration file <code>connect-standalone.properties</code> is created in directory <code>/home/azureuser/snowpipe-streaming/scripts</code></p>
+<h3 is-upgraded>9. Create a security configuration file for the producer</h3>
+<p>Run the following commands to create a security configuration file <code>client.properties</code>.</p>
+<pre><code language="language-commandline" class="language-commandline">dir=/home/azureuser/snowpipe-streaming/scripts
+cat &lt;&lt; EOF &gt; $dir/client.properties
+# required EH Kafka security settings
+security.protocol=SASL_SSL
+sasl.mechanism=PLAIN
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=&#34;\$ConnectionString&#34; password=&#34;$CS&#34;;
+EOF
+
+</code></pre>
+<p>A configuration file <code>client.properties</code> is created in directory <code>/home/azureuser/snowpipe-streaming/scripts</code></p>
+<h3 is-upgraded>10. Create an event hub in the namespace</h3>
+<p>Go to the Event Hubs namespace and clicke <code>+ Event Hub</code>.</p>
+<p class="image-container"><img src="img/65d1bd366dd333da.png"></p>
+<p>Give the event hub a name, say <code>streaming</code>, then click <code>Next: Capture</code>.</p>
+<p class="image-container"><img src="img/16abd19394449b43.png"></p>
+<p>Leave everything as default, and click <code>Next: Review + create</code>.</p>
+<p class="image-container"><img src="img/1052a8dfe008120d.png"></p>
+<p>Click <code>Create</code> to create the event hub.</p>
+<p class="image-container"><img src="img/8ec0d8bea7f605ca.png"></p>
+<p>Scroll down to the list of event hubs, you will see the <code>streaming</code> event hub there.</p>
+<p class="image-container"><img src="img/bce0f2384eeab1b9.png"></p>
+<p>To describe the topic, run the following commands in the VM shell:</p>
+<pre><code language="language-commandline" class="language-commandline">$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --describe --topic streaming
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/3c775875bcb1f04e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare the Snowflake account for streaming" duration="10">
+        <h3 is-upgraded>1. Creating user, role, and database</h3>
+<p>First login to your Snowflake account as a power user with ACCOUNTADMIN role. Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.</p>
+<pre><code>-- Set default value for multiple variables
+-- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
+-- You should change them after the workshop
+SET PWD = &#39;Test1234567&#39;;
+SET USER = &#39;STREAMING_USER&#39;;
+SET DB = &#39;AZ_STREAMING_DB&#39;;
+SET WH = &#39;AZ_STREAMING_WH&#39;;
+SET ROLE = &#39;AZ_STREAMING_RL&#39;;
+
+USE ROLE ACCOUNTADMIN;
+
+-- CREATE USERS
+CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT=&#39;STREAMING USER&#39;;
+
+-- CREATE ROLES
+CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
+
+-- CREATE DATABASE AND WAREHOUSE
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
+USE IDENTIFIER($DB);
+CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = &#39;SMALL&#39;;
+
+-- GRANTS
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
+GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
+GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
+
+-- SET DEFAULTS
+ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
+ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
+
+
+-- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
+-- IT WILL BE SOMETHING LIKE &lt;organization_name&gt;-&lt;account_name&gt;
+-- e.g. ykmxgak-wyb52636
+
+WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,&#39;.snowflakecomputing.com&#39;,&#39;&#39;) AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = &#39;SNOWFLAKE_DEPLOYMENT_REGIONLESS&#39;;
+
+</code></pre>
+<p>Please write down the Account Identifier, we will need it later. <img src="img/f5a3bbf6be8a8907.png"></p>
+<p>Next we need to configure the public key for the streaming user to access Snowflake programmatically.</p>
+<p>First, in the Snowflake worksheet, replace &lt; pubKey &gt; with the content of the file <code>/home/azureuser/pub.Key</code> (see <code>step 5</code> by clicking on <code>section #2 Create an Event Hub and a Linux virtual machine in Azure cloud</code> in the left pane) in the following SQL command and execute.</p>
+<pre><code language="language-commandline" class="language-commandline">use role accountadmin;
+alter user streaming_user set rsa_public_key=&#39;&lt; pubKey &gt;&#39;;
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/18c23540c0d73221.png"></p>
+<p>Now logout of Snowflake, sign back in as the default user <code>streaming_user</code> we just created with the associated password (default: Test1234567). Run the following SQL commands in a worksheet to create a schema (e.g. <code>AZ_STREAMING_SCHEMA</code>) in the default database (e.g. <code>AZ_STREAMING_DB</code>):</p>
+<pre><code language="language-commandline" class="language-commandline">SET DB = &#39;AZ_STREAMING_DB&#39;;
+SET SCHEMA = &#39;AZ_STREAMING_SCHEMA&#39;;
+
+USE IDENTIFIER($DB);
+CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
+</code></pre>
+<h3 is-upgraded>2. Install SnowSQL (optional but highly recommended)</h3>
+<p>This step is optional for this workshop but is highly recommended if you prefer to use the CLI to interact with Snowflake later instead of the web console.</p>
+<p><a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL</a> is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.</p>
+<p>To install SnowSQL. Execute the following commands on the Linux Session Manager console:</p>
+<pre><code language="language-commandline" class="language-commandline">curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
+echo -e &#34;~/bin \n y&#34; &gt; /tmp/ans
+bash /tmp/snowsql-1.2.24-linux_x86_64.bash &lt; /tmp/ans
+
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/6d04a9b4c064ca9e.png"></p>
+<p>Next set the environment variable for Snowflake Private Key Phrase:</p>
+<pre><code language="language-commandline" class="language-commandline">export SNOWSQL_PRIVATE_KEY_PASSPHRASE=&lt;key phrase you set up when running openssl previously&gt;
+</code></pre>
+<p>Note that you should add the command above in the ~/.bashrc file to preserve this environment variable across sessions.</p>
+<pre><code language="language-commandline" class="language-commandline">echo &#34;export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE&#34; &gt;&gt; ~/.bashrc
+</code></pre>
+<p>Now you can execute this command to interact with Snowflake:</p>
+<pre><code language="language-commandline" class="language-commandline">$HOME/bin/snowsql -a &lt;Snowflake Account Identifier&gt; -u streaming_user --private-key-path $HOME/rsa_key.p8 -d az_streaming_db -s az_streaming_schema
+</code></pre>
+<p>Type <code>Ctrl-D</code> to get out of SnowSQL session.</p>
+<p>You can edit the <a href="https://docs.snowflake.com/en/user-guide/snowsql-config.html#snowsql-config-file" target="_blank"><code>~/.snowsql/config</code></a> file to set default parameters and eliminate the need to specify them every time you run snowsql.</p>
+<p>At this point, the Snowflake setup is complete.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure the Kafka connector for Snowpipe Streaming" duration="10">
+        <h3 is-upgraded>1. Collect parameters for the Kafka connector</h3>
+<p>Run the following commands to collect various connection parameters for the Kafka connector.</p>
+<pre><code language="language-commandline" class="language-commandline">cd $HOME
+outf=/tmp/params
+cat &lt;&lt; EOF &gt; /tmp/get_params
+a=&#39;&#39;
+until [ ! -z \$a ]
+do
+ read -p &#34;Input Snowflake account identifier: e.g. ylmxgak-wyb53646 ==&gt; &#34; a
+done
+
+echo export clstr_url=\$a.snowflakecomputing.com &gt; $outf
+export clstr_url=\$a.snowflakecomputing.com
+
+read -p &#34;Snowflake cluster user name: default: streaming_user ==&gt; &#34; user
+if [[ \$user == &#34;&#34; ]]
+then
+   user=&#34;streaming_user&#34;
+fi
+
+echo export user=\$user &gt;&gt; $outf
+export user=\$user
+
+pass=&#39;&#39;
+until [ ! -z \$pass ]
+do
+  read -p &#34;Private key passphrase ==&gt; &#34; pass
+done
+
+echo export key_pass=\$pass &gt;&gt; $outf
+export key_pass=\$pass
+
+read -p &#34;Full path to your Snowflake private key file, default: /home/azureuser/rsa_key.p8 ==&gt; &#34; p8
+if [[ \$p8 == &#34;&#34; ]]
+then
+   p8=&#34;/home/azureuser/rsa_key.p8&#34;
+fi
+
+priv_key=\`cat \$p8 | grep -v PRIVATE | tr -d &#39;\n&#39;\`
+echo export priv_key=\$priv_key  &gt;&gt; $outf
+export priv_key=\$priv_key
+cat $outf &gt;&gt; $HOME/.bashrc
+EOF
+. /tmp/get_params
+
+</code></pre>
+<p>See below example screen capture.</p>
+<p class="image-container"><img src="img/2682489a73796487.png"></p>
+<h3 is-upgraded>2. Create a Snowflake Kafka connect configuration file</h3>
+<p>Run the following commands to generate a configuration file for the Kafka connector.</p>
+<pre><code language="language-commandline" class="language-commandline">dir=/home/azureuser/snowpipe-streaming/scripts
+cat &lt;&lt; EOF &gt; $dir/snowflakeconnectorAZ.properties
+name=snowpipeStreaming
+connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
+tasks.max=4
+topics=streaming
+snowflake.private.key.passphrase=$key_pass
+snowflake.database.name=AZ_STREAMING_DB
+snowflake.schema.name=AZ_STREAMING_SCHEMA
+snowflake.topic2table.map=streaming:AZ_STREAMING_TBL
+buffer.count.records=10000
+buffer.flush.time=5
+buffer.size.bytes=20000000
+snowflake.url.name=$clstr_url
+snowflake.user.name=$user
+snowflake.private.key=$priv_key
+snowflake.role.name=AZ_STREAMING_RL
+snowflake.ingestion.method=snowpipe_streaming
+snowflake.enable.schematization=false
+value.converter.schemas.enable=false
+jmx=true
+key.converter=org.apache.kafka.connect.storage.StringConverter
+valur.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
+errors.tolerance=all
+EOF
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Putting it all together" duration="10">
+        <p>Finally, we are ready to start ingesting data into the Snowflake table.</p>
+<h3 is-upgraded>1. Start the Kafka Connector for Snowpipe streaming</h3>
+<p>Go back to the Linux console and execute the following commands to start the Kafka connector.</p>
+<pre><code language="language-commandline" class="language-commandline">$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorAZ.properties
+</code></pre>
+<p>If everything goes well, you should see something similar to screen capture below: <img src="img/ea540861ddaa4c82.png"></p>
+<p>Leave this screen open and let the connector continue to run.</p>
+<h3 is-upgraded>2. Start the producer</h3>
+<p>Open up a new ssh session connection to the VM. In the shell, run the following command:</p>
+<pre><code language="language-commandline" class="language-commandline">curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+</code></pre>
+<p>You should see response similar to screen capture below if everything works well.</p>
+<p class="image-container"><img src="img/f02a31e4158de126.png"></p>
+<p>Note that in the script above, the producer queries a <a href="http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky" target="_blank">Rest API</a> that provides real-time flight data over the San Francisco Bay Area in JSON format. The data includes information such as timestamps, <a href="https://icao.usmission.gov/mission/icao/#:~:text=Home%20%7C%20About%20the%20Mission%20%7C%20U.S.,civil%20aviation%20around%20the%20world." target="_blank">icao</a> numbers, flight IDs, destination airport, longitude, latitude, and altitude of the aircraft, etc. The data is ingested into the <code>streaming</code> topic on the event hub and then picked up by the Snowpipe streaming Kafka connector, which delivers it directly into a Snowflake table <code>az_streaming_db.az_streaming_schema.az_streaming_tbl</code>.</p>
+<p class="image-container"><img src="img/f3df9aec8be69f20.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query ingested data in Snowflake" duration="10">
+        <p>Now, switch back to the Snowflake console and make sure that you signed in as the default user <code>streaming_user</code>. The data should have been streamed into a table, ready for further processing.</p>
+<h3 is-upgraded>1. Query the raw data</h3>
+<p>To verify that data has been streamed into Snowflake, execute the following SQL commands.</p>
+<pre><code language="language-sh" class="language-sh">use az_streaming_db;
+use schema az_streaming_schema;
+show channels in table az_streaming_tbl;
+</code></pre>
+<p>You should see that there are two channels, corresponding to the two partitions created earlier in the topic. <img src="img/a97adc3d0a9d0428.png">.</p>
+<p>Note that, unlike the screen capture above, at this point, you should only see one row in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.</p>
+<p>Now run the following query on the table.</p>
+<pre><code>select * from az_streaming_tbl;
+</code></pre>
+<p>You should see there are two columns in the table: <code>RECORD_METADATA</code> and <code>RECORD_CONTENT</code> as shown in the screen capture below.</p>
+<p><img src="img/ba1b0b327e197196.png"> The <code>RECORD_CONTENT</code> column is an JSON array that needs to be flattened.</p>
+<h3 is-upgraded>2. Flatten the raw JSON data</h3>
+<p>Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.</p>
+<pre><code language="language-sh" class="language-sh">create or replace view flights_vw
+  as select
+    f.value:utc::timestamp_ntz ts_utc,
+    CONVERT_TIMEZONE(&#39;UTC&#39;,&#39;America/Los_Angeles&#39;,ts_utc::timestamp_ntz) as ts_pt,
+    f.value:alt::integer alt,
+    f.value:dest::string dest,
+    f.value:orig::string orig,
+    f.value:id::string id,
+    f.value:icao::string icao,
+    f.value:lat::float lat,
+    f.value:lon::float lon,
+    st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
+    year(ts_pt) yr,
+    month(ts_pt) mo,
+    day(ts_pt) dd,
+    hour(ts_pt) hr
+FROM   az_streaming_tbl,
+       Table(Flatten(az_streaming_tbl.record_content)) f;
+</code></pre>
+<p>The SQL commands create a view, convert timestamps to different time zones, and use Snowflake&#39;s <a href="https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html" target="_blank">Geohash function</a>  to generate geohashes that can be used in time-series visualization tools like Grafana</p>
+<p>Let&#39;s query the view <code>flights_vw</code> now.</p>
+<pre><code language="language-sh" class="language-sh">select * from flights_vw;
+</code></pre>
+<p>As a result, you will see a nicely structured output with columns derived from the JSONs <img src="img/efdc0f8ecdd7ff5e.png"></p>
+<h3 is-upgraded>3. Stream real-time flight data continuously to Snowflake</h3>
+<p>We can now write a loop to stream the flight data continuously into Snowflake.</p>
+<p>Go back to the Linux session and run the following script.</p>
+<pre><code language="language-sh" class="language-sh">while true
+do
+  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  sleep 10
+done
+
+</code></pre>
+<p>You can now go back to the Snowflake worksheet to run a <code>select count(1) from flights_vw</code> query every 10 seconds to verify that the row counts is indeed increasing.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="5">
+        <p>When you are done with the demo, to tear down the Azure resources, follow this <a href="https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/delete-resource-group?tabs=azure-powershell" target="_blank">doc</a> to dismantle the resource group and its associated resources.</p>
+<p>For Snowflake cleanup, execute the following SQL commands.</p>
+<pre><code language="language-commandline" class="language-commandline">USE ROLE ACCOUNTADMIN;
+
+DROP DATABASE AZ_STREAMING_DB;
+DROP WAREHOUSE AZ_STREAMING_WH;
+DROP ROLE AZ_STREAMING_RL;
+
+-- Drop the streaming user
+DROP USER IF EXISTS STREAMING_USER;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using an Azure event hub and the Kafka connector for Snowpipe streaming hosted on a VM. You can also containerize the connector on the <a href="https://azure.microsoft.com/en-us/products/kubernetes-service" target="_blank">Azure Kubernetes Services (AKS)</a> to leverage the benefits of scability and manageability.</p>
+<p>Related Resources</p>
+<ul>
+<li><a href="https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c" target="_blank">Snowpipe Streaming Demystified</a></li>
+<li><a href="https://quickstarts.snowflake.com/" target="_blank">Getting started with Snowflake</a></li>
+<li><a href="https://www.snowflake.com/Workloads/data-sharing/" target="_blank">Snowflake for Data Sharing</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/marketplace/" target="_blank">Snowflake Marketplace</a></li>
+<li><a href="https://azure.microsoft.com/en-us/products/event-hubs" target="_blank">Azure Event Hubs</a></li>
+<li><a href="https://azuremarketplace.microsoft.com/en-us/marketplace/apps/snowflake.snowflake_contact_me?tab=overview" target="_blank">Snowflake on Azure Marketplace</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

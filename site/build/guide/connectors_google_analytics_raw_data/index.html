@@ -1,0 +1,443 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with the Snowflake Connector for Google Analytics</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="connectors_google_analytics_raw_data"
+                  title="Getting Started with the Snowflake Connector for Google Analytics"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p class="image-container"><img src="img/a8c80cfce6e63182.png"></p>
+<p>In this Quickstart, we will investigate how to use the Snowflake Connector for Google Analytics Raw Data to emulate data ingestion from Google Analytics to BigQuery into Snowflake.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A BigQuery dataset with Google Analytics data.</li>
+<li>A Streamlit application to visualize the data.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>You will learn how to:</p>
+<ul>
+<li>Create a Google Analytics Project.</li>
+<li>Create a BigQuery dataset.</li>
+<li>Install and configure the Snowflake Connector for Google Analytics Raw Data.</li>
+<li>Visualize the BigQuery data in a Streamlit application.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://accounts.google.com/signup/v2/webcreateaccount?hl=en&flowName=GlifWebSignIn&flowEntry=SignUp" target="_blank">Google Account</a> to access <a href="https://analytics.google.com/" target="_blank">Google Analytics</a> and <a href="https://cloud.google.com/bigquery" target="_blank">BigQuery</a>.</li>
+<li>Familiarity with basic Python and SQL.</li>
+<li>Familiarity with data science notebooks.</li>
+<li>Go to the <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).</p>
+<h3 is-upgraded>Creating Objects and Loading Data</h3>
+<ol type="1">
+<li>Navigate to Worksheets, click <code>+</code> in the top-right corner to create a new Worksheet, and choose <strong>SQL Worksheet</strong>.</li>
+<li>Copy and paste the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-connector-for-google-analytics/blob/main/scripts/setup.sql" target="_blank">setup script</a> code to create Snowflake objects (warehouse, database, schema) and click <strong>Run All</strong> at the top of the Worksheet.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Google Analytics" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will create a Google Analytics Account and Property in Google Analytics.</p>
+<h3 is-upgraded>Create Account</h3>
+<ol type="1">
+<li>To create an Account, navigate to <a href="https://analytics.google.com/" target="_blank">Google Analytics</a> and click on <strong>Start measuring</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/85a94c872fd7ceee.png"></p>
+<ol type="1" start="2">
+<li>Enter an account name such as <strong>Snowflake Connector Account</strong> and click <strong>Next</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/4dcc683996c3228d.png"></p>
+<ol type="1" start="3">
+<li>Enter the <strong>Property Name</strong> as <strong>Snowflake Connector Property</strong> and click <strong>Next</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/f9dc0b4a9e3b58c4.png"></p>
+<ol type="1" start="4">
+<li>Select the industry category and business size and click <strong>Next</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/4c67c39908a1ea83.png"></p>
+<ol type="1" start="5">
+<li>Select the business objectives and click <strong>Create</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/bac03aba6a96c09f.png"></p>
+<ol type="1" start="6">
+<li>Accept the terms and conditions and click <strong>I Accept</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/dd672814a7f63bb5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="BigQuery" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will create a BigQuery dataset and table to store Google Analytics data.</p>
+<h3 is-upgraded>Create a BigQuery Project</h3>
+<ol type="1">
+<li>Navigate to <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a> and click on <strong>Create or select a project</strong> button to create a new project.</li>
+</ol>
+<p class="image-container"><img src="img/f3165caa48518e80.png"></p>
+<ol type="1" start="2">
+<li>Select <strong>New Project</strong> then <strong>No organization</strong> and click <strong>Create</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/c743fab876892557.png"></p>
+<ol type="1" start="3">
+<li>In the popup notification window on the top right, click <strong>SELECT PROJECT</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/c65baada9ba20d16.png"></p>
+<ol type="1" start="4">
+<li>The page will automatically load to the new project. Hover over the left sidebar to expand it and in the <strong>Resources</strong> section, click on <strong>BigQuery</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/849b4dcd343b487c.png"></p>
+<ol type="1" start="5">
+<li>In the <strong>Explorer</strong>, enter <code>bigquery-</code> in the <strong>Search BigQuery resources</strong> box and toggle to <strong>Search all projects</strong>. Click on the star next to <code>bigquery-public-data</code> to star the dataset.</li>
+</ol>
+<p class="image-container"><img src="img/c068a35b4d83ac1b.png"></p>
+<ol type="1" start="6">
+<li>Click <strong>X</strong> in the <strong>Search BigQuery resources</strong> to view your project and the starred project.</li>
+</ol>
+<p class="image-container"><img src="img/5053625a8b5c41a7.png"></p>
+<ol type="1" start="7">
+<li>Expand the <strong>bigquery-public-data</strong> dataset to view the datasets.</li>
+</ol>
+<p class="image-container"><img src="img/2fab25f27883cc21.png"></p>
+<ol type="1" start="8">
+<li>Scroll down to find and expand the <code>ga4_obfuscated_sample_ecommerce</code> dataset and select the only table that&#39;s in this dataset. It should start with <code>events_</code>. Click <code>COPY</code>.</li>
+</ol>
+<p class="image-container"><img src="img/f271373329826a8a.png"></p>
+<ol type="1" start="9">
+<li>Select <strong>BROWSE</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/6ffac85f83e72901.png"></p>
+<ol type="1" start="10">
+<li>Select the project that was created earlier, <strong>Snowflake Connector Project</strong> in this example.</li>
+</ol>
+<p class="image-container"><img src="img/3db1b04a0d9e03cd.png"></p>
+<ol type="1" start="11">
+<li>After clicking on the project, the <strong>Dataset</strong> and <strong>Table</strong> fields will be blank.</li>
+</ol>
+<p class="image-container"><img src="img/ce4f0152aaea9a85.png"></p>
+<ol type="1" start="12">
+<li>Click on the <strong>Dataset</strong> field and select <strong>CREATE NEW DATASET</strong> in the dropdown.</li>
+</ol>
+<p class="image-container"><img src="img/bc6b17a8500dae0c.png"></p>
+<ol type="1" start="13">
+<li>Enter <code>analytics_20210131</code> and click <strong>CREATE DATASET</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/70086f82fc576114.png"></p>
+<ol type="1" start="14">
+<li>Click on the <strong>Table</strong> field and enter <code>events_20210131</code> for the table name and click <strong>COPY</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/83fa976ad62051f6.png"></p>
+<ol type="1" start="15">
+<li>Click <strong>GO TO TABLE</strong> on the toast that appears on the bottom of the page.</li>
+</ol>
+<p class="image-container"><img src="img/933cea6867ae347c.png"></p>
+<ol type="1" start="16">
+<li>View the table by clicking <strong>PREVIEW</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/79adb0328e3644a6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Link Analytics" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will link Google Analytics to BigQuery.</p>
+<h3 is-upgraded>Link Google Analytics to BigQuery</h3>
+<ol type="1">
+<li>Navigate to <a href="https://analytics.google.com/" target="_blank">Google Analytics</a> and enter <strong>BigQuery Links</strong> in the search bar and select <strong>BigQuery Links</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/3d154851d31818fd.png"></p>
+<ol type="1" start="2">
+<li>Click the <strong>Link</strong> button.</li>
+</ol>
+<p class="image-container"><img src="img/e3af30738792ceb3.png"></p>
+<ol type="1" start="3">
+<li>Click on the <strong>Choose a BigQuery project</strong> button.</li>
+</ol>
+<p class="image-container"><img src="img/592fa3a2f11b6884.png"></p>
+<ol type="1" start="4">
+<li>Select the BigQuery Project and click <strong>Confirm</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/5637c0680226b5de.png"></p>
+<ol type="1" start="5">
+<li>Click <strong>Next</strong> and select <strong>Include advertising identifiers for mobile app streams</strong>, <strong>Streaming (best-effort)</strong>, and <strong>Daily</strong>. Click <strong>Next</strong> again.</li>
+</ol>
+<p class="image-container"><img src="img/1752ee90a3a74c76.png"></p>
+<ol type="1" start="6">
+<li>Click <strong>Submit</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/bf24b7469bdef863.png"></p>
+<ol type="1" start="7">
+<li>A new link is created.</li>
+</ol>
+<p class="image-container"><img src="img/449dded127d94a01.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Service Account" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>In this step, we will configure the OAuth Consent Screen.</p>
+<h3 is-upgraded>Create Service Account Key</h3>
+<ol type="1">
+<li>Navigate back to BigQuery and hover over the left sidebar to expand it and click on <strong>APIs &amp; Services</strong> then <strong>Credentials</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/45f6f13e49fc2a66.png"></p>
+<ol type="1" start="2">
+<li>Click on <strong>Create Credentials</strong> and select <strong>Service account</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/cc61b08ac4924d74.png"></p>
+<ol type="1" start="3">
+<li>Enter a <strong>Service account name</strong> such as <strong>Connector Service Account</strong> and click <strong>CREATE AND CONTINUE</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/995b38c8e3858578.png"></p>
+<ol type="1" start="4">
+<li>Add all 3 of these roles one at a time by clicking on the dropdown list to select a role, and then click <strong>+ ADD ANOTHER ROLE</strong> to add the next role then click DONE: <strong>BigQuery Data Viewer</strong>, <strong>BigQuery Read Session User</strong> and <strong>BigQuery Job User</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/f3510df72084d219.png"></p>
+<ol type="1" start="5">
+<li>Click on the newly created service account and click on <strong>ADD KEY</strong> then <strong>Create new key</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/ef54e57862d6592d.png"><img src="img/bfd62565f0e0471d.png"></p>
+<ol type="1" start="6">
+<li>Select <strong>JSON</strong> and click <strong>CREATE</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/c0e3a7f70097d568.png"></p>
+<ol type="1" start="7">
+<li>The JSON key file will be downloaded to your computer.</li>
+</ol>
+<p class="image-container"><img src="img/47e3c295e3e01d24.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="OAuth Configuration" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will configure the OAuth Consent Screen.</p>
+<h3 is-upgraded>Configure OAuth Consent Screen</h3>
+<ol type="1">
+<li>Hover over the left sidebar to expand it and click on <strong>APIs &amp; Services</strong> then <strong>OAuth consent screen</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/da978d9b0aaa384c.png"></p>
+<ol type="1" start="2">
+<li>Select <strong>External</strong> and click <strong>CREATE</strong>.</li>
+<li><strong>Note</strong> if you have the <strong>GO TO NEW EXPERIENCE</strong> button, click the button to proceed to the next step.</li>
+</ol>
+<p class="image-container"><img src="img/9a9c4002966e4083.png"></p>
+<ol type="1" start="4">
+<li>Navigate to <strong>Clients</strong> and click on <strong>GET STARTED</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/34058e5eab7a4e65.png"></p>
+<ol type="1" start="5">
+<li>Enter the App name as <strong>Snowflake Connector for Google Analytics Raw Data</strong> and click <strong>NEXT</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/af464849a11de083.png"></p>
+<ol type="1" start="6">
+<li>Click <strong>External</strong> and then <strong>NEXT</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/c85e4b62040ca490.png"></p>
+<ol type="1" start="7">
+<li>Enter an email address (preferably the same one entered for the User Support Email) and click <strong>NEXT</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/f46c35f639ef4ca3.png"></p>
+<ol type="1" start="8">
+<li>Select to Agree and click <strong>CONTINUE</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/422b47ce05fe32bd.png"></p>
+<ol type="1" start="9">
+<li>Click <strong>CREATE</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/7f17d639721ff23c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable API" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will enable the Cloud Resource Manager API.</p>
+<h3 is-upgraded>Cloud Resource Manager API</h3>
+<ol type="1">
+<li>Inside BigQuery, enter <strong>Cloud Resource Manager API</strong> in the search bar and click on <strong>Cloud Resource Manager API</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/f223d2310c63a210.png"></p>
+<ol type="1" start="2">
+<li>Click <strong>ENABLE</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/9672c80360c369a4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector" duration="6">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will install and configure the Snowflake Connector for Google Analytics Raw Data.</p>
+<h3 is-upgraded>Clean Up Script</h3>
+<ol type="1">
+<li>Navigate to the Snowflake Marketplace and type in <strong>Snowflake Connector for Google Analytics Raw Data</strong> and click on the Connector.</li>
+</ol>
+<p class="image-container"><img src="img/72914258e87123e0.png"></p>
+<ol type="1" start="2">
+<li>Click <strong>GET</strong> and then <strong>GET</strong> to install the Connector.</li>
+</ol>
+<p class="image-container"><img src="img/b49c13e4c9585a20.png"></p>
+<ol type="1" start="3">
+<li>Click <strong>Configure</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/c0f07e8d9626be86.png"></p>
+<ol type="1" start="4">
+<li>Click <strong>Mark all as done</strong> and then click <strong>Start configuration</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/c39952d407a6a7e3.png"></p>
+<ol type="1" start="5">
+<li>Click <strong>Configure</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/e74fc9e083220894.png"></p>
+<ol type="1" start="6">
+<li>Upload the JSON file that was previously downloaded and upload it to this page and click <strong>Connect</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/a242dc606d0c1d36.png"></p>
+<ol type="1" start="7">
+<li>Click <strong>Define data to sync</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/b420d3b6cd54ccd3.png"></p>
+<ol type="1" start="8">
+<li>Select the data to sync and click <strong>Start sync</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/59cf04c6e3a50aea.png"></p>
+<ol type="1" start="9">
+<li>When the data is syncing, the UI will indicate with <strong>Last sync: x minutes ago</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/8db89ccdcbb7d858.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Notebook" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will create a Snowflake Notebook to view the data: both the raw un-flattened and flattened data.</p>
+<h3 is-upgraded>Create a Snowflake Notebook</h3>
+<ol type="1">
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-connector-for-google-analytics/blob/main/notebooks/0_start_here.ipynb" target="_blank">Snowflake Notebook</a></li>
+<li>Navigate to Snowsight, make sure you&#39;re using the <strong>ACCOUNTADMIN</strong> role and go to <strong>Projects</strong> and <strong>Notebooks</strong>.</li>
+<li>Click on the dropdown arrow portion of the <code>+ Notebook</code> button.</li>
+<li>Click on <code>Import .ipynb file</code>.</li>
+<li>A popup window will appear to upload the Notebook file.</li>
+<li>In the <strong>Name</strong> section, name the Notebook, select <strong>GOOGLE_ANALYTICS</strong> for the database and <strong>RAW_DATA</strong> for the schema.</li>
+<li>Select <strong>GOOGLE_ANALYTICS_DS_WH</strong> for the warehouse.</li>
+<li>Click <strong>Create</strong>.</li>
+<li>Click <strong>Run all</strong> to run the Notebook.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will create a Streamlit application to visualize the data.</p>
+<h3 is-upgraded>Visualize Data</h3>
+<ol type="1">
+<li>Copy the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-connector-for-google-analytics/blob/main/scripts/streamlit.py" target="_blank">Streamlit code</a>.</li>
+<li>Navigate to Snowsight, make sure you&#39;re using the <strong>ACCOUNTADMIN</strong> role and go to <strong>Projects</strong> and <strong>Streamlit</strong>.</li>
+<li>Click on the <code>+ Streamlit App</code> button.</li>
+<li>In the <strong>App title</strong> section, name the app, select <strong>GOOGLE_ANALYTICS</strong> for the database and <strong>RAW_DATA</strong> for the schema.</li>
+<li>Select <strong>GOOGLE_ANALYTICS_DS_WH</strong> for the warehouse.</li>
+<li>Paste in the Streamlit code into the code editor and click <strong>Run</strong>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>When you&#39;re finished with this Quickstart, you can clean up the objects created in Snowflake.</p>
+<h3 is-upgraded>Clean Up Script</h3>
+<p>Navigate to the last cell in the Snowflake Notebook labeled <strong>clean_up</strong> to uncomment and run it to drop all objects created in this Quickstart.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="3">
+        <h2 is-upgraded>Congrats! You&#39;re reached the end of this Quickstart!</h2>
+<h3 is-upgraded>What You Learned</h3>
+<p>With the completion of this Quickstart, you have learned how to:</p>
+<ul>
+<li>Use the Snowflake Connector for Google Analytics Raw Data to ingest data from Google Analytics/BigQuery into Snowflake.</li>
+<li>Visualize the data in a Streamlit application.</li>
+</ul>
+<h3 is-upgraded>Resources</h3>
+<ul>
+<li><a href="https://other-docs.snowflake.com/en/connectors/google/gard/gard-connector-about" target="_blank">Snowflake Connector for Google Analytics Raw Data</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

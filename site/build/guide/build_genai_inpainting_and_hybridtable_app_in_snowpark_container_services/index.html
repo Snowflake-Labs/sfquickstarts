@@ -1,0 +1,345 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build GenAI Inpainting and Hybrid Table App in Snowpark Container Services</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services"
+                  title="Build GenAI Inpainting and Hybrid Table App in Snowpark Container Services"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>By completing this QuickStart guide, you will get to explore <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services</a> (SPCS) to deploy a Streamlit application showcasing GenAI inpainting using open source libraries as well as use of hybrid table for transactional workload.</p>
+<p class="image-container"><img alt="Snowpark Container Service" src="img/e36c67a78e8f10.gif"></p>
+<h2 is-upgraded>What is Snowpark Container Services?</h2>
+<p class="image-container"><img alt="Snowpark Container Service" src="img/a6b44d4fc43f61bb.png"></p>
+<p>Snowpark Container Services is a fully managed container offering that allows you to easily deploy, manage, and scale containerized services, jobs, and functions, all within the security and governance boundaries of Snowflake, with no data movement. As a fully managed service, SPCS comes with Snowflake&#39;s native security, RBAC support, and built-in configuration and operational best-practices.</p>
+<p>Snowpark Container Services are fully integrated with both Snowflake features and third-party tools, such as Snowflake Virtual Warehouses and Docker, allowing teams to focus on building data applications, and not building or managing infrastructure. This managed service allows you to run and scale your container workloads across regions and clouds without the additional complexity of managing a control plane, worker nodes, and also while having quick and easy access to your Snowflake data.</p>
+<p class="image-container"><img alt="Development to Deployment" src="img/d2912b9c97429151.png"></p>
+<p>For more information on these objects, check out <a href="https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741" target="_blank">this blog</a> along with the Snowpark Container Services <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">documentation</a>.</p>
+<h2 is-upgraded>What are Hybrid Tables?</h2>
+<p>A hybrid table is a Snowflake table type that is optimized for hybrid transactional and operational workloads that require low latency and high throughput on small random point reads and writes. A hybrid table supports unique and referential integrity constraint enforcement that is critical for transactional workloads. You can use a hybrid table along with other Snowflake tables and features to power <a href="https://www.snowflake.com/en/data-cloud/workloads/unistore/" target="_blank">Unistore workloads</a> that bring transactional and analytical data together in a single platform.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/tables-hybrid" target="_blank">Hybrid Tables</a>.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll learn</h2>
+<ul class="checklist">
+<li>The working mechanics of Snowpark Container Services</li>
+<li>How to build and push a containerized Docker image to SPCS along with code and other files</li>
+<li>How to use open source AI model for image inpainting</li>
+<li>How to create and work with Hybrid tables</li>
+<li>How to create a Streamlit application</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A long-running service using Snowflake&#39;s managed Snowpark Container Services to deploy a Streamlit application showcasing GenAI inpainting using open source libraries as well as use of hybrid table for transactional workload.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A non-trial Snowflake account in a supported <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions" target="_blank">AWS region</a> with access to a role that has the <code>ACCOUNTADMIN</code> role. If not, you will need to work with your admin to perform the initial environment setup.</li>
+<li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> installed and running.</li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="8">
+        <p><strong>Step 1</strong>. Clone <a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services" target="_blank">GitHub repository</a>. If you don&#39;t have Git installed, you can also download the repo as a .zip file.</p>
+<p><strong>Step 2</strong>. In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> using <a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/setup.sql" target="_blank"><code>setup.sql</code></a> and run the commands to create various objects such as database, schema, warehouse, stages, compute pool, image repository, etc.</p>
+<h3 is-upgraded>Useful resources for some of the newly introduced objects created during setup</h3>
+<ul>
+<li>The <a href="https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration" target="_blank">OAuth security integration</a> will allow us to login to our UI-based services using our web browser and Snowflake credentials.</li>
+<li>The <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool" target="_blank">compute pool</a> is the set of compute resources on which our services will run.</li>
+<li>The <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository" target="_blank">image repository</a> is the location in Snowflake where we will push our Docker images so that our services can use them.</li>
+</ul>
+<p><strong>Step 3</strong>.</p>
+<p>Log into your Snowflake account and use Snowsight to load data into newly created <code>cell_towers_ca</code> and <code>images</code> tables. For both of the tables, select the following in the UI:</p>
+<ul>
+<li>Header: <code>Skip first line</code></li>
+<li>Field optionally enclosed by: <code>Double quotes</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Code Walkthrough" duration="5">
+        <p>The code for the Streamlit application is split into two .py files – and</p>
+<ol type="1">
+<li><a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/app_helper.py" target="_blank">app_helper.py</a><ul>
+<li>As the name suggests this file contains code to get Session object, configure navigation, initialize open source inpainting model as well as process and save generated image.</li>
+<li>The one important thing to note and pay attention to is this <code>pipe = pipe.to("cuda")</code> – this is what indicates that the inpainting pipeline is leveraging GPU compute via SPCS</li>
+</ul>
+</li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/app_main.py" target="_blank">app_main.py</a><ul>
+<li>This is the entry point of the application and contains code to specify application wide config, adds navigation, and load data.</li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build, Tag and Push Docker Image" duration="30">
+        <p>In the cloned repo, you should see a <a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/Dockerfile" target="_blank">Dockerfile</a> that looks like this:</p>
+<pre><code language="language-python" class="language-python"># Use rapidsai image for GPU compute
+FROM rapidsai/rapidsai:23.06-cuda11.8-runtime-ubuntu22.04-py3.10
+
+RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+
+RUN pip install --default-timeout=1000 -r requirements.txt
+RUN pip install ipython --upgrade
+
+COPY app.css .
+COPY *.py ./
+ADD pages ./pages
+COPY *.ipynb ./
+COPY entrypoint.sh .
+
+RUN mkdir .streamlit
+COPY .streamlit/config.toml .streamlit
+
+# Expose Jupyter port
+EXPOSE 4200
+# Expose Streamlit port
+EXPOSE 8080
+
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT [ &#34;./entrypoint.sh&#34; ]
+</code></pre>
+<p>Things to note:</p>
+<ul>
+<li>Select <code>rapidsai</code> for the base image which will enable us to run GPU workloads for deploying GenAI inpainting in SPCS.</li>
+<li>Install packages from <a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/requirements.txt" target="_blank">requirements.txt</a>.</li>
+<li>Copy code files into the container</li>
+<li>Expose ports 8080 and 4200</li>
+<li>Start Jupyter Lab and Streamlit application when the container launches via <a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/entrypoint.sh" target="_blank">entrypoint.sh</a>.</li>
+</ul>
+<h2 is-upgraded>Build Image</h2>
+<p>Let&#39;s build the image locally. In a terminal window, browse to your local clone of the repo and run the following command:</p>
+<pre><code language="language-bash" class="language-bash">DOCKER_BUILDKIT=0  docker build --platform linux/amd64 -t genai-spcs .
+</code></pre>
+<h2 is-upgraded>Tag Image</h2>
+<p>Let&#39;s create a new tag of the image that points to the image repository in your Snowflake account.</p>
+<p>Replace <strong><em>your-org-name</em></strong> and <strong><em>your-account-name</em></strong> with your organization and account name. If your account name contains an underscore (_), you will need to replace it with a dash (-) for the below command. Otherwise, you may encounter an error similar to <code>Get "https:/v2/": http: no Host in request URL</code>.</p>
+<pre><code language="language-bash" class="language-bash">docker tag genai-spcs:latest your-org-name-your-account-name.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/genai-spcs:latest
+</code></pre>
+<p>For example, <code>docker tag genai-spcs:latest sfsenorthamerica-build-spcs.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/genai-spcs:latest</code></p>
+<h2 is-upgraded>Push Image</h2>
+<p>Next we need to push the image to Snowflake. From the same terminal window, run the following commands:</p>
+<p>Replace <strong><em>your-org-name</em></strong> and <strong><em>your-account-name</em></strong> with your organization and account name. If your account name contains an underscore (_), you will need to replace it with a dash (-) for the below commands. Otherwise, you may encounter an error similar to <code>Get "https:/v2/": http: no Host in request URL</code>.</p>
+<pre><code language="language-bash" class="language-bash">docker login your-org-name-your-account-name.registry.snowflakecomputing.com
+</code></pre>
+<p>For example, <code>docker login sfsenorthamerica-build-spcs.registry.snowflakecomputing.com -u dash</code></p>
+<pre><code language="language-bash" class="language-bash">docker push your-org-name-your-account-name.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/llm-spcs:latest
+</code></pre>
+<p>For example, <code>docker push sfsenorthamerica-build-spcs.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/genai-spcs:latest</code></p>
+<aside class="special"><p> NOTE: This may take ~30mins or more depending on your network connection so you may move on to the next step <strong>Upload Spec YAML</strong> while the image is being pushed.</p>
+</aside>
+<h2 is-upgraded>Upload Spec YAML</h2>
+<p>Services in SPCS are defined using YAML files. These YAML files configure all of the various parameters needed to run the containers within your Snowflake account. Learn more about <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference" target="_blank">configurable parameters</a> in spec YAML files.</p>
+<p>Navigate to your local clone of the repo and you should see <a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/genai-spcs.yaml" target="_blank">genai-spcs.yaml</a> that looks like this:</p>
+<pre><code language="language-yaml" class="language-yaml">spec:
+  container:  
+  - name: genai-spcs
+    image: /dash_db/dash_schema/dash_repo/genai-spcs
+    volumeMounts: 
+    - name: llm-workspace
+      mountPath: /notebooks/llm-workspace
+    env:
+      SNOWFLAKE_MOUNTED_STAGE_PATH: /notebooks/llm-workspace
+    resources:                         
+        requests:
+          nvidia.com/gpu: 1
+        limits:
+          nvidia.com/gpu: 1
+  endpoint:
+  - name: streamlit
+    port: 8080
+    public: true
+  - name: jupyter
+    port: 4200
+    public: true
+  volume:
+  - name: llm-workspace
+    source: &#34;@llm_workspace&#34;
+    uid: 0
+    gid: 0
+</code></pre>
+<p>If needed, make edits to the default names of the database, schema, and/or image repository and save the file. Once the spec file is updated, use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#uploading-files-onto-a-stage" target="_blank">Snowsight to upload it to Snowflake Stage <code>dash_stage</code></a> so that it can be referenced in the service we will create in the next section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Service" duration="5">
+        <p>Once the <code>docker push...</code> command completes in the previous step, verify that the image exists by running the following commands in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">use role DASH_SPCS;
+CALL SYSTEM$REGISTRY_LIST_IMAGES(&#39;/dash_db/dash_schema/dash_repo&#39;);
+</code></pre>
+<p>You should see image <code>genai-spcs</code> listed.</p>
+<p>Once we have successfully pushed the Docker image and uploaded the spec YAML, we have all of the components we need in order to create our service. There are three components required to create the service:</p>
+<ol type="1">
+<li>A service name</li>
+<li>A compute pool the service will run on</li>
+<li>A spec file that defines the service</li>
+</ol>
+<p>Before creating the service, run the following command to check the status of the compute pool DASH_GPU3 and make sure it is in IDLE or ACTIVE state.</p>
+<pre><code language="language-sql" class="language-sql">use role DASH_SPCS;
+
+show compute pools;
+</code></pre>
+<p>If the compute pool DASH_GPU3 is <strong>not</strong> in IDLE or ACTIVE state, run the following command and wait a few mins.</p>
+<pre><code language="language-sql" class="language-sql">alter compute pool DASH_GPU3 resume;
+</code></pre>
+<aside class="special"><p> NOTE: Before proceeding, make sure the compute pool DASH_GPU3 is in IDLE or ACTIVE state.</p>
+</aside>
+<p>To create the service, run the following commands in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">create service genai_service
+IN COMPUTE POOL DASH_GPU3
+FROM @dash_stage
+SPECIFICATION_FILE = &#39;genai-spcs.yaml&#39;
+MIN_INSTANCES = 1
+MAX_INSTANCES = 1
+QUERY_WAREHOUSE = DASH_WH_S
+EXTERNAL_ACCESS_INTEGRATIONS = (ALLOW_ALL_ACCESS_INTEGRATION);
+</code></pre>
+<p>To check the status of the service, run the following in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">select 
+  v.value:containerName::varchar container_name
+  ,v.value:status::varchar status  
+  ,v.value:message::varchar message
+from (select parse_json(system$get_service_status(&#39;genai_service&#39;))) t, 
+lateral flatten(input =&gt; t.$1) v;
+</code></pre>
+<aside class="special"><p> NOTE: Before proceeding, make sure the service is in READY state.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Application" duration="8">
+        <p>Once the service is in a <code>READY</code> state, execute the following command in a SQL worksheet to get the endpoint URL:</p>
+<pre><code language="language-sql" class="language-sql">show endpoints in service genai_service;
+</code></pre>
+<p>If everything has gone well so far, you should see a service named <strong>streamlit</strong> with <strong>ingress_url</strong> of the application–something similar to <code>iapioai5-sfsenorthamerica-build-spcs.snowflakecomputing.app</code></p>
+<p>In a new browser window, copy-paste the <strong>ingress_url</strong> URL from above and you should see the login screen. To launch the application, enter your Snowflake credentials and you should see the application up and running.</p>
+<aside class="special"><p> NOTE: To access the app, the user logging in must have <code>DASH_SPCS</code> role AND their user default role <strong>cannot</strong> be <code>ACCOUNTADMIN</code>, <code>SECURITYADMIN</code>, or <code>ORGADMIN</code>.</p>
+</aside>
+<h2 is-upgraded>Gen AI Inpainting</h2>
+<ol type="1">
+<li>On this page, use your mouse to paint the area white where you&#39;d like a cell phone tower to be built.</li>
+<li>Then click on <strong>Generate Image</strong> button – this will kickoff a inpainting process using open source Gen AI model. In a few seconds, the generated image will be displayed on the right-hand side of the selected image!</li>
+</ol>
+<h2 is-upgraded>Tower Uptime</h2>
+<ol type="1">
+<li>On this page, update status of one of the towers in the dataframe on the right. This will kickoff a process to updated the hybrid table and also update the map instantaneously!</li>
+<li>Run <code>select * from cell_towers_ca</code> in a SQL worksheet and you&#39;ll see the status of that particular tower updated.</li>
+</ol>
+<h2 is-upgraded>Demo</h2>
+<p class="image-container"><img alt="Snowpark Container Service" src="img/e36c67a78e8f10.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="2">
+        <p>To cleanup resources and remove all of the objects you created during this QuickStart, run the following commands in a SQL worksheet. This will ensure that you don&#39;t incur any unnecessary costs specifically associated with this QuickStart guide.</p>
+<aside class="special"><p> NOTE: Snowpark Container Services bills credits/second based on the compute pool&#39;s uptime, similar to Virtual Warehouse billing.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">USE ROLE ROLE DASH_SPCS;
+DROP SERVICE DASH_DB.DASH_SCHEMA.genai_service;
+
+USE ROLE ACCOUNTADMIN;
+ALTER COMPUTE POOL DASH_GPU3 STOP ALL;
+ALTER COMPUTE POOL DASH_GPU3 SUSPEND;
+DROP COMPUTE POOL DASH_GPU3;
+DROP SCHEMA DASH_SCHEMA;
+DROP DATABASE DASH_DB;
+DROP WAREHOUSE DASH_WH_S;
+DROP ROLE DASH_SPCS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <p>Congratulations, you have successfully completed this QuickStart! By completing this guide, you were able to create and manage long-running service using Snowflake&#39;s managed Snowpark Container Services to deploy a Streamlit application showcasing GenAI inpainting using open source libraries as well as use of hybrid tables for transactional workload.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>The working mechanics of Snowpark Container Services</li>
+<li>How to build and push a containerized Docker image to SPCS along with code and other files</li>
+<li>How to use open source AI model for image inpainting</li>
+<li>How to work with Hybrid tables</li>
+<li>How to create a Streamlit application</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services" target="_blank">QuickStart GitHub Repo</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#0" target="_blank">QuickStart Guide: Intro to Snowpark Container Services</a></li>
+<li><a href="https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/" target="_blank">Blog: Snowflake Announces Snowpark Container Services</a></li>
+<li><a href="https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741" target="_blank">Blog: Snowpark Container Services - A Tech Primer</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Docs: Snowpark Container Services</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/commands-snowpark-container-services" target="_blank">Docs: Snowpark Container Services SQL Commands</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-hybrid" target="_blank">Docs: Hybrid Tables</a></li>
+<li><a href="https://www.youtube.com/watch?v=DelaJBm0UgI" target="_blank">Video: Building Advanced ML with Snowpark Container Services - Summit 2023</a></li>
+<li><a href="https://www.youtube.com/watch?v=u98YTgCelYg" target="_blank">Video: Snowpark Container Services with NVIDIA</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

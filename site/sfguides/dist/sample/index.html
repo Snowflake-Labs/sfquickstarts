@@ -1,0 +1,253 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowflake Guide Template</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="sample"
+                  title="Snowflake Guide Template"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Please use <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template" target="_blank">this markdown file</a> as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own quickstarts, including: code snippet highlighting, downloading files, inserting photos, and more.</p>
+<p>It is important to include on the first page of your guide the following sections: Prerequisites, What you&#39;ll learn, What you&#39;ll need, and What you&#39;ll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have <strong>built</strong> something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).</p>
+<p>The rest of this Snowflake Guide explains the steps of writing your own guide.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Markdown syntax</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to set the metadata for a guide (category, author, id, etc)</li>
+<li>how to set the amount of time each slide will take to finish</li>
+<li>how to include code snippets</li>
+<li>how to hyperlink items</li>
+<li>how to include images</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+<li><a href="https://golang.org/doc/install" target="_blank">GoLang</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake Guide</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Metadata Configuration" duration="2">
+        <p>It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:</p>
+<ul>
+<li><strong>summary</strong>: This is a sample Snowflake Guide <ul>
+<li>This should be a short, 1 sentence description of your guide. This will be visible on the main landing page.</li>
+</ul>
+</li>
+<li><strong>id</strong>: sample <ul>
+<li>make sure to match the id here with the name of the file, all one word.</li>
+</ul>
+</li>
+<li><strong>categories</strong>: data-science <ul>
+<li>You can have multiple categories, but the first one listed is used for the icon.</li>
+</ul>
+</li>
+<li><strong>environments</strong>: web <ul>
+<li><code>web</code> is default. If this will be published for a specific event or  conference, include it here.</li>
+</ul>
+</li>
+<li><strong>status</strong>: Published <ul>
+<li>(<code>Draft</code>, <code>Published</code>, <code>Deprecated</code>, <code>Hidden</code>) to indicate the progress and whether the sfguide is ready to be published. <code>Hidden</code> implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.</li>
+</ul>
+</li>
+<li><strong>feedback link</strong>: https://github.com/Snowflake-Labs/sfguides/issues</li>
+<li><strong>tags</strong>: Getting Started, Data Science, Twitter <ul>
+<li>Add relevant  tags to make your sfguide easily found and SEO friendly.</li>
+</ul>
+</li>
+<li><strong>authors</strong>: Daniel Myers <ul>
+<li>Indicate the author(s) of this specific sfguide.</li>
+</ul>
+</li>
+</ul>
+<p>You can see the source metadata for this guide you are reading now, on <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template" target="_blank">the github repo</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Step" duration="2">
+        <p>A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag <code>##</code>.</p>
+<pre><code language="language-markdown" class="language-markdown">## Step 1 Title
+Duration: 3
+
+All the content for the step goes here.
+
+## Step 2 Title
+Duration: 1
+
+All the content for the step goes here.
+</code></pre>
+<p>To indicate how long each step will take, set the <code>Duration</code> under the step title (i.e. <code>##</code>) to an integer. The integers refer to minutes. If you set <code>Duration: 4</code> then a particular step will take 4 minutes to complete.</p>
+<p>The total sfguide completion time is calculated automatically for you and will be displayed on the landing page.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Code Snippets, Info Boxes, and Tables" duration="2">
+        <p>Look at the <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template" target="_blank">markdown source for this sfguide</a> to see how to use markdown to generate code snippets, info boxes, and download buttons.</p>
+<h2 is-upgraded>JavaScript</h2>
+<pre><code language="language-javascript" class="language-javascript">{ 
+  key1: &#34;string&#34;, 
+  key2: integer,
+  key3: &#34;string&#34;
+}
+</code></pre>
+<h2 is-upgraded>Java</h2>
+<pre><code language="language-java" class="language-java">for (statement 1; statement 2; statement 3) {
+  // code block to be executed
+}
+</code></pre>
+<h2 is-upgraded>Info Boxes</h2>
+<aside class="special"><p>This will appear in a positive info box.</p>
+</aside>
+<aside class="warning"><p>This will appear in a negative info box.</p>
+</aside>
+<h2 is-upgraded>Buttons</h2>
+<p><a href="https://www.youtube.com/user/iamhalsey/playlists" target="_blank"><paper-button class="colored" raised>Youtube - Halsey Playlists</paper-button></a></p>
+<h2 is-upgraded>Tables</h2>
+<table>
+<tr><td colspan="2" rowspan="1"><p> **The table header** </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>The table body</p>
+</td><td colspan="1" rowspan="1"><p>with two columns</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Hyperlinking</h2>
+<p><a href="https://www.youtube.com/user/iamhalsey/playlists" target="_blank">Youtube - Halsey Playlists</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Images, Videos, and Surveys, and iFrames" duration="2">
+        <p>Look at the <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template" target="_blank">markdown source for this guide</a> to see how to use markdown to generate these elements.</p>
+<h2 is-upgraded>Images</h2>
+<p class="image-container"><img alt="Puppy" src="img/f0c5546d153b4249.jpg"></p>
+<h2 is-upgraded>Videos</h2>
+<p>Videos from youtube can be directly embedded: </p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/KmeiFXrZucE?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h2 is-upgraded>Inline Surveys</h2>
+<google-codelab-survey survey-id="sample-1">
+<h4>How do you rate yourself as a user of Snowflake?</h4>
+<paper-radio-group>
+<paper-radio-button>Beginner</paper-radio-button>
+<paper-radio-button>Intermediate</paper-radio-button>
+<paper-radio-button>Advanced</paper-radio-button>
+</paper-radio-group>
+</google-codelab-survey>
+<h2 is-upgraded>Embed an iframe</h2>
+<iframe class="embedded-iframe" src="https://codepen.io/MarioD/embed/Prgeja"></iframe>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Importing markdown files" duration="1">
+        <p>This content has been imported from another markdown file. An imported document is called a fragment. Fragments are great when you have common information across multiple sfguides.</p>
+<p>While you can embed things like images, videos, and surveys inside a fragment; you cannot define additional, top-level steps inside a fragment.</p>
+<h2 is-upgraded>Videos</h2>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h2 is-upgraded>Inline Surveys</h2>
+<google-codelab-survey survey-id="-1">
+<h4>What is your favorite color?</h4>
+<paper-radio-group>
+<paper-radio-button>Blue</paper-radio-button>
+<paper-radio-button>Green</paper-radio-button>
+</paper-radio-group>
+</google-codelab-survey>
+
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="1">
+        <p>The Conclusion and Next Steps section is one of the most important parts of a guide. This last section helps to sum up all the information the reader has gone through, and in many ways should read like a <a href="https://www.howtogeek.com/435266/what-does-tldr-mean-and-how-do-you-use-it/#post-435266:~:text=How%20Do%20You%20Use%20TLDR%3F,you%E2%80%99re%20the%20author%20or%20commenter.%20Using" target="_blank">TLDR summary</a>.</p>
+<p>There are three main sub-headers in a Conclusion step:</p>
+<ol type="1">
+<li>a general conclusion paragraph (what you are reading now!)</li>
+<li>&#34;What We&#39;ve Covered&#34; section with a bulleted list of things</li>
+<li>&#34;Related Resources&#34; with links to various other resources, other guides, docs, videos, GitHub source code, etc.</li>
+</ol>
+<p>It&#39;s also important to remember that by the time a reader has completed a Guide, the goal is that they have actually built something! Guides teach through hands-on examples – not just explaining concepts.</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>creating steps and setting duration</li>
+<li>adding code snippets</li>
+<li>embedding images, videos, and surveys</li>
+<li>importing other markdown files</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguides" target="_blank">SFGuides on GitHub</a></li>
+<li><a href="https://guides.github.com/introduction/flow/" target="_blank">Learn the GitHub Flow</a></li>
+<li><a href="https://guides.github.com/activities/forking/" target="_blank">Learn How to Fork a project on GitHub</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

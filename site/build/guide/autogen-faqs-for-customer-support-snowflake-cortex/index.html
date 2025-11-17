@@ -1,0 +1,427 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AutoGen FAQs for Customer Support with Snowflake Cortex</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="autogen-faqs-for-customer-support-snowflake-cortex"
+                  title="AutoGen FAQs for Customer Support with Snowflake Cortex"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll learn how to build an automated FAQ generation system using customer support tickets and Large Language Models (LLMs). The application analyzes support conversations and automatically generates relevant FAQ entries that can be viewed through an interactive Streamlit interface.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to process customer support conversations using Snowflake</li>
+<li>How to generate FAQs automatically using LLMs</li>
+<li>How to create an interactive FAQ viewer with filtering and search capabilities</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A system that processes support tickets to extract common issues</li>
+<li>A searchable FAQ interface with filtering capabilities</li>
+<li>An automated FAQ generation pipeline using LLMs</li>
+<li>An interface to view the generated FAQs</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://signup.snowflake.com/?utm_cta=trial-en-www-homepage-top-right-nav-ss-evg&_ga=2.74406678.547897382.1657561304-1006975775.1656432605&_gac=1.254279162.1656541671.Cj0KCQjw8O-VBhCpARIsACMvVLPE7vSFoPt6gqlowxPDlHT6waZ2_Kd3-4926XLVs0QvlzvTvIKg7pgaAqd2EALw_wcB" target="_blank">Snowflake account</a> with: <ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <h2 is-upgraded>Create Database and Tables</h2>
+<p>First, let&#39;s set up our database and required tables:</p>
+<pre><code language="language-sql" class="language-sql">-- Create database and schema
+CREATE DATABASE IF NOT EXISTS CUSTOMER_SUPPORT;
+CREATE SCHEMA IF NOT EXISTS CUSTOMER_SUPPORT.FAQS;
+
+-- Create FAQ table
+CREATE OR REPLACE TABLE CUSTOMER_SUPPORT.FAQS.CUSTOMER_SUPPORT_FAQ (
+    ISSUE_AREA VARCHAR,
+    ISSUE_CATEGORY VARCHAR,
+    QUESTION VARCHAR,
+    ANSWER VARCHAR,
+    CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+);
+</code></pre>
+<h2 is-upgraded>Load Sample Data</h2>
+<ol type="1">
+<li>Download the sample customer support tickets <a href="https://github.com/Snowflake-Labs/sfguide-autogen-faqs-for-customer-support-with-snowflake-cortex/blob/main/data/customer_service_tickets.parquet" target="_blank">parquet file</a>.</li>
+<li>Upload the parquet file using Snowsight:<ul>
+<li>Navigate to Data → Databases → CUSTOMER_SUPPORT → Tables</li>
+<li>Click &#34;Load Data&#34; in the top right</li>
+<li>Select &#34;Load from Files&#34;</li>
+<li>Choose &#34;Upload&#34; and select your parquet file</li>
+<li>In the wizard: <ul>
+<li>Select &#34;Parquet&#34; as file format</li>
+<li>Choose &#34;CUSTOMER_SUPPORT_TICKETS&#34; as target table</li>
+<li>Click &#34;Load&#34; to start the upload</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>Dataset from NebulaByte/E-Commerce_Customer_Support_Conversations on HuggingFace</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Process Support Tickets" duration="10">
+        <p>Let&#39;s examine our customer support tickets:</p>
+<pre><code language="language-sql" class="language-sql">Select ISSUE_AREA, ISSUE_CATEGORY, CONVERSATION 
+FROM CUSTOMER_SUPPORT_TICKETS 
+LIMIT 3;
+</code></pre>
+<aside class="special"><p> Before processing large volumes of tickets, examine a sample to ensure data quality and structure.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate FAQs with LLMs" duration="5">
+        <p>Now we&#39;ll generate FAQ entries using the Claude 3.5 Sonnet LLM:</p>
+<h2 is-upgraded>Snowflake Notebook</h2>
+<ol type="1">
+<li>Click on <a href="https://github.com/Snowflake-Labs/sfguide-autogen-faqs-for-customer-support-with-snowflake-cortex" target="_blank">Notebook</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</li>
+<li>In your Snowflake account:<ul>
+<li>On the left hand navigation menu, click on Projects » Notebooks</li>
+<li>On the top right, click on Notebook down arrow and select <strong>Import .ipynb</strong> file from the dropdown menu</li>
+<li>Select the file you downloaded in step 1 above</li>
+</ul>
+</li>
+<li>In the Create Notebook popup:<ul>
+<li>For Notebook location, select <strong>CUSTOMER_SUPPORT.FAQS</strong> for your database and schema</li>
+<li>Select your <strong>Warehouse</strong></li>
+<li>Click on Create button</li>
+</ul>
+</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">INSERT INTO CUSTOMER_SUPPORT_FAQ (ISSUE_AREA, ISSUE_CATEGORY, QUESTION, ANSWER)
+WITH GroupedData AS (
+    SELECT 
+        ISSUE_AREA, 
+        ISSUE_CATEGORY, 
+        LISTAGG(CONVERSATION, &#39; ||| &#39;) AS CONCATENATED_CONVERSATIONS
+    FROM CUSTOMER_SUPPORT_TICKETS
+    GROUP BY ISSUE_AREA, ISSUE_CATEGORY
+),
+Prompts AS (
+    SELECT 
+        ISSUE_AREA, 
+        ISSUE_CATEGORY,
+        LEFT(
+            CONCAT(
+                &#39;You are a customer service assistant. Based on the following conversations, generate an FAQ entry in valid JSON format with two keys: &#34;question&#34; and &#34;answer&#34;. Conversations: &#39;,
+                CONCATENATED_CONVERSATIONS,
+                &#39; Output: {&#34;question&#34;: &#34;&lt;your question here&gt;&#34;, &#34;answer&#34;: &#34;&lt;your answer here&gt;&#34;}&#39;
+            ),
+            2000
+        ) AS PROMPT
+    FROM GroupedData
+),
+RawOutputs AS (
+    SELECT 
+        ISSUE_AREA, 
+        ISSUE_CATEGORY,
+        SNOWFLAKE.CORTEX.COMPLETE(&#39;claude-3-5-sonnet&#39;, PROMPT) AS RAW_OUTPUT
+    FROM Prompts
+),
+CleanedOutputs AS (
+    SELECT 
+        ISSUE_AREA, 
+        ISSUE_CATEGORY,
+        REPLACE(
+            REPLACE(
+                REPLACE(
+                    RAW_OUTPUT,
+                    &#39;```&#39;, &#39;&#39;
+                ),
+                &#39;json&#39;, &#39;&#39;
+            ),
+            &#39;\n&#39;, &#39;&#39;
+        ) AS CLEANED_OUTPUT
+    FROM RawOutputs
+),
+ParsedOutputs AS (
+    SELECT 
+        ISSUE_AREA,
+        ISSUE_CATEGORY,
+        TRY_PARSE_JSON(CLEANED_OUTPUT) AS PARSED_JSON
+    FROM CleanedOutputs
+    WHERE TRY_PARSE_JSON(CLEANED_OUTPUT) IS NOT NULL
+)
+SELECT 
+    ISSUE_AREA, 
+    ISSUE_CATEGORY,
+    PARSED_JSON:&#34;question&#34;::STRING AS QUESTION,
+    PARSED_JSON:&#34;answer&#34;::STRING AS ANSWER
+FROM ParsedOutputs;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Verify and Review" duration="10">
+        <p>Check the generated FAQs:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM CUSTOMER_SUPPORT_FAQ ORDER BY CREATED_AT DESC;
+</code></pre>
+<p>Ensure:</p>
+<ul>
+<li>Questions are relevant and clear</li>
+<li>Answers are accurate and helpful</li>
+<li>Categories are correctly assigned</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build the FAQ Viewer" duration="20">
+        <ol type="1">
+<li>Navigate to Streamlit in Snowflake:<ul>
+<li>Click on the <strong>Streamlit</strong> tab in the left navigation pane</li>
+<li>Click on <strong>+ Streamlit App</strong> button in the top right</li>
+</ul>
+</li>
+<li>Configure App Settings:<ul>
+<li>Enter a name for your app (e.g., Customer_Support_AutoGen_FAQ_Viewer)</li>
+<li>Select a warehouse to run the app (Small warehouse is sufficient)</li>
+<li>Choose the <strong>CUSTOMER_SUPPORT.FAQS</strong> database and schema</li>
+</ul>
+</li>
+</ol>
+<pre><code language="language-python" class="language-python"># Import python packages
+import streamlit as st
+import pandas as pd
+
+from snowflake.snowpark.context import get_active_session
+
+# Get the current credentials
+session = get_active_session()
+
+# Query to fetch FAQs
+def fetch_faqs():
+    query = &#34;&#34;&#34;
+        SELECT 
+            ISSUE_AREA, 
+            ISSUE_CATEGORY, 
+            QUESTION, 
+            ANSWER, 
+            CREATED_AT
+        FROM CUSTOMER_SUPPORT_FAQ
+        ORDER BY CREATED_AT DESC;
+    &#34;&#34;&#34;
+    return session.sql(query).to_pandas()
+
+# Paginate FAQs
+def paginate_data(data, page, page_size=5):
+    start = page * page_size
+    end = start + page_size
+    return data.iloc[start:end]
+
+# Streamlit app
+def main():
+    st.title(&#34;Customer Support FAQ Viewer&#34;)
+    
+    # Sidebar for search and filters
+    st.sidebar.header(&#34;Filters &amp; Search&#34;)
+    
+    # Search bar in the sidebar
+    search_query = st.sidebar.text_input(&#34;Search FAQs:&#34;, &#34;&#34;)
+    
+    # Connect to Snowfla
+    faqs = fetch_faqs()
+    
+    # Check if filters returned results
+    if faqs.empty:
+        st.warning(&#34;No FAQs match your filters or search query.&#34;)
+        return
+    
+   # Filters in the sidebar
+    issue_area = st.sidebar.selectbox(&#34;Filter by Issue Area:&#34;, [&#34;All&#34;] + sorted(faqs[&#34;ISSUE_AREA&#34;].unique()))
+    issue_category = st.sidebar.selectbox(&#34;Filter by Issue Category:&#34;, [&#34;All&#34;] + sorted(faqs[&#34;ISSUE_CATEGORY&#34;].unique()))
+    
+    # Apply filters
+    if issue_area != &#34;All&#34;:
+        faqs = faqs[faqs[&#34;ISSUE_AREA&#34;] == issue_area]
+    if issue_category != &#34;All&#34;:
+        faqs = faqs[faqs[&#34;ISSUE_CATEGORY&#34;] == issue_category]
+    if search_query.strip():
+        faqs = faqs[
+            faqs[&#34;QUESTION&#34;].str.contains(search_query, case=False, na=False) |
+            faqs[&#34;ANSWER&#34;].str.contains(search_query, case=False, na=False)
+        ]
+    
+    # Check if filters returned results
+    if faqs.empty:
+        st.warning(&#34;No FAQs match your filters or search query.&#34;)
+        return
+    
+    # Pagination setup
+    page_size = 5
+    total_pages = (len(faqs) - 1) // page_size + 1
+    if &#34;current_page&#34; not in st.session_state:
+        st.session_state[&#34;current_page&#34;] = 0
+
+    # Current page data
+    current_page = st.session_state[&#34;current_page&#34;]
+    paginated_faqs = paginate_data(faqs, current_page, page_size)
+
+    # Display FAQs
+    for index, row in paginated_faqs.iterrows():
+        with st.expander(f&#34;{row[&#39;QUESTION&#39;]}&#34;):
+            st.write(f&#34;**Answer:** {row[&#39;ANSWER&#39;]}&#34;)
+            st.write(f&#34;*Issue Area:* {row[&#39;ISSUE_AREA&#39;]}  |  *Issue Category:* {row[&#39;ISSUE_CATEGORY&#39;]}  |  *Created At:* {row[&#39;CREATED_AT&#39;]}&#34;)
+    
+    # Pagination controls at the bottom
+    st.markdown(
+        &#34;&#34;&#34;
+        &lt;style&gt;
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 20px;
+        }
+        .pagination-buttons {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .pagination-buttons:disabled {
+            background-color: #CCCCCC;
+            cursor: not-allowed;
+        }
+        .pagination-summary {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        &lt;/style&gt;
+        &#34;&#34;&#34;,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(&#39;&lt;div class=&#34;pagination-container&#34;&gt;&#39;, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+
+    # Safe button handling
+    previous_button_pressed = col1.button(&#34;⬅️ Previous&#34;, key=&#34;prev&#34;)
+    next_button_pressed = col3.button(&#34;➡️ Next&#34;, key=&#34;next&#34;)
+
+    if previous_button_pressed and current_page &gt; 0:
+        st.session_state[&#34;current_page&#34;] -= 1
+    elif next_button_pressed and current_page &lt; total_pages - 1:
+        st.session_state[&#34;current_page&#34;] += 1
+
+    with col2:
+        st.markdown(
+            f&#34;&lt;div class=&#39;pagination-summary&#39;&gt;Page {st.session_state[&#39;current_page&#39;] + 1} of {total_pages}&lt;/div&gt;&#34;,
+            unsafe_allow_html=True
+        )
+
+    st.markdown(&#39;&lt;/div&gt;&#39;, unsafe_allow_html=True)
+if __name__ == &#34;__main__&#34;:
+    main()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations! You&#39;ve built an automated FAQ generation system that:</p>
+<ul>
+<li>Processes support conversations</li>
+<li>Generates FAQs using LLMs</li>
+<li>Provides a searchable interface</li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Using Snowflake Cortex LLM functions</li>
+<li>Processing conversational data</li>
+<li>Building Streamlit applications in Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+<p>Sample Code &amp; Guides:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Guide</a></li>
+<li><a href="https://docs.streamlit.io/library/api-reference" target="_blank">Streamlit Components</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-overview" target="_blank">LLM Best Practices</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

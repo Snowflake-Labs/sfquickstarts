@@ -1,0 +1,1353 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Data App with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_a_data_app_with_snowflake"
+                  title="Build a Data App with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Snowflake is a terrific platform on which to build data applications. The unique characteristics and cloud-based design allow for building applications that scale with data and workload. This tutorial will go through how to build and deploy both the Processing Layer and the User Interface Layer paired with Snowflake as the Persistence Layer.</p>
+<p>Our example will be using a fictional food truck franchise website, Tasty Bytes. We will be building a graphical user interface with charts and graphs for franshisees to be able to examine sales data related to their franchise of food trucks. After logging in via a login page, each franchisee will have one page that will show metrics at the franchise level, and another that will show metrics around the food truck brands for that franchise.</p>
+<p>The Processing and User Interface Layers will be built using Node.js. The dataset is a orders history for Tasty Bytes.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account, and familiarity with the Snowsight interface</li>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Ability to install and run software on your computer</li>
+<li>Basic experience using git</li>
+<li>Intermediate knowledge of Node.js and React JS</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to configure and build a custom API Powered by Snowflake, written in Node.js</li>
+<li>How to configure and build a custom frontend website to communicate with the API, written in React and Node.js</li>
+<li>How to run and test the frontend and API on your machine</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> Installed</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+<li><a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">NPM</a> Installed</li>
+</ul>
+<aside class="special"><p><strong>Installing Using NVM</strong></p>
+<p>Node Version Manager provides the ability to have multiple versions of Node installed on your local environment.  This can be helpful so that you can complete this lab without impacting any existing Node setup that you have on your machine. NVM can be found here: <a href="https://github.com/nvm-sh/nvm" target="_blank">https://github.com/nvm-sh/nvm</a></p>
+<p>To run this lab you will want to utilize Node 18.16.0 which can be installed using the following command after NVM has been installed: <code>nvm install 18.16.0</code></p>
+</aside>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>API Powered by Snowflake built in Node.js</li>
+<li>React JS Web Application that connects to that API</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 1: Data" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>In this part of the lab we&#39;ll set up our Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our Tasty Bytes Food Truck orders data into our ORDERS table and run a few queries to get familiar with the data.</p>
+<h2 is-upgraded>Step 1.1 Initial Snowflake Setup</h2>
+<p>For this part of the lab we will want to ensure we run all steps as the ACCOUNTADMIN role</p>
+<pre><code language="language-sql" class="language-sql">-- Change role to accountadmin
+use role accountadmin;
+</code></pre>
+<p>First we can create a <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">Virtual Warehouse</a> that can be used for data exploration and general querying in this lab.  We&#39;ll create this warehouse with a size of <code>Medium</code> which is right sized for that use case in this lab.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a virtual warehouse for data exploration
+create or replace warehouse query_wh with 
+	warehouse_size = &#39;medium&#39; 
+	warehouse_type = &#39;standard&#39; 
+	auto_suspend = 300 
+	auto_resume = true 
+	min_cluster_count = 1 
+	max_cluster_count = 1 
+	scaling_policy = &#39;standard&#39;;
+</code></pre>
+<h2 is-upgraded>Step 1.2 Load Data</h2>
+<p>Next we will create a database and schema that will house the tables that store our application data.</p>
+<pre><code language="language-sql" class="language-sql">-- Create the application database and schema
+create or replace database frostbyte_tasty_bytes;
+create or replace schema app;
+</code></pre>
+<p>This DDL will create the structure for the ORDERS table which is the main source of data for our application in this lab.</p>
+<pre><code language="language-sql" class="language-sql">-- Create table structure for order data 
+create or replace table orders (
+	order_id number(38,0),
+	truck_id number(38,0),
+	order_ts timestamp_ntz(9),
+	order_detail_id number(38,0),
+	line_number number(38,0),
+	truck_brand_name varchar(16777216),
+	menu_type varchar(16777216),
+	primary_city varchar(16777216),
+	region varchar(16777216),
+	country varchar(16777216),
+	franchise_flag number(38,0),
+	franchise_id number(38,0),
+	franchisee_first_name varchar(16777216),
+	franchisee_last_name varchar(16777216),
+	location_id number(19,0),
+	customer_id number(38,0),
+	first_name varchar(16777216),
+	last_name varchar(16777216),
+	e_mail varchar(16777216),
+	phone_number varchar(16777216),
+	children_count varchar(16777216),
+	gender varchar(16777216),
+	marital_status varchar(16777216),
+	menu_item_id number(38,0),
+	menu_item_name varchar(16777216),
+	quantity number(5,0),
+	unit_price number(38,4),
+	price number(38,4),
+	order_amount number(38,4),
+	order_tax_amount varchar(16777216),
+	order_discount_amount varchar(16777216),
+	order_total number(38,4)
+);
+</code></pre>
+<p>For loading data into the ORDERS table we will create a new Virtual Warehouse sized as a <code>Large</code> to help us quickly ingest the data we have stored in an S3 bucket.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a virtual warehouse for data loading
+create or replace warehouse load_wh with 
+	warehouse_size = &#39;large&#39; 
+	warehouse_type = &#39;standard&#39; 
+	auto_suspend = 300 
+	auto_resume = true 
+	min_cluster_count = 1 
+	max_cluster_count = 1 
+	scaling_policy = &#39;standard&#39;;
+</code></pre>
+<p>Next we have to create a <a href="https://docs.snowflake.com/en/user-guide/data-load-overview" target="_blank">STAGE</a> which is a Snowflake object that points to a cloud storage location Snowflake can access to both ingest and query data.  In this lab the data is stored in a publically accessible AWS S3 bucket which we are referencing when creating the Stage object.</p>
+<pre><code language="language-sql" class="language-sql">-- Create stage for loading orders data
+create or replace stage tasty_bytes_app_stage
+	url = &#39;s3://sfquickstarts/frostbyte_tastybytes/app/orders/&#39;;
+</code></pre>
+<p>Once we&#39;ve created both the Virtual Warehouse we want to use for loading data and the Stage which points to where the data resides in cloud storage we can simply <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table" target="_blank">COPY</a> the data from that Stage into our ORDERS table.</p>
+<pre><code language="language-sql" class="language-sql">-- Copy data into orders table using the load wh
+ copy into orders from @tasty_bytes_app_stage;
+</code></pre>
+<h2 is-upgraded>Step 1.3 Explore Data</h2>
+<p>Now that we&#39;ve loaded our data into the ORDERS table we can run a few queries to get familiar with it - but first we will want to change the Virtual Warehouse we&#39;re using from the <code>LOAD_WH</code> back to the <code>QUERY_WH</code> created earlier in the lab.</p>
+<pre><code language="language-sql" class="language-sql">-- Change our Virtual Warehouse context to use our query_wh
+ use warehouse query_wh;
+</code></pre>
+<p>To begin with we can simply look at a sample of the entire table.</p>
+<pre><code language="language-sql" class="language-sql">-- Simple query to look at 10 rows of data 
+select * from orders limit 10;
+</code></pre>
+<p>Next we can see how many records we&#39;ve loaded into the table.  Notice how quickly the query executes - this is due to Snowflake&#39;s unique architecture which enables a certain class of queries like this one to pull results from metadata instead of requiring compute to generate the result. You should see that the table has a little more than 231M rows.</p>
+<pre><code language="language-sql" class="language-sql">-- Query to count all records in the table
+select count(*) from orders;
+</code></pre>
+<p>Next we can see the date range included in our data. You should see that the data ranges from <code>2022-01-01</code> to <code>2022-10-31</code>.</p>
+<pre><code language="language-sql" class="language-sql">-- Query to find the date range of the data
+select min(order_ts), max(order_ts) from orders;
+</code></pre>
+<p>Finally we can run a more complex query to look at the total revenue by month where we will use a couple of <a href="https://docs.snowflake.com/en/sql-reference-functions" target="_blank">functions</a> to parse the month number and name from the ORDER_TS column in the ORDERS table.</p>
+<pre><code language="language-sql" class="language-sql">-- Sales by month
+select month(order_ts),monthname(order_ts), sum(price)
+from orders 
+group by month(order_ts), monthname(order_ts)
+order by month(order_ts);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 2: Queries" duration="20">
+        <h2 is-upgraded>Overview</h2>
+<p>Now that we&#39;ve done the initial set up within our Snowflake account including loading data into the ORDERS table we will focus on turning our business questions into queries for our application.</p>
+<p>Our queries will be broken into two groups - <code>Franchise</code> queries and <code>Truck Brand</code> level queries.  For the sake of ease we will focus on the following Franchise, Truck Brand, and Date Range for this part of the lab.</p>
+<ul>
+<li>Franchise:  <code>1</code></li>
+<li>Truck Brand: <code>Guac n' Roll</code></li>
+<li>Date Range: <code>2022-01-01</code> to <code>2022-03-31</code></li>
+</ul>
+<h2 is-upgraded>Setting Snowsight Context</h2>
+<p>To ensure the correct context is use for these queries we will set our database, schema, and Virtual Warehouse using the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">-- Set query context
+use database frostbyte_tasty_bytes;
+use schema app;
+use warehouse query_wh;
+</code></pre>
+<h2 is-upgraded>2.1 Franchise Queries</h2>
+<p>To answer the business questions about how our overall Franchise business is doing we&#39;ll need create the three following queries.  All of the columns required for these exist in the <code>ORDERS</code> table and no joining of tables are required.</p>
+<ol type="1">
+<li>Top 10 Countries Based on Revenue for Franchise 1 in the time window 2022-01-01 to 2022-03-31</li>
+<li>Top 10 Truck Brands Based on Revenue for Franchise 1 in the time window 2022-01-01 to 2022-03-31</li>
+<li>Monthly Revenue for Franchise 1 for the year 2023 per Truck Brand</li>
+</ol>
+<p>You can spend some time creating the queries for each of these and then check your answers against the provided queries below by expanding each section.</p>
+<p>     Top 10 Countries Based on Revenue</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    TOP 10 country,
+    sum(price) AS revenue
+FROM
+    app.orders
+WHERE
+    date(order_ts) &gt;= &#39;2022-01-01&#39;
+    AND date(order_ts) &lt;= &#39;2022-03-31&#39;
+    AND franchise_id = 1
+GROUP BY
+    country
+ORDER BY
+    sum(price) desc;
+</code></pre>
+<p>     Top 10 Truck Brands Based on Revenue</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    TOP 10 truck_brand_name,
+    sum(price) AS revenue
+FROM
+    app.orders
+WHERE
+    date(order_ts) &gt;= &#39;2022-01-01&#39;
+    AND date(order_ts) &lt;= &#39;2022-03-31&#39;
+    AND franchise_id = 1
+GROUP BY
+    truck_brand_name
+ORDER BY
+    sum(price) desc;
+</code></pre>
+<p>     Montly Revenue per Truck Brand</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    country,
+    month(order_ts) as date,
+    sum(price) AS revenue
+FROM
+    app.orders
+WHERE
+        year(order_ts) = 2022
+    AND franchise_id = 1
+GROUP BY
+    country,
+    month(order_ts)
+ORDER BY
+    sum(price) desc;
+</code></pre>
+<h2 is-upgraded>2.2 Truck Brand Queries</h2>
+<p>Franchise owners will want to dig deeper into the data and better understand performance trends at the Truck Brand level so we&#39;ll need to create four more queries to analyze the data.  All of the columns required for these exist in the <code>ORDERS</code> table and no joining of tables are required.</p>
+<ol type="1">
+<li>Total Sales by Day-of-Week for Franchise 1 and the Guac n&#39; Roll brand in the time window 2022-01-01 to 2022-03-31</li>
+<li>Menu Items sorted by Revenue for Franchise 1 and the Guac n&#39; Roll brand in the time window 2022-01-01 to 2022-03-31</li>
+<li>Menu Items sorted by Revenue by Day-of-Week for Franchise 1 and the Guac n&#39; Roll brand in the time window 2022-01-01 to 2022-03-31</li>
+<li>Cities sorted by Revenue by Day-of-Week for Franchise 1 and the Guac n&#39; Roll brand in the time window 2022-01-01 to 2022-03-31</li>
+</ol>
+<p>You can spend some time creating the queries for each of these and then check your answers against the provided queries below by expanding each section.</p>
+<p>     Total Sales by Day-of-Week</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    dayofweek(order_ts) as DoW,
+    sum(price) AS revenue
+FROM
+    app.orders
+WHERE
+    date(order_ts) &gt;= &#39;2022-01-01&#39;
+    AND date(order_ts) &lt;= &#39;2022-03-31&#39;
+    AND truck_brand_name = &#39;Guac n&#39;&#39; Roll&#39;
+    AND franchise_id = 1
+GROUP BY
+    dayofweek(order_ts)
+ORDER BY
+    dayofweek(order_ts),
+        sum(price) desc;
+</code></pre>
+<p>     Top Selling Items</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    menu_item_name,
+    sum(price) AS revenue
+FROM
+    app.orders
+WHERE
+    date(order_ts) &gt;= &#39;2022-01-01&#39;
+    AND date(order_ts) &lt;= &#39;2022-03-31&#39;
+    AND truck_brand_name = &#39;Guac n&#39;&#39; Roll&#39;
+    AND franchise_id = 1
+GROUP BY
+    menu_item_name
+ORDER BY
+    sum(price) desc;
+</code></pre>
+<p>     Top Selling items by Day-of-Week</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    dayofweek(order_ts) as DoW,
+    menu_item_name,
+    sum(price) AS revenue
+FROM
+    app.orders
+WHERE
+    date(order_ts) &gt;= &#39;2022-01-01&#39;
+    AND date(order_ts) &lt;= &#39;2022-03-31&#39;
+    AND truck_brand_name = &#39;Guac n&#39;&#39; Roll&#39;
+    AND franchise_id = 1
+GROUP BY
+    dayofweek(order_ts),
+    menu_item_name
+ORDER BY
+    dayofweek(order_ts),
+        sum(price) desc;
+</code></pre>
+<p>     Best Cities by Day-of-Week</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    dayofweek(order_ts) as DoW,
+    primary_city,
+    sum(price) AS revenue
+FROM
+    app.orders
+WHERE
+    date(order_ts) &gt;= &#39;2022-01-01&#39;
+    AND date(order_ts) &lt;= &#39;2022-03-31&#39;
+    AND truck_brand_name = &#39;Guac n&#39;&#39; Roll&#39;
+    AND franchise_id = 1
+GROUP BY
+    dayofweek(order_ts),
+    primary_city
+ORDER BY
+    dayofweek(order_ts),
+    sum(price) desc;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 3: Snowflake Setup" duration="0">
+        <h2 is-upgraded>Overview</h2>
+<p>Now that we&#39;ve created our database, loaded data and developed the queries needed to answer our business questions the last step before getting into application code is setting up the necessary objects so that the application can connect to Snowflake securely and query data on its own Virtual Warehouse</p>
+<h2 is-upgraded>Setting Snowsight Context</h2>
+<p>To ensure the correct context is use for these queries we will set our database, schema, and Virtual Warehouse using the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">-- Set query context
+use database frostbyte_tasty_bytes;
+use schema app;
+use warehouse query_wh;
+</code></pre>
+<h2 is-upgraded>Step 3.1 Creating the Service User</h2>
+<p>To enable our application to connect securely to Snowflake we are going to create a service user in the Snowflake account and create a key pair that we will use to authenticate that user. Start by generating a private and a public key to associate with the user.</p>
+<p>Generate and download the key files <a href="https://www.cryptool.org/en/cto/openssl" target="_blank">in your browser</a>. Running the following commands below in the Web OpenSSL Application window and download the Files generated.</p>
+<p>If you prefer to generate the key files using <a href="https://www.openssl.org/" target="_blank">openssl</a> locally, run the following commands in your shell.</p>
+<pre><code language="language-sh" class="language-sh">$ openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out app_user_rsa_key.p8 -nocrypt
+Generating RSA private key, 2048 bit long modulus (2 primes)
+
+$ openssl rsa -in app_user_rsa_key.p8 -pubout -out app_user_rsa_key.pub
+writing RSA key
+
+$ cat app_user_rsa_key.pub
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmT/
+....
++SWsODZKAhqU8PRAqlXhIQIDAQAB
+-----END PUBLIC KEY-----
+</code></pre>
+<p>You should now have two key files in your folder, app_user_rsa_key.p8 and app_user_rsa_key.pub. We can now create the service user in Snowflake, in the Snowflake account you created in the earlier lab (as <code>ACCOUNTADMIN</code>), run the following:</p>
+<pre><code language="language-sql" class="language-sql">-- Change role to accountadmin
+use role accountadmin;
+
+-- Create a database role for our application
+create role tasty_app_api_role;
+
+-- Grant privileges to the newly created role on required database objects
+grant usage on database frostbyte_tasty_bytes to role tasty_app_api_role;
+grant usage on schema frostbyte_tasty_bytes.app to role tasty_app_api_role;
+grant select on all tables in schema frostbyte_tasty_bytes.app to role tasty_app_api_role;
+grant select on future tables in schema frostbyte_tasty_bytes.app to role tasty_app_api_role;
+
+-- Create the service user
+create user if not exists tasty_app_api_user
+    password = null
+    login_name = &#39;tasty_app_api_user&#39;
+    display_name = &#39;tasty app api user&#39;
+    first_name = &#39;tasty app api user&#39;
+    last_name = &#39;tasty app api user&#39;
+    must_change_password = false
+    disabled = false
+    default_warehouse = tasty_app_api_wh
+    default_namespace = frostbyte_tasty_bytes.app
+    default_role = tasty_app_api_role
+    rsa_public_key = &#39;&lt;rsa_public_key&gt;&#39;
+    comment = &#39;api user for tasty app&#39;;
+
+-- Grant the role to the user
+grant role tasty_app_api_role to user tasty_app_api_user;
+</code></pre>
+<p>Where you replace <code><rsa_public_key></code> with the contents of the <code>app_user_rsa_key.pub</code> file you just created locally (copy everything between the <code>-----BEGIN PUBLIC KEY-----</code> and the <code>-----END PUBLIC KEY-----</code> lines)</p>
+<h2 is-upgraded>Step 3.2 Creating a Virtual Warehouse for the Application</h2>
+<p>Much like we created separate Virtual Warehouses for exploring and loading data, we will create one specifically for our service to use when executing queries on Snowflake. We will also grant the privilege <code>USAGE</code> to the service role so that it can use the warehouse.</p>
+<pre><code language="language-sql" class="language-sql">-- Create Warehouse for the API
+create or replace warehouse tasty_app_api_wh with 
+    warehouse_size = &#39;small&#39; 
+    warehouse_type = &#39;standard&#39; 
+    auto_suspend = 300 
+    auto_resume = true 
+    min_cluster_count = 1 
+    max_cluster_count = 1 
+    scaling_policy = &#39;standard&#39;;
+
+-- Grant permission to use the warehouse to the service role
+grant usage on warehouse tasty_app_api_wh to role tasty_app_api_role;
+</code></pre>
+<h2 is-upgraded>Step 3.3 Building the Users Login table</h2>
+<p>Since our application will be connecting to Snowflake using a service user, we need a place to store the Franchisee login information and encrypted passwords so the application can authenticate them at login.</p>
+<pre><code language="language-sql" class="language-sql">-- Create Users table for the Website
+create or replace table users (
+	user_id number(38,0) autoincrement,
+	user_name varchar(16777216) not null,
+	hashed_password varchar(16777216),
+	franchise_id number(38,0),
+	password_date timestamp_ntz(9),
+	status boolean,
+	unique (user_name)
+);
+</code></pre>
+<pre><code language="language-sql" class="language-sql"> -- Add Franchisee logins 
+insert into users
+    values
+    (1,&#39;user1&#39;,&#39;$2b$10$v0IoU/pokkiM13e.eayf1u3DkgtIBMGO1uRO2O.mlb2K2cLztV5vy&#39;,1,current_timestamp,TRUE), 
+    (2,&#39;user2&#39;,&#39;$2b$10$e2TXM/kLlazbH1xl31SeOe6RTyfL3E9mE8sZZsU33AE52rO.u44JC&#39;,120,current_timestamp,TRUE),
+    (3,&#39;user3&#39;,&#39;$2b$10$WX4e1LAC.rAabBJV58RuKerEK4T/U4htgXrmedTa5oiGCWIRHwe0e&#39;,271,current_timestamp,TRUE);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 4: Building the backend" duration="50">
+        <p>This lab will take you through building the backend, in the form of an API, that can be called by the frontend application. The backend API will connect to the Snowflake database and serve the results of queries over a number of API endpoints. We will take the queries designed in the <a href="#3" target="_self">Lab 3: Snowflake Setup</a> and have the results of these queries returned by endpoints in the API. We will then secure access to the API using bearer authorization tokens in the form of signed JWTs (Javascript Web Tokens). For this lab we are not securing the communication using HTTPS, but in a production environment this should be added.</p>
+<h2 is-upgraded>Lab 4.1: Setting up the code</h2>
+<p>The starting code for this lab is hosted on GitHub. You can start by cloning the repository into a separate folder if you haven&#39;t done so already as part of the earlier labs.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app zero-to-app
+</code></pre>
+<p>Change directory to the <code>zero-to-app/</code> directory that is created when you clone the repository. You should now have a directory with subdirectories for the different labs. For this lab we will use the <code>backend/</code> directory. Open this directory in an IDE (like VSCode).</p>
+<p>We will start by adding the Node dependencies to the project. In a terminal window run the following:</p>
+<pre><code language="language-bash" class="language-bash">npm i express@4.18.2 snowflake-sdk@1.6.22 dotenv@16.1.3 bcrypt@5.1.0 cors@2.8.5 jsonwebtoken@9.0.0
+npm i nodemon@2.0.22 --save-dev
+</code></pre>
+<p>Start the server by running:</p>
+<pre><code language="language-sh" class="language-sh">npm run serve
+</code></pre>
+<p>This will run the server and you can access the supplied endpoint in a browser, or using curl:</p>
+<pre><code language="language-sh" class="language-sh">curl http://localhost:3000
+</code></pre>
+<p>Note that this runs the Node server using <code>nodemon</code>, which helps us by restarting the server whenever it detects a change to the code we are working on. However, if you need to stop it, simply press Ctrl + c in the terminal where you started it. Once stopped, if it crashed, or something else happend, you can simply run <code>npm run serve</code> again to start it back up. In several steps below you are asked to do additional tasks in the terminal/shell, easiest is often to open an additional terminal window for these and keeping the server running in the first one.</p>
+<h2 is-upgraded>Lab 4.2: Configuring the connection to Snowflake</h2>
+<p>We can now connect to the Snowflake database we created in the earlier lab. To do so we are going to use the service user (<code>TASTY_APP_API_USER</code>) in the Snowflake account created in the previous lab. We will need the private key created in <a href="#3" target="_self">Lab 3: Snowflake Setup</a>. If you didn&#39;t change the location of where that key was created, we can simply reference it in our code. The path <code>../../app_user_rsa_key.p8</code> here is the <em>relative</em> path from <code>app.js</code> file to the folder where the key was created.</p>
+<p>The code for setting up the connection to Snowflake is contained in the file <code>connect.js</code>. Add a reference to this file at the top of <code>app.js</code>:</p>
+<pre><code language="language-js" class="language-js">// 4.2.1 Set up the connection to Snowflake
+var connection = require(&#39;./connect.js&#39;)
+
+</code></pre>
+<p>In <code>connect.js</code>, after starting the server on line 17, add the following:</p>
+<pre><code language="language-js" class="language-js">// 4.2.2 get connection details from environment variables
+const options = {
+    account: process.env.ACCOUNT,
+    username: process.env.USERNAME,
+    authenticator: &#34;SNOWFLAKE_JWT&#34;,
+    privateKeyPath: &#34;../../app_user_rsa_key.p8&#34;,
+    database: process.env.DATABASE,
+    schema: process.env.SCHEMA,
+    warehouse: process.env.WAREHOUSE,
+};
+
+// 4.2.3 create the connection to the Snowflake account
+const connection = snowflake.createConnection(options);
+connection.connect((err, conn) =&gt; {
+    if (err) {
+        console.error(&#39;Unable to connect to Snowflake&#39;, err);
+    } else {
+        console.log(&#39;Connected to Snowflake account &#39; + options.account);
+    }
+});
+
+module.exports = connection;
+</code></pre>
+<p>Also create a new file  called <code>.env</code> in the <code>backend</code> directory by copying the <code>.env.example</code> file:</p>
+<pre><code language="language-sh" class="language-sh">cp .env.example .env
+</code></pre>
+<p>Edit the <code>.env</code> file and replace <code>REPLACE_WITH_ACCOUNT</code> with the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">account identifier</a> of your Snowflake account.</p>
+<p>To now test out the connection, start by replacing the <code>/</code> route in the <code>app.js</code> file to use the connection we just created, and issue a query:</p>
+<pre><code language="language-js" class="language-js">app.get(&#34;/&#34;, (req, res, next) =&gt; {
+    console.log(req.method + &#39;: &#39; + req.path);
+    // 4.2.3 Connect to Snowflake and return query result
+    connection.execute({
+        sqlText: sql_queries.all_franchise_names,
+        complete: (err, stmt, rows) =&gt; {
+            if (err) {
+                console.error(&#39;Unable to retrieve franchises&#39;, err);
+                res.status(500).json({ error: &#39;Unable to retrieve franchises&#39; });
+            } else {
+                res.status(200).json(rows);
+            }
+        },
+    });
+});
+</code></pre>
+<p>Here we are executing the SQL command that is defined in the <code>sql.js</code> file. These are the queries that you developed in the previous lab. This file is included in <code>app.js</code> as a requirement at the top of the file:</p>
+<pre><code language="language-js" class="language-js">// 4.2.4 Definition of sql queries to execute
+var sql_queries = require(&#39;./sql&#39;)
+</code></pre>
+<p>Open the <code>sql.js</code> file and examine the SQL statement being executed. Test this out in a browser <a href="http://localhost:3000/" target="_blank">http://localhost:3000/</a>, or by running a curl command:</p>
+<pre><code language="language-sh" class="language-sh">curl http://localhost:3000
+</code></pre>
+<aside class="warning"><p><strong>Need help with this step?</strong></p>
+<p>You can set your entire backend folder to the end of this step by running a <code>git</code> command to grab it from the repo. In the <code>/backend</code> folder (it will only reset changes you have set in this folder), run <code>git checkout -- ./backend</code></p>
+</aside>
+<h2 is-upgraded>Lab 4.3: Building the endpoints</h2>
+<p>We can now add the queries to each endpoint to make them return some more interesting results. Start with the endpoint for getting sales for the top 10 countries. It is contained in the file <code>/routes/franchise.js</code>. Start by including this file in <code>app.js</code> and add the routes we will define in there to the app:</p>
+<pre><code language="language-js" class="language-js">// 4.3.1 Add franchise routes
+const franchise = require(&#39;./routes/franchise.js&#39;)
+app.use(&#34;/franchise&#34;, franchise);
+</code></pre>
+<p>Now we open <code>/routes/franchise.js</code> and update the first route to return the top selling countries for a specified franchise between two dates:</p>
+<pre><code language="language-js" class="language-js">router.get(&#39;/:franchise/countries/&#39;, (req, res) =&gt; {
+    // 4.3.2 Parse parameters and connect to Snowflake a return query response    
+    const franchise = req.params.franchise
+    const startdate = utils.parseDate(req.query.start) ?? utils.defaultStartDate();
+    const enddate = utils.parseDate(req.query.end) ?? utils.defaultEndDate();
+
+    console.log(&#39;start: &#39; + startdate + &#39;, end: &#39; + enddate);
+
+    connection.execute({
+        sqlText: sql_queries.top_10_countries,
+        binds: [franchise, startdate, enddate],
+        complete: (err, stmt, rows) =&gt; {
+            if (err) {
+                console.error(&#39;Unable to retrieve order data&#39;, err);
+                res.status(500).json({ error: &#39;Unable to retrieve order data&#39; });
+            } else {
+                res.status(200).json(rows);
+            }
+        },
+    });
+});
+</code></pre>
+<p>In the code we are using a helper functions from the file <code>utils.js</code> to parse out dates from the supplied query string parameters in the format <code>YYYY-MM-DD</code>.</p>
+<p>We are here picking up both the franchise id from the parameters of the request, like <a href="http://localhost:3000/franchise/1/countries" target="_blank">http://localhost:3000/franchise/1/countries</a> and optionally allowing the user to specify a start and end date for the data to be returned, like <a href="http://localhost:3000/franchise/1/countries?start=2022-01-01&end=2022-03-01" target="_blank">http://localhost:3000/franchise/1/countries?start=2022-01-01&amp;end=2022-03-01</a>. These parameters are then bound to the query using the <code>binds</code> argument to the <code>execute()</code> function call. Updated the SQL statement <code>top_10_countries</code> in the <code>sql.js</code> file to use these parameters in the condition for the query:</p>
+<pre><code language="language-sql" class="language-sql">-- 4.3.3 Update SQL for Top selling countries for franchise
+-- Top 10 Countries
+    SELECT
+        TOP 10 country,
+        sum(price) AS revenue
+    FROM
+        app.orders
+    WHERE
+        franchise_id = :1
+        AND date(order_ts) &gt;= :2
+        AND date(order_ts) &lt;= :3
+    GROUP BY
+        country
+    ORDER BY
+        sum(price) desc;
+</code></pre>
+<p>In the query, you can see how each argument (<code>franchise</code>, <code>startdate</code>, <code>enddate</code>) passed to the query gets bound to the ordinal markers (<code>:1</code>, <code>:2</code>, <code>:3</code>).</p>
+<p>You can now go ahead and implement the next endpoint <code>/:franchise/trucks/:truckbrandname/sales_topitems</code> in the same way, by getting the parameters from the request and binding them to the executed SQL statements in the section marked <code>4.3.4</code>. Also update the SQL statement in the <code>sql.js</code> file, using the query built in the first labs. Note that you here will have to also bind the parameter for <code>:truckbrandname</code> to the SQL statement marked <code>4.3.5</code>.</p>
+<p>The routes we will add are:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Route</p>
+</td><td colspan="1" rowspan="1"><p>Method</p>
+</td><td colspan="1" rowspan="1"><p>Query Parameters</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>/</p>
+</td><td colspan="2" rowspan="1"><p>Return a list of available franchises and the truck brands for each</p>
+</td><td colspan="1" rowspan="1"></td></tr>
+<tr><td colspan="1" rowspan="1"><p>/franchise/:franchise/countries</p>
+</td><td colspan="1" rowspan="1"><p>Returns a top 10 countries by sales for the specified franchise</p>
+</td><td colspan="1" rowspan="1"><p>startdate and enddate</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>/franchise/:franchise/trucks</p>
+</td><td colspan="1" rowspan="1"><p>Returns a top 10 trucks by sales for the specified franchise</p>
+</td><td colspan="1" rowspan="1"><p>startdate and enddate</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>/franchise/:franchise/revenue/:year</p>
+</td><td colspan="2" rowspan="1"><p>Return the revenue for the specified year and truck</p>
+</td><td colspan="1" rowspan="1"></td></tr>
+<tr><td colspan="1" rowspan="1"><p>/franchise/:franchise/trucks/:truckbrandname/sales_topitems</p>
+</td><td colspan="1" rowspan="1"><p>Returns the top selling items by truck brand for a specified franchise.</p>
+</td><td colspan="1" rowspan="1"><p>startdate and enddate</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>/franchise/:franchise/trucks/:truckbrandname/sales_dayofweek</p>
+</td><td colspan="1" rowspan="1"><p>Returns sales by truck brand for a specified franchise by day of week.  different views of the data is returned</p>
+</td><td colspan="1" rowspan="1"><p>startdate and enddate</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>/franchise/:franchise/trucks/:truckbrandname/sales_topitems_dayofweek</p>
+</td><td colspan="1" rowspan="1"><p>Returns the top selling items by truck brand for a specified franchise by day of week.</p>
+</td><td colspan="1" rowspan="1"><p>startdate and enddate</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>/franchise/:franchise/trucks/:truckbrandname/locations</p>
+</td><td colspan="1" rowspan="1"><p>Returns the top 10 locations for a truck brand for a specified franchise</p>
+</td><td colspan="1" rowspan="1"><p>startdate and enddate</p>
+</td></tr>
+</table>
+<p>The routes can then be filtered by adding <code>?start=2022-01-01&end=2022-03-01</code> as optional query parameters.</p>
+<p>The code for the remaining endpoints is in the file <code>/routes/franchise_all.js</code>. Also add these routes to the <code>app.js</code> file to include them in the service:</p>
+<pre><code language="language-js" class="language-js">// 4.3.6 Add remaining franchise routes
+const franchise_all = require(&#39;./routes/franchise_all.js&#39;)
+app.use(&#34;/franchise&#34;, franchise_all);
+</code></pre>
+<p>With this, all the endpoints are now built out and you can test the API.</p>
+<p>Here are a few curl commands to test the APIs:</p>
+<ul>
+<li><code>curl "http://localhost:3000/franchise/120/countries"</code></li>
+<li><code>curl "http://localhost:3000/franchise/120/trucks"</code></li>
+<li><code>curl "http://localhost:3000/franchise/120/revenue/2022"</code></li>
+<li><code>curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales"</code></li>
+<li><code>curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales?analysis=dayofweek"</code></li>
+<li><code>curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales?analysis=topitems_dayofweek"</code></li>
+</ul>
+<aside class="warning"><p> Need help with this step?</p>
+<p>You can set your entire backend folder to the end of this step by running a <code>git</code> command to grab it from the repo. In the <code>/backend</code> folder (it will only reset changes you have set in this folder), run <code>git checkout -- ./backend</code></p>
+</aside>
+<h2 is-upgraded>Lab 4.4: Securing the API</h2>
+<p>We should now add a way to secure the access to the API, so that the frontend that we will build in a later lab, can authenticate and we can manage the access to the data and the endpoints. For this API we will use a HTTP authentication scheme usually referred to as Bearer Authentication. An application, like the frontend, can login using a username and password, and get a signed token back from the backend that in subsequent calls can be included in the header. The token will be signed by the backend so that in later calls the signature can be verified, adding a measure of protection against tampering. It should be noted that in this lab we are not setting up secured communication with HTTPS, but in a production scenario, this should be done to ensure that both username and passwords, as well as tokens sent between backend and frontend, are protected from interception. The very nature of bearer tokens means that anyone in possession of (bearing) a valid token will be given access to the protected resource (hence the name bearer). For this lab we will be using signed JWTs (JSON Web Token), which is a common standard for token authentication.</p>
+<h3 is-upgraded>Creating access tokens</h3>
+<p>We will start by generating two random secrets that should be secured with the backend and not shared with other parties. We will use the <code>node</code> command-line tool to do this.</p>
+<pre><code language="language-sh" class="language-sh">$ node
+&gt; require(&#34;crypto&#34;).randomBytes(64).toString(&#34;hex&#34;)
+&#39;0b5191c5f9257c3999d1c7d1324e66f6af9a187881b52e2a4117afe6c7f901329e0a6bb1bebc5d5ea9e6a98984e288f12bb29950b77c4d98075dba87bdb6c5bb&#39;
+&gt; require(&#34;crypto&#34;).randomBytes(64).toString(&#34;hex&#34;)
+&#39;b8f994547e66fa6cecf3e02ab35275616d900368fe0ca2ac6bf4342ff63abef7d093d6f4d6c574f7d44ee30ea54f6716c6f1c5bef23e61ab9888fccb061ba9f4&#39;
+&gt; .exit
+</code></pre>
+<p>Generate two random strings like this and add them in the <code>.env</code> file.</p>
+<pre><code language="language-sh" class="language-sh">ACCESS_TOKEN_SECRET=0b5191c5.....dba87bdb6c5bb # 4.4.1 Replace with randomly generated string
+REFRESH_TOKEN_SECRET=b8f99454.....fccb061ba9f4 # 4.4.1 Replace with randomly generated string
+</code></pre>
+<p>The provided code in the <code>auth.js</code> file helps us create access and refresh tokens:</p>
+<pre><code language="language-js" class="language-js">const jwt = require(&#34;jsonwebtoken&#34;)
+module.exports = {
+
+    refreshTokens: [],
+
+    // accessTokens
+    generateAccessToken: function(user) {
+        return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: &#34;360m&#34; })
+    },
+
+    // refreshTokens
+    generateRefreshToken: function(user) {
+        const refreshToken =
+            jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: &#34;20m&#34; })
+        this.refreshTokens.push(refreshToken)
+        return refreshToken
+    },
+};
+</code></pre>
+<p>Include the <code>auth.js</code> at the top of the <code>app.js</code> file:</p>
+<pre><code language="language-js" class="language-js">// 4.4.2 Add helpers for authenetication and tokens
+var auth = require(&#39;./auth&#39;)
+</code></pre>
+<p>Notice how the <code>ACCESS_TOKEN_SECRET</code> and <code>REFRESH_TOKEN_SECRET</code> from the <code>.env</code> file are now used to sign the tokens we generate. Having different secrets means that this back backend can uniquely verify that a token was generated and signed by itself.</p>
+<aside class="special"><p> Note that here we are setting an expiration time of 360 minutes for the access tokens to make this lab a little easier (meaning a token will not expire during the entire lab), in a production scenario it would likely be a much shorter expiration time, like 15 minutes.</p>
+</aside>
+<h3 is-upgraded>Adding a login endpoint to the API</h3>
+<p>In <code>/routes/login.js</code> we can now add two endpoints; one to login and get an access token, and one to get a refresh token. We will check the supplied username and password with the hashed password in our database in the <code>USERS</code> table. Additionally, we will add an endpoint to get a new access token using the refresh token, in case the access token has expired.</p>
+<pre><code language="language-js" class="language-js">app.post(&#34;/login&#34;, async (req, res) =&gt; {
+    if(!req.body.name || !req.body.password ) {
+        res.status(422).send(&#34;Incorrect data&#34;)
+        return
+    }
+
+    const login_user = req.body.name
+    const login_password = req.body.password
+    connection.execute({
+        sqlText: sql_queries.verify_user,
+        binds: [login_user],
+        complete: (err, stmt, rows) =&gt; {
+            if (err) {
+                console.error(&#39;Unable to validate user&#39;, err);
+                res.status(500).json({ error: &#39;Unable to validate user&#39; })
+                return
+            } else {
+                if (rows.length == 0){
+                    console.log(&#39;User does not exist: &#39; + login_user)
+                    res.status(401).json(&#39;Invalid user or password&#39;)
+                    return
+                } else {
+                    user_row = rows[0]
+                    user_name = user_row.USER_NAME
+                    hashed_password = user_row.HASHED_PASSWORD
+                    franchise_id = user_row.FRANCHISE_ID                    
+                    bcrypt.compare(login_password, hashed_password, function(err, result) {
+                        if (err){
+                            console.log(&#39;Failed to check password for: &#39; + login_user + &#39; - &#39; + err.message)
+                            res.status(401).json(&#39;Invalid user or password&#39;)
+                            return
+                        }
+                        if (result){
+                            console.log(&#39;Successful login, generating token for: &#39; + user_name + &#39;, franchise: &#39; + franchise_id)
+                            const accessToken = auth.generateAccessToken({ user: req.body.name, franchise: franchise_id })
+                            const refreshToken = auth.generateRefreshToken({ user: req.body.name, franchise: franchise_id })
+                            res.json({ accessToken: accessToken, refreshToken: refreshToken })
+                            return
+                        }
+                        console.log(&#39;Incorrect password for user: &#39; + login_user)
+                        res.status(401).json(&#39;Invalid user or password&#39;)
+                        return
+                    });
+                }
+            }
+        },
+    });
+});
+
+app.post(&#34;/refresh&#34;, (req, res) =&gt; {
+    if (!req.body.token)
+        res.status(422).send(&#34;Incorrect data&#34;)
+    if (!auth.refreshTokens.includes(req.body.token))
+        res.status(400).send(&#34;Refresh Token Invalid&#34;)
+    auth.refreshTokens = auth.refreshTokens.filter((c) =&gt; c != req.body.token)
+    //remove the old refreshToken from the refreshTokens list
+    const accessToken = auth.generateAccessToken({ user: req.body.token.user, franchise: req.body.token.franchise })
+    const refreshToken = auth.generateRefreshToken({ user: req.body.token.user, franchise: req.body.token.franchise })
+    //generate new accessToken and refreshTokens
+    res.json({ accessToken: accessToken, refreshToken: refreshToken })
+});
+</code></pre>
+<p>You can now add these two endpoints to the API by including it in <code>app.js</code>:</p>
+<pre><code language="language-js" class="language-js">// 4.4.3 Add routes for login
+app.use(&#34;/&#34;, login);
+</code></pre>
+<aside class="special"><p> Note how in the login endpoint we are comparing the stored hashed passwords with a hash of the passed in password, meaning we are never storing plaintext passwords in the database, and the only time we are handling the plaintext password is in this method. Again this makes it important to ensure that the communication between the frontend and the backend is secured using HTTPS in a production scenario.</p>
+</aside>
+<p>Since we already created users in the first lab and stored hashed passwords for them in the database, we can try out the login endpoint to get an access token:</p>
+<pre><code language="language-sh" class="language-sh">curl -X POST http://localhost:3000/login -H &#39;Content-Type:application/json&#39; -d &#39;{&#34;name&#34;:&#34;user2&#34;,&#34;password&#34;:&#34;password120&#34;}&#39;
+</code></pre>
+<p>You can inspect the content of the JWT tokens using <a href="https://JWT.io" target="_blank">JWT.io</a>, paste it in and inspect the payload. It should contain something like this in the payload part:</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;user&#34;: &#34;user2&#34;,
+  &#34;franchise&#34;: &#34;120&#34;,
+  &#34;iat&#34;: 1681417090,
+  &#34;exp&#34;: 1681418290
+}
+</code></pre>
+<p>Just for reference, the users that were created in the earlier database set up lab are the following:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>User name</p>
+</td><td colspan="1" rowspan="1"><p>Hashed password</p>
+</td><td colspan="1" rowspan="1"><p>Franchise id</p>
+</td><td colspan="1" rowspan="1"><p>Plaintext password</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>user1</p>
+</td><td colspan="1" rowspan="1"><p>$2b$10$3/teX....iH7NI1SjoTjhi74a</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>password1</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>user2</p>
+</td><td colspan="1" rowspan="1"><p>$2b$10$9wdGi....U8qeK/nX3c9HV8VW</p>
+</td><td colspan="1" rowspan="1"><p>120</p>
+</td><td colspan="1" rowspan="1"><p>password120</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>user3</p>
+</td><td colspan="1" rowspan="1"><p>$2b$10$CNZif....IXZFepwrGtZbGqIO</p>
+</td><td colspan="1" rowspan="1"><p>271</p>
+</td><td colspan="1" rowspan="1"><p>password271</p>
+</td></tr>
+</table>
+<h3 is-upgraded>Validating tokens</h3>
+<p>We can now add a validation of the token that should now be included in each call to the backend by adding a middleware to the routes.</p>
+<p>In <code>auth.js</code> we have a method to validate a token, meaning that the backen can look at a supplied token and verify that is was actually signed using the same secret we generated earlier.</p>
+<pre><code language="language-js" class="language-js">    validateToken: function (req, res, next) {
+        ..
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) =&gt; {
+            if (err) {
+                res.status(403).send(&#34;Token invalid&#34;)
+            }
+            else {
+                req.user = user
+                next() //proceed to the next action in the calling function
+            }
+        });
+    },
+</code></pre>
+<p>This function can now be added as route middleware (meaning they will be executed as part of the request/response chain), to <code>app.js</code> like this:</p>
+<pre><code language="language-js" class="language-js">// 4.4.4 Add validation of tokens to each route
+app.use(auth.validateToken);
+</code></pre>
+<p>This validates the JWT token and picks up the user and franchise that should be set in it, we can now access the data in the <code>req.user</code> variable in our endpoints.</p>
+<p>It&#39;s important that this is actually added after the route for <code>/login</code>, otherwise it will actually try to validate the token as you are trying to login to get a token (creating an impossible situation). In Node Express the order in which we add routes and middleware is important to keep track of.</p>
+<p>In <code>auth.js</code> we also have a method to validate that the user has access to the franchise that is requested in the route, meaning that if you log in with a user with a <code>franchise_id</code> we simply verify that you in the queries are trying to access that franchise (if not we will throw back an Unauthorized status for the request) :</p>
+<pre><code language="language-js" class="language-js">    validateAccess: function (req, res, next) {
+        if (req.user &amp;&amp; req.user.franchise) {
+            const franchise = req.params.franchise
+            if (franchise == req.user.franchise) {
+                res.franchise = req.user.franchise
+                next()
+            } else if (franchise == undefined) {
+                next()
+            }
+            else {
+                res.status(403).json({ error: &#39;Unauthorized&#39; })
+            }
+        }
+        else {
+            res.status(403).json({ error: &#39;Unauthorized&#39; });
+        }
+    }
+</code></pre>
+<p>Now go ahead and add this to each endpoint in <code>/routes/franchise.js</code>:</p>
+<pre><code language="language-js" class="language-js">router.get(&#39;/:franchise/countries/&#39;, auth.validateToken, (req, res) =&gt; {
+    // 4.3.2 Parse parameters and connect to Snowflake a return query response    
+
+    ...
+});
+</code></pre>
+<p>Test this out by calling an endpoint, using <code>curl</code> and supplying the access token we got earlier when testing the <code>login</code> endpoint:</p>
+<pre><code language="language-sh" class="language-sh">curl http://localhost:3000/ -H &#34;Accept: application/json&#34; -H &#34;Authorization: Bearer eyJhbGciOiJIUzI1....ceiHArwUcaA8&#34;
+</code></pre>
+<aside class="warning"><p> Need help with this step?</p>
+<p>You can set your entire backend folder to the end of this step by running a <code>git</code> command to grab it from the repo. In the <code>/backend</code> folder (it will only reset changes you have set in this folder), run <code>git checkout -- ./backend</code></p>
+</aside>
+<h2 is-upgraded>Lab 4.5 Adding CORS to the API</h2>
+<p>Since the frontend will be calling the backend from another host, we need to add allowed origins for requests to the backend.</p>
+<p>In the development of this lab we are using <code>localhost:3000</code> for the backend and <code>localhost:3001</code> for the frontend, when deployed they would have some different hostnames.</p>
+<p>For security reasons, browsers restrict cross-origin HTTP requests initiated from scripts, meaning that if we don&#39;t explicitly allow another origin, like <code>localhost:3001</code> to request a resource from our API it will be blocked.</p>
+<p>We solve this in Node Express by adding the <code>cors</code> package to the application and then configuring the allowed origins.</p>
+<p>Right before we start the server in <code>app.js</code>, add the following to allow CORS (Cross Origin Request Scripting) for the frontend that we will later build:</p>
+<pre><code language="language-js" class="language-js">// 4.5.1 add CORS to the app
+cors_origin = &#39;http://localhost:3001&#39;
+app.use(cors({
+    origin: [cors_origin]
+}));
+</code></pre>
+<aside class="warning"><p> Need help with this step?</p>
+<p>You can set your entire backend folder to the end of this step by running a <code>git</code> command to grab it from the repo. In the <code>/backend</code> folder (it will only reset changes you have set in this folder), run <code>git checkout -- ./backend</code></p>
+</aside>
+<h2 is-upgraded>Lab 4.6 Finalizing the API</h2>
+<p>The backend is now ready to be used by the frontend. We can do some final updates to the API to make it easier to manage and making it a little more flexible.</p>
+<p>First, we move all configuration in <code>app.js</code> to an environment file. This will help us when are deploying it somwhere else. Replace the old code for <code>cors_origin</code> and all the way to the call for <code>app.listen(...)</code> with this:</p>
+<pre><code language="language-js" class="language-js">// 4.5.1 add CORS to the app
+cors_origin = process.env.CORS_ADDRESS ?? &#39;http://localhost:3001&#39;
+app.use(cors({
+    origin: [cors_origin]
+}));
+
+port = process.env.PORT ?? 3000
+app.listen(port, () =&gt; {    
+    console.log(&#39;Server running on port &#39; + port);
+    console.log(&#39;Environment: &#39; + app.get(&#39;env&#39;))
+    console.log(&#39;CORS origin allowed: &#39; + cors_origin)
+});
+</code></pre>
+<p>Since we may want to test out the API, without having to add a bearer token to the request header (which is not possible with a regular browser window), we can add a simple way to bypass the validation. We only allow this when the API is running in development mode however.</p>
+<p>To enable this, we can add a <code>NODE_ENV</code> variable to our <code>.env</code> file. If that is set to <code>development</code> then we will bypass the token validation and use a preset user and franchise (<code>DEV_AUTH_USER</code> and <code>DEV_AUTH_FRANCHISE</code> variables, also in the <code>.env</code> file). This is great for testing and development, but should of course not be present in the production deployment of the API.</p>
+<p>Add these 3 variables to your <code>.env</code> file. The final <code>.env</code> file would then look like this:</p>
+<pre><code language="language-sh" class="language-sh">ACCOUNT=my_account_123
+USERNAME=tasty_app_api_user
+DATABASE=FROSTBYTE_TASTY_BYTES
+SCHEMA=RAW_POS
+WAREHOUSE=TASTY_DATA_APP_WH
+
+ACCESS_TOKEN_SECRET=0b5191c5f9257c3999d1c7d1324e66f6af9a187881b52e2a4117afe6c7f901329e0a6ba1bebc5d5ea9e6a98984e288f12bb29950b77c4d98075dba87bdb6c5bb
+REFRESH_TOKEN_SECRET=b8f994547e66fa6cecf3e02ab35275616d900368fe0ca2ac6bf4342ff63abef7d093d6f4d6e574f7d44ee30ea54f6716c6f1c5bef23e61ab9888fccb061ba9f4
+
+PORT=3000
+CORS_ADDRESS=http://localhost:3001
+NODE_ENV=development
+DEV_AUTH_USER=user1
+DEV_AUTH_FRANCHISE=1
+</code></pre>
+<p>Next, in the <code>auth.js</code> file we can update the <code>validateToken</code> function:</p>
+<pre><code language="language-js" class="language-js">    validateToken: function (req, res, next) {
+        //get token from request header
+        const authHeader = req.headers[&#34;authorization&#34;]
+        if (authHeader == null) {
+            // 4.6.2 Allow for development mode bypass of token validation
+            environment = process.env.NODE_ENV
+            if(&#39;development&#39;==environment){
+                if (process.env.DEV_AUTH_USER){
+                    console.warn(&#39;Development mode: no auth header found, accepting user &#34;&#39; + process.env.DEV_AUTH_USER + &#39;&#34; from environment variables with franchise &#39; + process.env.DEV_AUTH_FRANCHISE)
+                    req.user = {user:process.env.DEV_AUTH_USER, franchise:process.env.DEV_AUTH_FRANCHISE}
+                    next()
+                    return
+                }
+            }
+            res.status(400).send(&#34;Auth header not present&#34;)
+            return
+        }
+        const token = authHeader.split(&#34; &#34;)[1]
+        //the request header contains the token &#34;Bearer &lt;token&gt;&#34;, split the string and use the second value in the split array.
+        if (token == null) res.status(400).send(&#34;Token not present&#34;)
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) =&gt; {
+            if (err) {
+                res.status(403).send(&#34;Token invalid&#34;)
+            }
+            else {
+                req.user = user
+                next()            
+            }
+        });
+    },
+</code></pre>
+<aside class="warning"><p> Need help with this step?</p>
+<p>You can set your entire backend folder to the end of this step by running a <code>git</code> command to grab it from the repo. In the <code>/backend</code> folder (it will only reset changes you have set in this folder), run <code>git checkout -- ./backend</code></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 5: Stressing and Scaling your Snowflake instance" duration="0">
+        <h2 is-upgraded>Overview</h2>
+<p>In this lab we want to test the scalability of the API.  We want to ensure that when the workload increases, Snowflake scales out to meet that need.  To test this we are going to run the same stress test against our API twice.  The first time we run the test will be with a single cluster warehouse (as it is now, min and a max size are both set to 1).  The second time we run the test will be with a multi-cluster warehouse (MCW)</p>
+<p>For the tests we are going to be using <a href="https://www.artillery.io/" target="_blank">artillery.io</a></p>
+<p>In order to use artillery we will need to install it.  Make sure you are in the backend directory of the project and on the command line execute the following statement.</p>
+<pre><code language="language-nodejs" class="language-nodejs">npm install -g artillery
+</code></pre>
+<h2 is-upgraded>Conduct the test (single cluster warehouse)</h2>
+<p>To run our test we need to define what that test looks like. This definition is the same for both tests so we compare apples and apples. In our project we go to the <code>/backend/load_test</code> directory and find the <code>load_test.yaml</code> file which describes the test we are about to perform</p>
+<pre><code language="language-yaml" class="language-yaml">config:
+  target: &#34;http://localhost:3000&#34;
+  http:
+      # Responses have to be sent within 180 seconds, or an `ETIMEDOUT` error gets raised.
+      timeout: 180  
+  processor: &#34;./load_test/load_test_helper.js&#34;
+  phases:
+    - duration: 100
+      arrivalRate: 10
+      rampTo: 50
+      
+scenarios:
+  - name: &#34;Get basic data&#34;
+    flow:
+      - post:
+          url: &#34;/login&#34;
+          json:
+            name: &#34;user2&#34;
+            password: &#34;password120&#34;
+          capture:
+           - json: &#34;$.accessToken&#34;
+             as: &#34;accessToken&#34;
+      - loop:
+          - function: &#34;generateRandomDate&#34;
+          - get:
+              url: &#34;/franchise/120/countries?start=&#123;&#123; startDate }}&amp;end=&#123;&#123; endDate }}&#34;
+              headers:
+                Authorization: &#34;Bearer &#123;&#123; accessToken }}&#34;
+              afterResponse: &#34;printStatus&#34;
+          - think: 1
+        count: 5   
+</code></pre>
+<ul>
+<li>config <ul>
+<li>target: The API url we are targetting</li>
+<li>arrivalRate: new users to add every second</li>
+</ul>
+</li>
+<li>scenarios <ul>
+<li>flow.post.url: endpoint we hit using (POST)</li>
+<li>flow.post.json.name: pass in the username</li>
+<li>flow.post.json.password: pass in the password</li>
+<li>flow.post.capture.json: capture the returned access token</li>
+<li>loop: we are going to execute the next step a number of times</li>
+<li>loop.get.url: endpoint we hit using (GET)</li>
+<li>loop.get.headers.Authorization: pass in the authorization header using the token retrieved earlier</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Run the Test</h2>
+<p>Now let&#39;s go ahead and run the test.  Before we do let&#39;s capture the current_timestamp so we can use it in your queries later and make filtering really easy.  Grab the return from the following statement</p>
+<pre><code language="language-sql" class="language-sql">SELECT current_timestamp();
+</code></pre>
+<p>from the backend directory of the project go ahead and execute the following</p>
+<pre><code language="language-nodejs" class="language-nodejs">npx artillery run ./load_test/load_test.yaml
+</code></pre>
+<h2 is-upgraded>Test Completed</h2>
+<p>Our test is complete and we have two outputs to look at.  One is on your screen from Artillery.  It is telling you things like the number of requests issued, the rate we issued queries, the result codes and how many vUsers were created.</p>
+<p>The other way to look at this is inside Snowflake.  We want to see if the warehouse scaled out and executed queries on those scaled out clusters. Let&#39;s first look from the perspective of the warehouse.  In Snowsight run the following query the filters by the warehouse name and suitable duration in the past.  In this test there should be no rows returned</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_EVENTS_HISTORY 
+WHERE CLUSTER_NUMBER &gt; 0
+AND WAREHOUSE_NAME = &#39;TASTY_APP_API_WH&#39;
+AND TIMESTAMP &gt;= &#39;&lt;insert value we captured earlier&gt;&#39;
+ORDER BY TIMESTAMP DESC; 
+</code></pre>
+<p>The other persective is from the perspective of the queries we executed.  For that we can run the following query in Snowsight that again filters by the warehouse and timeframe.  What did those wait times look like?  There are other metrics available in the QUERY_HISTORY view that are not included below for brevity but if you are feeling curious then you can add them to the query also.</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    Query_ID,
+    start_time, 
+    end_time, 
+    total_elapsed_time,
+    EXECUTION_TIME,
+    queued_overload_time,    
+    queued_overload_time + execution_time as how_the_times_add_up,    
+    cluster_number,
+    warehouse_name,
+    execution_status,
+    QUEUED_PROVISIONING_TIME,
+    queued_repair_time,
+    child_queries_wait_time
+FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+WHERE warehouse_name = &#39;TASTY_APP_API_WH&#39;
+AND start_time &gt;= &#39;&lt;insert value we captured earlier&gt;&#39;
+ORDER BY start_time DESC; 
+</code></pre>
+<p>Now let&#39;s change the warehouse into a MCW and rerun the test.  In Snowsight execute the following.</p>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE &lt;insert name of your warehouse&gt; SET MAX_CLUSTER_COUNT = 10;
+</code></pre>
+<p>In the code above we will allow Snowflake to scale out our warehouse to 10 clusters.</p>
+<h2 is-upgraded>Conduct the tests (Multi-Cluster Warehouse)</h2>
+<p>Now let&#39;s go ahead and run the test again.  Before we do let&#39;s capture the current_timestamp once more so we can use it in your queries later and make filtering really easy.  Grab the return from the following statement</p>
+<pre><code language="language-sql" class="language-sql">SELECT current_timestamp();
+</code></pre>
+<p>from the backend directory of the project go ahead and execute the following</p>
+<pre><code language="language-nodejs" class="language-nodejs">npx artillery run load_test.yaml
+</code></pre>
+<h2 is-upgraded>Test Completed</h2>
+<p>Our test is complete and we again have two outputs to look at.  One is on the screen from Artillery.  Can you see a difference in the output?</p>
+<p>The other is inside Snowflake.  We want to see if the warehouse scaled out and executed queries on those scaled out clusters. Let&#39;s first look from the perspective of the warehouse.  In Snowsight run the following query that filters by the warehouse name and suitable duration in the past.  If the warehouse scaled then we should see rows returned:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_EVENTS_HISTORY 
+WHERE CLUSTER_NUMBER &gt; 0
+AND WAREHOUSE_NAME = &#39;TASTY_APP_API_WH&#39;
+AND TIMESTAMP &gt;= &#39;&lt;insert value we captured earlier&gt;&#39;
+ORDER BY TIMESTAMP DESC; 
+</code></pre>
+<p>and the other persective is from the perspective of the queries we executed.  For that we can run the following query in Snowsight that again filters by the warehouse and timeframe and also looks for cluster numbers &gt; 1 (i.e. scale out clusters)</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    Query_ID,
+    start_time, 
+    end_time, 
+    total_elapsed_time,
+    EXECUTION_TIME,
+    queued_overload_time,    
+    queued_overload_time + execution_time as how_the_times_add_up,    
+    cluster_number,
+    warehouse_name,
+    execution_status,
+    QUEUED_PROVISIONING_TIME,
+    queued_repair_time,
+    child_queries_wait_time
+FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+WHERE warehouse_name = &#39;TASTY_APP_API_WH&#39;
+AND cluster_number &gt; 1
+AND start_time &gt;= &#39;&lt;insert value we captured earlier&gt;&#39;
+ORDER BY start_time DESC; 
+</code></pre>
+<h3 is-upgraded>Here is an example test result</h3>
+<pre><code language="language-sql" class="language-sql">--Capture output before test starts
+SELECT current_timestamp();
+SET load_test_start_time = &#39;&lt;captured value&gt;&#39;;-- i.e 2023-05-30 08:31:03.502 -0700
+
+--Capture output after test finishes
+SELECT current_timestamp();
+SET load_test_end_time = &#39;&lt;captured value&gt;&#39;;-- i.e 2023-05-30 08:33:03.502 -0700
+
+--Now execute the following
+WITH query_times AS (    
+    SELECT 
+        Query_ID,
+        CASE WHEN cluster_number IS NULL THEN &#39;Cache&#39; ELSE cluster_number::varchar END as cluster_number,
+        time_slice(start_time::timestamp,10,&#39;SECOND&#39;) as slice
+    FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+    WHERE warehouse_name = &#39;TASTY_APP_API_WH&#39;
+    AND start_time &gt;= $load_test_start_time
+    AND start_time &lt;= $load_test_end_time
+)
+SELECT
+    count(query_id) as query_count,
+    cluster_number,
+    slice
+FROM query_times
+group by cluster_number, slice
+ORDER BY slice DESC;
+</code></pre>
+<p>They say a picture paints a thousand words so here is a graph from Snowsight that shows the cluster scale throughout the test.</p>
+<p class="image-container"><img alt="MCW Scale" src="img/798a4a24f9f2ee7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 6: Frontend Overview" duration="40">
+        <p>This lab will take you through building a React JS frontend that can then be displayed in your favorite browser. The frontend will connect to the backend API which then connects to the Snowflake database and serves the results of queries over a number of API endpoints. The query results are then rendered in the browser as charts which are then easily consumed by the end users.</p>
+<p>We will take the API Endpoints designed in the <a href="#lab-4-backend-overview" target="_blank">Data API Lab</a> and display charts on the web page.</p>
+<p>In this lab we are not securing the communication using HTTPS, but in a production environment this should be added.</p>
+<h2 is-upgraded>Lab 6.1: Setting up the code</h2>
+<p>The starting code for this lab is in the GitHub repository we cloned earlier. For this lab we will use the <code>frontend</code> subdirectory from the main directory. Open this folder in an IDE (like VSCode).</p>
+<p>We will start by adding the Node dependencies to the project. In a new terminal window, change to the <code>frontend</code> directory and run the following:</p>
+<pre><code language="language-sh" class="language-sh">npm i react
+npm i react-bootstrap
+npm i recharts
+</code></pre>
+<p>To configure the application, copy the example file <code>.env.example</code> to create a new file in the frontend directory called <code>.env</code></p>
+<pre><code language="language-sh" class="language-sh">cp .env.example .env
+</code></pre>
+<p>Start the server by running:</p>
+<pre><code language="language-sh" class="language-sh">npm start
+</code></pre>
+<p>This will start a development web server and you can access the web application in a browser:</p>
+<pre><code language="language-sh" class="language-sh">http://localhost:3001/
+</code></pre>
+<p>To stop the Web Server, simply terminate the task that started the server, press Ctrl+c</p>
+<h2 is-upgraded>Lab 6.2: Code layout.</h2>
+<p>Before making changes, let us understand how the files are organized. Below image show various files in building the Frontend. Some of the files contain the boilerplate code generated when initializing ReactJS appilication.</p>
+<p>All the required files are in the <strong><em>src</em></strong> folder. <strong><em>src/pages</em></strong> folder has the Javascript (.js) and Stylesheet files (.css)</p>
+<ul>
+<li><strong><em>Login.js</em></strong>, has the HTML and JS code required to render Login page.</li>
+<li><strong><em>Login.css</em></strong>, has the styles on the Login Page.</li>
+<li><strong><em>Home.js</em></strong>, has the HTML and JS code required to render Franchise view. We will be modifying this file to add various charts.</li>
+<li><strong><em>Home.css</em></strong>, has the styles on the Franchise view.</li>
+<li><strong><em>Details.js</em></strong>, has the HTML and JS code required to render Truck Detail view. We will be modifying this file to add various charts.</li>
+<li><strong><em>Details.css</em></strong>, has the styles on the Truck Detail view.</li>
+</ul>
+<h2 is-upgraded>Lab 6.3: Building the Franchise Overview UI.</h2>
+<p>Login to the website using one of the users and passwords from above.</p>
+<p>On successful Login, the Backend API returns <strong><em>Franchise_Id</em></strong> and <strong><em>AccessToken</em></strong>, we will use them to make subsequent calls to the Backend API.</p>
+<p>We can now start building the UI. Let us start with building a Bar Chart for the <strong><em>Sales for the Top 10 Countries</em></strong>. The Backend API end point is <code>/franchise/:franchise/countries</code>, optionally specifying the Start and End dates.</p>
+<p>First, let us fetch Data from Backend for Sales by Top10 Countries. Update the stubbed method in <strong><em>pages/Home.js</em></strong> add a variable to hold the data returned by the backend as <em>6.3.1</em>.</p>
+<pre><code language="language-js" class="language-js">let [top10Countries, setTop10Countries] = useState([]);
+</code></pre>
+<p>add the following code to <strong><em>pages/Home.js</em></strong> as <em>6.3.2</em>.</p>
+<pre><code language="language-js" class="language-js">function fetchTop10Countries() {
+    const requestOptions = {
+        method: &#39;GET&#39;,
+        headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, &#39;Authorization&#39;: &#39;Bearer &#39; + location.state.accessToken },
+    };
+    fetch(backendURL+&#39;/franchise/&#39;+franchise+&#39;/countries?start=&#39;+fromDate+&#39;&amp;end=&#39;+toDate, requestOptions)
+        .then((result) =&gt; result.json())
+            .then((data) =&gt; {
+                setTop10Countries(data)
+    })
+}
+</code></pre>
+<p>We are using the <code>franchise</code> and the <code>accessToken</code> we recieved from the Backend API on successful Login. The <code>accessToken</code> is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.</p>
+<p>In the <code>requestOptions</code>, we are setting the Request Method (GET/POST), and we are sending the <code>accessToken</code> in the header as a Bearer Token.</p>
+<p>We need to update the React UI hooks, so the newly created method is called when the page is requested. Update the <code>useEffect()</code> method in <strong><em>pages/Home.js</em></strong> as <em>6.3.3</em>, to add the following.</p>
+<pre><code language="language-js" class="language-js">fetchTop10Countries();
+</code></pre>
+<p>Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library <strong><em>recharts</em></strong>. Add the following code to <strong><em>pages/Home.js</em></strong> as <em>6.3.4</em> to display the chart.</p>
+<pre><code language="language-html" class="language-html">&lt;ResponsiveContainer width=&#34;100%&#34; height=&#34;100%&#34;&gt;
+    &lt;BarChart
+        layout=&#39;vertical&#39;
+        width={700}
+        height={0}
+        data={top10Countries}
+        margin=&#123;&#123;top: 15, right: 15, left: 25, bottom: 5,}}&gt;
+        &lt;XAxis type=&#34;number&#34; dataKey=&#34;REVENUE&#34; tickFormatter={tickFormater}&gt;
+        &lt;/XAxis&gt;                            
+        &lt;YAxis type=&#34;category&#34; dataKey=&#34;COUNTRY&#34;&gt;
+        &lt;/YAxis&gt;
+        &lt;Tooltip formatter={(value) =&gt; &#39;US$&#39;+(new Intl.NumberFormat(&#39;en&#39;).format(value))} /&gt;
+        &lt;Bar dataKey=&#34;REVENUE&#34; fill=&#34;#548bf2&#34;&gt;
+            &lt;LabelList dataKey=&#34;REVENUE&#34; position=&#34;insideRight&#34; fill=&#39;white&#39; formatter={labelFormatter} /&gt;
+        &lt;/Bar&gt;
+    &lt;/BarChart&gt;
+&lt;/ResponsiveContainer&gt;
+</code></pre>
+<p>At this point, if you save your changes and check the web browser it should display the <strong><em>Sales for the Top 10 Countries</em></strong>. Make Sure your development Web Server is still running.</p>
+<p>Now uet us add a Bar Chart for the <strong><em>Sales for the Top 10 Trucks</em></strong>. The Backend API end point is <code>/franchise/:franchise/trucks</code>, optionally specifying the Start and End dates.</p>
+<p>Let us fetch Data from Backend for Sales by Top10 Trucks. In this method, since we are fetching Top Trucks, we will add a little bit of complexity to store unique list of Trucks. Update the stubbed method in <strong><em>pages/Home.js</em></strong> add a variable to hold the data returned by the backend as <em>6.3.5</em>.</p>
+<pre><code language="language-js" class="language-js">let [top10Trucks, setTop10Trucks] = useState([]); //used to hold Sales of the Top 10 Trucks
+let [trucks, setTrucks] = useState([]); // used to hold unique Trucks brands.
+</code></pre>
+<p>add the following code to <strong><em>pages/Home.js</em></strong> as <em>6.3.6</em>.</p>
+<pre><code language="language-js" class="language-js">function fetchTop10Trucks() {
+    const requestOptions = {
+            method: &#39;GET&#39;,
+            headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, &#39;Authorization&#39;: &#39;Bearer &#39; + location.state.accessToken },
+    };
+    fetch(backendURL+&#39;/franchise/&#39;+franchise+&#39;/trucks?start=&#39;+fromDate+&#39;&amp;end=&#39;+toDate, requestOptions)
+        .then((result) =&gt; result.json())
+            .then((data) =&gt; {
+                setTop10Trucks(data)
+                let t = [];
+
+                for (let i=0; i&lt;data.length; i++) {
+                    t.push(data[i].TRUCK_BRAND_NAME);
+                }
+                setTrucks(t);
+        })
+}
+</code></pre>
+<p>We are using the <code>franchise</code> and the <code>accessToken</code> we recieved from the Backend API on successful Login. The <code>accessToken</code> is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.</p>
+<p>In the <code>requestOptions</code>, we are setting the Request Method (GET/POST), and we are sending the <code>accessToken</code> in the header as a Bearer Token.</p>
+<p>Update the <code>useEffect()</code> method in <strong><em>pages/Home.js</em></strong> as <em>6.3.7</em>, to add the following.</p>
+<pre><code language="language-js" class="language-js">fetchTop10Trucks();
+</code></pre>
+<p>Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library <strong><em>recharts</em></strong>. Add the following code to <strong><em>pages/Home.js</em></strong> as <em>6.3.8</em> to display the chart.</p>
+<pre><code language="language-html" class="language-html">&lt;ResponsiveContainer width=&#34;100%&#34; height=&#34;100%&#34;&gt;
+    &lt;BarChart
+        layout=&#39;horizontal&#39;
+        width={700}
+        height={0}
+        data={top10Trucks}
+        margin=&#123;&#123;top: 15, right: 15, left: 25, bottom: 5,}}&gt;
+        &lt;XAxis type=&#34;category&#34; dataKey=&#34;TRUCK_BRAND_NAME&#34; /&gt;
+        &lt;YAxis type=&#34;number&#34; dataKey=&#34;REVENUE&#34;  tickFormatter={tickFormater} /&gt;                       
+        &lt;Tooltip formatter={(value) =&gt; &#39;US$&#39;+(new Intl.NumberFormat(&#39;en&#39;).format(value))} /&gt;
+        &lt;Bar dataKey=&#34;REVENUE&#34; fill=&#34;#548bf2&#34;&gt;
+            &lt;LabelList dataKey=&#34;REVENUE&#34; position=&#34;top&#34; fill=&#39;grey&#39; formatter={labelFormatter} /&gt;
+        &lt;/Bar&gt;
+    &lt;/BarChart&gt;
+&lt;/ResponsiveContainer&gt;
+</code></pre>
+<p>Save your changes and you should see the below chart displayed in your browser running the Web Application.</p>
+<p class="image-container"><img alt="Alt text" src="img/58929d851a5cfc3f.png"></p>
+<p>The final step to finish the page is to add the navigation to go to the Truck Details page, add the following code to <strong><em>pages/Home.js</em></strong> as <em>6.3.9</em>:</p>
+<pre><code language="language-js" class="language-js">function gotoDetails() {
+    navigate(&#39;/details&#39;, {state: {franchise: franchise, truck_brand_name: top10Trucks[0][&#39;TRUCK_BRAND_NAME&#39;], fromDate: fromDate, toDate:toDate, trucks: trucks, accessToken: location.state.accessToken, refreshToken: location.state.refreshToken}});
+}
+</code></pre>
+<h2 is-upgraded>Lab 6.4: Building the Truck Details Page UI.</h2>
+<p>We can now start building the Truck details page UI. Let us start with building a Bar Chart for the <strong><em>Best Items for a Truck</em></strong>. The Backend API end point is <code>/franchise/:franchise/trucks/:truck/sales_topitems</code>, optionally specifying the Start and End dates.</p>
+<p>First, let us fetch Data from Backend for Best Items for a Truck. Update the stubbed method in <strong><em>pages/Details.js</em></strong> add a variable to hold the data returned by the backend as <em>6.4.1</em>.</p>
+<pre><code language="language-js" class="language-js">let [topItemsByTruck, setTopItemsByTruck] = useState([]);
+</code></pre>
+<p>add the following code to <strong><em>pages/Details.js</em></strong> as <em>6.4.2</em></p>
+<pre><code language="language-js" class="language-js">function fetchTopItemsByTruck() {
+        const requestOptions = {
+            method: &#39;GET&#39;,
+            headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, &#39;Authorization&#39;: &#39;Bearer &#39; + location.state.accessToken },
+        };
+        fetch(backendURL+&#39;/franchise/&#39;+franchise+&#39;/trucks/&#39;+truck+&#39;/sales_topitems?start=&#39;+fromDate+&#39;&amp;end=&#39;+toDate, requestOptions)
+            .then((result) =&gt; result.json())
+                .then((data) =&gt; {
+                    setTopItemsByTruck(data)
+        })
+    }
+</code></pre>
+<p>We are using the <code>franchise</code> and the <code>accessToken</code> we recieved from the Backend API on successful Login. The <code>accessToken</code> is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.</p>
+<p>In the <code>requestOptions</code>, we are setting the Request Method (GET/POST), and we are sending the <code>accessToken</code> in the header as a Bearer Token.</p>
+<p>Now let us update the React UI hooks, so the newly created method is called when the page is requested. Update the <code>useEffect()</code> method in <strong><em>pages/Details.js</em></strong> as <em>6.4.3</em>, to add the following.</p>
+<pre><code language="language-js" class="language-js">fetchTopItemsByTruck();
+</code></pre>
+<p>Now that we have the data from the Backend API, we can build the BarChart, to do that, we are using a react library <strong><em>recharts</em></strong>. Add the following code to <strong><em>pages/Details.js</em></strong> as <em>6.4.4</em> to display the chart.</p>
+<pre><code language="language-html" class="language-html">&lt;ResponsiveContainer width=&#34;100%&#34; height=&#34;100%&#34;&gt;
+    &lt;BarChart
+        width={700}
+        height={0}
+        data={topItemsByTruck}
+        margin=&#123;&#123;top: 15, right: 15, left: 25, bottom: 5,}}&gt;
+        &lt;XAxis type=&#34;category&#34; dataKey=&#34;MENU_ITEM_NAME&#34;&gt;
+        &lt;/XAxis&gt;
+        &lt;YAxis type=&#34;number&#34; dataKey=&#34;REVENUE&#34; tickFormatter={tickFormater}&gt;
+        &lt;/YAxis&gt;
+        &lt;Tooltip formatter={(value) =&gt; &#39;US$&#39;+(new Intl.NumberFormat(&#39;en&#39;).format(value))} /&gt;
+        &lt;Bar dataKey=&#34;REVENUE&#34; fill=&#34;#548bf2&#34;&gt;
+            &lt;LabelList dataKey=&#34;REVENUE&#34; position=&#34;top&#34; fill=&#39;grey&#39; formatter={labelFormatter} /&gt;
+        &lt;/Bar&gt;
+    &lt;/BarChart&gt;
+&lt;/ResponsiveContainer&gt;
+</code></pre>
+<p>At this point, if you save your changes and check the web browser it should display the <strong><em>Best Items for a Truck</em></strong>. Make Sure your development Web Server is still running.</p>
+<p>Now uet us add a Bar Chart for the <strong><em>Sales for day of the week for a truck</em></strong>. The Backend API end point is <code>/franchise/:franchise/trucks/:truck/sales_dayofweek</code>, optionally specifying the Start and End dates.</p>
+<p>Let us fetch Data from Backend for Sales for day of the week for a truck. Update the stubbed method in <strong><em>pages/Details.js</em></strong> add a variable to hold the data returned by the backend as <em>6.4.5</em>.</p>
+<pre><code language="language-js" class="language-js">let [salesByDOW, setSalesByDOW] = useState([]);
+</code></pre>
+<p>add the following code to <strong><em>pages/Details.js</em></strong> as <em>6.4.6</em></p>
+<pre><code language="language-js" class="language-js">function fetchSalesByDOW() {
+    const requestOptions = {
+        method: &#39;GET&#39;,
+        headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, &#39;Authorization&#39;: &#39;Bearer &#39; + location.state.accessToken },
+    };
+    fetch(backendURL+&#39;/franchise/&#39;+franchise+&#39;/trucks/&#39;+truck+&#39;/sales_dayofweek?start=&#39;+fromDate+&#39;&amp;end=&#39;+toDate, requestOptions)
+        .then((result) =&gt; result.json())
+            .then((data) =&gt; {
+                setSalesByDOW(data)
+    })
+}
+</code></pre>
+<p>We are using the <code>franchise</code> and the <code>accessToken</code> we recieved from the Backend API on successful Login. The <code>accessToken</code> is then validated by the Backend API and the Snowflake query is executed and the results are returned. We convert the results to JSON and store in a local variable.</p>
+<p>In the <code>requestOptions</code>, we are setting the Request Method (GET/POST), and we are sending the <code>accessToken</code> in the header as a Bearer Token.</p>
+<p>Now let us update the React UI hooks, so the newly created method is called when the page is requested. Update the <code>useEffect()</code> method in <strong><em>pages/Details.js</em></strong> as <em>6.4.7</em>, to add the following.</p>
+<pre><code language="language-js" class="language-js">fetchSalesByDOW();
+</code></pre>
+<p>Now that we have the data from the Backend API, we can build an AreaChart, to do that, we are using a react library <strong><em>recharts</em></strong>. Add the following code to <strong><em>pages/Details.js</em></strong> as <em>6.4.8</em> to display the chart.</p>
+<pre><code language="language-html" class="language-html">&lt;ResponsiveContainer width=&#34;100%&#34; height=&#34;100%&#34;&gt;
+    &lt;AreaChart
+        width={500}
+        height={400}
+        data={salesByDOW}
+        margin=&#123;&#123;
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+        }}&gt;
+        &lt;XAxis dataKey=&#34;DOW&#34; tickFormatter={dayofWeek} /&gt;
+        &lt;YAxis tickFormatter={tickFormater} /&gt;
+        &lt;Tooltip formatter={(value) =&gt; &#39;US$&#39;+(new Intl.NumberFormat(&#39;en&#39;).format(value))} /&gt;
+        &lt;Area type=&#34;monotone&#34; dataKey=&#34;REVENUE&#34; stroke=&#34;#548bf2&#34; fill=&#34;#548bf2&#34; activeDot=&#123;&#123; r: 8 }} /&gt;
+    &lt;/AreaChart&gt;
+&lt;/ResponsiveContainer&gt;
+</code></pre>
+<p>You should see the below chart displayed in your browser running the Web Application.</p>
+<p class="image-container"><img alt="Alt text" src="img/c0a6fce4d296b3ce.png"></p>
+<h2 is-upgraded>Lab 6.5: Use the Website.</h2>
+<p>The web application has 3 pages (Login Page, Franchise Page and Truck Details Page)</p>
+<p><strong><em>Login as User</em></strong>, is the way for a user to be validated and also establish a session in the Backend for the user. This is a simple page, when user enters their username and password and press Login button, user is authenticated and is navigated to the Franchise View. <img alt="Alt text" src="img/85a679f35f03a49f.png"></p>
+<p><strong><em>Franchise View</em></strong>, displays various charious charts like Sales for Top 10 Countries, Sales from Top 10 Trucks and the YTD revuenue for the <em>Franchise</em>. On this page, user is presented with 2 date pickers to choose Start and End Dates which are used for filtering the data.</p>
+<p>The user can then navigate to the Truck Details page by clicking on the Truck Details button on the top right.</p>
+<p class="image-container"><img alt="Alt text" src="img/3207e1a300cb22c2.png"></p>
+<p><strong><em>Truck Details View</em></strong>, displays various charts like Top Items, Sales by Day-of-Week, Best Sellers by Day-of-Week, Best Cities by Day-of-Week for the selected <em>Franchise</em> and <em>Truck Brand</em>. On this page, the user is presented with the same 2 date pickers from the previous page. In addition, the user has the option to choose a Truck Brand.</p>
+<p>The user can navigate back to the Franchise page, by clicking on the <em>Back to Overview</em> button on the top right.</p>
+<p class="image-container"><img alt="Alt text" src="img/c0a6fce4d296b3ce.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 7: Cleanup" duration="0">
+        <h2 is-upgraded>Front End</h2>
+<p>There isn&#39;t very much to clean up or tear down after this lab. When you don&#39;t need the frontend any more stop the development web server, simply by terminating the task that started the server, press Ctrl+c.</p>
+<h2 is-upgraded>Back End</h2>
+<p>To make sure that the backend is not running any more, simply terminate the task that started the server, press Ctrl+c.</p>
+<h2 is-upgraded>Snowflake Database</h2>
+<p>To clean up your Snowflake environment you can run the following SQL Statements.</p>
+<pre><code language="language-sql" class="language-sql">drop database frostbyte_tasty_bytes;
+drop warehouse query_wh;
+drop warehouse load_wh;
+drop warehouse tasty_app_api_wh;
+drop user tasty_app_api_user;
+drop role tasty_app_api_role;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

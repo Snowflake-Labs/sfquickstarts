@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: automated-query-performance-insights
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Learn how to analyze query performance in Snowflake using SQL queries to identify bottlenecks and optimize execution times.
-categories: getting-started, data-engineering, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: SQL, Performance Optimization, Query Analysis, Snowflake, Data Engineering
 
 # Analyze Query Performance in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 You'll learn how to leverage Snowflake's `ACCOUNT_USAGE` schema to analyze query performance, identify bottlenecks, and optimize your SQL queries. This guide provides practical SQL queries that will help you to understand query execution patterns and warehouse utilization.
 
@@ -30,7 +29,6 @@ A collection of analytical SQL queries that provide insights into query performa
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 Firstly, fire up your Snowflake Notebook by clicking on `Projects` > `Notebooks` in the left sidebar followed by clicking on `+ Notebook` in the top-right hand corner.
 
@@ -40,7 +38,6 @@ Firstly, to follow along with this quickstart, you can click on [Automated_Query
 
 <!-- ------------------------ -->
 ## Analyze Long-Running Queries
-Duration: 5
 
 This query identifies the 50 longest-running queries from the past day:
 
@@ -68,11 +65,10 @@ LIMIT 50;
 
 Here, I'll specify `'CHANIN_XS'` as this is the warehouse that I typically use and here's what the returned results would look like:
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 <!-- ------------------------ -->
 ## Analyze Query Patterns in Relation to Execution Time
-Duration: 5
 
 Group queries by execution time buckets:
 
@@ -94,11 +90,10 @@ GROUP BY 1;
 
 An analysis of the query patterns for my warehouse `'CHANIN_XS'` returned the following output:
 
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 <!-- ------------------------ -->
 ## Analyze Query Patterns to Find Repeated Queries
-Duration: 5
 
 Identify frequently executed queries:
 
@@ -117,10 +112,9 @@ LIMIT 100;
 ```
 Here's the returned output for my frequently executed queries:
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 ## Analyze Warehouse Load
-Duration: 5
 
 Monitor warehouse utilization:
 
@@ -137,11 +131,10 @@ HAVING SUM(avg_queued_load) >0;
 
 Results from warehouse utilization is shown below:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 <!-- ------------------------ -->
 ## Identify Long-Running Tasks
-Duration: 5
 
 Track task execution times:
 
@@ -155,11 +148,10 @@ ORDER BY duration_seconds DESC;
 
 The returned output for task execution time is shown below:
 
-![image](assets/img05.PNG)
+![image](assets/img05.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully learned how to analyze and optimize query performance in Snowflake using SQL queries. These analytical tools will help you identify bottlenecks and improve your data operations efficiency.
 

@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "internal_marketplace_intra_org_sharing",
+  "duration": 115,
+  "title": "Intra-Company Data Sharing With The Snowflake Internal Marketplace",
+  "authors": "Matthias Nicola, Henrik Nielsen",
+  "summary": "INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE",
+  "source": "intra_company_data_sharing_with_the_snowflake_internal_marketplace/intra_company_data_sharing_with_the_snowflake_internal_marketplace.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-sharing"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "internal_marketplace_intra_org_sharing"
+}

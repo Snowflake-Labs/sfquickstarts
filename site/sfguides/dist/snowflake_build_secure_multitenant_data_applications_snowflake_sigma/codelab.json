@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "snowflake_build_secure_multitenant_data_applications_snowflake_sigma",
+  "duration": 90,
+  "title": "Build and Secure Multi-Tenant Data Applications with Snowflake and Sigma",
+  "summary": "Snowflake Summit 2023 HoL with Sigma",
+  "source": "snowflake_build_secure_multitenant_data_applications_snowflake_sigma/snowflake_build_secure_multitenant_data_applications_snowflake_sigma.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "snowflake"
+  ],
+  "tags": [
+    "sigma",
+    "snowflake",
+    "web"
+  ],
+  "feedback": "https://github.com/sigmacomputing/sigmaquickstarts/issues",
+  "url": "snowflake_build_secure_multitenant_data_applications_snowflake_sigma"
+}

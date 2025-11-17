@@ -1,0 +1,180 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>LLM Assisted Medical Coding Extraction for Healthcare in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="llm_assisted_medical_coding_extraction_for_healthcare"
+                  title="LLM Assisted Medical Coding Extraction for Healthcare in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img src="img/d1cb6eb76a488817.png"></p>
+<p>In the complex landscape of healthcare, the accurate calculation of patient risk scores is not just a matter of compliance, but a crucial aspect that can significantly influence a provider&#39;s financial reimbursements. Accurate risk scoring is instrumental in ensuring that healthcare providers receive the appropriate compensation for the level of care they provide, balancing the dual objectives of delivering high-quality care and maintaining financial viability. And these  scores not only influence clinical decisions and resource allocation but also significantly impact reimbursement rates from insurance companies. Given their importance, the need for precision in calculating risk scores cannot be overstated.</p>
+<p class="image-container"><img src="img/dc1831a8e4fe225.png"></p>
+<p>Traditionally, healthcare providers have relied on various tools and methodologies to estimate patient risk scores. However, these conventional methods often fall short in addressing the complexity and variability inherent in patient data.  In this Quickstart guide we will study how to leverage a large language model in the beginning and implement a Distillation flow with a Llama 405b to generate training samples to teach a smaller model perform the code extraction task with the same accuracy but lower cost. Large language model (LLM) distillation focuses on replicating the performance of a large model on a specific task by transferring its capabilities to a smaller model. This allows developers to achieve similar results to models like GPT-4 but with reduced computational cost and faster performance—though only for the targeted task.</p>
+<p>The process treats the large model as the &#34;teacher&#34; and the smaller model as the &#34;student.&#34; The student model could range from a simple logistic regression to a more advanced foundation model like BERT. By transferring essential knowledge from a complex teacher model to a smaller student model, the distillation flow preserves performance while reducing size and computational demands ,making them ideal for integration across a broader range of devices and platforms.</p>
+<h2 is-upgraded>What is Cortex Fine Tuning?</h2>
+<p>The Snowflake Cortex Fine-tuning function offers a way to customize large language models for your specific task. Cortex Fine-tuning is a fully managed service that lets you fine-tune popular LLMs using your data, and achieve the fewer trainable parameters, a higher training throughput, and, unlike adapters, no additional inference latency.  Users can fine-tune and use industry-leading LLMs very easily with SQL and/or Python functions. - You select training dataset and optional validation dataset from your own data to fine-tune a foundation model. There is no data privacy or security concerns associated with data move or migration. Also Cortex fine-tuning does Automatic Parameter Efficient Fine-tuning (PEFT) without manual parameters.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A non-trial Snowflake account with access to a role that has the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.</li>
+<li>Git installed.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to retrieve unstructured files—in this case, medical reports—in PDF format from an external stage in Snowflake, read them, and apply a text chunking function within a Snowflake Notebook.</li>
+<li>How to extract ICD10 codes from medical reports using a large language model, creating a labeled dataset for training.</li>
+<li>How to utilize the extracted medical codes with Cortex LLMs to fine-tune a smaller model, achieving the accuracy of a larger model.</li>
+<li>How to leverage the fine-tuned, smaller model for efficient and accurate code extraction</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account in a region where Snowflake Cortex and Arctic are available.</li>
+<li>Access to the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.</li>
+<li>Git installed.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A comprehensive end-to-end autonomous coding solution utilizing LLMs to extract and analyze medical codes from patient reports.</li>
+<li>Utilize Snowflake Cortex Fine Tuning to enhance coding accuracy while reducing costs, thereby maximizing revenue and facilitating streamlined decision-making. This will contribute to improved patient risk scoring and better claim reimbursements.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="2">
+        <p>This section will walk you through creating various objects</p>
+<h3 is-upgraded>High-Level Workflow</h3>
+<p class="image-container"><img src="img/b77a74d9eb097619.png"></p>
+<p>Steps: <strong>Step 1</strong>. - Clone <a href="https://github.com/Snowflake-Labs/sfguide-llm-assisted-medical-coding-extraction-for-healthcare-in-snowflake" target="_blank">GitHub</a> repository.</p>
+<p><strong>Step 2</strong>. - Run the code under the scripts/setup.sql file in Snowsight SQL Worksheet. Once the objects are setup, now let us proceed to the notebook execution</p>
+<p><strong>Step 3</strong>. The Notebook is available to download from the <a href="https://github.com/Snowflake-Labs/sfguide-llm-assisted-medical-coding-extraction-for-healthcare-in-snowflake/tree/main/notebook" target="_blank">notebook</a> folder in the git repository.</p>
+<p><strong>Step 4</strong> Run cell by cell in the notebook. We will explore the Notebook in detailed in the next section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex Fine Tuning" duration="2">
+        <p>In this section we will explore the notebook. As mentioned earlier, do not execute Run All. Instead execute cell by cell.</p>
+<p>Large language model (LLM) distillation aims to replicate the performance of a large model on a specific task by transferring its capabilities to a smaller, more efficient model. This enables developers to achieve results comparable to large models like GPT-4, but with significantly lower computational costs and faster execution—albeit limited to the targeted task.</p>
+<p>In this process, the large model acts as the &#34;teacher,&#34; while the smaller model serves as the &#34;student.&#34;  We will leverage Cortex LLM Functions and specifically the COMPLETE with llama3.1-405b which will act as &#34;teacher&#34; in order to prepare the training dataset for Fine Tuning.</p>
+<h3 is-upgraded>Important considerations for fine-tuning:</h3>
+<ul>
+<li>The quality of the data provided heavily influences fine-tuning performance.</li>
+<li>The dataset should be well-curated, with ample quantities of high-quality data in the appropriate format for training.</li>
+</ul>
+<h3 is-upgraded>Step 1 Data Preparation</h3>
+<p>Begin by importing Streamlit and any other necessary libraries.</p>
+<p>To prepare training and validation data:</p>
+<ul>
+<li>Use your existing data engineering pipeline to load unstructured medical reports into a Snowflake stage. For this Quickstart, we have hosted in an external S3 stage.</li>
+<li>Retrieve the files from the stage and apply chunking. Chunking divides the text into manageable parts that fit within the model&#39;s context window (the amount of text that can be processed at once). This ensures only relevant portions of each document are passed to the model, leading to improved accuracy.</li>
+<li>If your unstructred files has already landed in Snowflake, then load the training and optional validation dataset into the target table.</li>
+</ul>
+<h3 is-upgraded>Step 2 Carry Distillation Flow</h3>
+<p>Once the data is available, we will begin the distillation process. The first step in the flow is having the LLM label the unlabeled data. For labeling, we will use a large model like Llama 3.1-405b. A prompt will instruct the model to:</p>
+<ul>
+<li>Read through the report for relevant information.</li>
+<li>Extract the ICD Code based on the report content.</li>
+<li>Return the result as a Python list for downstream processing</li>
+</ul>
+<p>The generated ICD10 codes along with the prompt and the report is saved in a table</p>
+<h3 is-upgraded>Step 3 Split Training and Validation dataset</h3>
+<ul>
+<li>Split the resultant dataset into train,test and validation.</li>
+<li>Ensure you have sufficient number of training samples (may range from 50-1000) depending on the task. In this case since we are showing the art of the possible only a small number is added.</li>
+</ul>
+<p>We will now carry fine tuning of a small model using the labeled dataset with Snowflake Cortex Fine tuning and improve the accuracy, at both low cost and low latency results.</p>
+<h3 is-upgraded>Step 4 Carry Cortex Fine Tuning</h3>
+<ul>
+<li>The Fine tuning function SNOWFLAKE.CORTEX.FINETUNE creates a fine-tuning job. The tuned model is saved to the model registry of the schema. It takes the following parameters :<ul>
+<li>You specify an identifier for the fine tuned model.</li>
+<li>Choose one of the base model available today. Remember this is the student model so it can be a small model ultimately learning from the teacher&#39;s style.</li>
+<li>Query that returns the prompt and completion for the Training</li>
+<li>Query that returns the prompt and completion for the validation</li>
+</ul>
+</li>
+<li>When the Fine tuning job is created, a generated unique job ID is returned. This can be used to monitor the fine tuning workflow and the completion status. The training takes sometime to finish and the next steps are dependent on the successful completion of this.</li>
+</ul>
+<h3 is-upgraded>Step 5 Calculate patient risk scores</h3>
+<p>Healthcare providers and Medical coders can now extract patient risk scores using the accurately detected ICD Codes from the fine tuned model. If you have customers and a risk score mapping for various conditions, you can now use the ICD10 codes to calculate patient risk scores accurately and efficiently.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>At the end of this guide, we have seen how to create a production ready AI based autonomous medical coding extraction pipeline which is accurate and cost-effective at the same time, and not rely on a low accurate Prompt engineered or RAG application We saw that how easily fine tuning alleviates the workload on physicians and medical coders, as we aim to advance the implementation of autonomous medical coding. This approach will not only ensure high accuracy and clinical specificity but also support various healthcare models paving the way for a more sustainable and effective healthcare environment. As you can see the ability to adopt fine tuning techniques from Snowflake enables a team to start with a small off the shelf  model and customize the model to overarching goal for enhancing efficiency and achieving 100% accuracy.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Retrieve medical reports in PDF format from an external stage in Snowflake, read them, and apply a text chunking function within a Snowflake Notebook.</li>
+<li>Extract ICD10 codes from medical reports using a large language model, generating a labeled dataset for training.</li>
+<li>Utilize the extracted medical codes with Cortex LLMs to fine-tune a smaller model, matching the accuracy of a larger model.</li>
+<li>Leverage the fine-tuned, smaller model for efficient and accurate code extraction.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning" target="_blank">Snowpark Cortex Fine-Tuning Documentation</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowpark Cortex LLM</a></h3>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

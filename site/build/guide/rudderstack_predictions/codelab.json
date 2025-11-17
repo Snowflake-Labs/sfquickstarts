@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "rudderstack_predictions",
+  "duration": 66,
+  "title": "Build predictive features without MLOps using RudderStack and Snowflake",
+  "summary": "Create predictive features with RudderStack and Snowflake without MLOps",
+  "source": "rudderstack_predictions/rudderstack_predictions.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "data-science-\u0026-ai",
+    "getting-started"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "rudderstack",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "rudderstack_predictions"
+}

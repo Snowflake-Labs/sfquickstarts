@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_mapping_in_native_apps",
+  "duration": 46,
+  "title": "Data Mapping in Snowflake Native Apps using Streamlit",
+  "summary": "This guide will provide step-by-step details for building a data mapping requirement in Snowflake Native Apps and Streamlit",
+  "source": "data_mapping_in_native_apps/data_mapping_in_native_apps.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "getting-started",
+    "featured",
+    "data-engineering",
+    "native-app",
+    "streamlit"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "nativeapp",
+    "python",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_mapping_in_native_apps"
+}

@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake",
+  "duration": 60,
+  "title": "Simplify and Accelerate Data Access Provisioning with Immuta and Snowflake",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake/simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "datagovernance",
+    "ai"
+  ],
+  "tags": [
+    "accesscontrol",
+    "ai",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "immuta",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake"
+}

@@ -1,0 +1,312 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data Modeling With Snowflake &#43; SqlDBM</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_modeling_with_sqldbm"
+                  title="Data Modeling With Snowflake &#43; SqlDBM"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Relational database modeling enables instant visual review of a database landscape and the relationships between its entities, serving as a blueprint for your data.</p>
+<p><a href="https://www.SqlDBM.com" target="_blank">SqlDBM</a> is an online database modeling platform that works with leading cloud platforms such as Snowflake and requires absolutely no coding to get started. In this Quickstart, you will see how you can model a sample Snowflake database in just a few clicks and begin taking advantage of all the time-saving features that SqlDBM delivers.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to quickly diagram an existing schema through reverse engineering</li>
+<li>Create and manipulate database objects using time-saving features like copying and templates</li>
+<li>Collaboration when working on data modeling projects</li>
+<li>Sharing, documenting &amp; data governance for your data models</li>
+<li>Track change history using revisions</li>
+<li>Forward engineering &amp; deployment of changes to Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Use During the Lab</h2>
+<ul>
+<li>An existing or trial <a href="https://sqldbm.com/Home/" target="_blank">SqlDBM account</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Automatically bring your models into the cloud with SqlDBM</li>
+<li>Enable both the business and IT personas with your data models</li>
+<li>Collaborate and share your data models</li>
+<li>Foward-Engineer data models into Snowflake</li>
+</ul>
+<p>A sample schema diagram like the one we will create:</p>
+<p class="image-container"><img alt="example model" src="img/3b29c617263acd1b.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Project in SqlDBM" duration="5">
+        <p>After logging in to <a href="https://www.SqlDBM.com" target="_blank">SqlDBM</a>, you will be taken to the Projects Dashboard. Otherwise, select &#34;Dashboard&#34; from the top-right dropdown.</p>
+<p class="image-container"><img alt="Dashboard" src="img/782717c007003a38.jpg"></p>
+<h2 is-upgraded>Reverse-Engineer Using Example Schema</h2>
+<p>Follow the steps to create a Snowflake project and bring your schema:</p>
+<ul>
+<li>Download our <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/sqldbmguide/assets/sample_schema.sql" target="_blank">example DDL</a></li>
+<li>Click the &#34;Create Project&#34; button at the top to get started.</li>
+<li>Hover over the &#34;Snowflake&#34; as the database type.</li>
+<li>Click the &#34;Existing Database&#34; to create a live connection to Snowflake.</li>
+<li>You can paste the contents directly into the text area on the screen.</li>
+<li>or upload the file by pressing the &#34;Drop your file&#34; button</li>
+</ul>
+<p class="image-container"><img alt="Creating a new project" src="img/e198108d1854eb61.jpg"></p>
+<h2 is-upgraded>Parse the script to create a project</h2>
+<ul>
+<li>Press the up arrow icon / &#34;Upload SQL Script&#34; button at the top to parse the DDL provided.</li>
+</ul>
+<p class="image-container"><img alt="Upload SQL script" src="img/2b9e4ba31f09ec26.jpg"></p>
+<ol type="1" start="7">
+<li>Review the objects that are being imported on the left panel. Optionally, you can exclude individual items from being imported by de-selecting the check-box next to them.</li>
+<li>Press the &#34;Import&#34; button to create a project with the selected objects.<ul>
+<li>Parsing and importing DDL into a project is called <strong>Reverse Engineering</strong> in SqlDBM and is not limited to new projects. This can be done at any point to retrieve changes to the database made outside of SqlDBM from the Reverse Engineering screen.</li>
+<li>Note, this will not re-initiate the entire project. Users will be able to choose which objects are added, updated, or deleted from a project depending on whether or not they currently exist.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Reverse Engineering " src="img/dadcd1a0cdd95504.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Organizing Your Data Model" duration="0">
+        <h2 is-upgraded>Add new diagram</h2>
+<ol type="1">
+<li>There are several ways to create a new diagram.</li>
+<li>Choose objects, hold the &#34;Ctrl&#34; key and click the &#34;Plus&#34; icon. That is the easiest way to add a new diagram with chosen objects.</li>
+<li>Use the context menu by diagram item of Diagrams level on the side panel.</li>
+<li>Use the bottom bar of Diagrams level on the side panel.</li>
+</ol>
+<h2 is-upgraded>Create a Subject Area</h2>
+<p>Subject areas serve as folders for keeping diagrams organized by categories such as department or project. Right-click on &#34;Subject Areas&#34; in the Diagrams screen and select &#34;Add a Subject Area.&#34;</p>
+<p class="image-container"><img alt="Upload SQL script" src="img/261b78ee13f7806b.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Standards, Conventions, and Mappings" duration="8">
+        <p>You can add prefixes and suffixes to the names of different object types, define attribute names using naming rules and for bulk renaming of individual fields or auto-expansion of naming abbreviations using <strong>Name Mappings</strong>, <strong>Case Standards</strong> and <strong>Glossary Terms</strong>  .</p>
+<p class="image-container"><img alt="standards" src="img/d6337c41b881a16a.jpg"></p>
+<h2 is-upgraded>Case Standards</h2>
+<ol type="1">
+<li>Click the blue SqlDBM logo in the top left</li>
+<li>Go down to the bottom option &#34;Settings and Conventions&#34;</li>
+<li>Select &#34;Case Standards&#34; and use the option for UPPER_CASE</li>
+<li>Click the button &#34;Apply to existing objects&#34;</li>
+</ol>
+<p class="image-container"><img alt="Case Standard" src="img/fcb50601b7b70f46.jpg"></p>
+<h2 is-upgraded>Glossary</h2>
+<ol type="1">
+<li>Go Back to the Menu and Select &#34;Glossary&#34;</li>
+<li>Enter &#34;CUSTOMER_ID&#34; in the Name column</li>
+<li>Enter &#34;CUS_ID&#34; in the Change To column</li>
+<li>Click the button &#34;Apply to existing objects&#34;</li>
+</ol>
+<p class="image-container"><img alt="Glossary" src="img/216c9975c8023618.jpg"></p>
+<h2 is-upgraded>Name Mappings</h2>
+<ul>
+<li>Go Back to the Menu and Select &#34;Name Mappings&#34;</li>
+<li>Check the box next to Tables</li>
+<li>Add a &#34;_T&#34; for all your tables end with this(Example: ${TableName}_T)</li>
+<li>Click the button &#34;Apply to existing objects&#34;</li>
+</ul>
+<p class="image-container"><img alt="Name Mapping" src="img/5dce1895f023b2b5.jpg"></p>
+<h2 is-upgraded>Templates</h2>
+<ol type="1">
+<li>Click on Database Explorer in left hand menu</li>
+<li>Navigate to Column Templates</li>
+<li>Hover your mouse over the Column template option and select &#34;Create New&#34;</li>
+<li>Name your Template &#34;Auditlog&#34;</li>
+<li>Add a new column to your template called &#34;LastUpdated&#34; with a data type of &#34;timestamp&#34;</li>
+<li>Highlight your new AuditLog template and select the &#34;Apply To Current Objects&#34; setting</li>
+<li>Your table template should now be applied to all objects</li>
+</ol>
+<p class="image-container"><img alt="Audit Logs" src="img/6521a69e44a7f530.jpg"></p>
+<p>Templates come standard with SqlDBM wether you want to build templates for a set of columns or a template for an entire table.</p>
+<ul>
+<li>Table templates allow you to accelerate the build of tables that would follow a consistent pattern and reduce design time.</li>
+<li>Column Templates are a way to create and reuse common columns across the entire project. This allows you to automate one of the most redundant tasks associated with table creation and standardize those columns across your data model.</li>
+</ul>
+<p class="image-container"><img alt="templates" src="img/905dcfde54cff4d0.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Share, Document &amp; Model Governance" duration="10">
+        <h2 is-upgraded>Sharing Data Models</h2>
+<p>Sharing your data model is a crucial step in fostering transparency, collaboration, and alignment across teams. By making your data models accessible to stakeholders, developers, analysts, and business users, you enable a shared understanding of the data structure, which helps reduce miscommunication and speeds up decision-making.</p>
+<ol type="1">
+<li>Invite users as consumers. This will give users read-only access to the data modeling project allow them to look at the data model and use SqlDBM&#39;s collaboration features to leave feedback and collaborate on data models.</li>
+<li>Use SqlDBM&#39;s iFrame feature to automatically integrate your ERD diagrams from SqlDBM into any tool of your choosing.</li>
+<li>Use SqlDBM&#39;s integration with Confluence to share your models directly in your pages in Confluence.</li>
+<li>Export out models as an image or excel file.</li>
+</ol>
+<h2 is-upgraded>Database Documentation</h2>
+<ol type="1">
+<li>Click On Database documentation option from the left hand menu</li>
+<li>Metadata can be added, edit or deleted within your data models from here</li>
+<li>A <strong>Report Page</strong> can be generated that can be used to search and navigate through metadata within your data models</li>
+</ol>
+<p class="image-container"><img alt="documentation" src="img/24d0bdfbc1e5e077.jpg"></p>
+<p>SqlDBM&#39;s <strong>Database Documentation</strong> allows users to review and edit object-level comments in one centralized and searchable screen. The descriptions provided here are intended to help the team go beyond object definitions and provide meaningful details about the data contained in the tables.</p>
+<h2 is-upgraded>Model Governance</h2>
+<p>Model Governance will supplement existing projects and offer its own role, allowing users to administer new functionality, like Fields, Pages, and Reports, and open them up to everyone on the project team.</p>
+<ul>
+<li>Fields - Governance fields are additional metadata columns that can be added and maintained on the Database documentation screen. SqlDBM also provides dbt-specific properties through pre-built field templates such as freshness, tests and more. All of this metadata will be available for output as complete dbt compatible source and model YAML.</li>
+<li>Pages - Extend documentation beyond the object level with rich text full-length content, embedded images, diagrams, styling, and formatting. Pages allow teams to maintain project-level overviews of things like metrics and KPI definitions, business terms, and operational outlines.</li>
+<li>Reports - An all-in-one project information portal in HTML format for end users with searchable object details, descriptions, and references. Reports offer a sleek interface for finding and navigating between related project assets.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Track Changes and Compare Model Versions" duration="6">
+        <p>Every save in SqlDBM generates a versioned <em>revision</em>, which allows for change tracking and version control. SqlDBM projects store an infinite revision history, and any two revisions can be compared to track changes. The latest revision is indicated next to the project name at the top of the screen.</p>
+<p class="image-container"><img alt="revisions" src="img/9afb3fbeefef398f.png"></p>
+<h2 is-upgraded>Compare Revisions</h2>
+<p>Use the Compare Revisions feature to identify differences between your SqlDBM revisions within seconds. This feature helps you detect possible mistakes when migrating DB/DW across environments by comparing the tables and DDL scripts.</p>
+<p>Click on &#34;Compare Revisions&#34; in the left pane.</p>
+<p>Select the two revisions that you would like to compare.</p>
+<p>You will see all the database objects listed in the revisions you have selected. Changes are highlighted based on the following colors:</p>
+<ul>
+<li>Red - deleted objects</li>
+<li>Green - created objects</li>
+<li>Yellow - modified objects</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Forward Engineer &amp; Code Generation" duration="8">
+        <h2 is-upgraded>DDL and ALTER Script Generation</h2>
+<p>Forward Engineering allows users to export the database objects created in SqlDBM projects by generating SQL scripts. Through Forward Engineering, users can generate complete CREATE statements for selected objects or ALTER scripts for changes between project versions or environments.</p>
+<h2 is-upgraded>dbt YAML Genration</h2>
+<p>Users can forward engineer dbt-compatible source or model YAML for tables and views. By default, YAML output will include the object name, columns, and descriptions. Additional properties and meta fields can be maintained in Database documentation or enabled on the Forward engineering screen for complete control over the final YAML output.</p>
+<p class="image-container"><img alt="FE" src="img/f7b632c5f2a9be1b.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Collaborate and Work Together on Data Modeling Projects" duration="10">
+        <h2 is-upgraded>How to add collaborators</h2>
+<p>From the top menu of a project, click the share icon and enter an email address for a project member that has previously been added in the Admin Console.</p>
+<h2 is-upgraded>Team Communication</h2>
+<p>Team communication allows users to communicate with other team members directly through the tool. Comments can be linked to specific objects and are searchable and actionable through the functions provided by SqlDBM.</p>
+<p class="image-container"><img alt="comments" src="img/25be96fe9104bd0a.jpg"></p>
+<p>See below for details on the following features:</p>
+<ul>
+<li>Create comments</li>
+<li>Tag team members</li>
+<li>Review and dismiss comments</li>
+<li>Edit comments</li>
+<li>Search and filter</li>
+</ul>
+<h2 is-upgraded>Concurrent Working</h2>
+<p>Concurrent Working allows users to work in parallel branches without having to lock a project. Changes made in any branch can be compared before merging to main and synchronized with any new updates that happen meanwhile.</p>
+<p>Allows:</p>
+<ul>
+<li>Setup Concurrent Working</li>
+<li>Create branch</li>
+<li>Project sharing at the branch level</li>
+<li>Maintaining branches</li>
+</ul>
+<p class="image-container"><img alt="concurrentworking" src="img/e5456e5c2537882d.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Logical Projects" duration="5">
+        <h2 is-upgraded>Database Agnostic Business Modeling</h2>
+<p>Logical modeling allows users to design independently of a specific database type and establish a foundational business model that can be shared or converted. Logical projects offer full control over the data type mapping, normalization, and naming convention settings for easy import and export from physical.</p>
+<p class="image-container"><img alt="logicalmodel" src="img/93f23d7d0f492f69.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Schema Change Management" duration="3">
+        <h2 is-upgraded>DB Schema Monitoring</h2>
+<p>DB Schema Monitoring periodically polls your cloud databases and alerts designated recipients if DDL changes are detected giving you the opportunity to take proactive measures.</p>
+<p class="image-container"><img alt="schemamonitor" src="img/ac8f2b744d55aaea.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="4">
+        <p>Visually guided database modeling can help an enterprise data team make sense of, and accelerate database development. In this Quickstart, we followed a simple development workflow: from creating and instantiating a new Snowflake project and schema, to making changes, all the way to deployment. However, the benefits of a centralized modeling tool extend well beyond the role of a developer.</p>
+<p>Whether it&#39;s a project manager using <strong>Compare Revisions</strong> to track changes, a business user familiarizing themselves with a previously-unknown datamart through a relational diagram, or a new team-member becoming appraised of an organization through <strong>Database Documentation</strong> - doing this in a single tool and a coordinated fashion makes everyone&#39;s job easier and ensures consistency throughout.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Creating a project</li>
+<li>Reverse engineering a Snowflake database</li>
+<li>Configuring project defaults and the look and feel</li>
+<li>GUI-based no-code editing</li>
+<li>Collaboration</li>
+<li>Change tracking</li>
+<li>Forward Engineer &amp; Code Generation</li>
+</ul>
+<h2 is-upgraded>Additional resources</h2>
+<ul>
+<li>If you have questions about any of the topics described in this Quickstart or additional functionality, please request a guided demo through our website: <a href="https://www.SqlDBM.com" target="_blank">SqlDBM</a>.</li>
+<li>Full documentation of all our features can be found in our <a href="https://intercom.help/SqlDBMhelpcenter/en" target="_blank">Help Center</a>.</li>
+<li>To learn more about database modeling best practices, find out about upcoming features, and stay connected to our growing data community, be sure to follow us on <a href="https://www.linkedin.com/company/sqldbm" target="_blank">LinkedIn</a>.</li>
+<li>Training videos, webinars, and new feature demos on our <a href="https://www.youtube.com/channel/UCxzY9EOGgPPhHCXj6h3ufsA" target="_blank">Youtube channel</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

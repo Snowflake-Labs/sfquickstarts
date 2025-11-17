@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-time-series-analytics-with-pricing-data-on-snowflake",
+  "duration": 28,
+  "title": "Getting Started with Time Series Analytics with Pricing Data on Snowflake",
+  "summary": "Getting Started with Time Series Analytics with Pricing Data on Snowflake",
+  "source": "getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/getting-started-with-time-series-analytics-with-pricing-data-on-snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "time-series",
+    "notebooks"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "timeseries",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-time-series-analytics-with-pricing-data-on-snowflake"
+}

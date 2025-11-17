@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku",
+  "duration": 64,
+  "title": "A No Code Approach to Machine Learning with Snowflake and Dataiku",
+  "summary": "This is an introduction to Dataiku and Snowflake",
+  "source": "a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku/a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "ai",
+    "partner"
+  ],
+  "tags": [
+    "ai",
+    "dataengineering",
+    "dataiku",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku"
+}

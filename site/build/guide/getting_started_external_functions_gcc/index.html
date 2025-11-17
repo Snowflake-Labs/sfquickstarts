@@ -1,0 +1,425 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started With External Functions Using the Google Cloud Console</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_external_functions_gcc"
+                  title="Getting Started With External Functions Using the Google Cloud Console"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This guide provides detailed instructions for using the Google Cloud Console user interface to create an external function hosted on GCP (Google Cloud Platform). You can use this guide either to create the sample external function we&#39;ll use or as a guide to create your own external function.</p>
+<p>Positive</p>
+<p>: Google also provides a command-line interface that you can use for many of these steps. For more details, see the GCP <a href="https://cloud.google.com/api-gateway/docs/quickstart" target="_blank">gcloud documentation</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Some familiarity with Google Cloud Console.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create and test a Google Cloud Function</li>
+<li>How to create an API integration and the external function itself in Snowflake.</li>
+<li>How to call an external function for GCP</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Google Cloud <a href="https://console.cloud.google.com/projectselector2/home/dashboard" target="_blank">project</a> ID.</li>
+<li><a href="https://cloud.google.com/billing/docs/how-to/modify-project" target="_blank">Billing enabled</a> for your Cloud Project</li>
+<li>The correct <a href="https://cloud.google.com/functions/docs/quickstart-python#before-you-begin" target="_blank">services</a> enabled for your Google Cloud Project.</li>
+<li>A Snowflake account in which you have <code>ACCOUNTADMIN</code> privileges or a role with the <code>CREATE INTEGRATION</code> privilege.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A sample external function with the Google Cloud Console</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare the Tracking Worksheet" duration="2">
+        <p>As you progress through this guide, you&#39;ll have to insert your own specific values to move on. To keep track of all the information you&#39;ll, we recommend you use this worksheet with fields for each of the required values:</p>
+<pre><code>================================================================================
+=================== TRACKING WORKSHEET: GOOGLE CLOUD CONSOLE ===================
+================================================================================
+
+****** Cloud Function (Remote Service) Info ************************************
+
+Cloud Function Trigger URL: ____________________________________________________
+
+
+****** API Config File Info ****************************************************
+
+Path Suffix: ___________________________________________________________________
+Configuration File Name: _______________________________________________________
+
+
+****** API Gateway (Proxy Service) Info ****************************************
+
+Managed Service Identifier: ____________________________________________________
+Gateway Base URL : _____________________________________________________________
+
+
+****** API Integration &amp; External Function Info ********************************
+
+API Integration Name: __________________________________________________________
+API_GCP_SERVICE_ACCOUNT: _______________________________________________________
+
+External Function Name: ________________________________________________________
+
+
+****** Security Info ***********************************************************
+
+Security Definition Name: ______________________________________________________
+</code></pre>
+<p>Now that you have this worksheet by your side, we can begin!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Google Cloud Function" duration="5">
+        <p>First, you need to create a Google Cloud function. The easiest way to do so is to use Google&#39;s <a href="https://cloud.google.com/functions/docs/quickstarts" target="_blank">Cloud Console Quickstart</a> guide found in their documentation.</p>
+<p>Below we will tell you what options to select when setting up the Cloud Function through Google Cloud. This guide will be using a function written in Python, so our specific instructions are based on the <strong>Python Quickstart</strong>.</p>
+<p>Positive</p>
+<p>: The Google Cloud Console also has quickstarts for other languages, such as Node.js, Go, and Java.</p>
+<p>When you go through the Quickstart, make sure to do the following:</p>
+<ul>
+<li>Specify that the trigger for the function is HTTP.</li>
+<li>Copy the trigger <strong>URL</strong> to the &#34;Cloud Function Trigger URL&#34; field in your tracking worksheet.</li>
+<li>If <strong>Require HTTPS</strong> is not already enabled, then enable it.</li>
+<li>Click <strong>Save</strong>.</li>
+<li>Click <strong>Next</strong>.</li>
+</ul>
+<p class="image-container"><img alt="gcc1" src="img/d6663e0d3919489c.png"></p>
+<p>Negative</p>
+<p>: The GCP instructions say to select <strong>Allow unauthenticated invocations</strong>. That is acceptable for sample functions, including the one in this guide, but most production systems should require authentication. We recommend you select &#34;Require authentication.&#34;</p>
+<p>Before pasting in any code, select an appropriate <strong>Runtime</strong>. For this guide&#39;s example, choose the Python 3.7 runtime.</p>
+<p class="image-container"><img alt="gcc2" src="img/ca5be26538d9a8a9.png"></p>
+<p>Then, replace the default code with this sample code:</p>
+<pre><code language="language-python" class="language-python">import json
+
+HTTP_SUCCESS = 200
+HTTP_FAILURE = 400
+
+def echo(request):
+    try:
+        # The list of rows to return.
+        return_value = []
+
+        payload = request.get_json()
+        rows = payload[&#34;data&#34;]
+
+        # For each input row
+        for row in rows:
+            # Include the row number.
+            row_number = row[0]
+            # Combine the value(s) in the row into a Python list that will be treated as an SQL VARIANT.
+            row_value = row[1:]
+            row_to_return = [row_number, row_value]
+            return_value.append(row_to_return)
+
+        json_compatible_string_to_return = json.dumps( { &#34;data&#34; : return_value } )
+        return (json_compatible_string_to_return, HTTP_SUCCESS)
+
+    except:
+        return(request.data, HTTP_FAILURE)
+</code></pre>
+<p>This code combines the input parameter values into a single list (array) and returns that list as a single value of SQL type VARIANT.</p>
+<p>Negative</p>
+<p>: Ensure that the <strong>Entry point</strong> matches the function&#39;s name (in this case, <code>echo</code>).</p>
+<p>Then click <strong>Deploy</strong> to finalize the creation. Now let&#39;s test the function out.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test the Google Cloud Function" duration="2">
+        <p>After you finish creating the Google Cloud Function, use the <strong>Testing</strong> tab in the console to call the function to make sure that it works as expected. You can also access this tab by clicking the three dots for the function and selecting <strong>Test function</strong>.</p>
+<p>For our example, replace any default data in the <strong>Testing</strong> tab with the following test data:</p>
+<pre><code>{ &#34;data&#34;:
+ [
+  [ 0, 43, &#34;page&#34; ],
+  [ 1, 42, &#34;life, the universe, and everything&#34; ]
+ ]
+}
+</code></pre>
+<p>The execution results should be similar to:</p>
+<pre><code>{&#34;data&#34;:
+ [
+  [0, [43, &#34;page&#34;] ],
+  [1, [42, &#34;life, the universe, and everything&#34;] ]
+ ]
+}
+</code></pre>
+<p>Negative</p>
+<p>: The results might be displayed in a different format from the example shown above.</p>
+<p class="image-container"><img alt="gcc3" src="img/4e1c730965447e6c.png"></p>
+<p>If the test succeeded, congratulations! You now have a Google Cloud Function that you can use as the remote service for your external function.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an API Definition" duration="5">
+        <p>Snowflake does not send data (HTTP POST requests) directly to a remote service. Instead, Snowflake sends the data to a proxy service that relays the data from Snowflake to the remote service (i.e., GCP Cloud Function) and back again.</p>
+<p>Positive</p>
+<p>: <strong>Links to Related Google Documentation <br></strong> For more detailed information about using the Google Cloud Console to perform the tasks described in this guide, see the sections on <a href="https://cloud.google.com/api-gateway/docs/quickstart-console#creating_an_api_definition" target="_blank">creating an API definition</a> and <a href="https://cloud.google.com/api-gateway/docs/quickstart-console#creating_a_gateway" target="_blank">creating a gateway</a> in the <a href="https://cloud.google.com/api-gateway/docs/quickstart-console" target="_blank">Quickstart for Deploying an API/API Gateway using the Google Cloud Console</a>.</p>
+<p>Create and customize a YAML-formatted configuration file that specifies the API you are creating on your local file system. The file should have the <code>.yaml</code> or <code>.yml</code> extension. Use this template:</p>
+<pre><code>swagger: &#39;2.0&#39;
+info:
+ title: API Gateway config for Snowflake external function.
+ description: This configuration file connects the API Gateway resource to the remote service (Cloud Function).
+ version: 1.0.0
+schemes:
+ - https
+produces:
+ - application/json
+paths:
+ /&lt;PATH&gt;:
+  post:
+   summary: Echo the input.
+   operationId: echo
+   x-google-backend:
+    address: &lt;HTTP ENDPOINT TO ROUTE REQUEST TO&gt;
+    protocol: h2
+   responses:
+    &#39;200&#39;:
+     description: &lt;DESCRIPTION&gt;
+     schema:
+      type: string
+</code></pre>
+<p>There are a few fields that you need to fill in or update. Let&#39;s go through those now.</p>
+<p>First, replace <code>&lt; PATH ></code> with a unique name. This will be incorporated into URLs, so use only characters that are valid in URLs. For our example, you can enter <code>demo-func-resource</code>.</p>
+<p>Unlike the other fields in this configuration file, the <code>&lt; PATH ></code> value is entered <em>before</em> the colon. This the correct format:</p>
+<pre><code>paths:
+ /demo-func-resource:
+</code></pre>
+<p>The pathname should <strong>not</strong> contain any <a href="https://swagger.io/docs/specification/2-0/describing-parameters/#path-parameters" target="_blank">path parameters</a>. While Google does support path parameters when setting the path to a URL, Snowflake does <strong>not</strong> support path parameters in the corresponding URL specified in the <code>CREATE EXTERNAL FUNCTION</code> statement.</p>
+<p>Then copy the path (e.g. <code>demo-func-resource</code>) you just named to the &#34;Path Suffix&#34; field in your tracking worksheet.</p>
+<p>Next, find the <code>address</code> field under the <code>x-google-backend</code> field, and replace <code><HTTP ENDPOINT TO ROUTE REQUEST TO></code> with the value from the &#34;Cloud Function Trigger URL&#34; field in your tracking worksheet. The result should look similar to:</p>
+<pre><code>x-google-backend:
+ address: https:// ...
+</code></pre>
+<p>The URL should not be enclosed in quotation marks. Since you selected <strong>Require HTTPS</strong> when creating the Google Cloud Function, ensure that the URL you enter into the address field starts with <code>https</code>.</p>
+<p>Positive</p>
+<p>: The URL does not need to be an endpoint hosted by Google; it can be the path to any HTTP endpoint.</p>
+<p>Optionally, you can also update any of the following values:</p>
+<ul>
+<li><code>title</code> in the <code>info</code> section.</li>
+<li><code>description</code> in the <code>info</code> section.</li>
+<li><code>operationId</code> in the <code>post</code> subsection of the <code>paths</code> section.</li>
+<li><code>summary</code> in the <code>post</code> subsection of the <code>paths</code> section.</li>
+</ul>
+<p>Review your sample configuration file. It should look similar to the following:</p>
+<pre><code>swagger: &#39;2.0&#39;
+info:
+ title: &#34;API Gateway config for Snowflake external function&#34;
+ description: &#34;This configuration file connects the API Gateway resource to the remote service (Cloud Function).&#34;
+ version: 1.0.0
+schemes:
+ - https
+produces:
+ - application/json
+paths:
+ /demo-func-resource:
+  post:
+   summary: &#34;echo the input&#34;
+   operationId: echo
+   x-google-backend:
+    address: https://my_dev.cloudfunctions.net/demo-cloud-function-01
+    protocol: h2
+   responses:
+    &#39;200&#39;:
+     description: echo result
+     schema:
+      type: string
+</code></pre>
+<p>Once you&#39;ve made all the changes, be sure to save the configuration file. Then, record the file path and name in the &#34;Configuration File Name&#34; field in your tracking worksheet.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an API Gateway" duration="10">
+        <p>Three steps together make up creating an API Gateway. Let&#39;s walk you through them now.</p>
+<h2 is-upgraded>Create a GCP API</h2>
+<p>First, you need to create a <em>GCP API</em>, a container containing one or more API Gateways and one or more configuration files.</p>
+<p>Go to the <strong>Google Cloud API Gateway</strong> screen by clicking on the GCP menu and selecting <strong>API Gateway</strong>. You can also search for it in the search bar at the top of any Google Cloud Platform page. Then:</p>
+<ol type="1">
+<li>Click on <strong>CREATE GATEWAY.</strong></li>
+<li>Enter the <strong>Display Name</strong> and the <strong>API ID</strong> (e.g. <code>demo-api-display-name-for-external-function1</code> and <code>demo-api-id-for-external-function1</code>).</li>
+</ol>
+<p class="image-container"><img alt="gcc4" src="img/c5d754bf369a9480.png"></p>
+<p>Positive</p>
+<p>: You do not need to record these values in your tracking worksheet. However, you might want to record the API ID so you can delete it when you are done with it.</p>
+<h2 is-upgraded>Create an API Config</h2>
+<p>After creating a GCP API, you need to create an API Config. You create an API config when you upload your configuration file to the console.</p>
+<p>Scroll to the <strong>API Config</strong> section of the screen and search for the field that contains <strong>Upload an API Spec</strong>. Click on <strong>BROWSE</strong> and select your configuration file.</p>
+<p>Positive</p>
+<p>: The name of your configuration file was recorded in the &#34;Configuration File Name&#34; field in your tracking worksheet.</p>
+<p>Enter a display name into the field that contains <strong>Display Name</strong>.</p>
+<p>Finally, <strong>select a service account</strong>. For this example, select <strong>App Engine default service account</strong>. If you are creating a function to use in production (rather than as a sample), you might choose a different service account.</p>
+<p class="image-container"><img alt="gcc5" src="img/cd71d170eba3520c.png"></p>
+<p>Negative</p>
+<p>: The selected service account must have appropriate privileges, including privileges to call the Cloud Function.</p>
+<h2 is-upgraded>Create a Gateway with the API Config</h2>
+<p>Scroll to the <strong>Gateway details</strong> section of the screen and enter the <strong>Display Name</strong> of the new API Gateway.</p>
+<p>Then, click in the <strong>Location</strong> field and select the appropriate region (e.g. <code>us-central1</code>).</p>
+<p class="image-container"><img alt="gcc6" src="img/6f2f71862e07c54.png"></p>
+<p>Click on <strong>CREATE GATEWAY</strong>. This will take you to the <strong>APIs</strong> screen and shows you a list of your APIs.</p>
+<p>Negative</p>
+<p>: If your new API is not visible immediately, wait a few minutes, then click the <strong>Refresh</strong> button.</p>
+<p>You&#39;ll need to copy the value of the API&#39;s <strong>Managed Service</strong> to the &#34;Managed Service Identifier&#34; field in your tracking worksheet.</p>
+<p>Once you&#39;ve copied that down, click on the name of the API. You should see four tabs:</p>
+<ul>
+<li><strong>OVERVIEW</strong></li>
+<li><strong>DETAILS</strong></li>
+<li><strong>CONFIGS</strong></li>
+<li>And <strong>GATEWAYS</strong></li>
+</ul>
+<p>Click on the <strong>GATEWAYS</strong> tab; You&#39;ll want to copy the <strong>Gateway URL</strong> to the &#34;Gateway Base URL&#34; field in your tracking worksheet.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the API Integration" duration="3">
+        <p>Now let&#39;s go over how to create an API integration object in Snowflake to work with your proxy service (i.e., Google Cloud API Gateway).</p>
+<p>You can create the API integration object using the  <a href="https://docs.snowflake.com/en/sql-reference/sql/create-api-integration.html" target="_blank">CREATE API INTEGRATION</a> command within Snowflake. To do so, first, you&#39;ll need to be logged into the Snowflake web interface and on the Worksheets page.</p>
+<p>From the Worksheets page, execute the USE ROLE command to use the ACCOUNTADMIN role or a role with the CREATE INTEGRATION privilege. For example:</p>
+<pre><code>use role accountadmin;
+</code></pre>
+<p>Once you are using the necessary role, you can create the API integration object. Enter a CREATE API INTEGRATION statement that takes this form:</p>
+<pre><code>create or replace api integration &lt;integration_name&gt;
+  api_provider = google_api_gateway
+  google_audience = &#39;&lt;google_audience_claim&gt;&#39;
+  api_allowed_prefixes = (&#39;&lt;url&gt;&#39;)
+  enabled = true;
+</code></pre>
+<p>In the statement:</p>
+<ul>
+<li>Replace <code>&lt; integration_name ></code> with a unique integration name (e.g. <code>my_api_integration_name</code>). The name must follow the rules for <a href="https://docs.snowflake.com/en/sql-reference/identifiers.html" target="_blank">Object Identifiers</a>. Be sure to record the integration name in your tracking worksheet&#39;s &#34;API Integration Name&#34; field.</li>
+<li>For <code>google_audience</code>, replace <code>&lt; google_audience_claim ></code> with the value from the &#34;Managed Service Identifier&#34; field in your tracking worksheet.</li>
+</ul>
+<p>Positive</p>
+<p>: During authentication, Snowflake passes a JWT (JSON Web Token) to Google. The JWT contains an &#34;aud&#34; (&#34;audience&#34;) claim, which Snowflake sets to the value for <code>google_audience</code>. For more information about authenticating with Google, see the Google service account <a href="https://cloud.google.com/api-gateway/docs/authenticate-service-account#configure_auth" target="_blank">authentication documentation</a>.</p>
+<ul>
+<li>For <code>api_allowed_prefixes</code>, replace <code>&lt; url ></code> with the value from the &#34;Gateway Base URL&#34; field in your tracking worksheet. This field allows you to restrict the URLs to which this API integration can be applied.</li>
+</ul>
+<p>Once you&#39;ve made the necessary adjustments to the statement, execute the CREATE API INTEGRATION statement.</p>
+<p>After executing, we&#39;ll need to grab some additional information. Execute the <a href="https://docs.snowflake.com/en/sql-reference/sql/desc-integration.html" target="_blank">DESCRIBE INTEGRATION</a> command:</p>
+<pre><code>describe integration &lt;integration_name&gt;;
+</code></pre>
+<p>Look at the results; Record the value for <code>API_GCP_SERVICE_ACCOUNT</code> in the &#34;API_GCP_SERVICE_ACCOUNT&#34; field in your tracking worksheet.</p>
+<p>Now we have everything we need to create the external function!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the External Function" duration="3">
+        <p>Now it&#39;s time to discuss how to create an external function object in Snowflake. This object stores information about the remote service, such as the parameters that the remote service accepts.</p>
+<p>Negative</p>
+<p>: External functions in Snowflake are database objects, meaning they must be created in a schema in a database. To create an external function, you must have the appropriate privileges on the database and schema where you are creating the function. For more details, see <a href="https://docs.snowflake.com/en/user-guide/security-access-control-privileges.html" target="_blank">Access Control Privileges</a>.</p>
+<p>You should still be on the Worksheets page of the Snowflake web interface. From there, you will enter a <a href="https://docs.snowflake.com/en/sql-reference/sql/create-external-function.html" target="_blank">CREATE EXTERNAL FUNCTION</a> statement that takes the following form:</p>
+<pre><code>create or replace external function &lt;external_function_name&gt;(&lt;parameters&gt;)
+  returns variant
+  api_integration = &lt;api_integration_name&gt;
+  as &#39;&lt;function_url&gt;&#39;;
+</code></pre>
+<p>Again, you&#39;ll need to modify the function to have your own specific parameters:</p>
+<ul>
+<li>Replace <code>&lt; external_function_name ></code> with a unique function name (e.g. <code>echo</code>). This name must follow the rules for <a href="https://docs.snowflake.com/en/sql-reference/identifiers.html" target="_blank">Object Identifiers</a>. Record this name in the &#34;External Function Name&#34; field in your tracking worksheet.</li>
+<li>Replace <code>&lt; parameters ></code> with the names and SQL data types of the parameters for the function, if any. Record the parameter names and data types in your tracking worksheet&#39;s &#34;External Function Name&#34; field. For our example:</li>
+</ul>
+<pre><code>a integer, b varchar
+</code></pre>
+<p>Negative</p>
+<p>: The parameters must correspond to the parameters expected by the remote service. The parameter names do not need to match, but the data types need to be compatible.</p>
+<ul>
+<li>Replace <code>&lt; api_integration_name ></code> with the value from the &#34;API Integration Name&#34; field in your tracking worksheet.</li>
+<li>Replace <code>&lt; function_URL ></code> with the values from the &#34;Gateway Base URL&#34; and &#34;Path Suffix&#34; fields, separated by a forward slash (<code>/</code>). The URL should look similar to:</li>
+</ul>
+<pre><code>https://&lt;gateway-base-url&gt;/&lt;path-suffix&gt;
+</code></pre>
+<p>After making those changes, execute the CREATE EXTERNAL FUNCTION command.</p>
+<p>You should now be able to call your external function. Let&#39;s go over how to do that next.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Calling the External Function" duration="1">
+        <p>Now it&#39;s finally time to call the external function!</p>
+<p>Negative</p>
+<p>: <strong>A role must have USAGE or OWNERSHIP privileges on that external function. <br></strong> If appropriate, grant USAGE privilege on the external function to one or more Snowflake roles so that the roles can call the external function.</p>
+<p>You can call your external function as you would execute any UDF. For our specific example function, the command looks like this:</p>
+<pre><code>select &lt;external_function_name&gt;(42, &#39;Life, the Universe, and Everything&#39;);
+</code></pre>
+<p>The returned value should be similar to:</p>
+<pre><code>[42, &#34;Life, the Universe, and Everything&#34;]
+</code></pre>
+<p>Negative</p>
+<p>: External functions are schema objects, so the schema containing the function must be in use in your session, or you must specify the fully qualified name of the function when calling it.</p>
+<p>Great! You&#39;ve successfully created and called an external function for GCP!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="1">
+        <p>In the previous steps, you created a Google Cloud Function that can be called by anyone who has the correct Google Cloud API Gateway endpoint.</p>
+<p>Unless you want the endpoint to be open to the public, you should secure it by creating a security policy on the Google Cloud API Gateway. The Snowflake <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-gcp-ui-security-policy.html" target="_blank">documentation</a> provides instructions for creating a security policy for the API Gateway by adding a customized <code>securityDefinitions</code> section to the configuration file for the API definition.</p>
+<p>As you delve into creating a function on GCP, you may need to troubleshoot specific issues. If you do, be sure to turn to our <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-gcp-troubleshooting.html" target="_blank">Troubleshooting External Functions for GCP</a> guide to help you in that process.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting-started-with-prophet-using-snowflake-ml",
+  "duration": 15,
+  "title": "Getting Started with Prophet Model using Snowflake ML",
+  "summary": "This is a sample Snowflake Guide to get started with Prophet",
+  "source": "getting_started_with_prophet_model_using_snowflake_ml/getting_started_with_prophet_model_using_snowflake_ml.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "mlops",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-prophet-using-snowflake-ml"
+}

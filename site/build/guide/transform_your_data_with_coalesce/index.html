@@ -1,0 +1,259 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Accelerate Transformations with Coalesce and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="transform_your_data_with_coalesce"
+                  title="Accelerate Transformations with Coalesce and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Coalesce is a best-in-class Data Transformation solution for Snowflake. With Coalesce, you build directed acyclic graphs (DAG) made up of nodes that run on a schedule and produce tested, up-to-date datasets ready for your business users.</p>
+<p>The Coalesce product is built around the concept of &#34;metadata&#34; - column and table level information that describes the structure and transformations inside your data warehouse. This metadata makes both designing and deploying data warehouses easier, especially at enterprise scale.</p>
+<p class="image-container"><img alt="Coalesce Pipeline" src="img/e702471aff7808b5.png"></p>
+<p>This guide will help you quickly get started with Coalesce, connecting your database and creating a small data mart for a hypothetical sales team.  Using the Snowflake sample database, we will be implementing a Dimension node to track historical changes of their customers and a Fact node to record order transactions.</p>
+<p>The following video provides a brief overview of (most of) what this guide will be covering.</p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/MVQRH2qsizg?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL and Snowflake</li>
+<li>Basic understanding of dimensional modeling</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use Coalesce to build a basic data transformation pipeline</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>If you haven&#39;t yet signed up for a Coalesce account, you can do so <a href="https://coalesce.io/start-free/" target="_blank">here</a>.</li>
+<li>Make sure you&#39;re using Google&#39;s Chrome browser, as other browsers are not officially supported.</li>
+<li>Have your Snowflake login information handy. Don&#39;t have a Snowflake account yet or not ready to connect your company&#39;s Snowflake to Coalesce? Sign up for a free trial <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">here</a> and use Snowflake&#39;s provided sample data.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A small data mart containing dimension and fact tables using native Snowflake SQL</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Initial Setup" duration="2">
+        <h2 is-upgraded>Interface Overview</h2>
+<p>When you first sign in on a new account, you&#39;ll be presented with the <strong>Projects Dashboard</strong>, where a default <strong>Project</strong> and <strong>Development Workspace</strong> will be already created. Feel free to disregard the warning about Version Control, as this guide will not be using that feature. Click the <strong>Launch</strong> button to open the workspace to continue.</p>
+<p class="image-container"><img alt="Launching a Workspace" src="img/7b042a964165bd4e.png"></p>
+<p>Once you&#39;ve done this you&#39;ll be presented with the <strong>Build</strong> interface.  This is where you&#39;ll spend most of your time creating nodes, building a graph with them, and transforming your data.  In Coalesce, each Node is a logical unit of work that represents a table, a view, or multiple Snowflake objects.  The other interface is the <strong>Deploy</strong> interface, which will be used to push your pipeline to other environments (QA, Production, etc.), including your graph and other metadata.</p>
+<aside class="special"><p>Note that on a brand new account, the <strong>Problem Scanner</strong> will show a few action items.  You can disregard those as most will be resolved by the end of this guide.</p>
+</aside>
+<p class="image-container"><img alt="Problem Scanner" src="img/75748b2f5f895f87.png"></p>
+<h2 is-upgraded>Connect to Snowflake</h2>
+<ol type="1">
+<li>Click on <strong>Build Settings</strong>, which is represented by a cogwheel icon toward the bottom left</li>
+</ol>
+<p class="image-container"><img alt="Build Settings Location" src="img/da39314f532bb924.png"></p>
+<ol type="1" start="2">
+<li>Go to <strong>Development Workspaces</strong> and edit your current <strong>Workspace</strong> by clicking the pencil icon to the right of it.</li>
+<li>Obtain your Snowflake URL, which you can find in the lower left of Snowflake&#39;s UI upon login -</li>
+</ol>
+<p class="image-container"><img alt="Find SF URL" src="img/8cdbfbe3aa60b773.png"></p>
+<ol type="1" start="4">
+<li>From the <strong>Edit Workspace</strong> screen → <strong>Settings</strong> → <strong>Account</strong> → Add your Snowflake URL</li>
+</ol>
+<p class="image-container"><img alt="Edit Workspace" src="img/9e3729dcc2c9195f.png"></p>
+<ol type="1" start="5">
+<li>From the <strong>Edit Workspace</strong> screen → <strong>User Credentials</strong> and fill out the form with your Snowflake login</li>
+<li>Click <strong>Test Connection</strong> to ensure your credentials work as expected</li>
+<li>Click <strong>Save</strong></li>
+</ol>
+<p>You&#39;ve now connected Coalesce to your Snowflake instance!</p>
+<h2 is-upgraded>Configure Storage Locations &amp; Workspace</h2>
+<p>A storage location is a logical name you provide to represent a database and schema (in Snowflake) and you will need them to make use of the <strong>Workspace</strong> you configured earlier.  Depending on when you signed up for Coalesce, your account may have one or two <strong>Storage Locations</strong> already created. One will be mapped to the Snowflake Sample Data (SRC or SAMPLE) and the other will be where we write new tables (WORK or TARGET). If your workspace already has 2 storage locations, you can skip to Step 3 below.</p>
+<ol type="1">
+<li>Go to <strong>Build Settings</strong> → <strong>Storage Locations</strong> and click on <strong>New Storage Location</strong> to create a new location - TARGET</li>
+<li>Make sure to set TARGET as the default <strong>Storage Location</strong>.</li>
+<li>Edit your <strong>Workspace</strong> → <strong>Storage Mappings</strong></li>
+<li>From here enter the actual databases and schemas that will correspond to each <strong>Storage Location</strong>.  For this guide we will be using Snowflake&#39;s sample schema TPCH_SF1 as our data source.  Feel free to use any schema you&#39;d like as the target for the transformed data.</li>
+</ol>
+<p class="image-container"><img alt="Configuration of Storage Mappings" src="img/507da01b2f724566.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Data Sources" duration="2">
+        <p>Now it&#39;s time to add <strong>Sources</strong> to the graph.  The graph node view is where you&#39;ll configure <strong>Nodes</strong> that will transform your data.  Below is an example of a graph with several nodes -</p>
+<p class="image-container"><img alt="Example Graph" src="img/522a3fb53fa02cc8.png"></p>
+<p>To add <strong>Source Nodes</strong> take the following steps:</p>
+<ol type="1">
+<li>Expand <strong>Nodes</strong> from the <strong>Left Sidebar</strong> (if not already open)</li>
+</ol>
+<p class="image-container"><img alt="Select Nodes" src="img/b69317164bb4a2be.png"></p>
+<ol type="1" start="2">
+<li>Click on the <strong>+</strong> sign → <strong>Add Sources</strong></li>
+</ol>
+<p class="image-container"><img alt="Adding Sources" src="img/3fc2069e1b43b21c.png"></p>
+<ol type="1" start="3">
+<li>Choose your source tables on the left and click <strong>Add Sources</strong> on the bottom right to add the sources to your pipeline</li>
+</ol>
+<p class="image-container"><img alt="Add Sources to Pipeline" src="img/ecbedb4f8b9e76ff.png"></p>
+<ol type="1" start="4">
+<li>You&#39;ll now see your graph populated with some <strong>Source Nodes</strong></li>
+</ol>
+<p class="image-container"><img alt="Graph with Source Nodes" src="img/8663de4666b69cf1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Make a Stage Node" duration="2">
+        <p>Now that you have a few <strong>Source Nodes</strong> on your graph, it&#39;s time to add a <strong>Stage Node</strong>.  <strong>Stage Nodes</strong> are intermediate nodes in the graph where you prepare the data by applying business logic.</p>
+<ol type="1">
+<li>Add one or more <strong>Stage Nodes</strong> by right clicking your <code>Nation</code> <strong>Source Node</strong> → <strong>Add Node</strong> → <strong>Stage Node</strong>.  Note that you can select multiple <strong>Source Nodes</strong> by Shift+clicking them and then add multiple <strong>Stage Nodes</strong> simultaneously.</li>
+<li>Double click on the <strong>Stage Node</strong> or right-click → <strong>Edit</strong> to open up the <strong>Node Editor</strong></li>
+<li>Open <strong>Node Properties</strong> on the right and change the <strong>Location</strong> to the Target you configured earlier.</li>
+</ol>
+<p class="image-container"><img alt="Node Properties" src="img/8d7636ab61d4bf96.png"></p>
+<ol type="1" start="4">
+<li>Click <strong>Create</strong> to create a table in Snowflake</li>
+<li>Click <strong>Run</strong> to populate the table.  Note that you haven&#39;t transformed the data yet!</li>
+<li>Edit the <strong>Transform</strong> field in the <strong>Mapping</strong> grid by double clicking in the transform field of the <code>N_NAME</code> column.  Try a simple transform like <code>LOWER()</code> and the name of your column, or you can use the syntax <code>LOWER(&#123;&#123;SRC}})</code></li>
+<li>Click <strong>Run</strong> again to transform the data</li>
+</ol>
+<aside class="special"><p> Any <a href="https://docs.snowflake.com/en/sql-reference-functions.html" target="_blank">Snowflake SQL transform</a> can be used to transform your data.</p>
+</aside>
+<p class="image-container"><img alt="Transformed Data" src="img/ca379a948b0f7d1b.png"></p>
+<ol type="1" start="8">
+<li>You&#39;ll see a preview of your transformed data in the lower half of the screen, but feel free to take a peek in your Snowflake database to confirm.</li>
+</ol>
+<p>Congratulations!  You&#39;ve connected your database and applied a basic transformation to your data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Dimension Table" duration="3">
+        <p>Now let&#39;s create a simple slowly changing dimension (Type 2) — an industry standard for tracking historical data by creating multiple records for a given natural key.</p>
+<ol type="1">
+<li>Create a new <strong>Stage Node</strong> from the CUSTOMER <strong>Source Node</strong></li>
+<li>Go into this new node to <strong>Create</strong> and <strong>Run</strong></li>
+<li>Return to the main graph and create a Dimension node from the <code>STG_CUSTOMER</code> node.  By default, Coalesce creates a Type 1 Dimension.  In this guide we will be making a Type 2 Dimension to track historical data of a column.</li>
+</ol>
+<p class="image-container"><img alt="Graph With Dimension" src="img/200ee3cc718d2faa.png"></p>
+<ol type="1" start="4">
+<li>Go into the new <code>DIM_CUSTOMER</code> node</li>
+<li>Open up <strong>Options</strong> on the right side</li>
+<li>Choose <code>C_CUSTKEY</code> as a business key by selecting it and clicking the arrow to move it to the right</li>
+</ol>
+<p class="image-container"><img alt="Choosing a Business Key" src="img/3e17fd05c8b3d34f.png"></p>
+<ol type="1" start="7">
+<li>Scroll down the options pane to <strong>Change Tracking</strong> and select columns <code>C_ADDRESS</code> and <code>C_PHONE</code>, clicking the arrow to move them to the right</li>
+<li>Now <strong>Create</strong> and <strong>Run</strong> the <code>DIM_CUSTOMER</code> node</li>
+</ol>
+<aside class="special"><p> In the <strong>Dimension Node</strong>, if no <strong>Change Tracking</strong> columns are selected, the node will act as a Type 1 Dimension.  If <strong>Change Tracking</strong> columns are selected, it will act as a Type 2.</p>
+</aside>
+<p>You have now finished creating a Type 2 Dimension table.  Next we will make a Fact Table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Fact Table" duration="3">
+        <p>Now let&#39;s create a fact table.</p>
+<ol type="1">
+<li>Create a new <strong>Stage Node</strong> from the <code>ORDERS</code> <strong>Source Node</strong></li>
+<li>Open the new <code>STG_ORDERS</code> node and delete all the columns except for <code>O_ORDERKEY</code>, <code>O_CUSTKEY</code>, and <code>O_TOTALPRICE</code></li>
+<li>Select the <code>DIM_CUSTOMER</code> node on the left side, then select <code>DIM_CUSTOMER_KEY</code> and drag it into your <code>STG_ORDERS</code> mapping grid</li>
+</ol>
+<p class="image-container"><img alt="Adding Customer Key" src="img/20b3f35e51bb72ed.png"></p>
+<ol type="1" start="4">
+<li>Go to <strong>Join</strong> in <code>STG_ORDERS</code></li>
+<li>Delete the existing text</li>
+<li>Click <strong>Generate Join</strong> and then <strong>Copy to Editor</strong></li>
+<li>Replace the <code>/*COLUMN*/</code> text with <code>O_CUSTKEY</code></li>
+<li><strong>Create</strong> and <strong>Run</strong> the <code>STG_ORDERS</code> node</li>
+<li>Create a <strong>Fact Node</strong> from <code>STG_ORDERS</code></li>
+<li>Open the new <code>FCT_ORDERS</code> node</li>
+<li>Open <strong>Options</strong> → Business Key → add <code>O_ORDERKEY</code></li>
+<li><strong>Create</strong> and <strong>Run</strong> the <code>FCT_ORDERS</code> node</li>
+</ol>
+<p>You have now made a fact table!  You can run this query in Snowflake (adjusting your schema and databases from <code>MY_DB</code> and <code>MY_SCHEMA</code> to the ones in your environment) to confirm.</p>
+<pre><code language="language-sql" class="language-sql">select DIM.C_NAME CUSTOMER_NAME,
+sum(FCT.O_TOTALPRICE) TOTAL_PRICE
+from &#34;MY_DB&#34;.&#34;MY_SCHEMA&#34;.&#34;FCT_ORDERS&#34; FCT
+inner join &#34;MY_DB&#34;.&#34;MY_SCHEMA&#34;.&#34;DIM_CUSTOMER&#34; DIM
+on FCT.DIM_CUSTOMER_KEY = DIM.DIM_CUSTOMER_KEY
+group by DIM.C_NAME;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Now that you&#39;re familiar with some of Coalesce&#39;s basic functionality and how it can be used to automate many of your SQL workflows, you can:</p>
+<ul>
+<li><a href="https://coalesce.io/request-demo/" target="_blank">Contact us</a> to speak with our product experts about your use case and see a live, personalized demo</li>
+<li>Check out our <a href="https://coalesce.io/resources/" target="_blank">resources</a> to learn more about our platform</li>
+<li>Learn more about version control and using git with Coalesce by visiting our <a href="https://docs.coalesce.io/docs/git-settings" target="_blank">documentation</a> and following this hands-on <a href="https://guides.coalesce.io/dataops-and-git-best-practices/index.html#0" target="_blank">guide</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Connecting Snowflake to Coalesce</li>
+<li>Adding data sources</li>
+<li>Transforming data with a Stage Node</li>
+<li>Creating Dimension and Fact Tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

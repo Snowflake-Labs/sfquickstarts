@@ -1,16 +1,15 @@
 author: Janet Revell
 id: soda
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Follow this guide to set up and run a Soda scan for data quality in Snowflake.
-categories: Getting-Started, Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Quality, Data Testing
 
 # Data Quality Testing with Soda
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![soda-data-quality](assets/soda-data-quality.png)
 
@@ -50,7 +49,6 @@ Is your data fresh? Is it complete or missing values? Are there unexpected dupli
 
 <!-- ------------------------ -->
 ## How Soda Works
-Duration: 2
 
 Soda works by taking the data quality checks that you prepare and using them to run a scan of datasets in a data source. A scan is a CLI command which instructs Soda to prepare optimized SQL queries that execute data quality checks on your data source to find invalid, missing, or unexpected data. When checks fail, they surface bad-quality data and present check results that help you investigate and address quality issues.
 
@@ -79,7 +77,6 @@ Use GitHub Actions to add automated Soda data quality checks to your **developme
 
 <!-- ------------------------ -->
 ## Install Soda
-Duration: 2
 
 1. In your command-line interface, create a Soda project directory in your local environment, then navigate to the directory.
     ```shell
@@ -125,7 +122,6 @@ To exit the virtual environment when you are done with this tutorial, use the co
 
 <!-- ------------------------ -->
 ## Connect Soda to Snowflake
-Duration: 8
 
 To connect Soda to Snowflake, you use a `configuration.yml` file which stores access details for your data source.
 
@@ -183,7 +179,6 @@ This guide also instructs you to connect to a Soda Cloud account using API keys 
 
 <!-- ------------------------ -->
 ## Write data quality checks and run a scan
-Duration: 6
 
 A check is a test that Soda executes when it scans a dataset in your data source. The `checks.yml` file stores the checks you write using the [Soda Checks Language (SodaCL)](https://go.soda.io/sodacl). You can create multiple checks.yml files to organize your data quality checks and run all, or some of them, at scan time.
 
@@ -249,7 +244,6 @@ A check is a test that Soda executes when it scans a dataset in your data source
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 Now that you have seen Soda in action, learn more about how and where to integrate data quality into your existing workflows and pipelines.
 

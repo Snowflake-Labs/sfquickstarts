@@ -1,0 +1,343 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with LlamaParse and Cortex Search</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-llamaparse-and-cortex-search"
+                  title="Getting Started with LlamaParse and Cortex Search"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p>This guide walks through how to build a RAG using LlamaParse (from LlamaIndex) to parse documents and Snowflake Cortex for text splitting, search and generation.</p>
+<p><a href="https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/" target="_blank">LlamaParse</a> is a genAI-native document parsing platform - built with LLMs and for LLM use cases. The main goal of LlamaParse is to parse and clean your data, ensuring that it&#39;s high quality before passing to any downstream LLM use case such as RAG or agents.</p>
+<p>LlamaParse comes equipped with the following features:</p>
+<ul>
+<li>State-of-the-art table extraction</li>
+<li>Provide natural language instructions to parse the output in the exact format you want it.</li>
+<li>JSON mode</li>
+<li>Image extraction</li>
+<li>Support for 10+ file types (.pdf, .pptx, .docx, .html, .xml, and more)</li>
+<li>Foreign language support</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to parse complex PDFs using LlamaParse</li>
+<li>How to convert Llama-Index document format to DataFrames</li>
+<li>How to load data into Snowflake</li>
+<li>How to split text for retrieval</li>
+<li>How to create and use Cortex Search services</li>
+<li>How to build a RAG pipeline for question answering</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A workflow to parse and ingest PDFs into Snowflake</li>
+<li>A table of split text chunks for hybrid search (via Cortex Search)</li>
+<li>A RAG pipeline for Q&amp;A using Cortex Search and Snowflake Cortex generation</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A LlamaCloud API key (<a href="https://docs.cloud.llamaindex.ai/api_key" target="_blank">get one here</a>)</li>
+<li>A Snowflake account (<a href="https://signup.snowflake.com/" target="_blank">sign up here</a>)</li>
+<li>Python <strong>3.10+</strong></li>
+<li>Required Python packages: <code>llama-cloud</code>, <code>snowflake-snowpark-python</code>, <code>snowflake-ml-python</code>, <code>pandas</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="2">
+        <p>Set up your environment and credentials for LlamaParse and Snowflake. You&#39;ll need a <a href="https://docs.cloud.llamaindex.ai/api_key" target="_blank">LlamaCloud API key</a> and a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a>.</p>
+<p>Once you have signed up for a Snowflake account, create database and warehouse using the following SQL statements:</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS SEC_10KS;
+
+CREATE OR REPLACE WAREHOUSE LLAMAPARSE_CORTEX_SEARCH_WH WITH
+     WAREHOUSE_SIZE=&#39;X-SMALL&#39;
+     AUTO_SUSPEND = 120
+     AUTO_RESUME = TRUE
+     INITIALLY_SUSPENDED=TRUE;
+</code></pre>
+<p>To open the notebook, open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-llamaparse-and-cortex-search/blob/main/llama-parse-cortex-search.ipynb" target="_blank">llama-parse-cortex-search.ipynb</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</p>
+<p>First, et your Llama-Cloud API key and Snowflake credentials as environment variables.</p>
+<pre><code language="language-python" class="language-python">import os
+import nest_asyncio
+nest_asyncio.apply()
+
+os.environ[&#34;LLAMA_CLOUD_API_KEY&#34;] = &#34;llx-...&#34;  # Replace with your LlamaCloud API key
+os.environ[&#34;SNOWFLAKE_ACCOUNT&#34;] = &#34;...&#34;        # Use hyphens in place of underscores
+os.environ[&#34;SNOWFLAKE_USER&#34;] = &#34;...&#34;
+os.environ[&#34;SNOWFLAKE_PASSWORD&#34;] = &#34;...&#34;
+os.environ[&#34;SNOWFLAKE_ROLE&#34;] = &#34;...&#34;
+os.environ[&#34;SNOWFLAKE_WAREHOUSE&#34;] = &#34;LLAMAPARSE_CORTEX_SEARCH_WH&#34;
+os.environ[&#34;SNOWFLAKE_DATABASE&#34;] = &#34;SEC_10KS&#34;
+os.environ[&#34;SNOWFLAKE_SCHEMA&#34;] = &#34;PUBLIC&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Parse Documents with LlamaParse" duration="3">
+        <p>This step uses <a href="https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/" target="_blank">LlamaParse</a> to parse your PDF or other supported documents into structured data suitable for downstream LLM and RAG workflows.</p>
+<p>Download a PDF (e.g., <a href="https://d18rn0p25nwr6d.cloudfront.net/CIK-0001640147/663fb935-b123-4bbb-8827-905bcbb8953c.pdf" target="_blank">Snowflake&#39;s latest 10K</a>) and save as <code>snowflake_2025_10k.pdf</code> in your working directory.</p>
+<p>Then, use LlamaParse to parse the documents.</p>
+<pre><code language="language-python" class="language-python">from llama_cloud_services import LlamaParse
+
+parser = LlamaParse(
+    num_workers=4,
+    verbose=True,
+    language=&#34;en&#34;,
+)
+
+result = parser.parse(&#34;./snowflake_2025_10k.pdf&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write to Snowflake" duration="5">
+        <p>Convert the parsed documents to a DataFrame and load them into your Snowflake database for further processing and search.</p>
+<p>Before writing to Snowflake, we need to convert LlamaIndex Documents to python DataFrames.</p>
+<pre><code language="language-python" class="language-python"># Get markdown documents
+markdown_documents = result.get_markdown_documents(split_by_page=False)
+
+import pandas as pd
+
+# fields that matter only to vector/RAG helpers – we don&#39;t need them here
+_INTERNAL_KEYS_TO_SKIP = {
+    &#34;excluded_embed_metadata_keys&#34;,
+    &#34;excluded_llm_metadata_keys&#34;,
+    &#34;relationships&#34;,
+    &#34;metadata_template&#34;,
+    &#34;metadata_separator&#34;,
+    &#34;text_template&#34;,
+    &#34;class_name&#34;,
+}
+
+def documents_to_dataframe(documents):
+    &#34;&#34;&#34;Convert a list of LlamaIndex documents to a tidy pandas DataFrame,
+    omitting vector-store helper fields that aren&#39;t needed for retrieval.
+    &#34;&#34;&#34;
+    rows = []
+
+    for doc in documents:
+        d = doc.model_dump(exclude_none=True)
+
+        for k in _INTERNAL_KEYS_TO_SKIP:
+            d.pop(k, None)
+
+        # Pull out &amp; flatten metadata
+        meta = d.pop(&#34;metadata&#34;, {})
+        d.update(meta)
+
+        # Extract raw text
+        t_res = d.pop(&#34;text_resource&#34;, None)
+        if t_res is not None:
+            d[&#34;text&#34;] = t_res.get(&#34;text&#34;) if isinstance(t_res, dict) else getattr(t_res, &#34;text&#34;, None)
+
+        rows.append(d)
+
+    return pd.DataFrame(rows)
+</code></pre>
+<p>Then, we can connect to Snowflake and write the dataframe to a table.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark import Session
+
+connection_parameters = {
+    &#34;account&#34;: os.getenv(&#34;SNOWFLAKE_ACCOUNT&#34;),
+    &#34;user&#34;: os.getenv(&#34;SNOWFLAKE_USER&#34;),
+    &#34;password&#34;: os.getenv(&#34;SNOWFLAKE_PASSWORD&#34;),
+    &#34;role&#34;: os.getenv(&#34;SNOWFLAKE_ROLE&#34;),
+    &#34;warehouse&#34;: os.getenv(&#34;SNOWFLAKE_WAREHOUSE&#34;),
+    &#34;database&#34;: os.getenv(&#34;SNOWFLAKE_DATABASE&#34;),
+    &#34;schema&#34;: os.getenv(&#34;SNOWFLAKE_SCHEMA&#34;),
+}
+
+session = Session.builder.configs(connection_parameters).create()
+snowpark_df = session.create_dataframe(documents_df)
+snowpark_df.write.mode(&#34;overwrite&#34;).save_as_table(&#34;snowflake_10k&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Split Text" duration="2">
+        <p>Split the loaded document text into smaller chunks using the <a href="https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex" target="_blank">Snowflake Cortex Text Splitter</a>, preparing your data for search.</p>
+<pre><code language="language-python" class="language-python">split_text_sql = &#34;&#34;&#34;
+CREATE OR REPLACE TABLE SNOWFLAKE_10K_MARKDOWN_CHUNKS AS
+SELECT
+    ID,
+    &#34;file_name&#34; as FILE_NAME,
+    c.value::string as TEXT
+FROM
+    SNOWFLAKE_10K,
+    LATERAL FLATTEN(input =&gt; SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER(
+        &#34;text&#34;,
+        &#39;markdown&#39;,
+        512,
+        128
+    )) c;
+&#34;&#34;&#34;
+
+session.sql(split_text_sql).collect()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Cortex Search Service" duration="5">
+        <p>Create a <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search Service</a> on your chunked data to enable fast, hybrid search over your documents in Snowflake.</p>
+<pre><code language="language-python" class="language-python">create_search_service_sql = &#34;&#34;&#34;
+CREATE OR REPLACE CORTEX SEARCH SERVICE SNOWFLAKE_10K_SEARCH_SERVICE
+  ON TEXT
+  ATTRIBUTES ID, FILE_NAME
+  WAREHOUSE = S
+  TARGET_LAG = &#39;1 hour&#39;
+AS (
+  SELECT
+    ID,
+    FILE_NAME,
+    TEXT
+  FROM SEC_10KS.PUBLIC.SNOWFLAKE_10K_MARKDOWN_CHUNKS
+);
+&#34;&#34;&#34;
+
+session.sql(create_search_service_sql).collect()
+</code></pre>
+<p>Now that the Cortex Search Service is created, we can create a python class to retrieve relevant chunks from the service.</p>
+<pre><code language="language-python" class="language-python">from snowflake.core import Root
+from typing import List
+from snowflake.snowpark.session import Session
+
+class CortexSearchRetriever:
+    def __init__(self, snowpark_session: Session, limit_to_retrieve: int = 4):
+        self._snowpark_session = snowpark_session
+        self._limit_to_retrieve = limit_to_retrieve
+
+    def retrieve(self, query: str) -&gt; List[str]:
+        root = Root(self._snowpark_session)
+        search_service = (
+            root.databases[&#34;SEC_10KS&#34;]
+                .schemas[&#34;PUBLIC&#34;]
+                .cortex_search_services[&#34;SNOWFLAKE_10K_SEARCH_SERVICE&#34;]
+        )
+        resp = search_service.search(
+            query=query,
+            columns=[&#34;text&#34;],
+            limit=self._limit_to_retrieve
+        )
+        return [curr[&#34;text&#34;] for curr in resp.results] if resp.results else []
+
+retriever = CortexSearchRetriever(snowpark_session=session, limit_to_retrieve=5)
+retrieved_context = retriever.retrieve(&#34;What was the total revenue (in billions) for Snowflake in FY 2024? How much of that was product revenue?&#34;)
+retrieved_context
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build RAG pipeline" duration="2">
+        <p>Build a simple Retrieval-Augmented Generation (RAG) pipeline that uses your Cortex Search Service to retrieve relevant context and generate answers using <a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Snowflake Cortex Complete</a> LLMs.</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import complete
+
+class RAG:
+    def __init__(self, session):
+        self.session = session
+        self.retriever = CortexSearchRetriever(snowpark_session=self.session, limit_to_retrieve=10)
+
+    def retrieve_context(self, query: str) -&gt; list:
+        return self.retriever.retrieve(query)
+
+    def generate_completion(self, query: str, context_str: list) -&gt; str:
+        prompt = f&#34;&#34;&#34;
+          You are an expert assistant extracting information from context provided.\n
+          Answer the question concisely, yet completely. Only use the information provided.\n
+          Context: {context_str}\n
+          Question:\n{query}\nAnswer:\n&#34;&#34;&#34;
+        response = complete(&#34;claude-4-sonnet&#34;, prompt, session=self.session)
+        return response
+
+    def query(self, query: str) -&gt; str:
+        context_str = self.retrieve_context(query)
+        return self.generate_completion(query, context_str)
+
+rag = RAG(session)
+response = rag.query(&#34;What was the total revenue (in billions) for Snowflake in FY 2024? How much of that was product revenue?&#34;)
+print(response)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="2">
+        <p>Congratulations! You have parsed a PDF with LlamaParse, loaded it into Snowflake, indexed it with Cortex Search, and built a simple RAG pipeline for question answering on your data.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to parse PDFs with LlamaParse</li>
+<li>How to load and split data in Snowflake</li>
+<li>How to create and use Cortex Search</li>
+<li>How to build a simple RAG pipeline for Q&amp;A</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/" target="_blank">LlamaParse (LlamaIndex)</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowflake Python API</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

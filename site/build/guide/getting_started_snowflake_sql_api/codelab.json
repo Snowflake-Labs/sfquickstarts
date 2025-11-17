@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting_started_snowflake_sql_api",
+  "duration": 19,
+  "title": "Getting Started With Snowflake SQL API",
+  "summary": "Getting Started With Snowflake SQL API",
+  "source": "getting_started_snowflake_sql_api/getting_started_snowflake_sql_api.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "sql",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_snowflake_sql_api"
+}

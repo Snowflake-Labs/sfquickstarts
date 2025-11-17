@@ -1,0 +1,526 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowflake Security Dashboards</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="security_dashboards_for_snowflake"
+                  title="Snowflake Security Dashboards"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>The Security Field CTO team at Snowflake has talked with thousands of Snowflake customers over the years. Most of them have a simple request: &#34;Tell us how to do security well for Snowflake, please.&#34; It&#39;s a reasonable thing to ask. We&#39;ve tried many ways to deliver the answer to this question, from checklists and tutorials to documents and slides. In 2021, we started a project (code named &#34;Snow Sentry&#34;) that aimed to take much of that advice and put it into code. We created a set of sample tiles contained in a single dashboard to act as an MVP for monitoring security items in Snowflake. You will build a replica of that MVP during this Quickstart lab.</p>
+<h2 is-upgraded>Who Should Use These Dashboards?</h2>
+<p>These dashboards are for any Snowflake customer who wants to gain a deeper understanding of their Snowflake account. The dashboards cover:</p>
+<ul>
+<li>Authentication patterns: Failed login attempts organized by user and reason, and account-wide visibility of the authentication types in use</li>
+<li>Roles: RBAC maturity ratings, AccountAdmin usage monitoring, least-used roles for users</li>
+<li>Users: Most dangerous user, disabled users not yet dropped, and users with stale passwords</li>
+<li>Configuration drift: Deviations from baseline normal to network policies, security integrations, replication, and failback-enabled Snowflake Accounts</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake&#39;s Snowsight tile creation and management</li>
+<li>Basic SQL skills</li>
+<li>Accountadmin role for the Snowflake account where you will work</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use SQL to explore Snowflake&#39;s security auditing and configuration metadata</li>
+<li>The items the Security Field CTO team thinks are the right starting point for understanding the security posture of your Snowflake Account(s)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A set of Security dashboards for Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with Snowflake&#39;s SnowSight Tiles" duration="1">
+        <p>Throughout this lab we will be creating dashboard tiles (<em>i.e.</em> charts, graphs) to display information. <em>How</em> to create these tiles is not the point of this lab, but if you don&#39;t know the basics, you will likely get lost. So, we will step through creating the first tile in detail, and assume you will know what to do for the rest.</p>
+<p>The majority of what you should need to know is in the documentation here:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards" target="_blank">Visualizing Data With Dashboards</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Dashboard and the First Tile" duration="10">
+        <p>First, prepare by setting up some background items. We will create a special role, grant it rights, and then grant that role to the user that you are using for this lab. You can do this in whatever UI or tool you want.</p>
+<pre><code>use role accountadmin; 
+create role SENTRY;
+grant imported privileges on database snowflake to role SENTRY;
+create or replace warehouse SENTRY with warehouse_size=&#39;SMALL&#39;;
+grant usage on warehouse SENTRY to role SENTRY;
+grant role SENTRY to user &lt;YOURUSER&gt;;
+</code></pre>
+<p>Now we have a role named <code>SENTRY</code> that has access to the proper resources. Each time you want to use these dashboards, set your context, like so:</p>
+<pre><code>use role SENTRY;
+use warehouse SENTRY;
+use database snowflake;
+use schema account_usage;
+</code></pre>
+<p>This ensures you have the proper resources to run the SQL that you will be writing. It also means you can give people access to this information by granting them access to the SENTRY role or an equivalent role with access to the equivalent resources.</p>
+<p>Next, log in to the Snowflake UI, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight" target="_blank">Snowsight</a>, and navigate to the &#34;Dashboards&#34; section on the left menu:</p>
+<p class="image-container"><img alt="Dashboards Menu" src="img/67089723239db2b4.png"></p>
+<p>Set your role context to the role you created earlier:</p>
+<p class="image-container"><img alt="Set Role" src="img/58101376e95d8226.png"></p>
+<p>    Start a new dashboard by clicking the blue **+ Dashboard** button at the top-right of the screen, and name it &#34;Security Dashboard Quickstart.&#34; You may see that there is no warehouse selected for the dashboard (depending on how you arrived here). If that&#39;s the case, set the warehouse to the one that you granted to the role earlier. </p>
+<p class="image-container"><img alt="Set Warehouse" src="img/3e78569310df1975.png"></p>
+<p>    To complete this step, we will create a single tile step-by-step. First, let&#39;s preview the completed tile: </p>
+<p class="image-container"><img alt="First Complete Tile" src="img/9a157256e70a790.png"></p>
+<p>Now let&#39;s get started:</p>
+<ol type="1">
+<li>Click the blue <strong>+ Dashboard</strong> button at the center of your blank dashboard.<br> In the upper right-hand corner of the editing area, your context should be set to <code>SNOWFLAKE.ACCOUNT_USAGE</code>. If not, use the drop-down to set it to that.<br><img alt="Set Tile Context" src="img/1a34ebe87e1563f5.png"></li>
+<li>This is the SQL for our first tile:</li>
+</ol>
+<pre><code>select
+    user_name,
+    error_message,
+    count(*) num_of_failures
+from
+    login_history
+where
+    is_success = &#39;NO&#39;
+group by
+    user_name,
+    error_message
+order by
+    num_of_failures desc;
+</code></pre>
+<ol type="1" start="3">
+<li>Copy and paste the code into the editing area. Run it, and click <strong>Chart</strong> at the divider between the editing area and the results area.<br> You should see something that looks like this:<br><img alt="Set Tile Context" src="img/109f9d073efcb521.png"></li>
+<li>In the Chart area, click the date in the upper, left-hand corner. Edit this and rename it to: <code>Authentication: Failures, by User and Reason</code></li>
+<li>On the right-hand side, change <strong>Chart Type</strong> to <strong>Bar</strong>.</li>
+<li>Continuing on the right-hand side, select the drop-down menu to the left of <strong>X-Axis</strong>, and change <strong>Column</strong> to <strong>USER_NAME</strong>.</li>
+<li>Under that <strong>USER_NAME</strong>, click <strong>+ Add column</strong>, and select the <strong>ERROR_MESSAGE</strong> column. It should appear above the <strong>USER_NAME</strong> as a &#34;Series,&#34; like so:<br><img alt="Set Tile Data Columns" src="img/df901bad2f391e1b.png"></li>
+<li>Continuing on the right-hand side, under the <strong>Appearance</strong> heading, click the icon to the right of <strong>Grouping</strong>, which will change the chart. You will know you have the right one if the &#34;Stretching&#34; label appears beneath it (though you do not need to adjust that new setting).</li>
+<li>Continuing on the right-hand side, click the check box next to <strong>Label X-Axis</strong> and make the input box read &#34;User&#34;. Then click the checkbox next to <strong>Label Y-Axis</strong> and update the input box to read &#34;Login Failures&#34;.<br> At this point, your chart should look very close to the final result shared above. The size of the bars, names, and errors you  see will be different because of the actual data, of course. The labels, title text, type of bars, and other details should be the same.</li>
+<li>Now click the blue <strong>- Return to Security Dashboa...</strong> link in the upper left-hand corner of the tile editing widget.<br> You should end up with a dashboard that has a single tile, like so: <img alt="Final state of first tile" src="img/b4c096562abae502.png"></li>
+</ol>
+<aside class="special"><p>As an FYI, the black bars appearing in these screen shots are there to block out information specific to the testing area where these screens came from.</p>
+</aside>
+<p>From this point on, tiles will be presented in their final form and instructions will focus on the SQL and other details you will use. Hopefully, this walkthrough has provided enough instruction on how to manipulate the Tile editor to make the remaining tiles.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Authentication Tiles" duration="5">
+        <p>Our Security Dashboard will have three tiles focusing on authentication data. The first is the <code>Authentication: Failures, by User and Reason</code> tile that we made in the previous step. This shows that the Snowflake audit trail is capturing all the information you need to track the health of authentication events.</p>
+<p>The second will be named <code>Authentication: Breakdown by Method</code>, and it looks like this:<br><img alt="Final state of authn breakdown tile" src="img/652c9b757e722c57.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">select
+   first_authentication_factor || &#39; &#39; ||nvl(second_authentication_factor, &#39;&#39;) as authentication_method
+   , count(*)
+    from login_history
+    where is_success = &#39;YES&#39;
+    and user_name != &#39;WORKSHEETS_APP_USER&#39;
+    group by authentication_method
+    order by count(*) desc;
+</code></pre>
+<p>Similar to failure tracking, it&#39;s crucial to ensure that people are using the right authentication methods. This tile shows how to break down what methods are being used and by whom.</p>
+<p>By default, these tiles will be side by side, but you can drag them to be one under the other if you prefer. We find that a side-by-side presentation makes this information-dense visual easier to read, but arrange it however you see fit.</p>
+<p>The third tile for authentication will be named <code>Authentication: Service identities bypassing keypair authentication with a password</code>. This tile assumes you have &#34;service account&#34; style users which are configured with key pair authenitcation which you expect will ONLY use that key pair as an authenticaiton method. The tile will look like this: <img alt="final state of key pair bypass tile" src="img/708ad0e7a707bc43.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+ l.user_name,
+ first_authentication_factor,
+ second_authentication_factor,
+ count(*) as Num_of_events
+FROM snowflake.account_usage.login_history as l
+JOIN snowflake.account_usage.users u on l.user_name = u.name and l.user_name ilike &#39;%svc&#39; and has_rsa_public_key = &#39;true&#39;
+WHERE is_success = &#39;YES&#39;
+AND first_authentication_factor != &#39;RSA_KEYPAIR&#39;
+GROUP BY l.user_name, first_authentication_factor, second_authentication_factor
+ORDER BY count(*) desc;
+</code></pre>
+<p>Note that in this SQL there is a specific part which looks for users with a naming convention containing <code>_SVC</code>. That is the <code>and l.user_name ilike '%svc'</code> bit of the SQL (which is also highlighted in the screen shot by the red box). This is assuming that any &#34;service account&#34; would use such a convnetion. So this will need adjusting in yoiur world to reflect the conventions you may use for these user types.</p>
+<p>As you build this out ask yourself: What other information does your organization need to know about authentication? You now know where to find it. We will return to this theme again and again.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Privileged Access Tiles" duration="6">
+        <p>Good security practices require keeping an eye on privileged access users on any system. These tiles show you how to do that using the audit trail Snowflake provides you. There are two tiles in this category.</p>
+<p>First is the <code>Privileged Access: ACCOUNTADMIN Grants</code> tile. This is a simple table that looks like this:</p>
+<p class="image-container"><img alt="AA grants tile final state" src="img/1ec40b3270ceeb2f.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">select
+    user_name || &#39; granted the &#39; || role_name || &#39; role on &#39; || end_time as Description, query_text as Statement
+from
+    query_history
+where
+    execution_status = &#39;SUCCESS&#39;
+    and query_type = &#39;GRANT&#39;
+    and query_text ilike &#39;%grant%accountadmin%to%&#39;
+order by
+    end_time desc;
+</code></pre>
+<p>The second tile is the <code>Privileged Access: ACCOUNTADMIN's that do not use MFA</code> tile. The name says it all. Here we&#39;re looking for people that have elevated access, but who are not using the powerful protection that MFA (multi-factor authentication) provides.</p>
+<p>The tile looks like this: <img alt="AA without MFA tile final state" src="img/fd2a116a67321f60.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">select u.name, 
+timediff(days, last_success_login, current_timestamp()) || &#39; days ago&#39; last_login ,
+timediff(days, password_last_set_time,current_timestamp(6)) || &#39; days ago&#39; password_age
+from users u
+join grants_to_users g on grantee_name = name and role = &#39;ACCOUNTADMIN&#39; and g.deleted_on is null
+where ext_authn_duo = false and u.deleted_on is null and has_password = true
+order by last_success_login desc;
+</code></pre>
+<p>An obvious extension to these tiles would be to include other built-in roles, like <code>SYSADMIN</code> and <code>SECURITYADMIN</code>, in addition to the <code>ACCOUNTADMIN</code> role. Less obvious—but similarly powerful—would be to include roles that have these roles granted to them. Perhaps you can even include roles that you have created that you know to have a great deal of power at your organization.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Identity Management Tiles" duration="6">
+        <p>Governing users well is arguably the most important thing you can do to have healthy security outcomes. These three tiles cover a few basics. Everyone should be checking these in every system.</p>
+<p>First is the <code>Identity Management: Users by oldest Passwords</code> tile. It&#39;s worth pointing out that you can use <a href="https://docs.snowflake.com/en/sql-reference/sql/create-password-policy" target="_blank">Password Policies</a> in Snowflake to proactively control the age of passwords for users. Many organizations, however, have not yet applied these policies, or they have exceptions for service accounts or other types of users. This will keep an eye on compliance to your policies, even when password policy age can&#39;t be limited proactively.</p>
+<p>The tile looks like this:</p>
+<p class="image-container"><img alt="Old Passwords tile final state" src="img/3202b41976a6f0ac.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">select name, datediff(&#39;day&#39;, password_last_set_time, current_timestamp()) || &#39; days ago&#39; as password_last_changed from users 
+where deleted_on is null and 
+password_last_set_time is not null
+order by password_last_set_time;
+</code></pre>
+<p>Next is the &#34;<code>Identity Management: Stale Users</code>&#34; tile. Here we&#39;re looking to see the last login for each user principal. The tile will look like this:</p>
+<p class="image-container"><img alt="Stale Users tile final state" src="img/fb58a23d7e3472f9.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">select name, datediff(&#34;day&#34;, nvl(last_success_login, created_on), current_timestamp()) || &#39; days ago&#39; Last_Login from users 
+where deleted_on is null
+order by datediff(&#34;day&#34;, nvl(last_success_login, created_on), current_timestamp()) desc;
+</code></pre>
+<p>The third and final is the <code>Identity Management: SCIM Token Lifecycle</code> tile. <a href="https://docs.snowflake.com/en/user-guide/scim" target="_blank">SCIM (System for Cross-domain Identity Management)</a> is an open specification to help facilitate the automated management of user identities and groups (<em>i.e.</em> roles) in cloud applications using RESTful APIs. Since it&#39;s doing such sensitive work, the token used by the SCIM provider system making these changes is very powerful, and making sure it&#39;s healthy and well managed is imperative.</p>
+<p>The tile looks like this: <img alt="SCIM Token tile final state" src="img/f5481927576e0954.png"> The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">select
+    user_name as by_whom,
+    datediff(&#39;day&#39;, start_time, current_timestamp()) || &#39; days ago&#39; as created_on,
+    ADD_MONTHS(start_time, 6) as expires_on,
+    datediff(
+        &#39;day&#39;,
+        current_timestamp(),
+        ADD_MONTHS(end_time, 6)
+    ) as expires_in_days
+from
+    query_history
+where
+    execution_status = &#39;SUCCESS&#39;
+    and query_text ilike &#39;select%SYSTEM$GENERATE_SCIM_ACCESS_TOKEN%&#39;
+    and query_text not ilike &#39;select%where%SYSTEM$GENERATE_SCIM_ACCESS_TOKEN%&#39;
+order by
+    expires_in_days;
+</code></pre>
+<p>Again, there are many aspects to Identity Management that deserve to be delved into. The goal here is to get you started, and to leave you with the tools to take the plunge now that you know where the pool is, and which side is the deep end so you don&#39;t hurt yourself diving into the wrong places.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Least Privileged Access Tiles" duration="5">
+        <p>A close second to Identity Management is Entitlement Management. The ideal for this is achieving Least Privileged Access, the state where user and roles have only exactly the entitlements required to accomplish their authorized business goals. There are two tiles we have created to help with that.</p>
+<p>First there is the <code>Least Privileged Access: Most Dangerous Person</code> tile. The cheeky title does relate to a real idea of technical risk. To rise to the top of this, someone must have the most entitlements granted in the system overall.</p>
+<p>The tile will look like this:<br><img alt="Most Dangerous Person tile final state" src="img/99ee1a5431c442c0.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">with role_hier as (
+    --Extract all Roles
+    select
+        grantee_name,
+        name
+    from
+        grants_to_roles
+    where
+        granted_on = &#39;ROLE&#39;
+        and privilege = &#39;USAGE&#39;
+        and deleted_on is null
+    union all
+        --Adding in dummy records for &#34;root&#34; roles
+    select
+        &#39;root&#39;,
+        r.name
+    from
+        roles r
+    where
+        deleted_on is null
+        and not exists (
+            select
+                1
+            from
+                grants_to_roles gtr
+            where
+                gtr.granted_on = &#39;ROLE&#39;
+                and gtr.privilege = &#39;USAGE&#39;
+                and gtr.name = r.name
+                and deleted_on is null
+        )
+) --CONNECT BY to create the polyarchy and SYS_CONNECT_BY_PATH to flatten it
+,
+role_path_pre as(
+    select
+        name,
+        level,
+        sys_connect_by_path(name, &#39; -&gt; &#39;) as path
+    from
+        role_hier connect by grantee_name = prior name start with grantee_name = &#39;root&#39;
+    order by
+        path
+) --Removing leading delimiter separately since there is some issue with how it interacted with sys_connect_by_path
+,
+role_path as (
+    select
+        name,
+        level,
+        substr(path, len(&#39; -&gt; &#39;)) as path
+    from
+        role_path_pre
+) --Joining in privileges from GRANT_TO_ROLES
+,
+role_path_privs as (
+    select
+        path,
+        rp.name as role_name,
+        privs.privilege,
+        granted_on,
+        privs.name as priv_name,
+        &#39;Role &#39; || path || &#39; has &#39; || privilege || &#39; on &#39; || granted_on || &#39; &#39; || privs.name as Description
+    from
+        role_path rp
+        left join grants_to_roles privs on rp.name = privs.grantee_name
+        and privs.granted_on != &#39;ROLE&#39;
+        and deleted_on is null
+    order by
+        path
+) --Aggregate total number of priv&#39;s per role, including hierarchy
+,
+role_path_privs_agg as (
+    select
+        trim(split(path, &#39; -&gt; &#39;) [0]) role,
+        count(*) num_of_privs
+    from
+        role_path_privs
+    group by
+        trim(split(path, &#39; -&gt; &#39;) [0])
+    order by
+        count(*) desc
+) --Most Dangerous Man - final query
+select
+    grantee_name as user,
+    count(a.role) num_of_roles,
+    sum(num_of_privs) num_of_privs
+from
+    grants_to_users u
+    join role_path_privs_agg a on a.role = u.role
+where
+    u.deleted_on is null
+group by
+    user
+order by
+    num_of_privs desc;
+</code></pre>
+<p>Second is the <code>Least Privileged Access: Most Bloated Roles</code> tile. This is the sister to the most dangerous person. The most bloated role is the role that has the most entitlements. A user with several of these would easily start rising to the top of the last tile. The tile will look like this:</p>
+<p class="image-container"><img alt="Most Bloated Role tile final state" src="img/75004f7d573fa4f3.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">--Role Hierarchy
+with role_hier as (
+    --Extract all Roles
+    select
+        grantee_name,
+        name
+    from
+        grants_to_roles
+    where
+        granted_on = &#39;ROLE&#39;
+        and privilege = &#39;USAGE&#39;
+        and deleted_on is null
+    union all
+        --Adding in dummy records for &#34;root&#34; roles
+    select
+        &#39;root&#39;,
+        r.name
+    from
+        roles r
+    where
+        deleted_on is null
+        and not exists (
+            select
+                1
+            from
+                grants_to_roles gtr
+            where
+                gtr.granted_on = &#39;ROLE&#39;
+                and gtr.privilege = &#39;USAGE&#39;
+                and gtr.name = r.name
+                and deleted_on is null
+        )
+) --CONNECT BY to create the polyarchy and SYS_CONNECT_BY_PATH to flatten it
+,
+role_path_pre as(
+    select
+        name,
+        level,
+        sys_connect_by_path(name, &#39; -&gt; &#39;) as path
+    from
+        role_hier connect by grantee_name = prior name start with grantee_name = &#39;root&#39;
+    order by
+        path
+) --Removing leading delimiter separately since there is some issue with how it interacted with sys_connect_by_path
+,
+role_path as (
+    select
+        name,
+        level,
+        substr(path, len(&#39; -&gt; &#39;)) as path
+    from
+        role_path_pre
+) --Joining in privileges from GRANT_TO_ROLES
+,
+role_path_privs as (
+    select
+        path,
+        rp.name as role_name,
+        privs.privilege,
+        granted_on,
+        privs.name as priv_name,
+        &#39;Role &#39; || path || &#39; has &#39; || privilege || &#39; on &#39; || granted_on || &#39; &#39; || privs.name as Description
+    from
+        role_path rp
+        left join grants_to_roles privs on rp.name = privs.grantee_name
+        and privs.granted_on != &#39;ROLE&#39;
+        and deleted_on is null
+    order by
+        path
+) --Aggregate total number of priv&#39;s per role, including hierarchy
+,
+role_path_privs_agg as (
+    select
+        trim(split(path, &#39; -&gt; &#39;) [0]) role,
+        count(*) num_of_privs
+    from
+        role_path_privs
+    group by
+        trim(split(path, &#39; -&gt; &#39;) [0])
+    order by
+        count(*) desc
+) 
+select * from role_path_privs_agg order by num_of_privs desc
+</code></pre>
+<p>Since these tiles are doing a deeper level of analysis, the SQL is much more complex. Even with that complexity, there are likely opportunities to pull in more information, or to aim similar analysis at other aspects of the system, such as detecting users that have the most code deployed in the form of SnowPark or stored procedures.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuration Management Tiles" duration="4">
+        <p>There are many types of policy that control the security properties of your Snowflake Accounts. These two tiles explore how those properties are managed. The first looks broadly at all thes changes that may be taking place to your Snowflake configuration. This will help you track when any changes are made to these policies.</p>
+<p>The first tile is called <code>Configuration Management: Privileged object changes by User</code>. The tile will look like this: <img alt="config changes by user tile final state" src="img/af8e99c259b0dbeb.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">  SELECT
+    query_text,
+    user_name,
+    role_name,
+    end_time
+  FROM snowflake.account_usage.query_history
+    WHERE execution_status = &#39;SUCCESS&#39;
+      AND query_type NOT in (&#39;SELECT&#39;)
+      AND (query_text ILIKE &#39;%create role%&#39;
+          OR query_text ILIKE &#39;%manage grants%&#39;
+          OR query_text ILIKE &#39;%create integration%&#39;
+          OR query_text ILIKE &#39;%create share%&#39;
+          OR query_text ILIKE &#39;%create account%&#39;
+          OR query_text ILIKE &#39;%monitor usage%&#39;
+          OR query_text ILIKE &#39;%ownership%&#39;
+          OR query_text ILIKE &#39;%drop table%&#39;
+          OR query_text ILIKE &#39;%drop database%&#39;
+          OR query_text ILIKE &#39;%create stage%&#39;
+          OR query_text ILIKE &#39;%drop stage%&#39;
+          OR query_text ILIKE &#39;%alter stage%&#39;
+          )
+  ORDER BY end_time desc;
+</code></pre>
+<p>This query also makes some choices based on the list of <code>query_text</code> options it chooses to pull out of the audit trail. Maybe you feel like there are more things that should be on this list? Or less?</p>
+<p>The second tile looks at one of the most crucial configurations: Network Policy, which decides what network origination points will be allowed to connect to your Snowflake Accounts. It will be called <code>Configuration Management: Network Policy Changes</code> The tile will look like this:<br><img alt="Network POlicy changes tile final state" src="img/b2b649499ab72d79.png"></p>
+<p>The SQL for this tile is:</p>
+<pre><code language="language-sql" class="language-sql">select user_name || &#39; made the following Network Policy change on &#39; || end_time || &#39; [&#39; ||  query_text || &#39;]&#39; as Events
+   from query_history where execution_status = &#39;SUCCESS&#39;
+   and query_type in (&#39;CREATE_NETWORK_POLICY&#39;, &#39;ALTER_NETWORK_POLICY&#39;, &#39;DROP_NETWORK_POLICY&#39;)
+   or (query_text ilike &#39;% set network_policy%&#39; or
+       query_text ilike &#39;% unset network_policy%&#39;)
+       and query_type != &#39;SELECT&#39; and query_type != &#39;UNKNOWN&#39;
+   order by end_time desc;
+</code></pre>
+<p>You can easily modify this to watch for modifications to any of the policies controlling access to your Snowflake Accounts.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>The Security Dashboard you&#39;ve built here is a starting point. The hope is you&#39;ve seen that all the information you would likely want to use is available, and we make it relatively easy to get that information displayed in a useful way.</p>
+<p>If you want to learn more about Snowflake security, check out the official documentation here: <a href="https://docs.snowflake.com/user-guide/admin-security" target="_blank">Summary of Security Features (Docs)</a>. There is also a lot more information about Security at Snowflake here: <a href="https://www.snowflake.com/product/security-and-trust-center/" target="_blank">Snowflake Security &amp; Trust Center</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to use Snowsight to create dashboard tiles</li>
+<li>Using the Snowflake audit trail to find security data</li>
+<li>Building tiles to explore your Snowflake security data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

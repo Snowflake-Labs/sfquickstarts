@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "mfa-audit",
+  "duration": 23,
+  "title": "Building an MFA Audit System with Streamlit in Snowflake Notebooks",
+  "summary": "Learn how to build a Streamlit app in Snowflake Notebooks to audit and monitor Multi-Factor Authentication (MFA) status of users, with automated email notifications for non-compliant users.",
+  "source": "mfa_audit/mfa_audit.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "cybersecurity",
+    "data-engineering",
+    "streamlit"
+  ],
+  "tags": [
+    "cybersecurity",
+    "emailnotifications",
+    "mfa",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "mfa-audit"
+}

@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_with_apache_airflow_kr",
+  "duration": 36,
+  "title": "Apache Airflow, Snowflake 및 dbt를 사용한 데이터 엔지니어링",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "data_engineering_with_apache_airflow_kr/data_engineering_with_apache_airflow_kr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "architecture-patterns",
+    "partner-integrations"
+  ],
+  "tags": [
+    "airflow",
+    "dataengineering",
+    "dbt",
+    "gettingstarted",
+    "kr",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_with_apache_airflow_kr"
+}

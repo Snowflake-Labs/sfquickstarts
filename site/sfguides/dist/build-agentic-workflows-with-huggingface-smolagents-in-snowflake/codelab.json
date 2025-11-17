@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build-agentic-workflows-with-huggingface-smolagents-in-snowflake",
+  "duration": 30,
+  "title": "Build Agentic Workflows with Hugging Face Smolagents in Snowflake",
+  "summary": "This guide outlines the process for creating agentic workflow in Snowflake Notebook on Container Runtime.",
+  "source": "build_agentic_workflows_with_huggingface_smolagents_in_snowflake/build_agentic_workflows_with_huggingface_smolagents_in_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-science-\u0026-ml",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "build-agentic-workflows-with-huggingface-smolagents-in-snowflake"
+}

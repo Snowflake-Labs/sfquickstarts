@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_a_private_custom_api_in_python",
+  "duration": 24,
+  "title": "Build a private Custom API in Python and Flask using Ockam",
+  "summary": "A guide to building and running a custom private API Powered by Snowflake, Ockam, and Python/Flask",
+  "source": "build_a_private_custom_api_in_python/build_a_private_custom_api_in_python.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "app-development",
+    "architecture-patterns",
+    "solution-examples"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build_a_private_custom_api_in_python"
+}

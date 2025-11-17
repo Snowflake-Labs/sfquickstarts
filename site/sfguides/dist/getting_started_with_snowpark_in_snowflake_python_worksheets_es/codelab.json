@@ -1,0 +1,37 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_snowpark_in_snowflake_python_worksheets_es",
+  "duration": 33,
+  "title": "Introducción a Snowpark con las hojas de trabajo de Snowflake para Python",
+  "authors": "Dash Desai",
+  "summary": "Introducción a la ingeniería de datos y al ML con Snowpark para Python",
+  "source": "getting_started_with_snowpark_in_snowflake_python_worksheets_es/getting_started_with_snowpark_in_snowflake_python_worksheets_es.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "dataengineering",
+    "es",
+    "gettingstarted",
+    "hojasdetrabajodepython",
+    "ingenieríadedatos",
+    "introducción",
+    "pythonworksheets",
+    "snowparkparapython",
+    "snowparkpython",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpark_in_snowflake_python_worksheets_es"
+}

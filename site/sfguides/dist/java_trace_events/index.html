@@ -1,0 +1,877 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Using trace events in Java</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="java_trace_events"
+                  title="Using trace events in Java"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Have you ever created a stored procedure or a user-defined function in Snowflake? If you have, then you probably want to know whether it&#39;s working well. If something goes wrong with it, you want to know what exactly is not working as expected. In other words, you are concerned about <em>observability</em> of your code. You probably know that you can use a <a href="https://docs.snowflake.com/en/developer-guide/logging-tracing/logging" target="_blank">logger</a> in your code, and that log records are stored in the <a href="https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up" target="_blank">event table</a>. But have you heard about <a href="https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing" target="_blank"><strong>trace events</strong></a>? We have recently launched them in preview, and this guide explains how they can help you improve observability.</p>
+<p>Unlike log records, trace events are structured. They contain named attributes which can be easily queried with SQL.</p>
+<p>Please be aware that our current implementation of trace events has several limitations. Because of these limitations, we recommend using trace events in functions and procedures which are invoked <em>once per query</em> , as in <code>call my_procedure();</code> or <code>select my_function();</code> (but <strong>NOT </strong><code>select my_function(x) from some_table;</code>)</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account;</li>
+<li>Some familiarity with Java;</li>
+<li>Some familiarity with <a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-java" target="_blank">stored procedures</a> written in Java.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to emit trace events from Java code;</li>
+<li>How to analyze them by querying an event table.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account with an event table.</li>
+<li>If you have a Snowflake account but haven&#39;t created an event table yet, you&#39;ll need an <code>ACCOUNTADMIN</code> role so that you can set up an event table.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A stored procedure which performs several operations, collects data about each operation, and records this data as a trace event.</li>
+<li>SQL queries which you can use to find those trace events in the event table, and aggregate them.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating and seeding a database" duration="2">
+        <p>In this quickstart, we&#39;ll use a stored procedure that reads data from an input table, performs some computations, and saves results of those computations in an output table. So, let&#39;s create those tables and populate the input table with data:</p>
+<ul>
+<li>Creating a database:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">create database java_trace_events_quickstart;
+use database java_trace_events_quickstart;
+</code></pre>
+<ul>
+<li>Creating an input table:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">create table points(x float, y float);
+</code></pre>
+<ul>
+<li>Creating an output table:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">create table centroids(cluster_id integer, x float, y float);
+</code></pre>
+<ul>
+<li>Populating the input table with data:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">insert into points (x, y) values
+(1.213553154, 2.235544541),
+(0.8118554179, 1.6821308),
+(1.399174966, 2.053757933),
+(0.9512621773, 2.015222401),
+(0.5887461028, 1.891685846),
+(0.6577208216, 2.320720871),
+(1.138717596, 1.556020953),
+(1.275741404, 1.855811669),
+(0.9634354253, 2.33982825),
+(1.390448021, 1.99901768),
+(0.9601962266, 1.916674695),
+(1.466388729, 1.783033344),
+(1.287095773, 1.505214384),
+(0.5224690381, 1.535836808),
+(1.004467712, 1.689165137),
+(0.6189839587, 1.98350093),
+(0.5519874087, 2.258298169),
+(0.7359490453, 1.69681398),
+(1.132060711, 2.395814026),
+(0.7445552652, 1.500579867),
+(9.723189864, 20.0014149),
+(10.9206379, 19.94554546),
+(9.469893731, 19.13094579),
+(10.65544056, 19.53934379),
+(10.19535497, 19.77086368),
+(9.495595388, 19.13485713),
+(9.382500149, 19.30473076),
+(9.627784041, 19.04113154),
+(10.02231036, 20.53784382),
+(9.347483563, 20.85932972),
+(9.967839449, 19.47796103),
+(9.122536461, 20.35109391),
+(9.922944802, 20.72190232),
+(9.854270717, 20.64568569),
+(10.08886809, 19.869337),
+(9.995250676, 20.58962103),
+(10.91948309, 19.87501052),
+(10.95252272, 19.72416871),
+(10.90777625, 20.84325985),
+(10.41457795, 20.64964595),
+(5.398656265, 16.23788224),
+(5.586711317, 15.51057788),
+(5.70908083, 15.51383295),
+(4.820765545, 14.67189127),
+(4.157480672, 13.58119069),
+(5.365974039, 15.91155853),
+(3.839719712, 16.36947194),
+(5.249863368, 15.41913563),
+(5.689566, 16.21414046),
+(3.717206952, 14.65194383),
+(4.256715825, 16.2572023),
+(4.885755607, 15.57848386),
+(6.402890523, 14.25692963),
+(4.096131121, 16.28270187),
+(4.22328614, 15.35017802),
+(6.357887622, 13.7592523),
+(4.036586515, 13.60022993),
+(5.54888424, 14.16924161),
+(4.230579224, 14.01085911),
+(4.328285372, 14.1043345),
+(null, 1),
+(2, &#39;NaN&#39;);
+</code></pre>
+<h2 is-upgraded>What&#39;s in the input data</h2>
+<p class="image-container"><img alt="Visualization of the input data" src="img/dec2a36106c14e58.png"></p>
+<p>These are coordinates of points on a plane. There are 3 clusters of points, centered around coordinates <code>(1, 2)</code>; <code>(10, 20)</code>; and <code>(5, 15)</code>. The stored procedure we&#39;ll create in the next step will try to find these centers by invoking the <a href="https://towardsdatascience.com/understanding-k-means-clustering-in-machine-learning-6a6e67336aa1" target="_blank">K-Means clustering</a> algorithm.</p>
+<h2 is-upgraded>What is K-Means clustering</h2>
+<p>K-means clustering is an algorithm that finds groups of points in a dataset which are close to each other. It returns coordinates of &#34;centers&#34; of those groups - they are called &#34;centroids&#34;. It is an iterative process: the algorithm places each centroid at a random point, and gradually moves it. Eventually the algorithm reaches the state when centroids don&#39;t move. It means that the algorithm has converged, and coordinates of centroids can be returned to a caller.</p>
+<p>The K-means algorithm is fast, but the caller has to know the number of clusters in advance.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up an event table" duration="1">
+        <p>Trace events are stored in an event table. So, let&#39;s make sure that you have one. Please run the following commands:</p>
+<ul>
+<li>To check if you have <em>any</em> event table:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">show event tables;
+</code></pre>
+<ul>
+<li>If the previous command returns multiple rows, you&#39;ll need to check which of the event tables is active:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">show parameters like &#39;EVENT_TABLE&#39; in account;
+</code></pre>
+<ul>
+<li>If <code>show event tables</code> doesn&#39;t return any rows, you&#39;ll need to create a new event table and make it active:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">use role ACCOUNTADMIN;
+create or replace event table events;
+alter account set event_table = &#39;java_trace_events_quickstart.public.events&#39;;
+</code></pre>
+<ul>
+<li>Run this query again to confirm that the event table has been created and activated:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">show parameters like &#39;EVENT_TABLE&#39; in account;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a stored procedure" duration="2">
+        <p>Now, let&#39;s create our example stored procedure. It is quite long, because it does several things:</p>
+<ul>
+<li>Reads data from an input table;</li>
+<li>Filters out rows with missing values;</li>
+<li>Performs <a href="https://towardsdatascience.com/understanding-k-means-clustering-in-machine-learning-6a6e67336aa1" target="_blank">K-Means clustering</a> of valid rows;</li>
+<li>Saves the output of the clustering algorithm to the output table.</li>
+</ul>
+<p>At each step, the procedure emits a trace event containing information about that step.</p>
+<h2 is-upgraded>Stored procedure code</h2>
+<p>Please run the following query. It will create a procedure named <code>KMEANS</code>:</p>
+<pre><code language="language-sql" class="language-sql">create or replace procedure kmeans(
+  inputTable string, xColumn string, yColumn string,
+  outputTable string, clusterIdColumn string, outputXColumn string, outputYColumn string,
+  numClusters int, maxIterations int)
+returns string
+language java
+packages=(&#39;com.snowflake:snowpark:latest&#39;, &#39;com.snowflake:telemetry:latest&#39;)
+handler=&#39;KMeansClusterer.run&#39;
+as $$
+import com.snowflake.snowpark_java.*;
+import com.snowflake.snowpark_java.types.DataTypes;
+import com.snowflake.snowpark_java.types.StructField;
+import com.snowflake.snowpark_java.types.StructType;
+import com.snowflake.telemetry.Telemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
+import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/** Performs K-Means clustering of points in 2-dimensional space. */
+class KMeansClusterer {
+  private static Logger logger = LoggerFactory.getLogger(KMeansClusterer.class);
+
+  private static String TRACE_PREFIX = &#34;com.mycompany.kmeans.&#34;;
+  private static String RUNTIME_ATTR_NAME = &#34;runtime_millis&#34;;
+
+  static class Point {
+    Point(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    public double getX() { return x; }
+    
+    public void setX(double newValue) { this.x = newValue; }
+
+    public double getY() { return y; }
+
+    public void setY(double newValue) { this.y = newValue; }
+
+    private double x;
+    private double y;
+  }
+
+  KMeansClusterer(
+      Session session,
+      String inputTableName,
+      String xColumnName,
+      String yColumnName,
+      String outputTableName,
+      String outputClusterIdColumnName,
+      String outputXColumnName,
+      String outputYColumnName,
+      int numClusters,
+      int maxIterations) {
+    this.numClusters = numClusters;
+    this.maxIterations = maxIterations;
+    this.session = session;
+    this.inputTableName = inputTableName;
+    this.xColumnName = xColumnName;
+    this.yColumnName = yColumnName;
+    this.outputTableName = outputTableName;
+    this.outputClusterIdColumnName = outputClusterIdColumnName;
+    this.outputXColumnName = outputXColumnName;
+    this.outputYColumnName = outputYColumnName;
+  }
+
+  /**
+   * Performs K-Means clustering of points stored in the given input table. Stores coordinates of
+   * clusters&#39; centroids in the given output table.
+   *
+   * @param session Snowpark session
+   * @param inputTable Name of the input table
+   * @param xColumn Name of the column in the input table that contains X coordinates of points
+   * @param yColumn Name of the column in the input table that contains Y coordinates of points
+   * @param outputTableName Name of the output table
+   * @param outputClusterIdColumnName Name of the column in the output table that will be populated
+   *     with cluster ids. Cluster ids are integer numbers.
+   * @param outputXColumnName Name of the column in the output table that will be populated with X
+   *     coordinates of clusters&#39; centroids.
+   * @param outputYColumnName Name of the column in the output table that will be populated with Y
+   *     coordinates of clusters&#39; centroids.
+   * @param numClusters Number of clusters.
+   * @param maxIterations The limit on the number of iterations.
+   * @return &#34;SUCCESS&#34; if the algorithm converged, an error message otherwise.
+   */
+  public static String run(
+      Session session,
+      String inputTable,
+      String xColumn,
+      String yColumn,
+      String outputTableName,
+      String outputClusterIdColumnName,
+      String outputXColumnName,
+      String outputYColumnName,
+      int numClusters,
+      int maxIterations) {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    String result;
+    boolean ranClustering = false;
+
+    Telemetry.setSpanAttribute(TRACE_PREFIX + &#34;input.num_clusters&#34;, numClusters);
+    Telemetry.setSpanAttribute(TRACE_PREFIX + &#34;input.max_iterations&#34;, maxIterations);
+
+    if (numClusters != 0) {
+      KMeansClusterer clusterer =
+          new KMeansClusterer(
+              session,
+              inputTable,
+              xColumn,
+              yColumn,
+              outputTableName,
+              outputClusterIdColumnName,
+              outputXColumnName,
+              outputYColumnName,
+              numClusters,
+              maxIterations);
+
+      Row[] rows = clusterer.readInputData();
+
+      if (rows.length &gt;= numClusters) {
+        ranClustering = true;
+        clusterer.initializeCentroids(rows);
+        boolean converged = clusterer.computeClusters(rows);
+        attributesBuilder.put(AttributeKey.longKey(TRACE_PREFIX + &#34;rows.processed&#34;), rows.length);
+        if (converged) {
+          clusterer.saveCentroids();
+          result = &#34;SUCCESS&#34;;
+        } else {
+          result = &#34;Failed to converge&#34;;
+        }
+      } else {
+        result =
+            String.format(
+                &#34;Number of rows (%d) is less than the requested number of clusters (%d)&#34;,
+                rows.length, numClusters);
+      }
+    } else {
+      result = &#34;The number of clusters should be greater than 0&#34;;
+    }
+
+    long endTime = System.currentTimeMillis();
+    attributesBuilder.put(AttributeKey.booleanKey(TRACE_PREFIX + &#34;ran_clustering&#34;), ranClustering);
+    attributesBuilder.put(
+        AttributeKey.longKey(TRACE_PREFIX + RUNTIME_ATTR_NAME), endTime - startTime);
+    attributesBuilder.put(AttributeKey.stringKey(TRACE_PREFIX + &#34;return_value&#34;), result);
+    Telemetry.addEvent(TRACE_PREFIX + &#34;summary&#34;, attributesBuilder.build());
+    logger.info(String.format(&#34;Return value: %s&#34;, result));
+    return result;
+  }
+
+  /** Computes a distance between two points. */
+  public static double computeDistance(double x1, double y1, double x2, double y2) {
+    double xDiff = x1 - x2;
+    double yDiff = y1 - y2;
+    return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+  }
+
+  private Row[] readInputData() {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    DataFrame rawInput = session.table(inputTableName);
+    long totalNumRows = rawInput.count();
+
+    Row[] result =
+        rawInput
+            .filter(
+                Functions.col(xColumnName)
+                    .is_not_null()
+                    .and(Functions.not(Functions.col(xColumnName).equal_nan()))
+                    .and(Functions.col(yColumnName).is_not_null())
+                    .and(Functions.not(Functions.col(yColumnName).equal_nan())))
+            .collect();
+
+    long endTime = System.currentTimeMillis();
+    long numGoodRows = result.length;
+    long numFilteredOutRows = totalNumRows - numGoodRows;
+    attributesBuilder.put(AttributeKey.longKey(TRACE_PREFIX + &#34;rows.total&#34;), totalNumRows);
+    attributesBuilder.put(
+        AttributeKey.longKey(TRACE_PREFIX + &#34;rows.filtered_out&#34;), numFilteredOutRows);
+    attributesBuilder.put(AttributeKey.longKey(TRACE_PREFIX + &#34;rows.good&#34;), numGoodRows);
+    attributesBuilder.put(
+        AttributeKey.longKey(TRACE_PREFIX + RUNTIME_ATTR_NAME), endTime - startTime);
+    Telemetry.addEvent(TRACE_PREFIX + &#34;io.read&#34;, attributesBuilder.build());
+    logger.info(
+        String.format(
+            &#34;Read %d rows from input; filtered out %d of them. The remaining %d are good&#34;,
+            totalNumRows, numFilteredOutRows, numGoodRows));
+    return result;
+  }
+
+  private boolean computeClusters(Row[] rows) {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    int numIterations = 0;
+    boolean centroidsMoved = true;
+
+    while (centroidsMoved &amp;&amp; numIterations &lt; maxIterations) {
+      computedClusters = new HashMap&lt;&gt;();
+      for (Row row : rows) {
+        double x = row.getDouble(0);
+        double y = row.getDouble(1);
+
+        double minDistance = Double.MAX_VALUE;
+        Integer clusterWithMinDistance = createClusterId(0);
+        for (int i = 0; i &lt; numClusters; i++) {
+          Integer clusterId = createClusterId(i);
+          Point centroid = centroids.get(clusterId);
+          double distance = computeDistance(x, y, centroid.getX(), centroid.getY());
+          if (distance &lt; minDistance) {
+            minDistance = distance;
+            clusterWithMinDistance = clusterId;
+          }
+        }
+        if (!computedClusters.containsKey(clusterWithMinDistance)) {
+          computedClusters.put(clusterWithMinDistance, new ArrayList&lt;&gt;());
+        }
+        computedClusters.get(clusterWithMinDistance).add(new Point(x, y));
+      }
+
+      centroidsMoved = false;
+      for (Integer clusterId : computedClusters.keySet()) {
+        double sumX = 0.0;
+        double sumY = 0.0;
+        int numPoints = 0;
+        Point centroid = centroids.get(clusterId);
+        for (Point pt : computedClusters.get(clusterId)) {
+          sumX += pt.getX();
+          sumY += pt.getY();
+          numPoints++;
+        }
+        if (numPoints != 0) {
+          double meanX = sumX / numPoints;
+          double meanY = sumY / numPoints;
+          double distance = computeDistance(centroid.getX(), centroid.getY(), meanX, meanY);
+          logger.info(
+              String.format(
+                  &#34;Iteration %d, cluster id %d, distance: %f&#34;, numIterations, clusterId, distance));
+          if (distance &gt; 0) {
+            logger.info(
+                String.format(
+                    &#34;Iteration %d: Moving centroid %d from (%f, %f) to (%f, %f)&#34;,
+                    numIterations, clusterId, centroid.getX(), centroid.getY(), meanX, meanY));
+            centroidsMoved = true;
+            centroid.setX(meanX);
+            centroid.setY(meanY);
+          } else {
+            logger.info(
+                String.format(
+                    &#34;Iteration %d: Not moving centroid %d from (%f, %f)&#34;,
+                    numIterations, clusterId, centroid.getX(), centroid.getY()));
+          }
+        } else {
+          logger.info(
+              String.format(&#34;Iteration %d: No points in cluster %d&#34;, numIterations, clusterId));
+        }
+      }
+      numIterations++;
+    }
+
+    boolean converged = (numIterations &lt; maxIterations);
+    long endTime = System.currentTimeMillis();
+    attributesBuilder.put(
+        AttributeKey.longKey(TRACE_PREFIX + RUNTIME_ATTR_NAME), endTime - startTime);
+    attributesBuilder.put(AttributeKey.longKey(TRACE_PREFIX + &#34;num_iterations&#34;), numIterations);
+    attributesBuilder.put(
+        AttributeKey.longKey(TRACE_PREFIX + &#34;input.max_iterations&#34;), maxIterations);
+    attributesBuilder.put(AttributeKey.booleanKey(TRACE_PREFIX + &#34;converged&#34;), converged);
+    Telemetry.addEvent(TRACE_PREFIX + &#34;clustering&#34;, attributesBuilder.build());
+
+    return converged;
+  }
+
+  private void saveCentroids() {
+    long startTime = System.currentTimeMillis();
+    Row[] rows = new Row[centroids.size()];
+    int i = 0;
+
+    for (Map.Entry&lt;Integer, Point&gt; centroid : centroids.entrySet()) {
+      rows[i] =
+          Row.create(centroid.getKey(), centroid.getValue().getX(), centroid.getValue().getY());
+      i++;
+    }
+
+    StructType schema =
+        StructType.create(
+            new StructField(outputClusterIdColumnName, DataTypes.IntegerType),
+            new StructField(outputXColumnName, DataTypes.DoubleType),
+            new StructField(outputYColumnName, DataTypes.DoubleType));
+
+    DataFrame df = session.createDataFrame(rows, schema);
+    df.write().saveAsTable(outputTableName);
+
+    long endTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    attributesBuilder.put(
+        AttributeKey.longKey(TRACE_PREFIX + RUNTIME_ATTR_NAME), endTime - startTime);
+    Telemetry.addEvent(TRACE_PREFIX + &#34;io.write&#34;, attributesBuilder.build());
+  }
+
+  private void initializeCentroids(Row[] rows) {
+    Random rand = new Random(System.currentTimeMillis());
+    Set&lt;Integer&gt; previousIndexes = new HashSet&lt;&gt;();
+    for (int i = 0; i &lt; numClusters; i++) {
+      int index;
+      do {
+        index = rand.nextInt(rows.length);
+      } while (previousIndexes.contains(index));
+      previousIndexes.add(index);
+
+      Point newCentroid = new Point(rows[index].getDouble(0), rows[index].getDouble(1));
+      Integer clusterId = createClusterId(i);
+      centroids.put(clusterId, newCentroid);
+      logger.info(
+          String.format(
+              &#34;Centroid %d initialized at (%f, %f)&#34;,
+              clusterId, newCentroid.getX(), newCentroid.getY()));
+    }
+  }
+
+  private static Integer createClusterId(int clusterIndex) {
+    return clusterIndex + 1;
+  }
+
+  private Session session;
+  private String inputTableName;
+  private String xColumnName;
+  private String yColumnName;
+  private String outputTableName;
+  private String outputClusterIdColumnName;
+  private String outputXColumnName;
+  private String outputYColumnName;
+  private Map&lt;Integer, Point&gt; centroids = new HashMap&lt;&gt;();
+  Map&lt;Integer, List&lt;Point&gt;&gt; computedClusters;
+  private int numClusters;
+  private int maxIterations;
+}
+$$;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Taking a closer look at the code" duration="5">
+        <p>Let&#39;s take a closer look at the code of our stored procedure, and find parts required for emitting trace events:</p>
+<h2 is-upgraded>The Telemetry package</h2>
+<p>The procedure uses the <code>com.snowflake:telemetry</code> package:</p>
+<pre><code>packages=(&#39;com.snowflake:snowpark:latest&#39;, &#39;com.snowflake:telemetry:latest&#39;)
+</code></pre>
+<h2 is-upgraded>Imports of telemetry APIs</h2>
+<p>The procedure imports classes defined in Snowflake&#39;s telemetry package and in <a href="https://github.com/open-telemetry/opentelemetry-java" target="_blank">OpenTelemetry Java API</a>:</p>
+<pre><code language="language-java" class="language-java">import com.snowflake.telemetry.Telemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
+</code></pre>
+<h2 is-upgraded>Code that emits trace events</h2>
+<p>Try searching for calls to the <code>Telemetry.addEvent</code> method - you&#39;ll find quite a few of them. Each event has <em>attributes</em>, which are recorded with the <code>AttributesBuilder</code> class.</p>
+<pre><code language="language-java" class="language-java">// Adding attributes to an event
+AttributesBuilder attributesBuilder = Attributes.builder();
+attributesBuilder.put(AttributeKey.booleanKey(TRACE_PREFIX + &#34;ran_clustering&#34;), ranClustering);
+attributesBuilder.put(
+        AttributeKey.longKey(TRACE_PREFIX + RUNTIME_ATTR_NAME), endTime - startTime);
+attributesBuilder.put(AttributeKey.stringKey(TRACE_PREFIX + &#34;return_value&#34;), result);
+
+// Emitting an event
+Telemetry.addEvent(TRACE_PREFIX + &#34;summary&#34;, attributesBuilder.build());
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Calling the stored procedure" duration="2">
+        <h2 is-upgraded>Enabling logging and tracing</h2>
+<p>First, let&#39;s make sure that logging and tracing are enabled:</p>
+<pre><code language="language-sql" class="language-sql">alter session set log_level=&#39;INFO&#39;;
+alter session set trace_level=&#39;ALWAYS&#39;;
+</code></pre>
+<h2 is-upgraded>Calling the procedure</h2>
+<p>Now, let&#39;s call our stored procedure. If you followed instructions in the &#34;Creating and seeding a database&#34; step precisely, and didn&#39;t change names of tables and columns, then the following command should work:</p>
+<pre><code language="language-sql" class="language-sql">call kmeans(&#39;points&#39;, &#39;x&#39;, &#39;y&#39;, &#39;centroids&#39;, &#39;cluster_id&#39;, &#39;x&#39;, &#39;y&#39;, 3, 100);
+</code></pre>
+<p>If everything worked well, it should return the string <code>SUCCESS</code>. Try changing the last parameter to <code>1</code> and calling the procedure again - it will return <code>Failed to converge</code>.</p>
+<h2 is-upgraded>Examining its output</h2>
+<p>Every time when the <code>kmeans</code> procedure runs successfully, it inserts rows into the <code>centroids</code> table. The number of rows is equal to the number of clusters (<code>3</code> in the example above). Our input table contains 3 clusters centered around points with coordinates <code>(1, 2)</code>; <code>(10, 20)</code>; and <code>(5, 15)</code>. If everything works well, you should see values similar to those in the <code>centroids</code> table. However, the algorithm isn&#39;t always able to find an optimal solution. If you see values which are substantially different, you can <code>truncate table centroids</code> and call the <code>kmeans</code> procedure again.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Analyzing trace events" duration="10">
+        <p>Trace events are structured records. Because of this, you can easily aggregate data collected from multiple invocations of your code, and answer questions such as:</p>
+<ul>
+<li>What is the average / median / p95 runtime of each part of my code?</li>
+<li>How many rows have been processed by my code?</li>
+<li>What is the failure ratio, and how are failed invocations different from successful ones?</li>
+</ul>
+<p>Code in the following examples includes SQL queries run against events emitted by the <code>KMeansClusterer</code> class in the preceding examples. Please note that <strong>it takes a few minutes for trace events to be ingested into an event table</strong>. So, if you called the <code>kmeans</code> procedure a few seconds ago, please wait a few minutes before proceeding to the next step.</p>
+<p>The following code sets the name of the event table. This variable is required for the queries below.</p>
+<pre><code language="language-sql" class="language-sql">set event_table_name=&#39;events&#39;;
+</code></pre>
+<h2 is-upgraded>Average, median, p90 / 95 / 99 runtime of each function</h2>
+<pre><code language="language-sql" class="language-sql">with raw_data as (  
+select
+  record[&#39;name&#39;] as fn_name,
+  record_attributes[&#39;com.mycompany.kmeans.runtime_millis&#39;] as runtime_millis
+from
+  identifier($event_table_name)
+where
+  resource_attributes[&#39;snow.executable.name&#39;] like &#39;KMEANS%&#39;
+  and record_type=&#39;SPAN_EVENT&#39;
+  and runtime_millis is not null
+)
+select
+  fn_name,
+  avg(runtime_millis) as runtime_average,
+  percentile_disc(0.50) within group (order by runtime_millis) as runtime_median,
+  percentile_disc(0.90) within group (order by runtime_millis) as runtime_p90,
+  percentile_disc(0.95) within group (order by runtime_millis) as runtime_p95,
+  percentile_disc(0.99) within group (order by runtime_millis) as runtime_p99
+from
+  raw_data
+group by
+  fn_name
+order by
+  runtime_p99 desc; 
+</code></pre>
+<h2 is-upgraded>How many times the algorithm did and did not converge</h2>
+<pre><code language="language-sql" class="language-sql">select
+  record_attributes[&#39;com.mycompany.kmeans.converged&#39;] as is_converged,
+  count(*) as num_invocations
+from
+  identifier($event_table_name)
+where
+  resource_attributes[&#39;snow.executable.name&#39;] like &#39;KMEANS%&#39;
+  and record_type=&#39;SPAN_EVENT&#39;
+  and record[&#39;name&#39;] = &#39;com.mycompany.kmeans.clustering&#39;
+group by is_converged;
+</code></pre>
+<h2 is-upgraded>Percentage of invocations where the algorithm was able to converge</h2>
+<pre><code language="language-sql" class="language-sql">with tmp1 as (
+  select
+    case when record_attributes[&#39;com.mycompany.kmeans.converged&#39;] = true then 1 else 0 end as one_converged,
+    1 as one_invocation
+  from
+    identifier($event_table_name)
+  where
+    resource_attributes[&#39;snow.executable.name&#39;] like &#39;KMEANS%&#39;
+    and record_type=&#39;SPAN_EVENT&#39;
+    and record[&#39;name&#39;] = &#39;com.mycompany.kmeans.clustering&#39;
+),
+tmp2 as (
+  select
+    sum(one_converged) as num_converged,
+    sum(one_invocation) as num_invocations
+  from
+    tmp1
+)
+select
+  num_converged / num_invocations * 100.0 as percent_converged
+from tmp2;
+</code></pre>
+<h2 is-upgraded>Average number of iterations required for convergence</h2>
+<pre><code language="language-sql" class="language-sql">select
+  avg(record_attributes[&#39;com.mycompany.kmeans.num_iterations&#39;]) as average_iterations
+from
+  identifier($event_table_name)
+where
+  resource_attributes[&#39;snow.executable.name&#39;] like &#39;KMEANS%&#39;
+  and record_type=&#39;SPAN_EVENT&#39;
+  and record[&#39;name&#39;] = &#39;com.mycompany.kmeans.clustering&#39;
+  and record_attributes[&#39;com.mycompany.kmeans.converged&#39;] = true;
+
+</code></pre>
+<h2 is-upgraded>Total number of rows processed by all invocations of the algorithm</h2>
+<pre><code language="language-sql" class="language-sql">select
+  sum(record_attributes[&#39;com.mycompany.kmeans.rows.processed&#39;]) as total_processed_rows
+from
+  identifier($event_table_name)
+where
+  resource_attributes[&#39;snow.executable.name&#39;] like &#39;KMEANS%&#39;
+  and record_type=&#39;SPAN_EVENT&#39;
+  and record[&#39;name&#39;] = &#39;com.mycompany.kmeans.summary&#39;;
+
+</code></pre>
+<h2 is-upgraded>Average percentage of filtered out rows</h2>
+<pre><code language="language-sql" class="language-sql">select
+  avg(record_attributes[&#39;com.mycompany.kmeans.rows.filtered_out&#39;] / record_attributes[&#39;com.mycompany.kmeans.rows.total&#39;] * 100.0) as avg_percent_of_filtered_out_rows
+from
+  identifier($event_table_name)
+where
+  resource_attributes[&#39;snow.executable.name&#39;] like &#39;KMEANS%&#39;
+  and record_type=&#39;SPAN_EVENT&#39;
+  and record[&#39;name&#39;] = &#39;com.mycompany.kmeans.io.read&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="What can be recorded as a trace event" duration="5">
+        <h2 is-upgraded>Time taken to execute each part of a stored procedure</h2>
+<p>If your procedure performs several lengthy operations, you may want to record the amount of time taken by each operation. Later on, you can aggregate this information with a SQL query.</p>
+<p>For example, you can compute the average / median / p95 time taken by each operation. To do that, you can emit a trace event after each operation, recording the duration of that operation in an attribute of the event.</p>
+<p>In our example, the <code>KMeansClusterer</code> class records the run time of each part of its workflow. It also records the total run time of its main function (<code>KMeansClusterer.run</code>).</p>
+<pre><code language="language-java" class="language-java">class KMeansClusterer {
+  public static String run(/* parameters omitted */) {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    
+    // Creating an instance of KMeansClusterer and calling its methods.
+
+    long endTime = System.currentTimeMillis();    
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.runtime_millis&#34;), endTime - startTime);    
+    Telemetry.addEvent(&#34;com.mycompany.kmeans.stats&#34;, attributesBuilder.build());    
+  }
+
+  private Row[] readInputData() {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    
+    // Reading data from a table and filtering out rows with missing values.
+    
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.runtime_millis&#34;), endTime - startTime);
+    Telemetry.addEvent(&#34;com.mycompany.kmeans.io.read&#34;, attributesBuilder.build());    
+  }
+
+  private long computeClusters(Row[] rows) {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    
+    // Computing clusters.
+
+    long endTime = System.currentTimeMillis();
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.runtime_millis&#34;), endTime - startTime);    
+    Telemetry.addEvent(&#34;com.mycompany.kmeans.clustering&#34;, attributesBuilder.build());
+  }  
+}
+</code></pre>
+<h2 is-upgraded>Intermediate results of a computation</h2>
+<p>If your stored procedure loads raw data and performs a sequence of transformations, then you may want to record some characteristics of the data after each transformation.</p>
+<p>In our example, the <code>KMeansClusterer</code> class methods record the following data points:</p>
+<ul>
+<li>The <code>readInputData</code> method records the number of rows read from source and number of rows with missing values.</li>
+<li>The <code>computeClusters</code> method records the number of iterations performed by the clustering algorithm, the limit on the number of iterations, and a boolean value that indicates whether the algorithm converged before reaching that limit.</li>
+</ul>
+<pre><code language="language-java" class="language-java">class KMeansClusterer {  
+  private Row[] readInputData() {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    DataFrame rawInput = session.table(inputTableName);
+    long totalNumRows = rawInput.count();
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.rows.total&#34;), totalNumRows);
+    
+    Row[] result =
+        rawInput
+            .filter(
+                Functions.col(xColumnName)
+                    .is_not_null()
+                    .and(Functions.not(Functions.col(xColumnName).equal_nan()))
+                    .and(Functions.col(yColumnName).is_not_null())
+                    .and(Functions.not(Functions.col(yColumnName).equal_nan())))
+            .collect();
+
+    long endTime = System.currentTimeMillis();
+    long numGoodRows = result.length;
+    long numFilteredOutRows = totalNumRows - numGoodRows;
+    
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.rows.filtered_out&#34;), numFilteredOutRows);
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.runtime_millis&#34;), endTime - startTime);
+    Telemetry.addEvent(&#34;com.mycompany.kmeans.io.read&#34;, attributesBuilder.build());    
+    return result;
+  }
+
+  private long computeClusters(Row[] rows) {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    
+    // Computing clusters.
+
+    long endTime = System.currentTimeMillis();
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.runtime_millis&#34;), endTime - startTime);
+    attributesBuilder.put(AttributeKey.longKey(&#34;numIterations&#34;), numIterations);
+    attributesBuilder.put(AttributeKey.longKey(&#34;maxIterations&#34;), maxIterations);
+    attributesBuilder.put(AttributeKey.booleanKey(&#34;converged&#34;), (numIterations &lt; maxIterations));
+    Telemetry.addEvent(&#34;com.mycompany.kmeans.clustering&#34;, attributesBuilder.build());
+  }  
+}
+</code></pre>
+<h2 is-upgraded>A summary of a stored procedure execution</h2>
+<p>At the end of a stored procedure, you may want to emit a trace event which contains attributes such as the number of rows processed, time taken to execute the whole procedure, and so on.</p>
+<p>For example, the <code>KMeansClusterer</code> class records the following data points in its run function:</p>
+<ul>
+<li>Number of processed rows.</li>
+<li>Whether the clustering algorithm ran (it won&#39;t run if the input is invalid).</li>
+<li>The value returned by the stored procedure to the caller.</li>
+</ul>
+<pre><code language="language-java" class="language-java">class KMeansClusterer {
+  public static String run(/* parameters omitted */) {
+    long startTime = System.currentTimeMillis();
+    AttributesBuilder attributesBuilder = Attributes.builder();
+    
+    // Reading input
+
+    attributesBuilder.put(AttributeKey.longKey(&#34;com.mycompany.kmeans.rows.processed&#34;), rows.length);
+
+    // Calling the clustering function
+
+    long endTime = System.currentTimeMillis();
+    attributesBuilder.put(AttributeKey.longKey(&#34;runtimeMillis&#34;), endTime - startTime);
+    attributesBuilder.put(AttributeKey.booleanKey(&#34;com.mycompany.kmeans.ran_clustering&#34;), ranClustering);    
+    attributesBuilder.put(AttributeKey.stringKey(&#34;com.mycompany.kmeans.return_value&#34;), result);
+    Telemetry.addEvent(&#34;com.mycompany.kmeans.stats&#34;, attributesBuilder.build());    
+  } 
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="What can be recorded as a span attribute" duration="1">
+        <p>Trace events are grouped into <em>spans</em>. However, the current version of the telemetry API does not allow you to create your own spans, or to control lifecycle of spans automatically created for you.</p>
+<p>All events are added to a span that is created automatically before your code is invoked. If your query invokes a function or a procedure only once (as in <code>call my_stored_procedure();</code> or <code>select my_function();</code>), then we&#39;ll create only one span, and all events emitted by <code>my_stored_procedure</code> or <code>my_function</code> will be added to that span. However, if your query invokes a function for each row (as in <code>select my_function(x) from some_table;</code>), then there will be multiple spans. If <code>my_function</code> emits trace events, then each event will be added to <em>one</em> of those spans. When the number of events in a span reaches the limit, new events will be discarded (in Java), or old events will be deleted (in Python). So, it&#39;s impossible to tell which events will be recorded and how they will be distributed across spans. This is the main reason why we don&#39;t recommend emitting trace events from functions which are invoked once per row.</p>
+<p>Despite these limitations, you can still find span attributes useful for recording information which doesn&#39;t change while your query is running. In our example, the <code>KMeansClusterer.run</code> method records its arguments as span attributes:</p>
+<pre><code language="language-java" class="language-java">Telemetry.setSpanAttribute(TRACE_PREFIX + &#34;input.num_clusters&#34;, numClusters);
+Telemetry.setSpanAttribute(TRACE_PREFIX + &#34;input.max_iterations&#34;, maxIterations);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Trace events allow you to record structured information about what&#39;s happening in your code while it is running in Snowflake. You can easily analyze trace events by running SQL queries against the event table. We recommend using trace events in stored procedures or functions which are invoked only once per SQL query.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Creating a Java stored procedure that emits trace events;</li>
+<li>Analyzing trace events emitted by that stored procedure;</li>
+<li>What trace events and span attributes can be used for;</li>
+</ul>
+<h2 is-upgraded>Related documentation</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up" target="_blank">Setting up an event table</a>;</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing" target="_blank">Trace events for functions and procedures</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

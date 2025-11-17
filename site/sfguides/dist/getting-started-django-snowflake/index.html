@@ -1,0 +1,342 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake as a backend for Django</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-django-snowflake"
+                  title="Getting Started with Snowflake as a backend for Django"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Django is a popular Python open-source web framework that allows developers to build web applications quickly and easily. Django provides many features and tools for web development, such as an Object-Relational Mapping (ORM) system for interacting with databases, an admin interface for managing application data, and much more. Django is commonly used with OLTP databases for its backend, but Snowflake can be a great backend for Django when you need the power of the data cloud behind your app.</p>
+<p>In this Quickstart, we&#39;ll demonstrate how to use Snowflake as a backend for your Django application using the <strong>django-snowflake</strong> Python package. You&#39;ll build a sample Django app that connects to Snowflake and displays Snowflake data on the frontend.</p>
+<p>Let&#39;s get started!</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Python version &gt;= 3.8</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Do</h2>
+<ul>
+<li>Create a database in Snowflake and load data into it</li>
+<li>Connect a Django application to Snowflake using the <strong>django-snowflake</strong> backend</li>
+<li>Create models in the Django app to represent the Snowflake data</li>
+<li>View the Snowflake data as an end user of the app</li>
+<li>Browse the Snowflake data using Django&#39;s admin interface</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account (<a href="https://signup.snowflake.com/developers" target="_blank">trial</a>, or otherwise)</li>
+<li>A code editor</li>
+<li>A terminal</li>
+<li>git</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A sample Django app that connects to Snowflake and displays Snowflake data on the frontend</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clone the sfguide-getting-started-django-snowflake repo" duration="1">
+        <p>First, clone Snowflake&#39;s <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-django-snowflake" target="_blank"><strong>sfguide-getting-started-django-snowflake</strong></a> repo and navigate into the cloned repo.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-getting-started-django-snowflake.git &amp;&amp; cd sfguide-getting-started-django-snowflake/
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install Django and run the app" duration="3">
+        <p>This repo contains a Django project called <strong>quickstart</strong>, which contains an app called <strong>trips</strong> representing Citibike trip data. To run the project, you&#39;ll need to install Django. If you don&#39;t have Django installed, you can install it using pip.</p>
+<pre><code language="language-py" class="language-py">pip install django
+</code></pre>
+<p>Next, confirm that the app successfully runs. Change into the <strong>quickstart/</strong> folder and run the following command:</p>
+<pre><code language="language-py" class="language-py">python manage.py runserver
+</code></pre>
+<p>Navigate to <a href="http://localhost:8000/trips" target="_blank">localhost:8000/trips</a> in your browser. If you see a success message (&#34;Hello there! Welcome to the django-snowflake Quickstart!&#34;), then you&#39;ve successfully run the app. Ignore any warnings in your terminal about unapplied migrations – we&#39;ll address that in a later step of this Quickstart.</p>
+<p>If you don&#39;t see the success message, you can troubleshoot errors using Django&#39;s documentation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a database in Snowflake" duration="2">
+        <p>Let&#39;s create a database in Snowflake that we can connect to the Django app. If you don&#39;t already have a Snowflake account, now&#39;s a good time to create one by registering for a <a href="https://signup.snowflake.com/developers" target="_blank">free 30-day trial</a>.</p>
+<p>In Snowflake, navigate to the &#34;Databases&#34; subsection within the &#34;Data&#34; section of the sidebar. At the top right, click the button to create a new database. Name the database &#34;DJANGO_DB&#34;.  We&#39;ll connect this database to the Django application in a later step.</p>
+<p class="image-container"><img alt="CreateDatabase" src="img/ca5d8b49f02ffb9e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install 
+django-snowflake" duration="1">
+        <p>To connect the Django app to the database you created in Snowflake, you&#39;ll need the <strong>django-snowflake</strong> package. You should install the version of <strong>django-snowflake</strong> that corresponds to your version of Django. To check the version of Django you have installed, run the following command:</p>
+<pre><code language="language-bash" class="language-bash">python -m django --version
+</code></pre>
+<p>For example, if you have version 4.1.x of Django installed, you should install the corresponding version of <strong>django-snowflake</strong>:</p>
+<pre><code language="language-bash" class="language-bash">pip install django-snowflake==4.1.*
+</code></pre>
+<p>Note that the minor release number of Django doesn&#39;t correspond to the minor release number of <strong>django-snowflake</strong>. Use the latest minor release of each.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect the Django app to Snowflake" duration="2">
+        <p>Let&#39;s configure the project&#39;s settings to use Snowflake as the backend. Change into the <strong>quickstart/</strong> folder (within the parent <strong>quickstart/</strong> folder, i.e., <strong>quickstart/quickstart/</strong>) and take a look at what&#39;s inside. You&#39;ll notice several files  associated with the project. Using your preferred code editor, open the <strong>settings.py</strong> file. This file contains the database settings that we&#39;ll configure.</p>
+<p>Scroll down to the <code>DATABASES</code> dictionary defined on line 77. It should look something like this:</p>
+<pre><code language="language-python" class="language-python">DATABASES = {
+    &#39;default&#39;: {
+        &#39;ENGINE&#39;: &#39;django.db.backends.sqlite3&#39;,
+        &#39;NAME&#39;: BASE_DIR / &#39;db.sqlite3&#39;,
+    }
+}
+</code></pre>
+<p>The <code>DATABASES</code> dictionary is a collection of named databases that are configured for the project. By default, Django projects are configured to use SQLite as a backend (note the <code>default</code> database entry in the <code>DATABASES</code> dictionary, which uses a SQLite engine and points to the <strong>db.sqlite3</strong> file in the root of the project).</p>
+<p>Let&#39;s set Snowflake as the default backend. Configure Django to connect to the Snowflake database you created by using the code below:</p>
+<pre><code language="language-python" class="language-python">DATABASES = {
+    &#39;default&#39;: {
+        &#39;ENGINE&#39;: &#39;django_snowflake&#39;,
+        &#39;NAME&#39;: &#39;DJANGO_DB&#39;,
+        &#39;SCHEMA&#39;: &#39;PUBLIC&#39;,
+        &#39;WAREHOUSE&#39;: &#39;COMPUTE_WH&#39;,
+        &#39;USER&#39;: &#39;YOUR_USERNAME&#39;,
+        &#39;PASSWORD&#39;: &#39;YOUR_PASSWORD&#39;,
+        &#39;ACCOUNT&#39;: &#39;YOUR_ACCOUNT_IDENTIFIER&#39;,
+        # Include &#39;OPTIONS&#39; if you need to specify any other
+        # snowflake.connector.connect() parameters.
+        # https://docs.snowflake.com/en/user-guide/python-connector-api.html#connect
+        &#39;OPTIONS&#39;: {},
+    }
+}
+</code></pre>
+<p>This configuration allows us to connect to Snowflake using <code>django-snowflake</code>. We&#39;re specifically connecting to the <strong>DJANGO_DB</strong> database, using the <strong>PUBLIC</strong> schema, and using the <strong>COMPUTE_WH</strong> warehouse. Be sure to replace the <code>YOUR_USERNAME</code>, <code>YOUR_PASSWORD</code>, and <code>YOUR_ACCOUNT_IDENTIFIER</code> with the correct, corresponding values. If you need help locating your account identifier, see <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">Account Identifiers</a>. Save your changes.</p>
+<p>That&#39;s it! You don&#39;t have to run any additional commands to connect to Snowflake. If you&#39;ve successfully connected, your terminal will display a message like &#34;System check identified no issues (0 silenced).&#34;. If the connection was unsuccessful, your terminal will output the associated errors, which you can then troubleshoot.</p>
+<aside class="warning"><p><strong>Important</strong></p>
+<p>The purpose of this Quickstart is to demonstrate how to use Snowflake as a Django backend. Note, however, that this backend would be inappropriate for use in web app use cases where multiple clients could be creating objects within Snowflake at the same time. As such, this Quickstart is for demonstration purposes only.</p>
+<p>A more common approach would be to configure multiple databases for your Django application, with Snowflake acting as the backend for data warehouse use cases (rather than writing web apps). For more information, refer to the Django documentation on <a href="https://docs.djangoproject.com/en/4.1/topics/db/multi-db/" target="_blank">Multiple databases</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Django migrations" duration="1">
+        <p>You&#39;ve probably seen that pesky warning about unapplied migrations several times in your terminal by now. Let&#39;s address them.</p>
+<p>Navigate up one level to the <strong>quickstart/</strong> folder (i.e., the one that contains the <strong>manage.py</strong> file). Run the migrations with the following command:</p>
+<pre><code language="language-bash" class="language-bash">python manage.py migrate
+</code></pre>
+<p>This command will run the default Django migrations, and write several Django-specific tables to your <strong>DJANGO_DB</strong> in Snowflake. Navigate to the <strong>DJANGO_DB</strong> database in Snowflake and expand the tables section (under the <strong>PUBLIC</strong> schema). You should see all of the tables that Django wrote to the database. If you don&#39;t see them, click the &#34;...&#34; near the top and click &#34;Refresh&#34;.</p>
+<p>These tables contain Django-specific information required to run your application properly. Without these tables, your app might behave in unexpected ways. Feel free to peruse the tables, but do not modify them.</p>
+<p class="image-container"><img alt="DefaultDjangoMigrations" src="img/d7e40d9c9968e35.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load data into your database" duration="7">
+        <p>Let&#39;s load some fun data into the database that we can use in the Django app. We&#39;re going to load data into <strong>DJANGO_DB</strong> by doing the following:</p>
+<ol type="1">
+<li>Creating a stage in Snowflake for the data that we&#39;ll load. The data is hosted on AWS S3 and is publicly accessible (i.e., no credentials required).</li>
+<li>Creating a worksheet and defining the target table and file format for ingesting data into the database.</li>
+<li>Copying the data from the stage into the target table.</li>
+</ol>
+<p>Let&#39;s load!</p>
+<h3 is-upgraded>Create a stage</h3>
+<p>Within Snowflake, navigate to your <strong>DJANGO_DB</strong> database and expand it. Click on the <strong>PUBLIC</strong> schema. Click the &#34;Create&#34; button in the top right of the screen, and, in the drop down, select &#34;Stage &gt; Amazon S3&#34;.  A &#34;Create Securable Object&#34; modal will appear. In the editor within the modal, replace the entire template with the following:</p>
+<pre><code>create stage citibike_trips
+    url = &#39;s3://snowflake-workshop-lab/citibike-trips-csv/&#39;;
+</code></pre>
+<p>The <code>credentials</code> field in the stage template is not needed since the data is publicly accessible.</p>
+<p>Click &#34;Create Stage&#34;. If successful, you&#39;ll see a &#34;CITIBIKE_TRIPS&#34; stage created under the <strong>PUBLIC</strong> schema.</p>
+<h3 is-upgraded>Define the target table and file format for data ingestion</h3>
+<p>Next, let&#39;s define the table and file format that we&#39;ll use for the data we&#39;ll load.</p>
+<p>Navigate to &#34;Worksheets&#34; in the left panel of the Snowflake UI. Start a new worksheet using the &#34;+ Worksheet&#34; button in the top right. Ensure you have the correct database (<strong>DJANGO_DB</strong>), schema (<strong>PUBLIC</strong>), and warehouse (<strong>COMPUTE_WH</strong>) set for your worksheet. Add the following code and run it all:</p>
+<pre><code language="language-sql" class="language-sql">create or replace table trip
+(trip_id integer autoincrement start 1 increment 1,
+tripduration timestamp,
+starttime timestamp,
+stoptime timestamp,
+start_station_id integer,
+start_station_name string,
+start_station_latitude float,
+start_station_longitude float,
+end_station_id integer,
+end_station_name string,
+end_station_latitude float,
+end_station_longitude float,
+bikeid integer,
+membership_type string,
+usertype string,
+birth_year integer,
+gender integer);
+
+create or replace file format csv type=&#39;csv&#39;
+  compression = &#39;auto&#39; field_delimiter = &#39;,&#39; record_delimiter = &#39;\n&#39;
+  skip_header = 0 field_optionally_enclosed_by = &#39;\042&#39; trim_space = false
+  error_on_column_count_mismatch = false escape = &#39;none&#39; escape_unenclosed_field = &#39;\134&#39;
+  date_format = &#39;auto&#39; timestamp_format = &#39;auto&#39; null_if = (&#39;&#39;)
+  comment = &#39;file format for ingesting data into snowflake&#39;;
+</code></pre>
+<p>These commands will create the target table and define the file format to help ingest data. If you&#39;d like to see the table created, navigate to the <strong>TRIP</strong> table in your <strong>DJANGO_DB</strong> database. You&#39;ll note that it is empty. We&#39;re going to populate it next.</p>
+<h3 is-upgraded>Copy data into the target table</h3>
+<p>In the same worksheet, add the following command to the bottom of the file and run it:</p>
+<pre><code language="language-sql" class="language-sql">copy into trip (tripduration, starttime, stoptime, start_station_id, start_station_name, start_station_latitude, start_station_longitude, end_station_id, end_station_name, end_station_latitude, end_station_longitude, bikeid, membership_type, usertype, birth_year, gender) from @citibike_trips file_format=csv PATTERN = &#39;.*csv.*&#39;;
+</code></pre>
+<p>The command will process the data files from the stage and copy them into the <strong>TRIP</strong> table created earlier. If you navigate to the &#34;Data Preview&#34; tab for the <strong>TRIP</strong> table, you&#39;ll see a sample of the data in the table (you may need to refresh the preview).</p>
+<p>Great, we now have some data to play with in the database!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Django models using 
+inspectdb" duration="2">
+        <p>For demonstration purposes, the app includes a view that will render a sample of the trip data once everything is properly configured. Navigate to <a href="http://localhost:8000/trips/from/graham-conselyea" target="_blank">localhost:8000/trips/from/graham-conselyea</a>. You should encounter an error! That&#39;s because although we&#39;ve connected the app to Snowflake, we haven&#39;t yet created the Django models necessary to represent the trip data in the app. Let&#39;s create those models now.</p>
+<p>A model is a representation of your data in the Django app. Creating a model based on the data in the <strong>TRIP</strong> table will allow you to programmatically use the data throughout the Django app.</p>
+<p>Django has a handy command called <strong>inspectdb</strong> that automatically generates Django models for you based on a table&#39;s metadata and schema. We&#39;ll use this command to generate a Trip model that we&#39;ll use in the app.</p>
+<p>In the parent <strong>quickstart/</strong> folder, run the following command:</p>
+<pre><code language="language-bash" class="language-bash">python manage.py inspectdb TRIP &gt; generated_models.py
+</code></pre>
+<p>This command will inspect the <strong>TRIP</strong> table in the <strong>DJANGO_DB</strong> database, generate models based on the table, and dump the models into a file called <strong>generated_models.py</strong>.</p>
+<p>Open the <strong>generated_models.py</strong> file. If the model generation was successful, the file will define a class called <code>Trip</code>, along with additional fields based on the columns of the table. In addition,  note the comments inserted at the top of the file during model generation. Here&#39;s a sample of the file:</p>
+<pre><code language="language-python" class="language-python">class Trip(models.Model):
+    trip_id = models.BigAutoField(blank=True, null=True)
+    tripduration = models.TextField(blank=True, null=True)  # This field type is a guess.
+    # Rest of code omitted for brevity
+</code></pre>
+<p>To use this model in the app, we&#39;ll need to add the <code>Trip</code> model definition to the <strong>TRIP</strong> app in the <strong>quickstart</strong> Django project. Copy the contents of <strong>generated_models.py</strong>. Next, open the <strong>quickstart/trips/models.py</strong> file and replace everything inside the file with what you copied from <strong>generated_models.py</strong>.</p>
+<p>Finally, let&#39;s specify that <code>trip_id</code> should be used as the primary key for the data. Modify the line that defines <code>trip_id</code> as shown below and save your changes.</p>
+<pre><code language="language-python" class="language-python">trip_id = models.BigAutoField(blank=True, primary_key=True)
+</code></pre>
+<aside class="warning"><p><strong>Important</strong></p>
+<p>While handy, the <code>inspectdb</code> command is not perfect. If it is unable to identify the correct type for a column (i.e, string, number, etc.), then it will make a best guess, which you&#39;ll see noted in the generated models. You should always revise your generated models to make sure they are what you expect. For more information, see the <a href="https://docs.djangoproject.com/en/4.1/ref/django-admin/#inspectdb" target="_blank">Django documentation on <strong>inspectdb</strong></a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and run migrations" duration="1">
+        <p>Because we&#39;ve created a model, we&#39;ll need to also create – not run – a migration. This migration will record the creation of the model. In your terminal, from the root <strong>quickstart/</strong> folder, run the following command:</p>
+<pre><code language="language-bash" class="language-bash">python manage.py makemigrations trips
+</code></pre>
+<p>This command will create a <strong>migrations/</strong> folder within the <strong>trips/</strong> folder and populate it with files that correspond to changes to the model. This command also creates the initial migration in a file called <strong>0001_initial.py</strong>. Feel free to peruse it if you&#39;re curious, but do not modify it.</p>
+<p>We&#39;re now ready to run the migration. Run the following command:</p>
+<pre><code language="language-bash" class="language-bash">python manage.py migrate trips
+</code></pre>
+<p>This will run the migration defined in <strong>0001_initial.py</strong>.</p>
+<p>That&#39;s it! We can now use this model through the Django app.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Browse the data as an end user" duration="1">
+        <p>As mentioned in a previous step, the app includes a view that will render a sample of the data once everything is properly configured (i.e., creating a model). We&#39;ve since created the model necessary to use the trip data in the app, so we can now view the bike trip data as if we were an end user of the app.</p>
+<p>Navigate to <a href="http://localhost:8000/trips/from/graham-conselyea" target="_blank">localhost:8000/trips/from/graham-conselyea</a>. If you&#39;ve successfully configured Snowflake as a backend and ran the necessary migrations, you should see a table titled &#34;10 Trips from the ‘Graham Ave &amp; Conselyea St&#39; Station&#34; on the page. This is just a sample of the data – there are all sorts of cool things you could do with the data if you wanted to.</p>
+<p class="image-container"><img alt="BrowseDataEndUser" src="img/b22274ae0e297a31.png"></p>
+<p>For some context, we configured the view as follows:</p>
+<ul>
+<li>The view is defined in <strong>/trips/views.py</strong>, as <code>class GrahamConselyeaView</code>. In this view, we programmatically access and return the trip data that is displayed on the front end. We&#39;re able to do this by operating on the <code>Trip</code> model we defined earlier (which is based on the trip data in Snowflake).</li>
+<li>We defined a new path in the <code>urlpatterns</code> list in <strong>/trips/urls.py</strong>, which references the view defined in <strong>/trips/views.py</strong>.</li>
+<li>The HTML is defined in the <strong>trips-from-graham-conselyea.html</strong> file, in the <strong>/trips/templates/trips</strong> folder.</li>
+</ul>
+<p>For more information on views in Django, see <a href="https://docs.djangoproject.com/en/4.1/topics/http/views/" target="_blank">Writing Views</a> in the Django documentation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Optional) Browse the data as a Django admin" duration="3">
+        <p>If you&#39;re an admin of a Django app, you can browse models in an admin UI that Django provides out of the box. To view the data as an admin, you&#39;ll need to register as a super user of the app, and also register the model to the admin site.</p>
+<p>First, let&#39;s create a super user. Run the following command:</p>
+<pre><code language="language-bash" class="language-bash">python manage.py createsuperuser
+</code></pre>
+<p>You&#39;ll be prompted for a username, email (press &#34;Enter&#34; on your keyboard to leave it blank), and password. You can set these to any values that you like, but be sure to jot them down so that you can log into the admin UI.</p>
+<p>Navigate to <a href="http://localhost:8000/admin" target="_blank">localhost:8000/admin</a> in your browser. You&#39;ll be met with a login page. Enter the credentials you defined for your super user and log in. If successful, you&#39;ll see the &#34;Django administration&#34; UI. Note the models shown in the UI (&#34;Groups&#34; and &#34;Users&#34;). These models were created as part of the default Django migrations you ran earlier. If you click on the &#34;Users&#34; model, you should see an entry for the super user you just created!</p>
+<p>Next, let&#39;s register the Trip model. Navigate to <strong>quickstart/trips/admin.py</strong>. Add the following to the file:</p>
+<pre><code language="language-python" class="language-python">from .models import Trip
+
+admin.site.register(Trip)
+</code></pre>
+<p>Save the file and reload the admin page in your browser. If successful, you should see a new section in the UI called &#34;Trips&#34;, with a &#34;Trips&#34; entry underneath. Click on the &#34;Trips&#34; entry. Voila! This is the trip data that we imported into the app from Snowflake. Each object represents a row in the <strong>TRIP</strong> database. Click on the object to browse its contents. Note that, if you wanted to, you could modify the data using this admin UI.</p>
+<p class="image-container"><img alt="BrowseDataAdmin" src="img/2c15cb2bc65cfc25.png"></p>
+<aside class="warning"><p><strong>Note</strong></p>
+<p>Django&#39;s admin UI is a handy interface provided by Django out of the box. However, depending on your use case, it might not be the best interface to use if you want to edit data. We demonstrate the admin UI in this Quickstart to show how it is possible to browse data in Snowflake from within Django. For database administration, you should choose a workflow that best suits your use case.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>Congratulations! In just a few minutes, you were able to configure a Django app to use Snowflake as a backend using <strong>django-snowflake</strong>. What we covered here is only a sample demonstration of what&#39;s possible – there are all sorts of great things that you can build when using Snowflake as a backend in Django. What will you build?</p>
+<p>We would love your feedback on this Quickstart! Please submit your feedback using this form: <a href="https://forms.gle/zTwg1AVjrKspCwoq9" target="_blank">Feedback Form</a></p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Creating a database in Snowflake and loading data into it</li>
+<li>Connecting a Django application to Snowflake using the <strong>django-snowflake</strong> backend</li>
+<li>Creating models in the Django app to represent the Snowflake data</li>
+<li>Browsing the Snowflake data using Django&#39;s admin interface</li>
+<li>Viewing the Snowflake data as an end user of the app</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://developers.snowflake.com/demos/visualize-snowflake-data-in-a-django-web-app/" target="_blank">Full demo on Snowflake Demo Hub</a></li>
+<li><a href="https://docs.djangoproject.com/en/4.1/" target="_blank">Official Django documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ecosystem-lang" target="_blank">Native Programmatic Interfaces for Snowflake</a></li>
+<li><a href="https://community.snowflake.com/s/" target="_blank">Snowflake Community</a></li>
+<li><a href="https://www.youtube.com/watch?v=PNR7kKAbP2U" target="_blank">YouTube – Using Snowflake As A Backend For Django</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

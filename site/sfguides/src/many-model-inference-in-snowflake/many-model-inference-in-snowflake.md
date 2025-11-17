@@ -1,20 +1,19 @@
 author: Charlie Hammond
 id: many-model-inference-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Easily run inference on many models in Snowflake
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Many Model Inference in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Many datasets can be easily partitioned into multiple independent subsets. For example, a dataset containing sales data for a chain of stores can be partitioned by store number. A separate model can then be trained for each partition. Training and inference operations on the partitions can be parallelized, reducing the wall-clock time for these operations. Furthermore, since individual stores likely differ somewhat in how their features affect their sales, this approach can actually lead to more accurate inference at the store level.
 
-In this quickstart, you will use the [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview) to implement [partitioned](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/partitioned-custom-models) inference using custom models. When using the model, the registry partitions the dataset and predicts the partitions in parallel using all the nodes and cores in your warehouse. Finally, it combines the results into a single dataset. This differs from the [Getting Started with Partitioned Models in Snowflake Model Registry](https://quickstarts.snowflake.com/guide/partitioned-ml-model/index.html?index=..%2F..index#0) quickstart by implementing a "stateful" model that runs training independently of inference. This allows you to pretrain a list of models, then log them as a single model in Snowflake which loads fitted models during inference.
+In this quickstart, you will use the [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview) to implement [partitioned](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/partitioned-custom-models) inference using custom models. When using the model, the registry partitions the dataset and predicts the partitions in parallel using all the nodes and cores in your warehouse. Finally, it combines the results into a single dataset. This differs from the [Getting Started with Partitioned Models in Snowflake Model Registry](/en/developers/guides/partitioned-ml-model/) quickstart by implementing a "stateful" model that runs training independently of inference. This allows you to pretrain a list of models, then log them as a single model in Snowflake which loads fitted models during inference.
 
 ### Prerequisites
 - Access to a Snowflake account with Accountadmin. 
@@ -32,7 +31,6 @@ In this quickstart, you will use the [Snowflake Model Registry](https://docs.sno
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -65,7 +63,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE MANY_MODELS_DATABASE  TO ROLE MANY_MO
 
 <!-- ------------------------ -->
 ## Run the Notebooks
-Duration: 30
 
 ### Setup Notebook
 - Download the setup notebook from this [link](https://github.com/Snowflake-Labs/sfguide-many-model-inference-in-snowflake/blob/main/notebooks/0_start_here.ipynb)
@@ -86,11 +83,10 @@ Duration: 30
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Partitioning datasets for machine learning enables efficient parallel processing and improved accuracy by tailoring models to specific subsets of data, such as store-specific sales trends. With Snowflake’s Model Registry, you can seamlessly implement partitioned inference using stateful models. This approach allows you to train models independently for each partition, log them as a single model, and leverage Snowflake’s compute resources to perform parallelized inference across all partitions.
 
-By adopting this workflow, you reduce wall-clock time for training and inference, enhance scalability, and improve prediction accuracy at the partition level. Take advantage of Snowflake’s capabilities to streamline your machine learning pipeline—start exploring partitioned modeling with Snowflake’s [Model Registry documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview) and [quickstart guides](https://quickstarts.snowflake.com/guide/partitioned-ml-model/index.html?index=..%2F..index#0) today!
+By adopting this workflow, you reduce wall-clock time for training and inference, enhance scalability, and improve prediction accuracy at the partition level. Take advantage of Snowflake’s capabilities to streamline your machine learning pipeline—start exploring partitioned modeling with Snowflake’s [Model Registry documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview) and [quickstart guides](/en/developers/guides/partitioned-ml-model/) today!
 
 ### What You Learned
 - How to implemente a "stateful" custom partitioned model in Snowflake
@@ -98,4 +94,4 @@ By adopting this workflow, you reduce wall-clock time for training and inference
 ### Related Resources
 - [Snowflake Model Registry Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview)
 - [Partitioned Model Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/partitioned-custom-models)
-- [Getting Started with Partitioned Models in Snowflake Model Registry Quickstart](https://quickstarts.snowflake.com/guide/partitioned-ml-model/index.html?index=..%2F..index#0)
+- [Getting Started with Partitioned Models in Snowflake Model Registry Quickstart](/en/developers/guides/partitioned-ml-model/)

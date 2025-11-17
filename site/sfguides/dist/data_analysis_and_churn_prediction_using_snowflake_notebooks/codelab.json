@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "data_analysis_and_churn_prediction_using_snowflake_notebooks",
+  "duration": 32,
+  "title": "Data Analysis and Churn Prediction Using Snowflake Notebooks",
+  "summary": "Data Analysis and Churn Prediction Using Snowflake Notebooks",
+  "source": "data_analysis_and_churn_prediction_using_snowflake_notebooks/data_analysis_and_churn_prediction_using_snowflake_notebooks.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "churn",
+    "prediction",
+    "getting-started"
+  ],
+  "tags": [
+    "churn",
+    "gettingstarted",
+    "notebooks",
+    "prediction",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_analysis_and_churn_prediction_using_snowflake_notebooks"
+}

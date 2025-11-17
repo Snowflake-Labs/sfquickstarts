@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "improvado",
+  "duration": 11,
+  "title": "Improvado Composable \"Agentic\" Data Platform with Snowflake",
+  "summary": "Getting Started guide to show how users can use Improvado Composable “Agentic” Data Platform with Snowflake",
+  "source": "improvado/improvado.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations",
+    "marketing"
+  ],
+  "tags": [
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "improvado"
+}

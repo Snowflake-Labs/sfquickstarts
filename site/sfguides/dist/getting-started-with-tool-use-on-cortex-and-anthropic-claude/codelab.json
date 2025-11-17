@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-tool-use-on-cortex-and-anthropic-claude",
+  "duration": 120,
+  "title": "Getting Started with Tool Use on Cortex and Anthropic Claude",
+  "summary": "This guide demonstrates how Snowflake Cortex integrates with Claude to enable external API interactions through tools.",
+  "source": "getting-started-with-tool-use-on-cortex-and-anthropic-claude/getting-started-with-tool-use-on-cortex-and-anthropic-claude.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-tool-use-on-cortex-and-anthropic-claude"
+}

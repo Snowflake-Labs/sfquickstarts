@@ -1,0 +1,330 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_synthetic_data_and_distillation_for_llms"
+                  title="Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Getting started with AI on enterprise data can seem overwhelming. Between getting familiar with LLMs, how to perform custom prompt engineering, fine-tuning an existing foundation model and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex AI.</p>
+<p>In this quickstart we will specifically show you how to use Llama 3.1 405B and Llama 3 8B but you can follow the same steps with other LLMs available in Snowflake Cortex AI.</p>
+<h2 is-upgraded>What is Snowflake Cortex AI?</h2>
+<p><a href="https://www.snowflake.com/en/data-cloud/cortex" target="_blank">Snowflake Cortex AI</a> is an intelligent, fully managed service that provides access to industry-leading large language models (LLMs) and chat with your data services. Cortex AI capabilities include:</p>
+<p class="image-container"><img alt="Cortex" src="img/49319a8d4b8d69e.png"></p>
+<p><strong>Models</strong>: Access to tasks specific functions such as sentiment analysis, translation as well as Foundation Models from Snowflake, Meta, Mistral AI. Leading models from Meta and Mistral AI are available for serverless fine-tuning (public preview).</p>
+<p><strong>Chat Services</strong>:  Ask questions against unstructured data, such as documents using Cortex Search or ask questions to structured data, such as sales transactions using Cortex Analyst - both coming soon to public preview.</p>
+<p><strong>AI &amp; ML Studio</strong>: This a no-code development workspace in Snowflake. Specifically for LLMs, Studio lets users quickly try out models, easily fine-tune models, and set up use cases such as search so you can expedite delivery of applications.</p>
+<p>In this quickstart, we will go through 2 flows – Use Cortex AI to fine-tune an LLM to categorize customer support tickets for a Telecom provider, and generate custom email/text communications tailored to each customer ticket.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview" target="_blank">Snowflake Cortex</a>.</p>
+<h2 is-upgraded>Custom LLMs for Enterprise Use-cases</h2>
+<p>Compared to a smaller size model such as <code>llama3-8b</code>, a foundation large language model such as <code>llama3.1-405b</code> can be used to categorize support tickets with higher accuracy. But using a large language model comes with higher inference costs.</p>
+<p>Using fine-tuning, organizations can make smaller models really good at specific tasks to deliver results with the accuracy of larger models at just a fraction of the cost.</p>
+<p>Fine-tuning requires some labeled data. In many real-world scenarios this data can be hard to come by. This might be a new use-case that did not exist before or the existing data cannot be accessed. LLMs allow us to solve this issue via synthetic data.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>By the end of this quickstart guide, you will be able to use Snowflake Cortex AI to:</p>
+<ul>
+<li><strong>Generate Synthetic Data</strong>: Prompt <code>llama3.1-405b</code> to generate synthetic customer support tickets.</li>
+<li><strong>Prepare</strong>: Training dataset for distilling the knowledge from a foundation model into a small custom LLM.</li>
+<li><strong>Distill</strong>: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.</li>
+<li><strong>Generate</strong>: Custom email/text communications tailored to each support ticket</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>Fine-tuned model used for support ticket categorization</li>
+<li>Email/text generation application</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account in a region where Snowflake Cortex AI is available. <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability" target="_blank">Check availability</a>.</li>
+<li>A Snowflake user created with ACCOUNTADMIN permissions. This user will be used to get things setup in Snowflake.</li>
+</ul>
+<aside class="special"><p> Note: Cortex Fine-tuning is not available in Snowflake Free Trial accounts. Use your own accounts or reach out to your account representative to use this in your account.</p>
+</aside>
+<ul>
+<li>Download the Snowflake Notebook from <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb" target="_blank">this Git repository</a> for fine-tuning the model.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="0">
+        <p>Let&#39;s create a fresh database for this guide. Log into <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> using your credentials to get started.</p>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</li>
+<li>For each SQL script block below, select all the statements in the block and execute them top to bottom.</li>
+</ul>
+</aside>
+<p>In a new SQL worksheet, run the following SQL commands to create the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html" target="_blank">warehouse</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database.html" target="_blank">database</a> and <a href="https://docs.snowflake.com/en/sql-reference/sql/create-schema.html" target="_blank">schema</a>.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
+CREATE DATABASE DASH_DB;
+CREATE SCHEMA DASH_SCHEMA;
+
+USE DASH_DB.DASH_SCHEMA;
+USE WAREHOUSE DASH_S;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate Synthetic Training Data" duration="10">
+        <h2 is-upgraded>Define Support Ticket Categories</h2>
+<p>First, we create a list of categories of support tickets that we want the model to categorize.  Run these SQL statements in a SQL worksheet to create <code>support_ticket_category</code> table and load data.</p>
+<pre><code language="language-sql" class="language-sql">create or replace table support_ticket_category (
+  category string
+);
+
+INSERT INTO support_ticket_category (category) VALUES 
+  (&#39;Roaming fees&#39;), 
+  (&#39;Slow data speed&#39;), 
+  (&#39;Lost phone&#39;), 
+  (&#39;Add new line&#39;), 
+  (&#39;Closing account&#39;);
+</code></pre>
+<h2 is-upgraded>Prompt Llama 3.1 405b to Generate Synthetic Support Tickets</h2>
+<p>In this step we prompt the LLM to generate 25 synthetic examples of customer support tickets for every category.</p>
+<aside class="special"><p> NOTE: Snowflake offers a derived model that uses the SwiftKV library to optimize inference. This optimization enables Snowflake to offer model at 75% off than the 405B base model. To try the more cost effective option you can use Snowflake-Llama-3.1-405 as the model name.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">create or replace table support_tickets as (
+    SELECT 
+      category, 
+      TRY_PARSE_JSON(
+        SNOWFLAKE.CORTEX.COMPLETE(
+          &#39;llama3.1-405b&#39;,
+          CONCAT(
+            &#39;Please provide 25 examples of customer service calls in a telecom company for the following category:&#39;, category, &#39;. Provide detailed and realistic scenarios that customer service representatives might encounter. Ensure the examples are diverse and cover various situations within each category. Please put the  examples into a JSON list. Each element in JSON list should include the following: {&#34;scenario&#34;: &lt;scenario&gt;, &#34;request&#34;: &lt;detailed request from the customer, which usually is less than 3 sentences.&gt;}. Only include JSON in output and no other words.&#39;))) as tickets
+    from support_ticket_category
+);
+</code></pre>
+<p>The table <code>support_tickets</code> now contains our synthetic data but the data format is a bit inconvenient as each row contains multiple support tickets. To flatten the data we run</p>
+<pre><code language="language-sql" class="language-sql">create or replace table flatten_support_tickets as (
+select 
+    category, 
+    abs(hash(value:request)) % 10000000 as id,
+    value:request as request, 
+    value:scenario as scenario
+from support_tickets, lateral flatten(input =&gt; tickets) 
+);
+</code></pre>
+<p>We now have a table <code>flatten_support_tickets</code> with one ticket per row. We also generated unique IDs for each ticket.</p>
+<h2 is-upgraded>Rating and Filtering Synthetic Data with an LLM as a Judge.</h2>
+<p>We want to make sure our data is of high quality. Again, we can use an LLM to help us with this task. Instead of prompting the LLM to generate the support tickets, we now ask the LLM to rate the synthetic data for two criteria: We want the tickets to be (1) realistic and (2) valid.</p>
+<pre><code language="language-sql" class="language-sql">create or replace table rate_support_tickets as (
+    SELECT category, id, request, scenario, TRY_PARSE_JSON(SNOWFLAKE.CORTEX.COMPLETE(&#39;llama3.1-405b&#39;, CONCAT(&#39;You are a judge to verify if a the support ticket received in a telecom company is realistic, and valid, please give scores from 1 to 5 for each category and give your final recommendation for the given question. Support Ticket: &#39;, request, &#39; Please give the score in JSON format alone following this example: &#34;{&#34;realistic&#34;: 5, &#34;valid&#34;: 4}&#34;.  You can put a reason into the result JSON as &#34;reason&#34;: &lt;reason&gt;. Only include JSON in the output and no other words.&#39;))) as rating
+    from flatten_support_tickets
+);
+</code></pre>
+<p>Now we can filter out examples that are below the bar for <code>realistic</code> or <code>valid</code>. We create the <code>filtered_support_tickets</code> table for the next steps.</p>
+<pre><code language="language-sql" class="language-sql">create or replace table filtered_support_tickets as (
+    select * from rate_support_tickets where rating[&#39;realistic&#39;] &gt;= 4 and rating[&#39;valid&#39;] &gt;= 4
+);
+</code></pre>
+<h2 is-upgraded>Test Base Model Performance for Support Ticket Categorization using Cortex AI</h2>
+<p>First, let&#39;s use Snowflake Cortex AI <code>COMPLETE()</code> to categorize the support tickets into our categories – Roaming Fees, Slow data speed, Add new line, Closing account and more.</p>
+<p>We can use any Cortex AI supported model under the hood to invoke the <code>COMPLETE()</code> function. In this quickstart, let&#39;s use <code>llama3.1-405b</code> and use the following prompt.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FUNCTION CATEGORIZE_PROMPT_TEMPLATE(request STRING)
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+CONCAT(&#39;You are an agent that helps organize requests that come to our support team. 
+
+The request category is the reason why the customer reached out. These are the possible types of request categories:
+
+Roaming fees
+Slow data speed
+Lost phone
+Add new line
+Closing account
+
+Try doing it for this request and return only the request category only.
+
+request: &#39;, request)
+$$
+;
+</code></pre>
+<p>Using a powerful and large language model such as <code>llama3.1-405b</code> might be highly accurate without doing any complex customizations but running <code>llama3.1-405b</code> on millions of support tickets comes with a cost. So, let&#39;s try the same COMPLETE() function with the same prompt but this time with a smaller model such as <code>llama3-8b</code>.</p>
+<pre><code language="language-sql" class="language-sql">SELECT id, SNOWFLAKE.CORTEX.COMPLETE(&#39;llama3-8b&#39;, CATEGORIZE_PROMPT_TEMPLATE(request)) FROM filtered_support_tickets;
+</code></pre>
+<p>As we can see, the smaller model <code>llama3-8b</code> does not generate results with a consistent structure.</p>
+<p>To overcome this, we could fine-tune <code>llama3-8b</code> particularly for this task. This fine-tuned model will be smaller in size and the inference cost is only a fraction of what a larger model would cost.</p>
+<h2 is-upgraded>Prepare the Distillation Data</h2>
+<p>We now split the data into a training and validation portion. We want to use 20% of the data for validation and the remaining 80% for training. To get a reproducible data split between runs, we use the unique ID we to determine if a ticket is part of the training portion or the validation portion:</p>
+<pre><code language="language-sql" class="language-sql">create or replace table training_data as (
+    SELECT * from filtered_support_tickets where ID % 10 &lt; 8 
+);
+
+create or replace table validation_data as (
+    SELECT * from filtered_support_tickets where ID % 10 &gt;= 8 
+);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Fine-tuning" duration="0">
+        <p>To fine-tune the language model, we need training data that includes support ticket requests and right category labels for each of them. Annotations for millions of support tickets are not readily available. So we could leverage an existing large language model to create category labels and prepare the dataset for fine-tuning.</p>
+<p>Next step is to split the curated dataset into a training and a test set. There are two ways you can fine-tune a large language model.</p>
+<ul>
+<li>Use Snowflake Snowflake AI &amp; ML Studio that allows you to run fine-tuning from the UI. This is currently in PrPr</li>
+<li>Use FINETUNE() Cortex function to run the fine-tune job using SQL queries. This is currently available in PuPr.</li>
+</ul>
+<h2 is-upgraded>Fine-tuning using Snowflake AI &amp; ML Studio</h2>
+<p>Once we have the training data, we could use Snowflake AI &amp; ML Studio to fine-tune. Cortex AI features a no-code fine-tuning from the UI using the <code>Create Custom LLM</code> option.</p>
+<p class="image-container"><img alt="CortexStudio" src="img/7ad4602122056176.png"></p>
+<ul>
+<li>In the wizard that appears, select the base model for fine-tuning. In this case, <code>llama3-8b</code>.</li>
+<li>Select the appropriate role and warehouse for model fine-tuning.</li>
+<li>Select the right database to store the fine-tuned model as well.</li>
+<li>Select the training data including the prompt column, and complete column</li>
+<li>In the end, select the validation data for Cortex to evaluate the fine-tuning process too</li>
+<li>Inferencing the fine-tuned model</li>
+</ul>
+<h2 is-upgraded>Fine-tuning using <code>FINETUNE()</code> SQL API</h2>
+<p>Alternatively, you can also fine-tune the LLM using SQL API <code>FINETUNE()</code>. Learn more about the syntax <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning" target="_blank">here</a>.</p>
+<pre><code language="language-sql" class="language-sql">select snowflake.cortex.finetune(
+&#39;CREATE&#39;, 
+&#39;DASH_DB.DASH_SCHEMA.SUPPORT_TICKETS_FINETUNED&#39;, &#39;llama3-8b&#39;, 
+&#39;SELECT request as prompt, category as completion from DASH_DB.DASH_SCHEMA.training_data&#39;, 
+&#39;SELECT request as prompt, category as completion from DASH_DB.DASH_SCHEMA.validation_data&#39;
+););
+</code></pre>
+<p>After running the above query, we can keep track of the fine-tuning job using the below command.</p>
+<pre><code language="language-sql" class="language-sql">select snowflake.cortex.finetune(&#39;DESCRIBE&#39;, &#39;CortexFineTuningWorkflow_f4016e33-92ce-45d3-918a-19115c398f10&#39;);
+</code></pre>
+<h2 is-upgraded>Inferencing the Distilled Model</h2>
+<p>Once the fine-tuning is complete, we could run inference on the model by simply invoking the Cortex AI <code>COMPLETE()</code> with the fine-tuned model name as one of the parameters.</p>
+<pre><code language="language-sql" class="language-sql">SET fine_tuned_model_name = &#39;SUPPORT_TICKETS_FINETUNED&#39;;
+
+SELECT id, request,
+TRIM(SNOWFLAKE.CORTEX.COMPLETE($fine_tuned_model_name, request), &#39;\n&#39;) as fine_tuned_model_response
+FROM validation_data;
+</code></pre>
+<p>Note that we don&#39;t need to provide our prompt template with detailed instructions anymore. The model has learned from the training data how to respond to the input without any instructions.</p>
+<h2 is-upgraded>Automated Generation of Email Responses to support tickets using LLMs</h2>
+<p>After categorizing the support tickets into different categories based on the reason for the support request, we can also use Cortex AI to auto-generate the email/text responses to these support requests.</p>
+<p>The following code snippet creates a nimble steamlit application in a Snowflake Notebook that you can use to iterate through the different prompts while invoking the Complete() function.</p>
+<pre><code language="language-python" class="language-python">st.subheader(&#34;Auto-generate custom emails or text messages&#34;)
+
+with st.container():
+    with st.expander(&#34;Edit prompt and select LLM&#34;, expanded=True):
+        entered_prompt = st.text_area(&#39;Prompt&#39;,&#34;&#34;&#34;Please write an email or text promoting a new plan that will save customers total costs. If the customer requested to be contacted by text message, write text message response in less than 25 words, otherwise write email response in maximum 100 words.&#34;&#34;&#34;)
+    
+        with st.container():
+            left_col,right_col = st.columns(2)
+            with left_col:
+                selected_category = st.selectbox(&#39;Select category&#39;,(&#39;Roaming fees&#39;, &#39;Closing account&#39;, &#39;Add new line&#39;, &#39;Slow data speed&#39;))
+            with right_col:
+                selected_llm = st.selectbox(&#39;Select LLM&#39;,(&#39;snowflake-arctic&#39;,&#39;llama3-8b&#39;,&#39;llama3.1-405b&#39;,&#39;mistral-large&#39;, &#39;reka-flash&#39;,))
+
+with st.container():
+    _,mid_col,_ = st.columns([.4,.3,.3])
+    with mid_col:
+        generate_template = st.button(&#39;Generate messages ⚡&#39;,type=&#34;primary&#34;)
+
+with st.container():
+    if generate_template:
+        sql = f&#34;&#34;&#34;select s.ticket_id, s.customer_name, concat(IFF(s.contact_preference = &#39;Email&#39;, &#39;📩&#39;, &#39;📲&#39;), &#39; &#39;, s.contact_preference) as contact_preference, snowflake.cortex.complete(&#39;{selected_llm}&#39;,
+        concat(&#39;{entered_prompt}&#39;,&#39;Here is the customer information: Name: &#39;,customer_name,&#39;, Contact preference: &#39;, contact_preference))
+        as llm_response from support_tickets as s join support_tickets_train as t on s.ticket_id = t.ticket_id
+        where t.mistral_large_response = &#39;{selected_category}&#39; limit 10&#34;&#34;&#34;
+
+        with st.status(&#34;In progress...&#34;) as status:
+            df_llm_response = session.sql(sql).to_pandas()
+            st.subheader(&#34;LLM-generated emails and text messages&#34;)
+            for row in df_llm_response.itertuples():
+                status.caption(f&#34;Ticket ID: `{row.TICKET_ID}`&#34;)
+                status.caption(f&#34;To: {row.CUSTOMER_NAME}&#34;)
+                status.caption(f&#34;Contact through: {row.CONTACT_PREFERENCE}&#34;)
+                status.markdown(row.LLM_RESPONSE.replace(&#34;--&#34;, &#34;&#34;))
+                status.divider()
+            status.update(label=&#34;Done!&#34;, state=&#34;complete&#34;, expanded=True)
+
+</code></pre>
+<p>Depending on the values in the <code>contact_preference</code> column, Cortex AI can generate text or email messages that can be used for customer support responses.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully generated synthetic data and distilled the knowledge from a big foundation model into a small and specialized fine-tuned model. You can use any of <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=TNKw8Mx5&_fsi=TNKw8Mx5#availability" target="_blank">these</a> supported LLMs for fine-tuning with Cortex.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>You have learnt how to use Snowflake Cortex AI to:</p>
+<ul>
+<li><strong>Generate Synthetic Data</strong>: Prompt <code>llama3.1-405b</code> to generate synthetic customer support tickets.</li>
+<li><strong>Prepare</strong>: Training dataset for distilling a the knowledge from a foundation model into a small custom LLM.</li>
+<li><strong>Distill</strong>: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.</li>
+<li><strong>Generate</strong>: Custom email/text communications tailored to each support ticket</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview" target="_blank">Snowflake Cortex Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning" target="_blank">Snowflake Cortex Fine-tuning</a></li>
+<li><a href="https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete" target="_blank">Snowflake Cortex COMPLETE()</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/asking_questions_to_your_own_documents_with_snowflake_cortex" target="_blank">Streamlit + Snowflake Cortex AI conversational assistant</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb" target="_blank">Snowflake Notebooks: Demo Repository</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

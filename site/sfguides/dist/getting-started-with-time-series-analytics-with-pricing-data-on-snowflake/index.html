@@ -1,0 +1,198 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Time Series Analytics with Pricing Data on Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-time-series-analytics-with-pricing-data-on-snowflake"
+                  title="Getting Started with Time Series Analytics with Pricing Data on Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img src="img/dce0e2e0e138c692.png"></p>
+<p>This quickstart explores several time series features using FactSet Tick Data, including TIME_SLICE, ASOF_JOIN, and RANGE BETWEEN for insights into trade data. Aggregating time-series data through downsampling reduces data size and storage needs, using functions like TIME_SLICE and DATE_TRUNC for efficiency. ASOF JOIN simplifies joining time-series tables, matching trades with the closest previous quote, ideal for transaction-cost analysis in financial trading. Windowed aggregate functions, such as moving averages using the RANGE BETWEEN window frame, allow trend analysis over time, accommodating data gaps for flexible rolling calculations.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Intermediate knowledge of SQL</li>
+<li>Access to run Notebooks in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>Leveraging powerful SQL functions such as TIME_SLICE, ASOF JOIN, RANGE BETWEEN and more</li>
+<li>Analyzing Time Series data using Snowflake Notebooks</li>
+<li>Accessing data from Snowflake Marketplace</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account with Accountadmin access</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Time Series Analytics with Pricing Data on Snowflake</li>
+<li>Streamlit app using <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Data in Snowflake" duration="3">
+        <p>We are using FactSet Tick History data from Snowflake Marketplace for this Quickstart. FactSet Provides historical trading information which we will analyze in this Quickstart.</p>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to:</p>
+<ul>
+<li>Create Snowflake objects (warehouse, database, schema)</li>
+<li>Access FactSet data from Snowflake Marketplace</li>
+<li>Create tables needed</li>
+</ul>
+<h2 is-upgraded>Access Data from Snowflake Marketplace</h2>
+<p>Follow below instructions to get the FactSet Tick History data from Snowflake Marketplace.</p>
+<ul>
+<li>Navigate to <a href="https://app.snowflake.com/" target="_blank">Snowsight</a></li>
+<li>Click: Data Products</li>
+<li>Click: Marketplace</li>
+<li>Search: FactSet Tick History</li>
+<li>Scroll Down and Click: Tick History</li>
+<li>Click: Get</li>
+<li>Make sure the Database name is: Tick_History</li>
+<li>Which roles, in addition to ACCOUNTADMIN, can access this database? PUBLIC</li>
+<li>Click: Get</li>
+</ul>
+<h2 is-upgraded>Creating Objects, Loading Data, and Joining Data</h2>
+<p>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</p>
+<p>Run the SQL from the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/blob/main/scripts/setup.sql" target="_blank">file</a> in the worksheet to create Snowflake objects (database, schema, tables),</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Time Series Analytics using Snowflake Notebooks" duration="10">
+        <p>This quickstart demonstrates several advanced time series features using FactSet Tick Data on Snowflake. You will learn to leverage powerful SQL functions such as TIME_SLICE, ASOF JOIN, and RANGE BETWEEN to gain deeper insights into time series trade data.</p>
+<h2 is-upgraded>Aggregating Time-Series Data</h2>
+<p>Managing time-series data often requires aggregating fine-grained records into a summarized form, known as downsampling. This process reduces data size and storage needs, and minimizes compute resource requirements during query execution. For example, if a sensor records data every second but changes rarely, data can be aggregated to minute intervals for analysis.</p>
+<p>You can downsample data using the TIME_SLICE function, which groups records into fixed-width &#34;buckets&#34; and applies aggregate functions like SUM and AVG. Similarly, the DATE_TRUNC function reduces the granularity of date or timestamp values.</p>
+<p><a href="https://docs.snowflake.com/en/sql-reference/functions/time_slice" target="_blank">TIME_SLICE</a> calculates the beginning or end of a &#34;slice&#34; of time, where the length of the slice is a multiple of a standard unit of time (minute, hour, day, etc.). This function can be used to calculate the start and end times of fixed-width &#34;buckets&#34; into which data can be categorized.</p>
+<p class="image-container"><img src="img/31a11e52a7debcaf.png"></p>
+<h2 is-upgraded>Joining Time-Series Data</h2>
+<p>The <a href="https://docs.snowflake.com/en/sql-reference/constructs/asof-join" target="_blank">ASOF JOIN</a> construct simplifies joining tables with time-series data. Commonly used in financial trading analysis, ASOF JOIN enables transaction-cost analysis by matching trades with the closest previous quote. This method is beneficial for analyzing historical data, especially when timestamps from different devices are not perfectly aligned. We will determine transaction costs by joining trades with the closest preceding price data using an ASOF JOIN.</p>
+<p class="image-container"><img src="img/2349d3c0c0dda3cd.png"><img src="img/7f981fedca8cfb9b.png"></p>
+<h2 is-upgraded>Using Windowed Aggregations</h2>
+<p>Windowed aggregate functions allow you to analyze trends over time by computing rolling calculations (such as moving averages) within defined subsets of a dataset. The <a href="https://docs.snowflake.com/en/sql-reference/functions-analytic" target="_blank">RANGE BETWEEN</a> window frame, ordered by timestamps or numbers, remains unaffected by gaps in the data, providing flexible rolling aggregations. A range-based window frame consists of a logically computed set of rows rather than a physical number of rows as would be expressed in a row-based frame. In this solution you will explore RANGE BETWEEN to create interesting time series metrics on our data.</p>
+<p class="image-container"><img src="img/8879fb5bb2d95e56.png"></p>
+<h2 is-upgraded>Architecture</h2>
+<p>This solution harnesses the power of Snowflake to extract valuable insights from high-frequency financial data. By utilizing FactSet Tick Data, available on the Snowflake Marketplace, we&#39;ve constructed a robust data foundation. Synthetic closing prices, derived from the tick history, are stored in the closing_prices table within the raw schema.</p>
+<p>Snowflake Notebooks serve as our interactive workspace for exploring time series data. Through the skillful application of advanced SQL functions like TIME_SLICE, ASOF JOIN, and RANGE BETWEEN, we demonstrate how to:</p>
+<ul>
+<li>Calculate prevailing prices.</li>
+<li>Track trading performance using TIME_SLICE</li>
+<li>Analyze transaction costs using ASOF JOIN</li>
+<li>Identify trends using RANGE-based sliding window</li>
+<li>Measure volatility using LEAD &amp; LAG</li>
+</ul>
+<p class="image-container"><img src="img/fe7b08d8c7e7d629.png"></p>
+<h2 is-upgraded>Snowflake Notebook</h2>
+<p>Import the following Snowflake Notebook in Snowsight and run each of the cells: <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/blob/main/notebooks/0_start_here.ipynb" target="_blank">0_start_here.ipynb</a></p>
+<p class="image-container"><img src="img/87bff46e62f62ca8.png"><img src="img/ac1f4b89f5a5628.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit App Using Cortex Analyst" duration="10">
+        <p>Cortex Analyst is a fully-managed, LLM-powered Snowflake Cortex feature that helps you create applications capable of reliably answering business questions based on your structured data in Snowflake. With Cortex Analyst, business users can ask questions in natural language and receive direct answers without writing SQL. Available as a convenient REST API, Cortex Analyst can be seamlessly integrated into any application.</p>
+<p>In this step, you will build a Streamlit application leveraging Cortex Analyst to allow business users to query TICK_HISTORY data using natural language.</p>
+<h2 is-upgraded>Setup</h2>
+<ul>
+<li>Upload the semantic model to <code>EXAMPLE_STREAMLIT_STAGE</code><ul>
+<li>Download the semantic model <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/blob/main/streamlit/Time_Series_Analytics.yaml" target="_blank">here</a></li>
+<li>Navigate to Data &gt; Databases &gt; TIME_SERIES_ANALYTICS &gt; RAW &gt; EXAMPLE_STREAMLIT_STAGE</li>
+<li>Click + File and upload <code>Time_Series_Analytics.yaml</code><img alt="upload-semantic-model" src="img/751acd65e324e699.png"></li>
+</ul>
+</li>
+<li>Create Streamlit App <ul>
+<li>Navigate to Projects &gt; Streamlit &gt; Click + Streamlit</li>
+<li>Select TIME_SERIES_ANALYTICS database, RAW schema, and TIME_SERIES_ANALYTICS_WH warehouse <img alt="create-streamlit" src="img/100b7b708cd5c849.png"></li>
+<li>Copy and paste the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/blob/main/streamlit/time_series_cortex_analyst.py" target="_blank">Streamlit code</a> into the editor <img alt="streamlit-code" src="img/91d7656f067ed249.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Run the App</h2>
+<p>Ask one of the preconfigured questions or any other question! Cortex Analyst uses the semantic model and LLMs to translate natural language into SQL to explore the data.</p>
+<p class="image-container"><img alt="streamlit-app" src="img/91d7656f067ed249.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p><strong>You did it!</strong> You have successfully completed the Time Series Analytics with Pricing Data on Snowflake Quickstart.</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>Leveraged powerful SQL functions such as TIME_SLICE, ASOF JOIN, RANGE BETWEEN and more</li>
+<li>Analyzed Time Series data using Snowflake Notebooks</li>
+<li>Accessed data from Snowflake Marketplace</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/querying-time-series-data" target="_blank">Analyzing time-series data on Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/time_slice" target="_blank">TIME_SLICE</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/constructs/asof-join" target="_blank">ASOF JOIN</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions-analytic" target="_blank">RANGE BETWEEN</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

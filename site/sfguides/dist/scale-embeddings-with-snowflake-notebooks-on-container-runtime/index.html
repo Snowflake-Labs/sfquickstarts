@@ -1,0 +1,226 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Scale Embeddings with Snowflake Notebooks on Container Runtime</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="scale-embeddings-with-snowflake-notebooks-on-container-runtime"
+                  title="Scale Embeddings with Snowflake Notebooks on Container Runtime"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks in the Container Runtime</a> are a powerful IDE option for building ML workloads at scale. Container Runtime is a fully managed container environment that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.</p>
+<p>This guide will show you how to experiment with and scale embeddings generation in Snowflake Notebooks on Container Runtime.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake Account. Sign up for a <a href="https://signup.snowflake.com/" target="_blank">30-day free trial</a> account, if required.</li>
+<li>Foundational knowledge of Data Science workflows</li>
+<li>(Optional) Completed <a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0" target="_blank">Getting Started with Snowflake Notebook Container Runtime</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to load an open source embedding model</li>
+<li>How to generate embeddings using GPU compute with Snowflake Notebooks on Container Runtime</li>
+<li>How to evalulate the embeddings for RAG</li>
+<li>How to store embeddings as a Vector Type in a Snowflake table</li>
+<li>How to log and deploy the open source embedding model using Model Registry and Model Serving in SPCS</li>
+<li>How to perform a large batch embeddings generation (inference) job using Model Serving in SPCS</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You&#39;re a Data Scientist looking to experiment with an open source embedding model and evaluate a dataset with it before deciding to deploy it for a large batch embeddings generation (inference) job.</p>
+<ul>
+<li>In the first part of this Notebook, you will first load an embedding model and generate embeddings using a GPU on a sample dataset (~68K records).</li>
+<li>In the second part, you will evaluate a sampled RAG dataset (100K records) that has various questions and associated context chunks (&#34;labels&#34;). After evaluation, you will deploy the embedding model and perform inference on the full RAG dataset (~10M context chunks).</li>
+</ul>
+<p class="image-container"><img src="img/d7e8912c0a95ae06.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Your Account" duration="5">
+        <p>Complete the following steps to setup your account:</p>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste the <a href="https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/blob/main/scripts/setup.sql" target="_blank">setup.sql</a> code in the worksheet.</li>
+<li>Run all commands to create Snowflake objects</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+SET USERNAME = (SELECT CURRENT_USER());
+SELECT $USERNAME;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE EMBEDDING_MODEL_HOL_USER;
+GRANT ROLE EMBEDDING_MODEL_HOL_USER to USER identifier($USERNAME);
+
+-- Next create a new database and schema,
+CREATE DATABASE IF NOT EXISTS EMBEDDING_MODEL_HOL_DB;
+CREATE SCHEMA IF NOT EXISTS EMBEDDING_MODEL_HOL_SCHEMA;
+
+-- Create network rule and external access integration for pypi to allow users to pip install python packages within notebooks (on container runtimes)
+CREATE NETWORK RULE IF NOT EXISTS pypi_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = (&#39;pypi.org&#39;, &#39;pypi.python.org&#39;, &#39;pythonhosted.org&#39;,  &#39;files.pythonhosted.org&#39;);
+
+CREATE EXTERNAL ACCESS INTEGRATION IF NOT EXISTS pypi_access_integration
+  ALLOWED_NETWORK_RULES = (pypi_network_rule)
+  ENABLED = true;
+
+-- Create network rule and external access integration for users to access data and models from Hugging Face
+CREATE OR REPLACE NETWORK RULE hf_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = (&#39;huggingface.co&#39;, &#39;www.huggingface.co&#39;, &#39;cdn-lfs.huggingface.co&#39;, &#39;cdn-lfs-us-1.huggingface.co&#39;);
+
+CREATE EXTERNAL ACCESS INTEGRATION IF NOT EXISTS hf_access_integration
+  ALLOWED_NETWORK_RULES = (hf_network_rule)
+  ENABLED = true;
+
+create or replace network rule allow_all_rule
+  TYPE = &#39;HOST_PORT&#39;
+  MODE= &#39;EGRESS&#39;
+  VALUE_LIST = (&#39;0.0.0.0:443&#39;,&#39;0.0.0.0:80&#39;);
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION allow_all_integration
+  ALLOWED_NETWORK_RULES = (allow_all_rule)
+  ENABLED = true;
+  
+GRANT USAGE ON INTEGRATION pypi_access_integration TO ROLE EMBEDDING_MODEL_HOL_USER;
+GRANT USAGE ON INTEGRATION hf_access_integration TO ROLE EMBEDDING_MODEL_HOL_USER;
+GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE EMBEDDING_MODEL_HOL_USER;
+
+-- Create a snowpark optimized virtual warehouse access of a virtual warehouse for newly created role
+CREATE OR REPLACE WAREHOUSE EMBEDDING_MODEL_HOL_WAREHOUSE WITH
+  WAREHOUSE_SIZE = &#39;MEDIUM&#39;;
+  
+GRANT USAGE ON WAREHOUSE EMBEDDING_MODEL_HOL_WAREHOUSE to ROLE EMBEDDING_MODEL_HOL_USER;
+
+-- Create compute pool to leverage GPUs (see docs - https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool)
+
+--DROP COMPUTE POOL IF EXISTS GPU_NV_S_COMPUTE_POOL;
+
+CREATE COMPUTE POOL IF NOT EXISTS GPU_NV_S_COMPUTE_POOL
+    MIN_NODES = 4
+    MAX_NODES = 4
+    INSTANCE_FAMILY = GPU_NV_S;
+
+-- Grant usage of compute pool to newly created role
+GRANT OWNERSHIP ON COMPUTE POOL GPU_NV_S_COMPUTE_POOL TO ROLE EMBEDDING_MODEL_HOL_USER;
+
+-- Grant ownership of database and schema to newly created role
+GRANT OWNERSHIP ON DATABASE EMBEDDING_MODEL_HOL_DB TO ROLE EMBEDDING_MODEL_HOL_USER COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE EMBEDDING_MODEL_HOL_DB  TO ROLE EMBEDDING_MODEL_HOL_USER COPY CURRENT GRANTS;
+
+-- Grant usage back to ACCOUNTADMIN for visibility/usability
+GRANT ALL ON DATABASE EMBEDDING_MODEL_HOL_DB TO ROLE ACCOUNTADMIN;
+GRANT ALL ON ALL SCHEMAS IN DATABASE EMBEDDING_MODEL_HOL_DB  TO ROLE ACCOUNTADMIN;
+
+-- Create image repository
+CREATE IMAGE REPOSITORY IF NOT EXISTS my_inference_images;
+GRANT OWNERSHIP ON IMAGE REPOSITORY my_inference_images TO ROLE EMBEDDING_MODEL_HOL_USER;
+
+GRANT CREATE SERVICE ON SCHEMA EMBEDDING_MODEL_HOL_SCHEMA TO ROLE EMBEDDING_MODEL_HOL_USER;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Notebook" duration="60">
+        <ul>
+<li>Download the notebook: <a href="https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/blob/main/notebooks/0_start_here.ipynb" target="_blank">0_start_here</a></li>
+<li>Change role to <code>EMBEDDING_MODEL_HOL_USER</code></li>
+<li>Navigate to <code>Projects</code> &gt; <code>Notebooks</code> in Snowsight</li>
+<li>Click <code>Import .ipynb</code> from the + Notebook dropdown <img src="img/5d505155b06facf.png"></li>
+<li>Create a new notebok with the following settings: <img src="img/3e70f2a7f1e0c027.png"></li>
+<li>Click the three dots in the top right &gt; <code>Notebook Settings</code><img src="img/e1a335725f9e1065.png"></li>
+<li>Enable external access integrations <img src="img/7e5b4a91360cdff0.png"></li>
+<li>Run cells in the notebook!</li>
+</ul>
+<p>Once you reach the end, you&#39;ll kick off a batch embeddings inference job and will be able to see something like this in your query profile: <img src="img/7091c0d8bbe4f0ce.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>In conclusion, running Snowflake Notebooks on Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake.</p>
+<p>Within this Notebook, you:</p>
+<ul>
+<li>loaded an embedding model, generated embeddings using a GPU</li>
+<li>evaluated a dataset for a RAG solution</li>
+<li>deployed the embedding model</li>
+<li>performed large scale batch inference</li>
+<li>saved results to a Snowflake table</li>
+</ul>
+<p>...and all without a lot of complex infrastructure setup and management!</p>
+<p>Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts:</p>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0" target="_blank">Getting Started with Running Distributed PyTorch Models on Snowflake</a>.</li>
+<li><a href="https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0" target="_blank">Defect Detection Using Distributed PyTorch With Snowflake Notebooks</a></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml" target="_blank">Documentation: Container Runtime for ML</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview" target="_blank">Documentation: Snowflake Model Registry</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container" target="_blank">Documentation: Model Serving in SPCS</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0" target="_blank">Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

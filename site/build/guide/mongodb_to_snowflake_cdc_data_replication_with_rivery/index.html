@@ -1,0 +1,193 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>MongoDB to Snowflake CDC Data Replication with Rivery</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="mongodb_to_snowflake_cdc_data_replication_with_rivery"
+                  title="MongoDB to Snowflake CDC Data Replication with Rivery"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>The ability to move MongoDB data into a Snowflake Data Warehouse is key to enabling meaningful analytics using a proper SQL interface.</p>
+<p>MongoDB addresses specific use cases where developers are building scalable applications with evolving data schemas. It is often used to host modern applications&#39; operational data, where data storage and access patterns are highly optimized for fast write and retrieval, and many other factors like the availability and durability of data. To enable that functionality, MongoDB has its own recommended data model and access patterns which are not always as flexible as standard SQL for analytics purposes.</p>
+<p>While coming to analyzing the data, most users prefer a system with a proper SQL interface as almost all analysts are familiar with SQL and almost all existing reporting or visualization tools require a SQL interface to extract data.</p>
+<p>This is one of the key reasons that generate demand for replicating MongoDB data into a Snowflake data warehouse where data can be easily analyzed with proper SQL support. Other operational but relational databases such as SQL Server or PostgreSQL are sometimes used to store both transactional data and reporting data (in a separate schema) fulfilling the role of the data warehouse as well up to a certain limit. However with MongoDB&#39;s NoSQL schemaless nature, very early on it becomes important to move the data to Snowflake for meaningful analysis where data can not only be analyzed via SQL but also easily combined and modeled with other data sources. This type of analytics is crucial for application developers and product teams as they try to understand the usage patterns of their applications and how those could be improved to increase user satisfaction and conversion rates.</p>
+<p>For many organizations using MongoDB to store critical information such as their own product usage, it becomes increasingly important to get this data replicated in a near-real-time fashion. <a href="https://rivery.io/blog/what-is-change-data-capture-cdc/" target="_blank">Change Data Capture</a> (CDC) is a design pattern to determine, track, capture, and deliver changes made to transactional databases such as MongoDB. CDC is an extremely efficient method to enable near real-time data replication to ensure analytics are done on fresh data. Other benefits of CDC include a reduced load on the operational database engine as well as the ability to replicate deleted records that cannot be replicated using standard batch SQL extraction methods.</p>
+<p>Given this need, we&#39;ll use Rivery&#39;s platform to rapidly build a data pipeline to continuously migrate data from MongoDB to Snowflake. The primary method demonstrated in this quickstart is using MongoDB Change Streams - the MongoDB capability that powers CDC for MongoDB. If you&#39;d like to move MongoDB data to Snowflake using SQL-based extractions, that option is possible as well and will be pointed out where applicable.</p>
+<h2 is-upgraded>Prerequisites:</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li>Access to a MongoDB database. You can either: <ul>
+<li>Use a <a href="https://www.mongodb.com/docs/cloud-manager/tutorial/getting-started/" target="_blank">MongoDB trial</a></li>
+<li>Use your own MongoDB database</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Learn:</h2>
+<p>In this guide, you will learn how to set up a data pipeline that migrates MongoDB data to Snowflake using CDC Data Replication in Rivery&#39;s SaaS ELT Platform. In this process, you will learn:</p>
+<ul>
+<li>How to use Snowflake partner connect to launch a Rivery account</li>
+<li>How to create a source to target data pipeline to load any data source into Snowflake</li>
+<li>How to configure standard SQL extraction or CDC database data replication into Snowflake</li>
+<li>How to enforce your Snowflake masking policy on ingested data</li>
+<li>How to automate data source to snowflake data pipeline execution and track the pipeline current status and overall performance</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup a Rivery Account" duration="2">
+        <p>**If you already have a Rivery account you can skip this step.</p>
+<p>The easiest way to start a Rivery account with an established connection to your Snowflake account is to utilize Snowflake&#39;s Partner Connect. Within Snowsite this can be found under Admin &gt; Partner Connect &gt; Search for Rivery.</p>
+<p class="image-container"><img src="img/da08d4030d622fcb.png"></p>
+<p>This will set up both your Rivery account and Snowflake Target connection within Rivery.</p>
+<p>If you&#39;d like to set up a Rivery account separately, you can do so by navigating to <a href="https://rivery.io/" target="_blank">Rivery&#39;s website</a> and clicking <a href="https://rivery.io/free-trial/" target="_blank">‘Start for Free&#39;</a>. You can also use <a href="https://docs.rivery.io/docs/setting-up-a-rivery-account" target="_blank">this link</a> to find more information.**</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Snowflake Target Connection" duration="5">
+        <p>**If you&#39;ve utilized Snowflake&#39;s Partner Connect to create your Rivery account you can skip to Step 4.</p>
+<p>You can configure your Snowflake connection in Rivery. This will be needed later on as we point our MongoDB data (our Source) into Snowflake (our Target). Navigate to your <a href="https://console.rivery.io/" target="_blank">Rivery account</a>. From here, you can go to Connections &gt; New Connection &gt; Snowflake, fill in the connection details, and test the connection. More information can be found <a href="https://docs.rivery.io/docs/snowflake-as-a-target" target="_blank">here</a>.</p>
+<p class="image-container"><img src="img/2c8de0f85a07033d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure MongoDB Source Connection" duration="8">
+        <p>To configure Source Connection within Rivery, you&#39;ll want to navigate to your <a href="https://console.rivery.io/" target="_blank">Rivery account</a>. From here, you can go to Connections &gt; New Connection &gt; MongoDB, fill in the connection details, and test the connection. More information can be found <a href="https://docs.rivery.io/docs/create-a-connection" target="_blank">here</a>.</p>
+<p>Note Rivery offers a few different methods to ensure a secured connection to MongoDB including SSH, Reverse SSH, VPN, AWS PrivateLink, and Azure Private Link. If you are using a trial instance of MongoDB, it may be sufficient to only <a href="https://docs.rivery.io/docs/rivery-whitelist-ips?_gl=1*1txi7y0*_ga*MTQ1MTMzMDY5My4xNjc1OTQ2NDIz*_ga_6EMVQJWTN6*MTcwMzgyOTg0Mi40NjcuMS4xNzAzODMyMzkxLjI1LjAuMA.." target="_blank">whitelist Rivery&#39;s IPs</a>. If you are connecting to your own MongoDB instance, you may want to use <a href="https://docs.rivery.io/docs/security" target="_blank">one of the methods</a> mentioned above per your organization&#39;s preferences.</p>
+<p class="image-container"><img src="img/d568187cc37a2db9.png"></p>
+<h2 is-upgraded>Configure MongoDB for Change Streams</h2>
+<p>If you are using MongoDB versions 4.0 or 4.1 you will need to make sure your MongoDB instance &#34;Read Preference&#34; is set to Primary as detailed <a href="https://www.mongodb.com/docs/manual/core/read-preference/" target="_blank">here</a>. If you are using version 4.2 or above this step isn&#39;t required.</p>
+<p>Note only versions 4.0 and higher of MongoDB are supported by Rivery for <a href="https://docs.rivery.io/docs/mongo-db-change-streams-overview" target="_blank">CDC via Change Streams</a>. If you have an older version of MongoDB or you don&#39;t want to use Change Streams you can still replicate your data using Standard Extraction (SQL-based). In that case, choose Standard Extraction instead of Change Streams under step 5.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set the Pipeline Source" duration="7">
+        <p>Once your connections are set up, you&#39;ll want to create your replication data pipeline (River). On the navigation menu, click on Create River &gt; Source to Target River.</p>
+<p>From here, you&#39;ll want to select MongoDB as your Source.</p>
+<p>Once selected, you can then select your created MongoDB connection from the Source Connection drop-down.</p>
+<p class="image-container"><img src="img/81cb4220e50b302c.png"></p>
+<p>You can also add additional configurations like options to run ‘Multi-Collection&#39; (Multi Table) or ‘Legacy River&#39; (Single Table). You&#39;ll want to then select ‘Change Streams&#39; as your Default Extraction Mode.</p>
+<p>As mentioned above, you can also use ‘Standard Extraction&#39; if you&#39;ve decided to not enable ‘Change Streams&#39;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set the Pipeline Target" duration="3">
+        <p>Click on the ‘Target&#39; tab to configure your Target.</p>
+<p>Select Snowflake from the list of sources and select your Snowflake connection from the Target Connection Dropdown.</p>
+<p>Set the Database, Schema Name, Table Prefix, and Loading Mode in which you&#39;d like to load your data.<br><img src="img/ba6608ee94da1e20.png"><br> These will be the default values for each of the collections you select in the next step.</p>
+<p>Rivery supports loading your data via 3 different modes including <a href="https://docs.rivery.io/docs/snowflake-upsert-merge-loading-mode-options" target="_blank">Upsert-Merge</a>, Append, and Overwrite.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set the Pipeline Target Schema" duration="5">
+        <p>Clicking on the Schema tab you&#39;ll be able to select the specific collections that you want to extract/load.</p>
+<p>This can be done by checking the box on the left-hand side of the collection name or by selecting the box next to ‘Source collections&#39; to select all.</p>
+<p class="image-container"><img src="img/58a3ca66374308ba.png"></p>
+<p>You can also configure each of the Target Table names and additional table settings by selecting the table name and navigating between the Columns and Table Settings tabs.</p>
+<p class="image-container"><img src="img/f011ac0d1ede1815.png"></p>
+<p>Specifically, under the Table Settings tab, you will find Advanced Options to filter logical key duplication and enforce a <a href="https://docs.snowflake.com/en/user-guide/security-column-ddm-intro" target="_blank">masking policy</a> if you want to respect a data masking policy already defined in Snowflake.</p>
+<p class="image-container"><img src="img/8b666259e5719810.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Schedule and Run the Pipeline" duration="3">
+        <p>Once your setup is complete you can click on the Enable Stream toggle.</p>
+<p class="image-container"><img src="img/196e4a0d37b7b4f0.png"></p>
+<p>This will make sure that you have everything set up and will give you the option to Schedule your River run.</p>
+<p>If you choose Standard Extraction under step 5, you can schedule your pipeline under the Settings tab.</p>
+<p>Regardless of your replication method, under the Settings tab, you can add any additional alerts. Lastly, all you have to do is save your River and click Run to execute it for the first time!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring Your Pipeline" duration="2">
+        <p>You can then monitor the River run from the Activities page via the navigation menu or by clicking on the River Activities icon on the right-hand side.<br><img src="img/394a6c496bf8e665.png"><br> Clicking on any of the Pipelines will also give you granular breakdowns of each of the pipeline runs and tables.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>Congratulations! You&#39;ve now configured a MongoDB to Snowflake data migration pipeline. Depending on your configuration, this may be a one-time extract or schedule to run at a regular interval using CDC or standard SQL extraction. This pipeline should make sure you always get fresh MongoDB data in Snowflake with little effort to set up and code a data pipeline.</p>
+<p>We would love your feedback on this QuickStart Guide! Please submit your feedback using this Feedback <a href="https://docs.google.com/forms/d/e/1FAIpQLSdiYVIB6X-pge0FL2q1xNIXd1lo3qI947K6D42F3NBAQEcHtA/viewform?usp=sf_link" target="_blank">Form</a>.</p>
+<p>What You Learned</p>
+<ul>
+<li>How to use Snowflake partner connect to launch a Rivery account</li>
+<li>How to create a source to target data pipeline to load MongoDB data into Snowflake</li>
+<li>How to configure standard SQL extraction vs. CDC for MongoDB data replication into Snowflake</li>
+<li>How to enforce your Snowflake masking policy on ingested data</li>
+<li>How to automate MongoDB to snowflake data pipeline execution and track the pipeline current status and overall performance</li>
+</ul>
+<p>Related Resources</p>
+<ul>
+<li><a href="https://docs.rivery.io/docs/mongo-db-change-streams-overview" target="_blank">MongoDB Change Stream Overview</a></li>
+<li><a href="https://docs.rivery.io/docs/logic-overview" target="_blank">How to transform data within Snowflake using Rivery</a></li>
+<li><a href="https://rivery.io/product/reverse-etl/" target="_blank">How to Reverse ETL Snowflake data using Rivery</a></li>
+</ul>
+<p>Get up to speed on other <a href="https://rivery.io/partners-snowflake/" target="_blank">Rivery and Snowflake integrations</a> to simplify your data delivery.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

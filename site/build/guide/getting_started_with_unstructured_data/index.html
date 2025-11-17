@@ -1,0 +1,864 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Unstructured Data</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_unstructured_data"
+                  title="Getting Started with Unstructured Data"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This Quickstart is designed to help you understand the capabilities included in Snowflake&#39;s support for unstructured data. Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing this lab, you&#39;ll be ready to start storing and managing your own unstructured data in Snowflake.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account</li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Recommended to first complete <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowsql/index.html?index=..%2F..index" target="_blank">Getting Started with SnowSQL</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to access and store unstructured data</li>
+<li>How to govern unstructured data</li>
+<li>How to search for unstructured data using directory tables</li>
+<li>How to securely share unstructured data</li>
+<li>How to process unstructured data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A stage for storing and accessing files in Snowflake</li>
+<li>A user-defined function using Snowflake&#39;s engine to process files</li>
+<li>A secure view to share in the Snowflake Marketplace</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Notice and Terms of Use" duration="1">
+        <p>The data provided for this lab is an extract from the Enron email database made available by Carnegie Mellon University (<a href="https://www.cs.cmu.edu/~enron/" target="_blank">https://www.cs.cmu.edu/~enron/</a>).</p>
+<p>Use of the data provided is limited to this quickstart in connection with the Snowflake service and is subject to any additional terms and conditions on the Carnegie Mellon site.</p>
+<p>By accessing this data, you acknowledge and agree to the limits and terms related to the use of the Enron email data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your lab environment" duration="2">
+        <p>If you haven&#39;t already, register for a <a href="https://trial.snowflake.com/" target="_blank">Snowflake free 30-day trial</a>. The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.</p>
+<h2 is-upgraded>Navigating to Snowsight</h2>
+<p>For this lab, you will use the latest Snowflake web interface, Snowsight.</p>
+<ol type="1">
+<li>Log into your Snowflake trial account</li>
+<li>Click on <strong>Snowsight</strong> Worksheets tab. The new web interface opens in a separate tab or window.</li>
+<li>Click <strong>Worksheets</strong> in the left-hand navigation bar. The <strong>Ready to Start Using Worksheets and Dashboards</strong> dialog opens.</li>
+<li>Click the <strong>Enable Worksheets and Dashboards button</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Enable Worksheets and Dashboards" src="img/111785ef48da683b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Store &amp; Access Unstructured Data" duration="10">
+        <p>Let&#39;s start by preparing to load the unstructured data into Snowflake. Snowflake supports two types of stages for storing data files used for loading and unloading:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#internal-stages" target="_blank">Internal stages</a> store the files internally within Snowflake.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#external-stages" target="_blank">External stages</a> store the files in an external location (i.e. S3 bucket) that is referenced by the stage. An external stage specifies location and credential information, if required, for the bucket.</li>
+</ul>
+<h2 is-upgraded>Create a Database, Schema, and Warehouse</h2>
+<p>Before creating any stages, let&#39;s create a database and a schema that will be used for loading the unstructured data. We will use the UI within the Worksheets tab to run the DDL that creates the database and schema. Copy the commands below into your trial environment, and execute each individually.</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+
+create or replace database emaildb comment = &#39;Enron Email Corpus Database&#39;;
+create or replace schema raw;
+create or replace warehouse quickstart;
+
+use database emaildb;
+use schema raw;
+use warehouse quickstart;
+</code></pre>
+<h2 is-upgraded>Access Unstructured Data Stored in an S3 Bucket</h2>
+<p>The data we will be using in this lab is stored in an S3 bucket.</p>
+<h3 is-upgraded>Create an External Stage</h3>
+<p>You are working with unstructured PDFs that have already been staged in a public, external S3 bucket. Before you can use this data, you first need to create a Stage that specifies the location of our external bucket.</p>
+<aside class="special"><p>   For this lab we are using an AWS S3 bucket in us-east-1. To minimize data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake environment. </p>
+</aside>
+<p>Grant the <code>PUBLIC</code> schema access to the database, schema, and warehouse just created (This will be relevant in the next section).</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+grant usage on database emaildb to public;
+grant usage on schema emaildb.raw to public;
+grant usage on warehouse quickstart to public;
+</code></pre>
+<p>From the same worksheet you&#39;ve been using, run this command to create an external stage called <code>email_stage</code>.</p>
+<pre><code language="language-sql" class="language-sql">use schema emaildb.raw;
+-- Create an external stage where files are stored.
+create or replace stage email_stage
+ url = &#34;s3://sfquickstarts/Getting Started Unstructured Data/Emails/mailbox/&#34;
+ directory = (enable = true auto_refresh = true);
+</code></pre>
+<p>You can run this command to see a list of the files in your external stage.</p>
+<pre><code language="language-sql" class="language-sql">ls @email_stage;
+</code></pre>
+<p class="image-container"><img alt="List External Stage" src="img/72ba4d54bf75c200.png"></p>
+<p>We can see that the stage contains various mailboxes from Enron users containing some files (which are text files) of various sizes. We can get a summary of the file corpus in the query results on the right-hand side. For the purpose of this quickstart, just a sample of 226 files out of 517,551 files has been extracted.</p>
+<p class="image-container"><img alt="External Stage Query Details" src="img/f1a512a277ebb3d3.png"></p>
+<p><strong>The size of the files</strong>: We can see that the file size ranges from 666 bytes to 1023 bytes, with the majority of the files closer to 1023 bytes. If we click on the size metric, we can get more detailed information. The total corpus size is 208,414 bytes, with an average size of 922 bytes. If we hover over the histogram, we can filter results based on file size.</p>
+<h2 is-upgraded>Store Unstructured Data in an Internal Stage</h2>
+<p>Alternatively, you can store data directly in Snowflake with internal stages. Now, we want to create an internal stage and upload the same files while maintaining the directory structure of the various individual mailboxes on an internal stage.</p>
+<h3 is-upgraded>Create an Internal Stage</h3>
+<p>Run this command to create an internal stage called <code>email_stage_internal</code> as follows.</p>
+<pre><code language="language-sql" class="language-sql">use schema emaildb.raw;
+create or replace stage email_stage_internal
+directory = (enable = TRUE)
+encryption = (type = &#39;SNOWFLAKE_SSE&#39;);
+</code></pre>
+<aside class="special"><p>     Note that we have to specify a server-side encryption on the internal stage. When using the default client-side encryption, the files will be returned encrypted and not readable when accessed through URLs (in Section 6). </p>
+</aside>
+<h3 is-upgraded>Download Data and Scripts</h3>
+<p>We need to first download the following files to the local workstation by clicking on the hyperlinks below. The subsequent steps require <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL CLI</a> installed on the local workstation where the lab is ran:</p>
+<ul>
+<li><a href="https://sfquickstarts.s3.amazonaws.com/Getting%20Started%20Unstructured%20Data/Files/upload.snf" target="_blank">upload.snf</a>: SnowSQL Script which will upload the files to the internal stage just created.</li>
+<li><a href="https://sfquickstarts.s3.amazonaws.com/Getting%20Started%20Unstructured%20Data/Files/mailbox.tar.gz" target="_blank">mailbox.tar.gz</a>: The actual email data.</li>
+</ul>
+<p>Once downloaded, untar the contents of the files on your local workstation and note the full path including the mailbox parent directory of the tar archive. In the example below, this path is <code>/Users/znh/Downloads/quickstart/</code>. The file can be untarred as follows.</p>
+<pre><code language="language-bash" class="language-bash">cd /Users/znh/Downloads/quickstart/
+tar xzvf mailbox.tar.gz
+</code></pre>
+<h3 is-upgraded>Upload Files using SnowSQL</h3>
+<p>Before opening terminal, find out your account identifier which for the trial account will be <code><account-locator>.<region-id>.<cloud></code>. These fields can be retrieved from the URL of your Snowflake account.</p>
+<p>For example, the URL to access the trial account is <code>https://xx74264.ca-central-1.aws.snowflakecomputing.com/</code>. These are the values for the account identifier:</p>
+<ul>
+<li>Account Locator: <code>xx74264</code></li>
+<li>Region ID: <code>ca-central-1</code></li>
+<li>Cloud: <code>aws</code></li>
+</ul>
+<p>There may be additional segments if you are using your own account part of an organization. You can find those from the URL of your Snowflake account. Please check the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#account-identifiers" target="_blank">Snowflake Documentation</a> for additional details on this topic.</p>
+<p>Now open a terminal on your workstation and run the following SnowSQL command. You will be prompted for the password for the Snowflake user passed as a parameter.</p>
+<pre><code>snowsql -a &lt;account-identifier&gt; \
+-u &lt;user-id&gt; -d emaildb -r sysadmin -s raw \
+-D srcpath=&lt;source-path&gt; \
+-D stagename=@email_stage_internal \
+-o variable_substitution=true -f upload.snf
+</code></pre>
+<p>Using the examples above for the path and the account identifier, and the userid <code>myuser</code>, the command would be:</p>
+<pre><code>snowsql -a xx74264.ca-central-1.aws \
+-u myuser -d emaildb -r sysadmin -s raw \
+-D srcpath=/Users/znh/Downloads/quickstart/mailbox \
+-D stagename=@email_stage_internal \
+-o variable_substitution=true -f /Users/znh/Downloads/quickstart/upload.snf
+</code></pre>
+<p>The upload may take a few seconds depending on the speed of your internet connection. If the upload is successful, you should see data being uploaded in each subfolder, and you may see an output like the following on your terminal.</p>
+<p class="image-container"><img alt="SnowSQL PUT Files to Internal Stage" src="img/6287dbdd2b8f3437.png"></p>
+<p>Verify if the files have been uploaded successfully by entering the following command on your Snowflake worksheet.</p>
+<pre><code language="language-sql" class="language-sql">ls @email_stage_internal;
+</code></pre>
+<p>You should now see an identical list of files uploaded to the internal stage. Make sure you see 226 files uploaded</p>
+<p class="image-container"><img alt="List Internal Stage" src="img/64257fa8456dbb1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Govern Unstructured Data Access" duration="5">
+        <p>Just like structured and semi-structured data, access permissions to unstructured data in Snowflake can be governed using role-based access control (RBAC).</p>
+<h2 is-upgraded>Create Role and Grant Access</h2>
+<p>Let&#39;s create a role that will provide read access to the external stage we&#39;ve already created that contains PDFs.</p>
+<p>Let&#39;s first create the analyst role.</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+create or replace role analyst;
+grant role analyst to role sysadmin;
+</code></pre>
+<p>Then, switch back to <code>sysadmin</code> role, and <code>grant</code> the role <code>analyst</code> the rights to use the database <code>emaildb</code>, and the schema <code>raw</code> we just created earlier, as well as the ability to <code>read</code> from the stage.</p>
+<pre><code language="language-sql" class="language-sql">grant usage on database emaildb to role analyst;
+grant usage on schema emaildb.raw to role analyst;
+grant usage on warehouse quickstart to role analyst;
+grant read on stage email_stage_internal to role analyst;
+</code></pre>
+<p>To make sure this works as expected, make sure secondary roles are disabled for <code>analyst</code> role.</p>
+<pre><code language="language-sql" class="language-sql">use role analyst;
+select current_secondary_roles();
+use secondary roles none;
+</code></pre>
+<p>You can verify the <code>analyst</code> role only has access to read by listing the files in the internal stage, then trying to remove files from the external stage. When trying to remove, this should result in an error message.</p>
+<pre><code language="language-sql" class="language-sql">use role analyst;
+
+-- List files from the stage. This should execute successfully.
+ls @email_stage_internal;
+
+-- Try to remove files from the stage. This should return an error.
+rm @email_stage_internal;
+</code></pre>
+<p class="image-container"><img alt="Remove Internal Stage Analyst" src="img/66155a99e6f78cd6.png"></p>
+<p>In the subsequent sections, we will see a more fine-grained access control of the different unstructured files stored in Snowflake using scoped URLs.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Catalog Unstructured Data using Directory Tables" duration="6">
+        <p>One of the main pain points in managing large repositories of unstructured data is the ability to access metadata easily on the numerous files, as well as retrieve files per some metadata attributes (last modified, file size, file patterns).</p>
+<p>Directory Tables are built-in tables in Snowflake that provide an up-to-date, tabular file catalog for external and internal stages. Directory Tables make it easy to search for and query files using SQL.</p>
+<p>We will first reset the session parameters to the correct role, virtual warehouse, database and schema:</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+use warehouse quickstart;
+use schema emaildb.raw;
+</code></pre>
+<p>Prior to accessing the directory, it needs to be refreshed first for the files previously uploaded using the following command.</p>
+<pre><code language="language-sql" class="language-sql">alter stage email_stage_internal refresh;
+</code></pre>
+<p>Run the following command to access the directory table.</p>
+<pre><code language="language-sql" class="language-sql">select *
+from directory(@email_stage_internal);
+</code></pre>
+<p>This will provide some detailed metadata information about the files stored in the stage including the <code>RELATIVE_PATH</code>, the <code>LAST MODIFIED</code> timestamp, the <code>SIZE</code>, the <code>ETAG</code> as well as the <code>FILE URL</code> (more information on this in the next section).</p>
+<p class="image-container"><img alt="Directory Table" src="img/2345fbbeaf0ed5fe.png"></p>
+<h2 is-upgraded>Searching Directory Tables</h2>
+<p>We could now query these files using some SQL commands. For example, let&#39;s assume we want to identify all the emails from the mailbox belonging to the user <code>nemec-g</code>. We could easily do this with the following SQL query.</p>
+<pre><code language="language-sql" class="language-sql">select *
+from directory(@email_stage_internal) 
+where RELATIVE_PATH like &#39;%nemec-g%&#39;;
+</code></pre>
+<p class="image-container"><img alt="Directory Table filtered path" src="img/c592584e439fafb3.png"></p>
+<p>This query returns the 13 emails belonging to that user. Now let&#39;s try to identify the 5 largest email text in the dataset. We can do that with the following query.</p>
+<pre><code language="language-sql" class="language-sql">select *
+from directory(@email_stage_internal)
+order by size desc
+limit 5;
+</code></pre>
+<p class="image-container"><img alt="Directory Table filtered size" src="img/10bfe8020e2d013.png"></p>
+<h2 is-upgraded>Automatic Refresh</h2>
+<p>Say you want the directory table to refresh whenever a file is added to your S3 bucket. This can be accomplished by using event notifications in S3. When a new file is added to a bucket, S3 will send a notification to Snowflake, and a Stream can refresh the directory table.</p>
+<p>In this quickstart, we won&#39;t setup notifications in S3, but the command below is what you would use to create a stream on the directory table for a stage. More detailed documentation for automatically refreshing directory tables can be found <a href="https://docs.snowflake.com/en/user-guide/data-load-dirtables-auto.html" target="_blank">here</a>.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a table stream on directory table
+create stream documents_stream on directory(&lt;stage_name&gt;);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="URLs for Secure Access" duration="5">
+        <p>In the previous sections, we have seen how to store unstructured data in Snowflake, as well as access metadata about the unstructured files, and build queries to retrieve files based on metadata filters.</p>
+<p>In this section, we will look into how Snowflake offers access to the unstructured data through various types of URLs, as well as provide a more granular governance over unstructured data than at the stage level, as reviewed previously in Section 2.</p>
+<p>There are three different types of URLs that you can use to access unstructured data:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/build_scoped_file_url.html" target="_blank"><strong>Scoped URL</strong></a>: A scoped file URL can be generated for a user to give the user short-lived, scoped access to the file without giving privileges on the stage.</li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/build_stage_file_url.html" target="_blank"><strong>File URL</strong></a>: A file URL requires a user to be authenticated with Snowflake and requires the user to have read privileges on the stage.</li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/get_presigned_url.html" target="_blank"><strong>Pre-signed URL</strong></a>: As the name suggests, pre-signed URLs are already authenticated. Users can simply download the files using pre-signed URLs.</li>
+</ul>
+<p>The URL format for files is https://.snowflakecomputing.com/api/files/&lt;db_name&gt;/&lt;schema_name&gt;/&lt;stage_name&gt;/&lt;file_path&gt;.</p>
+<h2 is-upgraded>Scoped URL</h2>
+<p>Scoped URLs are encoded URLs that permit temporary access to a staged file without granting privileges to the stage. The URL expires when the persisted query result period ends (i.e. the results cache expires), which is currently 24 hours.</p>
+<p>We can generate a scoped URL of any file using the function <code>build_scoped_url()</code>. For example, let&#39;s create a view which provides the scoped URL for files in the stage <code>email_stage_internal</code>.</p>
+<pre><code language="language-sql" class="language-sql">create or replace view email_scoped_url_v
+as
+select
+	relative_path
+	, build_scoped_file_url(@email_stage_internal,relative_path) as scoped_url
+from directory(@email_stage_internal);
+
+select * from email_scoped_url_v limit 5;
+</code></pre>
+<p class="image-container"><img alt="Scoped URL" src="img/520cff2a27d2d8a3.png"></p>
+<p>As explained previously, this URL will be valid for 24 hours. Snowsight retrieves the file only for the user who generated the scoped URL.</p>
+<p>Scoped URLs enable access to the files via a view that retrieves scoped URLs. Only roles that have privileges on the view can access the files. The scoped URL contents are all encrypted and doesn&#39;t give any information about the bucket, database or schema.</p>
+<h3 is-upgraded>Secure Access with RBAC and Scoped URL</h3>
+<p>Let&#39;s assume a scenario where the <code>analyst</code> role needs access to all the files from the inbox of <code>NEMEC-G</code>. We can build a dynamic view which will filter the output based on the role of the view user.</p>
+<p>First let&#39;s build an assignment table where various roles (or even users) can be assigned a given mailbox for further analysis.</p>
+<pre><code language="language-sql" class="language-sql">create or replace table assignment (mailbox string, role string, filter string);
+
+insert into assignment values (&#39;NEMEC-G&#39;,&#39;ANALYST&#39;,&#39;%nemec-g%&#39;);
+insert into assignment values (&#39;*&#39;,&#39;SYSADMIN&#39;,&#39;%&#39;);
+
+select * from assignment;
+</code></pre>
+<p>As we can see from the query output above, the assignment table controls a 1-to-1 role-to-mailbox access mapping.</p>
+<p>We can now build a SQL view which will join with the assignment table to dynamically filter rows based on the role of the user executing the view and grant access to the view to the <code>analyst</code> role:</p>
+<pre><code language="language-sql" class="language-sql">create or replace secure view analyst_file_access_v as
+    select
+	    relative_path
+		, build_scoped_file_url(@email_stage_internal,relative_path) as scoped_url
+    from directory(@email_stage_internal)
+	    inner join assignment
+    where relative_path like filter
+  	    and role = current_role();
+
+grant select on analyst_file_access_v to role analyst;
+</code></pre>
+<p>Let&#39;s switch to role <code>analyst</code> and query the view.</p>
+<pre><code language="language-sql" class="language-sql">use role analyst;
+use warehouse quickstart;
+use schema raw;
+select * from analyst_file_access_v;
+</code></pre>
+<p class="image-container"><img alt="Secure View Scoped URL" src="img/7abe5dc0af5f4091.png"></p>
+<p>Click the <code>scoped_url</code> corresponding to the file <code>1222.</code> to your workstation and review the file locally.</p>
+<p>If we switch the role to <code>sysadmin</code> and run the same query:</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+use warehouse quickstart;
+use schema raw;
+select * from analyst_file_access_v;
+</code></pre>
+<p>This returns scoped URLs to access all the files.</p>
+<p>As we just experimented, scoped URLs are ideal for use in custom applications, providing unstructured data to other accounts via a share, or for downloading and ad-hoc analysis of unstructured data via Snowsight.</p>
+<h2 is-upgraded>File URL</h2>
+<p>A file URL is a permanent URL that identifies the database, schema, stage, and file path to a set of files, as opposed to the previous scoped URL where all this information is encrypted. A role that has sufficient privileges on the stage can access the files. It does not contain any authentication token. Authentication needs to be done when connecting through REST API. However, it works from our current authenticated Snowsight session.</p>
+<p>The following query will provide the file urls for the mailbox <code>arnold-j</code>.</p>
+<pre><code language="language-sql" class="language-sql">select
+    relative_path
+    , build_stage_file_url(@email_stage_internal,relative_path) as stage_file_url
+from directory(@email_stage_internal) 
+where relative_path like &#39;%arnold-j%&#39;;
+</code></pre>
+<p class="image-container"><img alt="File URL" src="img/f9c766bd1f7bb3d8.png"></p>
+<p>Click on any of the stage file URLs and download the file to your workstation.</p>
+<h2 is-upgraded>Pre-signed URL</h2>
+<p>Pre-signed URLs are used to download or access files, via a web browser for example, without authenticating into Snowflake or passing an authorization token. These URLs are ideal for business intelligence applications or reporting tools that need to display the unstructured file contents.</p>
+<p>Pre-signed URLs are open but temporary. The expiration time for the access token is configurable when generating the URL. Any user or application can directly access or download the files until the expiration time is reached.</p>
+<p>The following query will generate the pre-signed URLs for the mailbox <code>beck-s</code>. In the <code>get_presigned_url()</code> system function, we pass the parameter <code>300</code> which represents the expiration time for the token in seconds (which is 300s, so 5 minutes in this case).</p>
+<pre><code language="language-sql" class="language-sql">select
+    relative_path
+    , get_presigned_url(@email_stage_internal,relative_path,300) as presigned_url
+from directory(@email_stage_internal) 
+where relative_path like &#39;%beck-s%&#39;;
+</code></pre>
+<p>Click on any cell value in the <code>PRESIGNED_URL</code> column. This should give the actual full URL on the right hand side in the grey cell. (Click to Copy)</p>
+<p class="image-container"><img alt="Pre-signed URL" src="img/9e6253c3d7d18ec6.png"></p>
+<p>Open a new tab in your web browser, and paste the copied URL. This should download the file on your workstation. As you can see, the URL is valid even when executed outside from the Snowsight UI.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Perform Natural Language Processing" duration="20">
+        <p>We have so far reviewed how to store unstructured data files, retrieve them, provide granular access to the files through various URLs and through secure views. In this section, we want to extract additional attributes from the files. The entities extracted are going to be person names mentioned in the emails, as well as locations. The goal is to have these additional attributes used to enrich the file-level metadata for analytics.</p>
+<p>Using Snowpark runtimes and libraries, you can securely deploy and process Python, Java and Scala code to build pipelines, ML models, and applications in Snowflake. You can process unstructured files in Java (generally available), Python (public preview), and Scala (public preview) natively in Snowflake using Snowpark. In the following sections, you&#39;ll see how entity extraction can be done with Snowpark for both Java and Python.</p>
+<h2 is-upgraded>Python</h2>
+<p>For convenience, a number of popular open source third-party Python packages that are built and provided by Anaconda are made available to use out of the box inside Snowflake via the <a href="https://repo.anaconda.com/pkgs/snowflake" target="_blank">Anaconda Snowflake channel</a>. For any third-party packages not yet included, you can use stages to import. In this example, we&#39;ll use the punkt, averaged_perceptron_tagger, maxent_ne_chunker, and words language models from the <a href="https://www.nltk.org/" target="_blank">nltk</a> package, which have been uploaded and available on a Snowflake s3 public bucket.</p>
+<h3 is-upgraded>Creating a Python UDF</h3>
+<p>Creating the UDF involves a few steps in Snowflake.</p>
+<ol type="1">
+<li>Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+use schema emaildb.raw;
+
+create or replace stage nltk_imports
+url = &#34;s3://sfquickstarts/Getting Started Unstructured Data/Files/&#34;
+directory = (enable = true);
+</code></pre>
+<p>From the Snowflake worksheet, you can run the following command to confirm the nltk zip file is listed in the external stage.</p>
+<pre><code language="language-sql" class="language-sql">ls @nltk_imports/nltk_data;
+</code></pre>
+<p class="image-container"><img alt="List nltk imports external stage" src="img/988e53416d94cd57.png"></p>
+<ol type="1" start="2">
+<li>We can now create the UDF in Snowflake as the following.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">create or replace function python_parseText(file_path string)
+    returns variant
+    language python
+    runtime_version=3.8
+    imports = (&#39;@nltk_imports/nltk_data.zip&#39;)
+    packages = (&#39;snowflake-snowpark-python&#39;,&#39;nltk&#39;)
+    handler = &#39;udf_compute_named_entity&#39;
+AS
+$$
+def load_files(): 
+    &#34;&#34;&#34;Helper function that loads zipped files from stage and adds them
+    to the nltk data path&#34;&#34;&#34;
+    import os
+    import zipfile
+    import nltk
+    import sys
+    
+    #import directory, to be able to make references to files in the stage
+    IMPORT_DIRECTORY_NAME = &#34;snowflake_import_directory&#34;
+    import_dir = sys._xoptions[IMPORT_DIRECTORY_NAME]
+    
+    #paths to extract to, this is where the nltk library will search for the required files
+    nltk_dir = &#34;/tmp/nltk_data&#34;
+        
+    with zipfile.ZipFile(os.path.join(import_dir, &#34;nltk_data.zip&#34;), &#39;r&#39;) as zip_ref: 
+        zip_ref.extractall(nltk_dir)
+    
+    #append extracted path to the nltk library search path for usage in UDF
+    nltk.data.path.append(nltk_dir)
+
+def udf_compute_named_entity(file_path:str) -&gt; dict:
+    from snowflake.snowpark.files import SnowflakeFile
+    import email
+    import json
+    import nltk
+    from nltk.tokenize import word_tokenize
+    from nltk.tag import pos_tag
+    from nltk.chunk import ne_chunk
+
+    def parse_email_file(file_path):
+        with SnowflakeFile.open(file_path, &#39;r&#39;) as f:
+            msg = email.message_from_file(f)
+            payload = &#34;&#34;
+            if msg.is_multipart():
+                for _payload in msg.get_payload():
+                    # if payload.is_multipart(): ...
+                    payload += _payload.get_payload()
+            else:
+                payload= msg.get_payload()
+            return payload
+    def perform_named_entity_extraction(text):
+        tokens = word_tokenize(text)
+        tagged_tokens = pos_tag(tokens)
+        named_entities = ne_chunk(tagged_tokens)
+        persons = []
+        locations = []
+        for entity in named_entities:
+            if hasattr(entity, &#39;label&#39;):
+                if (entity.label() == &#39;PERSON&#39;):
+                    persons.append(&#39; &#39;.join([token for token, pos in entity]))
+                elif (entity.label() == &#39;GPE&#39;):
+                    locations.append(&#39; &#39;.join([token for token, pos in  entity]))
+        return {&#34;PERSONS&#34;:persons,&#34;LOCATIONS&#34;:locations}        
+    email_body = parse_email_file(file_path)
+    #load the files from stage for usage
+    load_files()
+    return perform_named_entity_extraction(email_body)
+
+$$;
+</code></pre>
+<h3 is-upgraded>Invoking the Python UDF</h3>
+<p>The UDF can be invoked on any text file containing readable english. From the email corpus stored on the internal stage, we can invoke the UDF as follows.</p>
+<pre><code language="language-sql" class="language-sql">select python_parseText(build_scoped_file_url(@email_stage_internal,&#39;/sanders-r/inbox/60.&#39;)) 
+as entities_extraction;
+</code></pre>
+<p class="image-container"><img alt="Python UDF Results" src="img/814999b4e81cd9b8.png"></p>
+<p>The output is serialized as a valid JSON format by the UDF. It contains 2 arrays, one for each named entities extraction:</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;LOCATIONS&#34;: [
+    &#34;Toronto&#34;
+  ],
+  &#34;PERSONS&#34;: [
+    &#34;Vince Carter&#34;,
+    &#34;Hakeem&#34;
+  ]
+}
+</code></pre>
+<p>Since we are using pre-built models which haven&#39;t been trained on this particular corpus, the entity extraction may not always be accurate. However, the models perform overall quite well for illustration purposes for this quickstart.</p>
+<h2 is-upgraded>Java</h2>
+<p>Alternatively to Python, the same entity extraction can be accomplished with Java. The Java code for the UDF has already been written and provided below. This code uses the open source <a href="https://opennlp.apache.org/" target="_blank">Apache OpenNLP</a> library to perform natural language processing on English text in this occurrence.</p>
+<p>The Java code leverages pre-built <a href="http://opennlp.sourceforge.net/models-1.5/" target="_blank">machine learning models</a> to perform named entity extraction for persons and locations. These models are packaged manually post-build in a Fat JAR.</p>
+<p>At a high level, the code does the following:</p>
+<ul>
+<li>Parse the text file contents using an Apache Tika text parser.</li>
+<li>Tokenize the parsed contents using a model.</li>
+<li>From the tokens, perform a named entity extraction for persons and locations using pre-built ML models.</li>
+<li>Serialize the results in a JSON string returned as an output.</li>
+</ul>
+<pre><code language="language-java" class="language-java">public String ParseText(String filePath) throws IOException, SAXException, TikaException {
+			
+// Configure gson	      
+GsonBuilder gsonBuilder = new GsonBuilder()
+Gson gson = gsonBuilder.create();
+		
+//detecting the file type
+BodyContentHandler handler = new BodyContentHandler();
+Metadata metadata = new Metadata();
+ParseContext pcontext=new ParseContext();
+	     
+SnowflakeFile file = SnowflakeFile.newInstance(filePath);
+InputStream ins = file.getInputStream();
+	      
+//Text document parser
+TXTParser  TexTParser = new TXTParser();
+TexTParser.parse(ins, handler, metadata, pcontext);
+	      
+String Contents = handler.toString();
+	      
+String[] AllPersonEntities = null;
+String[] AllLocationEntities = null;
+String JsonResult = null;
+	      
+NamedEntities NE = new NamedEntities(AllPersonEntities, AllLocationEntities);
+			
+ try {
+         for(int i=0;i&lt;sentences.length;i++){
+	          String Tokens[] = new NamedEntityExtraction().ParseTokens(Contents);
+	          String PersonEntities[] = new NamedEntityExtraction().findName(Tokens);
+	          String LocationEntities[] = new NamedEntityExtraction().findLocation(Tokens);
+	           
+	          AllPersonEntities = ArrayUtils.addAll(AllPersonEntities, PersonEntities);
+	          AllLocationEntities = ArrayUtils.addAll(AllLocationEntities, LocationEntities);
+	           
+	          NE.setPersons(AllPersonEntities);
+	          NE.setLocations(AllLocationEntities);
+	           
+	          JsonResult = gson.toJson(NE).toString();	
+               		
+		
+			} catch (IOException e) {
+	            e.printStackTrace();
+	        }
+		     return(JsonResult);
+}
+</code></pre>
+<p>A few elements relevant for this code:</p>
+<ul>
+<li>Notice the main class is <strong>NamedEntityExtraction</strong>.</li>
+<li>The method <strong>ParseText</strong> will be invoked by the UDF in the next section.</li>
+<li>The file path is passed as a parameter. It can be a URL to the file, or the path on the stage.</li>
+</ul>
+<h3 is-upgraded>Creating a Java UDF</h3>
+<p>The precompiled jar file including all the dependencies has been uploaded and available on a Snowflake s3 public bucket. Creating the UDF involves a few steps in Snowflake.</p>
+<ol type="1">
+<li>Create the external stage mapping to the S3 bucket URI where the jar file is currently available. From the Snowflake worksheet, enter the following command:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+use schema emaildb.raw;
+
+create or replace stage jars_stage_external
+url = &#34;s3://sfquickstarts/Common JARs/&#34;
+directory = (enable = true auto_refresh = true);
+</code></pre>
+<p>From the Snowflake worksheet, you can run the following command to confirm the jar file is listed in the external stage.</p>
+<pre><code language="language-sql" class="language-sql">ls @jars_stage_external;
+</code></pre>
+<p class="image-container"><img alt="List jar external stage" src="img/a8d86d7a8697c39d.png"></p>
+<ol type="1" start="2">
+<li>We can now create the UDF in Snowflake as the following.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">create or replace function  java_parseText(file string)
+returns string
+language java
+imports = (&#39;@jars_stage_external/EmailNLPv3-3.0.jar&#39;)
+handler = &#39;NamedEntityExtraction.ParseText&#39;
+;
+</code></pre>
+<h2 is-upgraded>Invoking the Java UDF</h2>
+<p>The UDF can be invoked on any text file containing readable english. From the email corpus stored on the internal stage, we can invoke the UDF as follows.</p>
+<pre><code language="language-sql" class="language-sql">select java_parseText(build_scoped_file_url(&#39;@email_stage_internal&#39;,&#39;/sanders-r/inbox/60.&#39;)) 
+as entities_extraction;
+</code></pre>
+<p class="image-container"><img alt="Java UDF Results" src="img/4d2cacc0d1edbeb1.png"></p>
+<p>The output is serialized as a valid JSON format by the UDF. It contains 2 arrays, one for each named entities extraction:</p>
+<pre><code language="language-json" class="language-json">{
+&#34;Persons&#34;:[&#34;David&#34;,&#34;Richard&#34;,&#34;Rob&#34;,&#34;Mark&#34;,&#34;Richard&#34;,&#34;Vince Carter&#34;],
+&#34;Locations&#34;:[&#34;Toronto&#34;,&#34;Toronto&#34;]
+}
+</code></pre>
+<h2 is-upgraded>Extracting and Storing Named Entities</h2>
+<p>We want to store the named entities as additional attributes for analysts to be able to select and retrieve the files of interest in their analysis, as well as perform some analytics on the attributes found. For the purpose of this quickstart, we&#39;ll use the Java UDF to complete this task. However, the same could be done using the Python UDF.</p>
+<p>We first want to scale-up the default warehouse size to run the Java UDF at scale across all cores available on all nodes on a 2XL warehouse (64 nodes). This can be done easily and quickly because of Snowflake&#39;s instant elasticity:</p>
+<pre><code language="language-sql" class="language-sql">alter warehouse quickstart set warehouse_size = xxlarge;
+</code></pre>
+<p>Now let&#39;s run the following query to store the named entities into a table.</p>
+<pre><code language="language-sql" class="language-sql">create or replace table email_named_entities_base as
+select
+    relative_path
+    , upper(replace(get(split(relative_path, &#39;/&#39;), 0), &#39;\&#34;&#39;, &#39;&#39;))	as mailbox
+    , java_parseText(build_scoped_file_url(&#39;@email_stage_internal/&#39;, relative_path)) 		as named_entities
+from (
+    select relative_path
+    from directory(@email_stage_internal)
+    group by relative_path
+);
+</code></pre>
+<p>After running this query, we can set the <code>warehouse</code> size back to a smaller size.</p>
+<aside class="special"><p>     THIS STEP IS VERY IMPORTANT NOT TO EXHAUST YOUR TRIAL CREDIT </p>
+</aside>
+<pre><code language="language-sql" class="language-sql">alter warehouse quickstart set warehouse_size = xsmall;
+</code></pre>
+<p>Verify with the following command that the warehouse is back to an <code>xsmall</code> size.</p>
+<pre><code language="language-sql" class="language-sql">show warehouses;
+</code></pre>
+<p>The output should show the <code>QUICKSTART</code> size as being <code>XSMALL</code>. Now let&#39;s query the base table containing the named entities.</p>
+<pre><code language="language-sql" class="language-sql">select
+    *
+from email_named_entities_base
+limit 5;
+</code></pre>
+<p>For each email, we now have created a <code>MAILBOX</code> attribute, as well as JSON string containing the named entities present in the file.</p>
+<p class="image-container"><img alt="Named Entities Base Table" src="img/bd4b6c7644456516.png"></p>
+<h2 is-upgraded>Exploring the Mailbox Corpus</h2>
+<p>We have now extracted the named entities the analysts are interested in seeing to do some analytics on this email corpus. We can use Snowflake native capabilities to easily store and query semi-structured data, in this case JSON.</p>
+<p>We will first create a view to parse the <code>NAMED_ENTITIES</code> JSON string and extract separately the persons and the locations entities, as well as count the number of entities identified in each email:</p>
+<pre><code language="language-sql" class="language-sql">create or replace view email_info_v
+as
+with named_entities
+as (
+    select
+	    relative_path
+	    , mailbox
+	    , parse_json(named_entities) as named_entities
+    from email_named_entities_base
+)
+select
+    relative_path
+    , mailbox
+    , named_entities:Persons::variant				as persons
+    , array_size(persons)							as num_person_entities
+    , named_entities:Locations::variant				as locations
+    , array_size(locations)							as num_location_entities
+    , array_size(persons) + array_size(locations)	as total_entities
+    , build_scoped_file_url(@email_stage_internal, relative_path)	as scoped_email_url
+from named_entities;
+</code></pre>
+<p>We can query the view and examine the output. Notice that we now have JSON arrays in separate columns for name and location entities, count of entities, and a scoped URL to access the file if we need to further examine its contents.</p>
+<pre><code language="language-sql" class="language-sql">select * from email_info_v limit 10;
+</code></pre>
+<p class="image-container"><img alt="Examine view output" src="img/7802754e2a132f56.png"></p>
+<p>We can now query the view to retrieve various entity metrics. For example, the following query identifies the top 5 emails in terms of total number of entities.</p>
+<pre><code language="language-sql" class="language-sql">select
+	relative_path
+	, mailbox
+	, total_entities
+	, num_person_entities
+	, num_location_entities
+	, persons
+	, locations
+	, scoped_email_url
+from email_info_v
+order by total_entities desc
+limit 10;
+</code></pre>
+<p class="image-container"><img alt="Number of entities view" src="img/add516f33e6eca14.png"></p>
+<p>The following query aggregates statistics on the number of entities identified per mailbox and returns the top 5 mailbox by total number of entities identified in the mailbox.</p>
+<pre><code language="language-sql" class="language-sql">select
+	mailbox
+	, count(relative_path)				as num_emails
+	, sum(total_entities)				as sum_entities
+	, round(avg(total_entities))		as avg_entities
+	, sum(num_person_entities)			as sum_persons
+	, round(avg(num_person_entities))	as avg_persons
+	, sum(num_location_entities)		as sum_locations
+	, round(avg(num_location_entities))	as avg_locations
+from email_info_v
+group by mailbox
+order by sum_entities desc
+limit 5;
+</code></pre>
+<p>We know that the most prolific mailbox is <code>WHITE-S</code> for identified entities in this email corpus.</p>
+<h2 is-upgraded>Performing Analytics on the Mailbox</h2>
+<p>Let&#39;s assume an analyst wants to identify all email correspondence where the name of ‘Willman&#39; (chosen completely randomly in this example) is mentioned. With Snowflake, you can easily flatten arrays to run this type of query.</p>
+<pre><code language="language-sql" class="language-sql">select
+	relative_path
+	, mailbox
+	, pers.value::string as person_entity
+from
+	email_info_v
+	, lateral flatten(input =&gt; Persons) pers;
+</code></pre>
+<p class="image-container"><img alt="Flattened JSON array" src="img/1dc108e5b32b0ef0.png"></p>
+<p>We can use the previous query as a CTE to retrieve all emails mentioning a specific person, including a scoped URL to access the actual email file.</p>
+<pre><code language="language-sql" class="language-sql">with persons_flattened as (
+    select
+    	relative_path
+		, mailbox
+		, pers.value::string as person_entity
+    from
+    	email_info_v
+		, lateral flatten(input =&gt; Persons) pers
+)
+select
+    relative_path
+    , mailbox
+    , person_entity
+    , build_scoped_file_url(@email_stage_internal,relative_path) as scoped_email_url
+from persons_flattened
+where person_entity like &#39;%Willmann%&#39;;
+</code></pre>
+<p class="image-container"><img alt="Mentions of Willmann" src="img/46674128a90f79a4.png"></p>
+<p>Click on any <code>MAY-L</code> mailbox email to download and review the email. This will allow you to learn a little bit more about that person&#39;s role and responsibilities in the Enron organization.</p>
+<p>Let&#39;s assume we want to identify the top 5 locations mentioned in the email corpus.</p>
+<pre><code language="language-sql" class="language-sql">with locations_flattened as (
+    select
+    	relative_path
+	    , mailbox
+	    , loc.value::string	as location_entity
+    from
+	    email_info_v
+	    , lateral flatten(input =&gt; Locations) loc
+)
+select
+    location_entity
+    , count(location_entity) as num_occurrences
+from locations_flattened
+group by location_entity
+order by num_occurrences desc
+limit 5;
+</code></pre>
+<p>We can use Snowsight to produce a visualization. Click on chart and set the settings as shown below.</p>
+<p class="image-container"><img alt="Number of location occurrences bar chart" src="img/47ff3eacca97aa75.png"></p>
+<p>As you can see, we can perform aggregations, and analytics on unstructured text data after extracting entities and information of interest. At this point, one could run more advanced data science use cases or visualizations using the numerous options available in Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Share Unstructured Data" duration="15">
+        <p>In this example, we want to share all the email corpus mentioning ‘Willman&#39; with another party using a Snowflake reader account.</p>
+<h2 is-upgraded>Creating a Reader Account</h2>
+<p>The first step is to create a reader account as follows. Note that you will need to provide a secure password of your choice.</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+create managed account if not exists emaildb_reader
+admin_name=&#39;admin&#39;, admin_password=&#39;&lt;password&gt;&#39;,
+type=reader, COMMENT=&#39;Emaildb Reader Account&#39;;
+</code></pre>
+<p>This command should return the account name, and the URL to access the account. Please copy and paste the output of the command as it provides you the login URL information for the account, as well as the user and password you chose</p>
+<pre><code>{
+&#34;accountName&#34;:&#34;&lt;account_name&gt;&#34;,
+&#34;loginUrl&#34;:&#34;https://&lt;account&gt;.snowflakecomputing.com&#34;
+}
+</code></pre>
+<p>You can run the following command to retrieve the managed account information at anytime.</p>
+<pre><code language="language-sql" class="language-sql">show managed accounts;
+</code></pre>
+<p>You can connect to the previous reader account using the URL, and the userid/password credentials you passed as parameters.</p>
+<h2 is-upgraded>Creating a Secure View to Share</h2>
+<p>Let&#39;s now create the secure view based on the query ran in the previous section that will be shared with the reader account.</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+use schema emaildb.raw;
+
+create or replace secure view email_corpus_willman_v as
+with persons_flattened as (
+    select
+        relative_path
+        , mailbox
+        , pers.value::string as person_entity
+    from
+		email_info_v
+        , lateral flatten(input =&gt; Persons) pers
+)
+select
+    relative_path
+    , mailbox
+    , person_entity
+    , build_scoped_file_url(@email_stage_internal,relative_path) as email_url
+from persons_flattened
+where person_entity like &#39;%Willmann%&#39;;
+</code></pre>
+<h2 is-upgraded>Create the Share</h2>
+<p>We can now create the share as follows. You will need to provide the reader account name created earlier:</p>
+<pre><code language="language-sql" class="language-sql">-- Create the share object
+use role accountadmin;
+create or replace share email_corpus 
+comment=&#39;Share in scope email corpus information&#39;;
+
+--what are we sharing?
+grant usage on database emaildb to share email_corpus;
+grant usage on schema emaildb.raw to share email_corpus;
+grant select on view emaildb.raw.email_corpus_willman_v to share email_corpus;
+
+-- whom are we sharing with?
+alter share email_corpus add accounts = &lt;reader-account-locator&gt;;
+</code></pre>
+<p>We can review the share we have just created. The following command provides all the shares in the account.</p>
+<pre><code language="language-sql" class="language-sql">-- check the share
+show shares like &#39;email_corpus&#39;;
+</code></pre>
+<p>We can get more details about the share, and the scope of the objects shared using the following command.</p>
+<pre><code language="language-sql" class="language-sql">-- review share
+describe share email_corpus;
+</code></pre>
+<p class="image-container"><img alt="Number of location occurrences bar chart" src="img/520aba0519ffca2a.png"></p>
+<p>This command shows us that the view <code>EMAIL_CORPUS_WILLMAN_V</code> is shared from the database <code>EMAILDB</code> and schema <code>RAW</code> in the current account.</p>
+<h2 is-upgraded>Accessing Shared Data</h2>
+<p>Switch to the web browser tab where you opened the session with the reader account created in step 6.1 or open a new session on the reader account. Now, click on the blue Snowsight UI button at the top and authenticate again.</p>
+<p>After logging in, as this is a new account, click on the worksheet button at the top and create a new virtual warehouse.</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+	
+create or replace warehouse compute_wh 
+warehouse_size=xsmall
+auto_suspend=1
+auto_resume=true
+initially_suspended=true;
+
+grant usage on warehouse compute_wh to public;
+</code></pre>
+<p>First, let&#39;s switch back to the <code>ACCOUNTADMIN</code> role. Click on the <strong>Home</strong> button in the top-left. Then in the top-left, click on <strong>ADMIN</strong>, then hover over <strong>Switch Role</strong>, and click on <strong>ACCOUNTADMIN</strong>. <img alt="Switch to ACCOUNTADMIN role" src="img/f0a21d2c116d63fb.png"></p>
+<p>Now let&#39;s view the shared data. In the pane on the left, click on on <strong>Data</strong>, then <strong>Private Sharing</strong>. You will see the <code>EMAIL_CORPUS</code> database listed under <strong>Ready to Get</strong>. Select it and give the database name <code>EMAIL_CORPUS</code> and make it available to <code>PUBLIC</code>, then click the <strong>Get Data</strong> button. <img alt="Get Data dialogue box" src="img/8aff2f0f541cc689.png"></p>
+<p>Click on <strong>Databases</strong>, then click on the <strong>Refresh</strong> button (round arrow button on the right side above the database list). You will now see the database <code>EMAIL_CORPUS</code>. <img alt="EMAIL_CORPUS shared database" src="img/bce44483af92e016.png"></p>
+<p>Select the worksheet created in this reader account. Add the following commands to set the worksheet session parameters and review the view objects available.</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+use schema &lt;account-locator&gt;_email_corpus.raw;
+use warehouse compute_wh;
+
+show views;
+</code></pre>
+<p>If you expand the database hierarchy on the left side of the window, you will see that the share appears from the consumer side as a database <code>EMAIL_CORPUS</code>, with a schema <code>RAW</code> and a single view object <code>EMAIL_CORPUS_WILLMAN_V</code>.</p>
+<p>We can now query the shared data. The query below will display only the emails related to ‘Willmann&#39;.</p>
+<pre><code language="language-sql" class="language-sql">select * from email_corpus_willman_v;
+</code></pre>
+<p>From the results, notice that all the URLs are encrypted, not revealing any information of the location where the shared data came from. Click on any <code>EMAIL_URL</code> and get access to the actual email text downloaded to your workstation. Download and review the email. Make sure it is valid. <img alt="Access shared data files" src="img/ff4bcffa744f8ae.png"></p>
+<p>You have now completed this demonstration of how unstructured data can be securely shared in the Snowflake Data Cloud using Snowflake Data Sharing capabilities.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You used Snowflake to perform natural language processing on email files.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Accessing external data with an <strong>External Stage</strong></li>
+<li>Storing unstructured data with an <strong>Internal Stage</strong> and <strong>SnowSQL</strong></li>
+<li>Governing unstructured data with <strong>Role-Based Access Control</strong></li>
+<li>Catalog unstructured data with <strong>Directory Tables</strong></li>
+<li>Securely access unstructured data with <strong>Scoped, File, and Pre-signed URLs</strong></li>
+<li>Processing unstructured data with <strong>Snowpark for Python and Java</strong></li>
+<li>Sharing unstructured data in the <strong>Data Cloud</strong></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/unstructured.html" target="_blank">Unstructured Data Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/java/udf-java.html" target="_blank">Java UDF Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index.html" target="_blank">Snowpark Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

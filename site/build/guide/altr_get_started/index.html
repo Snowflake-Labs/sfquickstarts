@@ -1,0 +1,380 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>ALTR Quickstart - Data Access Control</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="altr_get_started"
+                  title="ALTR Quickstart - Data Access Control"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="ALTR Quickstart - Data Access Control" duration="1">
+        <p>This Quick Start Guide is intended for Data Owners and Data Stewards or any other role responsible for securing sensitive data in your Snowflake data warehouses. Its purpose is to demonstrate how ALTR automates data governance.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake Enterprise Edition account (or higher). <ul>
+<li>We recommend that you sign up for a free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Trial</a></li>
+</ul>
+</li>
+<li>You need to be, or have access to, an ACCOUNTADMIN for your Snowflake instance.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>You will learn how to use ALTR to secure sensitive data in Snowflake with role based masking policies.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A role based data access policy for Snowflake that is automatically enforced by ALTR.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a sample database" duration="2">
+        <aside class="special"><p><strong>In This Step:</strong> We are creating a sample database by copying a small amount of data from Snowflakes shared <em>SNOWFLAKE_SAMPLE_DATA</em> database. We will use this sample database in the rest of this Quickstart.</p>
+</aside>
+<h2 is-upgraded>Create a sample database</h2>
+<ul>
+<li>To create the sample database run the following SQL in a SQL worksheet:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">-- Use ACCOUNTADMIN role
+USE ROLE ACCOUNTADMIN;
+
+-- Create Sample Database
+CREATE DATABASE ALTR_GETTING_STARTED_DB;
+
+-- Set DB Context
+USE DATABASE  ALTR_GETTING_STARTED_DB;
+
+-- Populate Sample database from Snowflakes shared sample database. 
+-- Usually named: SNOWFLAKE_SAMPLE_DATA
+CREATE TABLE SAMPLE_CUSTOMER AS 
+    SELECT 
+        C_FIRST_NAME,
+        C_LAST_NAME,
+        C_EMAIL_ADDRESS,
+        C_BIRTH_COUNTRY
+    FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CUSTOMER
+    LIMIT 10000;
+</code></pre>
+<aside class="warning"><p><strong>Note:</strong> If you can&#39;t get access to Snowflake&#39;s built in sample data and you want to use your own data go for it! To match this guide we recommend creating a separate database using the name ALTR_GETTING_STARTED_DB.  Just populate it with fields from your own data set.  Be sure to include some columns that contain PII like email addresses, names, addresses, SSN&#39;s etc.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup a new ALTR account" duration="3">
+        <aside class="special"><p><strong>In This Step:</strong> We will create the ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake. There is no installation required on your premises. The process starts starts in Snowflake&#39;s Partner Connect portal</p>
+</aside>
+<aside class="warning"><p><strong>NOTE:</strong> If you already have an ALTR account and want to use it instead of creating a new one then skip to Step 4 <strong><em>ALTR Setup for existing accounts</em></strong></p>
+</aside>
+<h2 is-upgraded>Create a new ALTR Account</h2>
+<ul>
+<li>Log in to your Snowflake instance and go to the Partner Connect page. If you need help finding Partner connect open this link in a new tab: <a href="https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect#connecting-with-a-snowflake-partner" target="_blank">Connecting with a Snowflake Partner</a>.</li>
+<li>Type &#34;ALTR&#34; in the search bar and then click on the &#34;ALTR&#34; card. <img alt="ALTR Account Created" src="img/a71b09446432fdf2.png"></li>
+<li>Follow the prompts. When you see the screen above click the &#34;Activate&#34; button. This will take you out of Snowflake Partner connect and into the ALTR portal <em>Password Setting Screen</em></li>
+</ul>
+<h2 is-upgraded>Set your ALTR Password and run ALTR Setup Wizard</h2>
+<p class="image-container"><img alt="ALTR Setup Screen" src="img/7051dbdbcfe294d0.png"></p>
+<ul>
+<li>Enter your password</li>
+<li>Accept Terms and Conditions</li>
+<li>Click &#34;Set Password&#34; Button</li>
+<li>Follow the prompts in the ALTR Setup Wizard (there are multiple steps).</li>
+</ul>
+<aside class="warning"><p><strong>NOTE:</strong> When you get to the <strong>choose a database to connect</strong> prompt, you should see <em>ALTR_GETTING_STARTED_DB</em> in the list.  Choose it and then wait for the wizard to complete.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ALTR Setup for existing accounts" duration="1">
+        <aside class="special"><p><strong>In This Step</strong> Only perform this step if you plan to use an ALTR account that existed before running this quick start.  If you just created a new ALTR account in the previous step then skip to step 5 <strong>Build Data Classification Report</strong></p>
+</aside>
+<h2 is-upgraded>Log in to Snowflake and run the ALTR Stored Procedure</h2>
+<ul>
+<li>Log in to the Snowflake instance that has already been associated with an ALTR account</li>
+<li>Create a new worksheet</li>
+<li>The stored procedure grants ALTR access to the newly created sample database</li>
+<li>Call the ALTR setup stored procedure as an ACCOUNTADMIN as follows</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">  CALL &#34;PC_ALTR_DB&#34;.&#34;PUBLIC&#34;.&#34;SETUP_ALTR_SERVICE_ACCOUNT&#34;(TRUE);
+</code></pre>
+<aside class="warning"><p><strong>NOTE</strong>: If the stored procedure runs but you get an error as a result then try calling it again with the parameter set to &#34;FALSE&#34; instead of TRUE as follows:</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">  CALL &#34;PC_ALTR_DB&#34;.&#34;PUBLIC&#34;.&#34;SETUP_ALTR_SERVICE_ACCOUNT&#34;(FALSE);
+</code></pre>
+<h2 is-upgraded>Connect ALTR to Sample Database</h2>
+<aside class="warning"><p><strong>NOTE</strong>: If your current ALTR account is a free tier account you are limited to a single connected database.  You will need to disconnect the existing database from ALTR first in order to connect this quickstart&#39;s sample database.  Or, you can use the database you already have connected, just remember the column names may not match what is in this guide.</p>
+</aside>
+<ul>
+<li><a href="https://altrnet.live.altr.com/api/auth/organization_login?uiredirect=true" target="_blank">Log in to your ALTR portal</a></li>
+<li>Navigate to &#34;Data Configuration -&gt; Data Sources&#34;</li>
+<li>Click on the &#34;Add New&#34; button</li>
+<li>Fill in the required fields: <ul>
+<li>Data Source Name: A friendly name for the datasource, we recommend using the actual database name</li>
+<li>Snowflake Host Name: url for snowflake account where this database resides.</li>
+<li>Service Account ID: ‘PC_ALTR_USER&#39; if ALTR account created via Snowflake Partner Connect</li>
+<li>Snowflake Database Name: Name given to the sample database (ALTR_GETTING_STARTED_DB)</li>
+</ul>
+</li>
+</ul>
+<aside class="warning"><p><strong>NOTE:</strong> If your ALTR account was not created via Snowflake Partner Connect try setting ALTR_SERVICE_USER as the Service Account ID.  One way to identify the Service Account ID: is to look at what value is set for other databases that are already connected to ALTR.  Click on a database that is already connected in the Data Sources page and then expand the &#34;Reconfigure Connection&#34; drop down in the detail pane to see the name of the Service Account ID field.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Data Classification Report" duration="1">
+        <aside class="special"><p><strong>In This Step</strong> The preceding steps are one time setup required for ALTR.  Now that those tasks are complete we can start building our data access policy. The first task is to identify what data in our database contains sensitive information, what most people call <em>classification</em>. So in this step we will have ALTR generate a classification report sending a sample of data to Google DLP service to get classificaton results.</p>
+</aside>
+<h2 is-upgraded>Start the data classification job</h2>
+<ul>
+<li>In the ALTR portal navigate to Data Configuration -&gt; Data Sources</li>
+<li>Open the settings panel for the <em>ALTR_GETTING_STARTED_DB</em> database by clicking on it in the list of databases</li>
+<li>Scroll down to <em>Data usage and classification</em> section of the settings panel and check the <strong>Tag data by classification</strong> checkbox <img alt="Classify Database" src="img/8b322cd513bfd45a.png"></li>
+<li>Click the <em>Tag Type</em> drop down and choose <em>Google DLP Classification</em></li>
+<li>Click the <em>Update Button</em> to save the settings.  ALTR will start the classificaton process.  You will receive an email when the process is completed. Wait until the classificaton job is complete before moving on.  It should take only a few minutes.</li>
+</ul>
+<h2 is-upgraded>View the classification report</h2>
+<ul>
+<li>Navigate to Data Configuration -&gt; Data Management page.</li>
+<li>Click on the <em>Classification Report</em> tab. <img alt="Classification Report" src="img/4a3e46bd0c55fd03.png"></li>
+</ul>
+<aside class="special"><p><strong>Classification Report Explainer:</strong></p>
+<ul>
+<li>The classification job tags columns with the information type it believes are contained in the data column. We call these <em>classifier tags</em></li>
+<li>A single column can be tagged with multiple <em>classifier tags</em> or none.</li>
+<li>The bar chart on the left lists the different types of <em>classifier tags</em>, and the percentage of columns in the database that have the tag.</li>
+<li>You can click on a single <em>classifier tag&#39;s</em> bar on the left and the chart on the right will update to list all the columns that have that <em>classifier tag</em>.</li>
+<li>Clicking the <em>Add Data</em> button next to a column will start ALTR <em>following</em> the column.  That means ALTR gets placed in the &#34;Query Stream&#34; of any query that references that column (Including Views)</li>
+<li><a href="https://docs.altr.com/explore-altr-features/classification" target="_blank">Get more information on data classification in ALTR</a></li>
+</ul>
+</aside>
+<h2 is-upgraded>Tell ALTR to start &#34;Following&#34; the C_EMAIL_ADDRESS column</h2>
+<ul>
+<li>Choose <em>EMAIL_ADDRESS</em> from the dropdown on the right hand side of the classification report. <img alt="Classification Report" src="img/b9080c0312e354c0.png"></li>
+<li>Click the <em>Add Data</em> button for the <em>C_EMAIL_ADDRESS</em> column to have ALTR follow this column.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Define Role Based Data Access Policy" duration="2">
+        <aside class="special"><p><strong>In This Step</strong> We will build role based data access policies for EMAIL addresses from within the ALTR portal using ALTR <em>Locks</em>.</p>
+</aside>
+<h2 is-upgraded>Create a policy defining what Snowflake roles will view email addresses unmasked</h2>
+<ul>
+<li>Navigate to Data Policy -&gt; Locks page in ALTR portal</li>
+<li>Click the <em>Add New</em> button and fill in the form as follows: <ul>
+<li>For the lock name enter <em>Email Unmasked</em></li>
+<li>Click the User Groups dropdown and check <em>SECURITYADMIN</em><img alt="Classification Report" src="img/4de8e280216a562d.png"></li>
+<li>Under the Policy Section there should be an empty tag/column form.  Fill it in as follows: <ul>
+<li>Click the <em>Tag</em> tab (not the <em>Column</em> tab)</li>
+<li>Select <em>EMAIL_ADDRESS</em> from the Tag dropdown</li>
+<li>Select <em>No Mask</em> from the Masking Policy dropdown</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Click the <em>Update Lock</em> button to save this lock. <img alt="Classification Report" src="img/7d855dc7e8beb1da.png"></li>
+</ul>
+<aside class="special"><p><strong>Lock Explainer</strong></p>
+<ul>
+<li>Congrats you just defined your first policy!</li>
+<li>This lock defines the policy that will display <em>EMAIL_ADDRESS</em> values without any masking so long as the user querying snowflake is using the <em>SECURITYADMIN</em> role.</li>
+<li>This lock will not be applied to any other role because only <em>SECURITYADMIN</em> is selected in it.</li>
+<li>Any user querying for <em>EMAIL_ADDRESS</em> under any other snowflake role will get the masking type configured for locks applicable to that role.</li>
+<li>If a user is operating under a role where there is no applicable Lock then that user will get null&#39;s back for <em>EMAIL_ADDRESS</em></li>
+<li><a href="https://docs.altr.com/explore-altr-features/locks" target="_blank">Get more information on using ALTR Locks</a></li>
+</ul>
+</aside>
+<h2 is-upgraded>Create a policy defining which Snowflake roles will view email addresses partially masked</h2>
+<ul>
+<li>on the same Locks page click the <em>Add New</em> button and fill in the form as follows: <ul>
+<li>For the lock name enter <em>Email Partially Masked</em></li>
+<li>Click the User Groups dropdown and check <em>SYSADMIN</em> and <em>ACCOUNTADMIN</em></li>
+</ul>
+</li>
+<li>Under the Policy Section there should be an empty tag/column form.  Fill it in as follows: <ul>
+<li>Click the <em>Tag</em> tab (not the <em>Column</em> tab)</li>
+<li>Select <em>EMAIL_ADDRESS</em> from the Tag dropdown</li>
+<li>Select <em>Email Mask</em> from the Masking Policy dropdown</li>
+</ul>
+</li>
+<li>Click the <em>Update Lock</em> button to save this lock.</li>
+</ul>
+<h2 is-upgraded>Create a policy defining which Snowflake roles will view email addresses fully masked</h2>
+<ul>
+<li>on the same Locks page click the <em>Add New</em> button and fill in the form as follows: <ul>
+<li>For the lock name enter <em>Email Fully Masked</em></li>
+<li>Click the User Groups dropdown and check <em>PUBLIC</em></li>
+</ul>
+</li>
+<li>Under the Policy Section there should be an empty tag/column form.  Fill it in as follows: <ul>
+<li>Click the <em>Tag</em> tab (not the <em>Column</em> tab)</li>
+<li>Select <em>EMAIL_ADDRESS</em> from the Tag dropdown</li>
+<li>Select <em>Email Mask</em> from the Masking Policy dropdown</li>
+</ul>
+</li>
+<li>Click the <em>Update Lock</em> button to save this lock.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test Policy in Snowflake" duration="0">
+        <h2 is-upgraded>Copy test SQL into a new worksheet.</h2>
+<p>Copy the SQL code below into a new worksheet.  This sheet has commands and queries we will use to test the policies you just created.  The first section grants access to the sample database for the <em>SYSADMIN</em>, <em>SECURITYADMIN</em>, and <em>PUBLIC</em> roles.  The next section is a series of tests that show ALTR enforcing policy based on a users Snowflake role.</p>
+<pre><code language="language-sql" class="language-sql">--
+-- Grant access to the sample database to our test roles:
+--
+use database ALTR_GETTING_STARTED_DB;
+use role accountadmin;
+
+grant select on table SAMPLE_CUSTOMER to role SECURITYADMIN;
+grant usage on database ALTR_GETTING_STARTED_DB to role SECURITYADMIN;
+grant usage on schema PUBLIC to role SECURITYADMIN;
+grant usage on warehouse COMPUTE_WH to role SECURITYADMIN;
+
+grant select on table SAMPLE_CUSTOMER to role SYSADMIN;
+grant usage on database ALTR_GETTING_STARTED_DB to role SYSADMIN;
+grant usage on schema PUBLIC to role SYSADMIN;
+grant usage on warehouse COMPUTE_WH to role SYSADMIN;
+
+grant select on table SAMPLE_CUSTOMER to role PUBLIC;
+grant usage on database ALTR_GETTING_STARTED_DB to role PUBLIC;
+grant usage on schema PUBLIC to role PUBLIC;
+grant usage on warehouse COMPUTE_WH to role PUBLIC;
+
+-- warehouse
+use COMPUTE_WH;
+
+-- *** END OF GRANT ACCESS section ***
+
+
+--
+-- ALTR Policy Tests:
+--
+
+-- SECURITYADMIN gets to see emails with no masking at all:
+use role SECURITYADMIN;
+select * from SAMPLE_CUSTOMER;
+
+-- SYSADMIN and ACCOUNT admin domain portion of emails only, email name portion is masked 
+use role SYSADMIN;
+select from SAMPLE_CUSTOMER;
+
+use role ACCOUNTADMIN;
+select from SAMPLE_CUSTOMER;
+
+-- PUBLIC sees emails fully masked
+use role PUBLIC;
+select * from SAMPLE_CUSTOMER;
+
+-- Now go into the ALTR portal and make the following changes 
+-- 1. remove the PUBLIC role from the fully masked lock,
+-- 2. add the PUBLIC role to the partially masked lock.
+
+-- Run query as PUBLIC role again and observe that moving the role into the 
+-- partially masked lock instantly updates access for that role
+
+use role PUBLIC;
+select * from SAMPLE_CUSTOMER;
+
+-- See what happens when a role is not associated with any policy.  Do this by going
+-- into the ALTR portal and unselecting the PUBLIC role from the partially masked lock.  
+-- Make sure that the PUBLIC role is not a part of any other lock.
+-- 
+
+use role PUBLIC;
+select * from SAMPLE_CUSTOMER;
+</code></pre>
+<h2 is-upgraded>Run the Grant Portion of SQL</h2>
+<ul>
+<li>In the worksheet you created above hilight the commands from the top through to the comment labeled: – *** END OF GRANT ACCESS section ***  This will grant access to the sample database for our test roles.</li>
+</ul>
+<h2 is-upgraded>Run the policy tests</h2>
+<ul>
+<li>There are six pairs of test commands.  The first command to set the correct role and then the query.</li>
+<li>Run each policy test query one at a time and check that the results are what is expected. We&#39;ve put comments in front of each pair to remind you what we configured in the policy.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <h2 is-upgraded>What we covered:</h2>
+<ul>
+<li>How to set up a Free ALTR Account and connect it to a Snowflake Database</li>
+<li>Generating and Using ALTR&#39;s integrated classification report to identify sensitive data.</li>
+<li>Creating automatically enforced, role based, data access policy for sensitive data</li>
+<li>Tested ALTR&#39;s role based data access enforcement live by querying from Snowflakes Snowsight user interface.</li>
+</ul>
+<h2 is-upgraded>Ideas for exploring futher:</h2>
+<ul>
+<li>Use any client or method to connect to Snowflake and query the sample database we just protected with ALTR.  You will see that ALTR enforces your policy in the same way no matter how the data is accessed.  From Snowflakes web ui, through any connector, driver or Method Snowflake supports (Go, Python, JDBC, REST API, Snowpark, .NET, Node.js, ODBC etc... )</li>
+</ul>
+<h2 is-upgraded>Getting Help:</h2>
+<ul>
+<li>If you need help on this or another Quickstart email us at support@altr.com (put ‘quickstart help&#39; in the subject line please) and somebody will reach out to you.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

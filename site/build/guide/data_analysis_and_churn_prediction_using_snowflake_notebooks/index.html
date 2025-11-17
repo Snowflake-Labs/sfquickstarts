@@ -1,0 +1,234 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data Analysis and Churn Prediction Using Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_analysis_and_churn_prediction_using_snowflake_notebooks"
+                  title="Data Analysis and Churn Prediction Using Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p class="image-container"><img src="img/d984c523173bd35d.png"></p>
+<p>Churn prediction relies on data analysis to be effective. Through data analysis, businesses gather, clean, and model customer data to uncover patterns and trends. This understanding of customer behavior is key for building accurate churn prediction models. By applying data analysis techniques, businesses can identify at-risk customers and take targeted actions to retain them. Essentially, data analysis provides the necessary foundation for effective churn prediction, helping businesses reduce churn and boost customer loyalty.</p>
+<p>In this Quickstart, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Snowflake Notebooks in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.</p>
+<p>This Quickstart uses Snowflake Notebooks to import and load data, train a Random Forest with Snowpark ML model, visualize the predicted results from the forcasting model by building an interactive web application and make predictions on new users.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>An interactive web app to make predictions on new users</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to import/load data with Snowflake Notebook</li>
+<li>How to train a Random Forest with Snowpark ML model</li>
+<li>How to visualize the predicted results from the forecasting model</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with basic Python and SQL</li>
+<li>Familiarity with training ML models</li>
+<li>Familiarity with data science notebooks</li>
+<li>Go to the <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Snowflake Environment" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).</p>
+<h3 is-upgraded>Creating Objects and Loading Data</h3>
+<ol type="1">
+<li>Navigate to Worksheets, click <code>+</code> in the top-right corner to create a new Worksheet, and choose <code>SQL Worksheet</code></li>
+</ol>
+<p class="image-container"><img src="img/2127138a67a4e8c8.png"></p>
+<ol type="1" start="2">
+<li>Copy and paste the following code to create Snowflake objects (warehouse, database, schema, role) and click <code>Run All</code> at the top of the Worksheet</li>
+</ol>
+<pre><code>USE ROLE securityadmin;
+
+-- create churn_data_scientist
+CREATE OR REPLACE ROLE churn_data_scientist;
+
+USE ROLE accountadmin;
+
+/*---------------------------*/
+-- Create our Database
+/*---------------------------*/
+CREATE OR REPLACE DATABASE churn_prod;
+
+/*---------------------------*/
+-- Create our Schema
+/*---------------------------*/
+CREATE OR REPLACE SCHEMA churn_prod.analytics;
+
+/*---------------------------*/
+-- Create our Warehouse
+/*---------------------------*/
+
+-- data science warehouse
+CREATE OR REPLACE WAREHOUSE churn_ds_wh
+    WAREHOUSE_SIZE = &#39;xsmall&#39;
+    WAREHOUSE_TYPE = &#39;standard&#39;
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+COMMENT = &#39;data science warehouse for churn prediction&#39;;
+
+-- Use our Warehouse
+USE WAREHOUSE churn_ds_wh;
+
+-- grant churn_ds_wh priviledges to churn_data_scientist role
+GRANT USAGE ON WAREHOUSE churn_ds_wh TO ROLE churn_data_scientist;
+GRANT OPERATE ON WAREHOUSE churn_ds_wh TO ROLE churn_data_scientist;
+GRANT MONITOR ON WAREHOUSE churn_ds_wh TO ROLE churn_data_scientist;
+GRANT MODIFY ON WAREHOUSE churn_ds_wh TO ROLE churn_data_scientist;
+
+-- grant churn_ds_wh database privileges
+GRANT ALL ON DATABASE churn_prod TO ROLE churn_data_scientist;
+
+GRANT ALL ON SCHEMA churn_prod.analytics TO ROLE churn_data_scientist;
+GRANT CREATE STAGE ON SCHEMA churn_prod.analytics TO ROLE churn_data_scientist;
+
+GRANT ALL ON ALL STAGES IN SCHEMA churn_prod.analytics TO ROLE churn_data_scientist;
+GRANT ALL ON ALL STAGES IN SCHEMA churn_prod.public TO ROLE churn_data_scientist;
+
+-- set my_user_var variable to equal the logged-in user
+SET my_user_var = (SELECT  &#39;&#34;&#39; || CURRENT_USER() || &#39;&#34;&#39; );
+
+-- grant the logged in user the churn_data_scientist role
+GRANT ROLE churn_data_scientist TO USER identifier($my_user_var);
+
+USE ROLE churn_data_scientist;
+
+/*---------------------------*/
+-- sql completion note
+/*---------------------------*/
+SELECT &#39;data analysis and churn prediction sql is now complete&#39; AS note;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Snowflake Notebooks" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.</p>
+<ol type="1">
+<li>The first Snowflake Notebook <a href="https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb" target="_blank">0_start_here.ipynb</a> contains scripts for importing and exploring our data</li>
+<li>The second Snowflake Notebook <a href="https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ml_feature_engineering.ipynb" target="_blank">1_telco_churn_ml_feature_engineering.ipynb</a> contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook</li>
+</ol>
+<h2 is-upgraded>Import Snowflake Notebooks</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks.</p>
+<ol type="1">
+<li>Navigate to Notebooks in <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> by clicking on <code>Projects</code> <code>-></code> <code>Notebook</code></li>
+<li>Switch Role to <code>CHURN_DATA_SCIENTIST</code></li>
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb" target="_blank">0_start_here.ipynb</a> and <a href="https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ml_feature_engineering.ipynb" target="_blank">1_telco_churn_ml_feature_engineering.ipynb</a> Notebooks</li>
+<li>Using the <code>Import .ipynb file</code>, import the downloaded Notebooks</li>
+</ol>
+<p class="image-container"><img src="img/384c3bc63b3717c6.png"></p>
+<ol type="1" start="5">
+<li>Select the <code>CHURN_PROD</code> database and <code>ANALYTICS</code> schema for the Notebook Location and <code>CHURN_DS_WH</code> for the Notebook warehouse and click <code>Create</code></li>
+<li>To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the <code>Packages</code> button on the package explorer in the top of the page to add the following packages: <code>altair</code>, <code>imbalanced-learn</code>, <code>numpy</code>, <code>pandas</code>, and <code>snowflake-ml-python</code></li>
+</ol>
+<p class="image-container"><img src="img/b053984ab96893fb.png"></p>
+<ol type="1" start="7">
+<li>At the top of the page, click <code>Start</code> to start the Notebook session and run the cells by clicking <code>Run All</code></li>
+</ol>
+<p class="image-container"><img src="img/be687633a8e9f045.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="2">
+        <h2 is-upgraded>Remove Snowflake Objects</h2>
+<ol type="1">
+<li>Navigate to Worksheets, click <code>+</code> in the top-right corner to create a new Worksheet, and choose <code>SQL Worksheet</code></li>
+<li>Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart</li>
+</ol>
+<pre><code>USE ROLE securityadmin;
+DROP ROLE IF EXISTS churn_data_scientist;
+USE ROLE accountadmin;
+DROP DATABASE IF EXISTS churn_prod;
+DROP WAREHOUSE IF EXISTS churn_ds_wh;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congrats! You&#39;re reached the end of this Quickstart!</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>With the completion of this Quickstart, you have now delved into:</p>
+<ul>
+<li>How to import/load data with Snowflake Notebook</li>
+<li>How to train a Random Forest with Snowpark ML model</li>
+<li>How to visualize the predicted results from the forecasting model</li>
+<li>How to build an interactive web app and make predictions on new users</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://developers.snowflake.com/solution/data-analysis-and-churn-prediction-using-snowflake-notebooks/" target="_blank">Snowflake Solutions Center - Data Analysis and Churn Prediction Using Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark API</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

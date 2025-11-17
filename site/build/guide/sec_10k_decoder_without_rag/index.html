@@ -1,0 +1,195 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AI21&#39;s Jamba-Instruct Quickstart | SEC 10K Decoder Without RAG</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="sec_10k_decoder_without_rag"
+                  title="AI21&#39;s Jamba-Instruct Quickstart | SEC 10K Decoder Without RAG"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this quickstart, we will review how to build a Streamlit App within Snowflake that allows you to easily analyze years of NVIDIA 10K filings using Jamba-Instruct in Cortex. With Jamba&#39;s 256K context window, there is no requirement to build a RAG pipeline that chunks the filings into segments that fit into a smaller context window.</p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit enables Snowflake users to combine Streamlit&#39;s component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform. https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/</p>
+<h2 is-upgraded>What is Snowflake Cortex?</h2>
+<p>Snowflake Cortex AI provides access to top-tier LLMs within your Snowflake environment. Build GenAI applications with fully managed LLMs and chat with your data services. https://www.snowflake.com/en/data-cloud/cortex/</p>
+<h2 is-upgraded>What is Jamba-Instruct?</h2>
+<p>AI21&#39;s Jamba-Instruct is the world&#39;s first-ever commercial LLM to successfully leverage SSM-Transformer architecture. This hybrid approach delivers leading quality, performance, and cost, offering the best value per cost across an impressive 256k context window. https://www.ai21.com/jamba</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account in a region where Snowflake Cortex and Jamba-Instruct are available. <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=mg3vAFop&_fsi=mg3vAFop#label-cortex-llm-availability" target="_blank">check availability</a></li>
+<li>A Snowflake account that is <a href="https://docs.snowflake.com/en/user-guide/data-share-consumers" target="_blank">credentialed to mount data</a> from the Marketplace</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to access data from the Snowflake Marketplace</li>
+<li>How to call Jamba-Instruct from within Snowflake Cortex</li>
+<li>Best practices for prompting Jamba-Instruct</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>This Streamlit application within Snowflake illustrates Jamba-Instruct&#39;s text analysis capabilities using Cybersyn&#39;s SEC Filings database. While 10K filings serve as our example, Jamba-Instruct on Cortex can be applied to various text-intensive scenarios such as processing internal documentation, analyzing customer feedback, or tackling any large-scale text analysis task specific to your industry.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup code and streamlit prerequisites" duration="5">
+        <h2 is-upgraded>Step 1: Accessing the data in Snowflake Marketplace</h2>
+<p><a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/cybersyn-sec-filings" target="_blank"><paper-button class="colored" raised>Get Cybersyn&#39;s SEC Filings Data</paper-button></a></p>
+<p>After logging into your Snowflake account, access <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/cybersyn-sec-filings" target="_blank">Cybersyn&#39;s SEC Filings</a> in the Marketplace.</p>
+<ul>
+<li>Click the Get button on the top right box of the listing</li>
+<li>Read and accept the terms</li>
+<li>Note: This data listing is available for free, at no additional charge</li>
+<li>The data is now available in your Snowflake Instance, as the SEC_FILINGS database under the Data menu on the left hand side panel</li>
+</ul>
+<p class="image-container"><img alt="Accessing_the_data_in_Snowflake_Marketplace" src="img/a84f1dbd377ed34f.png"></p>
+<h2 is-upgraded>Step 2: Create a database and schema where the Streamlit app will run</h2>
+<ul>
+<li>On the left side panel, click Data</li>
+<li>Click the blue + Database button in the top right corner</li>
+<li>Create a new database with a name of your choosing (e.g. CORTEX_STREAMLIT) for the Streamlit app to live in</li>
+<li>Create a new Schema in the database you created (e.g. CORTEX_STREAMLIT) with a name of your choosing (e.g. JAMBA)</li>
+</ul>
+<h2 is-upgraded>Step 3: Create the Streamlit app in Snowflake</h2>
+<ul>
+<li>On the left side panel, click Streamlit</li>
+<li>Click the blue + Streamlit App button in the top right corner <ul>
+<li>Make sure the role that you are using has access to Snowflake Cortex AI <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=mg3vAFop&_fsi=mg3vAFop#required-privileges" target="_blank">Required Privileges</a></li>
+<li>Name your App (e.g. Jamba-10K-Decoder)</li>
+<li>Select a Warehouse (XS will work for this demonstration)</li>
+<li>Select the database and schema for your app. If you followed Step 2, select this database (e.g. CORTEX_STREAMLIT and JAMBA)</li>
+<li>Click the blue Create button</li>
+<li>Delete all of the existing code</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 4: Copy the Streamlit app code from GitHub</h2>
+<p><a href="https://github.com/AI21Labs/AI21-Industry-Samples/blob/main/Snowflake_10K_Decoder/Snowflake_10K_Decoder.py" target="_blank">Streamlit GitHub Code</a></p>
+<ul>
+<li>Click the button above which will direct you to our Jamba-Instruct quickstart code that is hosted on GitHub.</li>
+<li>Within GitHub, navigate to the right side of the window and click the ‘Copy Raw Contents&#39; button. This will copy all of the required Python code into your clipboard.</li>
+<li>Paste the Python code into the Streamlit code area in your newly created Streamlit app in Snowflake.</li>
+</ul>
+<h2 is-upgraded>Step 5: Run the Jamba Streamlit Application</h2>
+<ul>
+<li>In the upper right corner of your Snowflake Streamlit app, click the blue Run button.</li>
+<li>Wait for the app to load.</li>
+</ul>
+<p><strong>You&#39;ve successfully built the Jamba-Instruct 10K Decoder Streamlit app in Snowflake!</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Jamba-Instruct in Cortex" duration="3">
+        <p>AI21&#39;s Jamba-Instruct is a powerful language model designed with a 256k context window to handle large volumes of text, up to ~800 pages, making it ideal for tasks such as summarizing lengthy documents, analyzing call transcripts, and extracting information from extensive data.</p>
+<p>Another major advantage of a long context window is its capacity to make advanced techniques more accessible, often eliminating the need for complex configurations. While Retrieval-Augmented Generation (RAG) is frequently employed to anchor language models with a company&#39;s curated data, Jamba-Instruct&#39;s long context window allows for achieving accurate results with or without RAG, simplifying the architecture and enhancing performance across various applications.</p>
+<h2 is-upgraded>10K-Decoder Usage</h2>
+<p>Cybersyn&#39;s <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/cybersyn-sec-filings?originTab=provider&providerName=Cybersyn%2C&ref=blog.streamlit.io" target="_blank">SEC_FILINGS</a> database is used for this application. This dataset provides real-world SEC filing documents for many companies, illustrating Jamba-Instruct&#39;s effectiveness in processing large volumes of text in a single prompt. The last few years of NVIDIA 10K filings are used for this demonstration. There are over 200k tokens in this text, and using Jamba-Instruct, you can fit all this text (and your questions about it) into a single prompt!</p>
+<aside class="warning"><p>Jamba-Insruct is not available in all regions, confirm your region is on the list <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=mg3vAFop&_fsi=mg3vAFop#label-cortex-llm-availability" target="_blank">check availability</a></p>
+</aside>
+<p class="image-container"><img alt="10K-Decoder_Usage" src="img/335a88989b56fb2a.png"></p>
+<ul>
+<li>You can view the data by clicking the View 10K Detail button</li>
+<li>You can ask questions about the filings by entering your question in the Enter your Question section, and then clicking Run Filing Query</li>
+</ul>
+<p class="image-container"><img alt="10K-Decoder_Usage (part_2)" src="img/c758ebce6070fa8d.png"></p>
+<ul>
+<li>Clicking on View Full Response will display the whole JSON structure returned from Cortex. This is helpful for seeing usage details</li>
+</ul>
+<p class="image-container"><img alt="Jamba_Response" src="img/38e7b656ec21d036.png"></p>
+<h2 is-upgraded>Prompting Tips</h2>
+<ul>
+<li>Be clear with your prompt</li>
+<li>Ensure your prompt doesn&#39;t contain grammatical errors</li>
+<li>Describe what you want, not what you don&#39;t want</li>
+<li>For more tips on effectively prompting Jamba check out our <a href="https://docs.ai21.com/docs/prompt-engineering" target="_blank">Jamba prompt engineering guide</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully built a GenAI Streamlit app using Jamba-Instruct on Snowflake Cortex AI. With this fully managed approach, GenAI can be harnessed without any data ever needing to leave Snowflake&#39;s secure walls.</p>
+<p>Jamba&#39;s 256k context window delivers superior performance across key long context use cases:</p>
+<ul>
+<li>Summarization and QA of long text (e.g. financial documents)</li>
+<li>Paired document reasoning and analysis</li>
+<li>Longer memory for customer service and agent chatbots</li>
+<li>Extracting insight from earnings calls</li>
+<li>Contradiction and compliance detection</li>
+<li>Long multi-shot prompt templates with many examples</li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to access data from the Snowflake Marketplace</li>
+<li>How to call Jamba-Instruct from within Snowflake Cortex</li>
+<li>Best practices for prompting Jamba-Instruct</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.ai21.com/jamba" target="_blank">Jamba-Instruct Launch Blog</a></li>
+<li><a href="https://www.linkedin.com/posts/snowflake-computing_ai21-labss-jamba-instruct-is-now-integrated-activity-7222333089492918272-63mG/" target="_blank">Jamba-Instruct in Cortex AI Launch Blog</a></li>
+<li><a href="https://arxiv.org/abs/2403.19887" target="_blank">Jamba Whitepaper</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex AI Complete Product Reference</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

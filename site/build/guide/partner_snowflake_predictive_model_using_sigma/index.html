@@ -1,0 +1,360 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Develop a Predictive Model using Snowflake and Sigma</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="partner_snowflake_predictive_model_using_sigma"
+                  title="Develop a Predictive Model using Snowflake and Sigma"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This QuickStart will guide you through an end-to-end example of utilizing Snowflake&#39;s new machine learning features.</p>
+<p>Our focus will be on creating a machine learning-driven price prediction tool, integrating the perspectives of both a business analyst and a data scientist using Snowflake and Sigma.</p>
+<p>We will demonstrate how Sigma enables the execution of complex commands in Snowflake, and displays results in a format similar to a spreadsheet interface.</p>
+<p>This approach not only maintains data security within Snowflake, but also broadens accessibility to users without SQL expertise.</p>
+<p>In our example, we&#39;ll analyze historic food truck sales data. We aim to develop a model identifying key drivers of high sales in the past and explore how a business analyst can leverage this model for informed decision-making. The analyst will be able to collaborate with the data scientist all from a sigma workbook.</p>
+<h2 is-upgraded>Target Audience</h2>
+<p>Anyone who is interested in learning how to easily leverage the power of Snowflakes machine learning features, by using Sigma.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<p>In this lab you will be creating a machine learning-driven price prediction tool, integrating the perspectives of both a business analyst and a data scientist using Snowflake and Sigma.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to explore and build a dataset for training a model</li>
+<li>How to build a machine learning model using Snowpark ML</li>
+<li>How to register a model in the Snowpark Model Registry</li>
+<li>How to expose the model to business users in Sigma</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Thanks for signing up for Snowflake &amp; Sigma&#39;s Hands-On Lab, &#34;Develop a Predictive Model Using Snowflake and Sigma&#34;. To ensure that you can follow along during the lab, please complete the work outlined below prior to the start of the lab.</p>
+<p>1: Sign up for a Snowflake Trial - You can sign up for a 30-day free trial of Snowflake <a href="https://signup.snowflake.com/" target="_blank">here.</a> Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you&#39;ll be asked to utilize the ACCOUNTADMIN role for some steps below.</p>
+<p>2: Accept Anaconda Terms - Follow <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-setup#label-notebooks-anaconda-terms" target="_blank">these instructions</a> to accept the Anaconda Terms to import Python libraries in Snowflake. (For this lab, you will need to import the <a href="https://pypi.org/project/snowflake-ml-python/" target="_blank">snowflake-ml-python</a> package in a Snowflake Notebook.)</p>
+<p>3: Sign Up for a Sigma Trial - From Snowflake, in Snowsight, navigate to <code>Data Product</code>s » <code>Partner Connect</code>, then search for <code>Sigma</code> and follow the instructions to sign up for a free trial. When signing up for a Sigma trial via Partner Connect, relevant Snowflake objects, such as a database (PC_SIGMA_DB), a compute warehouse (PC_SIGMA_WH), a role (PC_SIGMA_ROLE), and a user (PC_SIGMA_USER) for working with Snowflake data in Sigma. Furthermore, Partner Connect will automatically create a Snowflake connection for you in Sigma. (Snowflake PC_SIGMA_WH).</p>
+<p>Once you are done configuring partner connect, or if you already have a Sigma account (or <a href="https://www.sigmacomputing.com/free-trial" target="_blank">created a Sigma trial manually</a>), and did not use Partner Connect to create these Snowflake objects, you can run the following commands in a <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface" target="_blank">Snowsight Worksheet</a> to configure your HOL environment:</p>
+<pre><code language="language-code" class="language-code">USE ROLE SYSADMIN;
+CREATE DATABASE IF NOT EXISTS PC_SIGMA_DB;
+CREATE WAREHOUSE IF NOT EXISTS PC_SIGMA_WH
+
+    WAREHOUSE_SIZE=&#39;XSMALL&#39;
+    INITIALLY_SUSPENDED=TRUE
+    AUTO_SUSPEND=120;
+
+USE ROLE SECURITYADMIN;
+
+CREATE ROLE IF NOT EXISTS PC_SIGMA_ROLE;
+
+GRANT ALL ON DATABASE PC_SIGMA_DB TO ROLE PC_SIGMA_ROLE;
+GRANT USAGE ON WAREHOUSE PC_SIGMA_WH TO ROLE PC_SIGMA_ROLE;
+
+GRANT ROLE PC_SIGMA_ROLE TO ROLE SYSADMIN;
+GRANT ROLE PC_SIGMA_ROLE TO USER &lt;your-snowflake-user&gt;;
+
+
+USE ROLE SYSADMIN;
+CREATE DATABASE IF NOT EXISTS SIGMA_INTERNAL;
+CREATE SCHEMA IF NOT EXISTS SIGMA_INTERNAL.WRITEBACK;
+
+
+USE ROLE SECURITYADMIN;
+GRANT ALL ON DATABASE SIGMA_INTERNAL TO ROLE PC_SIGMA_ROLE;
+GRANT ALL ON SCHEMA SIGMA_INTERNAL.WRITEBACK TO ROLE PC_SIGMA_ROLE;
+</code></pre>
+<p>4: The following notebook has been provided for you to load into your Snowflake interface.</p>
+<p><a href="https://sigma-quickstarts-main.s3.us-west-1.amazonaws.com/notebooks/notebook_app.ipynb" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download Snowflake Notebook</paper-button></a></p>
+<p class="image-container"><img style="width: 800.00px" src="img/6eafcb009a7c6fed.png"></p>
+<p>Upon import, Snowflake will prompt you for a database and schema to be used in the notebook. You can use any database/schema that the Sigma Service Role has access to.</p>
+<ul>
+<li>A Sigma instance that has a connection established to your own Snowflake instance.</li>
+<li>Sigma Write-back is enabled to your Snowflake environment</li>
+<li>A snowflake role with Usage rights on a Snowflake schema that the Sigma Service Role has access to, as well as to the writeback location.</li>
+</ul>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="20">
+        <p>We&#39;re starting from scratch with a blank Sigma workbook. I&#39;ll first load our sales data from Snowflake. If you have sales data in Snowflake, we can directly connect to it from Sigma. In this case, we don&#39;t have that data in Snowflake, so we&#39;ll need to upload it. Fortunately, that&#39;s easy to do in Sigma. Let&#39;s upload a CSV file of shift sales from the city of Seattle.</p>
+<p><a href="https://sigma-quickstarts-main.s3.us-west-1.amazonaws.com/csv/SHIFT_SALES.csv" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download required CSV file</paper-button></a></p>
+<p>1: Download the CSV file from this <a href="https://sigma-quickstarts-main.s3.us-west-1.amazonaws.com/csv/SHIFT_SALES.csv" target="_blank">Sigma hosted location:</a></p>
+<p>2: From the Sigma home page click the &#34;Create New&#34; button in the top left corner and select &#34;Workbook&#34;.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/78b2028c674f9c1c.png"></p>
+<p>3: Now that you are in the Workbook, let&#39;s start by saving it with the name &#34;ML Shift Sales&#34; by clicking &#34;Save As&#34; in the top right.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/eb0fb79c452413f4.png"></p>
+<p>4: Add a new table, and then select Upload CSV as an option</p>
+<p class="image-container"><img style="width: 800.00px" src="img/8e9e46702e287a99.png"></p>
+<p>5: Make sure your instance is selected in the connection dropdown (NOT the Sigma Sample Database), and then drag your downloaded file into the upload area and then press save in the upper right to upload the table to your Snowflake instance and view the table in your sigma workbook.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/9b9db860bf8b873a.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sigma Data Exploration" duration="20">
+        <p>1: Shift sales will be of primary importance for this QuickStart, so let&#39;s adjust adjust its format to <code>currency</code> at the start of our analysis. Select the <code>Shift Sales</code> column, and use the buttons next to the formula bar to adjust the format:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/4480311e099f6664.png"></p>
+<p>2: We don&#39;t know what variables impact sales, but it&#39;s a safe bet to start with time having some kind of impact. Let&#39;s make a visual to explore this. Create a <code>Child element</code> visual:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/536b778237366582.png"></p>
+<p>Drag <code>Date</code> and <code>Shift Sales</code> columns to the <code>X</code> and <code>Y axis</code>, respectively:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/3e6fa6e3b755dbda.png"></p>
+<p>3: We can see that Sigma automatically aggregates our data to the <code>Day level</code> and applies a <code>Sum</code>.</p>
+<p>Lets adjust this to a monthly aggregation to &#34;quiet out&#34; some of the noise.</p>
+<p>You can adjust the formula directly in the formula bar:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e7a86802e8fbc3b9.png"></p>
+<p>4: We can see the seasonality of the sales around each January, and we can isolate this further to confirm that suspicion.</p>
+<p>We will switch the formula to a <a href="https://help.sigmacomputing.com/docs/datepart" target="_blank">datepart() function</a>, and see that the first 3 months do indeed have the highest sales:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/f83e2196a3009452.png"></p>
+<p>5: The second factor that we think may play a role in the sales is the shift that the sales took place in.</p>
+<p>We can easily add that to our visual, and then switch to a &#34;No Stacking&#34; bar chart, to see the differences between AM and PM shifts:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/8b450b7453eed4b6.png"></p>
+<p>6: The third factor that we think may play a role is the weekday that the sales took place on. This is a very similar question to our monthly analysis.</p>
+<p>We can duplicate the table:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/d1cc7664ea4bf4c9.png"></p>
+<p>Drag it next to our first chart:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/d37a45096de73cf1.png"></p>
+<p>And then adjust the <code>DatePart() function</code> to use <code>weekday</code>.</p>
+<p>Just like in the months, we can see that certain weekdays definitely return greater sales:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/971aa49b093ef9fe.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Dataset for Modeling" duration="20">
+        <p>Now that we have identified Month Number, Weekday, and Shift as potential predictors for shift sales, let&#39;s prepare a dataset with these variables for our data scientist. In Sigma, this may be something that a data scientist does in the existing workbook, or the analyst can prepare it with guidance. There is lots of room for collaboration through <a href="https://help.sigmacomputing.com/docs/workbook-collaboration-with-live-edit" target="_blank">live edit</a> and our <a href="https://help.sigmacomputing.com/docs/workbook-comments" target="_blank">comment feature.</a></p>
+<p>1: Create a child table of our shift sales table and drag it to the bottom of our workbook:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/7ca0014eb6858c52.png"></p>
+<p>2: For our training set, we want the data to be filtered before a certain date so that we can then assess shifts after that date in the test set.</p>
+<p>We right click the <code>Date</code> column, and then <code>filter</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/2ce30c809b86d436.png"></p>
+<p>Set the filter to <code>Between</code> the dates <code>1/1/2020 and 12/31/2022</code>, to get 3 years of training data:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/14a20857c7d5e1ba.png"></p>
+<p>Then, rename this table to <code>Train</code> by double-clicking the title, to edit it.</p>
+<p>3: Now we need to create the columns that we found to drive Sales.</p>
+<p>Add a column:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/759b7706361d780.png"></p>
+<p>Define it as <code>DatePart("month", [Date])</code>, so that we get the month number.</p>
+<p>4: We can easily duplicate this column to make a weekday column as well.</p>
+<p><code>Duplicate</code> the column and then change <code>month</code> to <code>weekday</code> in the formula:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/d31d6dbaef961de5.png"></p>
+<p>5: Finally, your data scientist may want you to encode categorical data into numerical values.</p>
+<p>We can easily do this with Sigma using a formula definition.</p>
+<p>Add a new column, define it&#39;s function as <code>If([Shift] = "AM", 1, 0)</code>, and then rename it to <code>Encoded Shift</code>.:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e24317b0315cf585.png"></p>
+<p>6: Now, we need to repeat all the steps to make a Test table....<strong>Just kidding!!</strong></p>
+<p>All we need to do is <code>duplicate</code> the table:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/b6b392b66267c1b3.png"></p>
+<p>Adjust the <code>date filter</code> so that it gives us values <code>on or after 1/1/2023</code>, and then rename the new table to <code>Test</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/c2f9ce340f361065.png"></p>
+<p>7: Finally, we can make all this work available in your Snowflake Write-back schema by creating a warehouse view from the Train table.</p>
+<p>We recommend calling it <code>Train</code>, but you can name it anything you&#39;d like:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/7cc5a1360288ffaf.png"><br></p>
+<p class="image-container"><img style="width: 600.00px" src="img/f56ffcab28922a88.png"></p>
+<aside class="warning"><p><strong>NOTE:<br></strong> Note that this will get us a fully qualified name that our data scientist can use in their programming. </p>
+</aside>
+<p>8: Repeat this for <code>Test</code> to create a warehouse view for the Test table.</p>
+<p>9: Publish the workbook to create the warehouse views!</p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Programming" duration="20">
+        <p>We can now let our data scientist know that TASTY_BITES_TRAIN is ready for them to train their model on Month, Weekday, and Shift. The Data Scientist can now begin their work in the Snowflake Notebook that was downloaded in the beginning section of this hands on lab.</p>
+<p>You can run those chunks one at a time and read their notations in the notebook, as well as see the general steps outlined below:</p>
+<h2 is-upgraded>1: Create a Model Registry</h2>
+<p>This is created in your database that you will use to store this and future models.</p>
+<pre><code language="language-python" class="language-python">from snowflake.ml.registry import Registry
+
+session.sql(&#34;CREATE SCHEMA IF NOT EXISTS ML_REGISTRY&#34;).collect()
+
+reg = Registry(session, database_name=&#34;SE_DEMO_DB&#34;, schema_name=&#34;ML_REGISTRY&#34;)
+</code></pre>
+<h2 is-upgraded>2: Snowpark ML Functions</h2>
+<p>The new Snowpark ML functions make it super easy to train open-source models on optimized and scalable Snowflake compute. We can set up a code block that allows us to easily train a decision tree regression model with just a few lines. You will use the warehouse view locations that you generated in your sigma workbook in the session table calls below:</p>
+<pre><code language="language-python" class="language-python">from snowflake.ml.modeling.tree import DecisionTreeRegressor
+
+# Specify inputs
+training_table = session.table(&#34;[USE WAREHOUSE VIEW LOCATION FOR TRAIN]&#34;)
+testing_table = session.table(&#34;[USE WAREHOUSE VIEW LOCATION FOR TEST]&#34;)
+
+# Input my Analyst&#39;s ideas for features
+feature_cols = [
+    &#34;MONTH_OF_DATE&#34;,
+    &#34;WEEKDAY_OF_DATE&#34;,
+    &#34;ENCODED_SHIFT&#34;,
+]
+target_col = &#34;SHIFT_SALES&#34;
+
+my_model = DecisionTreeRegressor()
+my_model.set_input_cols(feature_cols)
+my_model.set_label_cols(target_col)
+my_model.set_output_cols(&#34;PRED_&#34; + target_col)
+
+my_model.fit(training_table)
+</code></pre>
+<h2 is-upgraded>3: Create Governed Metrics</h2>
+<p>Snowflake also offers a large library of metrics that allow us to record the quality of a given model.</p>
+<pre><code language="language-python" class="language-python">from snowflake.ml.modeling.metrics import mean_absolute_error
+
+predictions = my_model.predict(testing_table)
+mae_score = mean_absolute_error(
+    df=predictions, y_true_col_names=&#34;SHIFT_SALES&#34;, y_pred_col_names=&#34;PRED_SHIFT_SALES&#34;
+)
+mae_score
+</code></pre>
+<h2 is-upgraded>4: Log the Model</h2>
+<p>Finally, we can log this model, and its version, comments, and metrics into the registry that we created above. The final line of this code prints the results, where we see that this model is now deployed to our registry where we can review, improve, and call the model.</p>
+<pre><code language="language-python" class="language-python"># Log the model
+model_ver = reg.log_model(
+    model_name=&#34;SHIFT_SALES_MODEL&#34;, version_name=&#34;Version_1&#34;, model=my_model
+)
+
+# Add a description to the model -
+model_ver.set_metric(metric_name=&#34;MAE Score&#34;, value=mae_score)
+model_ver.comment = &#34;This linear regression model predicts the Shift Sales for a given Location, using Features discovered through Sigma&#34;
+
+reg.get_model(&#34;SHIFT_SALES_MODEL&#34;).show_versions()
+</code></pre>
+<h2 is-upgraded>5: Give Permissions to Sigma</h2>
+<p>Thanks to Sigma&#39;s direct to CDW connection, all we have to do is give the Sigma Role access, and the model will be automatically available to Sigma!</p>
+<aside class="special"><p><strong>IMPORTANT:<br></strong> Make sure to update this to your registry and your Sigma role. </p>
+</aside>
+<pre><code language="language-python" class="language-python">session.sql(&#34;GRANT USAGE ON ALL MODELS IN SCHEMA SE_DEMO_DB.ML_REGISTRY TO ROLE PAPERCRANE&#34;).collect()
+</code></pre>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using the Model in Sigma" duration="5">
+        <p>We&#39;ll now show how we can apply that trained model in sigma, and look at an example application of that method.</p>
+<p>1: Create a child table from our <code>Test</code> table, and call it <code>Deploy Model.</code> We&#39;ll be calling our model here.</p>
+<p>2: Create a new column, and use the following syntax and your own model location to define a function like this:</p>
+<pre><code language="language-code" class="language-code">CallVariant(&#34;SE_DEMO_DB.ML_REGISTRY.SHIFT_SALES_MODEL!Predict&#34;) 
+</code></pre>
+<p>You should see an error about argument types, as we haven&#39;t provided any input yet. If you get an error about the UDF not existing, there is likely a permissions error.</p>
+<aside class="special"><p><strong>IMPORTANT:<br></strong> Make sure you have given usage to the model as described in Section 5. Visual Studio Code Programming, Step 6. </p>
+</aside>
+<p class="image-container"><img style="width: 800.00px" src="img/942b4ff9c1fab703.png"></p>
+<p>3: Now let&#39;s add the arguments. These should be provided in the same order as in your code: <code>MONTH_OF_DATE</code>, <code>WEEKDAY_OF_DATE</code>, <code>ENCODED_SHIFT</code>.</p>
+<p>Voila, you should now see a JSON output in this column.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/2fd682ced5ef54dc.png"></p>
+<p>4: Finally, we can now extract the prediction from the column. Sigma <a href="https://help.sigmacomputing.com/docs/json" target="_blank">reads JSON right out of the box</a>, so we can just right click and extract the columns.</p>
+<p>For linear regression, there is only one output, <code>PRED_SHIFT_SALES</code>, that we care about, but we could imagine other models that would have multiple outputs here.</p>
+<p>Confirm your selection, and we have our final prediction that directly runs the model we defined in Snowflake:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/15ed1e44f4309c49.png"><br><img style="width: 800.00px" src="img/d3c444d5dbd2375d.png"></p>
+<p>5: Now, if we combine the steps of the prediction above, we end up with a final syntax that looks something like this:</p>
+<pre><code language="language-code" class="language-code">Number(CallVariant(&#34;SE_DEMO_DB.ML_REGISTRY.SHIFT_SALES_MODEL!PREDICT&#34;, [Month of Date], [Weekday of Date], [Encoded Shift]).PRED_SHIFT_SALES)
+</code></pre>
+<p>That&#39;s quite a mouthful, and it is clearly unrealistic to expect later business users to invoke the model in this way. Luckily, we can use a <a href="https://help.sigmacomputing.com/docs/custom-functions" target="_blank">Sigma Custom Function</a> to encode this for future use in a friendlier syntax.</p>
+<p>Open up your <code>Admin Panel</code> to access the custom functions:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/f089f860c960ad90.png"></p>
+<p>6: Currently, <code>Custom Functions</code> are located on the bottom of our <code>Admin Panel</code>.</p>
+<p>Scroll down to the bottom of the page, and then select <code>Add</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/db57b78ffb52aca7.png"></p>
+<p>7: We can paste the formula from Step 5 into the formula box, and then update to your own model location.</p>
+<p>We can then give the Custom Function an easy-to-find name, <code>PredictShiftSales</code> - and let our users know what it does:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e5f0bad251f355b3.png"></p>
+<p>8: Now, we can define the arguments, again using User-Friendly variable names and descriptions. You don&#39;t need the descriptions, but they are a great way to explain and specify what users should enter here.</p>
+<p>For this QuickStart, you can just use the names <code>Month Number</code>, <code>Weekday Number</code> and <code>Shift Number</code> and save the descriptions for later:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/764c7be40bc2d240.png"></p>
+<p>9: Once we update the formula bar to use these new friendly names, making sure to maintain the order of the arguments, we can save the Custom Function and it will now be available in our workbook:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/95690e8715fe6272.png"></p>
+<p>10: Go back to the <code>ML Shift Sales</code> workbook and add a <code>new column</code> to our <code>Deploy Model</code> table.</p>
+<p>You&#39;ll be able to now run the exact same ML model by entering in <code>PredictShiftSales</code> and filling in the arguments!</p>
+<p>This simple format for calling the model will make your Model far more accessible to the end users who stand to benefit from it:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e70ef15aa48f1795.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Extended Applications" duration="5">
+        <p>This section documents examples of how different personas can benefit from deployed ML functions.</p>
+<p><strong>1: Business Ops: Scoring new data through Input tables:<br></strong> It&#39;s very common for organizations to have operational steps outside the CDW, in the format of Excel or Google Sheets files. Incorporating those files into a Machine Learning framework has historically involved a fair amount of friction. In Sigma, we can do it very simply using an input table. The input table allows us to paste the values from a Google Sheets table, and then transform the variables for the model, and apply the model all in one step:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/1238e98202933a9d.png"></p>
+<p>Our Business Op persona can then quickly identify the shifts with the most predicted earnings and allocate more resources to those shifts! In this example, we use a RankPercentile function to find the top and bottom 10% predicted shifts, and mark those for Boosting and Dropping, respectively ml36.png</p>
+<p><strong>2: Data Apps: Scoring a specific shift:<br></strong> Suppose you want to build your manager a tool that allows them to know whether a specific shift is expected to perform well or not. We can build that Data App in seconds in Sigma. In our example, we create two controls for the date and the shift. We can then handle the transformation within a Dynamic Text Element, such that the control is properly formatted for the Model Call. As a result, we get a ready-made Scoring App, where any business user can tweak what day or shift they want to get the prediction for:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/8b0645aa8cb9212e.png"></p>
+<p><strong>3: Data Science: Reviewing the quality of a model:<br></strong> Sigma can also be an excellent place to check the accuracy and performance of an ML model. In this example, we run the Custom Function against our Test Set and compare the output against the actual observed shift sales we saw for that day. We can create a new column, <code>Residual</code>, that measures the difference between the observed and predicted value.</p>
+<p>Then, the residuals can be plotted to see if the predictive power of our model is sufficient for our use case, or if further refinements in Snowpark or EDA are needed. Because Sigma is so flexible in the calculations and groupings we can apply, customers use Sigma for all sorts of statistical applications, including Power Analyses, Confusion Matrices, and Lift, ROC, and Gain charts:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/56f1d62648bc02d.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="3">
+        <p>Congratulations! You&#39;ve successfully built a training dataset, trained a model, and exposed it in a easy to use medium through a Sigma front end. This exercise is just scratching the surface of what is possible with Snowflake, Snowpark, and Sigma.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to explore and build a dataset for training a model</li>
+<li>How to build a machine learning model using Snowpark ML</li>
+<li>How to register a model in the Snowpark Model Registry</li>
+<li>How to expose the model to business users in Sigma</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p><a href="https://www.sigmacomputing.com/blog/" target="_blank">Blog</a><br><a href="https://community.sigmacomputing.com/" target="_blank">Community</a><br><a href="https://help.sigmacomputing.com/hc/en-us" target="_blank">Help Center</a><br><a href="https://quickstarts.sigmacomputing.com/" target="_blank">QuickStarts</a><br></p>
+<p>Be sure to check out all the latest developments at <a href="https://quickstarts.sigmacomputing.com/firstfridayfeatures/" target="_blank">Sigma&#39;s First Friday Feature page!</a><br></p>
+<p><a href="https://twitter.com/sigmacomputing" target="_blank"><img style="width: 75.00px" src="img/917f56367ae24b50.png"></a>  <a href="https://www.linkedin.com/company/sigmacomputing" target="_blank"><img style="width: 75.00px" src="img/a18a55886a7f2a91.png"></a>  <a href="https://www.facebook.com/sigmacomputing" target="_blank"><img style="width: 75.00px" src="img/4678deb447cfa22f.png"></a></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

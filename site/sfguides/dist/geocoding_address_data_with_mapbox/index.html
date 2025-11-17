@@ -1,0 +1,569 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Geocoding Address Data with Mapbox</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="geocoding_address_data_with_mapbox"
+                  title="Geocoding Address Data with Mapbox"
+                  environment="web"
+                  feedback-link="https://github.com/chriswhong/sfquickstarts">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This Quickstart will help you get started with the <strong>Mapbox Snowflake Native App</strong>, which adds new stored procedures for geocoding, navigation, and Mapbox boundaries APIs and data that you can use in your SQL queries.  Geocoding converts your address data (e.g. &#34;1600 Pennsylvania Ave, Washington, DC, 20500&#34;) into geographic coordinates which can be used for mapping and spatial analysis. Navigation stored procedures help calculate distance and duration between start and destination points, and calculate isochrones. Mapbox boundaries stored procedures allow you to do point-in-polygon lookups against the Mapbox boundaries dataset.</p>
+<p>Mapbox geocoding, navigation, and boundaries APIs and data are used by companies for a variety of purposes, including asset tracking, supply chain and retail strategy, and analysis of demographic trends, elections, and real estate.</p>
+<p>The Mapbox Snowflake Native App is powered by <a href="https://docs.mapbox.com/api" target="_blank">Mapbox APIs</a> and the boundaries lookup is powered by <a href="https://www.mapbox.com/boundaries" target="_blank">Mapbox Boundaries</a>.</p>
+<p class="image-container"><img alt="logos" src="img/7459bead39f62a26.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL and Snowflake</li>
+<li>Basic understanding of spatial concepts and geocoding (turning addresses into latitude and longitude coordinates)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use the Mapbox app&#39;s functions to perform bulk geocoding on a snowflake table.</li>
+<li>How to export your new spatial data for use in third-party tools</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to the snowflake GUI.</li>
+<li>The Mapbox Snowflake Native App installed in your snowflake environment.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>SQL queries to geocode address data from a single column</li>
+<li>SQL queries to geocode address data from multiple columns (structured data)</li>
+<li>SQL queries to export geojson data from a table with latitude and longitude data</li>
+<li>SQL queries to reverse geocode coordinates and perform boundary lookups</li>
+</ul>
+<p>© 2023 Mapbox, Inc</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installing the Mapbox App" duration="3">
+        <h2 is-upgraded>Step 1</h2>
+<p>After you install the Mapbox application, go to &#34;Data products&#34;, then click on &#34;Apps&#34;, then click on the Mapbox app. Then from the Mapbox app, click on the &#34;SETUP&#34; link in the upper-left side of the screen and follow the steps. These steps will help create an API Integration and external functions required for the application to work.</p>
+<p>Once you complete the steps using the &#34;SETUP&#34; link, return here to finish the rest of the installation steps.</p>
+<h2 is-upgraded>Step 2</h2>
+<p>You will need to do this step any time you want the Mapbox application to be able to access certain databases, schemas, and tables within your Snowflake account, specifying the names of those specific resources in your Snowflake account. The below is an example.</p>
+<p>Grant access to allow the application to access databases, schemas, and tables within your Snowflake account. The below assumes you have a database called &#34;mydatabase&#34; with a schema called &#34;testing&#34;, and a table called &#34;sample_addresses&#34;. Also, if you did not name the application exactly &#34;mapbox&#34;, change &#34;mapbox&#34; to the exact name of the Mapbox application.</p>
+<pre><code>GRANT USAGE ON DATABASE mydatabase to application mapbox;
+GRANT USAGE ON SCHEMA mydatabase.testing to application mapbox;
+GRANT SELECT ON TABLE mydatabase.testing.sample_addresses to application mapbox;
+GRANT UPDATE ON TABLE mydatabase.testing.sample_addresses to application mapbox;
+</code></pre>
+<p>Note that some of the examples in the &#34;Usage&#34; section below use sample data from sample tables provided by the application. The application does not need additional privileges to run against those sample tables and data provided by the application.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Usage" duration="1">
+        <p>A general usage note: stored procedures must pass all parameters in the stored procedure signature. Pass &#34;null&#34; if you do not wish to use a given parameter. All of the examples act on sample data that comes with the application. Wherever you see &#34;mapbox&#34; as a parameter in the stored procedure examples, if you did not name the native app &#34;mapbox&#34; you must change &#34;mapbox&#34; to match whatever you named the app.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Geocoding" duration="5">
+        <p>The geocoding stored procedures comply with the <a href="https://docs.mapbox.com/api/search/geocoding-v6/" target="_blank">Mapbox Geocoding V6 API.</a></p>
+<h3 is-upgraded>geocode_forward</h3>
+<p>Perform a forward geocode. <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">Refer to API documentation here.</a></p>
+<h4 is-upgraded>Procedure signature</h4>
+<pre><code>CALL geocode_forward_enrich (
+  DB_NAME VARCHAR,
+  SCHEMA_NAME VARCHAR,
+  TABLE_NAME VARCHAR,
+  DESTINATION_COLUMN_NAME VARCHAR,
+  INCREMENTAL BOOLEAN,
+  QUERY VARCHAR,
+  PARAM_BBOX VARCHAR,
+  PARAM_COUNTRY VARCHAR,
+  PARAM_FORMAT VARCHAR,
+  PARAM_LANGUAGE VARCHAR,
+  PARAM_PROXIMITY VARCHAR,
+  PARAM_TYPES VARCHAR,
+  PARAM_WORLDVIEW VARCHAR
+)
+</code></pre>
+<p>All parameters must be passed to the stored procedure, but if you do not wish to use any particular parameters, pass null for that parameter. For all parameters that start with &#34;PARAM&#34; you may pass in a string literal value instead of referencing a table column name by surrounding it in three single-quotes, like ‘‘‘myvalue&#39;&#39;&#39;.</p>
+<ul>
+<li>DB_NAME - the name of the database on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this database</li>
+<li>SCHEMA_NAME - the name of the schema on the database from the above parameter on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this schema</li>
+<li>TABLE_NAME - the name of the table on the database and schema from the above parameters on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this table</li>
+<li>DESTINATION_COLUMN_NAME - the name of the column in the above table to which the stored procedure will write the Mapbox value or response</li>
+<li>INCREMENTAL - if true, the stored procedure will not overwrite rows with a non-null value in the provided DESTINATION_COLUMN_NAME column.</li>
+<li>QUERY - column name in the above table to use as the query when forward geocoding</li>
+<li>PARAM_BBOX - column name in the above table to use as bbox filter <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for bounding box</a></li>
+<li>PARAM_COUNTRY - column name in the above table to use as country filter <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for country</a></li>
+<li>PARAM_FORMAT VARCHAR - column name in the above table to use as format <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for format</a></li>
+<li>PARAM_LANGUAGE VARCHAR - column name in the above table to use as language <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for language</a></li>
+<li>PARAM_PROXIMITY VARCHAR - column name in the above table to use as proximity <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for proximity</a></li>
+<li>PARAM_TYPES VARCHAR - column name in the above table to use as types filter <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for types</a></li>
+<li>PARAM_WORLDVIEW VARCHAR - column name in the above table to use as worldview <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for worldview</a></li>
+</ul>
+<h4 is-upgraded>Differences from normal Mapbox API</h4>
+<p>The following parameters mentioned in the Mapbox Geocoding V6 API documentation cannot be changed:</p>
+<ul>
+<li><code>permanent</code> (defaults to true and cannot be changed)</li>
+<li><code>limit</code> (defaults to 1 and cannot be changed)</li>
+<li><code>autocomplete</code> (defaults to false and cannot be changed)</li>
+</ul>
+<h4 is-upgraded>Examples</h4>
+<pre><code>CALL mapbox.core.geocode_forward_enrich (
+  &#39;mapbox&#39;,
+  &#39;sample_data&#39;,
+  &#39;geocode_forward&#39;,
+  &#39;response&#39;,
+  false,
+  &#39;query&#39;,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null
+);
+</code></pre>
+<p>This will update the mapbox.sample_data.geocode_forward table&#39;s &#34;response&#34; column and populate it with the forward geocoding result for each row</p>
+<h3 is-upgraded>geocode_reverse</h3>
+<p>Perform a reverse geocode using the Mapbox Geocoding V6 endpoint. <a href="https://docs.mapbox.com/api/search/geocoding-v6/#reverse-geocoding" target="_blank">Refer to API documentation here.</a></p>
+<h4 is-upgraded>Procedure signature</h4>
+<pre><code>CALL mapbox.core.geocode_reverse_enrich (
+  DB_NAME VARCHAR,
+  SCHEMA_NAME VARCHAR,
+  TABLE_NAME VARCHAR,
+  DESTINATION_COLUMN_NAME VARCHAR,
+  INCREMENTAL BOOLEAN,
+  LONGITUDE VARCHAR,
+  LATITUDE VARCHAR,
+  PARAM_COUNTRY VARCHAR,
+  PARAM_LANGUAGE VARCHAR,
+  PARAM_TYPES VARCHAR,
+  PARAM_WORLDVIEW VARCHAR
+);
+</code></pre>
+<p>All parameters must be passed to the stored procedure, but if you do not wish to use any particular parameters, pass null for that parameter. For all parameters that start with &#34;PARAM&#34; you may pass in a string literal value instead of referencing a table column name by surrounding it in three single-quotes, like ‘‘‘myvalue&#39;&#39;&#39;.</p>
+<ul>
+<li>DB_NAME - the name of the database on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this database</li>
+<li>SCHEMA_NAME - the name of the schema on the database from the above parameter on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this schema</li>
+<li>TABLE_NAME - the name of the table on the database and schema from the above parameters on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this table</li>
+<li>DESTINATION_COLUMN_NAME - the name of the column in the above table to which the stored procedure will write the Mapbox value or response</li>
+<li>INCREMENTAL - if true, the stored procedure will not overwrite rows with a non-null value in the provided DESTINATION_COLUMN_NAME column.</li>
+<li>LONGITUDE - column name in the above table to use as the longitude value when reverse geocoding</li>
+<li>LATITUDE - column name in the above table to use as the latitude value when reverse geocoding</li>
+<li>PARAM_COUNTRY - column name in the above table to use as country filter <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for country</a></li>
+<li>PARAM_LANGUAGE VARCHAR - column name in the above table to use as language <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for language</a></li>
+<li>PARAM_TYPES VARCHAR - column name in the above table to use as types filter <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for types</a></li>
+<li>PARAM_WORLDVIEW VARCHAR - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding" target="_blank">See the Mapbox API documentation for worldview</a></li>
+</ul>
+<h4 is-upgraded>Differences from normal Mapbox API</h4>
+<p>The following parameters mentioned in the Mapbox Geocoding V6 API documentation cannot be changed:</p>
+<ul>
+<li><code>permanent</code> (defaults to true and cannot be changed)</li>
+<li><code>limit</code> (defaults to 1 and cannot be changed)</li>
+</ul>
+<h4 is-upgraded>Examples</h4>
+<pre><code>CALL mapbox.core.geocode_reverse_enrich (
+  &#39;mapbox&#39;,
+  &#39;sample_data&#39;,
+  &#39;geocode_reverse&#39;,
+  &#39;response&#39;,
+  false,
+  &#39;longitude&#39;,
+  &#39;latitude&#39;,
+  null,
+  null,
+  null,
+  null
+);
+</code></pre>
+<p>This will update the mapbox.sample_data.geocode_reverse table&#39;s &#34;response&#34; column and populate it with the reverse geocoding result for each row</p>
+<h3 is-upgraded>geocode_structured</h3>
+<p>Perform a structured forward geocode using the Mapbox Geocoding V6 endpoint. <a href="https://docs.mapbox.com/api/search/geocoding-v6/#structured-input" target="_blank">Refer to API documentation here.</a></p>
+<h4 is-upgraded>Procedure signature</h4>
+<pre><code>CALL mapbox.core.geocode_structured_enrich (
+  DB_NAME VARCHAR,
+  SCHEMA_NAME VARCHAR,
+  TABLE_NAME VARCHAR,
+  DESTINATION_COLUMN_NAME VARCHAR,
+  INCREMENTAL BOOLEAN,
+  ADDRESS_LINE1 VARCHAR,
+  ADDRESS_NUMBER VARCHAR,
+  STREET VARCHAR,
+  BLOCK VARCHAR,
+  PLACE VARCHAR,
+  REGION VARCHAR,
+  POSTCODE VARCHAR,
+  LOCALITY VARCHAR,
+  NEIGHBORHOOD VARCHAR,
+  COUNTRY VARCHAR
+);
+</code></pre>
+<p>All parameters must be passed to the stored procedure, but if you do not wish to use any particular parameters, pass null for that parameter. For all parameters that start with &#34;PARAM&#34; you may pass in a string literal value instead of referencing a table column name by surrounding it in three single-quotes, like ‘‘‘myvalue&#39;&#39;&#39;.</p>
+<ul>
+<li>DB_NAME - the name of the database on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this database</li>
+<li>SCHEMA_NAME - the name of the schema on the database from the above parameter on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this schema</li>
+<li>TABLE_NAME - the name of the table on the database and schema from the above parameters on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this table</li>
+<li>DESTINATION_COLUMN_NAME - the name of the column in the above table to which the stored procedure will write the Mapbox value or response</li>
+<li>INCREMENTAL - if true, the stored procedure will not overwrite rows with a non-null value in the provided DESTINATION_COLUMN_NAME column.</li>
+<li>ADDRESS_LINE1 - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>ADDRESS_NUMBER - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>STREET - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>BLOCK - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>PLACE - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>REGION - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>POSTCODE - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>LOCALITY - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>NEIGHBORHOOD - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+<li>COUNTRY - <a href="https://docs.mapbox.com/api/search/geocoding-v6/#forward-geocoding-with-structured-input" target="_blank">See the Mapbox API documentation</a></li>
+</ul>
+<h4 is-upgraded>Differences from normal Mapbox API</h4>
+<p>None</p>
+<h4 is-upgraded>Examples</h4>
+<pre><code>CALL mapbox.core.geocode_structured_enrich (
+  &#39;mapbox&#39;,
+  &#39;sample_data&#39;,
+  &#39;geocode_structured&#39;,
+  &#39;response&#39;,
+  false,
+  null,
+  &#39;address_number&#39;,
+  &#39;address_street&#39;,
+  null,
+  &#39;address_place&#39;,
+  &#39;address_region&#39;,
+  null,
+  null,
+  null,
+  null
+);
+</code></pre>
+<p>This will update the mapbox.sample_data.geocode_structured table&#39;s &#34;response&#34; column and populate it with the structured geocoding result for each row</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Navigation" duration="5">
+        <h3 is-upgraded>Distance and duration</h3>
+<p>The <code>distance_and_duration_enrich</code> procedure provides simplified access to the <a href="https://docs.mapbox.com/api/navigation/matrix/" target="_blank">Mapbox Matrix API</a> with the primary difference being it can only calculate the distance and duration between two points. The result is an <code>OBJECT</code> value with structured contents that match the JSON responses provided by the Mapbox Matrix API.</p>
+<h4 is-upgraded>Procedure signature</h4>
+<pre><code>CALL mapbox.core.distance_and_duration_enrich(
+  DB_NAME VARCHAR,
+  SCHEMA_NAME VARCHAR,
+  TABLE_NAME VARCHAR,
+  DESTINATION_COLUMN_NAME VARCHAR,
+  INCREMENTAL BOOLEAN,
+  START_LONGITUDE VARCHAR,
+  START_LATITUDE VARCHAR,
+  END_LONGITUDE VARCHAR,
+  END_LATITUDE VARCHAR,
+  PROFILE VARCHAR
+);
+</code></pre>
+<p>All parameters must be passed to the stored procedure, but if you do not wish to use any particular parameters, pass null for that parameter.</p>
+<ul>
+<li>DB_NAME - the name of the database on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this database</li>
+<li>SCHEMA_NAME - the name of the schema on the database from the above parameter on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this schema</li>
+<li>TABLE_NAME - the name of the table on the database and schema from the above parameters on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this table</li>
+<li>DESTINATION_COLUMN_NAME - the name of the column in the above table to which the stored procedure will write the Mapbox value or response</li>
+<li>INCREMENTAL - if true, the stored procedure will not overwrite rows with a non-null value in the provided DESTINATION_COLUMN_NAME column.</li>
+<li>START_LONGITUDE - the starting point longitude coordinate</li>
+<li>START_LATITUDE - the starting point latitiude coordinate</li>
+<li>END_LONGITUDE - the ending point longitude coodidnate</li>
+<li>END_LATITUDE - the ending point latitude coordinate</li>
+<li>PROFILE - See <a href="https://docs.mapbox.com/api/navigation/matrix/" target="_blank">Mapbox Matrix API documentation</a>. Must be one of ‘mapbox/driving&#39;, ‘mapbox/walking&#39;, ‘mapbox/cycling&#39;, ‘mapbox/driving-traffic&#39;</li>
+</ul>
+<h4 is-upgraded>Differences from the normal Mapbox API</h4>
+<ul>
+<li>Only one source and one destination coordinate may be provided</li>
+<li>The <code>annotations</code> parameter cannot be changed, and is set to both distance and duration</li>
+<li>The <code>fallback_speed</code> parameter is not supported</li>
+<li>The <code>depart_at</code> parameter is not supported</li>
+<li>The <code>approaches</code> parameter is set to &#34;unrestricted&#34; and cannot be changed</li>
+</ul>
+<h4 is-upgraded>Examples</h4>
+<p>Get distance and duration for two points:</p>
+<pre><code>CALL mapbox.core.distance_and_duration_enrich (
+  &#39;mapbox&#39;,
+  &#39;sample_data&#39;,
+  &#39;distance_and_duration&#39;,
+  &#39;response&#39;,
+  false,
+  &#39;start_longitude&#39;,
+  &#39;start_latitude&#39;,
+  &#39;end_longitude&#39;,
+  &#39;end_latitude&#39;,
+  &#39;mapbox/walking&#39;
+);
+</code></pre>
+<h3 is-upgraded>Isochrone</h3>
+<p>The <code>isochrone_enrich</code> procedure provides a simplified interface to the <a href="https://docs.mapbox.com/api/navigation/isochrone/" target="_blank">Mapbox Isochrone API</a>. The result is a polygon <code>GEOGRAPHY</code> value.</p>
+<h4 is-upgraded>Procedure signature</h4>
+<pre><code>CALL mapbox.core.isochrone_enrich(
+  DB_NAME VARCHAR,
+  SCHEMA_NAME VARCHAR,
+  TABLE_NAME VARCHAR,
+  DESTINATION_COLUMN_NAME VARCHAR,
+  INCREMENTAL BOOLEAN,
+  LONGITUDE VARCHAR,
+  LATITUDE VARCHAR,
+  PROFILE VARCHAR,
+  DISTANCE VARCHAR,
+  METRIC VARCHAR
+);
+</code></pre>
+<p>The value of <code>metric</code> must be either ‘minutes&#39; or ‘meters&#39;.</p>
+<p>All parameters must be passed to the stored procedure, but if you do not wish to use any particular parameters, pass null for that parameter.</p>
+<ul>
+<li>DB_NAME - the name of the database on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this database</li>
+<li>SCHEMA_NAME - the name of the schema on the database from the above parameter on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this schema</li>
+<li>TABLE_NAME - the name of the table on the database and schema from the above parameters on which the stored procedure will act. Be sure you&#39;ve given the application permissions to act on this table</li>
+<li>DESTINATION_COLUMN_NAME - the name of the column in the above table to which the stored procedure will write the Mapbox value or response</li>
+<li>INCREMENTAL - if true, the stored procedure will not overwrite rows with a non-null value in the provided DESTINATION_COLUMN_NAME column.</li>
+<li>LONGITUDE - the longitude coordinate around which to center the isochrone</li>
+<li>LATITUDE - the latitude coordinate around which to center the isochrone</li>
+<li>PROFILE - See <a href="https://docs.mapbox.com/api/navigation/isochrone/" target="_blank">Mapbox Isochrone API documentation</a>. Must be one of ‘mapbox/driving&#39;, ‘mapbox/walking&#39;, ‘mapbox/cycling&#39;, ‘mapbox/driving-traffic&#39;</li>
+<li>DISTANCE - See <a href="https://docs.mapbox.com/api/navigation/isochrone/" target="_blank">Mapbox Isochrone API documentation</a>. Represents a value for ‘metric&#39;. If ‘10&#39;, and ‘metric&#39; is set to minutes, it signifies 10 minutes. If ‘metric&#39; is set to ‘meters&#39;, it signifies 10 meters.</li>
+<li>METRIC - See <a href="https://docs.mapbox.com/api/navigation/directions/" target="_blank">Mapbox Directions API documentation</a>. Must be one of ‘minutes&#39; or ‘meters&#39;</li>
+</ul>
+<h4 is-upgraded>Differences from the normal Mapbox API</h4>
+<p>Unlike the Mapbox API, the <code>isochrone</code> procedure will provide only one contour at a time.</p>
+<p>The following parameters mentioned in the Mapbox Isochrone API documentation cannot be changed:</p>
+<ul>
+<li><code>polygons</code> (defaults to <code>true</code>)</li>
+<li>all other <em>optional</em> parameters are unset</li>
+</ul>
+<h4 is-upgraded>Examples</h4>
+<pre><code>CALL mapbox.core.isochrone_enrich (
+  &#39;mapbox&#39;,
+  &#39;sample_data&#39;,
+  &#39;isochrone&#39;,
+  &#39;response&#39;,
+  false,
+  &#39;longitude&#39;,
+  &#39;latitude&#39;,
+  &#39;mapbox/walking&#39;,
+  15,
+  &#39;minutes&#39;
+)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Boundaries" duration="5">
+        <h3 is-upgraded>mapbox_boundaries_reverse_enrich</h3>
+<p>Perform a point-in-polygon lookup on <a href="https://www.mapbox.com/boundaries" target="_blank">Mapbox boundaries</a> data. This stored procedure is designed to be given a database, schema, and table on which to operate, and will fill in a specified column in that table with the specified boundaries layer.</p>
+<h4 is-upgraded>Stored procedure signature</h4>
+<pre><code>CALL mapbox.core.mapbox_boundaries_reverse_enrich(
+  DB_NAME STRING,
+  SCHEMA_NAME STRING,
+  TABLE_NAME STRING,
+  DESTINATION_COLUMN_NAME STRING,
+  INCREMENTAL BOOLEAN,
+  SOURCE_LONGITUDE_COLUMN_NAME VARCHAR,
+  SOURCE_LATITUDE_COLUMN_NAME VARCHAR,
+  PARAM_BOUNDARIES_SET VARCHAR,
+  PARAM_WORLDVIEW VARCHAR
+)
+</code></pre>
+<ul>
+<li>DB_NAME - the name of the database to operate on</li>
+<li>SCHEMA_NAME - the name of the schema to operate on</li>
+<li>TABLE_NAME - the name of the table to operate on</li>
+<li>DESTINATION_COLUMN_NAME - the name of the column in which to write the result of the layer lookup</li>
+<li>INCREMENTAL BOOLEAN - if true, the procedure will only update rows that have a null value in the specified destination column</li>
+<li>SOURCE_LONGITUDE_COLUMN_NAME - the column name that contains the longitude values used for the lookup</li>
+<li>SOURCE_LATITUDE_COLUMN_NAME - the column name that contains the latitude values used for the loopup</li>
+<li>PARAM_BOUNDARIES_SET - the set of boundaries layers to look up. Must be either ‘basic&#39; or ‘detailed&#39;. &#34;basic&#34; boundaries layers include: ‘adm0&#39;, ‘adm1&#39;, ‘adm2&#39;, ‘loc1&#39;, ‘loc2&#39;, ‘loc3&#39;, ‘loc4&#39;, ‘pos1&#39;, ‘pos2&#39;, ‘pos3&#39;, and ‘pos4&#39;. &#34;detailed&#34; boundaries layers include any layer that is not listed as a &#34;basic&#34; layer.</li>
+<li>PARAM_WORLDVIEW - the worldview to use. For now, only ‘US&#39; is supported</li>
+</ul>
+<h4 is-upgraded>Examples</h4>
+<p>The below example uses a sample schema and table that comes with the Mapbox app. It uses:</p>
+<ul>
+<li>The database called &#34;mapbox&#34;</li>
+<li>The schema in that same database called &#34;sample_data&#34;</li>
+<li>A table in that schema called &#34;sample_points&#34;</li>
+<li>A column called &#34;BOUNDARIES_BASIC&#34; in that same table which you wish to populate with boundaries information</li>
+<li>A column in that same table called &#34;longitude&#34; which contains the longitude point to use for the lookup</li>
+<li>A column in that same table called &#34;latitude&#34; which contains the latitude point to use for the lookup</li>
+</ul>
+<p>This stored procedure call will populate the provided table in-place with boundaries data in the specified destination column</p>
+<pre><code>CALL mapbox.core.mapbox_boundaries_reverse_enrich(
+  &#39;mapbox&#39;,
+  &#39;sample_data&#39;,
+  &#39;sample_points&#39;,
+  &#39;BOUNDARIES_BASIC&#39;,
+  false,
+  &#39;longitude&#39;,
+  &#39;latitude&#39;,
+  &#39;basic&#39;,
+  null
+)
+</code></pre>
+<p>Keep in mind that you must grant access to allow the application to access databases, schemas, and tables within your Snowflake account. The below example assumes you have a database called &#34;mydatabase&#34; with a schema called &#34;testing&#34;, and a table called &#34;sample_points&#34;.</p>
+<pre><code>GRANT USAGE ON DATABASE mydatabase to application mapbox
+GRANT USAGE ON SCHEMA mydatabase.testing to application mapbox
+GRANT SELECT ON TABLE mydatabase.testing.sample_points to application mapbox
+GRANT UPDATE ON TABLE mydatabase.testing.sample_points to application mapbox
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="General tips" duration="1">
+        <h2 is-upgraded>Using response values</h2>
+<p>Responses to geocoding stored procedures as well as responses returned from the boundaries stored procedure are in JSON format. You can <a href="https://docs.snowflake.com/en/user-guide/querying-semistructured" target="_blank">read more here</a> about how to access properties within JSON reponses. Below are some specific examples.</p>
+<h3 is-upgraded>Access a specific property</h3>
+<p>Take the following example JSON response, which is the same structure that would be in the sample_data.geocode_reverse table if you ran the geocode_reverse_enrich example above:</p>
+<pre><code>{
+  &#34;accuracy&#34;: &#34;rooftop&#34;,
+  &#34;confidence&#34;: &#34;exact&#34;,
+  &#34;context&#34;: {
+    &#34;country&#34;: {
+      &#34;country_code&#34;: &#34;US&#34;,
+      &#34;country_code_alpha_3&#34;: &#34;USA&#34;,
+      &#34;mapbox_id&#34;: &#34;dXJuOm1ieHBsYzpJdXc&#34;,
+      &#34;name&#34;: &#34;United States&#34;,
+      &#34;wikidata_id&#34;: &#34;Q30&#34;
+    },
+    &#34;district&#34;: {
+      &#34;mapbox_id&#34;: &#34;dXJuOm1ieHBsYzpudWJz&#34;,
+      &#34;name&#34;: &#34;Hillsborough County&#34;,
+      &#34;wikidata_id&#34;: &#34;Q488874&#34;
+    },
+    &#34;neighborhood&#34;: {
+      &#34;mapbox_id&#34;: &#34;dXJuOm1ieHBsYzpEWW1NN0E&#34;,
+      &#34;name&#34;: &#34;Fountain Square&#34;
+    },
+    &#34;place&#34;: {
+      &#34;alternate&#34;: {
+        &#34;mapbox_id&#34;: &#34;dXJuOm1ieHBsYzpFTkRvN0E&#34;,
+        &#34;name&#34;: &#34;Rocky Point&#34;
+      },
+      &#34;mapbox_id&#34;: &#34;dXJuOm1ieHBsYzpFejVJN0E&#34;,
+      &#34;name&#34;: &#34;Tampa&#34;,
+      &#34;wikidata_id&#34;: &#34;Q49255&#34;
+    },
+    &#34;postcode&#34;: {
+      &#34;mapbox_id&#34;: &#34;dXJuOm1ieHBsYzpCc0J1N0E&#34;,
+      &#34;name&#34;: &#34;33607&#34;
+    },
+    &#34;region&#34;: {
+      &#34;mapbox_id&#34;: &#34;dXJuOm1ieHBsYzpCZVRz&#34;,
+      &#34;name&#34;: &#34;Florida&#34;,
+      &#34;region_code&#34;: &#34;FL&#34;,
+      &#34;region_code_full&#34;: &#34;US-FL&#34;,
+      &#34;wikidata_id&#34;: &#34;Q812&#34;
+    }
+  },
+  &#34;feature_type&#34;: &#34;address&#34;,
+  &#34;latitude&#34;: 27.97981,
+  &#34;longitude&#34;: -82.534586,
+  &#34;mapbox_id&#34;: &#34;dXJuOm1ieGFkcjo5ZTQzZGI5Ni1mNzhkLTQ1MGEtOTEwYy0wYTM3ZDMyNmMxMzg&#34;,
+  &#34;name&#34;: &#34;4100 George J. Bean Parkway&#34;,
+  &#34;place_formatted&#34;: &#34;Tampa, Florida 33607, United States&#34;
+}
+</code></pre>
+<p>You can access a specific property in the JSON response like the following:</p>
+<pre><code>SELECT response:name from mapbox.sample_data.geocode_forward;
+</code></pre>
+<p>This will return only the value of the &#34;name&#34; property in the JSON response.</p>
+<p>If the property is multiple levels deep in the JSON hierarchy, such as the &#34;country_code&#34; beneath the country property, which is beneath the context object, you can do:</p>
+<pre><code>SELECT response:context:country:country_code from mapbox.sample_data.geocode_forward;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Version and upgrade notes" duration="1">
+        <p>Earlier versions of the application included user-defined functions (UDFs) for accessing geocoding functionality. These UDFs have been replaced with stored procedures. This table shows the name of the stored procedures that supercede each UDF</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>old UDF name</p>
+</td><td colspan="1" rowspan="1"><p>new stored procedure name</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>geocode_forward</p>
+</td><td colspan="1" rowspan="1"><p>geocode_forward_enrich</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>geocode_reverse</p>
+</td><td colspan="1" rowspan="1"><p>geocode_reverse_enrich</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>geocode_structured</p>
+</td><td colspan="1" rowspan="1"><p>geocode_structured_enrich</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully completed the Getting Started with Mapbox Geocoding &amp; Analysis Tools quickstart guide.</p>
+<p>What You Learned</p>
+<ul>
+<li>How to install the Mapbox Geocoding &amp; Analysis Tools Native App</li>
+<li>How to use functions in the the Mapbox Geocoding &amp; Analysis Tools Native App</li>
+</ul>
+<p>Related Resources</p>
+<ul>
+<li><a href="https://docs.mapbox.com/api/search/geocoding" target="_blank">Geocoding API</a></li>
+<li><a href="https://docs.mapbox.com/playground/geocoding" target="_blank">Geocoding API Playground</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

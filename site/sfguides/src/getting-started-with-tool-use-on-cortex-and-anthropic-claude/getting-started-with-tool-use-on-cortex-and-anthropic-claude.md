@@ -1,16 +1,15 @@
 author: James Cha-Earley
 id: getting-started-with-tool-use-on-cortex-and-anthropic-claude
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: This guide demonstrates how Snowflake Cortex integrates with Claude to enable external API interactions through tools.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Tool Use on Cortex and Anthropic Claude
 
 ## Overview
-Duration: 5
 
 In this quickstart, you'll learn how to leverage Snowflake Cortex's AI capabilities to create an intelligent weather assistant with tool use functionality. This guide demonstrates how Snowflake Cortex integrates with Claude to enable external API interactions, allowing you to define tools, process tool requests, and format tool results to create a seamless conversational experience powered by Snowflake's AI infrastructure.
 
@@ -36,7 +35,6 @@ In this quickstart, you'll learn how to leverage Snowflake Cortex's AI capabilit
   - In a supported [Region](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability)
 
 ## Setup Environment
-Duration: 10
 
 ### Set Up Required Database Objects and External Access
 
@@ -54,7 +52,6 @@ For this application to work, you'll need to:
 2. Keep your API key handy for insertion into the application code
 
 ## Streamlit App
-Duration: 10
 
 ### Setting Up the Streamlit App
 
@@ -89,7 +86,6 @@ Copy the Streamlit app from [streamlit.py](https://github.com/Snowflake-Labs/sfg
 
 
 ## Understanding Tool Use
-Duration: 15
 
 This section explains how the weather assistant application implements Claude's tool use capabilities in Snowflake.
 
@@ -123,7 +119,6 @@ The Claude API in Snowflake uses several key structures for tool functionality:
 The application demonstrates a complete end-to-end implementation with these components.
 
 ## Implementing the Weather Tool
-Duration: 15
 
 The heart of our tool use implementation is the `get_weather` function, which executes when Claude invokes the weather tool and communicates with the WeatherAPI service:
 
@@ -159,7 +154,6 @@ This function:
 4. Returns this information or an error message if something goes wrong
 
 ## Defining Tool Specification
-Duration: 25
 
 Next, we'll set up the tool specification and Claude integration through Snowflake's API. This is where we define what the weather tool does and how Claude should use it:
 
@@ -316,7 +310,6 @@ This function:
 5. Returns these elements for the tool execution phase
 
 ## Executing the Tool
-Duration: 20
 
 The most critical part of the tool use workflow is executing the tool when Claude requests it and properly formatting the results for Claude to incorporate into its response:
 
@@ -430,7 +423,6 @@ This code demonstrates the complete tool use cycle:
 This implements the full tool use lifecycle where Claude requests information, the application fetches it, and Claude then incorporates the results into its final response.
 
 ## Testing
-Duration: 15
 
 To ensure your application works correctly:
 
@@ -444,7 +436,6 @@ To ensure your application works correctly:
 
 
 ## Conclusion and Resources
-Duration: 5
 
 ### Conclusion
 Congratulations! You've built a powerful weather assistant application that combines the capabilities of Snowflake Cortex and Claude Sonnet 3.5 with real-time weather data. The tool use capabilities showcase how AI can interact with external services to provide valuable information to users in a conversational manner.
@@ -466,5 +457,5 @@ Documentation:
 
 Sample Code & Resources:
 - [Snowflake Developer Resources](https://developers.snowflake.com/)
-- [Snowflake Quickstarts](https://quickstarts.snowflake.com/)
-- [Getting Started with Anthropic on Snowflake Cortex](https://quickstarts.snowflake.com/guide/getting_started_with_anthropic_on_snowflake_cortex/index.html?index=..%2F..index#0)
+- [Snowflake Quickstarts](/en/developers/guides/)
+- [Getting Started with Anthropic on Snowflake Cortex](/en/developers/guides/getting-started-with-anthropic-on-snowflake-cortex/)

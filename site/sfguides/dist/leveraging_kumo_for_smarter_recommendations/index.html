@@ -1,0 +1,346 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Product Recommendations for High LTV Customers using Kumo in Snowflake Native Apps</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="leveraging_kumo_for_smarter_recommendations"
+                  title="Product Recommendations for High LTV Customers using Kumo in Snowflake Native Apps"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this guide, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations that users are more likely to buy, leading to increase engagement and sales.</p>
+<p>Specifically, you will learn how to develop the following two models using Snowflake&#39;s TPC-DS retail dataset.</p>
+<ul>
+<li><strong>Customer LTV Prediction</strong>: Predict how much money each customer will spend in the next 30 days</li>
+<li><strong>Product Recommendation</strong>: Predict the top 10 products that each user is most likely to buy</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/2c7834609e059c91.png"></p>
+<h3 is-upgraded>What is Kumo?</h3>
+<p>Kumo is an advanced ML platform that leverages <em>graph neural networks</em> to deliver predictions directly from your Snowflake relational data. Kumo ML models are powered by a GNN architecture, inspired by several academic papers in recent history. Data scientists simply need to write a <em>predictive query</em>, and then the Kumo platform will automatically craft the proper neural architecture for their data. As a result of this approach, Kumo is able to achieve great predictive performance out of the box, across a wide range of challenging scenarios.</p>
+<p>Kumo simplifies the end-to-end ML process by eliminating the need for extensive data preparation, model tuning, and feature engineering, allowing data scientists to focus on generating valuable predictions and insights.</p>
+<p>To learn more, please visit <a href="https://docs.kumo.ai/docs/welcome-to-kumo" target="_blank">Kumo&#39;s documentation</a>.</p>
+<h3 is-upgraded>What are Graph Neural Networks?</h3>
+<p>Graph neural networks (GNNs) are an emerging family of deep learning algorithms that bring together all the advantages from traditional deep learning to graphs. GNNs can learn patterns and relations on a grand scale, combining features from neighboring nodes and training predictive models across the entire network.</p>
+<p class="image-container"><img alt="img" src="img/4363dbdea757f4fb.png"></p>
+<h3 is-upgraded>What is a Kumo predictive query?</h3>
+<p>Kumo predictive queries are easy-to-use programming interfaces that automate the major steps in a typical ML pipeline, including target label engineering, feature engineering, model architecture, hyperparameter search, and model deployment. Predictive queries are written using Kumo&#39;s predictive query language (PQL), a SQL-like scripting language for describing ML predictions.</p>
+<h3 is-upgraded>What you will learn</h3>
+<p>In summary, you will learn how to:</p>
+<ul>
+<li>Connect Snowflake&#39;s TPC-DS retail dataset</li>
+<li>Create Kumo predictive queries to predict your highest value customers (i.e., highest &#34;lifetime value&#34; customers) and the products they are most likely to buy in the next 30 days</li>
+<li>Train your predictive queries</li>
+<li>Evaluate your predictive models using Kumo&#39;s explainable AI tools</li>
+<li>Create batch predictions for production use</li>
+</ul>
+<h3 is-upgraded>What you&#39;ll build</h3>
+<p>Using Kumo as a Snowflake native app, you will build predictive models for determining customer lifetime value (LTV) and delivering top ten product recommendations to those customers, all within your Snowflake environment. You can easily access those predictions from within a Snowflake worksheet, and deploy these predictions to your production website or email notification system.</p>
+<p>Please note that starting and using Kumo as a Snowflake native app will incur metered costs for running the required compute pool. Be sure to <a href="https://docs.kumo.ai/docs/installing-kumo-on-spcs#step-3-optional-shutting-down-kumo" target="_blank">shut down Kumo</a> to suspend the compute pool when the app is not in use.</p>
+<h3 is-upgraded>Pre-requisites</h3>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>A valid Kumo account installed as a <a href="https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo" target="_blank">native Snowflake app</a></li>
+<li>Snowflake&#39;s TPC-DS sample dataset from <a href="https://docs.snowflake.com/en/user-guide/sample-data" target="_blank">https://docs.snowflake.com/en/user-guide/sample-data</a></li>
+</ul>
+<aside class="special"><p> NOTE:  If you haven&#39;t already done so, please <a href="https://docs.kumo.ai/docs/installing-kumo-on-spcs" target="_blank">follow these instructions</a> to install Kumo as a native Snowflake app.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Data in Snowflake" duration="10">
+        <p>You will first need to install and downsample the public TPC-DS dataset that comes with your Snowflake deployment. The TPC-DS dataset models the decision support functions of a retail product supplier, containing vital business information such as customer, order, and product data. Although you will be downsampling the data for demonstration purposes, Kumo as a native Snowflake app can scale to billions of rows and terabytes of data.</p>
+<p>To learn more about the TPC-DS sample dataset, please visit <a href="https://docs.snowflake.com/en/user-guide/sample-data-tpcds" target="_blank">Snowflake&#39;s documentation.</a></p>
+<p>The following SQL code will install and downsample the sample dataset—you can run it as a worksheet inside of your Snowdrift web interface:</p>
+<pre><code>-- Create a database from the share.
+CREATE DATABASE SNOWFLAKE_SAMPLE_DATA FROM SHARE SFC_SAMPLES.SAMPLE_DATA;
+
+-- Grant the PUBLIC role access to the database.
+-- Optionally change the role name to restrict access to a subset of users.
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE PUBLIC;
+
+-- Create simplified versions of the dataset
+CREATE DATABASE KUMO_REC_DEMO;
+USE DATABASE KUMO_REC_DEMO;
+CREATE SCHEMA TPCDS_WEB_MINI;
+USE SCHEMA TPCDS_WEB_MINI;
+
+-- Create smaller copy of web_sales. Join in the date information for convenience.
+CREATE TABLE WEB_SALES_MINI AS
+    SELECT *  FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.WEB_SALES WEB_SALES
+    JOIN SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.DATE_DIM DATE_DIM
+    ON DATE_DIM.D_DATE_SK = WEB_SALES.WS_SOLD_DATE_SK
+    LIMIT 30000000;
+
+-- Create smaller copy of customers, only containing ones with sales
+CREATE TABLE CUSTOMERS_MINI AS
+    SELECT CUSTOMER.*  FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CUSTOMER CUSTOMER
+    JOIN (
+        SELECT DISTINCT WS_BILL_CUSTOMER_SK
+        FROM WEB_SALES_MINI
+    ) CUSTOMER_IDS
+    ON CUSTOMER.C_CUSTOMER_SK = CUSTOMER_IDS.WS_BILL_CUSTOMER_SK;
+
+-- Create smaller copy of items, only containing items with sales
+CREATE TABLE ITEMS_MINI AS
+    SELECT ITEM.*  FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.ITEM ITEM
+    JOIN (
+        SELECT DISTINCT WS_ITEM_SK
+        FROM WEB_SALES_MINI
+    ) ITEM_IDS
+    ON ITEM.I_ITEM_SK = ITEM_IDS.WS_ITEM_SK;
+
+-- Copy over the smaller tables into the same schema for convenience;
+CREATE TABLE CUSTOMER_DEMOGRAPHICS AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CUSTOMER_DEMOGRAPHICS;
+CREATE TABLE WEB_SITE AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.WEB_SITE;
+</code></pre>
+<p>Once the sample dataset has been created, you will see the new <code>KUMO_REC_DEMO</code> database under the Databases pane.</p>
+<p class="image-container"><img alt="img" src="img/299a608b3dd7fb0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Registering Your Schema in Kumo" duration="10">
+        <p>This step assumes that you have already installed Kumo as a Snowflake native app. If not, <a href="https://docs.kumo.ai/docs/installing-kumo-on-spcs#4-create-a-compute-pool-and-launch-the-kumo-container" target="_blank">follow these directions</a> to set up, install, and launch Kumo as a Snowflake native app.</p>
+<p>After importing the sample dataset into your Snowflake environment, you will start up Kumo as a Snowflake native app, log in through the Kumo app UI, and register the sample dataset&#39;s schema.</p>
+<h3 is-upgraded>Set Up Connector</h3>
+<p>After logging in to the Kumo app UI with your Snowflake credentials, click on <code>Connectors</code> from the left-hand navigation, followed by the <code>Configure Connector</code> button in the top right-hand corner. If you have enrolled in multi-factor authentication (MFA), you will need to first approve and configure the app for this to continue.<br><img alt="img" src="img/5d96f767db15ae3a.png"></p>
+<p>In the <code>Snowflake Connector</code> modal window, provide a unique <code>Name</code> for your connector, as well as your <code>Account Identifier</code>, <code>User</code>, and <code>Password</code>.</p>
+<aside class="special"><p> NOTE: You can identify your <code>Account Identifier</code> by analyzing the URL of your Kumo app: <img alt="img" src="img/302eb0a0234738bb.png"></p>
+</aside>
+<p>Input the following values for the remaining fields:</p>
+<ul>
+<li>Database: <code>KUMO_REC_DEMO</code></li>
+<li>Warehouse: <code>WAREHOUSE SMALL</code></li>
+<li>Schema: <code>TPCDS_WEB_MINI</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/90670e1602b64e0c.png"></p>
+<p>Click on the <code>Done</code> button to finish creating your connector. You should now see your new connector under the Connectors page.</p>
+<p class="image-container"><img alt="img" src="img/67c00cc15a8bc8ad.png"></p>
+<h3 is-upgraded>Register Your Table Schemas</h3>
+<p>Click on <code>Tables</code> from the left-hand navigation, followed by the <code>Connect Table</code> button in the top right-hand corner.</p>
+<p class="image-container"><img alt="img" src="img/aac36b57e14e7bd.png"></p>
+<p>You will now connect your first table: <strong>CUSTOMERS_MINI</strong>.</p>
+<p>Under <code>Connector</code>, make sure the name of the connector you created in the previous step is selected by default. If not, use the drop-down menu to select it; the options for the <code>Source Table</code> drop-down menu will then be populated with the five tables required for this quickstart.</p>
+<p class="image-container"><img alt="img" src="img/1c34b77c41e5afdc.png"></p>
+<p>Under <code>Source Table</code>, select the <code>CUSTOMERS_MINI</code> table—Kumo will then automatically fill in the <code>Name</code> value (you can accept the default) and load the table&#39;s pre-processing settings for you to configure. Provide an optional description for your table. Set the <code>C_CUSTOMER_SK</code> column as the primary key and its Type to <code>ID</code>.</p>
+<p class="image-container"><img alt="img" src="img/42da680783efb22f.png"></p>
+<p>Click the <code>Save</code> button to continue. You will be routed to your new table&#39;s detail page. Click on the <code>Connect Another Table</code> button to connect the rest of your tables.</p>
+<p class="image-container"><img alt="img" src="img/1d162aa42e0c72a9.png"></p>
+<p>Follow the same steps to create each of the remaining tables (<strong>CUSTOMER_DEMOGRAPHICS</strong>, <strong>ITEMS_MINI</strong>, <strong>WEB_SALES_MINI</strong>, <strong>WEB_SITE</strong>). When creating these tables, please take note of the following per table settings:</p>
+<ul>
+<li><strong>CUSTOMER_DEMOGRAPHICS</strong> - Set the <code>CD_DEMO_SK</code> column as the primary key and its Type to <code>ID</code>.</li>
+<li><strong>ITEMS_MINI</strong> - Set the <code>I_ITEM_SK</code> column as the primary key and its Type to <code>ID</code>.</li>
+<li><strong>WEB_SALES_MINI</strong> - Deselect the <code>WS_SOLD_TIME_SK</code> and <code>WS_SHIP_DATE_SK</code> columns; set the <code>D_DATE</code> as the Create Date.</li>
+<li><strong>WEB_SITE</strong> - Set the <code>WEB_SITE_SK</code> column as the primary key and its Type to <code>ID</code>.</li>
+</ul>
+<h3 is-upgraded>Create Your Graph</h3>
+<p>After creating your last table, click on the <code>Create Graph</code> button in the top right-hand corner.</p>
+<p>On the <code>Graph Setup</code> page, provide a name and optional description for your graph. Select the <code>WEB_SITE</code>, <code>WEB_SALES_MINI</code>, <code>ITEMS_MINI</code>, <code>CUSTOMER_DEMOGRAPHICS</code>, and <code>CUSTOMERS_MINI</code> tables to add them to your new Kumo graph</p>
+<p class="image-container"><img alt="img" src="img/dc0a2083b22c7bcc.png"></p>
+<p>Click the <code>Next</code> button to continue.</p>
+<p>On the <code>Set Links Between Tables</code> page, set the following linkages between your tables:</p>
+<p class="image-container"><img alt="img" src="img/38033fc1232a3efa.png"></p>
+<p>Your data model graph links should look like the following when you are done:<br><img alt="img" src="img/2c7834609e059c91.png"></p>
+<p>Click the <code>Complete Graph Creation</code> button to continue.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building Your Predictive Queries" duration="5">
+        <p>To create product recommendations for your highest value customers, you will first predict <em>who</em> your highest LTV customers are, followed by predictions regarding which products they are most likely to purchase. This entails writing predictive queries using Kumo&#39;s predictive query language (PQL), an easy-to-use, SQL-like language interface for querying the future.</p>
+<p>To learn more about predictive queries, please visit <a href="https://docs.kumo.ai/docs/predictive-query" target="_blank">Kumo&#39;s documentation.</a></p>
+<h3 is-upgraded>Predicting Your Highest LTV Customers</h3>
+<p>Customer LTV represents the total amount of money a customer is expected to spend on your business during their lifetime. For this quickstart, you can assume that the customers with the highest LTV are the most likely to buy something. Predicting LTV falls under the category of a regression problem.</p>
+<h5 is-upgraded>What is a regression problem?</h5>
+<p>Because the target variable of this prediction is a real-valued number, the task type of this predictive query is a regression problem. Regression problems involve predicting a continuous outcome based on the value of one or more predictor variables.</p>
+<p>The following PQL statement predicts customer LTV, as measured by the total amount of sales each customer is likely to make in the next 30 days:</p>
+<pre><code>PREDICT SUM(WEB_SALES_MINI.WS_EXT_SALES_PRICE, 0, 30)
+FOR EACH CUSTOMERS_MINI.C_CUSTOMER_SK
+</code></pre>
+<h5 is-upgraded>Creating and Training the LTV Predictive Query</h5>
+<p>Click on <code>Predictive Queries</code> from the left-hand navigation, followed by the <code>Write Predictive Queries</code> button in the top right-hand corner.</p>
+<p class="image-container"><img alt="img" src="img/b92d58ba30e0a93.png"></p>
+<p>On the <code>Predictive Query</code> page, provide a name and option description for your predictive query. Under <code>Graph Source</code>, select the graph you just created in the previous step.</p>
+<p>In the <code>PQuery</code> text area, insert the following PQL statement for predicting how much each customer will spend over the next 30 days:</p>
+<pre><code>PREDICT SUM(WEB_SALES_MINI.WS_EXT_SALES_PRICE, 0, 30)
+FOR EACH CUSTOMERS_MINI.C_CUSTOMER_SK
+</code></pre>
+<p>Once you have inserted a valid predictive query, Kumo will display the task type/description beneath the PQuery text box.</p>
+<p>Click on the <code>Next</code> button in the top right-hand corner to continue.</p>
+<p class="image-container"><img alt="img" src="img/a60483f9f126abfd.png"></p>
+<p>On the <code>Model Plan</code> page, you can review your <code>Run Mode</code> and <code>Model Planner</code> settings. You can accept the default values on this page. Click the <code>Save and Train</code> button in the top right-hand corner.</p>
+<p class="image-container"><img alt="img" src="img/262ba2524b2066fb.png"></p>
+<p>Once the predictive query starts the training process, you will be routed to your predictive query&#39;s training page, where you can monitor its progress in real-time.</p>
+<p class="image-container"><img alt="img" src="img/5de92eab6778942.png"></p>
+<h3 is-upgraded>Predicting What Products to Recommend</h3>
+<p>Once you have generated your predictions for customer LTV, you can then extract the customers with the highest LTV, and actively make recommendations to them by predicting which products they are most likely to purchase. GNNs are highly-suitable for recommendation tasks because, unlike traditional models, they can leverage rich graph connectivity patterns to gain a deeper understanding of user preferences and insights that are often missed by other algorithms.</p>
+<h5 is-upgraded>What is a link prediction problem?</h5>
+<p>The recommendation problem forms a bipartite graph between users and items, where nodes represent the users and items, and edges represent the user-item interactions. Edges often come with timestamps. Moreover, multiple edges may exist between pairs of nodes, since a user may repeatedly interact with the same item (e.g., repeat ordering of the same product in e-commerce).</p>
+<p class="image-container"><img alt="img" src="img/ec4ef8807d217123.png"></p>
+<p>Given the bipartite graph of the past interactions, a recommendation task can be cast as a link prediction task—one that calls for predicting future interactions between user nodes and item nodes.</p>
+<p>The following PQL statement predicts the top ten products your highest LTV customers are likely to purchase in the next 30 days:</p>
+<pre><code>PREDICT LIST_DISTINCT(WEB_SALES_MINI.WS_ITEM_SK, 0, 30)
+RANK TOP 10
+FOR EACH CUSTOMERS_MINI.C_CUSTOMER_SK
+</code></pre>
+<p>As you can see, in only three lines of code, you are getting the best, state-of-the-art recommender model used by companies like Pinterest, Uber, and Amazon.</p>
+<p>To learn more, read about <a href="https://docs.kumo.ai/docs/hybrid-graph-neural-networks" target="_blank">Kumo&#39;s hybrid GNN model</a> for recommendation systems.</p>
+<h5 is-upgraded>Creating and Training Your Recommendation System</h5>
+<p>Click on <code>Predictive Queries</code> from the left-hand navigation, followed by the <code>Write Predictive Queries</code> button in the top right-hand corner.</p>
+<p>On the <code>Predictive Query</code> page, provide a name and option description for your predictive query. Under <code>Graph Source</code>, select the graph you just created in the previous step.</p>
+<p>In the <code>PQuery</code> text area, insert the following PQL statement for predicting how much each customer will spend over the next 30 days:</p>
+<pre><code>PREDICT LIST_DISTINCT(WEB_SALES_MINI.WS_ITEM_SK, 0, 30)
+RANK TOP 10
+FOR EACH CUSTOMERS_MINI.C_CUSTOMER_SK
+</code></pre>
+<p>Once you have inserted a valid predictive query, Kumo will display the task type/description beneath the PQuery text box.</p>
+<p>Click on the <code>Next</code> button in the top right-hand corner to continue.</p>
+<p class="image-container"><img alt="img" src="img/a6847d98064503a0.png"></p>
+<p>On the <code>Model Plan</code> page, you can review your <code>Run Mode</code> and <code>Model Planner</code> settings. You can accept the default values on this page. Click the <code>Save and Train</code> button in the top right-hand corner.</p>
+<p class="image-container"><img alt="img" src="img/92ea590c925b80d7.png"></p>
+<p>Once the predictive query starts the training process, you will be routed to your predictive query&#39;s training page, where you can monitor its progress in real-time.</p>
+<p class="image-container"><img alt="img" src="img/47efe39ef8bbce36.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Evaluating the Model Performance" duration="5">
+        <p>Kumo provides a wide range of mechanisms for gauging the efficacy of your predictive models. On the <code>Training</code> tab of your predictive query, Kumo will display various metrics and statistics explaining the results of various neural architecture experiments and model planner parameters.</p>
+<p class="image-container"><img alt="img" src="img/816ae7dd57e0c96f.png"></p>
+<h3 is-upgraded>The Evaluation Tab</h3>
+<p>You can also access evaluation metrics under the <code>Evaluation</code> tab of your predictive query&#39;s detail page, as well as access your holdout predictions within a Snowflake worksheet.</p>
+<p>For example, after training your predictive query for determining LTV—a regression task—Kumo will export the standard evaluation metrics for regression, as described <a href="https://docs.kumo.ai/docs/regression" target="_blank">here</a>. Similarly, after training your predictive query for creating customer recommendations, Kumo provides evaluation metrics for link prediction, as described <a href="https://docs.kumo.ai/docs/link-prediction" target="_blank">here</a>.</p>
+<p class="image-container"><img alt="img" src="img/729f9870d92b2043.png"></p>
+<p>Please note that due to the randomly generated nature of the TPC-DS dataset, your evaluation metrics will display less-than-optimal results.</p>
+<h5 is-upgraded>Accessing Your Holdout Predictions in Snowpark</h5>
+<p>To access your holdout predictions in Snowpark, first click the <code>Copy</code> <img alt="img" src="img/702b041adb8ac2b2.png"> icon in the message directly under the <code>Evaluation</code> tab to copy the command to your clipboard.</p>
+<p class="image-container"><img alt="img" src="img/6c91d35ed2fffc13.png"></p>
+<p>Log in to your Snowflake account&#39;s Snowsight interface and create a new Python worksheet by clicking on either of the Python Worksheet links/buttons.<br><img alt="img" src="img/7b55b5822728eacc.png"></p>
+<p>Snowsight will load a barebones Python worksheet with some sample code in place. Paste the code from your predictive query&#39;s <code>Evaluation</code> tab (currently in your clipboard) into the worksheet, inside the <code>main</code> handler. Be sure to keep the <code>dataframe.show()</code> and <code>return dataframe</code> lines in place so your results appear in the <code>Results</code> tab.</p>
+<p class="image-container"><img alt="img" src="img/ee7b0c35c50309bc.png"></p>
+<p>Click the <code>Run</code> button in the top right-hand corner. You should now see your prediction results in the <code>Results</code> tab of your Python worksheet.<br><img alt="img" src="img/1e506b0a6eea729e.png"></p>
+<h3 is-upgraded>The Explorer Tab</h3>
+<p>If you click on the <code>Explorer</code> tab of your predictive query&#39;s detail page, you can view specific insights regarding individual entity-level predictions. For example, in the case of predicting top recommendation (a link prediction task), Kumo will display a list of selectable entity categories for viewing and comparing predictions against historical and ground truth data. You can also analyze the importance score that indicates the significance of each column in the prediction</p>
+<p class="image-container"><img alt="img" src="img/742e9f91ae615aef.png"></p>
+<p>Please refer to <a href="https://docs.kumo.ai/docs/explorer" target="_blank">Kumo&#39;s documentation</a> to learn more about the <code>Explorer</code> tab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Productionize Your Model" duration="10">
+        <p>After training your predictive query, you can set up a batch prediction workflow and jobs to run your predictive query on a regular basis. From your predictive query&#39;s detail page, click on <code>Create BP Workflow</code> in the top right-hand corner.</p>
+<p class="image-container"><img alt="img" src="img/8184827b46a07825.png"></p>
+<p>From the <code>Create a Batch Prediction Workflow</code> page, provide a name for your batch prediction workflow and an optional description. Make sure that your predictive query is selected in the <code>PQuery</code> drop-down menu. You can also click the <code>Edit PQuery Filters</code> to override some of your initial predictive query filters for your batch prediction.</p>
+<p><img alt="img" src="img/17b1c937aeacbc0.png"><br> Click on the <code>Create</code> button on the top right-hand corner to finish creating your batch prediction workflow.</p>
+<p>On your new batch prediction workflow&#39;s detail page, click on the <code>Run Batch Prediction Job</code> button to configure your batch prediction job settings.<br><img alt="img" src="img/f492eaee7118d171.png"></p>
+<p>In the Job Settings modal window, you can provide a <code>Prediction Anchor Time</code>, or starting date for your predictions. For this quickstart, leave <code>Prediction Anchor Time</code> blank (Kumo will use the latest timestamp in the fact table specified by your predictive query&#39;s target formula) and accept all the default values, but make sure that the connector you created previously is selected under the <code>Connector</code> drop-down menu.</p>
+<p>Kumo will write your batch predictions to your Snowflake environment, in the table specified under <code>Table Name</code> (in this case, <code>SSC_QUICKSTART_REC_PREDICTIONS</code>).</p>
+<p class="image-container"><img alt="img" src="img/ea59f2507a45311c.png"></p>
+<p>Click the <code>Submit</code> button to start your batch prediction job. You will be routed to your batch prediction job&#39;s detail page, where you can monitor its progress in real-time.</p>
+<p class="image-container"><img alt="img" src="img/ca169e353505a2e5.png"></p>
+<p>Once your batch prediction job is completed, copy the <code>Output Destination</code> to your clipboard by clicking on the <code>Copy</code><img alt="img" src="img/69019669e1056125.png"> button.</p>
+<p class="image-container"><img alt="img" src="img/511a7d4c34552fa1.png"></p>
+<p>Log in to your Snowflake account&#39;s Snowsight interface and create a new SQL worksheet by clicking on either of the SQL Worksheet links/buttons.</p>
+<p class="image-container"><img alt="img" src="img/ae5413c4328be1f9.png"></p>
+<p>Snowsight will load a blank SQL worksheet. Paste your batch prediction job&#39;s  <code>Output Destination</code> (currently in your clipboard) into the worksheet and click the <code>Run</code> button in the top right-hand corner. Your batch predictions should appear in the <code>Results</code> tab of your SQL worksheet.</p>
+<p class="image-container"><img alt="img" src="img/a2ff667fa7d97f62.png"></p>
+<p>For production use cases, your batch prediction jobs can be automated and integrated into a custom application using Kumo&#39;s REST API, or used to power notifications through a multi-channel provider such as Braze.</p>
+<p>Please refer to <a href="https://docs.kumo.ai/docs/batch-prediction" target="_blank">Kumo&#39;s Documentation</a> to learn more about Batch Predictions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup and Shutdown" duration="5">
+        <p>Once you&#39;re done using the Kumo native app, you should shut it down so as not to incur additional metered costs. You can do this by running the following command in a SQL worksheet:</p>
+<pre><code>SET KUMOAPP_STOP = CONCAT(($KUMOAPP_NAME),&#39;.KUMO_APP_SCHEMA.SHUTDOWN_APP&#39;);
+CALL IDENTIFIER($KUMOAPP_STOP)(&#39;USER_SCHEMA&#39;);
+</code></pre>
+<p>Snowflake will automatically suspend the underlying compute pool when the app is idle. However, you can also completely shut down the compute pool if you aren&#39;t using the Kumo app for an extended period:</p>
+<pre><code>DROP COMPUTE POOL IF EXISTS KUMO_COMPUTE_POOL;
+</code></pre>
+<p>You can always restart the compute pool and app at a later time, if needed. For more information about starting/stopping Kumo as a native Snowflake app, please refer to <a href="https://docs.kumo.ai/docs/installing-kumo-on-spcs#4-launch-and-use-kumo" target="_blank">Kumo&#39;s documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h3 is-upgraded>Conclusion</h3>
+<p>After importing our sample retail dataset, we developed and trained two predictive queries: one for predicting customer LTV, and the other for making top10 product recommendations for those customers. We then used Kumo&#39;s explainable AI tools for evaluating our models&#39; performance, and set up our predictive models for production use.</p>
+<h3 is-upgraded>What you learned</h3>
+<ul>
+<li>How to connect your Snowflake data to Kumo&#39;s Snowflake native app</li>
+<li>How to register your schemas and create graphs in Kumo</li>
+<li>How to create Kumo predictive queries for predicting customer LTV and making product recommendations</li>
+<li>How to evaluate model performance with Kumo&#39;s explainable AI tools</li>
+<li>How to productionize your Kumo predictive models</li>
+</ul>
+<h3 is-upgraded>Resources</h3>
+<ul>
+<li><a href="https://docs.kumo.ai/docs/" target="_blank">Kumo Documentation</a></li>
+<li><a href="https://docs.kumo.ai/docs/installing-kumo-on-spcs" target="_blank">Installing Kumo on SPCS</a></li>
+<li><a href="https://docs.kumo.ai/docs/troubleshooting-and-support" target="_blank">Kumo Native Snowflake App Troubleshooting Guide</a></li>
+<li><a href="https://docs.kumo.ai/docs/tutorial" target="_blank">Predictive Query Tutorial</a></li>
+<li><a href="https://docs.kumo.ai/docs/primary-commands" target="_blank">Predictive Query Reference</a></li>
+</ul>
+<p>If you have any questions, reach out to your Kumo account manager or Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

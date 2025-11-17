@@ -1,0 +1,398 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes – Snowpark 101 pour la Data Science</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_snowpark_101_for_data_science_fr"
+                  title="Tasty Bytes – Snowpark 101 pour la Data Science"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Présentation" duration="1">
+        <p class="image-container"><img src="img/82e3f493a86ab504.png"></p>
+<p>Dans ce guide Quickstart Snowpark 101 pour la Data Science, vous allez aider l&#39;entreprise fictive de food trucks Tasty Bytes à accroître ses ventes en entraînant un modèle destiné à fournir des recommandations d&#39;emplacements aux chauffeurs des camionnettes. Vous allez utiliser <strong>Snowpark for Python</strong> pour préparer les données, mais aussi pour entraîner et déployer un modèle. Une fois celui-ci déployé, vous créerez un prototype d&#39;application à l&#39;aide de <strong>Streamlit</strong> afin de montrer comment les chauffeurs des camionnettes pourraient utiliser le modèle pour trouver le meilleur emplacement de stationnement à chaque fois.</p>
+<h2 is-upgraded>Qu&#39;est-ce que Snowpark ?</h2>
+<p>Snowpark permet aux développeurs d&#39;interroger et de créer des applications de données en Python, Java et Scala via des API et des constructions de programmation de type DataFrame qui s&#39;exécutent sur le moteur élastique de Snowflake. Pour en savoir plus sur Snowpark, cliquez <a href="https://docs.snowflake.com/fr/developer-guide/snowpark/index" target="_blank">ici</a>.</p>
+<h2 is-upgraded>Qu&#39;est-ce que Streamlit ?</h2>
+<p>Streamlit <em>(dont Snowflake a fait l&#39;acquisition en mars 2022)</em> est une bibliothèque Python qui permet de créer et de partager facilement des applications Web personnalisées. Pour en savoir plus sur Streamlit, cliquez <a href="https://docs.streamlit.io/" target="_blank">ici</a>.</p>
+<h2 is-upgraded>Vous allez apprendre :</h2>
+<ul>
+<li>Comment accéder à des données tierces dans la <strong>Data Marketplace Snowflake</strong></li>
+<li>Comment explorer des données et exécuter le <strong>feature engineering avec les API DataFrame Snowpark</strong></li>
+<li>Comment <strong>entraîner un modèle dans Snowflake</strong> à l&#39;aide d&#39;une procédure stockée</li>
+<li>Comment <strong>déployer un modèle dans Snowflake</strong> vers une fonction définie par l&#39;utilisateur pour l&#39;inférence du modèle</li>
+<li>Comment <strong>créer une application Streamlit</strong> pour interagir avec le modèle</li>
+</ul>
+<h2 is-upgraded>Conditions préalables</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> doit être installé.</li>
+<li><a href="https://www.anaconda.com/" target="_blank">Anaconda</a> doit être installé.</li>
+<li>Vous devez posséder un compte Snowflake comprenant des <a href="https://docs.snowflake.com/fr/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">packages Anaconda activés par ORGADMIN</a>. Si vous n&#39;avez pas de compte Snowflake, vous pouvez créer un <a href="https://signup.snowflake.com/" target="_blank">compte d&#39;essai gratuit</a>.</li>
+<li>Vous devez vous connecter à un compte Snowflake avec le rôle ACCOUNTADMIN. Sinon, vous devez créer un compte d&#39;essai gratuit ou utiliser un autre rôle capable de créer une base de données, un schéma, des tables, des zones de préparation, des fonctions définies par l&#39;utilisateur et des procédures stockées.</li>
+</ul>
+<h2 is-upgraded>Vous allez créer :</h2>
+<ul>
+<li><strong>Des prévisions de ventes par emplacement<br></strong><img src="img/8a0acf58b4e467cf.gif"></li>
+<li><strong>Une application Streamlit pour trouver les meilleurs emplacements selon les prévisions de ventes<br></strong><img src="img/d644c14b0baf1931.gif"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuration des données dans Snowflake" duration="6">
+        <h2 is-upgraded>Présentation</h2>
+<p>Vous allez utiliser <a href="https://docs.snowflake.com/fr/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, l&#39;interface Web de Snowflake, pour :</p>
+<ul>
+<li>Accéder aux données de localisation de SafeGraph à partir de la Marketplace Snowflake</li>
+<li>Créer des objets Snowflake (entrepôt, base de données, schéma)</li>
+<li>Intégrer des données de ventes par équipe à partir de S3</li>
+<li>Associer les données de ventes par équipe aux données de localisation de SafeGraph</li>
+</ul>
+<p>Tasty Bytes exploite des food trucks dans des villes du monde entier, chaque camionnette ayant la possibilité de choisir deux emplacements différents chaque jour. Les emplacements sont associés aux points d&#39;intérêt de SafeGraph. Vous souhaitez associer à vos données de ventes par équipe la latitude et la longitude des données SafeGraph de la Marketplace afin de les utiliser en tant que fonctionnalités dans l&#39;entraînement du modèle.</p>
+<h2 is-upgraded>Étape 1 – Acquérir des données de points d&#39;intérêt SafeGraph à partir de la Marketplace Snowflake</h2>
+<ul>
+<li>Connectez-vous à votre compte Snowflake.</li>
+<li>Suivez les étapes et la vidéo ci-dessous pour accéder à l&#39;annonce de SafeGraph sur la Marketplace dans votre compte Snowflake.<ul>
+<li>Cliquez sur -&gt; l&#39;icône Home (Accueil).</li>
+<li>Cliquez sur -&gt; Marketplace.</li>
+<li>Recherchez -&gt; frostbyte.</li>
+<li>Cliquez sur -&gt; SafeGraph: frostbyte.</li>
+<li>Cliquez sur -&gt; Get (Obtenir).</li>
+<li>Renommez la base de données -&gt; FROSTBYTE_SAFEGRAPH (en lettres majuscules).</li>
+<li>Attribuez des rôles supplémentaires &gt; PUBLIC.</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/991d128c82488de9.gif"></p>
+<aside class="special"><p> SafeGraph est une entreprise mondiale de données géospatiales qui offre des données sur n&#39;importe quel endroit dans le monde. Des entreprises comme Esri, Tripadvisor, Mapbox et Sysco utilisent les données de SafeGraph pour mieux comprendre leurs clients, créer de nouveaux produits et prendre des décisions plus avisées concernant leur activité.</p>
+</aside>
+<h2 is-upgraded>Étape 2 – Créer des objets, charger des données et associer des données</h2>
+<ul>
+<li>Accédez aux feuilles de calcul, cliquez sur « + » dans le coin supérieur droit pour créer une nouvelle feuille de calcul, puis choisissez « SQL Worksheet » (Feuille de calcul SQL).</li>
+<li>Collez et exécutez l&#39;instruction SQL suivante dans la feuille de calcul pour créer des objets Snowflake (entrepôt, base de données, schéma), intégrer les données de ventes par équipe à partir de S3 et associer les données de ventes par équipe aux données de localisation de SafeGraph.</li>
+</ul>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE accountadmin;
+
+-- create a development database for data science work
+CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_dev;
+
+-- create raw, harmonized, and analytics schemas
+-- raw zone for data ingestion
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.raw; 
+-- harmonized zone for data processing
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.harmonized; 
+-- analytics zone for development
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.analytics;
+
+-- create csv file format
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_dev.raw.csv_ff type = &#39;csv&#39;;
+
+-- create an external stage pointing to S3
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes_dev.raw.s3load 
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39; 
+url = &#39;s3://sfquickstarts/frostbyte_tastybytes/&#39; 
+file_format = frostbyte_tasty_bytes_dev.raw.csv_ff;
+
+-- define shift sales table
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales( 
+  location_id NUMBER(19,0), 
+  city VARCHAR(16777216), 
+  date DATE, 
+  shift_sales FLOAT, 
+  shift VARCHAR(2), 
+  month NUMBER(2,0), 
+  day_of_week NUMBER(2,0), 
+  city_population NUMBER(38,0) 
+);
+
+-- create and use a compute warehouse
+CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60; 
+USE WAREHOUSE tasty_dsci_wh;
+
+-- ingest from S3 into the shift sales table
+COPY INTO frostbyte_tasty_bytes_dev.raw.shift_sales 
+FROM @frostbyte_tasty_bytes_dev.raw.s3load/analytics/shift_sales/;
+
+-- join in SafeGraph data
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.harmonized.shift_sales 
+  AS 
+SELECT 
+    a.location_id, 
+    a.city,
+    a.date, 
+    a.shift_sales, 
+    a.shift, 
+    a.month, 
+    a.day_of_week, 
+    a.city_population, 
+    b.latitude, 
+    b.longitude 
+FROM frostbyte_tasty_bytes_dev.raw.shift_sales a 
+JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b 
+ON a.location_id = b.location_id;
+
+-- promote the harmonized table to the analytics layer for data science development
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_dev.analytics.shift_sales_v 
+  AS 
+SELECT * FROM frostbyte_tasty_bytes_dev.harmonized.shift_sales;
+
+-- view shift sales data
+SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v; 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Science avec Snowpark" duration="22">
+        <h2 is-upgraded>Présentation</h2>
+<p>Tasty Bytes vise une croissance des ventes de 25 % par an sur cinq ans. Pour atteindre cet objectif et optimiser les revenus quotidiens de la flotte de camionnettes, l&#39;équipe data science doit concevoir un modèle de ML pour orienter les camionnettes vers les emplacements où les ventes devraient être les plus élevées sur une période de travail donnée.</p>
+<ul>
+<li>Le notebook <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a> traite des fonctionnalités/fonctions fondamentales d&#39;un workflow de data science de base utilisant Snowpark for Python.</li>
+<li>Suivez les étapes suivantes en tant que data scientist de Tasty Bytes à qui il a été demandé de créer et de déployer un modèle sur Snowflake afin de recommander les meilleurs emplacements de stationnement pour les food trucks. <ul>
+<li><strong>Éléments de base Snowpark</strong><ul>
+<li>Se connecter à Snowflake</li>
+<li>Explorer l&#39;API et les DataFrames</li>
+</ul>
+</li>
+<li><strong>Exploration de données et feature engineering</strong><ul>
+<li>Fonctions d&#39;agrégation</li>
+<li>Imputation, codage et décomposition des données à des fins d&#39;entraînement/de test</li>
+</ul>
+</li>
+<li><strong>Entraînement et déploiement du modèle</strong><ul>
+<li>Entraînement dans une procédure stockée</li>
+<li>Évolutivité élastique</li>
+<li>Déploiement d&#39;une fonction définie par l&#39;utilisateur pour l&#39;inférence de modèle</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Étape 1 – Cloner le référentiel GitHub</h2>
+<p><a href="https://docs.github.com/fr/repositories/creating-and-managing-repositories/cloning-a-repository" target="_blank">Clonez</a> le référentiel <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science" target="_blank">GitHub</a>. Le référentiel contient tout le code dont vous aurez besoin pour terminer ce guide Quickstart.</p>
+<pre><code>$ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science.git
+</code></pre>
+<h2 is-upgraded>Étape 2 – Mettre à jour le fichier d&#39;autorisation</h2>
+<ul>
+<li>Mettez à jour le fichier <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json" target="_blank"><strong>data_scientist_auth.json</strong></a> avec vos identifiants de compte Snowflake. Le notebook Python utilisera ce fichier pour accéder à vos identifiants et se connecter à Snowflake.<br><img src="img/1a036af60747060d.png"></li>
+</ul>
+<aside class="special"><p> Pour le paramètre <code>account</code> (Compte), utilisez votre <a href="https://docs.snowflake.com/fr/user-guide/admin-account-identifier" target="_blank">identificateur de compte</a>. Notez que l&#39;identificateur de compte ne comprend pas le suffixe snowflakecomputing.com.</p>
+</aside>
+<h2 is-upgraded>Étape 3 – Créer l&#39;environnement Python</h2>
+<aside class="special"><p> Les instructions suivantes utilisent <a href="https://www.anaconda.com/" target="_blank">Anaconda</a> pour créer l&#39;environnement Python. <em>Vous pouvez utiliser un autre environnement Python avec Python 3.8, par exemple, </em><a href="https://virtualenv.pypa.io/en/latest/" target="_blank"><em>virtualenv</em></a>.</p>
+</aside>
+<aside class="warning"><p><strong>Apple M1</strong> : il existe un problème connu d&#39;exécution de Snowpark Python sur les puces Apple M1 en raison de la gestion de la mémoire dans pyOpenSSL. Reportez-vous à la <a href="https://docs.snowflake.com/fr/developer-guide/snowpark/python/setup.html" target="_blank"><strong>documentation Snowpark correspondante</strong></a> pour résoudre ce problème.<br></p>
+</aside>
+<p><strong>Sur le terminal, procédez comme suit pour créer l&#39;environnement Python et lancer le notebook Jupyter :<br></strong> i. Créez un environnement Python 3.8 appelé « py38_env_tb1 » (tb1 = Tasty Bytes 1) à l&#39;aide de packages (et versions) du canal Anaconda Snowflake.</p>
+<pre><code>conda create --name py38_env_tb1 --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+</code></pre>
+<p>ii. Activez l&#39;environnement py38_env_tb1.</p>
+<pre><code>conda activate py38_env_tb1
+</code></pre>
+<p>iii. Installez les packages Snowpark Python qui seront utilisés dans les fonctions déployées sur Snowflake depuis le canal Anaconda Snowflake.</p>
+<pre><code>conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python numpy pandas scikit-learn joblib cachetools
+</code></pre>
+<p>iv. Installez les packages qui seront utilisés uniquement dans l&#39;environnement Python (interface utilisateur, visualisation, par exemple).</p>
+<pre><code>pip install streamlit matplotlib plotly notebook
+</code></pre>
+<p>v. Accédez au référentiel GitHub cloné et lancez le notebook Jupyter.</p>
+<pre><code>jupyter notebook
+</code></pre>
+<h2 is-upgraded>Étape 4 – Exécuter le notebook Jupyter</h2>
+<ul>
+<li>Ouvrez et parcourez les cellules du fichier <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a> du notebook Jupyter. <img src="img/ba2d6637d153b57d.png"></li>
+</ul>
+<h2 is-upgraded>Dépannage</h2>
+<ul>
+<li>Problèmes relatifs à PyArrow : désinstallez <code>pyarrow</code> avant d&#39;installer Snowpark.</li>
+<li>Créez un autre environnement Python depuis le fichier <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/environment.yml" target="_blank">environment.yml</a> :<br>i. Sur le terminal, accédez au référentiel GitHub cloné et créez l&#39;environnement.<pre><code>conda env create -f environment.yml
+</code></pre>
+ii . Activez l&#39;environnement.<pre><code>conda activate py38_env_tb1
+</code></pre>
+iii. Lancez le notebook Jupyter.<pre><code>jupyter notebook
+</code></pre>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prototype d&#39;application avec Streamlit" duration="6">
+        <h2 is-upgraded>Présentation</h2>
+<p>Maintenant que vous avez déployé un modèle qui prévoit les futures ventes par équipe de chaque emplacement, trouvez un moyen d&#39;aider les chauffeurs de camionnettes à utiliser ces prévisions pour choisir leur emplacement de stationnement. Vous devez créer un prototype d&#39;application pour montrer à l&#39;équipe d&#39;ingénierie comment un chauffeur de camionnette pourrait utiliser le modèle de prévisions de ventes par équipe. Grâce à l&#39;application, chaque utilisateur pourra choisir une ville et un horaire (midi ou soir), mais aussi afficher les prévisions de ventes par emplacement sur une carte.</p>
+<h2 is-upgraded>Étape 1 – Confirmer les conditions préalables</h2>
+<ul>
+<li>L&#39;application Streamlit exploite l&#39;environnement Python, le fichier d&#39;authentification et la fonction définie par l&#39;utilisateur de l&#39;étape 3. Confirmez que vous avez bien : <ul>
+<li>Créé l&#39;environnement Python 3.8 py38_env_tb1.</li>
+<li>Rempli le fichier data_scientist_auth.json.</li>
+<li>Exécuté le notebook <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a>.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Étape 2 (facultative) – Vérifier le code</h2>
+<ul>
+<li>Ouvrez le fichier <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py" target="_blank">streamlit_app.py</a>.</li>
+<li>Identifiez où la connexion à Snowflake s&#39;effectue.</li>
+<li>Identifiez où la fonction d&#39;inférence de modèle définie par l&#39;utilisateur est appelée pour donner des prévisions de ventes par équipe à la volée.</li>
+</ul>
+<h2 is-upgraded>Étape 3 – Lancer l&#39;application</h2>
+<ul>
+<li>Sur le terminal, accédez au référentiel GitHub cloné et activez l&#39;environnement Python py38_env_tb1. <pre><code>conda activate py38_env_tb1
+</code></pre>
+</li>
+<li>Lancez l&#39;application. <pre><code>streamlit run streamlit_app.py
+</code></pre>
+</li>
+<li>Utilisez le menu déroulant pour sélectionner une ville et afficher les recommandations mises à jour. <img src="img/f4a6619631509619.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Nettoyage" duration="5">
+        <h2 is-upgraded>Présentation des objets créés dans ce guide Quickstart</h2>
+<p><strong>Snowflake :</strong></p>
+<ul>
+<li><strong>Entrepôt :</strong> tasty_dsci_wh</li>
+<li><strong>Base de données :</strong> frostbyte_tasty_bytes_dev <ul>
+<li><strong>Schéma :</strong> brut <ul>
+<li><strong>Table :</strong> frostbyte_tasty_bytes_dev.raw.shift_sales</li>
+<li><strong>Zone de préparation :</strong> frostbyte_tasty_bytes_dev.raw.s3load</li>
+<li><strong>Format de fichier :</strong> frostbyte_tasty_bytes_dev.raw.csv_ff</li>
+</ul>
+</li>
+<li><strong>Schéma :</strong> harmonisé <ul>
+<li><strong>Table :</strong> frostbyte_tasty_bytes_dev.harmonized.shift_sales</li>
+</ul>
+</li>
+<li><strong>Schéma :</strong> analytique <ul>
+<li><strong>Tables :</strong><ul>
+<li>frostbyte_tasty_bytes_dev.analytics.shift_sales_train</li>
+<li>frostbyte_tasty_bytes_dev.analytics.shift_sales_test</li>
+</ul>
+</li>
+<li><strong>Vue :</strong> frostbyte_tasty_bytes_dev.analytics.shift_sales_v</li>
+<li><strong>Zone de préparation :</strong> frostbyte_tasty_bytes_dev.analytics.model_stage</li>
+<li><strong>Procédure :</strong> sproc_train_linreg</li>
+<li><strong>Fonction :</strong> udf_linreg_predict_location_sales</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Base de données partagée :</strong> frostbyte_safegraph <ul>
+<li><strong>Table :</strong> frostbyte_safegraph.public.frostbyte_tb_safegraph_s</li>
+</ul>
+</li>
+</ul>
+<p><strong>Anaconda :</strong></p>
+<ul>
+<li>Environnement Python py38_env_tb1</li>
+</ul>
+<p><strong>GitHub :</strong></p>
+<ul>
+<li>Référentiel cloné : <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/" target="_blank">sfguide-tasty-bytes-snowpark-101-for-data-science</a></li>
+</ul>
+<h2 is-upgraded>Étape 1 – Supprimer des objets Snowflake</h2>
+<ul>
+<li>Accédez aux feuilles de calcul, cliquez sur « + » dans le coin supérieur droit pour créer une nouvelle feuille de calcul, puis choisissez « SQL Worksheet » (Feuille de calcul SQL).</li>
+<li>Copiez et exécutez l&#39;instruction SQL suivante dans la feuille de calcul pour supprimer les objets Snowflake créés dans le guide Quickstart.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+DROP PROCEDURE IF EXISTS frostbyte_tasty_bytes.analytics.sproc_train_linreg(varchar, array, varchar, varchar);
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.udf_linreg_predict_location_sales(float, float, float, float, float, float, float, float);
+DROP DATABASE IF EXISTS frostbyte_tasty_bytes_dev;
+DROP DATABASE IF EXISTS frostbyte_safegraph;
+DROP WAREHOUSE IF EXISTS tasty_dsci_wh;
+</code></pre>
+<h2 is-upgraded>Étape 2 – Supprimer l&#39;environnement Python</h2>
+<ul>
+<li>Sur le terminal, exécutez la commande suivante :</li>
+</ul>
+<pre><code>conda remove --name py38_env_tb1 --all
+</code></pre>
+<h2 is-upgraded>Étape 3 – Supprimer le référentiel GitHub cloné</h2>
+<ul>
+<li>Sur le terminal, depuis le répertoire où le référentiel GitHub a été cloné, exécutez la commande suivante :</li>
+</ul>
+<pre><code>rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion et étapes suivantes" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p><strong>Vous avez réussi !</strong> Vous avez terminé le guide Quickstart Tasty Bytes Snowpark 101 pour la Data Science.</p>
+<p>Vous avez :</p>
+<ul>
+<li>Acquis des données de points d&#39;intérêt SafeGraph à partir de la Marketplace Snowflake</li>
+<li>Exploré des données et exécuté le feature engineering avec Snowpark</li>
+<li>Entraîné un modèle dans Snowflake avec une procédure stockée</li>
+<li>Déployé un modèle vers une fonction définie par l&#39;utilisateur</li>
+<li>Créé une application Streamlit pour fournir, à la volée, des prévisions de ventes par équipe par emplacement</li>
+</ul>
+<h2 is-upgraded>Prochaines étapes</h2>
+<p>Pour continuer à découvrir le Data Cloud Snowflake, cliquez sur le lien ci-dessous pour voir les autres guides Quickstart Tasty Bytes à votre disposition.</p>
+<ul>
+<li><h2 is-upgraded><a href="/guide/tasty_bytes_introduction_fr/index.html#3" target="_blank">Table des matières des guides Quickstart Powered by Tasty Bytes</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

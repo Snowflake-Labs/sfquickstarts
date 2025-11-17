@@ -1,0 +1,282 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Faster Path to Operational AI with Continual and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="A Faster Path to Operational AI with Continual and Snowflake"
+                  title="A Faster Path to Operational AI with Continual and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Guide Overview" duration="1">
+        <p>Continual is the Operational AI layer for the <a href="https://continual.ai/" target="_blank">Modern Data Stack</a> with Snowflake as the foundation. This guide is a simple introduction that will cover connecting Continual to Snowflake, building feature sets and models from data stored in Snowflake, and analyzing and maintaining ML models continuously over time. After completing this guide, there are <a href="https://docs.continual.ai/customer-churn/" target="_blank">more advanced examples</a> to try with other Modern Data Stack technologies like <a href="https://www.getdbt.com/" target="_blank">dbt</a>.</p>
+<p class="image-container"><img alt="1_5" src="img/6ca0f615ca28b06d.png"></p>
+<p>To keep things simple, we&#39;ll use a nicely manicured dataset to illustrate how Snowflake and Continual team up to enable modern data teams to effectively build, deploy, and utilize production grade ML models. The dataset consists of customer information such as account data, demography, geographic area, and phone activity of a fictional telecommunications business. It also contains a boolean value defining whether or not a customer has ended their contract and &#34;churned&#34;. While this dataset will suffice the purposes of quickly trying Continual and Snowflake, we don&#39;t believe it&#39;s the most realistic example, which is why we created a more comprehensive <a href="https://docs.continual.ai/customer-churn/" target="_blank">example you can try next</a>!</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Basic experience with Snowflake and SQL</li>
+<li>Basic knowledge of ML and data science problems</li>
+</ul>
+<h2 is-upgraded>You&#39;ll Learn</h2>
+<ol type="1">
+<li>How to connect Continual to Snowflake and do ML on your data cloud</li>
+<li>Create feature sets and models in Continual</li>
+<li>Evaluate and maintain production ML models</li>
+<li>Analyze model performance, input data, and features to iteratively improve performance</li>
+<li>Write predictions to Snowflake</li>
+</ol>
+<h2 is-upgraded>You&#39;ll Need</h2>
+<ul>
+<li><a href="https://cloud.continual.ai/register?utm_campaign=Snowflake%20QuickStarts&utm_source=continual%20guide" target="_blank">Sign up for a Continual account</a></li>
+<li><a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake account</a></li>
+</ul>
+<h2 is-upgraded>You&#39;ll Build</h2>
+<ul>
+<li>An operational, continually updating customer churn ML model</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your lab environment" duration="6">
+        <h2 is-upgraded>Set up Snowflake</h2>
+<p>Login using your unique credentials if you have a Snowflake account. If you don&#39;t have a Snowflake account, visit https://signup.snowflake.com/ and sign up for a free 30-day trial environment. <img alt="new_trial" src="img/fd04a39af683c28a.png"></p>
+<p>For this example, you will only need the Standard edition on <strong>AWS</strong>. But you may want to select <strong>Enterprise</strong> to try out rad features like time travel, materialized views, or database failover.</p>
+<p>Choose <strong>US West (Oregon)</strong> for the AWS region. <img alt="2_new_trial" src="img/49d8d3815f3f3af5.png"><img alt="3" src="img/c727a9a0ec615a6e.png"></p>
+<p>Once you&#39;ve logged in, open a new <strong>Worksheet</strong>. <img alt="4" src="img/dfe39ff50c16e4a0.png"><img alt="5" src="img/a53f53016c036acf.png"><img alt="6" src="img/1a21988aef95d97a.png"><img alt="7" src="img/a79de4a11f8310d2.png"></p>
+<p>Create a role, user, warehouse and database for Continual to use.</p>
+<p>In Worksheets, <strong>copy and paste the following SQL</strong> into your worksheet.</p>
+<p><strong>ACTION REQUIRED:</strong> Make sure to update the user_password</p>
+<pre><code language="language-sql" class="language-sql">begin; 
+
+-- ACTION NEEDED: choose a password for CONTINUAL_USER.
+set user_password = &#39;REPLACE ME WITH A SECURE PASSWORD&#39;;
+set role_name = &#39;CONTINUAL_ROLE&#39;;
+set user_name = &#39;CONTINUAL_USER&#39;;
+set warehouse_name = &#39;CONTINUAL_WAREHOUSE&#39;;
+set database_name = &#39;CONTINUAL&#39;; 
+
+-- change role to securityadmin for user / role steps
+use role securityadmin; 
+
+-- create role for Continual
+create role if not exists identifier($role_name);
+grant role identifier($role_name) to role SYSADMIN;
+
+-- create a user for Continual
+create user if not exists identifier($user_name)
+password = $user_password
+default_role = $role_name
+default_warehouse = $warehouse_name; 
+
+grant role identifier($role_name) to user identifier($user_name);
+
+-- change role to sysadmin for warehouse / database steps 
+
+use role sysadmin; 
+
+-- create a warehouse for Continual
+create warehouse if not exists identifier($warehouse_name)
+warehouse_size = medium
+warehouse_type = standard
+auto_suspend = 10
+auto_resume = true
+initially_suspended = true; 
+
+-- create database for Continual
+create database if not exists identifier($database_name); 
+
+-- grant Continual role access to warehouse
+grant USAGE
+on warehouse identifier($warehouse_name)
+to role identifier($role_name);
+
+-- grant Continual access to database
+grant CREATE SCHEMA, MONITOR, USAGE
+on database identifier($database_name)
+to role identifier($role_name); 
+
+Commit;
+</code></pre>
+<p class="image-container"><img alt="8" src="img/e6506391b3a25d12.png"></p>
+<p>Outside of what we defined above, we will not use additional databases/schemas/tables as sources for feature sets or models in this example. But for an actual use case, you will likely use additional sources and will need to grant the Continual user USAGE permission on any such resources. See <a href="https://docs.continual.ai/snowflake/#snowflake" target="_blank">our docs</a> for more information.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up Continual" duration="4">
+        <h2 is-upgraded>Signup for a trial account</h2>
+<p>To get started, navigate to <a href="https://cloud.continual.ai/register?utm_campaign=Snowflake%20QuickStarts&utm_source=continual%20guide" target="_blank">Continual.ai</a> and register an account. Continual has a free 30-day trial and no credit card is required.</p>
+<p>You&#39;ll need to verify your email address. If you don&#39;t receive a verification email within a few minutes, check your spam folder and email support@continual.ai. If your link expires, you can log back into your account to send a new verification email.</p>
+<h2 is-upgraded>Create an organization</h2>
+<p>Organizations allow you to share projects within a company and collaborate with team members under a shared billing account.</p>
+<h2 is-upgraded>Create a project</h2>
+<p>After creating your organization you will see your organization&#39;s project dashboard with the option to create a project. Projects are isolated workspaces for feature sets and models and connect bi-directionally with Snowflake.</p>
+<p>Go ahead and create a new project and name it <strong>CustomerChurn</strong></p>
+<p class="image-container"><img alt="9" src="img/a2efa9e344817fc1.png"></p>
+<h2 is-upgraded>Connect Continual to Snowflake</h2>
+<p>Each Continual project connects bi-directionally to one Snowflake Database. Continual maintains tables and views for all your feature sets, models, and model predictions inside a schema. This makes it easy to build models from your existing data and consume the predictions Continual maintains using your existing tools in Snowflake!</p>
+<p>Click <strong>Connect your data warehouse</strong> and then select <strong>Snowflake</strong></p>
+<p class="image-container"><img alt="10" src="img/db06b21f8cf2485f.png"><img alt="11" src="img/aeb0758aa2dc85e5.png"></p>
+<p>Enter your snowflake account identifier, username, password, database name, warehouse name, and role. Leave the schema field blank for Continual to automatically create one.</p>
+<p><strong>NOTE:</strong> The Host (Endpoint) is the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#account-identifiers" target="_blank">Snowflake account identifier</a>. If you selected a region other than US West (Oregon) you need <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#account-identifiers" target="_blank">additional segments depending on the region</a>.</p>
+<p class="image-container"><img alt="12" src="img/23231b85a883b151.png"></p>
+<p>Test the connection and then create the connection between Continual and Snowflake.</p>
+<p class="image-container"><img alt="13" src="img/4ab5f6401ec7c1d3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a feature set" duration="2">
+        <p>Now that we&#39;ve established our connection and can access data in Snowflake, it&#39;s time to prepare features for a model.</p>
+<p>A <a href="https://docs.continual.ai/feature-sets/" target="_blank">feature set</a> is one of the main objects in Continual and describes a collection of related features. Feature sets are defined by a SQL query in a YAML configuration file. Continual uses this query to build a view in your feature store corresponding to the feature set query definition.</p>
+<p>Click <strong>Create a feature set</strong>:</p>
+<p class="image-container"><img alt="14" src="img/7a108bd7e5258c17.png"></p>
+<p>The first step in creating a feature set is the Query Data step. This is where we use SQL to select the data defining our feature set. To make it easy, we have an example ready to go that will copy a csv from an object store into your Snowflake database and pre-populate the query editor, configurations and metadata, and schema. You are living the good life!</p>
+<p>Click <strong>Use an Example</strong> on the right-hand side and select <strong>Predict Customer Churn</strong></p>
+<p class="image-container"><img alt="15" src="img/10b3f1631f8bf3f.png"></p>
+<p><strong>Preview</strong> the data to verify the query is selecting the data required for the feature set.</p>
+<p>Then select <strong>Configure Feature Set</strong> on the bottom right to advance to the next step.</p>
+<p class="image-container"><img alt="16" src="img/2994c11911585d56.png"></p>
+<p>The <strong>Configure Feature Set</strong> step is where you add the metadata to the feature set: name, description, entity, and index. An <a href="https://docs.continual.ai/feature-sets/" target="_blank">entity</a> is a higher level object that combines feature sets that represent common business objects such as &#34;customers&#34;, &#34;products&#34;, and &#34;sales&#34;. The <a href="https://docs.continual.ai/feature-sets/#feature-set" target="_blank">index</a> is what uniquely identifies the feature set and connects it to an entity. All feature sets in an entity have the same index.</p>
+<p>Populate the fields as shown below and create a new entity called <strong>customer</strong>.</p>
+<p class="image-container"><img alt="17" src="img/e1f99e5127761f38.png"></p>
+<p>Click <strong>Define Schema</strong> to advance to the next step.</p>
+<p>Notice our feature set is displayed in the Data Model graph with all the columns, data types, and inclusion status.</p>
+<p>Okay, time to review and create! Click <strong>Review Changes</strong> and then <strong>Submit Changes</strong>:</p>
+<p class="image-container"><img alt="18" src="img/f0cca2b3845486d8.png"></p>
+<p>Now, click on the <strong>Changes</strong> tab on the left hand side to see the action added to the activity feed:</p>
+<p class="image-container"><img alt="19" src="img/998623050b381a17.png"></p>
+<p>Once the Feature Set has been created, we can see it listed on <strong>Feature Sets</strong> on the left vertical menu:</p>
+<p class="image-container"><img alt="20" src="img/eee72a024b3828ec.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a model" duration="5">
+        <p>In the last section, we connected to Snowflake and created a feature set for a ML model. Now it&#39;s time to create a model that will ingest our feature set, along with a few additional individual features, to predict the probability of a customer churning. The flow is very similar to creating a feature set except with some additional configurations.</p>
+<p>Unlike when creating a feature set, at the configuration step, we&#39;ll need to provide a target column to train our model on. Then we&#39;ll set policies for re-training, promotion, and running predictions. Click on <strong>Models</strong> on the left hand side, then <strong>Create Model</strong>:</p>
+<p class="image-container"><img alt="21" src="img/b4341d17cc0c77c9.png"></p>
+<p>Click <strong>Use an example</strong> and then select <strong>Predict Customer Churn</strong>:</p>
+<p class="image-container"><img alt="22" src="img/60ff359a4cd3a212.png"></p>
+<p>We need to make sure our SQL query contains a unique index, features, and a target. In addition to new features we&#39;ll define in our model spine, we want to include the feature set we built in the last section. The way we include our feature set is by including the index column of our feature set in our query and then linking it to our &#34;customers&#34; entity in the <strong>Review Schema</strong> step. Then, at model training time, Continual will join the feature set with the model to create the training data set. </p>
+<p>We typically recommend storing your features in feature sets and connecting them to your models via <a href="https://docs.continual.ai/feature-sets/?h=entity+linking#entity" target="_blank">entity linking</a>, but it&#39;s also possible to specify a list of columns in your model that represent additional features to bring into the model.</p>
+<p>Click <strong>Configure Model</strong>: <img alt="23" src="img/aa038886be041752.png"></p>
+<p>Cool, so let&#39;s give our model a name and description and define our model index and target column. These attributes, along with a sql query that generates the data and linked entities, forms the core of a model definition, and this is sometimes referred to as the model spine.</p>
+<p>Click <strong>Define Schema</strong>:</p>
+<p class="image-container"><img alt="24" src="img/8da292734a1bdc03.png"></p>
+<p>Now it&#39;s time to link our feature set index to our &#34;customer&#34; entity. Click the chain icon on the <strong>id</strong> row and then select <strong>customer</strong>:</p>
+<p class="image-container"><img alt="25" src="img/6b1abf265ac3c0a7.png"></p>
+<p>Type &#34;customer&#34; into the pop up box:</p>
+<p class="image-container"><img alt="26" src="img/65d0ff741b301704.png"></p>
+<p>Then click <strong>Link Column</strong>:</p>
+<p class="image-container"><img alt="27" src="img/56191e6a3f85e03a.png"></p>
+<p>Click <strong>Set Policies</strong>:</p>
+<p class="image-container"><img alt="28" src="img/75ce793b724be33e.png"></p>
+<p>In Continual, you can configure recurring training schedules to ensure your model is updating as frequently as it needs to. You can also set advanced settings such as which performance metric to optimize for, the size of the container, and even which models to include or exclude in the experiment.  While automated, Continual allows you to have control over how your model is created, optimized, deployed, and managed.</p>
+<p><a href="https://docs.continual.ai/data_checks/?h=data+checks" target="_blank">Data checks</a>, <a href="https://docs.continual.ai/mlops/?h=data+profiling#data-profiling" target="_blank">Data Profiling</a>, and other automated capabilities are enabled by default. But for additional analysis such as <a href="https://docs.continual.ai/xai/?h=shapley#shapley-values-global" target="_blank">Shapley values</a>, let&#39;s toggle <strong>Additional Plots</strong> to <strong>On</strong>.</p>
+<p class="image-container"><img alt="shapley" src="img/6fc9edaa2e35ca36.png"></p>
+<p>You can also set how the system chooses which model to promote to production and when new predictions should be made.</p>
+<p class="image-container"><img alt="30" src="img/ad684bf5b4615b42.png"></p>
+<p>Go ahead and create the model by clicking <strong>Submit Changes</strong>:</p>
+<p class="image-container"><img alt="31" src="img/cc26307d50e534b6.png"></p>
+<p>Well done! How easy was that?</p>
+<p>All changes you make in Continual, such as creating a new feature set or editing/updating an existing model, is listed in the <strong>Changes</strong> tab. This gives you a lineage of your team&#39;s work you can reference at any time.</p>
+<p class="image-container"><img alt="32" src="img/39195d0c818edc07.png"></p>
+<p>Once your model has been created and promoted it will write predictions directly back to Snowflake. Continual creates a table in your feature store for every model you create in the system that tracks all predictions made by model versions in that model over time. This table lives under &lt;feature_store&gt;.&lt;project_id&gt;.model_&lt;model_id&gt;_predictions_history. Continual additionally builds a view under &lt;feature_store&gt;.&lt;project_id&gt;.model_&lt;model_id&gt;_predictions which represents the latest prediction made for each record in your model spine.</p>
+<p>Let&#39;s use the latest predictions view. In Snowflake, paste the following sql statement in to view all your predictions:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM continual.customerchurn.model_customer_churn_30days_predictions; 
+</code></pre>
+<p class="image-container"><img alt="33" src="img/a6d4263ff289cabd.png"></p>
+<p class="image-container"><img alt="34" src="img/25b33372a17b3935.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="MLOps: Monitoring data and models" duration="3">
+        <p>Back in Continual, there are many tools and automation for monitoring data, models, and prediction jobs.</p>
+<p>Navigate to <strong>Models</strong> and select the customer_churn_30days model:</p>
+<p class="image-container"><img alt="35" src="img/3753ca3717ad7802.png"></p>
+<p>Each time you train a model, a new version is produced and managed under the <strong>Model Version</strong> view.</p>
+<p>Click <strong>Versions</strong> and choose a Model Version to evaluate:</p>
+<p class="image-container"><img alt="36" src="img/e2001fb9f0bd4b17.png"></p>
+<h2 is-upgraded>Performance Analysis</h2>
+<p>The <strong>Overview</strong> page shows the performance of the winning model, as well as each model that was tested. Continual runs a series of experiments across different model algorithms and optimizes performance across a specified performance metric.</p>
+<p class="image-container"><img alt="37" src="img/b73cc53fc876bd14.png"></p>
+<h2 is-upgraded>Monitoring Data</h2>
+<p>Click on <strong>Data Analysis</strong> to look closer at the data used to train the model. <img alt="38" src="img/f14abff86c33d653.png"></p>
+<p>Here you can look at the <a href="https://docs.continual.ai/mlops/#correlation-matrix" target="_blank">correlation matrix</a> to see which two variables are correlated and <a href="https://docs.continual.ai/mlops/#data-profiling" target="_blank">category scores</a> to look at each feature&#39;s profile to check if there are features with many Null values, large outliers, or unexpected distributions.</p>
+<p class="image-container"><img alt="39" src="img/45c8ce212cd176e5.png"></p>
+<h2 is-upgraded>Analyzing the model</h2>
+<p>Click on <strong>Model Insights</strong> and look at the confusion matrix to understand what your model is getting right and what types of errors it&#39;s making.</p>
+<p class="image-container"><img alt="40" src="img/82bbd9f029fc17e.png"></p>
+<p>We can also reference Feature Importance to view which features were the most impactful. Continual performs <a href="https://scikit-learn.org/stable/modules/permutation_importance.html" target="_blank">permutation-based</a> feature importance on the winning experiment and is available for each model version.</p>
+<p>Let&#39;s take a look at <a href="https://docs.continual.ai/xai/?h=shapley#shapley-values-global" target="_blank">shapley values</a> for insights about how each feature affects a prediction with regard to its expected value:</p>
+<p class="image-container"><img alt="405" src="img/f70e1896147c8873.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with a Use Case" duration="0">
+        <p>Just like that you&#39;ve enabled ML on Snowflake. Continual is the Operational AI layer for the modern data stack and designed with the shared principles of simplicity, minimal management overhead, and elasticity.</p>
+<p>In less than 20 minutes, we connected Continual to Snowflake, created a feature set, used it as input to experiment among more than 10 ML models and added other relevant features, promoted the best performing model to production, wrote prediction results back to Snowflake, analyzed our features and model performance to learn what improvements we can make. We completed our work in the UI but could&#39;ve used the CLI or SDK.</p>
+<p>This concludes the guide to quickly getting started with Continual on Snowflake. Now you&#39;re ready for a <a href="https://docs.continual.ai/customer-churn/" target="_blank">more advanced example of predicting customer churn</a> with Continual and dbt on Snowflake. If you need a little help or have questions along the way, <a href="https://continual.ai/book-a-demo?uisource=Snowflake-Quickstart-Guide" target="_blank">book some time</a> with one of our AI experts.  You can also learn more and see a demo of Continual on Snowflake at our recent webinar replay, available <a href="https://continual.ai/events/the-new-ai-dream-teams" target="_blank">here</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

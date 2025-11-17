@@ -1,0 +1,1204 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Leverage dbt Cloud to Generate ML ready pipelines using Snowpark python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python"
+                  title="Leverage dbt Cloud to Generate ML ready pipelines using Snowpark python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>The focus of this workshop will be to demonstrate how we can use both <em>SQL and python together</em> in the same workflow to run <em>both analytics and machine learning models</em> on dbt Cloud.</p>
+<p>The code complete repository for this quickstart can be found on <a href="https://github.com/dbt-labs/python-snowpark-formula1/tree/main" target="_blank">GitHub</a>.</p>
+<h2 is-upgraded>What you&#39;ll need to setup for the lab</h2>
+<ul>
+<li>A <a href="https://trial.snowflake.com/" target="_blank">Snowflake account</a> with ACCOUNTADMIN access</li>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+</ul>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>How to use dbt with Snowflake to build scalable transformations using SQL and Python</li>
+<li>How to use dbt SQL to prepare your data from sources to encoding</li>
+<li>How to train a model in dbt python and use it for future prediction</li>
+<li>How to deploy your full project</li>
+</ul>
+<h2 is-upgraded>What you need to know</h2>
+<ul>
+<li>Basic to intermediate SQL and python.</li>
+<li>Basic understanding of dbt fundamentals. We recommend the <a href="https://courses.getdbt.com/courses/fundamentals" target="_blank">dbt Fundamentals course</a> if you&#39;re interested.</li>
+<li>High level understanding of machine learning processes (encoding, training, testing).</li>
+<li>Simple ML algorithms — we will use logistic regression to keep the focus on the <em>workflow</em>, not algorithms!</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<ul>
+<li>A set of data analytics and prediction pipelines using Formula 1 data leveraging dbt and Snowflake, making use of best practices and code promotion between environments.</li>
+<li>We will create insights for: <ol type="1">
+<li>Finding the lap time average and rolling average through the years</li>
+<li>Predicting the position of each driver based on a decade of data</li>
+</ol>
+</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll need</h2>
+<ul>
+<li>As inputs, we are going to leverage Formula 1 dataset hosted on a dbt Labs public S3 bucket. <ul>
+<li>We will create a Snowflake Stage for our CSV files then use Snowflake&#39;s <code>COPY INTO</code> function to copy the data in from our CSV files into tables.</li>
+<li>The Formula 1 dataset is available on <a href="https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020" target="_blank">Kaggle</a>.</li>
+<li>The data is originally compiled from the <a href="http://ergast.com/mrd/" target="_blank">Ergast Developer API</a>.</li>
+</ul>
+</li>
+<li>We will not be building the full pipeline as part of this workshop. <ul>
+<li><strong>Instead we will leverage an existing repo, fork it, and focus on our machine learning pipeline.</strong></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture and use case overview" duration="2">
+        <p>In this lab we&#39;ll be transforming raw Formula 1 data into a consumable form for both analytics and machine learning pipelines. To understand how our data are related, we&#39;ve included an entity relationship diagram (ERD) of the tables we&#39;ll be using today.</p>
+<p>Our data rarely ever looks the way we need it in its raw form: we need to join, filter, aggregate, etc. dbt is designed to transform your data and keep your pipeline organized and reliable along the way. We can see from our Formula1 ERD that if we have a major table called <code>results</code> with other tables such as <code>drivers</code>, <code>races</code>, and <code>circuits</code> tables that provide meaningful context to the <code>results</code> table.</p>
+<p>You might also see that <code>circuits</code> cannot be directly joined to <code>results</code> since there is no key. This is a typical data model structure we see in the wild: we&#39;ll need to first join <code>results</code> and <code>races</code> together, then we can join to <code>circuits</code>. By bringing all this information together we&#39;ll be able to gain insights about lap time trends through the years.</p>
+<p><strong>Formula 1 ERD: <br></strong> ERD can also be downloaded for interactive view from <a href="https://formula1-dbt-cloud-python-demo.s3.amazonaws.com/Formula1_ERD.svg" target="_blank">S3</a><img alt="F1_ERD" style="width: 600.00px" src="img/c5037317edd38c51.svg"></p>
+<p>Here&#39;s a visual for the data pipeline that we&#39;ll be building using dbt! <img alt="project_DAG" src="img/a177691c2f9c48d9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting started with Snowflake" duration="5">
+        <h2 is-upgraded>Setup Snowflake trial and email alias</h2>
+<p>In this section we&#39;re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.</p>
+<ol type="1">
+<li><a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Sign up for a Snowflake Trial Account using this form</a>. Ensure that your account is set up using <strong>AWS</strong>.</li>
+<li>After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.</li>
+<li>To ensure we are working with a clean slate and create a fresh dbt Cloud instance when launching partner connect we will be using email aliasing. What this will look like is &lt;your_email&gt;+&lt;alias_addition&gt;@&lt;your_domain&gt;.com.</li>
+<li>Navigate to your left panel menu <strong>∨</strong> and select <strong>Profile</strong>. <img alt="snowflake_account_profile_menu" src="img/9de7eb7064b7c1b2.png"></li>
+<li>You will see your unaliased email you used to sign up for your snowflake trial (screenshot is redacted for privacy). <img alt="unaliased_email_profile" src="img/245132a0c7ebc60a.png"></li>
+<li>Edit the email field to include the alias using the notation &lt;your_email&gt;+dbtsnowpark@&lt;your_domain&gt;.com. Ensure you <strong>Save</strong> your updated aliased email. <img alt="alias_email_update_profile_save" src="img/622b9e528659d3ce.png"></li>
+<li>This should automatically send a re-verification email. In your email simply click the email link to verify your new aliased email, and then you&#39;re good to go. If for any reason you did the email was not generated you can navigate back to your <strong>Profile</strong> and click the link to manually <strong>Resend verification email</strong>. <img alt="manually_resend_verification_email" src="img/482c11e8ba5f6fa4.png"></li>
+<li>Your verification email will look like the image below. Select <strong>Validate your email</strong>. <img alt="verification_email" src="img/3e99e5ae2dcf07b1.png"></li>
+<li>After you validate your email your screen should look as follows: <img alt="verification_confirmation_page" src="img/648557c6d13355f9.png"></li>
+<li>Re-login or refresh your browser window.</li>
+</ol>
+<p>To recap, we created this email alias to ensure that later when we launch Partner Connect to spin up a dbt Cloud account that there are no previously existing dbt Cloud accounts and projects that cause issues and complications in setup.</p>
+<h2 is-upgraded>Enable Anaconda Python packages and open new SQL worksheet</h2>
+<ol type="1">
+<li>Ensure you are still logged in as the ACCOUNTADMIN. <img alt="new_snowflake_account" src="img/96839741adfb0c15.png"></li>
+<li>Navigate to <strong>Admin &gt; Billing &amp; Terms</strong>. Click <strong>Enable &gt; Acknowledge &amp; Continue</strong> to enable Anaconda Python packages to run in Snowflake. <img alt="enable-anaconda" src="img/1dd4be55a684dbbc.jpeg"><img alt="accept-anaconda-terms" src="img/e5ebcc50a8fbb2ed.jpeg"></li>
+<li>Finally, navigate back to <strong>Worksheets</strong> to create a new SQL Worksheet by selecting <strong>+</strong> then <strong>SQL Worksheet</strong> in the upper right corner.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load data into Snowflake" duration="7">
+        <p>We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts.</p>
+<ol type="1">
+<li>Your new Snowflake account has a preconfigured warehouse named <code>COMPUTE_WH</code>. You can check by going under <strong>Admin &gt; Warehouses</strong>. If for some reason you don&#39;t have this warehouse, we can create a warehouse using the following script:<pre><code language="language-sql" class="language-sql">create or replace warehouse COMPUTE_WH with warehouse_size=XSMALL
+</code></pre>
+</li>
+<li>Rename the SQL worksheet by clicking the worksheet name (this is automatically set to the current timestamp) using the 3 dots <code>...</code> option, then click  <strong>Rename</strong>. Rename the file to <code>data setup script</code> since we will be placing code in this worksheet to ingest the Formula 1 data. Set the context of the worksheet by setting your role as the <strong>ACCOUNTADMIN</strong> and warehouse as <strong>COMPUTE_WH</strong>. <img alt="rename-worksheet-and-select-warehouse" src="img/a39de56be089b55e.png"></li>
+<li>Copy the following code into the main body of the Snowflake SQL worksheet. You can also find this setup script under the <code>setup</code> folder in the <a href="https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/setup/setup_script_s3_to_snowflake.sql" target="_blank">Git repository</a>. The script is long since it&#39;s bringing in all of the data we&#39;ll need today! We recommend copying this straight from the github file linked rather than from this workshop UI so you don&#39;t miss anything (use Ctrl+A or Cmd+A).</li>
+</ol>
+<p>Generally during this lab we&#39;ll be explaining and breaking down the queries. We won&#39;t be going line by line, but we will point out important information related to our learning objectives!</p>
+<pre><code language="language-sql" class="language-sql">   /*
+   This is our setup script to create a new database for the Formula1 data in Snowflake.
+   We are copying data from a public s3 bucket into snowflake by defining our csv format and snowflake stage. 
+   */
+   -- create and define our formula1 database
+   create or replace database formula1;
+   use database formula1; 
+   create or replace schema raw; 
+   use schema raw; 
+
+   --define our file format for reading in the csvs 
+   create or replace file format csvformat
+   type = csv
+   field_delimiter =&#39;,&#39;
+   field_optionally_enclosed_by = &#39;&#34;&#39;, 
+   skip_header=1; 
+
+   --
+   create or replace stage formula1_stage
+   file_format = csvformat 
+   url = &#39;s3://formula1-dbt-cloud-python-demo/formula1-kaggle-data/&#39;;
+
+   -- load in the 8 tables we need for our demo 
+   -- we are first creating the table then copying our data in from s3
+   -- think of this as an empty container or shell that we are then filling
+
+   --CIRCUITS
+   create or replace table formula1.raw.circuits (
+       CIRCUIT_ID NUMBER(38,0),
+       CIRCUIT_REF VARCHAR(16777216),
+       NAME VARCHAR(16777216),
+       LOCATION VARCHAR(16777216),
+       COUNTRY VARCHAR(16777216),
+       LAT FLOAT,
+       LNG FLOAT,
+       ALT NUMBER(38,0),
+       URL VARCHAR(16777216)
+   );
+   -- copy our data from public s3 bucket into our tables 
+   copy into circuits 
+   from @formula1_stage/circuits.csv
+   on_error=&#39;continue&#39;;
+
+   --CONSTRUCTOR RESULTS 
+   create or replace table formula1.raw.constructor_results (
+       CONSTRUCTOR_RESULTS_ID NUMBER(38,0),
+       RACE_ID NUMBER(38,0),
+       CONSTRUCTOR_ID NUMBER(38,0),
+       POINTS NUMBER(38,0),
+       STATUS VARCHAR(16777216)
+   );
+   copy into constructor_results
+   from @formula1_stage/constructor_results.csv
+   on_error=&#39;continue&#39;;
+
+   --CONSTRUCTOR STANDINGS
+   create or replace table formula1.raw.constructor_standings (
+       CONSTRUCTOR_STANDINGS_ID NUMBER(38,0),
+       RACE_ID NUMBER(38,0),
+       CONSTRUCTOR_ID NUMBER(38,0),
+       POINTS NUMBER(38,0),
+       POSITION FLOAT,
+       POSITION_TEXT VARCHAR(16777216),
+       WINS NUMBER(38,0)
+   );
+   copy into constructor_standings
+   from @formula1_stage/constructor_standings.csv
+   on_error=&#39;continue&#39;;
+
+   --CONSTRUCTORS
+   create or replace table formula1.raw.constructors (
+       CONSTRUCTOR_ID NUMBER(38,0),
+       CONSTRUCTOR_REF VARCHAR(16777216),
+       NAME VARCHAR(16777216),
+       NATIONALITY VARCHAR(16777216),
+       URL VARCHAR(16777216)
+   );
+   copy into constructors 
+   from @formula1_stage/constructors.csv
+   on_error=&#39;continue&#39;;
+
+   --DRIVER STANDINGS
+   create or replace table formula1.raw.driver_standings (
+       DRIVER_STANDINGS_ID NUMBER(38,0),
+       RACE_ID NUMBER(38,0),
+       DRIVER_ID NUMBER(38,0),
+       POINTS NUMBER(38,0),
+       POSITION FLOAT,
+       POSITION_TEXT VARCHAR(16777216),
+       WINS NUMBER(38,0)
+
+   );
+   copy into driver_standings 
+   from @formula1_stage/driver_standings.csv
+   on_error=&#39;continue&#39;;
+
+   --DRIVERS
+   create or replace table formula1.raw.drivers (
+       DRIVER_ID NUMBER(38,0),
+       DRIVER_REF VARCHAR(16777216),
+       NUMBER VARCHAR(16777216),
+       CODE VARCHAR(16777216),
+       FORENAME VARCHAR(16777216),
+       SURNAME VARCHAR(16777216),
+       DOB DATE,
+       NATIONALITY VARCHAR(16777216),
+       URL VARCHAR(16777216)
+   );
+   copy into drivers 
+   from @formula1_stage/drivers.csv
+   on_error=&#39;continue&#39;;
+
+   --LAP TIMES
+   create or replace table formula1.raw.lap_times (
+       RACE_ID NUMBER(38,0),
+       DRIVER_ID NUMBER(38,0),
+       LAP NUMBER(38,0),
+       POSITION FLOAT,
+       TIME VARCHAR(16777216),
+       MILLISECONDS NUMBER(38,0)
+   );
+   copy into lap_times 
+   from @formula1_stage/lap_times.csv
+   on_error=&#39;continue&#39;;
+
+   --PIT STOPS 
+   create or replace table formula1.raw.pit_stops (
+       RACE_ID NUMBER(38,0),
+       DRIVER_ID NUMBER(38,0),
+       STOP NUMBER(38,0),
+       LAP NUMBER(38,0),
+       TIME VARCHAR(16777216),
+       DURATION VARCHAR(16777216),
+       MILLISECONDS NUMBER(38,0)
+   );
+   copy into pit_stops 
+   from @formula1_stage/pit_stops.csv
+   on_error=&#39;continue&#39;;
+
+   --QUALIFYING
+   create or replace table formula1.raw.qualifying (
+       QUALIFYING_ID NUMBER(38,0),
+       RACE_ID NUMBER(38,0),
+       DRIVER_ID NUMBER(38,0),
+       CONSTRUCTOR_ID NUMBER(38,0),
+       NUMBER NUMBER(38,0),
+       POSITION FLOAT,
+       Q1 VARCHAR(16777216),
+       Q2 VARCHAR(16777216),
+       Q3 VARCHAR(16777216)
+   );
+   copy into qualifying 
+   from @formula1_stage/qualifying.csv
+   on_error=&#39;continue&#39;;
+
+   --RACES 
+   create or replace table formula1.raw.races (
+       RACE_ID NUMBER(38,0),
+       YEAR NUMBER(38,0),
+       ROUND NUMBER(38,0),
+       CIRCUIT_ID NUMBER(38,0),
+       NAME VARCHAR(16777216),
+       DATE DATE,
+       TIME VARCHAR(16777216),
+       URL VARCHAR(16777216),
+       FP1_DATE VARCHAR(16777216),
+       FP1_TIME VARCHAR(16777216),
+       FP2_DATE VARCHAR(16777216),
+       FP2_TIME VARCHAR(16777216),
+       FP3_DATE VARCHAR(16777216),
+       FP3_TIME VARCHAR(16777216),
+       QUALI_DATE VARCHAR(16777216),
+       QUALI_TIME VARCHAR(16777216),
+       SPRINT_DATE VARCHAR(16777216),
+       SPRINT_TIME VARCHAR(16777216)
+   );
+   copy into races 
+   from @formula1_stage/races.csv
+   on_error=&#39;continue&#39;;
+
+   --RESULTS
+   create or replace table formula1.raw.results (
+       RESULT_ID NUMBER(38,0),
+       RACE_ID NUMBER(38,0),
+       DRIVER_ID NUMBER(38,0),
+       CONSTRUCTOR_ID NUMBER(38,0),
+       NUMBER NUMBER(38,0),
+       GRID NUMBER(38,0),
+       POSITION FLOAT,
+       POSITION_TEXT VARCHAR(16777216),
+       POSITION_ORDER NUMBER(38,0),
+       POINTS NUMBER(38,0),
+       LAPS NUMBER(38,0),
+       TIME VARCHAR(16777216),
+       MILLISECONDS NUMBER(38,0),
+       FASTEST_LAP NUMBER(38,0),
+       RANK NUMBER(38,0),
+       FASTEST_LAP_TIME VARCHAR(16777216),
+       FASTEST_LAP_SPEED FLOAT,
+       STATUS_ID NUMBER(38,0)
+   );
+   copy into results 
+   from @formula1_stage/results.csv
+   on_error=&#39;continue&#39;;
+
+   --SEASONS
+   create or replace table formula1.raw.seasons (
+       YEAR NUMBER(38,0),
+       URL VARCHAR(16777216)
+   );
+   copy into seasons 
+   from @formula1_stage/seasons.csv
+   on_error=&#39;continue&#39;;
+
+   --SPRINT RESULTS
+   create or replace table formula1.raw.sprint_results (
+       RESULT_ID NUMBER(38,0),
+       RACE_ID NUMBER(38,0),
+       DRIVER_ID NUMBER(38,0),
+       CONSTRUCTOR_ID NUMBER(38,0),
+       NUMBER NUMBER(38,0),
+       GRID NUMBER(38,0),
+       POSITION FLOAT,
+       POSITION_TEXT VARCHAR(16777216),
+       POSITION_ORDER NUMBER(38,0),
+       POINTS NUMBER(38,0), 
+       LAPS NUMBER(38,0),
+       TIME VARCHAR(16777216),
+       MILLISECONDS NUMBER(38,0),
+       FASTEST_LAP VARCHAR(16777216),
+       FASTEST_LAP_TIME VARCHAR(16777216),
+       STATUS_ID NUMBER(38,0)
+       );
+   copy into sprint_results 
+   from @formula1_stage/sprint_results.csv
+   on_error=&#39;continue&#39;;
+
+   --STATUS
+   create or replace table formula1.raw.status (
+       STATUS_ID NUMBER(38,0),
+       STATUS VARCHAR(16777216)
+   );
+   copy into status 
+   from @formula1_stage/status.csv
+   on_error=&#39;continue&#39;;
+</code></pre>
+<ol type="1" start="4">
+<li>Ensure all the commands are selected before running the query — an easy way to do this is to use Ctrl-A to highlight all of the code in the worksheet. Select <strong>run</strong> (blue triangle icon). Notice how the dot next to your <strong>COMPUTE_WH</strong> turns from gray to green as you run the query. The <strong>status</strong> table is the final table of all 14 tables loaded in. <img alt="load-data-from-s3" src="img/eae755a580d3cce0.png"></li>
+<li>Let&#39;s unpack that pretty long query we ran into component parts. We ran this query to load in our 14 Formula 1 tables from a public S3 bucket. To do this, we:</li>
+</ol>
+<ul>
+<li>Created a new database called <code>formula1</code> and a schema called <code>raw</code> to place our raw (untransformed) data into.</li>
+<li>Created a stage to locate our data we are going to load in. Snowflake Stages are locations where data files are stored. Stages are used to both load and unload data to and from Snowflake locations. Here we are using an external stage, by referencing an S3 bucket.</li>
+<li>Created our tables for our data to be copied into. These are empty tables with the column name and data type. Think of this as creating an empty container that the data will then fill into.</li>
+<li>Used the <code>copy into</code> statement for each of our tables. We reference our staged location we created and upon loading errors continue to load in the rest of the data. You should not have data loading errors but if you do, those rows will be skipped and Snowflake will tell you which rows caused errors.</li>
+</ul>
+<ol type="1" start="6">
+<li>Once the script completes, browse to the left navigation menu. Click on <strong>...</strong> button to bring up <strong>Refresh</strong> button. Click <strong>Refresh</strong> and you will see the newly created <code>FORMULA1</code> database show up. Expand the database and explore the different tables you just created and loaded data into in the RAW schema. <img alt="create-new-worksheet-to-query-data" src="img/5d24fd0ac64dcfce.png"></li>
+<li>Now let&#39;s take a look at some of our cool Formula 1 data we just loaded up!</li>
+</ol>
+<ul>
+<li>Create a SQL worksheet by selecting the <strong>+</strong> then <strong>SQL Worksheet</strong>. <img alt="create-new-worksheet-to-query-data" src="img/9f643c98823ec909.png"></li>
+<li>Navigate to <strong>Database &gt; Formula1 &gt; RAW &gt; Tables</strong>.</li>
+<li>Query the data using the following code. There are only 77 rows in the circuits table, so we don&#39;t need to worry about limiting the amount of data we query.<pre><code language="language-sql" class="language-sql">select * from formula1.raw.circuits
+</code></pre>
+</li>
+<li>Run the query. From here on out, we&#39;ll use the keyboard shortcuts Command-Enter or Control-Enter to run queries and won&#39;t explicitly call out this step.</li>
+<li>Review the query results, you should see information about Formula 1 circuits, starting with Albert Park in Australia!</li>
+<li>Ensure you have all 14 tables starting with <code>CIRCUITS</code> and ending with <code>STATUS</code>. Now we are ready to connect into dbt Cloud! <img alt="query-circuits-data" src="img/bbe6f039c52c6a35.png"></li>
+</ul>
+<p>We&#39;re ready to setup our dbt account!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Launching dbt cloud through partner connect" duration="2">
+        <p>We are going to be using <a href="https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html" target="_blank">Snowflake Partner Connect</a> to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your <a href="https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake" target="_blank">Snowflake connection</a> and environments already established.</p>
+<ol type="1">
+<li>Navigate out of your SQL worksheet back by selecting <strong>home</strong>.</li>
+<li>In Snowsight, confirm that you are using the <strong>ACCOUNTADMIN</strong> role.</li>
+<li>Confirm that your email address contains an email alias.</li>
+<li>Navigate to the <strong>Admin &gt; Partner Connect</strong>. Find <strong>dbt</strong> either by using the search bar or navigating the <strong>Data Integration</strong>. Select the <strong>dbt</strong> tile. <img alt="open-partner-connect" src="img/926c3b0a93598c31.png"></li>
+<li>You should now see a new window that says <strong>Connect to dbt</strong>. Select <strong>Optional Grant</strong> and add the <code>FORMULA1</code> database. This will grant access for your new dbt user role to the FORMULA1 database. <img alt="partner-connect-optional-grant" src="img/c6cedd4669c1907e.png"></li>
+<li>Ensure the <code>FORMULA1</code> is present in your optional grant before clicking <strong>Connect</strong>.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial. <img alt="connect-to-dbt" src="img/5e94a3378aafebf5.png"></li>
+</ol>
+<p>If you forgot to add the optional grant to the Formula1 database in the previous screenshot, please run these commands:</p>
+<pre><code language="language-sql" class="language-sql">grant usage on database FORMULA1 to role PC_DBT_ROLE;
+grant usage on schema FORMULA1.RAW to role PC_DBT_ROLE;
+grant select on all tables in schema FORMULA1.RAW to role PC_DBT_ROLE;
+</code></pre>
+<ol type="1" start="6">
+<li>When you see the <strong>Your partner account has been created</strong> window, click <strong>Activate</strong>. <img alt="connect-to-dbt" src="img/d3cd6472184650e4.png"></li>
+<li>You should be redirected to a dbt Cloud registration page. Fill out the form using whatever account name you&#39;d like. Make sure to save the password somewhere for login in the future. <img alt="dbt-cloud-sign-up" src="img/e8f612736d908dff.png"></li>
+<li>Select <strong>Complete Registration</strong>. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.</li>
+</ol>
+<p>Instead of building an entire version controlled data project from scratch, we&#39;ll be <strong>forking and connecting to an existing workshop github repository</strong> in the next step. dbt Cloud&#39;s git integration creates easy to use git guardrails. You won&#39;t need to know much Git for this workshop. In the future, if you&#39;re developing your own proof of value project from scratch, <a href="https://docs.getdbt.com/docs/collaborate/git/managed-repository" target="_blank">feel free to use dbt&#39;s managed  repository</a> that is spun up during partner connect.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Forking repository into dbt Cloud" duration="5">
+        <p>To keep the focus on dbt python and deployment today, we only want to build a subset of models that would be in an entire data project. To achieve this we need to fork an existing repository into our personal github, copy our forked repo name into dbt cloud, and add the dbt deploy key to our github account. Viola! There will be some back and forth between dbt cloud and GitHub as part of this process, so keep your tabs open, and let&#39;s get the setup out of the way!</p>
+<ol type="1">
+<li>Open a new browser tab and navigate to our demo repo by <a href="https://github.com/dbt-labs/dbt-python-hands-on-lab-snowpark" target="_blank">clicking here</a>.</li>
+<li><strong>Fork</strong> your own copy of the lab repo. <img alt="fork_exisiting_formula1_repo" src="img/d7c786a66a6be0c8.png"></li>
+<li>Add a description if you&#39;d like such as: &#34;learning about dbt Cloud is cool&#34; and <strong>Create fork</strong>.<br><img alt="create_new_fork" src="img/14641d08e611cb67.png"></li>
+<li>Select the <strong>Code</strong> button. Choose the SSH option and use the <strong>copy</strong> button shortcut for our repo. We&#39;ll be using this copied path in step 11 in this section. <img alt="copy_repo_ssh_github" src="img/6cb4e766932072b0.png"></li>
+<li>Head back over to your dbt Cloud browser tab so we can connect our new forked repository into our dbt Cloud project.</li>
+<li>We&#39;ll need to delete the existing connection to the managed repository spun up during Partner Connect before we input our new one. To do this navigate to <strong>Settings &gt; Account Settings &gt; Partner Connect Trial</strong>.</li>
+<li>This will open the <strong>Project Details</strong>. Navigate to <strong>Repository</strong> and click the existing managed repository GitHub connection setup during partner connect. <img alt="select-existing-partner-connect-repo" src="img/41ae2dfa38cfc8cb.png"></li>
+<li>In the <strong>Repository Details</strong> select <strong>Edit</strong> in the lower right corner. The option to <strong>Disconnect</strong> will appear, select it. <img alt="repository_details_disconnect" src="img/6cf9b83c4a16526c.png"></li>
+<li><strong>Confirm disconnect</strong>. <img alt="confirm_disconnect_from_managed_repo" src="img/d4c19899ce3c7c64.png"></li>
+<li>Within your <strong>Project Details</strong> you should have the option to <strong>Configure Repository</strong>. <img alt="configure_repository" src="img/9798703f39dfa85d.png"></li>
+<li>After deleting our partner connect managed repository, we should see <strong>New Repository</strong>. Select <strong>Git Clone</strong>. Input the repository by pasting what you copied from GitHub in step 4 above into the <strong>Repository</strong> parameter and clicking <strong>Import</strong>. <img alt="git_clone_copy_repo_from_github" src="img/9dc51189434a88f6.png"></li>
+<li>We can see we successfully made the connection to our forked GitHub repo. <img alt="update_dbt_cloud_repo_connection_with_forked_repo" src="img/bcb63b6ea9b80fff.png"></li>
+</ol>
+<p>If you tried to start developing onto of this repo right now, we&#39;d get permissions errors. So we need to give dbt Cloud write access.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Giving dbt cloud repo write access using github deploy keys" duration="5">
+        <ol type="1">
+<li>Click on your git cloned repository link. dbt Cloud generated a deploy key to link the development we do in dbt cloud back to our GitHub repo. <strong>Copy</strong> the deploy key starting with <strong>ssh-rsa</strong> followed by a long hash key (full key hidden for privacy). <img alt="copy_deploy_key_from_dbt_cloud" src="img/3b5daf1f833d548.png"></li>
+<li>Phew almost there! Navigate <strong>back to GitHub</strong> again.</li>
+<li>Ensure you&#39;re in your forked repo. Navigate to your repo <strong>Settings</strong><img alt="git_repo_settings" src="img/ce6e05b1bd5fa62d.png"></li>
+<li>Go to <strong>Deploy keys</strong>. <img alt="deploy_keys_github" src="img/38b17c70d43762fa.png"></li>
+<li>Select <strong>Add deploy key</strong>. <img alt="new_deploy_key_button" src="img/26701c9e585cad8a.png"></li>
+<li>Give your deploy key a title such as <code>dbt Cloud python snowpark</code>. Paste the ssh-rsa deploy key we copied from dbt Cloud into the <strong>Key</strong> box. Be sure to enable <strong>Allow write access</strong>. Finally, <strong>Add key</strong>. Your deploy key has been created. We won&#39;t have to come back to again GitHub until the end of our workshop. <img alt="add_new_deploy_key" src="img/c105b6e8fbf3d544.png"><img alt="deploy_key_created" src="img/9637f47a97542d2d.png"></li>
+<li>Head back over to dbt cloud. Navigate to <strong>Develop</strong>. <img alt="develop_panel_dbt_cloud" src="img/ae02d7cadaeaadbf.png"></li>
+<li><strong>Run &#34;dbt deps&#34;</strong><img alt="run_dep_deps_after_importing_forked_repo" src="img/d3b747f7d86cd462.png"></li>
+<li>Since we&#39;re bringing in an existing project, your root folder should now say <code>dbt-python-hands-on-lab-snowpark</code><img alt="file_tree_of_forked_repo" src="img/a1d437681e3cc4ce.png"></li>
+</ol>
+<p>Alas, now that our setup work is complete, time get a look at our production data pipeline code!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="IDE overview and building our dbt project" duration="5">
+        <p>dbt Cloud&#39;s IDE will be our development space for this workshop, so let&#39;s get familiar with it. Once we&#39;ve done that we&#39;ll run the pipeline we imported from our forked repo.</p>
+<ol type="1">
+<li>There are a couple of key features to point out about the IDE before we get to work. It is a text editor, an SQL and Python runner, and a CLI with Git version control all baked into one package! This allows you to focus on editing your SQL and Python files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The Git workflow in dbt Cloud allows both Git beginners and experts alike to be able to easily version control all of their work with a couple clicks. <img alt="ide-overview" src="img/516d62e53cdc1ba1.png"></li>
+<li>In the file tree, click on the magnifying glass icon next to the File Explorer on the left sidebar and type in <strong>hold_out_dataset_for_prediction.py</strong>. Click the <strong>Lineage</strong> tab. To make it full screen click the viewfinder icon. Play around with the nodes being shown by removing the 2 in front or behind of <code>2+hold_out_dataset_for_prediction+2</code>and updating the graph. <img alt="lineage_viewfinder" src="img/9caf0ac8e6637080.png"></li>
+<li>Explore the DAG for a few minutes to understand everything we&#39;ve done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We&#39;ll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. <img alt="lineage_fullview" src="img/b68ee34f9966b93c.png"> You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad.</li>
+<li>Let&#39;s run the pipeline we imported from our forked repo. Type <code>dbt build</code> into the command line and select <strong>Enter</strong> on your keyboard. When the run bar expands you&#39;ll be able to see the results of the run, where you should see the run complete successfully. <img alt="dbt_build_initial_pipeline_ml" src="img/adc9b6d19bdd46f.png"> To understand more about what the <a href="https://docs.getdbt.com/reference/commands/build" target="_blank">dbt build</a> syntax is running check out the documentation.</li>
+<li>You can look at the run results of each model to see the code that dbt compiles and sends to Snowflake for execution. Select the arrow beside a model <strong>&gt;</strong>. Click <strong>Details</strong> and view the ouput. We can see that dbt automatically generates the DDL statement and is creating our models in our development schema (i.e. <code>dbt_hwatson</code>). <img alt="model_details_ddl" src="img/78891cb473fda5da.png"></li>
+<li>Now let&#39;s switch over to a new browser tab <strong>on Snowflake</strong> to confirm that the objects were actually created. Click on the three dots <strong>...</strong> above your database objects and then <strong>Refresh</strong>. Expand the <strong>PC_DBT_DB</strong> database and you should see your development schema. Select the schema, then <strong>Tables</strong>  and <strong>Views</strong>. Now you should be able to see many models we created from our forked repo. <img alt="confirm_pipeline_build_in_snowflake" src="img/da09d850c536bd56.png"></li>
+</ol>
+<p>We did a lot upstream in our forked repo and we&#39;ll explore it at a high level of how we did that before moving on to machine learning model training and prediction in dbt cloud.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding our existing pipeline" duration="5">
+        <p>We brought a good chunk of our data pipeline in through our forked repo to lay a foundation for machine learning. In the next couple steps we are taking time to review how this was done. That way when you have your own dbt project you&#39;ll be familiar with the setup! We&#39;ll start with the dbt_project.yml, sources, and staging.</p>
+<h2 is-upgraded>dbt_project.yml</h2>
+<ol type="1">
+<li>Select the <code>dbt_project.yml</code> file in the root directory the file explorer to open it. What are we looking at here? Every dbt project requires a <code>dbt_project.yml</code> file — this is how dbt knows a directory is a dbt project. The <a href="https://docs.getdbt.com/reference/dbt_project.yml" target="_blank">dbt_project.yml</a> file also contains important information that tells dbt how to operate on your project.</li>
+<li>Your code should as follows:<pre><code language="language-yaml" class="language-yaml">name: &#39;snowflake_python_workshop&#39;
+version: &#39;1.5.0&#39;
+require-dbt-version: &#39;&gt;=1.3.0&#39;
+config-version: 2
+
+# This setting configures which &#34;profile&#34; dbt uses for this project.
+profile: &#39;default&#39;
+
+# These configurations specify where dbt should look for different types of files.
+# The `source-paths` config, for example, states that models in this project can be
+# found in the &#34;models/&#34; directory. You probably won&#39;t need to change these!
+model-paths: [&#34;models&#34;]
+analysis-paths: [&#34;analyses&#34;]
+test-paths: [&#34;tests&#34;]
+seed-paths: [&#34;seeds&#34;]
+macro-paths: [&#34;macros&#34;]
+snapshot-paths: [&#34;snapshots&#34;]
+
+target-path: &#34;target&#34;  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+    - &#34;target&#34;
+    - &#34;dbt_packages&#34;
+
+models:
+    snowflake_python_workshop:
+    staging:
+        +docs:
+        node_color: &#34;CadetBlue&#34;
+
+    marts:
+        +materialized: table
+        aggregates:
+        +docs:
+            node_color: &#34;Maroon&#34;
+        +tags: &#34;bi&#34;
+
+    core:
+        +materialized: table
+        +docs:
+        node_color: &#34;#800080&#34;
+
+    ml:
+        +materialized: table
+        prep_encoding_splitting:
+        +docs:
+            node_color: &#34;Indigo&#34;
+        training_and_prediction:
+        +docs:
+            node_color: &#34;Black&#34;
+</code></pre>
+</li>
+<li>The key configurations to point out in the file with relation to the work that we&#39;re going to do are in the <code>models</code> section.<ul>
+<li><code>require-dbt-version</code> — Tells dbt which version of dbt to use for your project. We are requiring 1.3.0 and any newer version to run python models and node colors.</li>
+<li><code>materialized</code> — Tells dbt how to materialize models when compiling the code before it pushes it down to Snowflake. All models in the <code>marts</code> folder will be built as tables.</li>
+<li><code>tags</code> — Applies tags at a directory level to all models. All models in the <code>aggregates</code> folder will be tagged as <code>bi</code> (abbreviation for business intelligence).</li>
+</ul>
+</li>
+<li><a href="https://docs.getdbt.com/docs/build/materializations" target="_blank">Materializations</a> are strategies for persisting dbt models in a warehouse, with <code>tables</code> and <code>views</code> being the most commonly utilized types. By default, all dbt models are materialized as views and other materialization types can be configured in the <code>dbt_project.yml</code> file or in a model itself. It&#39;s very important to note <em>Python models can only be materialized as tables or incremental models.</em> Since all our Python models exist under <code>marts</code>, the following portion of our <code>dbt_project.yml</code> ensures no errors will occur when we run our Python models. Starting with <a href="https://docs.getdbt.com/guides/migration/versions/upgrading-to-v1.4#updates-to-python-models" target="_blank">dbt version 1.4</a>, Python files will automatically get materialized as tables even if not explicitly specified.<pre><code language="language-yaml" class="language-yaml">marts:     
+  +materialized: table
+</code></pre>
+</li>
+</ol>
+<p>Cool, now that dbt knows we have a dbt project we can view the folder structure and data modeling.</p>
+<h2 is-upgraded>Folder structure</h2>
+<p>dbt Labs has developed a <a href="https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview" target="_blank">project structure guide</a> that contains a number of recommendations for how to build the folder structure for your project. These apply to our entire project except the machine learning portion - this is still relatively new use case in dbt without the same established best practices.</p>
+<p>Do check out that guide if you want to learn more. Right now we are going to organize our project using the following structure:</p>
+<ul>
+<li>sources — This is our Formula 1 dataset and it will be defined in a source YAML file. Nested under our Staging folder.</li>
+<li>staging models — These models have a 1:1 with their source table and are for light transformation (renaming columns, recasting data types, etc.).</li>
+<li>core models — Fact and dimension tables available for end user analysis. Since the Formula 1 is pretty clean demo data these look similar to our staging models.</li>
+<li>marts models — Here is where we perform our major transformations. It contains the subfolder: <ul>
+<li>aggregates</li>
+</ul>
+</li>
+<li>ml : <ul>
+<li>prep_encoding_splitting</li>
+<li>training_and_prediction (we&#39;ll be creating this folder later — it doesn&#39;t exist yet )</li>
+</ul>
+</li>
+</ul>
+<p>Your folder structure should look like (make sure to expand some folders if necessary): <img alt="folder_structure" src="img/78f44c57173b1383.png"></p>
+<p>Remember you can always reference the entire project in <a href="https://github.com/dbt-labs/python-snowpark-formula1" target="_blank">GitHub</a> to view the complete folder and file strucutre.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data modeling: review sources and staging" duration="3">
+        <p>In any data project we follow the process of starting with raw data, cleaning and transforming it, and then gaining insights. In this step we&#39;ll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we&#39;ll only need to preview these files (instead of build them).</p>
+<p>Sources allow us to create a dependency between our source database object and our staging models which will help us when we look at <a href="https://docs.getdbt.com/terms/data-lineage" target="_blank">data-lineage</a> later. Also, if your source changes database or schema, you only have to update it in your <code>f1_sources.yml</code> file rather than updating all of the models it might be used in.</p>
+<p>Staging models are the base of our project, where we bring all the individual components we&#39;re going to use to build our more complex and useful models into the project. Staging models have a 1:1 relationship with their source table and are for light transformation steps such as renaming columns, type casting, basic computations, and categorizing data.</p>
+<p>Since we want to focus on dbt and Python in this workshop, check out our <a href="https://docs.getdbt.com/docs/build/sources" target="_blank">sources</a> and <a href="https://docs.getdbt.com/guides/best-practices/how-we-structure/2-staging" target="_blank">staging</a> docs if you want to learn more (or take our <a href="https://courses.getdbt.com/collections" target="_blank">dbt Fundamentals</a> course which covers all of our core functionality).</p>
+<h2 is-upgraded>Creating Sources</h2>
+<ol type="1">
+<li>Open the file called <code>f1_sources.yml</code> with the following file path: <code>models/staging/formula1/f1_sources.yml</code>.</li>
+<li>You should see the following code that creates our 14 source tables in our dbt project from Snowflake: <img alt="sources_f1" src="img/57ca4320ee556424.png"></li>
+<li>dbt makes it really easy to:<ul>
+<li>declare <a href="https://docs.getdbt.com/docs/build/sources" target="_blank">sources</a></li>
+<li>provide <a href="https://docs.getdbt.com/docs/build/tests" target="_blank">testing</a> for data quality and integrity with support for both generic and singular tests</li>
+<li>create <a href="https://docs.getdbt.com/docs/collaborate/documentation" target="_blank">documentation</a> using descriptions where you write code</li>
+</ul>
+</li>
+</ol>
+<p>Now that we are connected into our raw data let&#39;s do some light transformations in staging.</p>
+<h2 is-upgraded>Staging</h2>
+<ol type="1">
+<li>Let&#39;s view two staging models that we&#39;ll be using to understand lap time trends through the years.</li>
+<li>Open <code>stg_lap_times</code>.<pre><code language="language-sql" class="language-sql">with
+
+lap_times as (select * from &#123;&#123; source(&#39;formula1&#39;, &#39;lap_times&#39;) }}),
+
+renamed as (
+    select
+        race_id as race_id,
+        driver_id as driver_id,
+        lap,
+        &#34;POSITION&#34; as driver_position,
+        &#34;TIME&#34; as lap_time_formatted,
+        &#123;&#123; convert_laptime(&#34;lap_time_formatted&#34;) }} as official_laptime,
+        milliseconds as lap_time_milliseconds
+    from lap_times
+)
+select
+    &#123;&#123; dbt_utils.generate_surrogate_key([&#34;race_id&#34;, &#34;driver_id&#34;, &#34;lap&#34;]) }}
+    as lap_times_id,
+    *
+from renamed
+</code></pre>
+</li>
+<li>Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. Select <strong>&lt;/&gt; Compile</strong> once its finished view the <strong>Compiled Code tab</strong>. <img alt="compiled_jinja_lap_times" src="img/20b11391f4a4e6a4.png"></li>
+<li>Now click <strong>Preview</strong> — look how pretty and human readable our <code>official_laptime</code> column is!</li>
+<li>Feel free to view our project macros under the root folder <code>macros</code> and look at the code for our convert_laptime macro in the <code>convert_laptim.sql</code> file.</li>
+<li>We can see the reusable logic we have for splitting apart different components of our lap times from hours to nanoseconds. If you want to learn more about leveraging macros within dbt SQL, check out our <a href="https://docs.getdbt.com/docs/build/jinja-macros" target="_blank">macros documentation</a>.</li>
+</ol>
+<p>You can see for every source table, we have a staging table. Now that we&#39;re done staging our data it&#39;s time for transformation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SQL Transformations" duration="5">
+        <p>dbt got it&#39;s start in being a powerful tool to enhance the way data transformations are done in SQL. Before we jump into python, let&#39;s pay homage to SQL. <br> SQL is so performant at data cleaning and transformation, that many data science projects &#34;use SQL for everything you can, then hand off to python&#34; and that&#39;s exactly what we&#39;re going to do.</p>
+<h2 is-upgraded>Fact and dimension tables</h2>
+<p><a href="https://docs.getdbt.com/terms/dimensional-modeling" target="_blank">Dimensional modeling</a> is an important data modeling concept where we break up data into &#34;facts&#34; and &#34;dimensions&#34; to organize and describe data. We won&#39;t go into depth here, but think of facts as &#34;skinny and long&#34; transactional tables and dimensions as &#34;wide&#34; referential tables. We&#39;ll preview one dimension table and be building one fact table.</p>
+<ol type="1">
+<li>Create a new branch so we can build new models (our main branch is protected as read-only in dbt Cloud). Name your branch <code>snowpark-python-workshop</code>. <img alt="create_branch_dbt_cloud" src="img/9eed8daefaffe7d.png"><img alt="name_branch_dbt_cloud" src="img/e7b00560acf69c3e.png"></li>
+<li>Navigate in the file tree to <strong>models &gt; marts &gt; core &gt; dim_races</strong>.</li>
+<li><strong>Preview</strong> the data. We can see we have the <code>RACE_YEAR</code> in this table. That&#39;s important since we want to understand the changes in lap times over years. So we now know <code>dim_races</code> contains the time column we need to make those calculations.</li>
+<li>Create a new file within the <strong>core</strong> directory <strong>core &gt; ... &gt; Create file</strong>. <img alt="create_fct_file" src="img/b4037303972c0031.png"></li>
+<li>Name the file <code>fct_lap_times.sql</code>. <img alt="fct_lap_times" src="img/2af800b79cc63112.png"></li>
+<li>Copy in the following code and save the file (<strong>Save</strong> or Ctrl+S):<pre><code language="language-sql" class="language-sql">with lap_times as (
+    select 
+        &#123;&#123; dbt_utils.generate_surrogate_key([&#39;race_id&#39;, &#39;driver_id&#39;, &#39;lap&#39;]) }} as lap_times_id,
+        race_id                                                                 as race_id,
+        driver_id                                                               as driver_id,
+        lap                                                                     as lap,
+        driver_position                                                         as driver_position,
+        lap_time_formatted                                                      as lap_time_formatted,
+        official_laptime                                                        as official_laptime,
+        lap_time_milliseconds                                                   as lap_time_milliseconds
+    from &#123;&#123; ref(&#39;stg_lap_times&#39;) }}
+)
+select * from lap_times
+</code></pre>
+</li>
+<li>Our <code>fct_lap_times</code> is very similar to our staging file since this is clean demo data. In your real world data project your data will probably be messier and require extra filtering and aggregation prior to becoming a fact table exposed to your business users for utilizing.</li>
+<li>Use the UI <strong>Build</strong> (buttom with hammer icon) to create the <code>fct_lap_times</code> model. <img alt="dbt_build_fct_lap_times" src="img/513ba93c5304aa89.png"></li>
+</ol>
+<p>Now we have both <code>dim_races</code> and <code>fct_lap_times</code> separately. Next we&#39;ll to join these to create lap trend analysis through the years.</p>
+<h2 is-upgraded>Marts tables</h2>
+<p>Marts tables are where everything comes together to create our business-defined entities that have an identity and purpose. We&#39;ll be joining our <code>dim_races</code> and <code>fct_lap_times</code> together.</p>
+<ol type="1">
+<li>Create a new file under your <strong>marts</strong> folder called <code>mrt_lap_times_years.sql</code>.</li>
+<li>Copy and <strong>Save</strong> the following code: <pre><code language="language-sql" class="language-sql">with lap_times as (
+select * from &#123;&#123; ref(&#39;fct_lap_times&#39;) }}
+    ),
+    races as (
+    select * from &#123;&#123; ref(&#39;dim_races&#39;) }}
+    ),
+    expanded_lap_times_by_year as (
+        select 
+            lap_times.race_id, 
+            driver_id, 
+            race_year,
+            lap,
+            lap_time_milliseconds 
+        from lap_times
+        left join races
+            on lap_times.race_id = races.race_id
+        where lap_time_milliseconds is not null 
+    )
+    select * from expanded_lap_times_by_year
+</code></pre>
+</li>
+<li>Our dataset contains races going back to 1950, but the measurement of lap times begins in 1996. Here we join our datasets together use our <code>where</code> clause to filter our races prior to 1996, so they have lap times.</li>
+<li>Execute the model using <strong>Build</strong>.</li>
+<li><strong>Preview</strong> your new model. We have race years and lap times together in one joined table so we are ready to create our trend analysis.</li>
+<li>It&#39;s a good time to commit the 2 new models we created in our repository. Click <strong>Commit and sync</strong> and add a commit message. <img alt="commit_and_sync_fct_mrt" src="img/2241649065578087.png"><img alt="commit_message_fct_mrt" src="img/27a8269e64d11cd2.png"></li>
+</ol>
+<p>Now that we&#39;ve joined and denormalized our data we&#39;re ready to use it in python development.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Python development in snowflake python worksheets" duration="5">
+        <p>This step is optional for this quickstart to give a better feel for working with python directly in Snowflake. To see how to implement this in dbt Cloud, you may skip to the next section.</p>
+<p>Now that we&#39;ve transformed data using SQL let&#39;s write our first python code and get insights about lap time trends. Snowflake python worksheets are excellent for developing your python code before bringing it into a dbt python model. Then once we are settled on the code we want, we can drop it into our dbt project.</p>
+<p><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets" target="_blank">Python worksheets</a> in Snowflake are a dynamic and interactive environment for executing Python code directly within Snowflake&#39;s cloud data platform. They provide a seamless integration between Snowflake&#39;s powerful data processing capabilities and the versatility of Python as a programming language. With Python worksheets, users can easily perform data transformations, analytics, and visualization tasks using familiar Python libraries and syntax, all within the Snowflake ecosystem. These worksheets enable data scientists, analysts, and developers to streamline their workflows, explore data in real-time, and derive valuable insights from their Snowflake data.</p>
+<ol type="1">
+<li>Head back over <strong>to Snowflake</strong>.</li>
+<li>Open up a <strong>Python Worksheet</strong>. The boilerplate example code when you first create a Python worksheet is fetching <code>information_schema.packages</code> available, filtering on column <code>language = ‘python'</code>, and returning that as dataframe, which is what gets shown in result (next step). <img alt="create_python_worksheet" src="img/39f8d6baf023bbf9.png"><img alt="new_python_worksheet_boilerplate_example_code" src="img/3d78ea549e537c25.png"></li>
+<li>Ensure you are in your development database and schema (i.e. <strong>PC_DBT_DB</strong> and <strong>DBT_HWATSON</strong>) and run the Python worksheet (Ctrl+A and <strong>Run</strong>). The query results represent the many (about 5,400) packages snowpark for python supports that you can leverage! <img alt="python_worksheet_db_schema" src="img/ccc3fac9188051ae.png"><img alt="results_of_new_python_worksheet_boilerplate_example_code" src="img/feefb0ec71cb0c61.png"></li>
+<li>Delete the sample boilerplate code in the new python worksheet. Copy the following code into the python worksheet to get a 5 year moving average of Formula 1 laps:<pre><code language="language-python" class="language-python"># The Snowpark package is required for Python Worksheets. 
+# You can add more packages by selecting them using the Packages control and then importing them.
+
+import snowflake.snowpark as snowpark
+import pandas as pd 
+
+def main(session: snowpark.Session): 
+    # Your code goes here, inside the &#34;main&#34; handler.
+    tableName = &#39;MRT_LAP_TIMES_YEARS&#39;
+    dataframe = session.table(tableName)
+    lap_times = dataframe.to_pandas()
+
+    # print table
+    print(lap_times)
+
+    # describe the data
+    lap_times[&#34;LAP_TIME_SECONDS&#34;] = lap_times[&#34;LAP_TIME_MILLISECONDS&#34;]/1000
+    lap_time_trends = lap_times.groupby(by=&#34;RACE_YEAR&#34;)[&#34;LAP_TIME_SECONDS&#34;].mean().to_frame()
+    lap_time_trends.reset_index(inplace=True)
+    lap_time_trends[&#34;LAP_MOVING_AVG_5_YEARS&#34;] = lap_time_trends[&#34;LAP_TIME_SECONDS&#34;].rolling(5).mean()
+    lap_time_trends.columns = lap_time_trends.columns.str.upper()
+
+    final_df = session.create_dataframe(lap_time_trends)
+    # Return value will appear in the Results tab.
+    return final_df
+</code></pre>
+</li>
+</ol>
+<p>If you have workloads that have large memory requirements such as deep learning models consider using <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes" target="_blank">Snowpark dataframes</a> and <a href="https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized" target="_blank">Snowpark-optimized warehouses</a> that are specifically engineered to handle these types of compute intensive workloads!</p>
+<ol type="1" start="5">
+<li>Your result should have three columns: <code>race_year</code>, <code>lap_time_seconds</code>, and <code>lap_moving_avg_5_years</code>. <img alt="chart_5yr_lap_time_avg" src="img/e081d1aa2fef5246.png"></li>
+</ol>
+<p>We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. Clicking on the <strong>Chart</strong> button next to <strong>Results</strong>, we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 <a href="https://en.wikipedia.org/wiki/History_of_Formula_One_regulations" target="_blank">regulation changes</a> including cost-cutting measures and in-race refueling bans. So we can safely ascertain lap times are not consistently decreasing.</p>
+<p>Now that we&#39;ve created this dataframe and lap time trend insight, what do we do when we want to scale it? In the next section we&#39;ll be learning how to do this by leveraging python transformations in dbt Cloud.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Python transformations in dbt Cloud" duration="2">
+        <h2 is-upgraded>Our first dbt python model for lap time trends</h2>
+<p>Let&#39;s get our lap time trends in our data pipeline so we have this data frame to leverage as new data comes in. The syntax of of a dbt python model is a variation of our development code in the python worksheet so we&#39;ll be explaining the code and concepts more.</p>
+<p>You might be wondering: How does this work? <br> Or more specifically: How is dbt able to send a python command over to a Snowflake runtime executing python? <br></p>
+<p>At a high level, dbt executes python models as stored procedures in Snowflake, via Snowpark for python.</p>
+<p><strong>Snowpark for python and dbt python architecture:</strong><img alt="architecture_diagram" src="img/edfc3718c05f52b.svg"></p>
+<ol type="1">
+<li>Open your dbt Cloud browser tab.</li>
+<li>Create a new file under the <strong>models &gt; marts &gt; aggregates</strong> directory called <code>agg_lap_times_moving_avg.py</code>.</li>
+<li>Copy the following code in and <strong>Save</strong> the file: <pre><code language="language-python" class="language-python">import pandas as pd
+
+def model(dbt, session):
+    # dbt configuration
+    dbt.config(packages=[&#34;pandas&#34;])
+
+    # get upstream data
+    lap_times = dbt.ref(&#34;mrt_lap_times_years&#34;).to_pandas()
+
+    # describe the data
+    lap_times[&#34;LAP_TIME_SECONDS&#34;] = lap_times[&#34;LAP_TIME_MILLISECONDS&#34;]/1000
+    lap_time_trends = lap_times.groupby(by=&#34;RACE_YEAR&#34;)[&#34;LAP_TIME_SECONDS&#34;].mean().to_frame()
+    lap_time_trends.reset_index(inplace=True)
+    lap_time_trends[&#34;LAP_MOVING_AVG_5_YEARS&#34;] = lap_time_trends[&#34;LAP_TIME_SECONDS&#34;].rolling(5).mean()
+    lap_time_trends.columns = lap_time_trends.columns.str.upper()
+
+    return lap_time_trends.round(1)
+</code></pre>
+</li>
+<li>Let&#39;s break down what this code is doing:</li>
+</ol>
+<ul>
+<li>First, we are importing the Python libraries that we are using. This is similar to a dbt <em>package</em>, but our Python libraries do <em>not</em> persist across the entire project.</li>
+<li>Defining a function called <code>model</code> with the parameter <code>dbt</code> and <code>session</code>. We&#39;ll define these more in depth later in this section. You can see that all the data transformation happening is within the body of the <code>model</code> function that the <code>return</code> statement is tied to.</li>
+<li>Then, within the context of our dbt model library, we are passing in a configuration of which packages we need using <code>dbt.config(packages=["pandas"])</code>.</li>
+<li>Use the <code>.ref()</code> function to retrieve the upstream data frame <code>mrt_lap_times_years</code> that we created in our last step using SQL. We cast this to a pandas dataframe (by default it&#39;s a Snowpark Dataframe).</li>
+<li>From there we are using python to transform our dataframe to give us a rolling average by using <code>rolling()</code> over <code>RACE_YEAR</code>.</li>
+<li>Convert our Python column names to all uppercase using <code>.upper()</code>, so Snowflake recognizes them. <strong>This has been a frequent &#34;gotcha&#34; for folks using dbt python so we call it out here.</strong> We won&#39;t go as in depth for our subsequent scripts, but will continue to explain at a high level what new libraries, functions, and methods are doing.</li>
+</ul>
+<ol type="1" start="5">
+<li>Create the model in our warehouse by clicking <strong>Build</strong>.</li>
+<li>We can&#39;t preview Python models directly, so let&#39;s open a new file using the <strong>+</strong> button or the Control-N shortcut to create a new scratchpad:<pre><code language="language-sql" class="language-sql">select * from &#123;&#123; ref(&#39;agg_lap_times_moving_avg&#39;) }}
+</code></pre>
+</li>
+<li><strong>Preview</strong> the output. It should look the same as our snowflake python worksheet: <img alt="preview_agg_lap_times_scratchpad" src="img/f5c3a447d6f9af1f.png"></li>
+<li>We can see we have the same results from our python worksheet development as we have in our codified dbt python project.</li>
+</ol>
+<h2 is-upgraded>The dbt model, .source(), .ref() and .config() functions</h2>
+<p>Let&#39;s take a step back before starting machine learning to both review and go more in-depth at the methods that make running dbt python models possible. If you want to know more outside of this lab&#39;s explanation read the documentation on Python models <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models" target="_blank">here</a>.</p>
+<ul>
+<li>def model(dbt, session). For starters, each Python model lives in a .py file in your models/ folder. It defines a function named <code>model()</code>, which takes two parameters: <ul>
+<li>dbt — A class compiled by dbt Core, unique to each model, enables you to run your Python code in the context of your dbt project and DAG.</li>
+<li>session — A class representing your data platform&#39;s connection to the Python backend. The session is needed to read in tables as DataFrames and to write DataFrames back to tables. In PySpark, by convention, the SparkSession is named spark, and available globally. For consistency across platforms, we always pass it into the model function as an explicit argument called session.</li>
+</ul>
+</li>
+<li>The <code>model()</code> function must return a single DataFrame. On Snowpark (Snowflake), this can be a Snowpark or pandas DataFrame.</li>
+<li><code>.source()</code> and <code>.ref()</code> functions. Python models participate fully in dbt&#39;s directed acyclic graph (DAG) of transformations. If you want to read directly from a raw source table, use <code>dbt.source()</code>. We saw this in our earlier section using SQL with the source function. These functions have the same execution, but with different syntax. Use the <code>dbt.ref()</code> method within a Python model to read data from other models (SQL or Python). These methods return DataFrames pointing to the upstream source, model, seed, or snapshot.</li>
+<li><code>.config()</code>. Just like SQL models, there are three ways to configure Python models: <ul>
+<li>In a dedicated <code>.yml</code> file, within the <code>models/</code> directory</li>
+<li>Within the model&#39;s <code>.py</code> file, using the <code>dbt.config()</code> method</li>
+<li>Calling the <code>dbt.config()</code> method will set configurations for your model within your <code>.py</code> file, similar to the <code>&#123;&#123; config() }} macro</code> in <code>.sql</code> model files. There&#39;s a limit to how complex you can get with the <code>dbt.config()</code> method. It accepts only literal values (strings, booleans, and numeric types). Passing another function or a more complex data structure is not possible. The reason is that dbt statically analyzes the arguments to <code>.config()</code> while parsing your model without executing your Python code. If you need to set a more complex configuration, we recommend you define it using the config property in a <a href="https://docs.getdbt.com/reference/resource-properties/config" target="_blank">YAML file</a>. Learn more about configurations <a href="https://docs.getdbt.com/reference/model-configs" target="_blank">here</a>. <pre><code language="language-python" class="language-python">def model(dbt, session):
+
+# setting configuration
+dbt.config(materialized=&#34;table&#34;)
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<ol type="1" start="9">
+<li><strong>Commit and sync</strong> so our project contains our <code>agg_lap_times_moving_avg.py</code> model, add a commit message and <strong>Commit changes</strong>.</li>
+</ol>
+<p>Now that we understand how to create python transformations we can use them to prepare train machine learning models and generate predictions!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Machine Learning: training and prediction" duration="8">
+        <p>In upstream parts of our data lineage we had dedicated steps and data models to cleaning, encoding, and splitting out the data into training and testing datasets. We do these steps to ensure:</p>
+<ul>
+<li>We have features for prediction and the predictions aren&#39;t erroneous (we filtered our drivers that weren&#39;t active drivers present at 2020) — review <code>ml_data_prep.py</code></li>
+<li>Representing (encoding) non-numerical data such as categorical and text variables as numbers — review <code>covariate_encoding.py</code></li>
+<li>Splitting our data into a training and testing set and a hold out set — review <code>training_testing_dataset.py</code> and <code>hold_out_dataset_for_prediction.py</code></li>
+</ul>
+<p>There are 3 areas to break down as we go since we are working at the intersection all within one model file:</p>
+<ol type="1">
+<li>Machine Learning</li>
+<li>Snowflake and Snowpark</li>
+<li>dbt Python models</li>
+</ol>
+<h2 is-upgraded>Training and saving a machine learning model</h2>
+<ol type="1">
+<li>Project organization remains key, under the <code>ml</code> folder make a new subfolder called <code>training_and_prediction</code>.</li>
+<li>Now create a new file called <code>train_model_to_predict_position.py</code><img alt="preview-create_train_model_file-test-position" src="img/7513334945c5e374.png"></li>
+<li>Copy and save the following code (make sure copy all the way to the right). You can also copy it from our demo repo by <a href="https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/models/ml/training_and_prediction/train_model_to_predict_position.py" target="_blank">clicking on this link</a> and using Ctrl/Cmd+A.<pre><code language="language-python" class="language-python">import snowflake.snowpark.functions as F
+from sklearn.model_selection import train_test_split
+import pandas as pd
+from sklearn.metrics import confusion_matrix, balanced_accuracy_score
+import io
+from sklearn.linear_model import LogisticRegression
+from joblib import dump, load
+import joblib
+import logging
+import sys
+from joblib import dump, load
+
+logger = logging.getLogger(&#34;mylog&#34;)
+
+def save_file(session, model, path, dest_filename):
+    input_stream = io.BytesIO()
+    joblib.dump(model, input_stream)
+    session._conn.upload_stream(input_stream, path, dest_filename)
+    return &#34;successfully created file: &#34; + path
+
+def model(dbt, session):
+    dbt.config(
+        packages = [&#39;numpy&#39;,&#39;scikit-learn&#39;,&#39;pandas&#39;,&#39;numpy&#39;,&#39;joblib&#39;,&#39;cachetools&#39;],
+        materialized = &#34;table&#34;,
+        tags = &#34;train&#34;
+    )
+    # Create a stage in Snowflake to save our model file
+    session.sql(&#39;create or replace stage MODELSTAGE&#39;).collect()
+
+    #session._use_scoped_temp_objects = False
+    version = &#34;1.0&#34;
+    logger.info(&#39;Model training version: &#39; + version)
+
+    # read in our training and testing upstream dataset
+    test_train_df = dbt.ref(&#34;training_testing_dataset&#34;)
+
+    #  cast snowpark df to pandas df
+    test_train_pd_df = test_train_df.to_pandas()
+    target_col = &#34;POSITION_LABEL&#34;
+
+    # split out covariate predictors, x, from our target column position_label, y.
+    split_X = test_train_pd_df.drop([target_col], axis=1)
+    split_y = test_train_pd_df[target_col]
+
+    # Split out our training and test data into proportions
+    X_train, X_test, y_train, y_test  = train_test_split(split_X, split_y, train_size=0.7, random_state=42)
+    train = [X_train, y_train]
+    test = [X_test, y_test]
+        # now we are only training our one model to deploy
+    # we are keeping the focus on the workflows and not algorithms for this lab!
+    model = LogisticRegression()
+
+    # fit the preprocessing pipeline and the model together 
+    model.fit(X_train, y_train)   
+    y_pred = model.predict_proba(X_test)[:,1]
+    predictions = [round(value) for value in y_pred]
+    balanced_accuracy =  balanced_accuracy_score(y_test, predictions)
+
+    # Save the model to a stage
+    save_file(session, model, &#34;@MODELSTAGE/driver_position_&#34;+version, &#34;driver_position_&#34;+version+&#34;.joblib&#34; )
+    logger.info(&#39;Model artifact:&#39; + &#34;@MODELSTAGE/driver_position_&#34;+version+&#34;.joblib&#34;)
+
+    # Take our pandas training and testing dataframes and put them back into snowpark dataframes
+    snowpark_train_df = session.write_pandas(pd.concat(train, axis=1, join=&#39;inner&#39;), &#34;train_table&#34;, auto_create_table=True, create_temp_table=True)
+    snowpark_test_df = session.write_pandas(pd.concat(test, axis=1, join=&#39;inner&#39;), &#34;test_table&#34;, auto_create_table=True, create_temp_table=True)
+
+    # Union our training and testing data together and add a column indicating train vs test rows
+    return  snowpark_train_df.with_column(&#34;DATASET_TYPE&#34;, F.lit(&#34;train&#34;)).union(snowpark_test_df.with_column(&#34;DATASET_TYPE&#34;, F.lit(&#34;test&#34;)))
+</code></pre>
+</li>
+<li>Use the UI <strong>Build</strong> our <code>train_model_to_predict_position</code> model.</li>
+<li>Breaking down our Python script:</li>
+</ol>
+<ul>
+<li>We&#39;re importing some helpful libraries. <ul>
+<li>Defining a function called <code>save_file()</code> that takes four parameters: <code>session</code>, <code>model</code>, <code>path</code> and <code>dest_filename</code> that will save our logistic regression model file. <ul>
+<li><code>session</code> — an object representing a connection to Snowflake.</li>
+<li><code>model</code> — when models are trained they are saved in memory, we will be using the model name to save our in-memory model into a joblib file to retrieve to call new predictions later.</li>
+<li><code>path</code> — a string representing the directory or bucket location where the file should be saved.</li>
+<li><code>dest_filename</code> — a string representing the desired name of the file.</li>
+</ul>
+</li>
+<li>Creating our dbt model <ul>
+<li>Within this model we are creating a stage called <code>MODELSTAGE</code> to place our logistic regression <code>joblib</code> model file. This is really important since we need a place to keep our model to reuse and want to ensure it&#39;s there. When using Snowpark commands, it&#39;s common to see the <code>.collect()</code> method to ensure the action is performed. Think of the session as our &#34;start&#34; and collect as our &#34;end&#34; when <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">working with Snowpark</a> (you can use other ending methods other than collect).</li>
+<li>Using <code>.ref()</code> to connect into our <code>training_and_test_dataset</code> model.</li>
+<li>Now we see the machine learning part of our analysis: <ul>
+<li>Create new dataframes for our prediction features from our target variable <code>position_label</code>.</li>
+<li>Split our dataset into 70% training (and 30% testing), train_size=0.7 with a <code>random_state</code> specified to have repeatable results.</li>
+<li>Specify our model is a logistic regression.</li>
+<li>Fit our model. In a logistic regression this means finding the coefficients that will give the least classification error.</li>
+<li>Round our predictions to the nearest integer since logistic regression creates a probability between for each class and calculate a balanced accuracy to account for imbalances in the target variable.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Right now our model is only in memory, so we need to use our nifty function <code>save_file</code> to save our model file to our Snowflake stage. We save our model as a joblib file so Snowpark can easily call this model object back to create predictions. We really don&#39;t need to know much else as a data practitioner unless we want to. It&#39;s worth noting that joblib files aren&#39;t able to be queried directly by SQL. To do this, we would need to transform the joblib file to an SQL queryable format such as JSON or CSV (out of scope for this workshop).</li>
+<li>Finally we want to return our dataframe, but create a new column indicating what rows were used for training and those for training.</li>
+</ul>
+</li>
+</ul>
+<ol type="1" start="6">
+<li>Viewing our output of this model: <img alt="preview-train-test-position" src="img/fb657c26a775a4e8.png"></li>
+<li>Let&#39;s pop back over to Snowflake. To check that our logistic regression model has been stored in our <code>MODELSTAGE</code> open a <strong>SQL Worksheet</strong> and use the query below to list objects in your modelstage. Make sure you are in the correct database and development schema to view your stage (this should be <code>PC_DBT_DB</code> and your dev schema - for example <code>dbt_hwatson</code>).<pre><code language="language-sql" class="language-sql">list @modelstage
+</code></pre>
+</li>
+</ol>
+<p class="image-container"><img alt="list-snowflake-stage" src="img/43d81fe76a22e9d.png"></p>
+<ol type="1" start="8">
+<li>To investigate the commands run as part of <code>train_model_to_predict_position.py</code> script, navigate to Snowflake query history to view it <strong>Home button &gt; Activity &gt; Query History</strong>. We can view the portions of query that we wrote such as <code>create or replace stage MODELSTAGE</code>, but we also see additional queries that Snowflake uses to interpret python code. <img alt="view-snowflake-query-history" src="img/df943badc343e5e7.png"></li>
+</ol>
+<p>Let&#39;s use our new trained model to create predictions!</p>
+<h2 is-upgraded>Predicting on new data</h2>
+<p>It&#39;s time to use that 2020 data we held out to make predictions on!</p>
+<ol type="1">
+<li>Create a new file under <code>ml/training_and_prediction</code> called <code>apply_prediction_to_position.py</code> and copy and save the following code (You can also copy it from our demo repo by <a href="https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/models/ml/training_and_prediction/apply_prediction_to_position.py" target="_blank">clicking on this link</a> and using Ctrl/Cmd+A.):<pre><code language="language-python" class="language-python">import logging
+import joblib
+import pandas as pd
+import os
+from snowflake.snowpark import types as T
+
+DB_STAGE = &#39;MODELSTAGE&#39;
+version = &#39;1.0&#39;
+# The name of the model file
+model_file_path = &#39;driver_position_&#39;+version
+model_file_packaged = &#39;driver_position_&#39;+version+&#39;.joblib&#39;
+
+# This is a local directory, used for storing the various artifacts locally
+LOCAL_TEMP_DIR = f&#39;/tmp/driver_position&#39;
+DOWNLOAD_DIR = os.path.join(LOCAL_TEMP_DIR, &#39;download&#39;)
+TARGET_MODEL_DIR_PATH = os.path.join(LOCAL_TEMP_DIR, &#39;ml_model&#39;)
+TARGET_LIB_PATH = os.path.join(LOCAL_TEMP_DIR, &#39;lib&#39;)
+
+# The feature columns that were used during model training
+# and that will be used during prediction
+FEATURE_COLS = [
+        &#34;RACE_YEAR&#34;
+        ,&#34;RACE_NAME&#34;
+        ,&#34;GRID&#34;
+        ,&#34;CONSTRUCTOR_NAME&#34;
+        ,&#34;DRIVER&#34;
+        ,&#34;DRIVERS_AGE_YEARS&#34;
+        ,&#34;DRIVER_CONFIDENCE&#34;
+        ,&#34;CONSTRUCTOR_RELAIBLITY&#34;
+        ,&#34;TOTAL_PIT_STOPS_PER_RACE&#34;]
+
+def register_udf_for_prediction(p_predictor ,p_session ,p_dbt):
+
+    # The prediction udf
+
+    def predict_position(p_df: T.PandasDataFrame[int, int, int, int,
+                                        int, int, int, int, int]) -&gt; T.PandasSeries[int]:
+        # Snowpark currently does not set the column name in the input dataframe
+        # The default col names are like 0,1,2,... Hence we need to reset the column
+        # names to the features that we initially used for training.
+        p_df.columns = [*FEATURE_COLS]
+
+        # Perform prediction. this returns an array object
+        pred_array = p_predictor.predict(p_df)
+        # Convert to series
+        df_predicted = pd.Series(pred_array)
+        return df_predicted
+
+    # The list of packages that will be used by UDF
+    udf_packages = p_dbt.config.get(&#39;packages&#39;)
+
+    predict_position_udf = p_session.udf.register(
+        predict_position
+        ,name=f&#39;predict_position&#39;
+        ,packages = udf_packages
+    )
+    return predict_position_udf
+
+def download_models_and_libs_from_stage(p_session):
+    p_session.file.get(f&#39;@{DB_STAGE}/{model_file_path}/{model_file_packaged}&#39;, DOWNLOAD_DIR)
+
+def load_model(p_session):
+    # Load the model and initialize the predictor
+    model_fl_path = os.path.join(DOWNLOAD_DIR, model_file_packaged)
+    predictor = joblib.load(model_fl_path)
+    return predictor
+
+# -------------------------------
+def model(dbt, session):
+    dbt.config(
+        packages = [&#39;snowflake-snowpark-python&#39; ,&#39;scipy&#39;,&#39;scikit-learn&#39; ,&#39;pandas&#39; ,&#39;numpy&#39;],
+        materialized = &#34;table&#34;,
+        tags = &#34;predict&#34;
+    )
+    session._use_scoped_temp_objects = False
+    download_models_and_libs_from_stage(session)
+    predictor = load_model(session)
+    predict_position_udf = register_udf_for_prediction(predictor, session ,dbt)
+
+    # Retrieve the data, and perform the prediction
+    hold_out_df = (dbt.ref(&#34;hold_out_dataset_for_prediction&#34;)
+        .select(*FEATURE_COLS)
+    )
+    trained_model_file = dbt.ref(&#34;train_model_to_predict_position&#34;)
+
+    # Perform prediction.
+    new_predictions_df = hold_out_df.withColumn(&#34;position_predicted&#34;
+        ,predict_position_udf(*FEATURE_COLS)
+    )
+
+    return new_predictions_df
+</code></pre>
+</li>
+<li>Use the UI Build our <code>apply_prediction_to_position</code> model.</li>
+<li><strong>Commit and sync</strong> our changes to keep saving our work as we go using the commit message <code>logistic regression model training and application</code> before moving on. <img alt="commit_training_and_prediction" src="img/d41eeca7b6cd6a31.png"><img alt="commit_message_training_and_prediction" src="img/57837a4b6e3ed101.png"></li>
+<li>At a high level in this script, we are:</li>
+</ol>
+<ul>
+<li>Retrieving our staged logistic regression model</li>
+<li>Loading the model in</li>
+<li>Placing the model within a user defined function (UDF) to call in line predictions on our driver&#39;s position</li>
+</ul>
+<ol type="1" start="5">
+<li>At a more detailed level:</li>
+</ol>
+<ul>
+<li>Import our libraries.</li>
+<li>Create variables to reference back to the <code>MODELSTAGE</code> we just created and stored our model to.</li>
+<li>The temporary file paths we created might look intimidating, but all we&#39;re doing here is programmatically using an initial file path and adding to it to create the following directories: <ul>
+<li>LOCAL_TEMP_DIR ➡️ /tmp/driver_position</li>
+<li>DOWNLOAD_DIR ➡️ /tmp/driver_position/download</li>
+<li>TARGET_MODEL_DIR_PATH ➡️ /tmp/driver_position/ml_model</li>
+<li>TARGET_LIB_PATH ➡️ /tmp/driver_position/lib</li>
+</ul>
+</li>
+<li>Provide a list of our feature columns that we used for model training and will now be used on new data for prediction.</li>
+<li>Next, we are creating our main function <code>register_udf_for_prediction(p_predictor ,p_session ,p_dbt):</code>. This function is used to register a user-defined function (UDF) that performs the machine learning prediction. It takes three parameters: <code>p_predictor</code> is an instance of the machine learning model, <code>p_session</code> is an instance of the Snowflake session, and <code>p_dbt</code> is an instance of the dbt library. The function creates a UDF named <code>predict_position</code> which takes a pandas dataframe with the input features and returns a pandas series with the predictions.</li>
+<li>⚠️ Pay close attention to the whitespace here. We are using a function within a function for this script.</li>
+<li>We have 2 simple functions that are programmatically retrieving our file paths to first get our stored model out of our <code>MODELSTAGE</code> and downloaded into the session <code>download_models_and_libs_from_stage</code> and then to load the contents of our model in (parameters) in <code>load_model</code> to use for prediction.</li>
+<li>Take the model we loaded in and call it <code>predictor</code> and wrap it in a UDF.</li>
+<li>Return our dataframe with both the features used to predict and the new label.</li>
+</ul>
+<p>🧠 Another way to read this script is from the bottom up. This can help us progressively see what is going into our final dbt model and work backwards to see how the other functions are being referenced.</p>
+<ol type="1" start="6">
+<li>Let&#39;s take a look at our predicted position alongside our feature variables. Open a new scratchpad and use the following query. I chose to order by the prediction of who would obtain a podium position: <pre><code language="language-sql" class="language-sql">select * from &#123;&#123; ref(&#39;apply_prediction_to_position&#39;) }} order by position_predicted
+</code></pre>
+</li>
+</ol>
+<p class="image-container"><img alt="preview_predicted_position" src="img/8e6b3be4e7e109bb.png"></p>
+<p>We can see that we created predictions in our final dataset for each result.</p>
+<ol type="1" start="7">
+<li>Run a fresh <code>dbt build</code> in the command bar to ensure our pipeline is working end to end. This will take a few minutes, (3 minutes and 2.4 seconds to be exact) so it&#39;s not a bad time to stretch (we know programmers slouch). This runtime is pretty performant since we&#39;re using an X-Smalll warehouse. If you want to speed up the pipeline, you can increase the <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">warehouse size</a> (good for SQL) or use a <a href="https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized" target="_blank">Snowpark-optimized Warehouses</a> (good for Python) <img alt="fresh_dbt_build_full_pipeline" src="img/b5e3c30739f2b121.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pipeline Deployment" duration="5">
+        <h2 is-upgraded>Committing all development work</h2>
+<p>Before we jump into deploying our code, let&#39;s have a quick primer on environments. Up to this point, all of the work we&#39;ve done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we&#39;ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch, allows us to separate our code from what other coworkers are building and code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of a Git branch and Snowflake database objects form our environment.</p>
+<p>Now that we&#39;ve completed applying prediction, we&#39;re ready to deploy our code from our development environment to our production environment and this involves two steps:</p>
+<ul>
+<li>Promoting code from our feature branch to the production branch in our repository. <ul>
+<li>Generally, the production branch is going to be named your main branch and there&#39;s a review process to go through before merging code to the main branch of a repository. Here we are going to merge without review for ease of this workshop.</li>
+</ul>
+</li>
+<li>Deploying code to our production environment. <ul>
+<li>Once our code is merged to the main branch, we&#39;ll need to run dbt in our production environment to build all of our models and run all of our tests. This will allow us to build production-ready objects into our production environment in Snowflake. Luckily for us, the Partner Connect flow has already created our deployment environment and job to facilitate this step.</li>
+</ul>
+</li>
+</ul>
+<ol type="1">
+<li>Before getting started, let&#39;s make sure that we&#39;ve committed all of our work to our feature branch. Our working branch,<code>snowpark-python-workshop</code>, should be clean. If for some reason you do still have work to commit, you&#39;ll be able to select the <strong>Commit and sync</strong>, provide a message, and then select <strong>Commit changes</strong> again.</li>
+<li>Once all of your work is committed, the git workflow button will now appear as <strong>Create pull request</strong>. <img alt="create_pull_request_dbt_cloud_button" src="img/eca85478d867274c.png"></li>
+<li>This will bring you to your GitHub repo. This will show the commits that encompass all changes made since the last pull request. Since we only added new files we are able to merge into <code>main</code> without conflicts.  Click <strong>Create pull request</strong>. <img alt="review_commits_create_pull_request" src="img/39bb92c086bc2dd0.png"></li>
+<li>This goes to a <strong>Open a pull request</strong> page. Usually, when merging in a pull request (PR) we would create descriptions and motivations for the work being completed, validation our models work (like a fresh dbt build), and note changes to exisiting models (we only created new models and didn&#39;t alter existing ones). Then typically your teammates will review, comment, and independently test out the code on your branch. dbt has created a <a href="https://docs.getdbt.com/blog/analytics-pull-request-template" target="_blank">pull request template</a> to make PRs as efficient and scalable to your analytics workflow.</li>
+</ol>
+<p>The template is also located in our root directory under <code>.github</code> in the file <code>pull_request_template.md</code>. When a PR is opened, the template will automatically be pulled in for you to fill out. For the workshop we&#39;ll do an abbreviated version of this for example. If you&#39;d like you can just add a quick comment followed by <strong>Merge pull request</strong> since we&#39;re doing a workshop in an isolated Snowflake trial account (and won&#39;t break anything).</p>
+<p>Our abbreviated PR template written markdown: <img alt="pr_template_writen_markdown" src="img/a51d1e3169ed08a6.png"></p>
+<p>PR preview: <img alt="pr_template_preview" src="img/18dfc8a27c964057.png"></p>
+<ol type="1" start="5">
+<li>Our PR is looking good. Let&#39;s <strong>Merge pull request</strong>. <img alt="merge_pr_github" src="img/f20f5ca91e1b9271.png"></li>
+<li>Then click <strong>Confirm merge</strong>. <img alt="confirm_merge_github" src="img/71f073c982d9a25.png"></li>
+<li>It&#39;s best practice to keep your repo clean by deleting your working branch once merged into main. You can always restore it later, for now <strong>Delete Branch</strong>. We&#39;re all done in GitHub for today! <img alt="delete_branch_github" src="img/ae5f865976e9fa98.png"></li>
+<li>Head back over to your dbt Cloud browser tab. Under <strong>Version Control</strong> select <strong>Pull from &#34;main&#34;</strong>. If you don&#39;t see this, refresh your browser tab and it should appear. <img alt="pull_from_main_dbt_cloud.png" src="img/f63d3867880d587d.png"></li>
+<li>Select <strong>Change branch</strong> to your <strong>main</strong> branch that now appears as (ready-only). <img alt="change_branch_dbt_cloud.png" src="img/5655204e25c2ff1d.png"><img alt="change_to_main.png" src="img/bff70b607fce15ba.png"><img alt="checkout_main_branch.png" src="img/9c978a99a62fde33.png"></li>
+<li>Finally, to bring our changes from our <code>main</code> branch in GitHub, select <strong>Pull from remote</strong><img alt="pull_from_remote_dbt_cloud" src="img/eb0eaf28d9818221.png"></li>
+<li>Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.</li>
+<li>In the menu, select <strong>Deploy &gt; Environments</strong><img alt="deploy_environments_ui" src="img/a04855b51c8c1b68.png"></li>
+</ol>
+<h2 is-upgraded>Setting your production schema</h2>
+<ol type="1">
+<li>You should see two environments listed and you&#39;ll want to select the <strong>Deployment</strong> environment then <strong>Settings</strong> to modify it.</li>
+<li>Before making any changes, let&#39;s touch on what is defined within this environment. The Snowflake connection shows the credentials that dbt Cloud is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our <code>PC_DBT_DB</code> database and use the default Partner Connect role and warehouse to do so. The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we&#39;ve been using as the schema for our development environment.</li>
+<li>Let&#39;s update the schema to create a new schema specifically for our production environment. Click <strong>Edit</strong> to allow you to modify the existing field values. Navigate to <strong>Deployment Credentials &gt; schema.</strong></li>
+<li>Update the schema name to <strong>production</strong>. Remember to select <strong>Save</strong> after you&#39;ve made the change. <img alt="name_production_schema" src="img/dff4a716e521e38f.png"></li>
+<li>By updating the schema for our production environment to <strong>production</strong>, it ensures that our deployment job for this environment will build our dbt models in the <strong>production</strong> schema within the <code>PC_DBT_DB</code> database as defined in the Snowflake Connection section.</li>
+</ol>
+<h2 is-upgraded>Creating multiple jobs</h2>
+<p>In machine learning you rarely want to retrain your model as often as you want new predictions. Model training is compute intensive and requires person time for development and evaluation, while new predictions can run through an existing model to gain insights about drivers, customers, events, etc. This problem can be tricky, but dbt Cloud makes it easy by: automatically creating dependencies from your code and making setup for environments and jobs simple.</p>
+<p>With this in mind we&#39;re going to have two jobs:</p>
+<ul>
+<li>One job that initially builds or retrains our machine learning model. This job will run all the models in our project, and was already created through partner connect.</li>
+<li>Another job that focuses on creating predictions from the existing machine learning model. This job will exclude model training by using syntax to exclude running <code>train_model_to_predict_position.py</code>. This second job requires that you have already created a trained model in a previous run and that it is in your MODELSTAGE area.</li>
+</ul>
+<ol type="1">
+<li>Let&#39;s look at over to our production job created by partner connect. Click on the deploy tab again and then select <strong>Jobs</strong>. <img alt="deploy_jobs_ui" src="img/51d274a8a2afe375.png"> You should see an existing and preconfigured <strong>Partner Connect Trial Job</strong>. <img alt="pc_default_job" src="img/44a71dc26bd4558f.png"></li>
+<li>Similar to the environment, click on the job, then select <strong>Settings</strong> to modify it. Let&#39;s take a look at the job to understand it before making changes. <img alt="pc_job_settings" src="img/b724e1a0a7413c21.png"></li>
+</ol>
+<ul>
+<li>The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is.</li>
+<li>The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we&#39;re going to keep these settings as is as well and stick with just generating docs.</li>
+<li>The Commands section is where we specify exactly which commands we want to run during this job. The command <code>dbt build</code> will run and test all the models our in project. We&#39;ll keep this as is.</li>
+<li>Finally, we have the Triggers section, where we have a number of different options for scheduling our job. Given that our data isn&#39;t updating regularly here and we&#39;re running this job manually for now, we&#39;re also going to leave this section alone.</li>
+</ul>
+<ol type="1" start="3">
+<li>So, what are we changing then? The job name and commands!</li>
+</ol>
+<ul>
+<li>Click <strong>Edit</strong> to allow you to make changes. Then update the name of the job to <strong>Machine learning initial model build or retraining</strong> this may seem like a mouthful, but naming with an entire data team is helpful (or our future selves after not looking at a project for 3 months).</li>
+<li>Go to <strong>Execution Settings &gt; Commands</strong>. Click <strong>Add Command</strong> and input <code>dbt build</code>. <img alt="edit_pc_job" src="img/10be0eef80fabac6.png"></li>
+<li>Delete the existing commands <code>dbt seed</code>, <code>dbt run</code>, and <code>dbt test</code>. Together they make up the functions of <code>dbt build</code> so we are simplifying our code. <img alt="edit_commands" src="img/6e1c833b68f2ff5d.png"><img alt="delete_commands" src="img/90d2632799140e17.png"></li>
+<li>After that&#39;s done, DON&#39;T FORGET CLICK <strong>Save</strong>.</li>
+</ul>
+<ol type="1" start="4">
+<li>Now let&#39;s go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you&#39;ll be able to click <strong>Run</strong> to kick off the job. In total we produced 106 entities: 14 view models, 67 tests, 24 table models, 1 incremental model. <img alt="run_job" src="img/67bbe35b5a4d51e9.png"></li>
+<li>Let&#39;s go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the production schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed. <img alt="job_run_output" src="img/91485ebccc4c4a96.png"></li>
+<li>Go back to dbt Cloud and navigate to <strong>Deploy &gt; Jobs &gt; Create Job</strong>. Edit the following job settings:</li>
+</ol>
+<ul>
+<li>Set the <strong>General Settings &gt; Job Name</strong> to <strong>Prediction on data with existing model</strong></li>
+<li>Set the <strong>Execution Settings &gt; Commands</strong> to <code>dbt build --exclude train_model_to_predict_position</code></li>
+<li>We can keep all other job settings the same</li>
+<li><strong>Save</strong> your job settings</li>
+</ul>
+<ol type="1" start="7">
+<li>Run your job using <strong>Run Now</strong>. Remember the only difference between our first job and this job is we are excluding model retraining. So we will have one less model in our outputs. We can confirm this in our run steps.</li>
+<li>Open the job and go to <strong>Run Steps &gt; Invoke</strong>. In our job details we can confirm one less entity (105 instead of 106).</li>
+</ol>
+<p>That wraps all of our hands on the keyboard time for today!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Fantastic! You&#39;ve finished the workshop! We hope you feel empowered in using both SQL and Python in your dbt Cloud workflows with Snowflake. Having a reliable pipeline to surface both analytics and machine learning is crucial to creating tangible business value from your data.</p>
+<p>To learn more about how to combine Snowpark and dbt Cloud for smarter production, visit <a href="https://www.getdbt.com/partners/snowflake/?utm_medium=paid-search&utm_source=google&utm_campaign=q2-2024_us-nonbrand-snowflake_co&utm_content=_kw-dbt-snowflake-ex___&utm_term=all_all__&utm_term=dbt%20snowflake&utm_campaign=us-nonbrand-data-documentation_co&utm_source=adwords&utm_medium=ppc&hsa_acc=8253637521&hsa_cam=20228840529&hsa_grp=156636570624&hsa_ad=660652830669&hsa_src=g&hsa_tgt=kwd-1396665886035&hsa_kw=dbt%20snowflake&hsa_mt=e&hsa_net=adwords&hsa_ver=3&gad=1&gclid=CjwKCAjw-7OlBhB8EiwAnoOEk5VEMt-wpzr1XV8PHx2BybhKYhXNoajhZf7jt5ZT43dukzca--hLhhoCY_cQAvD_BwE" target="_blank">our page</a> where you can <a href="https://www.getdbt.com/contact-demo/" target="_blank">book a demo</a> to talk to an expert and <a href="https://docs.getdbt.com/quickstarts/snowflake?step=1" target="_blank">try our quickstart</a> focusing on dbt basics such as setup, connections, tests, and documentation.</p>
+<p>Finally, for more help and information join our <a href="https://www.getdbt.com/community/" target="_blank">dbt community Slack</a> which contains more than 65,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content. Happy dbt&#39;ing!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

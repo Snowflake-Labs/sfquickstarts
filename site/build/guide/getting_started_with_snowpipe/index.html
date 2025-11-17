@@ -1,0 +1,379 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowpipe</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpipe"
+                  title="Getting Started with Snowpipe"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>When building data applications, your users count on seeing the latest. Stale data is less actionable and could lead to costly errors. That&#39;s why continuously generated data is essential. Snowflake provides a data loading tool to drive updates, ensuring your databases are accurate by updating tables in micro-batches.</p>
+<p>Let&#39;s look into how Snowpipe can be configured for continual loading. Then, we can review how you can efficiently perform basic management tasks. But first, If you&#39;re unfamiliar with Snowflake or loading database objects, check out these resources to get familiar with the topics ahead.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Quick Video <a href="https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc." target="_blank">Introduction to Snowflake</a></li>
+<li>Snowflake <a href="https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc." target="_blank">Data Loading Basics</a> Video</li>
+<li>AWS S3 Service <a href="https://docs.aws.amazon.com/AmazonS3/latest/gsg/GetStartedWithS3.html" target="_blank">Documentation</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Snowpipe staging methods</li>
+<li>Configure security access for Snowflake and AWS</li>
+<li>Automate Snowpipe with AWS S3 event notifications</li>
+<li>Manage Snowpipe and remove</li>
+<li>Next steps with database automation</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Create a <a href="https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en" target="_blank">Snowflake account</a> with an <strong>ACCOUNTADMIN</strong> role</li>
+<li>AWS <a href="https://aws.amazon.com/free/?sc_icampaign=acq_aws_takeover-1st-visit-free-tier&sc_ichannel=ha&sc_icontent=awssm-evergreen-1st-visit&sc_iplace=hero&trk=ha_awssm-evergreen-1st-visit&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc" target="_blank">Account</a> with access to a Snowflake supported <a href="https://docs.snowflake.com/en/user-guide/intro-regions.html" target="_blank">region</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Automated data loading with Snowpipe between AWS S3 bucket and Snowflake database.</li>
+</ul>
+<p>After ensuring the prerequisites detailed in this section, jump into the queueing data integration options with Snowpipe.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open a Snowflake Trial Account" duration="5">
+        <p>To complete this lab, you&#39;ll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:</p>
+<ol type="1">
+<li>Navigate to <a href="https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=hol&utm_campaign=northstar-hols-2025" target="_blank">https://signup.snowflake.com/</a></li>
+<li>Start the account creation by completing the first page of the form on the page</li>
+<li>On the next section of the form,  be sure to set the Snowflake edition to &#34;Enterprise (Most popular&#34;)</li>
+<li>Select &#34;AWS – Amazon Web Services&#34; as the cloud provider</li>
+<li>Select &#34;US West (Oregon)&#34; as the region</li>
+<li>Complete the rest of the form and click &#34;Get started&#34;</li>
+</ol>
+<p class="image-container"><img alt="trial" src="img/49d34d39ae54b676.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up AWS Bucket and Prefix (folder)" duration="5">
+        <h2 is-upgraded>Create a S3 Bucket</h2>
+<ol type="1">
+<li>Log in to the <a href="https://console.aws.amazon.com/" target="_blank">AWS Management Console</a> or create a free trial account if you don&#39;t have one <ul>
+<li>Must have a credit card and mobile number to set up a free trial account. However, account won&#39;t be charged unless upgraded after trial ends.</li>
+</ul>
+</li>
+<li>Once account is created, search for &#34;S3&#34; in the search bar</li>
+<li>Click on &#34;Create bucket&#34;</li>
+<li>Fill in the following details: <ul>
+<li>Bucket name: Must be globally unique (e.g., my-example-bucket-123)</li>
+<li>Region: Choose your desired AWS Region</li>
+</ul>
+</li>
+<li>Leave other settings as default or adjust as needed (e.g., versioning, encryption)</li>
+<li>Click &#34;Create bucket&#34; at the bottom</li>
+</ol>
+<h2 is-upgraded>Create a Prefix (folder)</h2>
+<ol type="1">
+<li>After creating the bucket, click on the bucket name to open it</li>
+<li>Click the &#34;Create folder&#34; button</li>
+<li>Enter the folder name (e.g., my-prefix/)</li>
+<li>Click &#34;Create folder&#34;</li>
+</ol>
+<p>Be sure to write down or memorize your bucket and prefix to be used in future steps.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Choose the Data Ingestion Method" duration="2">
+        <p>Snowpipe is an event based data ingest tool. Snowpipe provides two main methods for triggering a data loading event. This trigger could be a cloud storage notification (i.e. AWS S3 <code>ObjectCreated</code> event) or by directly calling the Snowpipe <code>insertFiles</code> REST API.</p>
+<ol type="1">
+<li>Cloud Storage Event Notifications (AWS S3, GCP CS, Azure Blob)</li>
+<li>Snowpipe&#39;s REST API</li>
+</ol>
+<p>This tutorial follows option 1, automating continuous data loading with cloud event notifications on AWS S3. In the next section, we&#39;ll configure your cloud notification preferences.</p>
+<p class="image-container"><img alt="Snowflake_data-load-snowpipe-flow" src="img/b01669660ea3daf7.png"></p>
+<p>The image above reveals the two Snowpipe workflows. Option one shows continuous data loading with cloud storage event notifications. Option two illustrates queueing data with a REST API call to the <code>insertFiles</code> endpoint.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Cloud Storage Event Notifications" duration="3">
+        <p>Notifications from your cloud storage infrastructure are a straight-forward way to trigger Snowpipe for continuous loading.</p>
+<p>Cloud Storage Platforms Snowpipe Supports:</p>
+<ul>
+<li>Google Cloud Storage</li>
+<li>Microsoft Azure Blob Storage</li>
+<li>AWS S3</li>
+</ul>
+<p>This tutorial focuses on using AWS S3 buckets with Snowpipe. Visit Snowflake&#39;s documentation to learn more about connecting Snowpipe to <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-gcs.html" target="_blank">Google Cloud Storage</a> or <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-azure.html" target="_blank">Microsoft Azure Blob Storage</a>.</p>
+<p>Choosing AWS S3 with Snowpipe integration allows you to decide between using an S3 event notification or Amazon&#39;s Simple Notification Service(SNS) to stage data for integration. Check if you currently have S3 event notifications that may conflict with a new notification. If so, you&#39;ll want to opt for SNS notifications. If not, the simple choice is to trigger continuous integration with S3 event notifications. Be aware that SNS network traffic travels outside of Amazon&#39;s VPC. If the potential security risk is an issue, consider employing AWS&#39;s PrivateLink service.</p>
+<p>Let&#39;s go over the access requirements needed to begin using S3 event notifications to load new data seamlessly in micro-batches.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Cloud Storage Permissions" duration="8">
+        <p>To begin using AWS storage notifications for Snowpipe processing, you&#39;ll follow these steps within your AWS and Snowflake account to set up the security conditions.</p>
+<ol type="1">
+<li>Create IAM Policy for Snowflake&#39;s S3 Access</li>
+</ol>
+<p>Snowflake needs IAM policy permission to access your S3 with <code>GetObject</code>, <code>GetObjectVersion</code>, and <code>ListBucket</code>. Log into your AWS console and search for IAM. Within the <strong>Account settings</strong>, confirm the <strong>Security Token Service</strong> list records your account&#39;s region as <strong>Active</strong>.</p>
+<p>Navigate to <strong>Policies</strong> and click on ‘Create policy&#39;. Switch the ‘Policy editor&#39; to JSON and replace with the following:</p>
+<pre><code>{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:GetObject&#34;,
+                &#34;s3:GetObjectVersion&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;bucket&gt;/&lt;prefix&gt;/*&#34;
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: &#34;s3:ListBucket&#34;,
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;bucket&gt;&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringLike&#34;: {
+                    &#34;s3:prefix&#34;: [
+                        &#34;*&#34;
+                    ]
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+<p>Don&#39;t forget to replace the <code><bucket></code> and <code><prefix></code> with <strong>your</strong> bucket name and folder path prefix. Click next and enter ‘snowflake_access&#39; as the policy name, then click on ‘Create policy&#39;.</p>
+<ol type="1" start="2">
+<li>New IAM Role</li>
+</ol>
+<p>Add a new IAM role tied to the ‘snowflake_access&#39; IAM policy by click on ‘Roles&#39; under ‘Access management&#39; followed by ‘Create role&#39;. Create the role with the following settings:</p>
+<ul>
+<li><strong>Trusted entity type</strong>: AWS account</li>
+<li><strong>An AWS account</strong>: This account</li>
+<li><strong>Require External ID</strong>: [x]</li>
+<li><strong>External ID</strong>: 0000</li>
+<li><strong>Add permissions</strong>: search for ‘snowflake_access&#39; and select the checkbox and hit next</li>
+<li><strong>Role Name</strong>: snowflake_role</li>
+<li><strong>Role Description</strong>: Snowflake role for access to S3 bucket</li>
+</ul>
+<p>Create the role, then click to see the role&#39;s summary and record the <strong>ARN</strong>.</p>
+<ol type="1" start="3">
+<li>Integrate IAM user with Snowflake storage.</li>
+</ol>
+<p>Within your Snowflake web console, you&#39;ll run the following command to integrate IAM user with Snowflake storage.</p>
+<pre><code>CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = S3
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = &#34;arn:aws:iam::&lt;role_account_id&gt;:role/snowflake_role&#34;
+  STORAGE_ALLOWED_LOCATIONS = (&#34;s3://&lt;bucket&gt;/&lt;path&gt;/&#34;);
+</code></pre>
+<p>Be sure to change the <code><bucket></code>, <code><prefix></code> and <code><role_account_id></code> with <em>your</em> AWS S3 bucket name, folder path prefix, and IAM role account ID (found on the IAM dashboard).</p>
+<p><img alt="Snowflake_CreateIntegration-image" src="img/c2e463d690b863db.png"> Note in the figure above the <strong>ACCOUNTADMIN</strong> role and status message of a successful creation.</p>
+<ol type="1" start="4">
+<li>Run storage integration description command.</li>
+</ol>
+<pre><code>desc integration S3_role_integration;
+</code></pre>
+<p>Run the above command to display your new integration&#39;s description. <img alt="Snowflake_IntDesc-image" src="img/a802fe9ba8e118fc.png"> Record the property values displayed for <code>STORAGE_AWS_IAM_USER_ARN</code> and <code>STORAGE_AWS_EXTERNAL_ID</code>.</p>
+<ol type="1" start="5">
+<li>IAM User Permissions</li>
+</ol>
+<p>Navigate back to your AWS IAM service console. Within the <strong>Roles</strong>, click the ‘snowflake_role&#39;. On the <strong>Trust relationships</strong> tab, click <strong>Edit trust policy</strong> and edit the file with the <code>STORAGE_AWS_IAM_USER_ARN</code> and <code>STORAGE_AWS_EXTERNAL_ID</code> retrieved in the previous step.</p>
+<pre><code>{
+  &#34;Version&#34;: &#34;2012-10-17&#34;,
+  &#34;Statement&#34;: [
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        &#34;AWS&#34;: &#34;&lt;STORAGE_AWS_IAM_USER_ARN&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+      &#34;Condition&#34;: {
+        &#34;StringEquals&#34;: {
+          &#34;sts:ExternalId&#34;: &#34;&lt;STORAGE_AWS_EXTERNAL_ID&gt;&#34;
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<p><strong>Update Policy</strong> after replacing the string values for <em>your </em><code>STORAGE_AWS_IAM_USER_ARN</code> and <code>STORAGE_AWS_EXTERNAL_ID</code>.</p>
+<p>After completing this section, your AWS and Snowflake account permissions are ready for Snowpipe. The next section provides the steps to perform automated micro-batching with cloud notifications triggering Snowpipe.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a pipe in Snowflake" duration="8">
+        <p>Now that your AWS and Snowflake accounts have the right security conditions, complete Snowpipe setup with S3 event notifications.</p>
+<ol type="1">
+<li>Create a Database, Table, Stage, and Pipe</li>
+</ol>
+<p>On a fresh Snowflake web console worksheet, use the commands below to create the objects needed for Snowpipe ingestion.</p>
+<p><strong>Create Database</strong></p>
+<pre><code language="language-sql" class="language-sql">create or replace database S3_db;
+</code></pre>
+<p>Execute the above command to create a database called ‘S3_db&#39;. The <strong>Results</strong> output will show a status message of <code>Database S3_DB successfully created</code>.</p>
+<p><strong>Create Table</strong></p>
+<pre><code language="language-sql" class="language-sql">create or replace table S3_table(files string);
+</code></pre>
+<p>This command will make a table by the name of ‘S3_table&#39; on the S3_db database. The <strong>Results</strong> output will show a status message of <code>Table S3_TABLE successfully created</code>.</p>
+<p><strong>Create Stage</strong></p>
+<pre><code language="language-sql" class="language-sql">use schema S3_db.public;
+create or replace stage S3_stage
+  url = (&#39;s3://&lt;bucket&gt;/&lt;path&gt;/&#39;)
+  storage_integration = S3_role_integration;
+</code></pre>
+<p>To make the external <a href="https://docs.snowflake.com/en/sql-reference/sql/create-stage.html" target="_blank">stage</a> needed for our S3 bucket, use this command. Be sure to update the <code><bucket></code> and <code><path></code> with your S3 bucket name and file path from earlier.</p>
+<p><img alt="Snowflake_CreateStage-image" src="img/72c26c1ba60295f6.png"> The figure above shows <em>Results</em> reading ‘Stage area S3_STAGE successfully created&#39;.</p>
+<p><strong>Create Pipe</strong></p>
+<p>The magic of automation is in the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-pipe.html" target="_blank">create pipe</a> parameter, <code>auto_ingest=true</code>. With auto_ingest set to true, data stagged will automatically integrate into your database.</p>
+<pre><code language="language-sql" class="language-sql">create or replace pipe S3_db.public.S3_pipe auto_ingest=true as
+  copy into S3_db.public.S3_table
+  from @S3_db.public.S3_stage;
+</code></pre>
+<p><img alt="Snowflake_CreatePipe-image" src="img/f80a0a9e7fbd821f.png"> Confirm you receive a status message of, ‘Pipe S3_PIPE successfully created&#39;.</p>
+<ol type="1" start="2">
+<li>Configure Snowpipe User Permissions</li>
+</ol>
+<p>Create a new role named <code>S3_role</code> with <em>ACCOUNTADMIN</em> access. Give the <code>S3_role</code> usage permissions to the database objects, insert permission for the <code>S3_table</code> and ownership of <code>S3_pipe</code>. Lastly, set the S3_role as a Snowflake user&#39;s default. Be sure to update <code><username></code> with your Snowflake username. To find your username, click on your initals in the bottom left hand corner. Hoover over ‘Account&#39; and click on ‘View account details&#39;. Confirm the statement was successful before creating the S3 event notification.</p>
+<pre><code language="language-sql" class="language-sql">-- Create Role
+use role accountadmin;
+ALTER PIPE S3_PIPE SET PIPE_EXECUTION_PAUSED=true;
+GRANT OWNERSHIP ON PIPE S3_db.public.S3_pipe TO ROLE accountadmin;
+create or replace role S3_role;
+
+-- Grant Object Access and Insert Permission
+grant usage on database S3_db to role S3_role;
+grant usage on schema S3_db.public to role S3_role;
+grant insert, select on S3_db.public.S3_table to role S3_role;
+grant usage on stage S3_db.public.S3_stage to role S3_role;
+
+-- Bestow S3_pipe Ownership
+grant ownership on pipe S3_db.public.S3_pipe to role S3_role;
+
+-- Grant S3_role and Set as Default
+grant role S3_role to user &lt;username&gt;;
+alter user &lt;username&gt; set default_role = S3_role;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_UserS3_Pipe-image" src="img/ae9fef02b16bad35.png"></p>
+<ol type="1" start="3">
+<li>New S3 Event</li>
+</ol>
+<p>Run the <code>show pipes</code> command to record the ARN listed in the ‘notification_channel&#39; column.</p>
+<pre><code language="language-sql" class="language-sql">show pipes;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_ShowPipe-image" src="img/dcd7565d3c7796fe.png"></p>
+<p>Copy the ARN because you&#39;ll need it to configure the S3 event notification.</p>
+<p>Sign in to your AWS account and navigate to the S3 service console. Select the bucket being used for Snowpipe and go to the <strong>Properties</strong> tab. The <strong>Events notification</strong> card listed will allow you to <strong>Create event notification</strong>. Create a notification with the values listed:</p>
+<ul>
+<li><strong>Event name</strong>: Auto-ingest Snowflake</li>
+<li><strong>Events types</strong>: All object create events</li>
+<li><strong>Destination</strong>: SQS Queue</li>
+<li><strong>Specify SQS queues</strong>: Enter SQS queue ARN</li>
+<li><strong>SQS queue:</strong> &lt;S3_pipe_ARN&gt;</li>
+</ul>
+<p><img alt="Snowflake_AWSS3Notification-image" src="img/ffd1aaf238bcc2da.png"> Snowpipe&#39;s automated micro-batching is now active. Learn how to manage database integration in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Manage and Remove Pipes" duration="3">
+        <p>Snowpipe is configured and now updates the Snowflake database when any object is created in the AWS S3 bucket. Let&#39;s review a few common commands to manage and remove Snowpipe.</p>
+<p><strong>ALTER PIPE</strong></p>
+<ul>
+<li>Pause Snowpipe</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">ALTER PIPE ... SET PIPE_EXECUTION_PAUSED = true
+</code></pre>
+<p>Before making configuration changes with <code>ALTER PIPE</code>, stop the Snowpipe process by pausing it by setting <code>PIPE_EXECUTION_PAUSED</code> to true. Once you&#39;re ready to start the pipe again, set this parameter to false.</p>
+<ul>
+<li>Check Snowpipe Status</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SYSTEM$PIPE_STATUS
+</code></pre>
+<p>To check the status of the pipe, run the above command.</p>
+<p><strong>DROP PIPE</strong></p>
+<pre><code language="language-sql" class="language-sql">drop pipe S3_db.public.S3_pipe;
+</code></pre>
+<p>The <code>drop</code> command will delete your Snowpipe once you are finished with this tutorial.</p>
+<p><strong>SHOW PIPE</strong></p>
+<pre><code language="language-sql" class="language-sql">show pipes
+</code></pre>
+<p>Confirm the pipe was removed by displaying all of the pipes.</p>
+<p>After wrapping up this section, you&#39;re ready to look ahead to using Snowpipe on your applications.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>You&#39;ve learned the benefits of continuous data loading and the different ways Snowpipe can be triggered to load new data. Plus, you can now configure cloud storage event notifications and manage Snowpipe.</p>
+<p>Review the various ways to implement Snowpipe. If you&#39;re contemplating migrating an active database, select the staging method best for your architecture, and test the workflow on a small dataset. Experimenting will allow for an accurate cost-benefit analysis. If you aren&#39;t gearing up to migrate, you quickly fire up a <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest-gs.html" target="_blank">Java or Python SDK</a> to see how Snowpipe uses REST API endpoints for data integration.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Snowpipe Continuous Data Loading vs SnowPipe REST API</li>
+<li>Configuring AWS S3 event notifications for Snowpipe</li>
+<li>Creating, managing, and deleting pipes in Snowflake</li>
+</ul>
+<p>To learn more about Snowpipe, checkout the <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html" target="_blank">Snowpipe reference documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake Feature Store and dbt</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-feature-store-and-dbt"
+                  title="Getting Started with Snowflake Feature Store and dbt"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This Quickstart demonstrates the integration between dbt and Snowflake Feature Store. The source data is managed within a Snowflake database, while the feature pipelines are orchestrated and executed using dbt. The resulting feature tables are stored in Snowflake. We then read from these feature tables, register them as Feature Views, and build ML Datasets.</p>
+<p>This architecture allows you to leverage dbt for data transformation while incorporating Snowflake Feature Store into your ML pipeline. We&#39;ll begin by defining base tables in Snowflake. Next, we&#39;ll use dbt to transform the data and save it back to Snowflake. Afterward, we&#39;ll register the transformed tables as feature tables and build a dataset. Finally, we&#39;ll add more data to the source table and demonstrate how features are updated when dbt is run again. Let&#39;s dive in!</p>
+<p class="image-container"><img alt="dbt-feature-store-diagram" src="img/5d3bbc35224e33d8.png"></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create features with Feature Store</li>
+<li>How to integrate dbt alongside Feature Store</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>A dbt Cloud Account (we will go through setting one up via Partner Connect)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Feature Engineering Pipeline using dbt with Snowflake Feature Store</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Your Account" duration="2">
+        <p>Complete the following steps to setup your account:</p>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and the following SQL in the worksheet</li>
+<li>Adjust &lt;YOUR_USER&gt; to your user</li>
+<li>Run all commands to create Snowflake objects</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE FS_DBT_ROLE;
+GRANT ROLE FS_DBT_ROLE to USER &lt;YOUR_USER&gt;;
+
+-- create our virtual warehouse
+CREATE OR REPLACE WAREHOUSE FS_DBT_WH AUTO_SUSPEND = 60;
+
+GRANT ALL ON WAREHOUSE FS_DBT_WH TO ROLE FS_DBT_ROLE;
+
+-- Next create a new database and schema,
+CREATE OR REPLACE DATABASE FS_DBT_DATABASE;
+CREATE OR REPLACE SCHEMA FS_DBT_SCHEMA;
+
+GRANT OWNERSHIP ON DATABASE FS_DBT_DATABASE TO ROLE FS_DBT_ROLE COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FS_DBT_DATABASE TO ROLE FS_DBT_ROLE COPY CURRENT GRANTS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup dbt Cloud" duration="0">
+        <ul>
+<li>From your Snowflake account, go to Data Products &gt; Partner Connect, search for dbt</li>
+</ul>
+<p class="image-container"><img alt="dbt-partner-connect" src="img/b9bb50997415e2bd.png"></p>
+<ul>
+<li>Add FS_DBT_DATABASE in the Optional Grant settings of the Connect to dbt Form</li>
+</ul>
+<p class="image-container"><img alt="dbt-partner-connect-setup" src="img/a6d72e34ec6dc7ed.png"></p>
+<ul>
+<li>Register for an account on dbt</li>
+<li>From dbt, click on your account &gt; Account Settings &gt; Connections &gt; Snowflake</li>
+<li>Update these fields <ul>
+<li>Database: FS_DBT_DATABASE</li>
+<li>Warehouse: FS_DBT_WH</li>
+<li>Role: FS_DBT_ROLE</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="dbt-connection-settings" src="img/9409e2e965c84e5c.png"></p>
+<ul>
+<li>Go to Your Profile &gt; Credentials and click on Partner Connect Trial</li>
+<li>Update the Connection Details with: <ul>
+<li>Database: FS_DBT_DATABASE</li>
+<li>Warehouse: FS_DBT_WH</li>
+<li>Role: FS_DBT_ROLE</li>
+</ul>
+</li>
+<li>Update the Development Credentials <ul>
+<li>Add a user that has access to role FS_DBT_ROLE (such as your own)</li>
+<li>Update the schema to FS_DBT_SCHEMA</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="dbt-credentials" src="img/e95105c646cfdd43.png"></p>
+<ul>
+<li>In dbt, click develop &gt; Cloud IDE</li>
+<li>Initialize a new project</li>
+<li>Delete the existing files in the models &gt; example folder</li>
+<li>Download the four files in <a href="https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/tree/main/scripts/dbt-files/models" target="_blank">this folder</a> and add them to the models &gt; example folder</li>
+<li>Replace dbt_project.yml with the contents of <a href="https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/scripts/dbt-files/dbt_project.yml" target="_blank">this file</a></li>
+<li>Add file macros &gt; generate_schema_name.sql with the contents of <a href="https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/scripts/dbt-files/macros/generate_schema_name.sql" target="_blank">this file</a></li>
+</ul>
+<p class="image-container"><img alt="feature-store-with-dbt" src="img/378d5456705e2c32.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Notebook" duration="10">
+        <ul>
+<li>Download the notebook from this <a href="https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/notebooks/0_start_here.ipynb" target="_blank">link</a></li>
+<li>Change role to FS_DBT_ROLE</li>
+<li>Navigate to Projects &gt; Notebooks in Snowsight</li>
+<li>Click Import .ipynb from the + Notebook dropdown</li>
+<li>Create a new notebok with the following settings <ul>
+<li>Notebook Location: FS_API_DATABASE, FS_API_SCHEMA</li>
+<li>Warehouse: FS_API_WH</li>
+</ul>
+</li>
+<li>Create Notebook</li>
+<li>Upload the two images <a href="https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/scripts/img/" target="_blank">here</a> using the plus button on the notebook file explorer</li>
+<li>Click Packages in the top right, add <code>snowflake-ml-python</code></li>
+<li>Run cells in the notebook!</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>In conclusion, this Quickstart showcases how dbt and Snowflake Feature Store can work together to create a seamless and efficient ML pipeline. By managing your source data in Snowflake and orchestrating feature pipelines with dbt, you can streamline the process of transforming, storing, and utilizing feature tables for your machine learning models.</p>
+<p>We demonstrated how to define base tables, transform data using dbt, and register the resulting feature tables. This integration ensures that your features stay up-to-date with each run of dbt. Ready to get started? Start integrating dbt with Snowflake Feature Store today!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create features with Feature Store</li>
+<li>How to integrate dbt alongside Feature Store</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Snowflake Feature Store</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities" target="_blank">Entities</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views" target="_blank">Feature Views</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/modeling#generating-datasets-for-training" target="_blank">Datasets</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

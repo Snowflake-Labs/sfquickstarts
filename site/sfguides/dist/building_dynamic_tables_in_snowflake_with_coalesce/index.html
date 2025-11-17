@@ -1,0 +1,434 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building Dynamic Tables in Snowflake with Coalesce</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="building_dynamic_tables_in_snowflake_with_coalesce"
+                  title="Building Dynamic Tables in Snowflake with Coalesce"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Dynamic tables are a new table type offered by Snowflake that allow data teams to use SQL statements to declaratively define the results of data pipelines. Dynamic tables simplify the process of creating and managing data pipelines by streamlining data transformations without having to manage Streams and Tasks.</p>
+<p><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">Dynamic tables</a> materialize the results of a query that you specify. Instead of creating a separate target table and writing code to transform and update the data in that table, you can define the target table as a dynamic table and specify the SQL statement that performs the transformation. An automated process updates the materialized results automatically through regular <a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh" target="_blank">refreshes</a>. These automatic refreshes occur based on changes to your data, meaning that they only operate on new data changes since the last refresh.</p>
+<h2 is-upgraded>Using Coalesce to Build Dynamic Tables</h2>
+<p>As the only transformation solution uniquely built for Snowflake, Coalesce offers a way to visually build, adjust and deploy dynamic tables in Snowflake orders of magnitude faster without having to code by hand. Coalesce provides many &#34;out-of-the-box&#34; node types that are ready to use immediately upon logging into the platform, in addition to empowering users to create their own nodes <a href="https://docs.coalesce.io/docs/user-defined-nodes" target="_blank">known as user-defined nodes, or UDNs</a>. The dynamic table node that you will use in the following exercise is a form of a UDN found in Coalesce.</p>
+<p>In this guide, you will build a small directed acyclic graph (DAG) in Coalesce using dynamic table nodes that understands dependency ordering. Snowflake handles the refreshing of the pipeline, while Coalesce guarantees that dynamic tables are created only after all upstream dependencies are satisfied. When building pipelines without dynamic tables, Coalesce uses the dependency graph for deployment and refreshing of tables and views.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake</li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Optional completion of the foundational Coalesce Quickstart <a href="https://quickstarts.snowflake.com/guide/transform_your_data_with_coalesce/index.html?index=..%2F..index#0" target="_blank">Accelerating Transformations with Coalesce and Snowflake</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">trial account</a> or access to an existing account with <code>ACCOUNT ADMIN</code> privileges</li>
+<li>A Coalesce account (either a trial account created via <a href="https://coalesce.io/product-technology/launch-coalesce-from-snowflake-partner-connect/" target="_blank">Snowflake Partner Connect</a>, or access to an existing account)</li>
+<li>A git account (optional)</li>
+<li>Google Chrome browser (recommended)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create dynamic tables for Snowflake ELT processing, faster and easier than ever before</li>
+<li>How to deploy dynamic tables to non-development environments</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Analytics-ready dynamic tables</li>
+<li>A directed acyclic graph (DAG) made up of dynamic table nodes</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Before You Start" duration="10">
+        <p>Complete the steps in this section to prepare your Coalesce environment. Please note that these steps assume you are using trial Snowflake and Coalesce accounts. If you are using pre-existing accounts, you will need to adjust your <a href="https://docs.coalesce.io/docs/storage-locations" target="_blank">Storage Locations and Mappings</a> to use the sample Snowflake dataset as shown in this guide.</p>
+<h2 is-upgraded>Step 1: Set Up Your Snowflake Trial Account</h2>
+<ol type="1">
+<li>Fill out the Snowflake trial account form <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">here</a>. Use an email address that is not associated with an existing Snowflake account.</li>
+<li>When signing up for your Snowflake account, select the region that is physically closest to you and choose Enterprise as your Snowflake edition. Please note that the Snowflake edition, cloud provider, and region used when following this guide do not matter.</li>
+</ol>
+<p>After registering, you will receive an email from Snowflake with an activation link and URL for accessing your trial account. Finish setting up your account following the instructions in the email.</p>
+<p class="image-container"><img alt="sftrial" src="img/ff1291906a8044de.png"></p>
+<h2 is-upgraded>Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect</h2>
+<p>Once you are logged into your Snowflake account, sign up for a free Coalesce trial account using Snowflake Partner Connect. Check your Snowflake account profile to make sure that it contains your fist and last name.</p>
+<ol type="1">
+<li>Select <strong>Admin &gt; Partner Connect</strong> in the navigation bar on the left hand side of your screen and click on the Coalesce button (under Data Integration).</li>
+</ol>
+<p class="image-container"><img alt="partnerconnect" src="img/798cd3b62abaa2ed.png"></p>
+<ol type="1" start="2">
+<li>Review the connection information and then click Connect.</li>
+</ol>
+<p class="image-container"><img alt="pccoalesce" src="img/12a4aba7ee4c9615.png"></p>
+<ol type="1" start="3">
+<li>When prompted, click <strong>Activate</strong> to activate your account. You can also activate your account later using the activation link emailed to your address.</li>
+</ol>
+<p class="image-container"><img alt="pcaccountcreated" src="img/271e15b608bbb51c.png"></p>
+<ol type="1" start="4">
+<li>Once you&#39;ve activated your account, fill in your information to complete the activation process.</li>
+</ol>
+<p class="image-container"><img alt="pcaccountactivated" src="img/bb96be0f4efd10eb.png"></p>
+<h2 is-upgraded>Step 3: Complete Your Coalesce Account Setup</h2>
+<ol type="1">
+<li>Log in to your Coalesce account and click the <strong>+</strong> icon in the left sidebar next to <strong>Projects.</strong> This will create a dedicated Project for your development and deployment Workspaces focused on your work with this guide. Name your new Project <strong>Dynamic Tables</strong> and then click the <strong>Next</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="newproject" src="img/777a280bcea91a85.png"></p>
+<ol type="1" start="2">
+<li>You will be prompted to set up version control with Coalesce. For now, click the <strong>Skip and Create</strong> button twice when prompted. You will set up git for version control in an optional step later in this guide, which will allow you to commit your work and deploy from your development Workspace to your test (QA) and Production Environments.</li>
+</ol>
+<p class="image-container"><img alt="skipgitsetup" src="img/70335408da47c9ef.png"></p>
+<ol type="1" start="3">
+<li>Once you&#39;ve created your Project, click the <strong>Create Workspace</strong> button to create your development Workspace.</li>
+</ol>
+<p class="image-container"><img alt="createworkspace" src="img/eba830c45b00aa83.png"></p>
+<ol type="1" start="4">
+<li>Name your Workspace <strong>Dynamic Tables - Dev</strong> and then click the <strong>Create</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="nameworkspace" src="img/3ace606651bf41c4.png"></p>
+<ol type="1" start="5">
+<li>Click the <strong>Launch</strong> button to open up your development Workspace.</li>
+</ol>
+<p class="image-container"><img alt="launchworkspace" src="img/ecb32d7920a71cb2.png"></p>
+<ol type="1" start="6">
+<li>You are now in the Build interface of your Workspace. In the upper right corner, click the question mark icon to open up the Resource Center.</li>
+</ol>
+<p class="image-container"><img alt="opencoalescemarketplace" src="img/530df9cb0c40bf02.png"></p>
+<ol type="1" start="7">
+<li>Coalesce provides a marketplace of certified nodes for different use cases and transformations. These nodes are made available in the form of a package that can be directly installed into your workspace and are immediately available to use. One of these packages is the Dynamic Tables package.</li>
+</ol>
+<p>Open the Build Settings of your workspace, and navigate to Packages. Click the Browse button in the upper right hand corner. This will take you to the Coalesce Marketplace. Find the Dynamic Tables package and click <strong>Find out more</strong>. Copy the Package ID from the package details page and navigate back to Coalesce.</p>
+<p class="image-container"><img alt="packagespage" src="img/61725656377ebda7.png"></p>
+<p>Click the Install button on the packages page and paste in the Package ID. The most recent version of the package will be automatically selected. Give the package an Alias - this is the name of the package as it will appear in the build interface of Coalesce.</p>
+<p class="image-container"><img alt="installpackage" src="img/6a1afc5d1fb932c4.png"></p>
+<ol type="1" start="8">
+<li>Once the dynamic tables node is loaded into your account, navigate to back to your Snowflake account and create a new Worksheet named <strong>Dynamic Tables.</strong></li>
+</ol>
+<p>Copy and run this <a href="https://docs.google.com/document/d/1BMSSVw3uwpFo2KM_GI7teSD9x2GMQL_FkUJdtjd8-cw/edit?usp=sharing" target="_blank">code</a> in your Worksheet. This will create a standalone Development, QA (Testing) and Production environment for you.</p>
+<p class="image-container"><img alt="sfscript" src="img/ff868c90682a5c7f.png"></p>
+<ol type="1" start="9">
+<li>Return to your Coalesce account, click on the pencil icon next to the name of your Workspace and then click on <strong>Storage Mappings.</strong> For your <code>SRC</code> mapping, select your newly created <code>DEV</code> database (starting with your first initial and last name) and <code>SOURCE DATA</code> schema. For your <code>WORK</code> mapping, select your <code>DEV</code> database and <code>REPORTING</code> schema as shown below.</li>
+</ol>
+<p class="image-container"><img alt="storagemappings" src="img/374ebef1e5419767.png"></p>
+<ol type="1" start="10">
+<li>Click on <strong>Parameters</strong> in your Workspace Settings and enter the following parameter in the field. This parameter will set the warehouse that will be used in your development Environment.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">{
+    &#34;targetDynamicTableWarehouse&#34;: &#34;DEV ENVIRONMENT&#34;
+}
+</code></pre>
+<p class="image-container"><img alt="addparameter" src="img/dca88d73f4dfba8a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Adding Data Sources" duration="2">
+        <ol type="1">
+<li>Click back to your Browser tab and click the Nodes icon in the left sidebar. Click the + icon that appears next to the Search bar. Click <strong>Add Sources</strong> from the dropdown menu.</li>
+</ol>
+<p class="image-container"><img alt="addsources" src="img/3970a487f4fbf545.png"></p>
+<ol type="1" start="2">
+<li>Expand and check all of the data sources under <code>SRC</code> - <code>SNOWFLAKE_SAMPLE_DATA.TPCH_SF1</code>. Then click <strong>Add 8 sources</strong> in the bottom right corner.</li>
+</ol>
+<p class="image-container"><img alt="addsrcscources" src="img/fe78fd2e5b72c6a.png"></p>
+<ol type="1" start="3">
+<li>You will see 8 new source nodes added to your graph which forms the foundation of your pipeline.</li>
+</ol>
+<p class="image-container"><img alt="sourcesadded" src="img/690168f3c940f465.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating Dynamic Table Nodes" duration="5">
+        <ol type="1">
+<li>Select your <code>CUSTOMER</code>, <code>NATION</code> and <code>REGION</code> source nodes. Then right click and hover over <strong>Join Nodes</strong> and select <strong>Dynamic Table Stage</strong>.</li>
+</ol>
+<p class="image-container"><img alt="joinnodes" src="img/8398027091802ad0.png"></p>
+<ol type="1" start="2">
+<li>Your new dynamic table node will open to show a handful of configuration settings in the right sidebar. These include <strong>Node Properties</strong> which includes your Storage Location, node type and whether deployment is enabled for your node.</li>
+</ol>
+<p>Under <strong>Dynamic Table Options,</strong> you have the option of changing the selected warehouse that you would like to use to run your node. Enter the warehouse <code>dev_wh_xs</code> that was created when you ran your setup code in Snowflake. In Coalesce, you have the ability to change and set specific warehouses that run each dynamic table node in a given environment (e.g. <code>DEV</code>, <code>QA</code>, or <code>PROD</code>) by using <a href="https://docs.coalesce.io/docs/rtp-default" target="_blank">Parameters</a>.</p>
+<p>The <strong>Downstream</strong> toggle controls whether refreshes are determined by subsequent nodes in your pipeline.</p>
+<p>Your <strong>Lag Specification</strong> determines how often your node is refreshed. Set this schedule to 1 minute as shown.</p>
+<p class="image-container"><img alt="dtnodeconfig" src="img/3d2c7a21f370f2b3.png"></p>
+<ol type="1" start="3">
+<li>Switch over to the <strong>Join</strong> tab in your dynamic table node and complete the join using the following statement:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">FROM &#123;&#123; ref(&#39;SRC&#39;, &#39;NATION&#39;) }} &#34;NATION&#34;
+INNER JOIN &#123;&#123; ref(&#39;SRC&#39;, &#39;REGION&#39;) }} &#34;REGION&#34;
+ON &#34;NATION&#34;.&#34;N_REGIONKEY&#34; = &#34;REGION&#34;.&#34;R_REGIONKEY&#34;
+INNER JOIN &#123;&#123; ref(&#39;SRC&#39;, &#39;CUSTOMER&#39;) }} &#34;CUSTOMER&#34;
+ON &#34;NATION&#34;.&#34;N_NATIONKEY&#34; = &#34;CUSTOMER&#34;.&#34;C_NATIONKEY&#34;
+</code></pre>
+<p class="image-container"><img alt="jointab" src="img/5a427b5ab771097e.png"></p>
+<ol type="1" start="4">
+<li>Press the Command key to multi-select and delete the columns <code>N_NATIONKEY</code>, <code>N_REGIONKEY</code>, <code>N_COMMENT</code>, <code>R_REGIONKEY</code> and <code>R_COMMENT</code> in your node.</li>
+</ol>
+<p class="image-container"><img alt="deletecolumns" src="img/64518d615a1320c0.png"></p>
+<ol type="1" start="5">
+<li>Click the <strong>Create</strong> button to create your dynamic table node. You can expand the DDL statement and view the code that was auto-generated by Coalesce to create the node.</li>
+</ol>
+<p class="image-container"><img alt="createdtnode1" src="img/30fd781ebb57750c.png"></p>
+<ol type="1" start="6">
+<li>Click on your Browser tab to return to your graph and select the <code>ORDERS</code> and <code>LINEITEM</code> source nodes. Right click and hover over <strong>Join Nodes</strong> and then click on your click on your dynamic table node.</li>
+</ol>
+<p class="image-container"><img alt="selectorderslineitem" src="img/d0fa336b8d93ffa.png"></p>
+<ol type="1" start="7">
+<li>In your second dynamic table node, click on <strong>Dynamic Table Options</strong> on the right side in your config area. In the dropdown, set the lag specification to 1 minute as you did with the previous dynamic table node.</li>
+</ol>
+<p class="image-container"><img alt="lagspecification" src="img/bbe1db6acb2bccf6.png"></p>
+<ol type="1" start="8">
+<li>Click on the Join tab and adjust the join statement as shown in the code below:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">FROM &#123;&#123; ref(&#39;SRC&#39;, &#39;ORDERS&#39;) }} &#34;ORDERS&#34;
+INNER JOIN &#123;&#123; ref(&#39;SRC&#39;, &#39;LINEITEM&#39;) }} &#34;LINEITEM&#34;
+ON &#34;ORDERS&#34;.&#34;O_ORDERKEY&#34; = &#34;LINEITEM&#34;.&#34;L_ORDERKEY&#34;
+</code></pre>
+<p class="image-container"><img alt="jointab2" src="img/6b74a7d7441da65b.png"></p>
+<ol type="1" start="9">
+<li>Click <strong>Mapping</strong> next to the Join tab. Press the Command key to multi-select and delete the columns <code>O_ORDERSTATUS</code>, <code>O_TOTALPRICE</code>, <code>O_ORDERDATE</code>, <code>O_CLERK</code>, <code>O_SHIPRIORITY</code>, <code>L_PARTKEY</code> and <code>L_SUPPKEY</code>:</li>
+</ol>
+<p class="image-container"><img alt="deletecolumnsnode2" src="img/1153c26266bb4388.png"></p>
+<ol type="1" start="10">
+<li>Click the Create button to create your dynamic table node.</li>
+</ol>
+<p class="image-container"><img alt="createstatement" src="img/cf0950bc8b5af8f5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Joining Dynamic Table Nodes" duration="5">
+        <ol type="1">
+<li>Click on the Browser tab to return to your graph. Select your two dynamic table nodes that you just created. To aggregate quantity of goods by customer, right click and hover over <strong>Join Nodes</strong> and then click on <strong>Dynamic Table Stage</strong> in the dropdown menu.</li>
+</ol>
+<p class="image-container"><img alt="jointwonodes" src="img/c9052fbb66714e31.png"></p>
+<ol type="1" start="2">
+<li>Click on the <strong>Join</strong> tab and adjust the join statement as shown below.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">FROM &#123;&#123; ref(&#39;SRC&#39;, &#39;DT_ORDERS_LINEITEM&#39;) }} &#34;DT_ORDERS_LINEITEM&#34;
+INNER JOIN &#123;&#123; ref(&#39;SRC&#39;, &#39;DT_CUSTOMER_NATION_REGION&#39;) }} &#34;DT_CUSTOMER_NATION_REGION&#34;
+ON &#34;DT_ORDERS_LINEITEM&#34;.&#34;O_CUSTKEY&#34; = &#34;DT_CUSTOMER_NATION_REGION&#34;.&#34;C_CUSTKEY&#34;
+</code></pre>
+<p class="image-container"><img alt="thirdjoinstatment" src="img/7c706394a73769ab.png"></p>
+<ol type="1" start="3">
+<li>Return to the <strong>Mapping</strong> grid, press the Shift key and select the <code>C_ADDRESS</code>, <code>C_NATIONKEY</code>, <code>C_PHONE</code>, <code>C_ACCTBAL</code>, <code>C_MKTSEGMENT</code>, and <code>C_COMMENT</code> columns. Right click and select <strong>Delete Columns</strong> from the dropdown menu.</li>
+</ol>
+<p class="image-container"><img alt="deletebulkcolumns" src="img/e8c1ba3b66e42008.png"></p>
+<ol type="1" start="4">
+<li>Select the <code>C_CUSTKEY</code> column. Press and hold the Shift and Option buttons, then scroll upwards to multi-select every column from <code>C_CUSTKEY</code> to <code>L_EXTENDEDPRICE</code>. Right click on the columns and select <strong>Delete Columns</strong> to bulk delete them. Finally, delete all of the remaining columns but <code>C_NAME</code> and <code>L_QUANTITY</code>.</li>
+</ol>
+<p class="image-container"><img alt="deletecolumns" src="img/8514445f3ef11adb.png"></p>
+<ol type="1" start="5">
+<li>Select the <code>C_NAME</code> column and drag it to the top of your <strong>Mapping</strong> grid so that it appears in front of the <code>L_QUANTITY</code> column. Select <code>L_QUANTITY</code> and add the aggregation below to the <strong>Transform</strong> field:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">sum(&#123;&#123;SRC}})
+</code></pre>
+<p class="image-container"><img alt="aggregation" src="img/684de7c018e9b4f2.png"></p>
+<ol type="1" start="6">
+<li>In your Config panel to the right, click on <strong>General Options.</strong> Select <strong>Group By All</strong> and toggle this on to utilize Snowflake&#39;s <code>GROUP BY ALL</code> capability.</li>
+</ol>
+<p class="image-container"><img alt="groupbyall" src="img/bba523156ce38e26.png"></p>
+<ol type="1" start="7">
+<li>Under <strong>Dynamic Table Options</strong>, ensure that your node will be refreshed slightly less frequently than your previous dynamic table nodes by setting your <strong>Time Value</strong> to 5 minutes.</li>
+</ol>
+<p class="image-container"><img alt="lagtime" src="img/7c0c5d6b07a732e3.png"></p>
+<ol type="1" start="8">
+<li>Press the <strong>Create</strong> button to create your dynamic tables node, and then expand your Create statement to view the <code>GROUP BY ALL</code> function that you added via the Config.</li>
+</ol>
+<p class="image-container"><img alt="createdtnode3" src="img/63e0a1d18306aae9.png"></p>
+<p>Congratulations! You have built out a small DAG of dynamic table nodes.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running and Visualizing Your DAG" duration="5">
+        <ol type="1">
+<li>To run your nodes as a DAG in its entirety, select your preceding node <code>DT_ORDERS_LINEITEM</code> to open it. In the Config section, select the <strong>Downstream</strong> option and press the <strong>Create</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="downstream" src="img/cbef450c3dc935e3.png"></p>
+<ol type="1" start="2">
+<li>Return to your Build interface, open up your <code>DT_CUSTOMER_NATION_REGION</code> node and repeat this action by selecting the <strong>Downstream</strong> option and creating your node.</li>
+</ol>
+<p class="image-container"><img alt="downstream2" src="img/874063107ffd8603.png"></p>
+<ol type="1" start="3">
+<li>Return to your Build interface and click the <strong>Run All</strong> button in the upper right corner to run your DAG. Now you are no longer using a lag to refresh the preceding dynamic table nodes. Instead, these dynamic tables will refresh based on the lag time of your subsequent <code>DT_ORDERS_LINEITEM_CUSTOMER_NATION_REGION</code> node.</li>
+</ol>
+<p class="image-container"><img alt="runall" src="img/6c967f0f2a8578af.png"></p>
+<ol type="1" start="4">
+<li>Now let&#39;s visualize the DAG in Snowflake. Navigate to your Snowflake account and select <strong>Data &gt; Databases</strong> in the left sidebar.</li>
+</ol>
+<p class="image-container"><img alt="sfsidebar" src="img/60131f9597c4a7fc.png"></p>
+<ol type="1" start="5">
+<li>Select your <code>DEV</code> database that you created earlier in this guide (<code>YOURFIRSTINITIALLASTNAME_DEV</code>). Under <strong>Source Data</strong>, click on Dynamic Tables and select your <code>DT_ORDERS_LINEITEM_CUSTOMER_NATION_REGION</code> node.</li>
+</ol>
+<p class="image-container"><img alt="devdb" src="img/8efb820f0a28c729.png"></p>
+<ol type="1" start="6">
+<li>On the right hand side of your Snowflake UI, click on <strong>Graph</strong> to see the status of your Coalesce DAG that has been visualized in Snowflake.</li>
+</ol>
+<p class="image-container"><img alt="visualizeddagsf" src="img/85507a84b0153d2e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparing for Deployment (Optional)" duration="5">
+        <p>To deploy your DAG to a non-development environment, you will first need to set up version control in Coalesce by connecting to a git repository.</p>
+<ol type="1">
+<li>Log into git and create a new repository for your dynamic tables Project in Coalesce. Copy the URL for your newly created repository.</li>
+</ol>
+<p class="image-container"><img alt="gitrepo" src="img/d62f87b7f53068eb.png"></p>
+<ol type="1" start="2">
+<li>Navigate back to your Coalesce account and click back to your Projects dashboard. Click on <strong>Setup Version Control</strong> in the prompt under your dynamic tables Project.</li>
+</ol>
+<p class="image-container"><img alt="setup" src="img/20b9b6b90ab333a6.png"></p>
+<ol type="1" start="3">
+<li>Enter your git repository URL when prompted:</li>
+</ol>
+<p class="image-container"><img alt="gitrepourl" src="img/dfad882083c61849.png"></p>
+<ol type="1" start="4">
+<li>Enter your git account credentials when prompted and click the <strong>Test Account</strong> button to confirm that your credentials are correct. Then click <strong>Finish.</strong> You have set up version control for your Project!</li>
+</ol>
+<p class="image-container"><img alt="gitaccount" src="img/22a7503bcb57fe8c.png"></p>
+<ol type="1" start="5">
+<li>Launch your dynamic tables Workspace once more and click on the git icon in the lower left corner. Enter &#34;Initial Commit&#34; in the Commit Message field and then click the <strong>Commit and Push</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="initialcommit" src="img/d070b515b7dbf493.png"></p>
+<ol type="1" start="6">
+<li>Close the git modal and click on the <strong>Build Settings</strong> (gear icon) in the lower left corner. Now it&#39;s time to create two Environments that are tied to the <code>QA</code> and <code>PROD</code> databases that we created as part of our setup in Snowflake.</li>
+</ol>
+<p>Click on <strong>Environments</strong> and then click on the <strong>New Environment</strong> button. Name your new Environment <code>QA</code> to use as a testing environment. You will need to enter your Snowflake account which can be found in the lower left hand corner of your Snowflake account. Click the Save button to save your <code>QA</code> settings.</p>
+<p class="image-container"><img alt="qaenv" src="img/f48611460fecf60b.png"></p>
+<ol type="1" start="7">
+<li>Click on <strong>User Credentials</strong> and enter your Snowflake user credentials. Then click on <strong>Storage Mappings</strong> on the left side and set your <code>SRC</code> mapping to your <code>QA</code> database (<code>FIRSTINITIALLASTNAME_DB</code>) and <code>SOURCE DATA</code> schema. Set your <code>WORK</code> mapping to your <code>QA</code> database and <code>REPORTING</code> schema. Then click the <strong>Save</strong> button and close the window.</li>
+</ol>
+<p class="image-container"><img alt="qastoragemappings" src="img/2a81dce2e04ba0f2.png"></p>
+<ol type="1" start="8">
+<li>Click on the <strong>Parameters</strong> section and enter the following parameter to designate that any dynamic table node run in your <code>QA</code> Environment will use the <code>qa_wh_xs.</code> Then click the <strong>Save</strong> button to save your <code>QA</code> settings.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">{
+    &#34;targetDynamicTableWarehouse&#34;: &#34;qa_wh_xs&#34;
+}
+</code></pre>
+<p class="image-container"><img alt="parameter1" src="img/3026dadaab6ac42e.png"></p>
+<ol type="1" start="9">
+<li>Close out of your <code>QA</code> Environment and click the <strong>New Environment</strong> button. Name this Environment <code>PROD.</code> You will need to enter your Snowflake account name which can be found in the lower left hand corner of your Snowflake account. Click the <strong>Save</strong> button to save your <code>PROD</code> settings.</li>
+</ol>
+<p class="image-container"><img alt="prodenv" src="img/906878b015f86992.png"></p>
+<ol type="1" start="10">
+<li>Click on <strong>User Credentials</strong> and enter your Snowflake credentials as you did for your <code>QA</code> Environment. Be sure to list <code>prod_wh_xs</code> as your warehouse. Then click on <strong>Storage Mappings</strong> and set your database to your <code>PROD</code> DB for <code>SRC</code> and <code>WORK.</code> Map your <code>SRC</code> schema to <code>SOURCE_DATA</code> and your <code>WORK</code> schema to <code>PUBLIC.</code> Then click the <strong>Save</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="prodmappings" src="img/f51b5ebfc7889c88.png"></p>
+<ol type="1" start="11">
+<li>Click on the <strong>Parameters</strong> section and enter the following parameter to designate that any dynamic table node run in your <code>PROD</code> Environment will use the <code>prod_wh_xs.</code> Then click the <strong>Save</strong> button.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">{
+    &#34;targetDynamicTableWarehouse&#34;: &#34;prod_wh_xs&#34;
+}
+</code></pre>
+<p class="image-container"><img alt="prodparameter" src="img/6cdd5440e952eef0.png"></p>
+<ol type="1" start="12">
+<li>Return to the Build interface and click on the git icon in the loweer left corner to commit your changes in preparation for deployment. Name your commit &#34;Env_Update&#34; and then click the <strong>Commit and Push</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="gitcommitdeploy" src="img/a3410fb725aeeb68.png"></p>
+<p>Congratulations! You&#39;ve set up your <code>QA</code> and <code>PROD</code> Environments and are now ready to deploy.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying Your DAG (Optional)" duration="2">
+        <ol type="1">
+<li>To deploy your DAG to your <code>QA</code> Environment, switch over to the <strong>Deploy</strong> interface at the top of your screen:</li>
+</ol>
+<p class="image-container"><img alt="qadeploy" src="img/e648881e921a27dd.png"></p>
+<ol type="1" start="2">
+<li>Press the <strong>Deploy</strong> button next to your <code>QA</code> Environment to start the deployment process. Then select your most recent commit (Env_Update) and click <strong>Next.</strong></li>
+</ol>
+<p class="image-container"><img alt="commitdeploy" src="img/3184869e18d5a453.png"></p>
+<ol type="1" start="3">
+<li>Your next screen will show the parameter that specifies that your <code>QA</code> warehouse should be used. Click the <strong>Next</strong> button to continue:</li>
+</ol>
+<p class="image-container"><img alt="parameterdeploy" src="img/fdd4442bf4b55e49.png"></p>
+<ol type="1" start="4">
+<li>Finally, review your deployment plan and then click the <strong>Deploy</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="reviewplandeploy" src="img/2e17560d16bb3a25.png"></p>
+<ol type="1" start="5">
+<li>Congratulations! You have successfully deployed your DAG to your <code>QA</code> Environment. You can continue working on your DAG, or repeat the deployment process and deploy to your <code>PROD</code> environment.</li>
+</ol>
+<p class="image-container"><img alt="successfuldeployment" src="img/ca164ab2d0e5b6c0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations, you&#39;ve completed this guide on creating dynamic table nodes in Snowflake using Coalesce. Continue with your free trial by loading your own sample or production data and exploring more of Coalesce&#39;s capabilities with our <a href="https://docs.coalesce.io/docs" target="_blank">documentation</a> and <a href="https://coalesce.io/resources/" target="_blank">resources</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to create dynamic tables for data engineering tasks more efficiently in Coalesce</li>
+<li>How to deploy dynamic tables to non-development environments</li>
+<li>How to build a directed acyclic graph (DAG) made up of dynamic table nodes</li>
+</ul>
+<h2 is-upgraded>Additional resources</h2>
+<ul>
+<li><a href="https://coalesce.io/faqs/" target="_blank">Coalesce FAQs</a></li>
+<li><a href="https://docs.coalesce.io/docs" target="_blank">Coalesce Documentation</a></li>
+<li>Reach out to our sales team at <a href="https://coalesce.io/contact-us/" target="_blank">coalesce.io</a> or by emailing <a href="sales@coalesce.io" target="_blank">sales@coalesce.io</a> to learn more!</li>
+</ul>
+<p>Happy transforming!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowpipe 시작하기</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpipe_kr"
+                  title="Snowpipe 시작하기"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="개요" duration="1">
+        <p>데이터 애플리케이션을 구축할 때 여러분의 사용자는 최신 데이터를 보기를 기대합니다. 오래된 데이터는 실행 가능성이 낮으며 많은 비용이 드는 오류를 초래할 수 있습니다. 이는 지속적으로 생성된 데이터가 중요한 이유입니다. Snowflake는 데이터 로딩 도구를 제공하여 업데이트를 추진하고, 마이크로 배치에 있는 데이터를 업데이트하여 여러분의 데이터베이스 정확도를 보장합니다.</p>
+<p>지속적인 로딩을 위해 Snowpipe를 어떻게 구성할 수 있는지 알아보겠습니다. 그런 다음 여러분이 효율적으로 기본 관리 작업을 수행할 수 있는 방법을 검토할 수 있습니다. 그러나 우선 Snowflake나 데이터베이스 오브젝트 로딩에 익숙하지 않다면 앞으로 다룰 주제에 익숙해지기 위해 다음 리소스를 확인하십시오.</p>
+<h2 is-upgraded>사전 필요 조건 및 지식</h2>
+<ul>
+<li>짧은 <a href="https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc." target="_blank">Snowflake 소개</a> 동영상</li>
+<li>Snowflake <a href="https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc." target="_blank">데이터 로딩 기본 사항</a> 동영상</li>
+<li>AWS S3 서비스 <a href="https://docs.aws.amazon.com/AmazonS3/latest/gsg/GetStartedWithS3.html" target="_blank">설명서</a></li>
+</ul>
+<h2 is-upgraded>학습할 내용</h2>
+<ul>
+<li>Snowpipe 스테이징 메서드</li>
+<li>Snowflake 및 AWS를 위한 보안 액세스 구성</li>
+<li>AWS S3 이벤트 알림으로 Snowpipe 자동화</li>
+<li>Snowpipe 관리 및 삭제</li>
+<li>데이터베이스 자동화의 다음 단계</li>
+</ul>
+<h2 is-upgraded>필요한 것</h2>
+<ul>
+<li><strong>ACCOUNTADMIN</strong> 역할을 가진 <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake 계정</a> 생성</li>
+<li>Snowflake 지원 <a href="https://docs.snowflake.com/ko/user-guide/intro-regions.html" target="_blank">지역</a>에 대한 액세스를 가진 AWS <a href="https://aws.amazon.com/free/?sc_icampaign=acq_aws_takeover-1st-visit-free-tier&sc_ichannel=ha&sc_icontent=awssm-evergreen-1st-visit&sc_iplace=hero&trk=ha_awssm-evergreen-1st-visit&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc" target="_blank">계정</a></li>
+</ul>
+<h2 is-upgraded>구축할 것</h2>
+<ul>
+<li>AWS S3 버킷과 Snowflake 데이터베이스 간에 Snowpipe를 통해 자동화된 데이터 로딩</li>
+</ul>
+<p>이 섹션에서 자세히 설명한 사전 필요조건을 준비한 다음 Snowpipe를 통한 대기 데이터 통합 옵션을 알아보겠습니다.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="데이터 수집 메서드 선택" duration="2">
+        <p>Snowpipe는 이벤트 기반 데이터 수집 도구입니다. Snowpipe는 데이터 로딩 이벤트를 트리거하기 위한 2개의 기본 메서드를 제공합니다. 이 트리거는 클라우드 저장소 알림(예: AWS S3 <code>ObjectCreated</code> 이벤트)일 수 있습니다. 또는 직접 Snowpipe <code>insertFiles</code> REST API를 호출하기도 합니다.</p>
+<ol type="1">
+<li>클라우드 저장소 이벤트 알림(AWS S3, GCP CS, Azure Blob)</li>
+<li>Snowpipe의 REST API</li>
+</ol>
+<p>이 자습서는 AWS S3에서 클라우드 이벤트 알림을 통해 지속적인 데이터 로딩을 자동화하는 옵션 1을 따릅니다. 다음 섹션에서는 여러분의 클라우드 알림 기본 설정을 구성하겠습니다.</p>
+<p class="image-container"><img alt="Snowflake_data-load-snowpipe-flow" src="img/b01669660ea3daf7.png"></p>
+<p>위 이미지는 2가지 Snowpipe 워크플로를 선보입니다. 옵션 1은 클라우드 저장소 이벤트 알림을 통한 지속적인 데이터 로딩을 나타냅니다. 옵션 2는 <code>insertFiles</code> 엔드포인트 대상 REST API 호출을 통한 대기 데이터를 묘사합니다.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="클라우드 저장소 이벤트 알림 구성" duration="3">
+        <p>여러분의 클라우드 저장소 인프라에서 전송하는 알림은 지속적인 로딩을 위해 Snowpipe를 트리거하는 직접적인 방법입니다.</p>
+<p>Snowpipe가 지원하는 클라우드 저장소 플랫폼</p>
+<ul>
+<li>Google Cloud Storage</li>
+<li>Microsoft Azure Blob Storage</li>
+<li>AWS S3</li>
+</ul>
+<p>이 자습서는 Snowpipe를 통해 AWS S3 버킷을 사용하는 데 집중합니다. Snowflake 설명서를 방문하여 <a href="https://docs.snowflake.com/ko/user-guide/data-load-snowpipe-auto-gcs.html" target="_blank">Google Cloud Storage</a> 또는 <a href="https://docs.snowflake.com/ko/user-guide/data-load-snowpipe-auto-azure.html" target="_blank">Microsoft Azure Blob Storage</a>와 Snowpipe를 연결하는 것에 대해 자세히 알아보십시오.</p>
+<p>AWS S3 및 Snowpipe 통합을 선택하면 통합을 위한 데이터를 스테이징하기 위해 S3 이벤트 알림을 사용할지 아니면 Amazon의 SNS(Simple Notification Service)를 사용할지를 결정할 수 있습니다. 새로운 알림과 충돌할 수 있으니 현재 S3 이벤트 알림이 있는지 확인하십시오. 있다면 SNS 알림을 선택하는 것이 좋습니다. 없다면 단순한 선택지는 S3 이벤트 알림을 통해 지속적인 통합을 트리거하는 것입니다. 참고로 SNS 네트워크 트래픽은 Amazon의 VPC 외부로 이동합니다. 잠재적 보안 위험이 이슈라면 AWS의 PrivateLink 서비스 사용을 고려하십시오.</p>
+<p>마이크로 배치에서 새로운 데이터를 원활하게 로드하기 위해 S3 이벤트 알림 사용 시작에 필요한 액세스 요구 사항을 다뤄 보겠습니다.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="클라우드 저장소 권한 구성" duration="8">
+        <p>Snowpipe 처리를 위해 AWS 저장소 알림 사용을 시작하려면 여러분의 AWS와 Snowflake 계정 내에서 다음 단계에 따라 보안 조건을 설정하십시오.</p>
+<ol type="1">
+<li>Snowflake의 S3 액세스를 위한 IAM 정책 생성</li>
+</ol>
+<p>Snowflake는 <code>GetObject</code>, <code>GetObjectVersion</code> 및 <code>ListBucket</code>으로 여러분의 S3에 액세스하려면 IAM 정책 권한이 필요합니다. 여러분의 AWS 콘솔에 로그인하고 IAM 서비스로 이동합니다. <strong>Account settings</strong> 내 <strong>Security Token Service</strong> 목록에서 여러분의 계정 지역이 <strong>Active</strong>로 기록되어 있는지 확인합니다.</p>
+<p><strong>Policies</strong>로 이동하고 아래 JSON을 사용하여 ‘snowflake_access&#39;라는 새로운 IAM 정책을 생성합니다.</p>
+<pre><code>{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:GetObject&#34;,
+                &#34;s3:GetObjectVersion&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;bucket&gt;/&lt;prefix&gt;/*&#34;
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: &#34;s3:ListBucket&#34;,
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;bucket&gt;&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringLike&#34;: {
+                    &#34;s3:prefix&#34;: [
+                        &#34;*&#34;
+                    ]
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+<p><strong>여러분의</strong> AWS S3 버킷 이름과 폴더 경로 접미사로 <code><bucket></code> 및 <code><prefix></code>를 대체해야 합니다.</p>
+<ol type="1" start="2">
+<li>새로운 IAM 역할</li>
+</ol>
+<p>AWS IAM 콘솔에서 ‘snowflake_access&#39; IAM 정책과 관련된 새로운 IAM 역할을 추가합니다. 다음과 같이 설정된 역할을 생성합니다.</p>
+<ul>
+<li><strong>Trusted Entity</strong>: 또 다른 AWS 계정</li>
+<li><strong>Account ID</strong>: &lt;your_account_id&gt;</li>
+<li><strong>Require External ID</strong>: [X]</li>
+<li><strong>External ID</strong>: 0000</li>
+<li><strong>Role Name</strong>: snowflake_role</li>
+<li><strong>Role Description</strong>: S3 <code><bucket></code>에 대한 액세스를 위한 Snowflake 역할</li>
+<li><strong>Policies</strong>: snowflake_access</li>
+</ul>
+<p>역할을 생성한 다음 클릭하여 역할의 요약을 확인하고 <strong>Role ARN</strong>을 기록합니다.</p>
+<ol type="1" start="3">
+<li>IAM 사용자를 Snowflake 저장소와 통합합니다.</li>
+</ol>
+<p>여러분의 Snowflake 웹 콘솔 내 워크시트에서 <code>CREATE STORAGE INTEGRATION</code> 명령을 실행하겠습니다.</p>
+<pre><code>CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = S3
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = &#34;arn:aws:iam::&lt;role_account_id&gt;:role/snowflake_role&#34;
+  STORAGE_ALLOWED_LOCATIONS = (&#34;s3://&lt;bucket&gt;/&lt;path&gt;/&#34;);
+</code></pre>
+<p><code><bucket></code>, <code><prefix></code> 및 <code><role_account_id></code>를 <em>여러분의</em> AWS S3 버킷 이름, 폴더 경로 접미사 및 IAM 역할 계정 ID로 대체해야 합니다.</p>
+<p><img alt="Snowflake_CreateIntegration-image" src="img/c2e463d690b863db.png"> 위 그림에서 <strong>ACCOUNTADMIN</strong> 역할과 성공적인 생성 상태 메시지를 확인하십시오.</p>
+<ol type="1" start="4">
+<li>저장소 통합 설명 명령을 실행합니다.</li>
+</ol>
+<pre><code>desc integration S3_role_integration;
+</code></pre>
+<p>위 명령을 실행하여 여러분의 새로운 통합의 설명을 표시합니다. <img alt="Snowflake_IntDesc-image" src="img/a802fe9ba8e118fc.png"> <code>STORAGE_AWS_IAM_USER_ARN</code> 및 <code>STORAGE_AWS_EXTERNAL_ID</code>를 위해 표시된 속성값을 기록합니다.</p>
+<ol type="1" start="5">
+<li>IAM 사용자 권한</li>
+</ol>
+<p>여러분의 AWS IAM 서비스 콘솔로 되돌아갑니다. <strong>Roles</strong> 내에서 ‘snowflake_role&#39;을 클릭합니다. <strong>Trust relationships</strong> 탭에서 <strong>Edit trust relationship</strong>을 클릭하고 이전 단계에서 찾았던 <code>STORAGE_AWS_IAM_USER_ARN</code> 및 <code>STORAGE_AWS_EXTERNAL_ID</code>가 포함된 파일을 편집합니다.</p>
+<pre><code>{
+  &#34;Version&#34;: &#34;2012-10-17&#34;,
+  &#34;Statement&#34;: [
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        &#34;AWS&#34;: &#34;&lt;STORAGE_AWS_IAM_USER_ARN&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+      &#34;Condition&#34;: {
+        &#34;StringEquals&#34;: {
+          &#34;sts:ExternalId&#34;: &#34;&lt;STORAGE_AWS_EXTERNAL_ID&gt;&#34;
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<p><em>여러분의 </em><code>STORAGE_AWS_IAM_USER_ARN</code> 및 <code>STORAGE_AWS_EXTERNAL_ID</code>를 위한 문자열 값을 대체한 후 <strong>Update Trust Policy</strong>를 클릭합니다.</p>
+<p>이 섹션을 완료한 후 여러분의 AWS와 Snowflake 계정 권한이 Snowpipe를 위해 준비되었습니다. 다음 섹션에서는 Snowpipe를 트리거하는 클라우드 알림을 통해 자동화된 마이크로 배치를 수행하기 위한 단계를 제공합니다.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake에서 파이프 생성" duration="8">
+        <p>이제 여러분의 AWS와 Snowflake 계정이 올바른 보안 조건이 갖추고 있으니 S3 이벤트 알림을 통해 Snowpipe 설정을 마무리하십시오.</p>
+<ol type="1">
+<li>데이터베이스, 테이블, 스테이지 및 파이프 생성</li>
+</ol>
+<p>새 Snowflake 웹 콘솔 워크시트에서 아래 명령을 사용하여 Snowpipe 수집에 필요한 오브젝트를 생성합니다.</p>
+<p><strong>데이터베이스 생성</strong></p>
+<pre><code language="language-sql" class="language-sql">create or replace database S3_db;
+</code></pre>
+<p>위 명령을 실행하여 ‘S3_db&#39;라는 데이터베이스를 생성합니다. <strong>Results</strong> 출력은 <code>Database S3_DB successfully created</code>라는 상태 메시지를 표시합니다.</p>
+<p><strong>테이블 생성</strong></p>
+<pre><code language="language-sql" class="language-sql">create or replace table S3_table(files string);
+</code></pre>
+<p>이 명령은 S3_db 데이터베이스에 ‘S3_table&#39;이라는 테이블을 생성합니다. <strong>Results</strong> 출력은 <code>Table S3_TABLE successfully created</code>라는 상태 메시지를 표시합니다.</p>
+<p><strong>스테이지 생성</strong></p>
+<pre><code language="language-sql" class="language-sql">use schema S3_db.public;
+create or replace stage S3_stage
+  url = (&#39;s3://&lt;bucket&gt;/&lt;path&gt;/&#39;)
+  storage_integration = S3_role_integration;
+</code></pre>
+<p>S3 버킷에 필요한 외부 <a href="https://docs.snowflake.com/ko/sql-reference/sql/create-stage.html" target="_blank">스테이지</a>를 생성하기 위해 이 명령을 사용하십시오. 여러분의 S3 버킷 이름과 파일 경로로 <code><bucket></code> 및 <code><path></code>를 대체해야 합니다.</p>
+<p><img alt="Snowflake_CreateStage-image" src="img/72c26c1ba60295f6.png"> 위 그림은 ‘Stage area S3_STAGE successfully created&#39;라는 <em>Results</em>를 보여줍니다.</p>
+<p><strong>파이프 생성</strong></p>
+<p>자동화의 마법은 <a href="https://docs.snowflake.com/ko/sql-reference/sql/create-pipe.html" target="_blank">CREATE PIPE</a> 매개 변수인 <code>auto_ingest=true</code>에 있습니다. auto_ingest가 true로 설정되어 있다면 스테이징된 데이터는 자동으로 여러분의 데이터베이스로 통합됩니다.</p>
+<pre><code language="language-sql" class="language-sql">create or replace pipe S3_db.public.S3_pipe auto_ingest=true as
+  copy into S3_db.public.S3_table
+  from @S3_db.public.S3_stage;
+</code></pre>
+<p><img alt="Snowflake_CreatePipe-image" src="img/f80a0a9e7fbd821f.png"> 여러분이 ‘Pipe S3_PIPE successfully created&#39;라는 상태 메시지를 받았음을 확인합니다.</p>
+<ol type="1" start="2">
+<li>Snowpipe 사용자 권한 구성</li>
+</ol>
+<p>Snowpipe 작업 실행과 관련된 Snowflake 사용자에게 충분한 권한이 있음을 보장하기 위해 Snowpipe 보안 권한을 관리하기 위한 고유한 역할을 생성합니다. 현재 여러분이 활용하고 있는 사용자 계정을 사용하지 마십시오. 대신 웹 콘솔 내에서 Snowpipe에 할당할 새로운 사용자를 생성하십시오.</p>
+<pre><code language="language-sql" class="language-sql">-- Create Role
+use role securityadmin;
+create or replace role S3_role;
+
+-- Grant Object Access and Insert Permission
+grant usage on database S3_db to role S3_role;
+grant usage on schema S3_db.public to role S3_role;
+grant insert, select on S3_db.public.S3_table to role S3_role;
+grant usage on stage S3_db.public.S3_stage to role S3_role;
+
+-- Bestow S3_pipe Ownership
+grant ownership on pipe S3_db.public.S3_pipe to role S3_role;
+
+-- Grant S3_role and Set as Default
+grant role S3_role to user &lt;username&gt;;
+alter user &lt;username&gt; set default_role = S3_role;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_UserS3_Pipe-image" src="img/ae9fef02b16bad35.png"></p>
+<p><em>SECURITYADMIN</em> 액세스를 가진 <code>S3_role</code>이라는 새로운 역할을 생성합니다. 데이터베이스 오브젝트에 <code>S3_role</code> 사용 권한을 부여하고 <code>S3_table</code> 권한과 <code>S3_pipe</code> 소유권을 삽입합니다. 마지막으로 S3_role을 Snowflake 사용자의 기본값으로 설정합니다. S3 이벤트 알림을 생성하기 전에 문이 성공적이었는지 확인합니다.</p>
+<ol type="1" start="3">
+<li>새로운 S3 이벤트</li>
+</ol>
+<p><code>show pipes</code> 명령을 실행하여 ‘notification_channel&#39; 열에 나열된 ARN을 기록합니다.</p>
+<pre><code language="language-sql" class="language-sql">show pipes;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_ShowPipe-image" src="img/dcd7565d3c7796fe.png"></p>
+<p>S3 이벤트 알림 구성에 필요하기에 ARN을 복사합니다.</p>
+<p>여러분의 AWS 계정에 로그인하고 S3 서비스 콘솔로 이동합니다. Snowpipe에 사용될 버킷을 선택하고 <strong>Properties</strong> 탭으로 이동합니다. 나열된 <strong>Events</strong> 카드를 통해 <strong>Add notification</strong> 작업이 가능합니다. 나열된 값으로 알림을 생성합니다.</p>
+<ul>
+<li><strong>Name</strong>: Snowflake 자동 수집</li>
+<li><strong>Events</strong>: 모든 오브젝트가 이벤트를 생성합니다</li>
+<li><strong>Send to</strong>: SQS 큐</li>
+<li><strong>SQS</strong>: SQS 큐 ARN 추가</li>
+<li><strong>SQS queue ARN:</strong> &lt;S3_pipe_ARN&gt;</li>
+</ul>
+<p><img alt="Snowflake_AWSS3Notification-image" src="img/ffd1aaf238bcc2da.png"> Snowpipe의 자동화된 마이크로 배치가 이제 활성 상태입니다. 다음 단계에서 데이터베이스 통합 관리 방법에 대해 알아보십시오.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="파이프 관리 및 삭제" duration="3">
+        <p>Snowpipe가 구성되었으며 이제 AWS S3 버킷에서 어떠한 오브젝트가 생성되었을 때 Snowflake 데이터베이스를 업데이트합니다. Snowpipe 관리 및 삭제를 위한 몇몇 공통 명령을 검토하겠습니다.</p>
+<p><strong>ALTER PIPE</strong></p>
+<ul>
+<li>Snowpipe 일시 중지</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">ALTER PIPE ... SET PIPE_EXECUTION_PAUSED = true
+</code></pre>
+<p>구성에 <code>ALTER PIPE</code>로 변경 사항을 적용하기 전에 <code>PIPE_EXECUTION_PAUSED</code>를 true로 설정하고 일시 중지하여 Snowpipe 프로세스를 중지합니다. 파이프를 다시 시작할 준비가 되었다면 이 매개 변수를 false로 설정합니다.</p>
+<ul>
+<li>Snowpipe 상태 확인</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SYSTEM$PIPE_STATUS
+</code></pre>
+<p>파이프 상태를 확인하기 위해 위 명령을 실행합니다.</p>
+<p><strong>DROP PIPE</strong></p>
+<pre><code language="language-sql" class="language-sql">drop pipe S3_db.public.S3_pipe;
+</code></pre>
+<p><code>drop</code> 명령은 이 자습서가 끝난 뒤에 여러분의 Snowpipe를 삭제합니다.</p>
+<p><strong>SHOW PIPE</strong></p>
+<pre><code language="language-sql" class="language-sql">show pipes
+</code></pre>
+<p>모든 파이프를 표시하여 파이프가 삭제되었는지 확인합니다.</p>
+<p>이 섹션을 끝낸 후 여러분은 애플리케이션에서 Snowpipe를 사용할 준비가 되었습니다.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="결론" duration="2">
+        <p>지속적인 데이터 로딩의 이점과 새로운 데이터를 로드하기 위해 Snowpipe를 트리거할 수 있는 다양한 방법을 배웠습니다. 또한 이제 클라우드 저장소 이벤트 알림을 구성하고 Snowpipe를 관리할 수 있습니다.</p>
+<p>Snowpipe를 구현하는 다양한 방식을 검토하십시오. 활성 데이터베이스의 마이그레이션을 고려하고 있다면 여러분의 아키텍처에 가장 적합한 스테이징 메서드를 선택하고 소규모 데이터 세트에서 워크플로를 테스트하십시오. 실험을 통해 정확한 비용 편익 분석이 가능합니다. 마이그레이션을 준비하고 있다면 빠르게 <a href="https://docs.snowflake.com/ko/user-guide/data-load-snowpipe-rest-gs.html" target="_blank">Java 또는 Python SDK</a>를 시작하여 Snowpipe가 데이터 통합을 위해 어떻게 REST API 엔드포인트를 사용하는지 확인하십시오.</p>
+<h2 is-upgraded>다룬 내용</h2>
+<ul>
+<li>Snowpipe 지속적인 데이터 로딩 vs Snowpipe REST API</li>
+<li>Snowpipe를 위한 AWS S3 이벤트 알림 구성</li>
+<li>Snowflake에서 파이프 생성, 관리 및 삭제</li>
+</ul>
+<p>Snowpipe에 대해 자세히 알아보려면 <a href="https://docs.snowflake.com/ko/user-guide/data-load-snowpipe-intro.html" target="_blank">Snowpipe 참조 설명서</a>를 확인하십시오.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

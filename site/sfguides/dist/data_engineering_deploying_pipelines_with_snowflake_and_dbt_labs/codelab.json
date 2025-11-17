@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_deploying_pipelines_with_snowflake_and_dbt_labs",
+  "duration": 56,
+  "title": "Deploying Pipelines with Snowflake and dbt labs",
+  "authors": "Dmytro Yaroshenko",
+  "summary": "This guide will provide step-by-step details for building and deploying data engineering pipelines with Snowflake and dbt labs",
+  "source": "data_engineering_deploying_pipelines_with_snowflake_and_dbt_labs/data_engineering_deploying_pipelines_with_snowflake_and_dbt_labs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "data-engineering",
+    "notebooks"
+  ],
+  "tags": [
+    "dataengineering",
+    "dbt",
+    "notebooks",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_deploying_pipelines_with_snowflake_and_dbt_labs"
+}

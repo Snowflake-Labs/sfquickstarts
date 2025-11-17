@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "scheduled-query-report",
+  "duration": 40,
+  "title": "Build an Interactive Scheduled Query Execution Report",
+  "summary": "Build an interactive report to analyze failed or long-running scheduled queries using Snowflake Notebooks with Streamlit integration.",
+  "source": "scheduled-query-report/scheduled-query-report.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "audit",
+    "streamlit",
+    "notebooks",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "datavisualization",
+    "python",
+    "snowflake",
+    "streamlit",
+    "taskmanagement",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "scheduled-query-report"
+}

@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "gain_insights_from_unstructured_data",
+  "duration": 29,
+  "title": "Gain Insights From Unstructured Data using Snowflake Cortex",
+  "summary": "Gain Insights From Unstructured Data with Snowflake Cortex",
+  "source": "gain_insights_from_unstructured_data/gain_insights_from_unstructured_data.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "gen-ai",
+    "data-science-\u0026-ai",
+    "cortex"
+  ],
+  "tags": [
+    "cortex",
+    "datascience",
+    "generativeai",
+    "llms",
+    "notebook",
+    "tastybytes",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "gain_insights_from_unstructured_data"
+}

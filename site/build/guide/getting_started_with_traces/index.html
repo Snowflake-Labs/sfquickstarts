@@ -1,0 +1,429 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Traces</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_traces"
+                  title="Getting Started with Traces"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This guide will introduce you to Logs, Traces, and Metrics in Snowflake which can be used to optimize performance and find errors in UDFs and stored procedures.</p>
+<p>This guide will use REST APIs from OpenWeather to showcase the fetch weather data as part of a pipeline.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Python and SQL</li>
+</ul>
+<h2 is-upgraded>What you will Learn</h2>
+<ul>
+<li>How to create a Notebook which incorporates Python and SQL cells</li>
+<li>How to build a Python UDF which pulls data from an external API</li>
+<li>How to create a procedure which will populates the bronze level data</li>
+<li>How to trace performance of the procedure and UDF</li>
+<li>How to get memory and cpu information from the procedure execution</li>
+</ul>
+<h2 is-upgraded>What you will Need</h2>
+<ul>
+<li>Snowflake account with</li>
+<li>Access to create a Database</li>
+<li>Access to create an Integration</li>
+<li>Account has accepted <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started" target="_blank">external offering terms</a></li>
+<li>Free API key from <a href="https://openweathermap.org/" target="_blank">OpenWeather</a> (The steps to get an API key are covered later in this quickstart)</li>
+</ul>
+<h2 is-upgraded>What you will Build</h2>
+<ul>
+<li>A Notebook that can pull weather data into a bronze layer, as part of a <a href="https://dataengineering.wiki/Concepts/Medallion+Architecture" target="_blank">Medallion Architecture</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Notebook" duration="2">
+        <p>Login to Snowsight using your credentials in Snowflake.</p>
+<p>You&#39;ll need a Database, Schema, and Warehouse to get started with the notebook.</p>
+<p>Run the following SQL (in a worksheet) to create the warehouse, database, and schema with tracing on:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE TRACING_QUICKSTART_WH WAREHOUSE_SIZE=XSMALL, INITIALLY_SUSPENDED=TRUE;
+CREATE OR REPLACE DATABASE TRACING_QUICKSTART;
+CREATE OR REPLACE SCHEMA DATA;
+
+ALTER DATABASE TRACING_QUICKSTART SET TRACE_LEVEL = ALWAYS;
+ALTER SCHEMA DATA SET TRACE_LEVEL = ALWAYS;
+
+</code></pre>
+<p>Go to Projects &gt; Notebooks in the left navigation. Click the + Notebook to create a new Notebook. Name the Notebook <code>TRACING_QUICKSTART</code> and Select the <code>TRACING_QUICKSTART</code> database and the <code>DATA</code> schema you created. Select the <code>TRACING_QUICKSTART_WH</code> that was just created, leave the default Run on warehouse selected and click Create.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="2">
+        <p>The first notebook cell will be used to setup the notebook. These variables will be used in subsequent cells using the <code>&#123;&#123;variable_name}}</code> syntax in SQL cells, and by using the variable names in Python cells.</p>
+<p>Paste this code into the first cell. If you&#39;d like to pull data for other cities, edit the city_list.</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+
+from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+
+user_name = session.sql(&#34;SELECT current_user()&#34;).collect()[0][0]
+schema_name = &#34;DATA&#34;
+database_name = &#34;TRACING_QUICKSTART&#34;
+event_table = session.sql(&#34;SHOW PARAMETERS LIKE &#39;event_table&#39; IN ACCOUNT&#34;).collect()[0][2]
+
+city_list = [(37.485318, -122.176482, &#39;Menlo Park&#39;), (52.3368551, 4.8694973, &#39;Amsterdam&#39;),(52.5100227, 13.3776724, &#39;Berlin&#39;), (52.2299305,20.9764142, &#39;Warsaw&#39;), (18.5645333,73.911966, &#39;Pune&#39;)]
+
+api_key = st.text_input(&#34;Enter API key for openweathermap&#34;)
+if api_key == &#34;&#34;:
+    raise Exception(&#34;Configuration needed&#34;)
+
+</code></pre>
+<p>When running this cell, it will prompt for entering an API key. This was done with the streamlit <code>text_input</code> widget.</p>
+<p>To get a free API key, sign up for an account on <a href="https://home.openweathermap.org/users/sign_up" target="_blank">OpenWeather</a>.</p>
+<p>After signing up, add a new API key by going to <a href="https://home.openweathermap.org/api_keys" target="_blank">API keys</a>. Create a new key with name <code>snowflake_key</code> and click Generate, copy the API key to the clipboard.</p>
+<p>After generating the key, go back to the Snowsight notebook and paste the key generated in the dialog and hit enter.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Confgure External API Access" duration="2">
+        <p>In the second notebook cell you will configure a network rule, secret, and external access integration to allow outbound connectivity to the OpenWeather API. This is necessary because the Python Notebook is secure by default and does not allow network access. A stage is also created to store the permanent UDF and procedure. &#34;Permanent&#34; means that the UDF and stored procedure will be stored in the database so that they can be called from outside the Notebook in the future, such as from a SQL query.</p>
+<p>Paste this code into the second cell, variables are automatically pulled in from the previous cell so no editing is needed.</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE &#34;&#123;&#123;database_name}}&#34;;
+USE SCHEMA &#34;&#123;&#123;schema_name}}&#34;;
+
+CREATE OR REPLACE NETWORK RULE OPENWEATHERMAP_API_NETWORK_RULE
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = (&#39;api.openweathermap.org&#39;);
+
+CREATE OR REPLACE SECRET OPENWEATHERMAP_API_KEY
+    TYPE = GENERIC_STRING
+    SECRET_STRING = &#34;&#123;&#123;api_key}}&#34;;
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENWEATHERMAP_ACCESS_INTEGRATION
+  ALLOWED_NETWORK_RULES = (OPENWEATHERMAP_API_NETWORK_RULE)
+  ALLOWED_AUTHENTICATION_SECRETS = (OPENWEATHERMAP_API_KEY)
+  ENABLED = true;
+
+CREATE STAGE IF NOT EXISTS EXEC_STORAGE;
+
+</code></pre>
+<p>Run this cell and verify it is successful.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enabling Logging and Metrics" duration="2">
+        <p>In order to get logs and metrics, levels need to be modified. This can easily be done in SQL.</p>
+<p>Change the third notebook cell to SQL and paste this section into the body.</p>
+<pre><code language="language-sql" class="language-sql">ALTER DATABASE &#34;&#123;&#123;database_name}}&#34; SET LOG_LEVEL = DEBUG;
+ALTER SCHEMA &#34;&#123;&#123;schema_name}}&#34; SET LOG_LEVEL = DEBUG;
+
+ALTER DATABASE &#34;&#123;&#123;database_name}}&#34; SET METRIC_LEVEL = ALL;
+ALTER SCHEMA &#34;&#123;&#123;schema_name}}&#34; SET METRIC_LEVEL = ALL;
+
+ALTER SESSION SET METRIC_LEVEL = ALL;
+
+</code></pre>
+<p>Run this cell and verify it is successful.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the UDF" duration="5">
+        <p>A UDF will use the External Access and Secret created previously and pull data from the OpenWeather API using Python Requests library. It will pull the current weather for a specific latitude and longitude.</p>
+<p>In order to populate the bronze layer, a stored procedure will call the UDF for every city in the city_list to get the current weather. This is done with a dataframe and will append the data to a table for usage in the future.</p>
+<p>When calling to a 3rd party API like this, it is important to know the performance and potential errors coming from those calls. To trace this information, the function uses a custom span in OpenTelemetry. Review the tracer variable and how that is used. Without the custom span, it would be difficult to know which calls were erroring out to the API and what status code the API was returning.</p>
+<p>The function will be stored in the database schema and can be used in the future from SQL or Python, as we will do in the next cell.</p>
+<p>Create a new Python cell at the bottom of the notebook by clicking on + Python.</p>
+<p>Paste this section into the new cell.</p>
+<pre><code language="language-python" class="language-python">import _snowflake
+import requests
+import json
+import logging
+
+
+rsession = requests.Session()
+def get_weather(lat, lon):
+  &#34;&#34;&#34;
+  A UDF handler. Given a latitude and longitude, this UDF will use external network access to get the 
+  weather for that area from the OpenWeatherMap API.
+  &#34;&#34;&#34;
+  api_key = _snowflake.get_generic_secret_string(&#39;api_key&#39;)
+  url = f&#34;https://api.openweathermap.org/data/2.5/weather?lat={lat}&amp;lon={lon}&amp;exclude=hourly,daily&amp;appid={api_key}&#34;
+  response = rsession.get(url)
+  logging.debug(f&#34;Body from API: {response.text} in get_weather&#34;)
+  if response.status_code != 200:
+    logging.warn(f&#34;Unexpected response from API: {response.status_code} in get_weather&#34;)
+  return response.json()
+
+# Register the UDF
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.types import VariantType, FloatType, IntegerType, StringType
+session = get_active_session()
+
+get_weather_fn = session.udf.register(get_weather,
+                                   return_type=VariantType(),
+                                   input_types=[FloatType(),FloatType()],
+                                   name=&#34;get_weather_fn&#34;,
+                                   replace=True,
+                                   is_permanent=True,
+                                   stage_location=&#34;EXEC_STORAGE&#34;,
+                                   secrets={&#39;api_key&#39;:&#39;OPENWEATHERMAP_API_KEY&#39;},
+                                   external_access_integrations=[&#34;OPENWEATHERMAP_ACCESS_INTEGRATION&#34;],
+                                   packages=[&#34;snowflake-snowpark-python&#34;, &#34;requests&#34;, &#34;snowflake-telemetry-python&#34;])
+
+</code></pre>
+<p>Run this cell and verify it is successful.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test the UDF" duration="2">
+        <p>Now that the UDF is stored in the database, it can easily be tested using SQL.</p>
+<p>Create a new SQL cell at the bottom of the notebook by clicking on + SQL.</p>
+<p>Paste this section into the new cell.</p>
+<pre><code language="language-sql" class="language-sql">SELECT GET_WEATHER_FN(45.6783036,-111.0347646)
+
+</code></pre>
+<p>Run this cell and verify it is successful, it will return the current weather in Bozeman, MT.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Procedure" duration="5">
+        <p>A procedure will be used to pull the weather for all the cities in the city_list.</p>
+<p>This python procedure needs the opentelemetry package. To add the package to the Notebook, click on Packages at the top. Under Anaconda Packages, add opentelemetry-api. Adding this package will take a minute as the package is downloaded and added to the running Notebook environment.</p>
+<p>Create a new Python cell at the bottom of the notebook by clicking on + Python.</p>
+<pre><code language="language-python" class="language-python">import datetime 
+import time
+import snowflake.snowpark
+
+from opentelemetry import trace
+from snowflake.snowpark.functions import sproc
+
+
+def get_weather_for_cities(session, to_table, minutes_to_run, seconds_to_wait):
+    &#34;&#34;&#34;
+    A stored procedure handler that reads from the city_list table and calls the UDF to add the wather
+    data as a new column
+    &#34;&#34;&#34;
+    df = session.table(&#34;city_list&#34;)
+    stop_time = datetime.datetime.utcnow() + datetime.timedelta(minutes = minutes_to_run)
+    tracer = trace.get_tracer(__name__)
+    while datetime.datetime.utcnow() &lt; stop_time:
+        with tracer.start_as_current_span(f&#34;get_weather_for_all_cities&#34;) as p:
+            pdf = df.select(get_weather_fn(&#34;lat&#34;, &#34;lon&#34;).alias(&#34;current_weather&#34;), &#34;name&#34;)
+            pdf.write.mode(&#34;append&#34;).save_as_table(to_table)
+        time.sleep(seconds_to_wait)
+    return &#34;OK&#34;
+
+# Store the city_list for use in the procedure
+df = session.create_dataframe(city_list).to_df(&#34;lat&#34;,&#34;lon&#34;,&#34;name&#34;)
+df.write.mode(&#34;overwrite&#34;).save_as_table(&#34;city_list&#34;)
+
+# Register the stored procedure
+get_weather_for_cities_sp = session.sproc.register(get_weather_for_cities, 
+                                                   name=&#34;get_weather_for_cities_sp&#34;,
+                                                   return_type=StringType(),
+                                                   input_types=[StringType(),IntegerType(),IntegerType()],
+                                                   is_permanent=True,
+                                                   replace=True,
+                                                   packages=[&#34;snowflake-snowpark-python&#34;, &#34;requests&#34;, &#34;snowflake-telemetry-python&#34;, &#34;opentelemetry-api&#34;],
+                                                   stage_location=&#34;EXEC_STORAGE&#34;)
+
+</code></pre>
+<p>Run this cell and verify it is successful, it will return the current weather in Bozeman, MT.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Procedure" duration="2">
+        <p>Create a new Python cell at the bottom of the notebook by clicking on + Python.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+session.sql(&#34;call get_weather_for_cities_sp(&#39;bronze_weather_api&#39;, 1, 15)&#34;).collect()
+session.table(&#34;bronze_weather_api&#34;)
+
+</code></pre>
+<p>Verify it is successful. After running, the notebook will output the dataframe of bronze_weather_api which includes the current weather for all the cities in city_list.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query the Data Ingested" duration="2">
+        <p>Create a new SQL cell by clicking on + SQL.</p>
+<p>Paste this section into the new cell.</p>
+<pre><code language="language-sql" class="language-sql">SELECT NAME, 
+       CURRENT_WEATHER[&#39;main&#39;][&#39;temp&#39;]::float as KELVIN_TEMP, 
+       CURRENT_WEATHER[&#39;weather&#39;][0][&#39;main&#39;]::varchar as CONDITIONS 
+FROM bronze_weather_api
+QUALIFY ROW_NUMBER() over (partition by NAME order by CURRENT_WEATHER[&#39;dt&#39;] desc) = 1;
+
+</code></pre>
+<p>Run this cell to verify it is successful.</p>
+<p>This will show the latest weather pulled by the notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="View the Traces" duration="5">
+        <p>Click on the left navigation item &#34;Monitoring&#34; &gt; &#34;Traces &amp; Logs&#34;.</p>
+<p>Traces can take a minute to show up, so you may have to wait and refresh until they appear. You may have to filter using the <code>Database</code> filter and selecting <code>TRACING_QUICKSTART</code> if there are other traces in the account.</p>
+<p>Look for the trace with the name <code>GET_WEATHER_FOR_CITIES_SP</code> and open to see the span details. Notice the <code>get_weather_for_all_cities</code> spans which are the more time consuming parts of the procedure. You can see fetching the data from the API and saving is only a few seconds, but the entire runtime of the procedure is over a minute.</p>
+<p>If you expand the <code>get_weather_fn</code> entry under <code>get_weather_for_all_cities</code>, you can see the Debug Logs by clicking on Logs on the trace to see all the http request information.</p>
+<p>This tracing information shows the entire execution timeline wsith information on every call.</p>
+<p class="image-container"><img style="width: 889.00px" src="img/afa7219e5dcd5892.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query the Metrics, Logs, and Trace Data" duration="3">
+        <p>Memory and CPU metrics are also available because the session set the METRIC_LEVEL to all.</p>
+<p>To get to this data, it is in the Events table.</p>
+<p>Find your events table by running this SQL:</p>
+<pre><code language="language-sql" class="language-sql">SHOW PARAMETERS LIKE &#39;event_table&#39; IN ACCOUNT;
+</code></pre>
+<p>This table is where Snowflake stores all metrics, spans, and logs.</p>
+<p>Query the memory and cpu metrics with this query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM &#39;&#123;&#123;event_table}}&#39;
+WHERE
+    RECORD_TYPE = &#39;METRIC&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;db.user&#39;] = &#39;&#123;&#123;user_name}}&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;snow.database.name&#39;] = &#39;&#123;&#123;database_name}}&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;snow.schema.name&#39;] = &#39;&#123;&#123;schema_name}}&#39;
+ORDER BY TIMESTAMP DESC;
+
+</code></pre>
+<p>Query the traces with this query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM &#39;&#123;&#123;event_table}}&#39;
+WHERE
+    RECORD_TYPE = &#39;SPAN&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;db.user&#39;] = &#39;&#123;&#123;user_name}}&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;snow.database.name&#39;] = &#39;&#123;&#123;database_name}}&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;snow.schema.name&#39;] = &#39;&#123;&#123;schema_name}}&#39;
+ORDER BY TIMESTAMP DESC;
+
+</code></pre>
+<p>Query the logs with this query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM &#39;&#123;&#123;event_table}}&#39;
+WHERE
+    RECORD_TYPE = &#39;LOG&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;db.user&#39;] = &#39;&#123;&#123;user_name}}&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;snow.database.name&#39;] = &#39;&#123;&#123;database_name}}&#39; 
+    and RESOURCE_ATTRIBUTES[&#39;snow.schema.name&#39;] = &#39;&#123;&#123;schema_name}}&#39;
+ORDER BY TIMESTAMP DESC;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Disabling Traces and Metrics" duration="2">
+        <p>Changing the level of tracing, metrics, and logs can be done similarly to how we enabled it, with SQL.</p>
+<p>Add a new SQL Cell and paste in the following contents and run.</p>
+<pre><code language="language-sql" class="language-sql">ALTER DATABASE &#34;&#123;&#123;database_name}}&#34; SET LOG_LEVEL = WARN;
+ALTER SCHEMA &#34;&#123;&#123;schema_name}}&#34; SET LOG_LEVEL = WARN;
+
+ALTER DATABASE &#34;&#123;&#123;database_name}}&#34; SET TRACE_LEVEL = OFF;
+ALTER SCHEMA &#34;&#123;&#123;schema_name}}&#34; SET TRACE_LEVEL = OFF;
+
+ALTER DATABASE &#34;&#123;&#123;database_name}}&#34; SET METRIC_LEVEL = NONE;
+ALTER SCHEMA &#34;&#123;&#123;schema_name}}&#34; SET METRIC_LEVEL = NONE;
+
+ALTER SESSION SET METRIC_LEVEL = NONE;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>Run the following in a Worksheet to clean up all objects created in this quickstart, including the notebook.</p>
+<pre><code language="language-sql" class="language-sql">DROP DATABASE TRACING_QUICKSTART;
+DROP INTEGRATION OPENWEATHERMAP_ACCESS_INTEGRATION;
+DROP WAREHOUSE TRACING_QUICKSTART_WH;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Traces and Metrics are a very powerful tool to develop, optimize, and debug jobs that run in Snowflake.</p>
+<p>If you want to learn more, check out the docs on <a href="https://docs.snowflake.com/en/LIMITEDACCESS/logging-tracing/tracing-accessing-events" target="_blank">Traces</a> and <a href="https://docs.snowflake.com/LIMITEDACCESS/snowpark-python-metrics" target="_blank">Metrics</a>.</p>
+<p>Also checkout other related guides:</p>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/alert_on_events/index.html" target="_blank">Event Tables and Alerts</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html" target="_blank">Snowflake Notebooks</a></li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Creating a Notebook</li>
+<li>Creating a Network Rule, Secret and Access Integration to access 3rd party data</li>
+<li>Enabling &amp; Configuring Tracing and Metrics</li>
+<li>Adding a custom span for easier debugging</li>
+<li>Viewing Traces and Querying Metric Data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

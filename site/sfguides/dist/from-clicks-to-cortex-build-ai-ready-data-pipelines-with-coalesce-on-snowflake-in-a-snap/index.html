@@ -1,0 +1,402 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="from-clicks-to-cortex-build-ai-ready-data-pipelines-with-coalesce-on-snowflake-in-a-snap"
+                  title="From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>This Hands-On Lab exercise is designed to help you master building data pipelines using Coalesce Marketplace. In this lab, you&#39;ll explore the Coalesce interface, learn how to easily transform and model your data with a variety of packages from Coalesce marketplace, understand how to build reporting pipelines, and play with real-time functionality.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to navigate the Coalesce interface</li>
+<li>How to add data sources to your graph</li>
+<li>How to prepare your data for transformations with Stage nodes</li>
+<li>How to join tables</li>
+<li>How to apply transformations to individual and multiple columns at once</li>
+<li>How to build out Dimension and Fact nodes</li>
+<li>How to make changes to your data and propagate changes across pipelines</li>
+<li>How to configure and build an ML Forecast node</li>
+</ul>
+<p>By completing the steps we&#39;ve outlined in this guide, you&#39;ll have mastered the basics of Coalesce and can venture into our more advanced features.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake <a href="https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_campaign=na-us-en-brand-trial-exact&utm_content=go-eta-evg-ss-free-trial&utm_term=c-g-snowflake%20trial-e&_bt=579123129595&_bk=snowflake%20trial&_bm=e&_bn=g&_bg=136172947348&gclsrc=aw.ds&gclid=CjwKCAiAk--dBhABEiwAchIwkYotxMl4v5sRhNMO6LxCXUTaor9yH2mAbOwQHVO0ZNJQRuNyHrmYwRoCPucQAvD_BwE" target="_blank">trial account</a></li>
+<li>A Coalesce trial account created via <a href="https://coalesce.io/product-technology/launch-coalesce-from-snowflake-partner-connect/" target="_blank">Snowflake Partner Connect</a></li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>The <a href="https://www.google.com/chrome/" target="_blank">Google Chrome browser</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Directed Acyclic Graph (DAG) representing a real-time data pipeline leverage advanced Snowflake features.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Before You Start" duration="10">
+        <p>To complete this lab, please create free trial accounts with Snowflake and Coalesce by following the steps below. You have the option of setting up Git-based version control for your lab, but this is not required to perform the following exercises. Please note that none of your work will be committed to a repository unless you set Git up before developing.</p>
+<p>We recommend using Google Chrome as your browser for the best experience.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Note: Not following these steps will cause delays and reduce your time spent in the Coalesce environment.</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Step 1: Create a Snowflake Trial Account</h2>
+<ol type="1">
+<li>Fill out the Snowflake trial account form <a href="https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_campaign=na-us-en-brand-trial-exact&utm_content=go-eta-evg-ss-free-trial&utm_term=c-g-snowflake%20trial-e&_bt=579123129595&_bk=snowflake%20trial&_bm=e&_bn=g&_bg=136172947348&gclsrc=aw.ds&gclid=Cj0KCQiAtvSdBhD0ARIsAPf8oNm6YH7UeRqFRkVeQQ-3Akuyx2Ijzy8Yi5Om-mWMjm6dY4IpR1eGvqAaAg3MEALw_wcB" target="_blank">here</a>. Use an email address that is not associated with an existing Snowflake account.</li>
+<li>When signing up for your Snowflake account, select the region that is physically closest to you and choose Enterprise as your Snowflake edition. Please note that the Snowflake edition, cloud provider, and region used when following this guide do not matter.<img alt="image1" src="img/71b765debf90ffce.png"></li>
+<li>After registering, you will receive an email from Snowflake with an activation link and URL for accessing your trial account. Finish setting up your account following the instructions in the email.</li>
+</ol>
+<h2 is-upgraded>Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect</h2>
+<p>Once you are logged into your Snowflake account, sign up for a free Coalesce trial account using Snowflake Partner Connect. Check your Snowflake account profile to make sure that it contains your fist and last name.</p>
+<p>Once you are logged into your Snowflake account, sign up for a free Coalesce trial account using Snowflake Partner Connect. Check your Snowflake account profile to make sure that it contains your fist and last name.</p>
+<ol type="1">
+<li>Select Data Products &gt; Partner Connect in the navigation bar on the left hand side of your screen and search for Coalesce in the search bar.<img alt="image2" src="img/9fb35325ac344f0a.png"></li>
+<li>Review the connection information and then click Connect.<img alt="image3" src="img/ff12f1f4228d14cf.png"></li>
+<li>When prompted, click Activate to activate your account. You can also activate your account later using the activation link emailed to your address.<img alt="image4" src="img/b93c58c89827967e.png"></li>
+<li>Once you&#39;ve activated your account, fill in your information to complete the activation process.<img alt="image5" src="img/224b043b97b8555c.png"></li>
+</ol>
+<p>Congratulations! You&#39;ve successfully created your Coalesce trial account.</p>
+<h2 is-upgraded>Step 3: Set Up The Dataset</h2>
+<ol type="1">
+<li>Within Worksheets, click the &#34;+&#34; button in the top-right corner of Snowsight and choose &#34;SQL Worksheet.&#34;<img alt="image8" src="img/746ae1b3c6b61690.png"></li>
+<li>Navigate to the <a href="https://github.com/coalesceio/hands-on-labs/blob/main/marketplace-hol/hol_setup.sql" target="_blank">Marketplace HOL Data Setup File</a> that is hosted on GitHub.</li>
+<li>Within GitHub, navigate to the right side and click &#34;Copy raw contents&#34;. This will copy all of the required SQL into your clipboard.<img alt="image9" src="img/18859b12d22c2549.png"></li>
+<li>Paste the setup SQL from GitHub into your Snowflake Worksheet. Then click inside the worksheet and select All (<em>CMD + A for Mac or CTRL + A for Windows</em>) and Click &#34;► Run&#34;.</li>
+<li>After clicking &#34;► Run&#34; you will see queries begin to execute. These queries will run one after another within the entire worksheet taking around 60 seconds.</li>
+</ol>
+<p>Once you&#39;ve activated your Coalesce trial account and logged in, you will land in your Projects dashboard. Projects are a useful way of organizing your development work by a specific purpose or team goal, similar to how folders help you organize documents in Google Drive.</p>
+<p>Your trial account includes a default Project to help you get started. Click on the Launch button next to your Development Workspace to get started. <img alt="image10" src="img/e56de7f7ed701f5f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installing Packages From Coalesce Marketplace" duration="10">
+        <p>You will need to add packages from Coalesce Marketplace into your workspace in order to complete this lab.</p>
+<ol type="1">
+<li>Within your workspace, navigate to the build settings in the lower left hand corner of the left sidebar<img alt="image12" src="img/85e2287d24999cd7.png"></li>
+<li>Select Packages from the Build Settings options<img alt="image13" src="img/d08c02caa204890b.png"></li>
+<li>Select Browse to Launch the Coalesce Marketplace<img alt="image14" src="img/fe1a274050dbb7d2.png"></li>
+<li>You&#39;ll see a variety of packages available to install. For this lab, we&#39;ll be installing each of the packages listed here:<ul>
+<li>External Data Package</li>
+<li>Dynamic Tables</li>
+<li>Cortex</li>
+<li>Incremental Loading</li>
+</ul>
+The process for installing each of these packages is the same, so once you do it once, you&#39;ll be able to follow the same flow for each consecutive package. Let&#39;s start with the External Data Package.</li>
+<li>Select the <strong>Find out more</strong> button on the External Data Package. This will open the details of the package<img alt="image15" src="img/6ecb73a7bdf533a9.png"></li>
+<li>Copy the package ID from the External Data Package page<img alt="image16" src="img/9798eb343806319c.png"></li>
+<li>Back in Coalesce, select the Install button:<img alt="image17" src="img/1f1354dc276791b9.png"></li>
+<li>Paste the Package ID into the corresponding input box:<img alt="image18" src="img/72a61c721cb0eff3.png"></li>
+<li>Give the package an Alias, which is the name of the package that will appear within the Build Interface of Coalesce. We&#39;ll be using the following aliases for each package in this guide:<ul>
+<li>External Data Package: EDP</li>
+<li>Dynamic Tables: Dynamic-Tables</li>
+<li>Cortex: Cortex</li>
+<li>Incremental Loading: Incremental</li>
+</ul>
+Finish by clicking Install.<img alt="image19" src="img/50d1d4d4f02fd1ef.png"></li>
+<li>Continue to follow this process until all four packages have been installed.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Storage Locations and Mappings" duration="3">
+        <p>Your Partner Connect Coalesce Account will come with two Storage Locations out of the box. We need to add one more to accomodate for some of the work we will be doing. In the setup of this guide, you will have run a SQL script in Snowflake that, among other things, created a stage and external volume. These two items will need to be mapped to a storage location in Coalesce so our packages can work with these objects.</p>
+<ol type="1">
+<li>To add storage locations, navigate to the left side of your screen and click on the Build settings cog.<img alt="image27" src="img/e1e9e45dc9be01a2.png"></li>
+<li>Click the &#34;Add New Storage Locations&#34; button and name it STORE representing the data coming from your restaurant.<img alt="image28" src="img/735da42c7cfae39c.png"></li>
+<li>Now map your storage location to their logical destinations in Snowflake. In the upper left corner next to your Workspace name, click on the pencil icon to open your Workspace settings. Click on Storage Mappings and map your STORE location to the <strong>MARKETPLACE_HOL</strong> database and the <strong>STORE</strong> schema. Select Save to ensure Coalesce stores your mappings.<img alt="image29" src="img/f47e3ad83b83aa04.png"></li>
+<li>Go back to the build settings and click on Node Types and then click the toggle button next to View to enable View node types. Now you&#39;re ready to start building your pipeline.<img alt="image30" src="img/8bbf26ecafd19cf.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Adding Data Sources" duration="10">
+        <ol type="1">
+<li>In the Browser within the Build Interface, select the + button in the upper left corner of the screen<img alt="image31" src="img/144be665a5314269.png"></li>
+<li>Select Add Sources. This will open the data sources modal which will display all of the obects available within each storage location you have configured.<img alt="image32" src="img/5a297d237f0f2612.png"></li>
+<li>Within the STORE Storage Location that you configured in the previous step, you will see four tables available. Select all four of the tables and select <strong>Add 4 Sources</strong><img alt="image33" src="img/c1d65c9e745781e.png"></li>
+<li>There is an additional data source that is a JSON file that exists in an AWS S3 Bucket. To obtain this data source, we&#39;ll use our first Marketplace package. Select the + button again in the upper left corner and navigate to Create New Node -&gt; EDP -&gt; Copy Into.<img alt="image34" src="img/5cac1501625b1ae9.png"></li>
+<li>This will add a Copy Into node into your graph and immediately place you in the node. Rename the node to <strong>CUSTOMER_REVIEWS</strong>.<img alt="image35" src="img/706239df884b490e.png"></li>
+<li>On the right side of the node, open the Source Data dropdown within the Config Settings of the node.<img alt="image36" src="img/2dfe3500aeecca4.png"></li>
+<li>Toggle the Internal or External Stage toggle to on.<img alt="image37" src="img/c351508b7bad3766.png"></li>
+<li>Now you&#39;ll need to confiugre each of the parameters listed. For the Coalesce Storage Location of Stage, you will list the <strong>STORE</strong> storage location, as this is the database and schema that each object from the setup script was created within.<img alt="image38" src="img/bdcce91ae4dde660.png"></li>
+<li>For the Stage Name, you will use the name of the stage created in the setup script: <strong>store_data</strong><img alt="image39" src="img/48df6bed5eec0eee.png"></li>
+<li>For the Path or Subfolder, you will pass through a path called <strong>json</strong> which is the folder containing the json data we wish to load.<img alt="image40" src="img/ba296bf93c1e793c.png"></li>
+<li>For the File Name(s), include the file name, which is named <strong>customer_reviews.json</strong>.<pre><code language="language-JS" class="language-JS">customer_reviews.json
+</code></pre>
+<img alt="image41" src="img/11d202c26dcbbcd5.png"></li>
+<li>You do not need to include anything for the file pattern. Open the <strong>File Format</strong> dropdown next.</li>
+<li>You will keep the File Format Definition as <strong>File Format Name</strong>. For the Coalesce Storage Location, you will again use the <strong>STORE</strong> storage location.<img alt="image42" src="img/7cfc8ae55e5d87dd.png"></li>
+<li>For the File Format Name, use the file format created in the setup script called <strong>JSONFORMAT</strong><img alt="image43" src="img/2353d7a6c28beca6.png"></li>
+<li>As already discussed, the File Type is JSON, so select that from the File Type dropdown.<img alt="image44" src="img/ea3530b6daf0071f.png"></li>
+<li>Once complete, Create and Run the node.<img alt="image45" src="img/289a977f6b93816e.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating Stage Nodes" duration="10">
+        <p>Now that you have your data sources added into Coalesce, we can begin processing all of the data by building a preparation layer for the rest of our data pipeline. Specifically, we&#39;ll use some stage nodes to accomplish this for several of our tables.</p>
+<ol type="1">
+<li>Because Coalesce uses nodes which represent templates or standards of objects, you can easily apply the same standard over and over again. Using the shift key, select the <strong>CUSTOMERS</strong>, <strong>MENU</strong>, and <strong>CUSTOMER_REVIEWS</strong> nodes and right click on either of them and select Add Node -&gt; Stage.<img alt="image46" src="img/8724e4e172d0e99f.png"></li>
+<li>Coalesce will automatically create stage nodes for each of the data sources. Double click on the <strong>STG_CUSTOMER_REVIEWS</strong> node to open it.<img alt="image47" src="img/3bbd6d86cffe0c90.png"></li>
+<li>You&#39;ll see that there is a VARIANT column containing all of the JSON data we loaded int the previous node. Coalesce provides a simple and powerful solution for parsing JSON and XML strings. Right click on the <strong>SRC</strong> column and select Derive Mappings -&gt; From JSON.<img alt="image48" src="img/beae73d7faa0898.png"></li>
+<li>Coalesce will split out each of the key value pairs into their own columns with the associated data type. With the name columns available, we no onger need the original columns from the Copy Into node. Select the <strong>SRC</strong> column, hold down the shift key, and select the <strong>SCAN_TIME</strong> column. Right click on either of these columnes and select Delete Columns.<img alt="image49" src="img/805804e7ca5dd4ed.png"></li>
+<li>You can apply data transformations at any point in Coalesce. Let&#39;s apply some column level transformations to these remaning columns. You may have noted that all of the columns names in other nodes are all upper case. To ensure consistency, let&#39;s do that to these columns as well. Again, using the shift key, select all of the columns, and right click on any column and select Bulk Edit.<img alt="image50" src="img/2936b8958e66eb6.png"></li>
+<li>The bulk editor will open and all of the attributes available to be edited will be displayed. In this case, we&#39;ll choose <strong>Column Name</strong>.<img alt="image51" src="img/e5aaf7cb71315e2c.png"></li>
+<li>The SQL editor will be displayed, which allows you to write any SQL that will be applied to all of the columns. In this case, we&#39;ll use an identifier that allows Coalesce to resolve the SQL statement to each column name, while applying an UPPER function.<pre><code language="language-SQL" class="language-SQL">&#123;&#123; column.name | upper }}
+</code></pre>
+<img alt="image52" src="img/76dc9881eebb83d6.png"></li>
+<li>With your SQL written in the SQL editor, select Preview to view the changes that Coalesce will make in bulk to your columns. Select <strong>Update</strong> to apply the changes.<img alt="image53" src="img/d3e23b9801ca008a.png"></li>
+<li>With your updates made, Create and Run the node to apply the changes to your object.<img alt="image54" src="img/5d7ac5663ed0b0db.png"></li>
+<li>You can also apply single column level transformations. Back in the Browser, double click into the <strong>STG_CUSTOMERS</strong> node.<img alt="image55" src="img/dec2210cbdefca1e.png"></li>
+<li>Let&#39;s create a new column and apply a transformation that allows us to determine the email domain of each of our customers. Double click on the <strong>Column Name</strong> at the bottom of the mapping grid. Call the column <strong>EMAIL_DOMAIN</strong>.<img alt="image56" src="img/ffdffb214c876ef9.png"></li>
+<li>Next, you&#39;ll need to supply a data type, in this case, use the <code>VARCHAR(50)</code> data type and input this into the mapping grid.<img alt="image57" src="img/c7ad567d2388bf8b.png"></li>
+<li>Now let&#39;s transform this column. To obtain the email domain, you can use the following SQL to the Transform column to apply the transformation.<pre><code language="language-SQL" class="language-SQL">SPLIT_PART(&#34;CUSTOMERS&#34;.&#34;EMAIL&#34;, &#39;@&#39;, 2)
+</code></pre>
+<img alt="image58" src="img/a6f2879589ed4e1.png"></li>
+<li>Create and Run all of the Stage Nodes to build and populate them with data in Snowflake.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Dynamic Table Nodes" duration="10">
+        <p>For the rest of the staging layer, you will use Dynamic Tables to transform your data while leveraging real-time pipeline updates to your data. Let&#39;s begin.</p>
+<ol type="1">
+<li>Using the shift key, select the <strong>ORDERS</strong> and <strong>ORDER_DETAIL</strong> tables, right click on either node and select Add Node -&gt; Dynamic-Tables -&gt; Dynamic Table Work Node. Coalesce will automatically add a Dynamic Table Work node to each data source.<img alt="image59" src="img/2c5716d782af4de2.png"></li>
+<li>Next, when using the Dynamic Table package, you need to use a parameter to configure the Dynamic Table warehouse. To do this, navigate to your workspace settings by clicking the gear icon in the upper left corner.<img alt="image60" src="img/2c725985b5256ab1.png"></li>
+<li>Select Parameters, and copy and paste the following code into the Parameters editor. Select Save once complete.<img alt="image61" src="img/970ea12c17ef685d.png"><pre><code language="language-JS" class="language-JS">{
+&#34;targetDynamicTableWarehouse&#34;: &#34;DEV ENVIRONMENT&#34;
+}
+</code></pre>
+</li>
+<li>Navigate back to the Browser and double click on the <strong>DT_WRK_ORDERS</strong> table.<img alt="image62" src="img/64d6525811ae7668.png"></li>
+<li>Select the Dynamic Table Options dropdown on the right side of the node.<img alt="image63" src="img/822121d530237dfd.png"></li>
+<li>For the Warehouse on which to execute Dynamic Table, input the warehouse that is available in your Snowflake account, or was created when running the setup script called <strong>compute_wh</strong>.<img alt="image64" src="img/b661d49fac3541e8.png"></li>
+<li>Next, turn on the Downstream toggle to activate the ability for the table to automatically refresh based on the schedule of a downstream table refresh.<img alt="image65" src="img/3e01f107cfc6338c.png"></li>
+<li>Finally, in the General Options dropdown, toggle on the Distinct toggle to ensure only distinct order records are procesed.<img alt="image66" src="img/3d5e2c87a4c13ca.png"></li>
+<li>Select Create to create the Dynamic Table.<img alt="image67" src="img/3dc82e69e29b5b40.png"></li>
+<li>We&#39;ll configure the <strong>DT_WRK_ORDER_DETAILS</strong> node the same way.<img alt="image68" src="img/d514e797a53ed7df.png"></li>
+<li>Additionally, for the <strong>DISCOUNT_AMOUNT</strong> column, we&#39;ll apply some logic to simplify our discount policy. Use the following code to apply CASE WHEN logic to the column.<img alt="image69" src="img/949b3a0c7b51740d.png"><pre><code language="language-SQL" class="language-SQL">CASE WHEN &#34;ORDER_DETAIL&#34;.&#34;DISCOUNT_AMOUNT&#34; &gt; 50 THEN 10 ELSE 1 END
+</code></pre>
+</li>
+<li>Select Create to create the Dynamic Table.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Joining Nodes Together" duration="7">
+        <p>Now that you have built your processing layer, it&#39;s time to join some of these objects together to prepare data for further analysis.</p>
+<ol type="1">
+<li>Using the shift key, select the STG_CUSTOMERS and STG_CUSTOMER_REVIEWS nodes and right click on either node and select Join Nodes -&gt; Stage.<img alt="image71" src="img/3a7957b29f29d4c1.png"></li>
+<li>This will create a new stage node which you will be placed within. To configure the join, navigate to the Join tab in the upper left corner of the mapping grid.<img alt="image72" src="img/c77d04130e03e882.png"></li>
+<li>Coalesce will automatically infer as much of the join as possible, but you will need to provide the join condition. In this case, you will be joining on CUSTOMER_ID from both nodes. You can either manually confiugre this, or copy and paste the code provided<img alt="image73" src="img/c27821de43fbad8f.png"><pre><code language="language-SQL" class="language-SQL">FROM &#123;&#123; ref(&#39;WORK&#39;, &#39;STG_CUSTOMER_REVIEWS&#39;) }} &#34;STG_CUSTOMER_REVIEWS&#34;
+INNER JOIN &#123;&#123; ref(&#39;WORK&#39;, &#39;STG_CUSTOMERS&#39;) }} &#34;STG_CUSTOMERS&#34;
+ON &#34;STG_CUSTOMER_REVIEWS&#34;.&#34;customer_id&#34; = &#34;STG_CUSTOMERS&#34;.&#34;CUSTOMER_ID&#34;
+</code></pre>
+</li>
+<li>Now that you have provided the join condition, rename the node to STG_CUSTOMER_MASTER.<img alt="image74" src="img/b56c6b00b5ec7210.png"></li>
+<li>Navigate back to the mapping grid and delete one of the CUSTOMER_ID columns, as an object can&#39;t contain duplicate column names.<img alt="image75" src="img/f500f611bf6ea7c6.png"></li>
+<li>Create and Run the node to create and populate the object.<img alt="image76" src="img/40159db9472098ef.png"></li>
+<li>Next, let&#39;s join the Dynamic Table nodes together. We want this to be a real-time pipeline, so we&#39;ll use another Dynamic Table Work Node to join our nodes together. Select the DT_WRK_ORDERS and DT_WRK_ORDER_DETAIL nodes and right click on either node and select Join Nodes -&gt; Dynamic-Tables -&gt; Dynamic Table Work.<img alt="image77" src="img/3345b3d32ec2b04a.png"></li>
+<li>You&#39;ll be placed inside of the new Dynamic Table node. Just as we did with the previous stage node, we can configure the join of this node exactly the same way. Navigate to the Join tab and, this time, we&#39;ll use ORDER_ID as the join condition. Which you can provide manually, or copy and paste the following code.<img alt="image78" src="img/f91f6324e2235f93.png"><pre><code language="language-SQL" class="language-SQL">FROM &#123;&#123; ref(&#39;WORK&#39;, &#39;DT_WRK_ORDERS&#39;) }} &#34;DT_WRK_ORDERS&#34;
+INNER JOIN &#123;&#123; ref(&#39;WORK&#39;, &#39;DT_WRK_ORDER_DETAIL&#39;) }} &#34;DT_WRK_ORDER_DETAIL&#34;
+ON &#34;DT_WRK_ORDERS&#34;.&#34;ORDER_ID&#34; = &#34;DT_WRK_ORDER_DETAIL&#34;.&#34;ORDER_ID&#34;
+</code></pre>
+</li>
+<li>Rename the node to DT_WRK_ORDER_MASTER.<img alt="image79" src="img/8ad47570746a8fb0.png"></li>
+<li>Navigate back to the mapping grid and remove one of each of the ORDER_ID and ORDER_DETAIL_ID columns.</li>
+<li>In the Dynamic Table Options dropdown, supply the warehouse you want this Dynamic Table to use. Again, we&#39;ll use <strong>compute_wh</strong>.<img alt="image81" src="img/5fabc039de178c1a.png"></li>
+<li>For this Dynamic Table, leave the Downstream toggle off. Instead, we&#39;ll schedule this Dynamic Table to update ever 5 minutes. In the Lag Specification parameter, input 5 as the Time Value. For the Time Period, choose Minutes from the dropdown.<img alt="image82" src="img/911f3b2bb3c74d21.png"></li>
+<li>Select Create to create the Dynamic Table object. You&#39;ve now configured a pipeline of order data updating every 5 minutes.<img alt="image83" src="img/364fc43475df295a.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Processing Real Time Data" duration="10">
+        <p>You now have an order master table, producing data that is cleaned and unified. However, there is still more that can be done to allow your data team to process this data, especially large amounts of this data, in an efficient manner.</p>
+<ol type="1">
+<li>Currently, you have a pipeline of Dynamic Tables updating every 5 minutes. You can use a view node to query this data as it is updating, so your entire team has insight into this data. To do so, right click on the DT_WRK_ORDER_MASTER node and select Add Node -&gt; View. Create the Veiw.<img alt="image84" src="img/4ff886bbe0290638.png"></li>
+<li>In an environment where data is updating in real-time, transactional tables containing data like orders data can become quite large and it is unrealistic to processes all of the data in the table every time it updates. In these situations, you can use incremental data loading. Let&#39;s learn how to do this by incrementally processing the data from your Dynamic Table pipeline, which only contains the last 30 days worth of data.Right click on the DT_WRK_ORDER_MASTER node and select Add Node -&gt; Incremental -&gt; Incremental Load.<img alt="image85" src="img/92b7f1b34b3c54ef.png"></li>
+<li>Incremental Load Nodes require you to have your data persisted down stream so that the node can incrementally load data into a table that has persisted data. Select the Create button in the Incremental Node you just created.<img alt="image86" src="img/f5e2ce150207cfef.png"></li>
+<li>Next, you need to create a table to persist the data from the incremental node. Right Click on the INC_ORDER_MASTER node in the Browser and select Add Node -&gt; Persistant Stage.<img alt="image87" src="img/f170cd4ec3147083.png"></li>
+<li>Using the options dropdown on the right side of the node, you use a business key to identify each order. In this case, it is a composite key of ORDER_ID and ORDER_DETAIL_ID.<img alt="image88" src="img/13d0054f0034413b.png"></li>
+<li>Once configured, Create and Run the node to buid the object.<img alt="image89" src="img/ef9b4581271c32d2.png"></li>
+<li>With the persistant table created, you can finish configuring the incremental node you just created. Back in the Browser, double click on the INC_ORDER_MASTER tabe you created.<img alt="image90" src="img/3b943ef9691ab3c5.png"></li>
+<li>Open the configuration options of the node on the right side of the screen and toggle on Filter data based on Persistent table. This will allow you to configure the node to incrementally filter and process data.<img alt="image91" src="img/2bd0f55e35e9cb24.png"></li>
+<li>Pass through the Persistent Table storage location to the incremental node, which in this case, is called <strong>WORK</strong>.<img alt="image92" src="img/e6c8bd4b37b9b999.png"></li>
+<li>Then, pass the persistent table name through as the table name parameter, called <strong>PSTG_ORDER_MASTER</strong>.<img alt="image93" src="img/1a0d73d4133daf17.png"></li>
+<li>Finally, you&#39;ll need to supply the data column used for incremental loading in the selector dropdown. In this case, choose <strong>ORDER_TS</strong><img alt="image94" src="img/3ba1ccd8c7415656.png"></li>
+<li>Once complete, navigate to the Join tab of the node and delete the line of code in the SQL editor.<img alt="image95" src="img/8c3ddd2ccad27ea0.png"></li>
+<li>In the upper right corner of the SQL editor, you&#39;ll see the Generate Join tool. Select Generate Join and you&#39;ll see severa lines of SQL that Coalesce has automatically generated. This is the exact SQL needed to incrementally process your data based on the parameters that were just supplied to the node.<img alt="image96" src="img/aec79cc355c1e858.png"></li>
+<li>Select <strong>Copy to Editor</strong> to copy the code into the SQL editor for you to reconfigure the dependency of the node as well as supply the incremental logic for the node.<img alt="image97" src="img/6a3c4ded18441203.png"></li>
+<li>Once this is complete, Run the node. Now you have a view that is processing data incrementally and loading that incremental data into a persistent table.<img alt="image98" src="img/c388ff7cdd53afb8.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a type 2 slowly changing dimension" duration="3">
+        <p>So far, you&#39;ve spent your time building pipelines with some of the more exciting packages from Coalesce Marketplace. But in the real world, not every use case needs you to use functionality like this. What happens when you need to create objects from standard requests, like creating Type 2 Slowly changing dimensions? Coalesce supports this functionality out of the box, without you having to write a single line of code.</p>
+<ol type="1">
+<li>In the Browser, right click on the STG_MENU node and select Add Node -&gt; Dimension.<img alt="image99" src="img/4103f0d824dd0f99.png"></li>
+<li>Select the options dropdown within the configuration on the right side of the screen.<img alt="image100" src="img/9cb426fc4788cb43.png"></li>
+<li>You are required to supply a business key for a dimension node to work. In this case, we&#39;ll use a composite key of MENU_ID and MENU_ITEM_ID.<img alt="image101" src="img/17196cfc18bc83ea.png"></li>
+<li>Next, to configure a Type 2 Slowly Changing Diemnsion (SCD), select the columns you want to have changes tracked on. For this lab, choose the ITEM_NAME column to track changes on.<img alt="image102" src="img/d403b5f534639504.png"></li>
+<li>Now Create and Run the node. Once you Run the node, view the code that was automatically generated for you in the Results panel.<img alt="image103" src="img/d075947a514ca684.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Cortex Functions" duration="7">
+        <p>You&#39;ve processed your orders data and have built some nodes around your customer data, but now it&#39;s time to circle back to the STG_CUSTOMER_MASTER table to gain some more insights our of this data. Primarily, we want to generate a sentiment score for each of our customers, based on the reviews they have left us. Let&#39;s learn how to do this.</p>
+<ol type="1">
+<li>In the Browser, right click on the STG_CUSTOMER_MASTER node and select Add Node -&gt; Cortex -&gt; Cortex Functions.<img alt="image104" src="img/a5bcb48af1a6f941.png"></li>
+<li>In the Cortex Package options on the right side of the node, select the dropdown.<img alt="image105" src="img/1cce19c21172be12.png"></li>
+<li>Toggle on the SENTIMENT toggle.<img alt="image106" src="img/59ffad75ff371632.png"></li>
+<li>All Coalesce requires from you is to supply the column you want to generate a sentiment score from. In the mapping grid, select the <strong>REVIEW_TEXT</strong> column, right click on it, and select Duplicate Column.<img alt="image107" src="img/d887fe963333b71b.png"></li>
+<li>Double Click on the new column name and rename it to <strong>REVIEW_SENTIMENT</strong>.<img alt="image108" src="img/2e7fda830e18f4ed.png"></li>
+<li>With a new column available to use for our sentiment score, we can keep the original text. In the Column Name dropdown in the SENTIMENT toggle, select the <strong>REVIEW_SENTIMENT</strong> column.<img alt="image109" src="img/dc0a43e003f6fcd.png"></li>
+<li>Create and Run the node to view the results and see how easy Coalesce makes it to work with Cortex functions in Snowflake.<img alt="image110" src="img/4cf56c26ad722cab.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating aggregate FCT node" duration="5">
+        <p>Now that you have an object that is creating a sentiment score about your customers reviews, the next thing you will do is create a Fact table that will store the measures about customers: in this case average review and average sentiment. Let&#39;s learn how to do this.</p>
+<ol type="1">
+<li>If it&#39;s not still open, double click into the LLM_CUSTOMER_MASTER node you created in the previous section.<img alt="image111" src="img/830727e5274d66c5.png"></li>
+<li>Holding the <code>command</code> or <code>windows</code> key, select the <strong>CUSTOMER_ID</strong>, <strong>REVIEW_SENTIMENT</strong>, and <strong>STAR_RATING</strong> columns in the mapping grid.<img alt="image112" src="img/80aeb27c894c7795.png"></li>
+<li>Right click on either of the highlight columns and select Add Node -&gt; Fact. Coalesce will automatically create a new node that contains just these three columns.<img alt="image113" src="img/fc4d895d8f4d47d2.png"></li>
+<li>We want to apply aggregate functions to this data to determine average sentiment score and star rating, as some customers have reviewed multiple menu items from our restaurant. You can use the same function to apply this transformation. For the <strong>REVIEW_SENTIMENT</strong> column, double click into the <strong>Transform</strong> column and supply the SQL statement here:<img alt="image114" src="img/661ce07e14d1a0a9.png"><pre><code language="language-SQL" class="language-SQL">AVG(&#123;&#123;SRC}})
+</code></pre>
+</li>
+<li>Apply the same transformation to the <strong>STAR_RATING</strong> column<img alt="image115" src="img/8e8a0b595e1ed408.png"><pre><code language="language-SQL" class="language-SQL">AVG(&#123;&#123;SRC}})
+</code></pre>
+</li>
+<li>Since you are using aggregate functions in an object, you will need to supply a <strong>GROUP BY</strong>. Navigate to the Join tab, and add a new line to the SQL editor. Add the SQL code here:<img alt="image116" src="img/1066591c8dcbcb50.png"><pre><code language="language-SQL:" class="language-SQL:">GROUP BY ALL 
+</code></pre>
+</li>
+<li>Create and Run the node to build the object and populate it with data.<img alt="image117" src="img/181aa53cdaeb38cd.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Reporting on our data" duration="5">
+        <p>So far, you&#39;ve used packages from Coalesce Marketplace to create a pipeline that lerverages different functionality that is fully managed by the nodes you&#39;ve added to the pipeline. You&#39;ve also created various objects that can be joined together to provide a holistic view of your data. Let&#39;s create a reporting object that brings together your order data, menu data, and customer data.</p>
+<ol type="1">
+<li>Holding down the shift key, in the browser, select the <strong>PSTG_ORDER_MASTER</strong>, <strong>FCT_CUSTOMER_MASTER</strong>, and <strong>DIM_MENU</strong> nodes (<strong>MAKE SURE TO SELECT THE NODES IN THE ORDER LISTED HERE</strong>). Right click on any of the selected nodes and select Join Nodes -&gt; View.<img alt="image118" src="img/bf3941d84ca2eeeb.png"></li>
+<li>Coalesce will place you in the node. Rename the node <strong>V_REPORT_MASTER</strong>.<img alt="image119" src="img/2f0210b1d7bed63b.png"></li>
+<li>Next, navigate to the join tab and configure manually, or use the following SQL to complete the join condition:<img alt="image120" src="img/69bd877f92331dfd.png"><pre><code language="language-SQL" class="language-SQL">FROM &#123;&#123; ref(&#39;WORK&#39;, &#39;PSTG_ORDER_MASTER&#39;) }} &#34;PSTG_ORDER_MASTER&#34;
+INNER JOIN &#123;&#123; ref(&#39;WORK&#39;, &#39;FCT_CUSTOMER_MASTER&#39;) }} &#34;FCT_CUSTOMER_MASTER&#34;
+ON &#34;PSTG_ORDER_MASTER&#34;.&#34;CUSTOMER_ID&#34; = &#34;FCT_CUSTOMER_MASTER&#34;.&#34;CUSTOMER_ID&#34;
+LEFT JOIN &#123;&#123; ref(&#39;WORK&#39;, &#39;DIM_MENU&#39;) }} &#34;DIM_MENU&#34;
+ON &#34;PSTG_ORDER_MASTER&#34;.&#34;MENU_ITEM_ID&#34;= &#34;DIM_MENU&#34;.&#34;MENU_ITEM_ID&#34;
+</code></pre>
+</li>
+<li>Next, select the Column Name header to alphanumerically sort the column names in the node. Using the shift key, select all of the <code>SYSTEM_</code> columns and delete them from the node.<img alt="image121" src="img/dd9ccdc30eab21a2.png"></li>
+<li>Next, you will need to remove any duplicate columns names from the node as an object cannot contain duplicate column names. Remove one of the columns for each of the following column names:<ul>
+<li>CUSTOMER_ID</li>
+<li>ITEM_NAME</li>
+<li>MENU_ITEM_ID</li>
+</ul>
+<img alt="image122" src="img/7ae6dcb8be1f7632.png"></li>
+<li>Select the Create button to create the view.<img alt="image123" src="img/af3f7597244b0286.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations on completing your lab. You&#39;ve mastered working with Coalesce Marketplace and extending the functionality of your data pipelines. Be sure to reference this exercise if you ever need a refresher.</p>
+<p>We encourage you to continue working with Coalesce by using it with your own data and use cases and by using some of the more advanced capabilities not covered in this lab.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to navigate the Coalesce interface</li>
+<li>Configure storage locations and mappings</li>
+<li>How to add data sources to your graph</li>
+<li>How to prepare your data for transformations with Stage nodes</li>
+<li>How to join tables</li>
+<li>How to apply transformations to individual and multiple columns at once</li>
+<li>How to build real-time data pipelines and work with Dynamic Tables</li>
+<li>How to configure and understand Cortex functions node</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://coalesce.io/get-started/" target="_blank">Getting Started</a></li>
+<li><a href="https://docs.coalesce.io/docs" target="_blank">Documentation</a> &amp; <a href="https://docs.coalesce.io/docs/quick-start" target="_blank">Quickstart Guide</a></li>
+<li><a href="https://fast.wistia.com/embed/channel/foemj32jtv" target="_blank">Video Tutorials</a></li>
+<li><a href="mailto:support@coalesce.io" target="_blank">Help Center</a></li>
+</ul>
+<p>Reach out to our sales team at <a href="https://coalesce.io/contact-us/" target="_blank">coalesce.io</a> or by emailing <a href="mailto:sales@coalesce.io" target="_blank">sales@coalesce.io</a> to learn more.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

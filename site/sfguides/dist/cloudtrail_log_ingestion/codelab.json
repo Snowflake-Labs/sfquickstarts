@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "cloudtrail_log_ingestion",
+  "duration": 30,
+  "title": "AWS Cloudtrail Ingestion",
+  "summary": "AWS CloudTrail is an AWS service that helps you enable operational and risk auditing, governance, and compliance of your AWS account. By ingesting and analyzing these logs in Snowflake, practitioners are able to gain analytical insights and work toward securing their environments at scale. This quickstart is a guide to ingesting and processing AWS CloudTrail events into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for analytics, threat detection and posture management.",
+  "source": "cloudtrail_log_ingestion/cloudtrail_log_ingestion.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cybersecurity",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "aws",
+    "cybersecurity",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "cloudtrail_log_ingestion"
+}

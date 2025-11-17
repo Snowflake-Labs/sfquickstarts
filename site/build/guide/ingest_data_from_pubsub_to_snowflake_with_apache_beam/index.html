@@ -1,0 +1,469 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Ingest data from PubSub to Snowflake with Apache Beam</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="ingest_data_from_pubsub_to_snowflake_with_apache_beam"
+                  title="Ingest data from PubSub to Snowflake with Apache Beam"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="30">
+        <p>This guide shows you how to set up your Google Cloud project, Snowflake account, create a Java project with Maven by using the Apache Beam SDK and run a streaming pipeline locally and on the Dataflow service. Each step is presented as a console command or an SQL command to reduce the possibility of incorrect execution of a step.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>This guide assumes you have a basic working knowledge of Java and Google Dataflow.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to configure GCP and Snowflake resources needed to run streaming pipelines</li>
+<li>how to compile and run a pipeline written in Java</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ol type="1">
+<li>Snowflake:<ol type="1">
+<li><em>A Snowflake Account.</em></li>
+<li><em>A Snowflake User created with </em><em><code>ACCOUNTADMIN</code></em><em> Role.</em> This user will need set up a necessary resources on Snowflake account.</li>
+</ol>
+</li>
+<li>Integrated Development Environment (IDE)<ol type="1">
+<li><em>Your favorite IDE with Git integration.</em> If you don&#39;t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank"><em>SnowSQL (CLI Client)</em></a><em> with named connection configured.</em> To install it, see <a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">installation guide</a>. To configure a named connection, see:  <a href="https://docs.snowflake.com/en/user-guide/snowsql-start.html#using-named-connections" target="_blank">using the named connection</a>.</li>
+</ol>
+</li>
+<li><em>Google Cloud Platform</em>:<ol type="1">
+<li><em>Google Cloud project with billing enabled</em>. If you don&#39;t have any, have a look at <a href="https://cloud.google.com/resource-manager/docs/creating-managing-projects" target="_blank">Creating a Google Cloud Project</a>. Learn how to <a href="https://cloud.google.com/billing/docs/how-to/verify-billing-enabled" target="_blank">check if billing is enabled on a project</a>.</li>
+<li>Ensure you have one of the following IAM roles to create a Cloud Storage bucket:<ul>
+<li>Owner (roles/owner)</li>
+<li>Editor (roles/editor)</li>
+<li>Storage Admin (roles/storage.admin)</li>
+</ul>
+The permissions contained in these roles allow you to create, delete, or modify buckets. For information on setting IAM roles, see the <a href="https://cloud.google.com/storage/docs/access-control/iam-roles" target="_blank">IAM roles for Cloud Storage</a> in the Google Cloud documentation</li>
+<li>Ensure you have one of the following IAM roles to create subscription and topics in Pub/Sub service:<ul>
+<li>Owner (roles/owner)</li>
+<li>Editor (roles/editor)</li>
+<li>Pub/Sub Admin (roles/storage.admin)</li>
+<li>Pub/Sub Editor (roles/storage.editor)</li>
+</ul>
+The permissions contained in these roles allow you to create, delete, or modify topics and subscriptions. For information on setting IAM roles, see the [IAM roles for Cloud Pub/Sub]https://cloud.google.com/pubsub/docs/access-control) in the Google Cloud documentation</li>
+<li>Ensure you have one of the following IAM roles to execute and manipulate Dataflow jobs:<ul>
+<li>Owner (roles/owner)</li>
+<li>Editor (roles/editor)</li>
+<li>Dataflow Developer Admin (roles/dataflow.developer)</li>
+</ul>
+The permissions contained in these roles allow you to execute and manipulate Dataflow jobs. For information on setting IAM roles, see the [IAM roles for Cloud Dataflow]hhttps://cloud.google.com/dataflow/docs/concepts/access-control) in the Google Cloud documentation</li>
+</ol>
+</li>
+<li><a href="https://maven.apache.org/download.cgi" target="_blank"><em>Apache Maven</em></a>. Please install Apache Maven by following <a href="https://maven.apache.org/install.html" target="_blank">installation guide</a>.</li>
+<li><a href="https://cloud.google.com/sdk" target="_blank"><em>Google Cloud SDK</em></a>. Please install Google Cloud SDK by following <a href="https://cloud.google.com/sdk/docs/install-sdk" target="_blank">installation guide</a>. You must also be logged in and have an active project in Google Cloud SDK.</li>
+</ol>
+<p>It is worth getting acquainted with <a href="https://beam.apache.org/get-started/quickstart-java/" target="_blank">quickstart for Apache Beam</a> as well.</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>We will run two Dataflow jobs:</p>
+<ul>
+<li>The Data Generator Job used to publish fake JSON messages at a specified rate (measured in messages per second) to a Google Cloud Pub/Sub topic. For details, see: <a href="https://cloud.google.com/blog/products/data-analytics/dataflow-flex-template-streaming-data-generator" target="_blank">Synthetic data generation with Dataflow data generator flex template</a></li>
+<li>The Data Receiver Job used to consume messages from a Google Cloud Pub/Sub topic and save all messages to the Snowflake table.</li>
+</ul>
+<p>An example message looks like the following:</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;id&#34;: &#34;a21850b9-3290-4161-b116-2518a615b6c5&#34;,
+  &#34;name&#34;: &#34;A green door&#34;,
+  &#34;age&#34;: 39,
+  &#34;price&#34;: 12.50
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Service User in Snowflake" duration="0">
+        <p>To execute SQL statements via SnowSQL, you must specify a connection name. For the sake of clarity, it is worth writing it as a variable so that you can later refer to it in commands.</p>
+<p>Set a variable that specifies your connection in SnowSQL:</p>
+<pre><code language="language-bash" class="language-bash">SNOWSQL_CONN=&#34;XXX&#34;
+</code></pre>
+<p>This will be used to execute SQL commands as in the example below:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;SELECT 1&#34;
+</code></pre>
+<p>You will now create a user account separate from your own that the application will use to query data in Snowflake database. In keeping with sound security practices, the account will use key-pair authentication and have limited access in Snowflake.</p>
+<p><em>Note:</em> Snowflake has a few limitations that you need to know if you are going to configure it yourself:</p>
+<ul>
+<li>The Snowflake Ingest Service only supports a private key authentication, so you have to use this authentication method if you are building streaming pipelines.</li>
+<li><code>SnowflakeIO</code> only supports encrypted private keys, so your private key must have passphrase set.</li>
+<li>Snowflake Ingest Service always uses the default account role. The role passed to Apache Beam is ignored.</li>
+</ul>
+<p>Let&#39;s start with setting up a few variables.</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_USERNAME=&#34;DEV_XXX_BEAM_USER&#34;
+SNOWFLAKE_ROLE=&#34;BEAM_ROLE&#34;
+SNOWFLAKE_WAREHOUSE=&#34;COMPUTE_WH&#34;
+SNOWFLAKE_PRIVATE_KEY_PASSPHASE=&#34;hard-to-quest-Pa@@phase-42&#34;
+</code></pre>
+<p>where:</p>
+<ul>
+<li><code>SNOWFLAKE_USERNAME</code> - the name of the new service user to be created</li>
+<li><code>SNOWFLAKE_ROLE</code> - default role used by the service user</li>
+<li><code>SNOWFLAKE_WAREHOUSE</code> - default warehouse used by the service user.</li>
+<li><code>SNOWFLAKE_PRIVATE_KEY_PASSPHASE</code> - passphrase used to encrypt the private key.</li>
+</ul>
+<p>To generate a private key, run:</p>
+<pre><code language="language-bash" class="language-bash">openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -v1 PBE-SHA1-RC4-128 -out rsa_key.p8 -passout &#34;pass:${SNOWFLAKE_PRIVATE_KEY_PASSPHASE}&#34;
+</code></pre>
+<p>The commands generate a private key in PEM format in <code>rsa_key.p8</code> file. The content of this file will be similar to the one below:</p>
+<pre><code>-----BEGIN ENCRYPTED PRIVATE KEY-----
+MIIE6TAbBgkqhkiG9w0BBQMwDgQILYPyCppzOwECAggABIIEyLiGSpeeGSe3xHP1
+wHLjfCYycUPennlX2bd8yX8xOxGSGfvB+99+PmSlex0FmY9ov1J8H1H9Y3lMWXbL
+...
+-----END ENCRYPTED PRIVATE KEY-----
+</code></pre>
+<p>Set a variable with a private key for later use. You should skip the first and last line. To do it, run:</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_PRIVATE_KEY=$(cat rsa_key.p8 | tail -n +2 | tail -r | tail -n +2 | tail -r)
+</code></pre>
+<p>Based on the private key, you should generate the public key. To do it, run</p>
+<pre><code language="language-bash" class="language-bash">openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub -passin &#34;pass:${SNOWFLAKE_PRIVATE_KEY_PASSPHASE}&#34;
+</code></pre>
+<p>The command generates the public key in PEM format in <code>rsa_key.pub</code>  file. The content of this file will be similar to the one below:</p>
+<pre><code language="language-bash" class="language-bash">-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy+Fw2qv4Roud3l6tjPH4
+zxybHjmZ5rhtCz9jppCV8UTWvEXxa88IGRIHbJ/PwKW/mR8LXdfI7l/9vCMXX4mk
+...
+-----END PUBLIC KEY-----
+</code></pre>
+<p>To use it later, set a variable with a public key for later use. You should skip the first and last line. To do it, run:</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_PUB_KEY=$(cat rsa_key.pub | tail -n +2 | tail -r | tail -n +2 | tail -r)
+</code></pre>
+<p>To make sure that the keys are correct, you can verify them.</p>
+<pre><code language="language-bash" class="language-bash">echo  &#34;It is a secret&#34; &gt; secret.txt
+openssl dgst -sha256 -sign rsa_key.p8 -passin &#34;pass:${SNOWFLAKE_PRIVATE_KEY_PASSPHASE}&#34; -out secret.txt.sign secret.txt
+openssl dgst -sha256 -verify rsa_key.pub -signature secret.txt.sign secret.txt
+rm secret.txt secret.txt.sign
+</code></pre>
+<p>Finally, to create a new user and role, run:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  CREATE OR REPLACE ROLE ${SNOWFLAKE_ROLE};
+  CREATE OR REPLACE USER ${SNOWFLAKE_USERNAME} DEFAULT_ROLE=${SNOWFLAKE_ROLE}, DEFAULT_WAREHOUSE=${SNOWFLAKE_WAREHOUSE} RSA_PUBLIC_KEY=&#39;${SNOWFLAKE_PUB_KEY}&#39;;
+
+  GRANT ROLE ${SNOWFLAKE_ROLE} TO USER ${SNOWFLAKE_USERNAME}
+&#34;
+</code></pre>
+<p>You can use SnowSQL to validate the service user&#39;s configuration. To do it, run:</p>
+<pre><code language="language-bash" class="language-bash">SNOWSQL_PRIVATE_KEY_PASSPHRASE=&#34;${SNOWFLAKE_PRIVATE_KEY_PASSPHASE}&#34; \
+   snowsql \
+   --accountname &#34;$(echo &#34;${SNOWFLAKE_SERVER_NAME}&#34; | cut -d &#34;.&#34; -f 1-2)&#34; \
+   --username &#34;${SNOWFLAKE_USERNAME}&#34; \
+   --dbname &#34;${SNOWFLAKE_DATABASE}&#34; \
+   --schemaname &#34;${SNOWFLAKE_SCHEMA}&#34; \
+   --warehouse &#34;${SNOWFLAKE_WAREHOUSE}&#34; \
+   --rolename &#34;${SNOWFLAKE_ROLE}&#34; \
+   --private-key-path &#34;rsa_key.p8&#34; \
+   --query &#39;SELECT CURRENT_ROLE(), CURRENT_USER()&#39;;
+</code></pre>
+<p>If you run into difficulties, check out the article <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html" target="_blank">Key Pair Authentication &amp; Key Pair Rotation </a> in the Snowflake documentation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up database, schema in Snowflake" duration="0">
+        <p>Set a variables that describe the Snowflake account and tables as in the example below:</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_SERVER_NAME=&#34;XXX.snowflakecomputing.com&#34;
+SNOWFLAKE_DATABASE=&#34;DEV_XXX_BEAM&#34;
+SNOWFLAKE_SCHEMA=&#34;DEV_XXX&#34;
+</code></pre>
+<p>where:</p>
+<ul>
+<li><code>SNOWFLAKE_SERVER_NAME</code> should specify the name of the server you will connect to. It must to end with <code>.snowflakecomputing.com</code>.</li>
+<li><code>SNOWFLAKE_DATABASE</code> - the name of the new database to be created</li>
+<li><code>SNOWFLAKE_SCHEMA</code> - the name of the new schema to be created</li>
+</ul>
+<p>To create a new database and schema and grant privilege, run:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  CREATE OR REPLACE DATABASE ${SNOWFLAKE_DATABASE};
+  CREATE OR REPLACE SCHEMA ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA};
+
+  GRANT USAGE ON DATABASE ${SNOWFLAKE_DATABASE} TO ROLE ${SNOWFLAKE_ROLE};
+  GRANT USAGE ON SCHEMA ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA} TO ROLE ${SNOWFLAKE_ROLE};
+&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up a bucket in GCP, stage and tables in Snowflake" duration="0">
+        <p>Let&#39;s start with setting up a few variables.</p>
+<pre><code language="language-bash" class="language-bash">DATAFLOW_BUCKET=&#34;sfc-pubsub-to-snowflake-dataflow&#34;
+SNOWFLAKE_STORAGE_INTEGRATION=&#34;DEV_XXX_BEAM_STORAGE_INTEGRATION&#34;
+SNOWFLAKE_STAGE=&#34;DEV_XXX_BEAM_STAGE&#34;
+PIPELINE_SNOWFLAKE_OUTPUT_TABLE=&#34;PUBSUB_MESSAGES&#34;
+</code></pre>
+<p>where:</p>
+<ul>
+<li><code>DATAFLOW_BUCKET</code> - the name of the new bucket to be created. It will be used as the staging area. Every bucket name are globally unique, so you will have to update value.</li>
+<li><code>SNOWFLAKE_STORAGE_INTEGRATION</code> - the name of the new storage integration to be created</li>
+<li><code>SNOWFLAKE_STAGE</code> - the name of the new stage to be created.</li>
+<li><code>SNOWFLAKE_STORAGE_INTEGRATION</code> - the name of the new storage integration to be created</li>
+</ul>
+<p>To create a GCS bucket, run:</p>
+<pre><code language="language-bash" class="language-bash">gsutil mb -c standard &#34;gs://${DATAFLOW_BUCKET}&#34;
+</code></pre>
+<p>To create a Snowflake storage integration, run:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  CREATE OR REPLACE STORAGE INTEGRATION ${SNOWFLAKE_STORAGE_INTEGRATION}
+    TYPE = EXTERNAL_STAGE
+    STORAGE_PROVIDER = GCS
+    ENABLED = TRUE
+    STORAGE_ALLOWED_LOCATIONS = (&#39;gcs://${DATAFLOW_BUCKET}/&#39;);
+&#34;
+</code></pre>
+<p>Now you need to check the name of the service account assigned to the storage integration to give it bucket permissions.</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_STORAGE_INTEGRATION_SA_EMAIL=$(snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;DESC STORAGE INTEGRATION ${SNOWFLAKE_STORAGE_INTEGRATION};&#34; -o output_format=json -o friendly=false -o timing=false | jq &#39;.[] | select(.property == &#34;STORAGE_GCP_SERVICE_ACCOUNT&#34;) | .property_value&#39; -r)
+   gsutil iam ch &#34;serviceAccount:${SNOWFLAKE_STORAGE_INTEGRATION_SA_EMAIL}:roles/storage.admin&#34; &#34;gs://${DATAFLOW_BUCKET}&#34;
+</code></pre>
+<p>Next, you need to create a stage to tell Snowflake where the files will be saved and what integration it should use. To do it, run:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  CREATE OR REPLACE STAGE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_STAGE}
+  URL=&#39;gcs://${DATAFLOW_BUCKET}/staging&#39;
+  STORAGE_INTEGRATION = ${SNOWFLAKE_STORAGE_INTEGRATION};
+
+  GRANT USAGE ON STAGE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_STAGE} TO ROLE ${SNOWFLAKE_ROLE};
+&#34;
+</code></pre>
+<p>Next we will deal with the table. These should match the format of the input messages. To create a new table, run:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  CREATE OR REPLACE TABLE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${PIPELINE_SNOWFLAKE_OUTPUT_TABLE} (id TEXT, name TEXT, age INTEGER, price FLOAT);
+
+  GRANT INSERT ON TABLE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${PIPELINE_SNOWFLAKE_OUTPUT_TABLE} TO ROLE ${SNOWFLAKE_ROLE};
+  GRANT SELECT ON TABLE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${PIPELINE_SNOWFLAKE_OUTPUT_TABLE} TO ROLE ${SNOWFLAKE_ROLE};
+&#34;
+</code></pre>
+<p>To verify the configuration, now we can create a file on the bucket and then load it.</p>
+<pre><code language="language-bash" class="language-bash">FILENAME=test-data-${RANDOM}.csv.gz
+echo &#34;&#39;16f0a88b-af94-4707-9f91-c1dd125f271c&#39;,&#39;A blue door&#39;,48,12.5
+&#39;df9efd67-67d6-487d-9ad4-92537cf25eaa&#39;,&#39;A yellow door&#39;,16,12.5
+&#39;04585e7f-f340-4d2e-8371-ffbc162c4354&#39;,&#39;A pink door&#39;,26,12.5
+&#39;d52275c0-d6c6-4331-8248-784255bef654&#39;,&#39;A purple door&#39;,13,12.5&#34; | gzip | gsutil cp - &#34;gs://${DATAFLOW_BUCKET}/staging/${FILENAME}&#34;
+snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  COPY INTO ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${PIPELINE_SNOWFLAKE_OUTPUT_TABLE} FROM @${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_STAGE}/${FILENAME};
+&#34;
+</code></pre>
+<p>And display a content of table:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  SELECT * FROM ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${PIPELINE_SNOWFLAKE_OUTPUT_TABLE} LIMIT 4
+&#34;
+</code></pre>
+<p>When everything works fine, we should clear the tables:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  TRUNCATE TABLE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${PIPELINE_SNOWFLAKE_OUTPUT_TABLE}
+&#34;
+</code></pre>
+<p>If you run into difficulties, check out the article: <a href="https://docs.snowflake.com/en/user-guide/data-load-gcs-config.html#step-3-grant-the-service-account-permissions-to-access-bucket-objects" target="_blank">Configuring an Integration for Google Cloud Storage</a> in the Snowflake documentation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up a Snowpipe" duration="0">
+        <p>Let&#39;s start with setting up a variable with name of new pipe to be created.</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_PIPE=&#34;PUSBUS_EXAMPLE_PIPE&#34;
+</code></pre>
+<p>To create a new pipe, run:</p>
+<pre><code language="language-bash" class="language-bash">snowsql -c &#34;${SNOWSQL_CONN}&#34; -q &#34;
+  CREATE OR REPLACE PIPE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_PIPE} AS
+  COPY INTO ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${PIPELINE_SNOWFLAKE_OUTPUT_TABLE} FROM @${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_STAGE};
+  ALTER PIPE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_PIPE} SET PIPE_EXECUTION_PAUSED=true;
+
+  GRANT OWNERSHIP ON PIPE ${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_PIPE} TO ROLE ${SNOWFLAKE_ROLE};
+&#34;
+</code></pre>
+<p>The pipe is automatically paused when the owner is changed. To resume pipe, run:</p>
+<pre><code language="language-bash" class="language-bash">SNOWSQL_PRIVATE_KEY_PASSPHRASE=&#34;${SNOWFLAKE_PRIVATE_KEY_PASSPHASE}&#34; \
+  snowsql \
+  --accountname &#34;$(echo &#34;${SNOWFLAKE_SERVER_NAME}&#34; | cut -d &#34;.&#34; -f 1-2)&#34; \
+  --username &#34;${SNOWFLAKE_USERNAME}&#34; \
+  --private-key-path &#34;rsa_key.p8&#34; \
+  --query &#34;
+  SELECT SYSTEM\$PIPE_FORCE_RESUME(&#39;${SNOWFLAKE_DATABASE}.${SNOWFLAKE_SCHEMA}.${SNOWFLAKE_PIPE}&#39;);
+&#34;
+</code></pre>
+<p>If you run into difficulties, check out the articles: <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest-gs.html" target="_blank">Preparing to Load Data Using the Snowpipe REST API</a>, <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-ts.html" target="_blank">Troubleshooting Snowpipe</a> in the Snowflake documentation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring a PubSub service" duration="0">
+        <p>Let&#39;s start with setting up a few variables.</p>
+<pre><code language="language-bash" class="language-bash">PIPELINE_PUBSUB_TOPIC=&#34;example-pipeline-pubsub-topic&#34;
+PIPELINE_PUBSUB_SUBSCRIPTION=&#34;example-pipeline-pubsub-subscription&#34;
+</code></pre>
+<p>where:</p>
+<ul>
+<li><code>PIPELINE_PUBSUB_TOPIC</code>- - the name of the new Google Pub/Sub topic to be created.</li>
+<li><code>PIPELINE_PUBSUB_SUBSCRIPTION</code> - - the name of the new Google Pub/Sub subscription to be created.</li>
+</ul>
+<p>Now we generate a full qualified names:</p>
+<pre><code language="language-bash" class="language-bash">GCP_PROJECT_ID=&#34;$(gcloud config get-value core/project)&#34;
+PIPELINE_PUBSUB_TOPIC_FQN=&#34;projects/${GCP_PROJECT_ID}/topics/${PIPELINE_PUBSUB_TOPIC}&#34;
+PIPELINE_PUBSUB_SUBSCRIPTION_FQN=&#34;projects/${GCP_PROJECT_ID}/subscriptions/${PIPELINE_PUBSUB_SUBSCRIPTION}&#34;
+</code></pre>
+<p>Create a new topic and subscription:</p>
+<pre><code language="language-bash" class="language-bash">gcloud pubsub topics create &#34;${PIPELINE_PUBSUB_TOPIC_FQN}&#34;
+gcloud pubsub subscriptions create --topic &#34;${PIPELINE_PUBSUB_TOPIC_FQN}&#34; &#34;${PIPELINE_PUBSUB_SUBSCRIPTION_FQN}&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running a streaming data generator" duration="0">
+        <p>To generate syntactic data that will be used by our pipeline, we will use <a href="https://cloud.google.com/blog/products/data-analytics/dataflow-flex-template-streaming-data-generator" target="_blank">Synthetic data generator</a> prepared by Google and available as flex templates.</p>
+<p>First, create a schema file.</p>
+<pre><code language="language-bash" class="language-bash">echo &#39;{
+   &#34;id&#34;: &#34;&#123;&#123;uuid()}}&#34;,
+   &#34;name&#34;: &#34;A green door&#34;,
+   &#34;age&#34;: &#123;&#123;integer(1,50)}},
+   &#34;price&#34;: 12.50
+}&#39; | gsutil cp - &#34;gs://${DATAFLOW_BUCKET}/stream-schema.json&#34;
+</code></pre>
+<p>For instructions on how to construct the schema file, see <a href="https://github.com/vincentrussell/json-data-generator" target="_blank">json-data-generator</a>.</p>
+<p>Set the name of the Dataflow region where your jobs will be executed.</p>
+<pre><code language="language-bash" class="language-bash">DATAFLOW_REGION=&#34;us-central1&#34;
+</code></pre>
+<p>To starts a new Dataflow job, run:</p>
+<pre><code language="language-bash" class="language-bash">gcloud beta dataflow flex-template run &#34;streaming-data-generator&#34; \
+   --project=&#34;${GCP_PROJECT_ID}&#34; \
+   --region=&#34;${DATAFLOW_REGION}&#34; \
+    --template-file-gcs-location=gs://dataflow-templates/latest/flex/Streaming_Data_Generator \
+   --parameters \
+schemaLocation=&#34;gs://${DATAFLOW_BUCKET}/stream-schema.json&#34;,\
+qps=1,\
+topic=&#34;${PIPELINE_PUBSUB_TOPIC_FQN}&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting the source code for the project" duration="0">
+        <p>Pipelines you will be running are written on Java. The source code is available in <a href="https://github.com/Snowflake-Labs/sfguide-beam-examples" target="_blank">GitHub</a>. To checkout repository, run:</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-beam-examples.git
+</code></pre>
+<p>Now, you can open the project in your favorite IDE.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running pipeline on Direct Runner (locally)" duration="0">
+        <p>To check if our pipeline works well, start by running it locally using Direct Runner.</p>
+<p>To compile and prepare a self-container JAR file, run:</p>
+<pre><code language="language-bash" class="language-bash">mvn package -P &#34;direct-runner&#34; --batch-mode
+</code></pre>
+<p>After executing this command, file <code>target/ingest-pubsub-to-snowflake-bundled-1.0.jar</code> should be created that you can run. To do ir, run:</p>
+<pre><code language="language-bash" class="language-bash">java -jar target/ingest-pubsub-to-snowflake-bundled-1.0.jar \
+   --runner=DirectRunner \
+   --serverName=&#34;${SNOWFLAKE_SERVER_NAME}&#34; \
+   --username=&#34;${SNOWFLAKE_USERNAME}&#34; \
+   --database=&#34;${SNOWFLAKE_DATABASE}&#34; \
+   --schema=&#34;${SNOWFLAKE_SCHEMA}&#34; \
+   --role=&#34;${SNOWFLAKE_ROLE}&#34; \
+   --rawPrivateKey=&#34;${SNOWFLAKE_PRIVATE_KEY}&#34; \
+   --snowPipe=&#34;${SNOWFLAKE_PIPE}&#34; \
+   --privateKeyPassphrase=&#34;${SNOWFLAKE_PRIVATE_KEY_PASSPHASE}&#34; \
+   --storageIntegrationName=&#34;${SNOWFLAKE_STORAGE_INTEGRATION}&#34; \
+   --inputSubscription=&#34;${PIPELINE_PUBSUB_SUBSCRIPTION_FQN}&#34; \
+   --outputTable=&#34;${PIPELINE_SNOWFLAKE_OUTPUT_TABLE}&#34; \
+   --gcpTempLocation=&#34;gs://${DATAFLOW_BUCKET}/temp&#34; \
+   --tempLocation=&#34;gs://${DATAFLOW_BUCKET}/temp&#34; \
+   --stagingBucketName=&#34;gs://${DATAFLOW_BUCKET}/staging&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running pipeline on Dataflow runner" duration="0">
+        <p>In a production environment, you take advantage of the Google Dataflow service.</p>
+<p>To compile and prepare a self-container JAR file, run:</p>
+<pre><code language="language-bash" class="language-bash">mvn package -P &#34;dataflow-runner&#34; --batch-mode
+</code></pre>
+<p>After executing this command, file <code>target/ingest-pubsub-to-snowflake-bundled-1.0.jar</code> should be created that you can run to submit a Google Dataflow job. To do ir, run:</p>
+<pre><code language="language-bash" class="language-bash">java -jar target/ingest-pubsub-to-snowflake-bundled-1.0.jar \
+   --runner=DataflowRunner \
+   --project=&#34;${GCP_PROJECT_ID}&#34; \
+   --region=&#34;${DATAFLOW_REGION}&#34; \
+   --appName=&#34;${DATAFLOW_APP_NAME}&#34; \
+   --serverName=&#34;${SNOWFLAKE_SERVER_NAME}&#34; \
+   --username=&#34;${SNOWFLAKE_USERNAME}&#34; \
+   --rawPrivateKey=&#34;${SNOWFLAKE_PRIVATE_KEY}&#34; \
+   --privateKeyPassphrase=&#34;${SNOWFLAKE_PRIVATE_KEY_PASSPHASE}&#34; \
+   --database=&#34;${SNOWFLAKE_DATABASE}&#34; \
+   --schema=&#34;${SNOWFLAKE_SCHEMA}&#34; \
+   --role=&#34;${SNOWFLAKE_ROLE}&#34; \
+   --storageIntegrationName=&#34;${SNOWFLAKE_STORAGE_INTEGRATION}&#34; \
+   --inputSubscription=&#34;${PIPELINE_PUBSUB_SUBSCRIPTION_FQN}&#34; \
+   --snowPipe=&#34;${SNOWFLAKE_PIPE}&#34; \
+   --outputTable=&#34;${PIPELINE_SNOWFLAKE_OUTPUT_TABLE}&#34; \
+   --gcpTempLocation=&#34;gs://${DATAFLOW_BUCKET}/temp&#34; \
+   --stagingBucketName=&#34;gs://${DATAFLOW_BUCKET}/staging&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>Congratulations on completing this lab!</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to configure GCP and Snowflake resources needed to run streaming pipelines</li>
+<li>How to compile and run a pipeline written in Java</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

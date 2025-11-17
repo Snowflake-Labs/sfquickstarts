@@ -1,0 +1,386 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started With External Functions on Azure</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_external_functions_azure"
+                  title="Getting Started With External Functions on Azure"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This guide provides an introduction to external functions created in Azure for use in Snowflake. You will learn how you can use Snowflake&#39;s external functions to call endpoints through Azure API management.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Some familiarity with Azure.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an Azure function</li>
+<li>How to use Snowflake&#39;s external functions</li>
+<li>How to call an external function through Azure API Management.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>An Azure AD (Active Directory) tenant.</li>
+<li>An account in that Azure AD tenant, with privileges to: <ul>
+<li>create an Azure Function app.</li>
+<li>create a service endpoint using Azure API Management service.</li>
+<li>register an Azure AD Application.</li>
+</ul>
+</li>
+<li>A Snowflake account in which you have <code>ACCOUNTADMIN</code> privileges or a role with the <code>CREATE INTEGRATION</code> privilege.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A sample external function using Azure</li>
+</ul>
+<p>Negative</p>
+<p>: There are two ways to create an external function on Azure with Snowflake. This tutorial is going over how to do so with the Azure Portal web interface. The other option is using an <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-azure-template.html" target="_blank">Azure Resource Manager template</a> provided by Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare the Tracking Worksheet" duration="3">
+        <p>Progressing through this guide will be substantially more manageable if you make a note of specific values. We&#39;ve provided the following worksheet to help you organize those pieces of information. We highly recommend you use it.</p>
+<pre><code>TRACKING WORKSHEET: AZURE PORTAL
+
+****** Azure Function (Remote Service) Info ****************************
+
+Azure Function app name: __________________________________________________
+HTTP-Triggered Function name: __________________________________________________
+Azure Function AD app registration name: _______________________________________
+Azure Function App AD Application ID: __________________________________________
+
+****** Azure API Management Service (Proxy Service) Info ***************
+
+API Management service name: ___________________________________________________
+API Management API URL suffix: _________________________________________________
+
+****** API Integration &amp; External Function Info *********************
+
+API Integration Name: __________________________________________________________
+AZURE_MULTI_TENANT_APP_NAME: ___________________________________________________
+AZURE_CONSENT_URL: _____________________________________________________________
+
+External Function Name: ________________________________________________________
+</code></pre>
+<p>Once you&#39;ve stashed this worksheet somewhere handy, you are ready to begin!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a New Azure Function App" duration="5">
+        <p>The first step in creating an Azure Function is to create an Azure Function app. This app will serve as a container for your function. Log into the Azure Portal, and follow the steps in the Microsoft documentation for creating an <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal" target="_blank">Azure Function App</a>.</p>
+<p>As you make your way through their instructions, make sure to do the following:</p>
+<ul>
+<li>When you enter a name in the <strong>Function App Name</strong> field, also record the name in the &#34;Azure Function app name&#34; field in your tracking worksheet.</li>
+<li>When asked to choose how to <strong>Publish</strong>, choose <strong>Code</strong>.</li>
+<li>When asked for the <code>Runtime stack</code>, select Node.js.</li>
+<li>When asked for the version of Node.js, select version 12.</li>
+<li>When asked which OS to run the function on, choose &#34;Windows.&#34;</li>
+</ul>
+<p>Your information should look similar to this:</p>
+<p class="image-container"><img alt="azurefunction1.png" src="img/26e2607d49e5258a.png"></p>
+<p>Negative</p>
+<p>: We&#39;ve selected a Node.js runtime because it allows for in-portal editing. Some languages, like Python, must be developed <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local#local-development-environments" target="_blank">locally</a>.</p>
+<p>Once you <strong>create</strong> your Azure function app, you can move on to creating an Azure Function to put in it.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an HTTP-Triggered Function" duration="5">
+        <p>You can call Azure Functions in a few ways with Azure. That being said, a Snowflake external function invokes a remote service via an HTTP POST command, so the Azure Function you create must be an &#34;HTTP-triggered function.&#34;</p>
+<p>Wait until your Function App screen is displaying &#34;Your deployment is complete.&#34; Underneath that, you&#39;ll see a dropdown called &#34;Next Steps.&#34; Select <strong>Add a function</strong> within that.</p>
+<p>From here, you can select your development environment, which for this guide is <strong>Develop in portal</strong>. You&#39;re going to create an <strong>HTTP Trigger</strong> function, so select that template.</p>
+<p>Then it&#39;s time to give the function a name. Record this in your tracking worksheet as &#34;HTTP-Triggered Function Name.&#34;</p>
+<p>And finally, enter the Authorization level. We recommend choosing <strong>Function.</strong></p>
+<p>Negative</p>
+<p>: For more information about possible authorization levels, see the Microsoft documentation on <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=csharp#configuration" target="_blank">HTTP-triggered functions</a>.</p>
+<p>Altogether, your screen should look like this:</p>
+<p class="image-container"><img alt="azurefunction1.png" src="img/e2a2baf0ad99458b.png"></p>
+<p>If it does, click <strong>Add</strong> at the bottom. You&#39;ll be directed to the page for that Function. In the tree menu on the left of your screen, click on <strong>Code + Test</strong>.</p>
+<p class="image-container"><img alt="azurefunction1.png" src="img/d55cf94f91e7d611.png"></p>
+<p>From here, you&#39;ll see the default code. Replace it with the following:</p>
+<pre><code>module.exports = async function(context, request) {
+    context.log(&#39;JavaScript HTTP trigger function processed a request.&#39;);
+
+    if (request.body) {
+        var rows = request.body.data;
+        var results = [];
+        rows.forEach(row =&gt; {
+            results.push([row[0], row]);
+        });
+
+        results = {data: results}
+        context.res = {
+            status: 200,
+            body: JSON.stringify(results)
+        };
+   }
+   else {
+       context.res = {
+           status: 400,
+           body: &#34;Please pass data in the request body.&#34;
+       };
+   }
+};
+
+</code></pre>
+<p>Be sure to save your changes! Now let&#39;s test out what this code does.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test the Function" duration="1">
+        <p>You should still be in the <strong>Code + Test</strong> section. From there, click <strong>Test/Run</strong> above your code. You can then specify the input parameters of your test.</p>
+<p>Paste the following data into the <strong>Body</strong> field and click <strong>Run</strong>:</p>
+<pre><code>{
+    &#34;data&#34;: [ [ 0, 43, &#34;page&#34; ], [ 1, 42, &#34;life, the universe, and everything&#34; ] ]
+}
+</code></pre>
+<p>If successful, you&#39;ll get an HTTP response code of 200 and content similar to the following:</p>
+<pre><code>{
+  &#34;data&#34;: [
+    [
+      0,
+      [
+        0,
+        43,
+        &#34;page&#34;
+      ]
+    ],
+    [
+      1,
+      [
+        1,
+        42,
+        &#34;life, the universe, and everything&#34;
+      ]
+    ]
+  ]
+}
+</code></pre>
+<p>Great! Our HTTP-triggered function is successfully created and tested in Azure. Now let&#39;s move onto the steps you need to take to integrate it with Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Azure AD Authentication" duration="10">
+        <p>There are a few steps that take place when an external function is called. First, Snowflake sends an HTTP POST command to a proxy service, and then that relays the command to the remote service.</p>
+<p>In Azure&#39;s case, the proxy service is the Azure API management service, and the remote service is the Azure Function. Both of these services have authorization requirements.</p>
+<p>For now, we&#39;ll be focusing on setting up authorization for your Azure Function App. When Snowflake authenticates with your Azure Function app, Snowflake uses OAuth <a href="https://docs.microsoft.com/en-us/azure/active-directory/azuread-dev/v1-oauth2-client-creds-grant-flow" target="_blank">client credential</a> grant flow with Azure AD. This requires an Azure AD app registration to represent your Azure Function app.</p>
+<h2 is-upgraded>Enable App Service Authentication for the Azure Function App</h2>
+<p>Navigate to the <strong>Function App</strong> screen by searching for &#34;Function app&#34; in the top search bar of any Azure page. From there, click into the specific function app you&#39;re using for this guide.</p>
+<p>There is a section labeled <strong>Settings</strong> with an <strong>Authentication (classic)</strong> option within it on the left side of your screen. Click into that.</p>
+<p>You&#39;ll see a page with just a single option: A toggle for <strong>App Service Authentication.</strong> Change it from <strong>Off</strong> to <strong>On</strong>. Right below the toggle, you&#39;ll see a dropdown labeled <strong>Action to take when request is not authenticated</strong>. Find and select <strong>Log in with Azure Active Directory</strong></p>
+<p>Under that dropdown, you&#39;ll see a list of <strong>Authentication Providers</strong>. Select <strong>Azure Active Directory.</strong></p>
+<p class="image-container"><img alt="azurefunction1.png" src="img/dbc9e27c1c5b9b9d.png"></p>
+<h2 is-upgraded>Register the Azure AD App</h2>
+<p>You should have been redirected to the <strong>Azure Active Directory Settings</strong> screen. This is where you&#39;ll register the AD app for your Azure Function App.</p>
+<p>For this guide, you&#39;ll be using the <strong>Management Mode</strong> called <strong>Express</strong>. Select it. After doing so, more options will appear. One will be a second <strong>Management mode</strong> toggle. The toggle should be on <strong>Create New AD App</strong>.</p>
+<p>By default, the Azure AD app registration name in the <strong>Create App</strong> field is the same as the Azure Function app name. You can change this name if you want. Regardless of if you change the name or not, record the Azure AD app registration name in the &#34;Azure Function AD app registration name&#34; field in your tracking worksheet.</p>
+<p class="image-container"><img alt="azurefunction1.png" src="img/da19d514c3c99a26.png"></p>
+<p>Click okay to be returned to the <strong>Authentication (classic)</strong> screen. Verify that the <strong>App Service Authentication</strong> button is <strong>On</strong>, then click the <strong>Save</strong> button at the top of the screen.</p>
+<h2 is-upgraded>Verify the Azure AD App</h2>
+<p>Now that your Azure AD app is registered, the last step is to verify that the app is listed under App registrations.</p>
+<p>Get another tab in your browser opened to the <a href="http://portal.azure.com" target="_blank">Azure Portal</a>. Search for <strong>App Registrations</strong> in the search bar at the top of the screen.</p>
+<p>From the <strong>App registrations</strong> screen, select the <strong>All applications</strong> tab if it is not already selected. You should see the name of the Azure AD app registration that you just created.</p>
+<p>Positive</p>
+<p>: You can also use the search bar to search for your Azure AD app by name. To do so, enter the first few characters of the name. The search bar assumes that you are typing the leading part of the name; it does not search for the specified substring everywhere in the function names.</p>
+<p>You should now be at the <strong>App registrations</strong> screen for your Azure AD app. You need to grab a piece of information from here: the <strong>Application (client) ID</strong> field. Record this as the <strong>Azure Function App AD Application ID</strong> field in your tracking worksheet.</p>
+<p>Negative</p>
+<p>: Make sure you copy the ID, not the Azure AD application name. The ID should contain a UUID.</p>
+<p>Once you have that information recorded, you&#39;re good to move on to the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Azure API Management Service" duration="30">
+        <p>Now you need to <a href="https://docs.microsoft.com/en-us/azure/api-management/get-started-create-service-instance" target="_blank">create the API Management service</a> in the Azure Portal. You can find the correct screen by searching for <strong>Create API Management</strong> in the search bar.</p>
+<p class="image-container"><img alt="azurefunction1.png" src="img/7cd36f37377fee17.png"></p>
+<p>As you create the API Management service, record the name you set as <strong>Resource name</strong> in the &#34;API Management service name&#34; field in your tracking worksheet.</p>
+<p>Once you click <strong>Create</strong>, your Azure API Management service will be deployed.</p>
+<p>Negative</p>
+<p>: It may take upwards of a half-hour for the API management service to be created and activated. You will get an email when the process is completed.</p>
+<p>Wait until the process is completed, and then move on to the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import the API Containing the Azure Function" duration="10">
+        <p>After you create the API Management service, the next step is to import and publish the Azure Function app that you&#39;ll call through that API Management service.</p>
+<p>Microsoft has detailed instructions for [importing a function app]((https://docs.microsoft.com/en-us/azure/api-management/import-function-app-as-api). Follow their instructions with screenshots that will update as the portal changes.</p>
+<p>They&#39;ll instruct you to navigate to the API Management Service you just created and then navigate to the <strong>APIs</strong> section in the menu on the left of your screen. Then you&#39;ll select <strong>Function App</strong> from the <strong>Add a new API</strong> page. Make sure to record the API URL suffix in the &#34;API Management API URL suffix&#34; field in your tracking worksheet.</p>
+<p>After completing the tasks to import an Azure Function app, you should be back on the API Management service page, viewing the APIs. Click into the API you just created, and click on the <strong>Settings</strong> tab. There are two things to check here:</p>
+<ul>
+<li>Under <strong>Products</strong>, select <strong>Starter</strong>. For a production system, you might make a different selection.</li>
+<li>Under <strong>Subscription Required</strong>,  you can uncheck the checkbox unless you want to require a subscription.</li>
+</ul>
+<p class="image-container"><img alt="azurefunction1.png" src="img/1d8303819a2b8ce8.png"></p>
+<p>Make sure to click the Save button.</p>
+<p>Negative</p>
+<p>: Snowflake strongly recommends <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-azure-ui-security-policy.html" target="_blank">creating a security policy on the Azure API Management service</a>.</p>
+<p>That&#39;s all you need to do in the Azure portal! The next steps will be in a Snowflake worksheet.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an API integration in Snowflake" duration="5">
+        <p>After setting up and configuring resources on Azure, you&#39;ll enable Snowflake to securely access the Azure API Management endpoint by using the following code to create the API integration.</p>
+<p>But first, you need to have the proper permissions. Execute the USE ROLE command to use the ACCOUNTADMIN role or a role with the CREATE INTEGRATION privilege. For example:</p>
+<pre><code>use role accountadmin;
+</code></pre>
+<p>Now that you have the proper permissions, you can enter a <a href="https://docs.snowflake.com/en/sql-reference/sql/create-api-integration.html" target="_blank">CREATE API INTEGRATION</a> statement. The statement should take this form:</p>
+<pre><code>create or replace api integration &lt;integration_name&gt;
+  api_provider = azure_api_management
+  azure_tenant_id = &#39;&lt;tenant_id&gt;&#39;
+  azure_ad_application_id = &#39;&lt;azure_application_id&gt;&#39;
+  api_allowed_prefixes = (&#39;&lt;url&gt;&#39;)
+  enabled = true;
+</code></pre>
+<p>In the statement:</p>
+<ul>
+<li>Replace <code>&lt; integration_name ></code> with a unique integration name (e.g. <code>my_api_integration_name</code>). The name must follow the rules for <a href="https://docs.snowflake.com/en/sql-reference/identifiers.html" target="_blank">Object Identifiers</a>. Record this name in your tracking worksheet&#39;s &#34;API Integration Name&#34; field.</li>
+<li>Replace <code>&lt; tenant_id ></code> with your Azure AD Tenant ID. As an alternative, you can use your domain (e.g. <code>my_company.onmicrosoft.com</code>). You can find your Tenant ID on the &#34;Azure Active Directory&#34; page.</li>
+<li>Replace <code>&lt; azure_application_id ></code> with the value from your tracking worksheet&#39;s &#34;Azure Function App AD Application ID&#34; field.</li>
+<li>Replace <code>&lt; url ></code> with the appropriate URL. Use the value in your tracking worksheet&#39;s &#34;API Management service name&#34; field in the following format:</li>
+</ul>
+<pre><code>https://&lt;api_management_service_name&gt;.azure-api.net
+</code></pre>
+<p>Positive</p>
+<p>: You can restrict the URLs to which this API integration can be applied by appending an appropriate suffix, (from the &#34;API Management API URL suffix&#34; field in your tracking worksheet) in which case the URL has the following format:</p>
+<pre><code>https://&lt;api_management_service_name&gt;.azure-api.net/&lt;api_url_suffix&gt;
+</code></pre>
+<p>You can confirm these are the correct URLs by checking the API Management service <strong>Settings</strong> tab for your imported API; they should match the base URL and suffix.</p>
+<p>Then execute the CREATE API INTEGRATION statement you entered.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Link the API Integration for Azure to the Proxy Service" duration="5">
+        <p>Before you can call the external function, you need to link the Snowflake API Integration to the Azure API Management Service. But first, you&#39;ll need to access some information about the API integration to create a service principal.</p>
+<p>You can find that by using the DESCRIBE API integration command:</p>
+<pre><code>describe api integration &lt;integration_name&gt;;
+</code></pre>
+<p>From the DESCRIBE results:</p>
+<ul>
+<li>Record the name of the AZURE_MULTI_TENANT_APP_NAME column in the corresponding field in your tracking worksheet.</li>
+<li>Record the name of the AZURE_CONSENT_URL column in the corresponding field in your tracking worksheet.The URL looks similar to the following:</li>
+</ul>
+<pre><code>https://login.microsoftonline.com/&lt;tenant_id&gt;/oauth2/authorize?client_id=&lt;snowflake_application_id&gt;&amp;response_type=code
+</code></pre>
+<p>Open the consent URL in your browser. When your browser resolves this URL, Azure automatically creates a service principal that represents Snowflake in the tenant. If Snowflake has not yet been granted access, you should see a Microsoft Permissions requested page, and you should continue to the next task.</p>
+<p>Positive</p>
+<p>: <strong>You do not need to grant access again for each new external function you create for Azure. <br></strong> You only need to create a service principal for Snowflake once per tenancy. After Snowflake has been granted access, access does not need to be granted again.</p>
+<p>Then click the <strong>Accept</strong> button. This allows the Azure service principal created for your Snowflake account to obtain an access token on any resource inside your Azure AD tenant.</p>
+<p>Negative</p>
+<p>: To enhance security, you should ensure that only authorized clients can access your Azure Function. You can do this after completing this lab.</p>
+<p>At this point, you have finished creating a service principal in your tenant to represent Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the External Function" duration="5">
+        <p>Now let&#39;s finally create the external function in Snowflake. You&#39;ll do this using a  <a href="https://docs.snowflake.com/en/sql-reference/sql/create-external-function.html" target="_blank">CREATE EXTERNAL FUNCTION</a> statement. The statement should take the following form:</p>
+<pre><code>create or replace external function &lt;external_function_name&gt;(&lt;parameters&gt;)
+    returns variant
+    api_integration = &lt;api_integration_name&gt;
+    as &#39;&lt;invocation_url&gt;&#39;;
+</code></pre>
+<p>In the statement:</p>
+<ul>
+<li>Replace <code>&lt; external_function_name ></code> with a unique function name (e.g. <code>echo</code>). This name must follow the rules for <a href="https://docs.snowflake.com/en/sql-reference/identifiers.html" target="_blank">Object Identifiers</a>. Record the function name in the &#34;External Function Name&#34; field in your tracking worksheet.</li>
+<li>Replace <code>&lt; parameters ></code> with the names and SQL data types of the parameters for the function. In our example, this is <code>a integer, b varchar</code>. Record the parameter names and data types in your tracking worksheet&#39;s &#34;External Function Name&#34; field.</li>
+</ul>
+<p>Negative</p>
+<p>: The parameters must correspond to the parameters expected by the remote service. The parameter names do not need to match, but the data types need to be compatible.</p>
+<ul>
+<li>Replace <code>&lt; api_integration_name ></code> with the value from the &#34;API Integration Name&#34; field in your tracking worksheet.</li>
+<li>Replace <code>&lt; invocation_url ></code> with the appropriate URL. This is the URL to which Snowflake sends the HTTP POST command in order to call the remote service. Use the values from the &#34;API Management service name&#34;, &#34;API Management API URL suffix&#34;, and &#34;HTTP-Triggered Function name&#34; fields in your tracking worksheet. It should take this form:</li>
+</ul>
+<pre><code>https://&lt;api_management_service_name&gt;.azure-api.net/&lt;api_url_suffix&gt;/&lt;http_triggered_function_name&gt;
+</code></pre>
+<p>After making those adjustments, execute the CREATE EXTERNAL FUNCTION command that you entered.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Calling the External Function" duration="1">
+        <p>At last, you have everything in place to invoke the external function in Snowflake.</p>
+<p>Negative</p>
+<p>: <strong>A role must have USAGE or OWNERSHIP privileges on that external function. <br></strong>If appropriate, grant USAGE privilege on the external function to one or more Snowflake roles so that the roles can call the external function.</p>
+<p>You can call your external function as you would execute any UDF. For our specific example function, the command looks like this:</p>
+<pre><code>SELECT my_external_function(42, &#39;Adams&#39;);
+</code></pre>
+<p>The returned value should be similar to:</p>
+<pre><code>[0, 42, &#34;Adams&#34;]
+</code></pre>
+<p>And just like that, you&#39;ve successfully called the external function!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Next Steps" duration="1">
+        <p>Over the period of this lab, you created an Azure Function that you accessed from Snowflake. That being said, any authenticated clients can call that function as well. If you&#39;d like to restrict the use to only Snowflake, check out our documentation on <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-azure-ui-security-policy.html" target="_blank">Creating the Azure Security Policy for the Proxy Service in the Portal</a>.</p>
+<p>As you explore the vast amount of options with Snowflake and Azure, you may run into complications. If you do, please turn to our <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-azure-troubleshooting.html" target="_blank">Troubleshooting External Functions for Azure</a> guide.</p>
+<p>This guide is meant as merely a jumping-off point for using external functions on Azure. Be sure to check out the <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-azure.html" target="_blank">detailed documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

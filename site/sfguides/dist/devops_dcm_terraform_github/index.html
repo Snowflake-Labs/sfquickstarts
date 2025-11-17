@@ -1,0 +1,447 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>DevOps: Database Change Management with Terraform and GitHub</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="devops_dcm_terraform_github"
+                  title="DevOps: Database Change Management with Terraform and GitHub"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfquickstarts/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p class="image-container"><img style="width: 600.00px" src="img/d5aa3a80ecd9dc98.png"></p>
+<p>This quickstart will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions and Terraform. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake, GitHub Actions, and Terraform.</p>
+<p>DevOps is concerned with automating the development, release and maintenance of software applications. As such, DevOps is very broad and covers the entire Software Development Life Cycle (SDLC). The landscape of software tools used to manage the entire SDLC is complex since there are many different required capabilities/tools, including:</p>
+<ul>
+<li>Requirements management</li>
+<li>Project management (Waterfall, Agile/Scrum)</li>
+<li>Source code management (Version Control)</li>
+<li>Build management (CI/CD)</li>
+<li>Test management (CI/CD)</li>
+<li>Release management (CI/CD)</li>
+</ul>
+<p>This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub for the CI/CD and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It&#39;s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you&#39;re interested in more details, please see my blog post <a href="https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/" target="_blank">Embracing Agile Software Delivery and DevOps with Snowflake</a>.</p>
+<aside class="special"><p><strong>Tip</strong> - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart <a href="https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0" target="_blank">Terraforming Snowflake</a>.</p>
+</aside>
+<p>Let&#39;s begin with a brief overview of GitHub and Terraform.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>This quickstart assumes that you have a basic working knowledge of Git repositories.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>A brief history and overview of GitHub Actions</li>
+<li>A brief history and overview of Terraform and Terraform Cloud</li>
+<li>How database change management tools like Terraform work</li>
+<li>How a simple release pipeline works</li>
+<li>How to create CI/CD pipelines in GitHub Actions</li>
+<li>Ideas for more advanced CI/CD pipelines with stages</li>
+<li>How to get started with branching strategies</li>
+<li>How to get started with testing strategies</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ol type="1">
+<li>Snowflake</li>
+<li><strong>A Snowflake Account.</strong></li>
+<li><strong>A Snowflake User created with appropriate permissions.</strong> This user will need permission to create databases.</li>
+<li>GitHub</li>
+<li><strong>A GitHub Account.</strong> If you don&#39;t already have a GitHub account you can create one for free. Visit the <a href="https://github.com/join" target="_blank">Join GitHub</a> page to get started.</li>
+<li><strong>A GitHub Repository.</strong> If you don&#39;t already have a repository created, or would like to create a new one, then <a href="https://github.com/new" target="_blank">Create a new respository</a>. For the type, select <code>Public</code> (although you could use either). And you can skip adding the README, .gitignore and license for now.</li>
+<li>Terraform Cloud</li>
+<li><strong>A Terraform Cloud Account.</strong> If you don&#39;t already have a Terraform Cloud account you can create on for free. Visit the <a href="https://app.terraform.io/signup/account" target="_blank">Create an account</a> page to get started.</li>
+<li>Integrated Development Environment (IDE)</li>
+<li><strong>Your favorite IDE with Git integration.</strong> If you don&#39;t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>.</li>
+<li><strong>Your project repository cloned to your computer.</strong> For connection details about your Git repository, open the Repository and copy the <code>HTTPS</code> link provided near the top of the page. If you have at least one file in your repository then click on the green <code>Code</code> icon near the top of the page and copy the <code>HTTPS</code> link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.</li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A simple, working release pipeline for Snowflake in GitHub Actions using Terraform</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="GitHub Overview" duration="2">
+        <p class="image-container"><img style="width: 250.00px" src="img/536d02dd1fa3fbfe.png"></p>
+<h2 is-upgraded>GitHub</h2>
+<p>GitHub provides a complete, end-to-end set of software development tools to manage the SDLC. In particular GitHub provides the following services (from GitHub&#39;s <a href="https://github.com/features" target="_blank">Features</a>):</p>
+<ul>
+<li>Collaborative Coding</li>
+<li>Automation &amp; CI/CD</li>
+<li>Security</li>
+<li>Client Apps</li>
+<li>Project Management</li>
+<li>Team Administration</li>
+<li>Community</li>
+</ul>
+<p class="image-container"><img style="width: 250.00px" src="img/8b40955ce9c98a32.png"></p>
+<h2 is-upgraded>GitHub Actions</h2>
+<p>&#34;GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want&#34; (from GitHub&#39;s <a href="https://github.com/features/actions" target="_blank">GitHub Actions</a>). GitHub Actions was <a href="https://github.blog/2018-10-16-future-of-software/" target="_blank">first announced in October 2018</a> and has since become a popular CI/CD tool. To learn more about GitHub Actions, including migrating from other popular CI/CD tools to GitHub Actions check out <a href="https://docs.github.com/en/actions/learn-github-actions" target="_blank">Learn GitHub Actions</a>.</p>
+<p>This quickstart will be focused on the GitHub Actions service.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Terraform Overview" duration="6">
+        <p class="image-container"><img style="width: 250.00px" src="img/4ca66794a32697c.png"></p>
+<h2 is-upgraded>Terraform</h2>
+<p><a href="https://www.terraform.io/" target="_blank">Terraform</a> is an open-source Infrastructure as Code (IaC) tool created by <a href="https://www.hashicorp.com/" target="_blank">HashiCorp</a> that &#34;allows you to build, change, and version infrastructure safely and efficiently. This includes low-level components such as compute instances, storage, and networking, as well as high-level components such as DNS entries, SaaS features, etc. Terraform can manage both existing service providers and custom in-house solutions.&#34; (from <a href="https://www.terraform.io/intro/index.html" target="_blank">Introduction to Terraform</a>). With Terraform the primary way to describe your infrastructure is by creating human-readble, declarative configuration files using the high-level configuration language known as <a href="https://www.terraform.io/docs/language/index.html" target="_blank">HashiCorp Configuration Language (HCL)</a>.</p>
+<h2 is-upgraded>Chan Zuckerberg Provider</h2>
+<p>While Terraform began as an IaC tool it has expanded and taken on many additional use cases (some listed above). Terraform can be extended to support these different uses cases and systems through a <a href="https://registry.terraform.io/browse/providers" target="_blank">Terraform Provider</a>. There is no official, first-party Terraform-managed Provider for Snowflake, but the <a href="https://chanzuckerberg.com/" target="_blank">Chan Zuckerberg Initiative (CZI)</a> has created a popular <a href="https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest" target="_blank">Terraform Provider for Snowflake</a>.</p>
+<p>Please note that this CZI Provider for Snowflake is a community-developed Provider, not an official Snowflake offering. It comes with no support or warranty.</p>
+<aside class="warning"><p><strong>REALLY IMPORTANT</strong> - <strong>Do not use this provider to manage your Snowflake tables.</strong> Currently the CZI Snowflake Provider drops and re-creates a table each time you make changes to it. So when using Terraform with Snowflake use it to create/manage the account level objects (warehouses, roles, integrations, databases, schemas, etc.) and then use a separate DCM tool for most objects within the database schema (tables, views, stored procedures, etc.).</p>
+</aside>
+<h2 is-upgraded>State Files</h2>
+<p>Another really important thing to understand about Terraform is how it tracks the state of the resources/objects being managed. Many declarative style tools like this will do a real-time comparison between the objects defined in code and the deployed objects and then figure out what changes are required. But Terraform does not operate in this manner, instead it maintains a State file which keeps track of things. See Terraform&#39;s overview of <a href="https://www.terraform.io/docs/language/state/index.html" target="_blank">State</a> and in particular their discussion of why they chose to require a State file in <a href="https://www.terraform.io/docs/language/state/purpose.html" target="_blank">Purpose of Terraform State</a>.</p>
+<p>State files in Terraform introduce a few challenges, the most significant is that the State file can get out of sync with the actual deployed objects. This will happen if you use a different process/tool than Terraform to update any deployed object (including making manual changes to a deployed object). The State file can also get out of sync (or corrupted) when multiple developers/process are trying to access it at the same time. See Terraform&#39;s <a href="https://www.terraform.io/docs/language/state/remote.html" target="_blank">Remote State</a> page for recommended solutions, including Terraform Cloud which will be discussed next.</p>
+<h2 is-upgraded>Terraform Cloud</h2>
+<p>&#34;Terraform Cloud is HashiCorp&#39;s managed service offering that eliminates the need for unnecessary tooling and documentation to use Terraform in production. Provision infrastructure securely and reliably in the cloud with free remote state storage. As you scale, add workspaces for better collaboration with your team.&#34; (from <a href="https://www.terraform.io/cloud" target="_blank">Why Terraform Cloud?</a>)</p>
+<p>Some of the key features include (from <a href="https://www.terraform.io/cloud" target="_blank">Why Terraform Cloud?</a>):</p>
+<ul>
+<li><strong>Remote state storage</strong>: Store your Terraform state file securely with encryption at rest. Track infrastructure changes over time, and restrict access to certain teams within your organization.</li>
+<li><strong>Flexible Workflows</strong>: Run Terraform the way your team prefers. Execute runs from the CLI or a UI, your version control system, or integrate them into your existing workflows with an API.</li>
+<li><strong>Version Control (VCS) integration</strong>: Use version control to store and collaborate on Terraform configurations. Terraform Cloud can automate a run as soon as a pull request is merged into a main branch.</li>
+<li><strong>Collaborate on infrastructure changes</strong>: Facilitate collaboration on your team. Review and comment on plans prior to executing any change to infrastructure.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup and Configure Terraform Cloud" duration="8">
+        <p>As discussed in the Overview section, you will need to have a Terraform Cloud Account for this quickstart. If you don&#39;t already have a Terraform Cloud account you can create on for free. Visit the <a href="https://app.terraform.io/signup/account" target="_blank">Create an account</a> page to get started. After you create your account you&#39;ll be asked to provide an organization name.</p>
+<p>Begin by <a href="https://app.terraform.io/" target="_blank">logging in to your Terraform Cloud account</a>. Please note your organization name, we&#39;ll need it later. If you&#39;ve forgotten, you can find your organization name in the top navigation bar and in the URL.</p>
+<h2 is-upgraded>Create a new Workspace</h2>
+<p>From the Workspaces page click on the &#34;+ New workspace&#34; button near the top right of the page. On the first page, where it asks you to choose the type of workflow, select &#34;API-driven workflow&#34;.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/37da4b7e78212af3.png"></p>
+<p>On the second page, where it asks for the &#34;Workspace Name&#34; enter <code>gh-actions-demo</code> and then click the &#34;Create workspace&#34; button at the bottom of the page.</p>
+<h2 is-upgraded>Setup Environment Variables</h2>
+<p>In order for Terraform Cloud to be able to connect to your Snowflake account you&#39;ll need to store the settings in Environment variables. Fortunately, Terraform Cloud makes this easy. From your new workspace homepage click on the &#34;Variables&#34; tab. Then for each variable listed below click on &#34;+ Add variable&#34; button (under the &#34;Environment Variables&#34; section) and enter the name given below along with the appropriate value (adjusting as appropriate).</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Variable key</p>
+</td><td colspan="1" rowspan="1"><p>Variable value</p>
+</td><td colspan="1" rowspan="1"><p>Sensitive?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWFLAKE_ACCOUNT</p>
+</td><td colspan="1" rowspan="1"><p>xy12345</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWFLAKE_REGION</p>
+</td><td colspan="1" rowspan="1"><p>east-us-2.azure</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWFLAKE_USER</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_USER</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWFLAKE_PASSWORD</p>
+</td><td colspan="1" rowspan="1"><p>*****</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+</table>
+<aside class="special"><p><strong>Tip</strong> - For more details on the supported arguments please check out the <a href="https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest/docs" target="_blank">CZI Terraform Provider for Snowflake documentation</a>.</p>
+</aside>
+<p>When you&#39;re finished adding all the secrets, the page should look like this:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/257ba7a574f4d1d0.png"></p>
+<h2 is-upgraded>Create an API Token</h2>
+<p>The final thing we need to do in Terraform Cloud is to create an API Token so that GitHub Actions can securely authenticate with Terraform Cloud. Click on your user icon near the top right of the screen and then click on &#34;User settings&#34;. Then in the left navigation bar click on the user settings page click on the &#34;Tokens&#34; tab.</p>
+<p>Click on the &#34;Create an API token&#34; button, give your token a &#34;Description&#34; (like <code>GitHub Actions</code>) and then click on the &#34;Create API token&#34; button. Pay careful attention on the next screen. You need to save the API token because once you click on the &#34;Done&#34; button the token <strong>will not be displayed again</strong>. Once you&#39;ve saved the token, click the &#34;Done&#34; button.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Actions Workflow" duration="8">
+        <h2 is-upgraded>Create Actions Secrets</h2>
+<p>Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create a secret to store the API token to Terraform Cloud.</p>
+<p>From the repository, click on the &#34;Settings&#34; tab near the top of the page. From the Settings page, click on the &#34;Secrets&#34; tab in the left hand navigation. The &#34;Actions&#34; secrets should be selected.</p>
+<p>Click on the &#34;New repository secret&#34; button near the top right of the page. For the secret &#34;Name&#34; enter <code>TF_API_TOKEN</code> and for the &#34;Value&#34; enter the API token value you saved from the previous step.</p>
+<aside class="special"><p><strong>Tip</strong> - For an even better solution to managing your secrets, you can leverage <a href="https://docs.github.com/en/actions/reference/environments" target="_blank">GitHub Actions Environments</a>. Environments allow you to group secrets together and define protection rules for each of your environments.</p>
+</aside>
+<h2 is-upgraded>Action Workflows</h2>
+<p>Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called <code>.github/workflows</code>. In this step we will create a deployment workflow which will run Terraform and deploy changes to our Snowflake account.</p>
+<ul>
+<li>From the repository, click on the &#34;Actions&#34; tab near the top middle of the page.</li>
+<li>Click on the &#34;set up a workflow yourself -&gt;&#34; link (if you already have a workflow defined click on the &#34;new workflow&#34; button and then the &#34;set up a workflow yourself -&gt;&#34; link)</li>
+<li>On the new workflow page <ul>
+<li>Name the workflow <code>snowflake-terraform-demo.yml</code></li>
+<li>In the &#34;Edit new file&#34; box, replace the contents with the the following:</li>
+</ul>
+</li>
+</ul>
+<pre><code language="language-yaml" class="language-yaml">name: &#34;Snowflake Terraform Demo Workflow&#34;
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  snowflake-terraform-demo:
+    name: &#34;Snowflake Terraform Demo Job&#34;
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: $&#123;&#123; secrets.TF_API_TOKEN }}
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+</code></pre>
+<p>Finally, click on the green &#34;Start commit&#34; button near the top right of the page and then click on the green &#34;Commit new file&#34; in the pop up window (you can leave the default comments and commit settings). You&#39;ll now be taken to the workflow folder in your repository.</p>
+<p>A few things to point out from the YAML pipeline definition:</p>
+<ul>
+<li>The <code>on:</code> definition configures the pipeline to automatically run when a change is pushed on the <code>main</code> branch of the repository. So any change committed in a different branch will not automatically trigger the workflow to run.</li>
+<li>Please note that if you are re-using an existing GitHub repository it might retain the old <code>master</code> branch naming. If so, please update the YAML above (see the <code>on:</code> section).</li>
+<li>We&#39;re using the default GitHub-hosted Linux agent to execute the pipeline.</li>
+</ul>
+<aside class="special"><p><strong>Tip</strong> - For more details about Action Workflows and runs check out the <a href="https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions" target="_blank">Introduction to GitHub Actions</a> page and the <a href="https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions" target="_blank">Workflow syntax for GitHub Actions</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your First Database Migration" duration="5">
+        <p>Open up your cloned GitHub repository in your favorite IDE and create a new file in the root named <code>main.tf</code> with the following contents. <em>Please be sure to replace the organization name with your Terraform Cloud organization name.</em></p>
+<pre><code language="language-terraform" class="language-terraform">terraform {
+  required_providers {
+    snowflake = {
+      source  = &#34;chanzuckerberg/snowflake&#34;
+      version = &#34;0.25.17&#34;
+    }
+  }
+
+  backend &#34;remote&#34; {
+    organization = &#34;my-organization-name&#34;
+
+    workspaces {
+      name = &#34;gh-actions-demo&#34;
+    }
+  }
+}
+
+provider &#34;snowflake&#34; {
+}
+
+resource &#34;snowflake_database&#34; &#34;demo_db&#34; {
+  name    = &#34;DEMO_DB&#34;
+  comment = &#34;Database for Snowflake Terraform demo&#34;
+}
+</code></pre>
+<p>Then commit the new script and push the changes to your GitHub repository. By pushing this commit to our GitHub repository the new workflow we created in the previous step will run automatically.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Confirm Changes Deployed to Snowflake" duration="4">
+        <p>By now your first database migration should have been successfully deployed to Snowflake, and you should now have a <code>DEMO_DB</code> database available. There a few different places that you should check to confirm that everything deployed successfully, or to help you debug in the event that an error happened.</p>
+<h2 is-upgraded>GitHub Actions Log</h2>
+<p>From your repository in GitHub, click on the &#34;Actions&#34; tab. If everything went well, you should see a successful workflow run listed. But either way you should see the run listed under the &#34;All workflows&#34;. To see details about the run click on the run name. From the run overview page you can further click on the job name (it should be <code>Snowflake Terraform Demo Job</code>) in the left hand navigation bar or on the node in the yaml file viewer. Here you can browse through the output from the various steps. In particular you might want to review the output from the <code>Terraform Apply</code> step.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/1903aeb54069c195.png"></p>
+<h2 is-upgraded>Terraform Cloud Log</h2>
+<p>While you&#39;ll generally be able to see all the Terraform output in the GitHub Actions logs, you may need to also view the logs on Terraform Cloud. From your Terraform Cloud Workspace, click on the &#34;Runs&#34; tab. Here you will see each run listed out, and for the purposes of this quickstart, each run here corresponds to a run in GitHub Actions. Click on the run to open it and view the output from the various steps.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/ecbf7203e9f88725.png"></p>
+<h2 is-upgraded>Snowflake Objects</h2>
+<p>Log in to your Snowflake account and you should see your new <code>DEMO_DB</code> database! Additionaly you can review the queries that were executed by Terraform by clicking on the &#34;History&#34; tab at the top of the window.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your Second Database Migration" duration="4">
+        <p>Now that we&#39;ve successfully deployed our first change to Snowflake, it&#39;s time to make a second one. This time we will add a schema to the <code>DEMO_DB</code> and have it deployed through our automated pipeline.</p>
+<p>Open up your cloned repository in your favorite IDE and edit the <code>main.tf</code> file by appending the following lines to end of the file:</p>
+<pre><code language="language-terraform" class="language-terraform">resource &#34;snowflake_schema&#34; &#34;demo_schema&#34; {
+  database = snowflake_database.demo_db.name
+  name     = &#34;DEMO_SCHEMA&#34;
+  comment  = &#34;Schema for Snowflake Terraform demo&#34;
+}
+</code></pre>
+<p>Then commit the changes and push them to your GitHub repository. Because of the continuous integration trigger we created in the YAML definition, your workflow should have automatically started a new run. Toggle back to your GitHub and open up the &#34;Actions&#34; page. From there open up the most recent workflow run and view the logs. Go through the same steps you did in the previous section to confirm that the new <code>DEMO_SCHEMA</code> has been deployed successfully.</p>
+<p>Congratulations, you now have a working CI/CD pipeline with Terraform and Snowflake!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Bonus: Advanced Actions Workflow" duration="10">
+        <p>In the previous sections we created and tested a simple GitHub Actions workflow with Terraform. This section provides a more advanced workflow that you can test out. This one adds the capability for having Terraform validate and plan a change before it&#39;s actually deployed. This pipeline adds CI triggers that cause it to run when a Pull Request (PR) is created/updated. During that process it will run a <code>terraform plan</code> and stick the results in the PR itself for easy review. Please give it a try!</p>
+<pre><code language="language-terraform" class="language-terraform">name: &#34;Snowflake Terraform Demo Workflow&#34;
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  snowflake-terraform-demo:
+    name: &#34;Snowflake Terraform Demo Job&#34;
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: $&#123;&#123; secrets.TF_API_TOKEN }}
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == &#39;pull_request&#39;
+        run: terraform plan -no-color
+        continue-on-error: true
+
+      - uses: actions/github-script@0.9.0
+        if: github.event_name == &#39;pull_request&#39;
+        env:
+          PLAN: &#34;terraform\n$&#123;&#123; steps.plan.outputs.stdout }}&#34;
+        with:
+          github-token: $&#123;&#123; secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`$&#123;&#123; steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`$&#123;&#123; steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`$&#123;&#123; steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`$&#123;&#123; steps.plan.outcome }}\`
+            
+            &lt;details&gt;&lt;summary&gt;Show Plan&lt;/summary&gt;
+            
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+            
+            &lt;/details&gt;
+            
+            *Pusher: @$&#123;&#123; github.actor }}, Action: \`$&#123;&#123; github.event_name }}\`, Working Directory: \`$&#123;&#123; env.tf_actions_working_dir }}\`, Workflow: \`$&#123;&#123; github.workflow }}\`*`;
+            
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == &#39;failure&#39;
+        run: exit 1
+
+      - name: Terraform Apply
+        if: github.ref == &#39;refs/heads/main&#39; &amp;&amp; github.event_name == &#39;push&#39;
+        run: terraform apply -auto-approve
+</code></pre>
+<p>This worklow was adapted from <a href="https://learn.hashicorp.com/tutorials/terraform/github-actions" target="_blank">Automate Terraform with GitHub Actions</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="4">
+        <p>So now that you&#39;ve got your first Snowflake CI/CD pipeline set up, what&#39;s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.</p>
+<h3 is-upgraded>Pipeline Stages</h3>
+<p>In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. Your GitHub Actions workflow can be extended to include a stage for each of your environments. For more details around how to work with environments, please refer to <a href="https://docs.github.com/en/actions/reference/environments" target="_blank">Environments</a> in GitHub.</p>
+<h3 is-upgraded>Branching Strategy</h3>
+<p>Branching strategies can be complex, but there are a few popular ones out there that can help get you started. To begin with I would recommend keeping it simple with <a href="https://guides.github.com/introduction/flow/" target="_blank">GitHub flow</a> (and see also <a href="http://scottchacon.com/2011/08/31/github-flow.html" target="_blank">an explanation of GitHub flow by Scott Chacon in 2011</a>). Another simple framework to consider is <a href="https://about.gitlab.com/blog/2014/09/29/gitlab-flow/" target="_blank">GitLab flow</a>.</p>
+<h3 is-upgraded>Testing Strategy</h3>
+<p>Testing is an important part of any software development process, and is absolutely critical when it comes to automated software delivery. But testing for databases and data pipelines is complicated and there are many approaches, frameworks, and tools out there. In my opinion, the simplest way to get started testing data pipelines is with <a href="https://www.getdbt.com/" target="_blank">dbt</a> and the <a href="https://docs.getdbt.com/docs/building-a-dbt-project/tests/" target="_blank">dbt Test features</a>. Another popular Python-based testing tool to consider is <a href="https://greatexpectations.io/" target="_blank">Great Expectations</a>.</p>
+<p>With that you should now have a working CI/CD pipeline in GitHub Actions and some helpful ideas for next steps on your DevOps journey with Snowflake. Good luck!</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>A brief history and overview of GitHub Actions</li>
+<li>A brief history and overview of Terraform and Terraform Cloud</li>
+<li>How database change management tools like Terraform work</li>
+<li>How a simple release pipeline works</li>
+<li>How to create CI/CD pipelines in GitHub Actions</li>
+<li>Ideas for more advanced CI/CD pipelines with stages</li>
+<li>How to get started with branching strategies</li>
+<li>How to get started with testing strategies</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.terraform.io/" target="_blank">Terraform</a></li>
+<li><a href="https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest" target="_blank">Chan Zuckerberg Terraform Provider for Snowflake</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/terraforming_snowflake/index.html?index=..%2F..index#0" target="_blank">Terraforming Snowflake Quickstart</a></li>
+<li><a href="https://github.com/features/actions" target="_blank">GitHub Actions</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

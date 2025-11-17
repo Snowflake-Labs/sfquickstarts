@@ -1,0 +1,726 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowpark Pythonによるデータエンジニアリングパイプライン</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_pipelines_with_snowpark_python_ja"
+                  title="Snowpark Pythonによるデータエンジニアリングパイプライン"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="概要" duration="15">
+        <p>「データエンジニアは、さまざまな手順でデータを転送し、データを使用可能な状態にするデータパイプラインの構築と保守に重点を置いています。データエンジニアリングプロセスには、場所から場所へのデータ転送を自動化し、そのデータを特定の種類の分析に使用できるように特定の形式に変換する<strong>データパイプライン</strong>の作成に必要な作業全体が含まれます。その意味で、データエンジニアリングは一度だけ行うものではありません。データの収集、準備、変換、提供に関連する継続的な作業です。データパイプラインは、これらのタスクを自動化して確実に反復するのに役立ちます。これは、特定のテクノロジーというよりもプラクティスです」（「初心者向けクラウドデータエンジニアリング」、Snowflake特別版）</p>
+<p>Snowpark Pythonの機能を活用してデータエンジニアリングパイプラインを構築したい場合は、このクイックスタートが最適です。ここでは、データサイエンスではなく、Pythonによるデータエンジニアリングパイプラインの構築に焦点を当てます。Snowpark Pythonによるデータサイエンスの例については、「<a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html?index=..%2F..index#0" target="_blank">Snowpark Pythonによる機械学習：- クレジットカード承認予測</a>」クイックスタートを参照してください。</p>
+<p>このクイックスタートは広範囲をカバーしており、最終的にはSnowpark Pythonストアドプロシージャを使用して堅牢なデータエンジニアリングパイプラインを構築できるようになります。このパイプラインはデータを段階的に処理し、Snowflakeタスクとオーケストレーションされ、CI/CDパイプラインで展開されます。また、Snowflakeの新しい開発者向けCLIツールとVisual Studio Code拡張機能の使用方法も学習します。以下に簡単な概要を図で示します。</p>
+<p><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"> では、準備をはじめましょう。</p>
+<aside class="warning"><p><strong>注意</strong> - 2023年2月1日現在、<a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">Snowflake Visual Studio Code拡張機能</a>と<a href="https://github.com/Snowflake-Labs/snowcli" target="_blank">SnowCLIツール</a>は両方ともまだプレビュー中です。</p>
+</aside>
+<h2 is-upgraded>前提条件</h2>
+<ul>
+<li>Pythonに精通していること</li>
+<li>DataFrame APIに精通していること</li>
+<li>Snowflakeに精通していること</li>
+<li>GitレポジトリとGitHubに精通していること</li>
+</ul>
+<h2 is-upgraded>学習する内容</h2>
+<p>このクイックスタートでは、次のSnowflake機能について学習します。</p>
+<ul>
+<li>Snowflakeのテーブルフォーマット</li>
+<li>COPYによるデータの取り込み</li>
+<li>スキーマ推論</li>
+<li>データシェアリング/マーケットプレイス（ETLの代わり）</li>
+<li>段階的な処理のためのストリーム（CDC）</li>
+<li>ビューに対するストリーム</li>
+<li>Python UDF（サードパーティパッケージを使用）</li>
+<li>Pythonストアドプロシージャ</li>
+<li>Snowpark DataFrame API</li>
+<li>Snowpark Pythonプログラマビリティ</li>
+<li>ウェアハウスの伸縮性（動的スケーリング）</li>
+<li>Visual Studio Code Snowflakeネイティブ拡張（PuPr、Git統合）</li>
+<li>SnowCLI（PuPr）</li>
+<li>タスク（ストリームトリガーを使用）</li>
+<li>タスクの監視</li>
+<li>GitHubアクション（CI/CD）の統合</li>
+</ul>
+<h2 is-upgraded>必要なもの</h2>
+<p>始める前に以下のものが必要です。</p>
+<ul>
+<li>Snowflake <ul>
+<li><strong>Snowflakeアカウント</strong></li>
+<li><strong>アカウント管理者権限で作成されたSnowflakeユーザー</strong>。このユーザーは、Snowflakeでの設定に使用されます。</li>
+<li><strong>同意された****Anaconda利用規約。</strong><a href="https://docs.snowflake.com/ja/developer-guide/udf/python/udf-python-packages.html#getting-started" target="_blank">サードパーティパッケージ</a>の「はじめに」セクションを参照してください。</li>
+</ul>
+</li>
+<li>Miniconda <ul>
+<li><strong>コンピュータにインストールされたMiniconda。</strong><a href="https://conda.io/miniconda.html" target="_blank">Miniconda</a>をダウンロードしてインストールします。または、Python 3.8で他のPython環境を使用することもできます。</li>
+</ul>
+</li>
+<li>SnowSQL <ul>
+<li>**コンピュータにインストールされたSnowSQL。**詳細については、<a href="https://developers.snowflake.com/snowsql/" target="_blank">SnowSQLのダウンロードページ</a>にアクセスし、「<a href="https://docs.snowflake.com/ja/user-guide/snowsql-install-config.html" target="_blank">SnowSQLのインストール</a>」ページを参照してください。</li>
+</ul>
+</li>
+<li>Git <ul>
+<li>**コンピュータにインストールされたGit。**詳細については、「<a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">はじめに - Gitのインストール</a>」ページを参照してください。</li>
+<li><strong>ユーザー名とメールアドレスが設定されたGit</strong>。まだ設定していない場合は、ローカルコンピュータで<a href="https://docs.github.com/en/get-started/getting-started-with-git/setting-your-username-in-git#setting-your-git-username-for-every-repository-on-your-computer" target="_blank">Gitのユーザー名</a>と<a href="https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-email-preferences/setting-your-commit-email-address#setting-your-email-address-for-every-repository-on-your-computer" target="_blank">メールアドレスを設定</a>してください。</li>
+</ul>
+</li>
+<li>Visual Studio Codeと必要な拡張機能 <ul>
+<li><strong>コンピュータにインストールされたVisual Studio Code</strong>。ダウンロードページへのリンクについては、<a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>のホームページを確認してください。</li>
+<li>**インストールされたPython拡張機能。**VS Codeの「拡張機能」ペインで「Python」拡張機能を検索し、（Microsoftから）インストールします。</li>
+<li>**インストールされたSnowflake拡張機能。**VS Codeの「拡張機能」ペインで「Snowflake」拡張機能を検索し、（Snowflakeから）インストールします。</li>
+</ul>
+</li>
+<li>ラボのレポジトリがフォークされ、ローカルにクローンされているGitHubアカウント <ul>
+<li><strong>GitHubアカウント</strong>。まだGitHubアカウントを持っていない場合は、無料で作成できます。はじめに、<a href="https://github.com/signup" target="_blank">Join GitHub</a>ページをご覧ください。</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>構築するもの</h2>
+<p>このクイックスタートでは、次のことを実行します。</p>
+<ul>
+<li>スキーマ推論を使用してParquetデータをSnowflakeにロードする</li>
+<li>Snowflakeマーケットプレイスデータへのアクセスを設定する</li>
+<li>温度を変換するPython UDFを作成する</li>
+<li>Pythonストアドプロシージャを使用してデータエンジニアリングパイプラインを作成し、データを段階的に処理する</li>
+<li>パイプラインをタスクとオーケストレーションする</li>
+<li>Snowsightでパイプラインをモニタリングする</li>
+<li>Snowpark PythonストアドプロシージャをCI/CDパイプラインで展開する</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="クイックスタート設定" duration="10">
+        <h2 is-upgraded>クイックスタート用レポジトリのフォークとクローン</h2>
+<p>GitHubアカウントでこのクイックスタート用レポジトリのフォークを作成する必要があります。<a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python" target="_blank">Snowpark Python関連のGitHubレポジトリを含むデータエンジニアリングパイプライン</a>にアクセスし、右上の「フォーク」ボタンをクリックします。必須フィールドに入力し、「フォークを作成」をクリックします。</p>
+<p>デフォルトでは、GitHubアクションはフォークしたレポジトリで定義されているワークフロー（またはCI/CDパイプライン）を無効にします。このレポジトリには、Snowpark Python UDFとストアドプロシージャを展開するワークフローが含まれています。このワークフローは後で使用します。そのため、現時点では、GitHubでフォークしたレポジトリを開き、ページ中央上部の「<code>Actions</code>」タブをクリックして、緑の「<code>I understand my workflows, go ahead and enable them</code>」ボタンをクリックすることで、このワークフローを有効にします。</p>
+<p><img style="width: 800.00px" src="img/2efe7bef427192a5.png"> 次に、新しくフォークしたレポジトリをローカルコンピュータにクローンする必要があります。新しいGitレポジトリの接続の詳細については、レポジトリを開き、ページ上部付近にある緑色の「コード」アイコンをクリックして「HTTPS」リンクをコピーします。</p>
+<p><img style="width: 300.00px" src="img/e1db21d0c6906488.png"> そのリンクをVS Codeで使用して、コンピュータにレポジトリをクローンします。詳細については、「<a href="https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository" target="_blank">Visual Studio CodeでGitHubレポジトリをクローンして使用する</a>」の手順に従ってください。必要に応じて、次のコマンドを実行して、コマンドラインからレポジトリをクローンすることもできます。</p>
+<pre><code language="language-bash" class="language-bash">git clone &lt;your-forked-repo-url&gt;
+cd sfguide-data-engineering-with-snowpark-python/
+</code></pre>
+<p>フォークしたレポジトリがローカルコンピュータにクローンされたら、そのフォルダをVS Codeで開きます。</p>
+<h2 is-upgraded>認証情報の設定</h2>
+<p>このクイックスタートでは、<a href="https://docs.snowflake.com/ja/user-guide/snowsql.html" target="_blank">SnowSQLコマンドラインクライアント</a>を直接使用しませんが、<code>~/.snowsql/config</code>にあるSnowSQL構成ファイルにSnowflake接続の詳細を保存します。SnowSQL構成ファイルが存在しない場合は、空のファイルを作成してください。</p>
+<p>次のセクションを<code>~/.snowsql/config</code>ファイルに追加して、このラボ用のSnowSQL構成を作成します（accountname、username、passwordを実際の値に置き換えます）。</p>
+<pre><code>[connections.dev]
+accountname = myaccount
+username = myusername
+password = mypassword
+rolename = HOL_ROLE
+warehousename = HOL_WH
+dbname = HOL_DB
+</code></pre>
+<p>**注意：**SnowCLIツール（ひいてはこのクイックスタート）は、現在のところキーペア認証では機能しません。共有SnowSQL構成ファイルからユーザー名とパスワードの詳細を取得するだけです。</p>
+<h2 is-upgraded>Anaconda環境の作成</h2>
+<p>提供された<code>conda_env.yml</code>ファイルを使用して、このラボ用のconda環境を作成してアクティブにします。ローカルのフォークしたレポジトリのルートにあるターミナルから次のコマンドを実行します。</p>
+<pre><code language="language-bash" class="language-bash">conda env create -f conda_env.yml
+conda activate pysnowpark
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflakeの設定" duration="10">
+        <h2 is-upgraded>VS Code用のSnowflake拡張機能</h2>
+<p>Snowflakeに対してさまざまな方法（Snowsight UI、SnowSQLなど）でSQLクエリを実行できますが、このクイックスタートではVS Code用のSnowflake拡張機能を使用します。SnowflakeのVS Code用ネイティブ拡張機能の概要については、<a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">VS CodeマーケットプレイスのSnowflake拡張機能ページ</a>を参照してください。</p>
+<h2 is-upgraded>スクリプトの実行</h2>
+<p>このクイックスタートでSnowflakeに必要なすべてのオブジェクトを設定するには、<code>steps/01_setup_snowflake.sql</code>スクリプトを実行する必要があります。</p>
+<p>まず、VS Codeの左側のナビゲーションバーにあるSnowflake拡張機能をクリックします。次に、アカウント管理者権限を持つユーザーでSnowflakeアカウントにログインします。Snowflakeにログインしたら、左側のナビゲーションバーにあるファイルエクスプローラーに戻って、VS Codeで<code>steps/01_setup_snowflake.sql</code>スクリプトを開きます。</p>
+<p>このスクリプト内のすべてのクエリを実行するには、エディタウィンドウの右上にある「すべてのステートメントを実行」ボタンを使用します。または、複数のチャンクに分けて実行したい場合は、実行するクエリをハイライトしてCMD/CTRL+Enterキーを押します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="未加工ファイルのロード" duration="10">
+        <p>このステップでは、未加工のTasty Bytes POSデータとカスタマーロイヤルティデータを、<code>s3://sfquickstarts/data-engineering-with-snowpark-python/</code>にある未加工のParquetファイルから、Snowflakeの<code>RAW_POS</code>スキーマと<code>RAW_CUSTOMER</code>スキーマにロードします。さらに、Snowpark Python APIを使用して、ノートパソコンからPythonでこのプロセスをオーケストレーションします。これは、コンテキストの中では、データフローの概要のステップ**#2**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>スクリプトの実行</h2>
+<p>未加工データをロードするには、<code>steps/02_load_raw.py</code>スクリプトを実行します。これはVS Codeでいくつかの方法で実行できます。ターミナルから実行することも、VS Codeで直接実行することもできます。このデモでは、ターミナルからPythonスクリプトを実行する必要があります。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps
+python 02_load_raw.py
+</code></pre>
+<p>このコマンドを実行している間、VS Codeでスクリプトを開いてこのページを読み進め、何が起こっているのかを理解してください。</p>
+<h2 is-upgraded>ローカルでのSnowpark Pythonの実行</h2>
+<p>このステップでは、ノートパソコンからローカルでSnowpark Pythonコードを実行します。スクリプトの下部に、ローカルデバッグに使用するコードブロックがあります（<code>if __name__ == "__main__":</code>ブロックの下）。</p>
+<pre><code language="language-python" class="language-python"># For local debugging
+if __name__ == &#34;__main__&#34;:
+    # Add the utils package to our path and import the snowpark_utils function
+    import os, sys
+    current_dir = os.getcwd()
+    parent_dir = os.path.dirname(current_dir)
+    sys.path.append(parent_dir)
+
+    from utils import snowpark_utils
+    session = snowpark_utils.get_snowpark_session()
+
+    load_all_raw_tables(session)
+#    validate_raw_tables(session)
+
+    session.close()
+</code></pre>
+<p>ここでいくつか注意すべき点があります。まず、Snowparkセッションは<code>utils/snowpark_utils.py</code>モジュールで作成されます。このモジュールには認証情報を取得するための複数のメソッドがあり、このクイックスタートでは、<code>~/.snowsql/config</code>にあるSnowSQL構成ファイルから取得します。詳細については、<a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python/blob/main/utils/snowpark_utils.py" target="_blank">utils/snowpark_utils.pyモジュール</a>のコードを参照してください。</p>
+<p>次に、Snowparkセッションを取得した後、手間のかかる作業を行う<code>load_all_raw_tables(session)</code>メソッドを呼び出します。次のいくつかのセクションでは、主要な部分について説明します。</p>
+<p>最後に、このクイックスタートのほぼすべてのPythonスクリプトには、ローカルデバッグブロックが含まれています。後でSnowpark PythonストアドプロシージャやUDFを作成しますが、それらのPythonスクリプトにも同様のブロックがあります。そのため、このパターンを理解することが重要です。</p>
+<h2 is-upgraded>Snowflakeで起こったことの確認</h2>
+<p>Snowflakeの<a href="https://docs.snowflake.com/ja/user-guide/ui-snowsight-activity.html#query-history" target="_blank">クエリ履歴</a>は非常に強力な機能で、Snowflakeアカウントに対して実行されたすべてのクエリを、どのツールやプロセスがそれを開始したかに関係なくログに記録します。これは、クライアントツールやAPIを使用する場合に特に役立ちます。</p>
+<p>先ほど実行したPythonスクリプトは、ローカルで少量の作業を行いました。基本的には、各テーブルをループし、データをロードするためのコマンドをSnowflakeに発行することで、プロセスをオーケストレーションするだけです。一方、手間のかかる作業はすべてSnowflake内部で実行されました。このプッシュダウンはSnowpark APIの特徴であり、これによってSnowflakeのスケーラビリティとコンピューティングパワーを活用できるようになります。</p>
+<p>Snowflakeアカウントにログインし、Snowpark APIによって生成されたSQLを簡単に見てみましょう。これにより、APIが行っていることに関する理解が深まり、問題が発生した場合のデバッグに役立ちます。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/cc5b2beff49c0878.png"></p>
+<h2 is-upgraded>スキーマ推論</h2>
+<p>Snowflakeの非常に便利な機能の1つに、作業したいステージのファイルのスキーマを推論する機能があります。これは、SQLでは<a href="https://docs.snowflake.com/ja/sql-reference/functions/infer_schema.html" target="_blank"><code>INFER_SCHEMA()</code></a>関数で実行されます。Snowpark Python APIでは、<code>session.read()</code>メソッドを呼び出すと自動的に実行されます。コードスニペットは次のとおりです。</p>
+<pre><code language="language-python" class="language-python">    # we can infer schema using the parquet read option
+    df = session.read.option(&#34;compression&#34;, &#34;snappy&#34;) \
+                            .parquet(location)
+</code></pre>
+<h2 is-upgraded>COPYによるデータの取り込み</h2>
+<p>データをSnowflakeテーブルにロードするために、DataFrameに対して<code>copy_into_table()</code>メソッドを使用します。このメソッドは、推論されたスキーマ（存在しない場合）を使用してSnowflakeでターゲットテーブルを作成し、高度に最適化されたSnowflake <code>COPY INTO &lt;table&gt;</code><a href="https://docs.snowflake.com/ja/sql-reference/sql/copy-into-table.html" target="_blank">コマンド</a>を呼び出します。コードスニペットは次のとおりです。</p>
+<pre><code language="language-python" class="language-python">    df.copy_into_table(&#34;{}&#34;.format(tname))
+</code></pre>
+<h2 is-upgraded>Snowflakeのテーブルフォーマット</h2>
+<p>Snowflakeの大きな利点の1つは、ファイルベースのデータレイクを管理する必要がなくなることです。Snowflakeは最初からこの目的のために設計されました。このステップでは、未加工データを構造化されたSnowflake管理テーブルにロードしています。しかし、Snowflakeテーブルは構造化データおよび半構造化データをネイティブにサポートでき、Snowflakeの成熟したクラウドテーブルフォーマット（Hudi、Delta、Icebergよりも前から存在しています）に保存されます。</p>
+<p>Snowflakeにロードされたデータは安全に保存および管理されます。未加工ファイルの保護や管理について心配する必要はありません。さらに、データは、未加工データであろうと構造化データであろうと、SnowflakeでSQLまたは好みの言語を使用して変換およびクエリできます。Sparkなどのコンピュートサービスを別途管理する必要はありません。</p>
+<p>これはSnowflakeユーザーにとって大きなメリットです。</p>
+<h2 is-upgraded>ウェアハウスの伸縮性（動的スケーリング）</h2>
+<p>Snowflakeでは、データの処理に使用する言語（SQL、Python、Java、Scala、Javascriptなど）に関係なく、ユーザー定義のコンピュートクラスタは<a href="https://docs.snowflake.com/ja/user-guide/warehouses.html" target="_blank">仮想ウェアハウス</a>の1種類のみです。このため、Snowflakeでのデータ操作が非常にシンプルになります。また、データのガバナンスはコンピュートクラスタから完全に分離されています。つまり、ウェアハウスの設定や使用する言語に関係なく、Snowflakeのガバナンスをくぐり抜けることはできません。</p>
+<p>また、これらの仮想ウェアハウスは、ほとんどの規模のウェアハウスで1秒以内に動的にスケーリングできます。つまり、コードのセクションを短時間で実行するために、コード内でコンピュート環境のサイズを動的に変更して容量を増やした後、再度動的にサイズを変更して容量を減らすことができます。また、秒単位で課金されるため（最低60秒）、コードのセクションを短時間で実行するために追加料金を支払う必要はありません。</p>
+<p>どれほど簡単か見てみましょう。コードスニペットは次のとおりです。</p>
+<pre><code language="language-python" class="language-python">    _ = session.sql(&#34;ALTER WAREHOUSE HOL_WH SET WAREHOUSE_SIZE = XLARGE WAIT_FOR_COMPLETION = TRUE&#34;).collect()
+
+    # Some data processing code
+
+    _ = session.sql(&#34;ALTER WAREHOUSE HOL_WH SET WAREHOUSE_SIZE = XSMALL&#34;).collect()
+</code></pre>
+<p>最初の<code>ALTER WAREHOUSE</code>ステートメントに<code>WAIT_FOR_COMPLETION</code>パラメータが含まれていることに注意してください。このパラメータを<code>TRUE</code>に設定すると、すべてのコンピューティングリソースがサイズ変更されて準備が整うまで、<code>ALTER WAREHOUSE</code>コマンドの戻りがブロックされます。このようにして、クラスターでデータを処理する前にクラスター全体が利用可能であることを確認します。</p>
+<p>このクイックスタートではこのパターンをあと数回使用するため、十分に理解しておくことが重要です。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="気候データのロード" duration="4">
+        <p>このステップでは、未加工の気象データをSnowflakeに「ロード」します。しかし、ここでは「ロード」という言葉は実際には正しくありません。Snowflake独自のデータシェアリング機能を使用しているため、実際にはカスタムETLプロセスでデータをSnowflakeアカウントにコピーする必要はありません。代わりに、SnowflakeマーケットプレイスでWeather Sourceが共有する気象データに直接アクセスできます。これは、コンテキストの中では、データフローの概要のステップ**#3**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Snowflakeマーケットプレイス</h2>
+<p>Weather Sourceは、世界の気象および気候データを提供するリーディングプロバイダーであり、同社のOnPoint Product Suiteは、企業がさまざまな業界の広範なユースケースに適用できる有意義で実用的なインサイトを迅速に生成するために必要な気象および気候データを提供しています。次の手順に従って、SnowflakeマーケットプレイスのWeather Sourceから<code>Weather Source LLC: frostbyte</code>フィードに接続しましょう。</p>
+<ul>
+<li>Snowsightにログインする</li>
+<li>左側のナビゲーションバーにある<code>Marketplace</code>リンクをクリックする</li>
+<li>検索ボックスに「Weather Source LLC: frostbyte」と入力し、「返す」をクリックする</li>
+<li>「Weather Source LLC: frostbyte」のリストタイルをクリックする</li>
+<li>青の「取得」ボタンをクリックする <ul>
+<li>「オプション」ダイアログを展開する</li>
+<li>「データベース名」を「FROSTBYTE_WEATHERSOURCE」（すべて大文字）に変更する</li>
+<li>「HOL_ROLE」ロールを選択して新しいデータベースにアクセスできるようにする</li>
+</ul>
+</li>
+<li>青の「取得」ボタンをクリックする</li>
+</ul>
+<p>これで完了です。今後は何もしなくてもこのデータが最新の状態に保たれます。プロバイダーが代わりにデータを更新します。つまり、データシェアリングでは、プロバイダーが公開したものが何であれ、それを常に見ることができます。素晴らしいと思いませんか。考えてみてください。これまでは、常に最新のサードパーティデータセットにアクセスするためにさまざまなことを行う必要がありましたが、それらがすべて不要になったのです。</p>
+<h2 is-upgraded>スクリプトの実行</h2>
+<p>左側のナビゲーションバーにあるファイルエクスプローラーから、VS Codeで<code>steps/03_load_weather.sql</code>スクリプトを開き、スクリプトを実行します。Snowflakeマーケットプレイスで共有されたデータへのクエリがいかに簡単であるかに注意してください。Snowflakeの他のテーブルやビューと同じようにアクセスします。</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="POSビューの作成" duration="10">
+        <p>このステップでは、6つの異なるテーブルを結合し、必要な列のみを選択することで、未加工のPOSスキーマを簡素化するビューを作成します。しかし、本当に素晴らしいのは、Snowpark DataFrame APIを使用してそのビューを定義することです。次に、そのビューに対するSnowflakeストリームを作成し、POSテーブルの変更を段階的に処理できるようにします。これは、コンテキストの中では、データフローの概要のステップ**#4**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>スクリプトの実行</h2>
+<p>ビューとストリームを作成するには、<code>steps/04_create_pos_view.py</code>スクリプトを実行します。ステップ2と同様に、ターミナルから実行しましょう。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps
+python 04_create_pos_view.py
+</code></pre>
+<p>このコマンドを実行している間、VS Codeでスクリプトを開いてこのページを読み進め、何が起こっているのかを理解してください。</p>
+<h2 is-upgraded>Snowpark DataFrame API</h2>
+<p><code>create_pos_view()</code>関数で最初に目を引くのは、Snowpark DataFrame APIを使用してSnowflakeビューを定義していることです。ビューに必要なロジックをすべて取り込む最終的なDataFrameを定義したら、Snowparkの<code>create_or_replace_view()</code>メソッドを呼び出すだけです。<code>create_pos_view()</code>関数の最後の行は次のとおりです。</p>
+<pre><code language="language-python" class="language-python">    final_df.create_or_replace_view(&#39;POS_FLATTENED_V&#39;)
+</code></pre>
+<p>Snowpark Python DataFrame APIの詳細については、「<a href="https://docs.snowflake.com/ja/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Snowpark PythonでのDataFramesの使用</a>」ページを参照してください。</p>
+<h2 is-upgraded>段階的な処理のためのストリーム（CDC）</h2>
+<p>Snowflakeを使用すると、段階的なデータの処理が非常に簡単になります。従来、データエンジニアは、テーブル内の新しいレコードのみを処理するために、高基準値（通常は日時列）を追跡する必要がありました。そのため、基準値を追跡してどこかに保存し、ソーステーブルに対するクエリでそれを使用する必要がありました。しかし、Snowflakeストリームでは、手間のかかる作業はすべてSnowflakeが行います。詳細については、「<a href="https://docs.snowflake.com/ja/user-guide/streams.html" target="_blank">テーブルストリームを使用した変更追跡</a>」ユーザーガイドを参照してください。</p>
+<p>必要なのは、ベーステーブルまたはビューに対してSnowflakeで<a href="https://docs.snowflake.com/ja/sql-reference/sql/create-stream.html" target="_blank"><code>STREAM</code></a>オブジェクトを作成し、Snowflakeの他のテーブルと同様にそのストリームにクエリを実行することだけです。ストリームは、最後に実行したDMLオプション以降に変更されたレコードのみを返します。変更されたレコードを扱いやすくするために、Snowflakeストリームはベーステーブルまたはビュー列とともに次のメタデータ列を提供します。</p>
+<ul>
+<li>METADATA$ACTION</li>
+<li>METADATA$ISUPDATE</li>
+<li>METADATA$ROW_ID</li>
+</ul>
+<p>これらのストリームメタデータ列の詳細については、ドキュメントの「<a href="https://docs.snowflake.com/ja/user-guide/streams-intro.html#stream-columns" target="_blank">ストリーム列</a>」セクションを参照してください。</p>
+<h2 is-upgraded>ビューに対するストリーム</h2>
+<p>Snowflakeの段階的な/CDCストリーム機能の優れた点は、ビューに対してストリームを作成できることです。この例では、6つの未加工のPOSテーブルを結合するビューに対してストリームを作成しています。これを行うコードは次のとおりです。</p>
+<pre><code language="language-python" class="language-python">def create_pos_view_stream(session):
+    session.use_schema(&#39;HARMONIZED&#39;)
+    _ = session.sql(&#39;CREATE OR REPLACE STREAM POS_FLATTENED_V_STREAM \
+                        ON VIEW POS_FLATTENED_V \
+                        SHOW_INITIAL_ROWS = TRUE&#39;).collect()
+</code></pre>
+<p>ここで、変更されたレコードを見つけるために<code>POS_FLATTENED_V_STREAM</code>ストリームにクエリを実行すると、Snowflakeは実際にはビューに含まれる6つのテーブルの中から変更されたレコードを検索します。このような非正規化スキーマに関する段階的な/CDCプロセスを構築しようとしたことがある方であれば、Snowflakeがここで提供する信じられないほどパワフルな機能に感謝することでしょう。</p>
+<p>詳細については、ドキュメントの「<a href="https://docs.snowflake.com/ja/user-guide/streams-intro.html#streams-on-views" target="_blank">ビューに対するストリーム</a>」セクションを参照してください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="華氏から摂氏への変換UDF" duration="10">
+        <p>このステップでは、最初のSnowpark Pythonオブジェクトであるユーザー定義関数（UDF）を作成し、Snowflakeに展開します。UDFから始めることは非常に基本的ですが、今後のステップではサードパーティのPythonパッケージを含むように更新します。また、このステップでは新しい開発者コマンドラインツールであるSnowCLIを紹介します。SnowCLIを使用することで、開発者はSnowpark Pythonオブジェクトの構築とSnowflakeへの展開を一貫した方法で行うことができます。SnowCLIの詳細については後述します。これは、コンテキストの中では、データフローの概要のステップ**#5**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>ローカルでのUDFの実行</h2>
+<p>UDFをローカルでテストするには、<code>steps/05_fahrenheit_to_celsius_udf/app.py</code>スクリプトを実行します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps/05_fahrenheit_to_celsius_udf
+python app.py 35
+</code></pre>
+<p>UDFを開発している間は、VS Codeでローカルに実行するだけです。また、UDFがSnowflakeのデータをクエリする必要がない場合、このプロセスは完全にローカルで実行されます。</p>
+<h2 is-upgraded>SnowflakeへのUDFの展開</h2>
+<p>SnowflakeにUDFを展開するには、SnowCLIツールを使用します。SnowCLIツールは、アプリケーションのパッケージ化、Snowflakeステージへのコピー、Snowflakeでのオブジェクトの作成といった手間のかかる作業をすべて行います。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps/05_fahrenheit_to_celsius_udf
+snow function create
+</code></pre>
+<p>このコマンドを実行している間、VS Codeでスクリプトを開いてこのページを読み進め、何が起こっているのかを理解してください。</p>
+<h2 is-upgraded>SnowflakeでのUDFの実行</h2>
+<p>SnowflakeでUDFを実行するには、いくつかのオプションがあります。SnowflakeのUDFは、次のようにSQLで呼び出すことができます。</p>
+<pre><code language="language-sql" class="language-sql">SELECT ANALYTICS.FAHRENHEIT_TO_CELSIUS_UDF(35);
+</code></pre>
+<p>また、SnowCLIユーティリティを使用して、次のようにVS CodeのターミナルからUDFを呼び出すこともできます。</p>
+<pre><code language="language-bash" class="language-bash">snow function execute -f &#34;fahrenheit_to_celsius_udf(35)&#34;
+</code></pre>
+<p>これにより、SnowCLIツールが上記のSQLクエリを生成し、Snowflakeアカウントに対して実行します。</p>
+<h2 is-upgraded>SnowCLIツールの概要</h2>
+<p><a href="https://github.com/Snowflake-Labs/snowcli" target="_blank">SnowCLI</a>ツールは開発者向けのコマンドラインツールで、コマンドラインから<code>snow</code>として実行されます。</p>
+<p><strong>注意</strong> - <a href="https://docs.snowflake.com/ja/user-guide/snowsql.html" target="_blank">SnowSQL</a>コマンドラインツールと混同しないでください。これはSnowflakeに接続してSQLクエリを実行し、すべてのDDLおよびDML操作を実行するためのクライアントであり、コマンドラインから<code>snowsql</code>として実行されます。</p>
+<p>SnowCLIは、次のSnowflakeオブジェクトの開発と展開を簡素化します。</p>
+<ul>
+<li>Snowpark Python UDF</li>
+<li>Snowpark Pythonストアドプロシージャ</li>
+<li>Streamlitアプリケーション</li>
+</ul>
+<p>このクイックスタートでは、最初の2つに焦点を当てます。特に、Snowpark Python UDFとストアドプロシージャに関しては、SnowCLIはオブジェクトをSnowflakeに展開するという手間のかかる作業をすべて実行します。次に、SnowCLIのdeployコマンドが実行するステップを簡単にまとめます。</p>
+<ul>
+<li>サードパーティパッケージを処理する <ul>
+<li>Anacondaチャネルから直接アクセスできるパッケージの場合は、<code>CREATE PROCEDURE</code>または<code>CREATE FUNCTION</code> SQLコマンドの<code>PACKAGES</code>リストに追加します。</li>
+<li>現在Anacondaチャネルで利用できないパッケージの場合は、コードをダウンロードし、プロジェクトzipファイルに追加します。</li>
+</ul>
+</li>
+<li>プロジェクトのすべてのファイルを含むzipファイルを作成する</li>
+<li>そのプロジェクトzipファイルをSnowflakeステージにコピーする</li>
+<li>Snowflake関数またはストアドプロシージャオブジェクトを作成する</li>
+</ul>
+<p>これにより、対応するSnowflakeデータベースオブジェクトでラップすることを心配せずに、Pythonアプリケーションを開発してテストすることもできるようになります。</p>
+<aside class="warning"><p><strong>注意</strong> - 2023年2月1日現在、SnowCLIツールはまだプレビュー中です。</p>
+</aside>
+<h2 is-upgraded>Snowpark Python UDFの詳細</h2>
+<p>このステップでは、非常にシンプルなPython UDFをSnowflakeに展開しました。今後のステップでは、サードパーティのパッケージを使用するように更新する予定です。また、SnowCLIコマンドでSnowflakeに展開したため、Snowflakeでオブジェクトを作成するためのSQL DDL構文を気にする必要はありませんでした。ただし、参考までに、「<a href="https://docs.snowflake.com/ja/developer-guide/udf/python/udf-python.html" target="_blank">Python UDFの作成</a>」開発者ガイドを参照してください。</p>
+<p>SnowCLIツールが関数を展開するために生成したSQLクエリは次のとおりです。</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
+         RETURNS float
+         LANGUAGE PYTHON
+         RUNTIME_VERSION=3.8
+         IMPORTS=(&#39;@HOL_DB.ANALYTICS.deployments/fahrenheit_to_celsius_udftemp_f_float/app.zip&#39;)
+         HANDLER=&#39;app.main&#39;
+         PACKAGES=();
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="注文更新ストアドプロシージャ" duration="10">
+        <p>このステップでは、最初のSnowpark Pythonストアドプロシージャ（sproc）を作成し、Snowflakeに展開します。このストアドプロシージャは、<code>HARMONIZED.POS_FLATTENED_V_STREAM</code>ストリームからの変更をターゲットの<code>HARMONIZED.ORDERS</code>テーブルにマージします。これは、コンテキストの中では、データフローの概要のステップ**#6**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>ローカルでのストアドプロシージャの実行</h2>
+<p>プロシージャをローカルでテストするには、<code>steps/06_orders_update_sp/app.py</code>スクリプトを実行します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps/06_orders_update_sp
+python app.py
+</code></pre>
+<p>ストアドプロシージャを開発している間は、VS Codeでローカルに実行するだけです。Pythonコードはノートパソコンでローカルに実行されますが、Snowpark DataFrameコードはSnowflakeアカウントにSQLクエリを発行します。</p>
+<h2 is-upgraded>Snowflakeへのストアドプロシージャの展開</h2>
+<p>Snowflakeにストアドプロシージャを展開するには、SnowCLIツールを使用します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps/06_orders_update_sp
+snow procedure create
+</code></pre>
+<p>このコマンドを実行している間、VS Codeでスクリプトを開いてこのページを読み進め、何が起こっているのかを理解してください。</p>
+<h2 is-upgraded>Snowflakeでのストアドプロシージャの実行</h2>
+<p>Snowflakeでストアドプロシージャを実行するには、いくつかのオプションがあります。Snowflakeのストアドプロシージャは、次のようにSQLで呼び出すことができます。</p>
+<pre><code language="language-sql" class="language-sql">CALL ORDERS_UPDATE_SP();
+</code></pre>
+<p>また、SnowCLIユーティリティを使用して、次のようにVS CodeのターミナルからUDFを呼び出すこともできます。</p>
+<pre><code language="language-bash" class="language-bash">snow procedure execute -p &#34;orders_update_sp()&#34;
+</code></pre>
+<p>これにより、SnowCLIツールが上記のSQLクエリを生成し、Snowflakeアカウントに対して実行します。</p>
+<h2 is-upgraded>Snowpark Pythonストアドプロシージャの詳細</h2>
+<p>このステップでは、PythonストアドプロシージャをSnowflakeに展開しました。また、SnowCLIコマンドでSnowflakeに展開したため、Snowflakeでオブジェクトを作成するためのSQL DDL構文を気にする必要はありませんでした。ただし、参考までに、「<a href="https://docs.snowflake.com/ja/sql-reference/stored-procedures-python.html" target="_blank">Snowpark（Python）でのストアドプロシージャの記述</a>」ガイドを参照してください。</p>
+<p>SnowCLIツールがプロシージャを展開するために生成したSQLクエリは次のとおりです。</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE  PROCEDURE orders_update_sp()
+         RETURNS string
+         LANGUAGE PYTHON
+         RUNTIME_VERSION=3.8
+         IMPORTS=(&#39;@HOL_DB.HARMONIZED.deployments/orders_update_sp/app.zip&#39;)
+         HANDLER=&#39;app.main&#39;
+         PACKAGES=(&#39;snowflake-snowpark-python&#39;,&#39;toml&#39;)
+        EXECUTE AS CALLER;
+</code></pre>
+<h2 is-upgraded>Snowpark APIの詳細</h2>
+<p>このステップでは、Snowpark DataFrame APIを実際に使用してデータ変換を行います。Snowpark APIは、<a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html" target="_blank">Spark SQL API</a>と同じ機能を提供します。まず、Snowparkセッションオブジェクトを作成する必要があります。PySparkと同様に、これは<code>Session.builder.configs().create()</code>メソッドを使って行います。ローカルで実行する場合は、<code>utils.snowpark_utils.get_snowpark_session()</code>ヘルパー関数を使用してセッションオブジェクトを作成します。ただし、Snowflakeに展開すると、セッションオブジェクトはSnowflakeによって自動的にプロビジョニングされます。また、Snowpark Pythonストアドプロシージャを構築する場合、契約では、エントリーポイント（またはハンドラー）関数の最初の引数はSnowparkセッションです。</p>
+<p><code>steps/06_orders_update_sp/app.py</code>スクリプトで最初に目を引くのは、SQLを使用してSnowflakeにオブジェクトを作成したり、オブジェクトのステータスをチェックしたりする関数がいくつかあることです。Snowpark APIを使用してSnowflakeにSQLステートメントを発行するには、予想どおり、<code>session.sql()</code>関数を使用します。次に例を示します。</p>
+<pre><code language="language-python" class="language-python">def create_orders_stream(session):
+    _ = session.sql(&#34;CREATE STREAM IF NOT EXISTS HARMONIZED.ORDERS_STREAM ON TABLE HARMONIZED.ORDERS \
+                    SHOW_INITIAL_ROWS = TRUE;&#34;).collect()
+</code></pre>
+<p>2番目のポイントは、DataFrameを使用してソースビューからターゲットテーブルに変更をマージする方法です。Snowpark DataFrame APIは、最終的にSnowflakeで<code>MERGE</code>コマンドを生成する<code>merge()</code>メソッドを提供します。</p>
+<pre><code language="language-python" class="language-python">    source = session.table(&#39;HARMONIZED.POS_FLATTENED_V_STREAM&#39;)
+    target = session.table(&#39;HARMONIZED.ORDERS&#39;)
+
+    # TODO: Is the if clause supposed to be based on &#34;META_UPDATED_AT&#34;?
+    cols_to_update = {c: source[c] for c in source.schema.names if &#34;METADATA&#34; not in c}
+    metadata_col_to_update = {&#34;META_UPDATED_AT&#34;: F.current_timestamp()}
+    updates = {**cols_to_update, **metadata_col_to_update}
+
+    # merge into DIM_CUSTOMER
+    target.merge(source, target[&#39;ORDER_DETAIL_ID&#39;] == source[&#39;ORDER_DETAIL_ID&#39;], \
+                        [F.when_matched().update(updates), F.when_not_matched().insert(updates)])
+</code></pre>
+<p>繰り返しますが、Snowpark Python DataFrame APIの詳細については、「<a href="https://docs.snowflake.com/ja/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Snowpark PythonでのDataFramesの使用</a>」ページを参照してください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Daily Cityメトリック更新ストアドプロシージャ" duration="10">
+        <p>このステップでは、2番目のSnowpark Pythonストアドプロシージャを作成し、Snowflakeに展開します。このストアドプロシージャは、<code>HARMONIZED.ORDERS</code>データとWeather Sourceデータを結合して、<code>ANALYTICS.DAILY_CITY_METRICS</code>という分析用の最終集計テーブルを作成します。別のSnowflakeストリームを使用して、<code>HARMONIZED.ORDERS</code>テーブルからデータを段階的に処理します。また、Snowpark DataFrame <code>merge()</code>メソッドを再度使用してデータをマージ/アップサートします。これは、コンテキストの中では、データフローの概要のステップ**#7**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>ローカルでのストアドプロシージャの実行</h2>
+<p>プロシージャをローカルでテストするには、<code>steps/07_daily_city_metrics_update_sp/app.py</code>スクリプトを実行します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps/07_daily_city_metrics_update_sp
+python app.py
+</code></pre>
+<p>ストアドプロシージャを開発している間は、VS Codeでローカルに実行するだけです。Pythonコードはノートパソコンでローカルに実行されますが、Snowpark DataFrameコードはSnowflakeアカウントにSQLクエリを発行します。</p>
+<h2 is-upgraded>Snowflakeへのストアドプロシージャの展開</h2>
+<p>Snowflakeにストアドプロシージャを展開するには、SnowCLIツールを使用します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps/07_daily_city_metrics_update_sp
+snow procedure create
+</code></pre>
+<p>このコマンドを実行している間、VS Codeでスクリプトを開いてこのページを読み進め、何が起こっているのかを理解してください。</p>
+<h2 is-upgraded>Snowflakeでのストアドプロシージャの実行</h2>
+<p>Snowflakeでストアドプロシージャを実行するには、いくつかのオプションがあります。Snowflakeのストアドプロシージャは、次のようにSQLで呼び出すことができます。</p>
+<pre><code language="language-sql" class="language-sql">CALL DAILY_CITY_METRICS_UPDATE_SP();
+</code></pre>
+<p>また、SnowCLIユーティリティを使用して、次のようにVS CodeのターミナルからUDFを呼び出すこともできます。</p>
+<pre><code language="language-bash" class="language-bash">snow procedure execute -p &#34;daily_city_metrics_update_sp()&#34;
+</code></pre>
+<p>これにより、SnowCLIツールが上記のSQLクエリを生成し、Snowflakeアカウントに対して実行します。</p>
+<h2 is-upgraded>データモデリングのベストプラクティス</h2>
+<p>分析のためにデータをモデリングするときのベストプラクティスは、テーブルのスキーマを明確に定義して管理することです。ステップ2では、Parquetから未加工データをロードする際に、Snowflakeのスキーマ検出機能を利用して、Parquetファイルと同じスキーマのテーブルを作成しました。このステップでは、DataFrame構文でスキーマを明示的に定義し、それを使用してテーブルを作成しています。</p>
+<pre><code language="language-python" class="language-python">def create_daily_city_metrics_table(session):
+    SHARED_COLUMNS= [T.StructField(&#34;DATE&#34;, T.DateType()),
+                                        T.StructField(&#34;CITY_NAME&#34;, T.StringType()),
+                                        T.StructField(&#34;COUNTRY_DESC&#34;, T.StringType()),
+                                        T.StructField(&#34;DAILY_SALES&#34;, T.StringType()),
+                                        T.StructField(&#34;AVG_TEMPERATURE_FAHRENHEIT&#34;, T.DecimalType()),
+                                        T.StructField(&#34;AVG_TEMPERATURE_CELSIUS&#34;, T.DecimalType()),
+                                        T.StructField(&#34;AVG_PRECIPITATION_INCHES&#34;, T.DecimalType()),
+                                        T.StructField(&#34;AVG_PRECIPITATION_MILLIMETERS&#34;, T.DecimalType()),
+                                        T.StructField(&#34;MAX_WIND_SPEED_100M_MPH&#34;, T.DecimalType()),
+                                    ]
+    DAILY_CITY_METRICS_COLUMNS = [*SHARED_COLUMNS, T.StructField(&#34;META_UPDATED_AT&#34;, T.TimestampType())]
+    DAILY_CITY_METRICS_SCHEMA = T.StructType(DAILY_CITY_METRICS_COLUMNS)
+
+    dcm = session.create_dataframe([[None]*len(DAILY_CITY_METRICS_SCHEMA.names)], schema=DAILY_CITY_METRICS_SCHEMA) \
+                        .na.drop() \
+                        .write.mode(&#39;overwrite&#39;).save_as_table(&#39;ANALYTICS.DAILY_CITY_METRICS&#39;)
+    dcm = session.table(&#39;ANALYTICS.DAILY_CITY_METRICS&#39;)
+</code></pre>
+<h2 is-upgraded>複雑な集約クエリ</h2>
+<p><code>merge_daily_city_metrics()</code>関数には、POSとWeather Sourceからのデータを結合して集約するために使用される複雑な集約クエリが含まれています。表現されている一連の複雑な結合と集約、およびステップ#5で作成したSnowpark UDFをどのようにしてさらに活用しているかをご覧ください。</p>
+<p>複雑な集約クエリは、Snowparkの<code>merge()</code>メソッドを使用して最終分析テーブルにマージされます。まだ確認していない場合は、Snowflakeクエリ履歴をチェックして、Snowpark APIによってどのクエリが生成されたかを確認してください。この場合、Snowpark APIはマージを含むすべての複雑なロジックを取得し、実行する単一のSnowflakeクエリを作成したことがわかります。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ジョブのオーケストレーション" duration="10">
+        <p>このステップでは、タスクという名前のSnowflakeのネイティブオーケストレーション機能を使用して、新しいSnowparkパイプラインをオーケストレーションします。それぞれのストアドプロシージャに1つずつ、2つのタスクを作成し、それらを連結します。その後、タスクを実行します。これは、コンテキストの中では、データフローの概要のステップ**#8**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>スクリプトの実行</h2>
+<p>これはSQLスクリプトなので、ネイティブのVS Code拡張機能を使用して実行します。<code>steps/08_orchestrate_jobs.sql</code>スクリプトをVS Codeで開き、エディタウィンドウの右上にある「すべてのステートメントを実行」ボタンを使用して全体を実行します。</p>
+<p>スクリプトを実行している間、VS Codeでスクリプトに目を通し、このページを読み進めて何が起こっているのかを理解してください。</p>
+<h2 is-upgraded>タスクの実行</h2>
+<p>このステップでは、タスクDAGのスケジュールを作成しなかったため、この時点では、DAGは自動的に実行されません。そのため、このスクリプトでは、次のように手動でDAGを実行していることがわかります。</p>
+<pre><code language="language-sql" class="language-sql">EXECUTE TASK ORDERS_UPDATE_TASK;
+</code></pre>
+<p>先ほどこのタスクを実行したときに何が起こったかを確認するには、スクリプトにある次のコメント化されたクエリをハイライトして実行します（CMD/CTRL+Enterキーを使用）。</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT =&gt; 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+</code></pre>
+<p>タスク履歴の出力では、<code>ORDERS_UPDATE_TASK</code>タスクがスキップされていることがわかります。<code>HARMONIZED.POS_FLATTENED_V_STREAM</code>ストリームにはデータがないため、これは正常な動作です。次のステップで、新しいデータを追加して再度実行します。</p>
+<h2 is-upgraded>タスクの詳細</h2>
+<p>タスクは、Snowflakeのネイティブなスケジューリング/オーケストレーション機能です。タスクを使用すると、次のいずれかのタイプのSQLコードを実行できます。</p>
+<ul>
+<li>単一のSQLステートメント</li>
+<li>ストアドプロシージャの呼び出し</li>
+<li>Snowflakeスクリプト開発者ガイドを使用した手続き型ロジック</li>
+</ul>
+<p>このクイックスタートでは、Snowparkストアドプロシージャを呼び出します。2番目のタスクを作成するためのSQL DDLコードは次のとおりです。</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TASK DAILY_CITY_METRICS_UPDATE_TASK
+WAREHOUSE = HOL_WH
+AFTER ORDERS_UPDATE_TASK
+WHEN
+  SYSTEM$STREAM_HAS_DATA(&#39;ORDERS_STREAM&#39;)
+AS
+CALL ANALYTICS.DAILY_CITY_METRICS_UPDATE_SP();
+</code></pre>
+<p>注意すべき点がいくつかあります。まず、<code>WAREHOUSE</code>句でタスク実行時に使用するSnowflake仮想ウェアハウスを指定します。<code>AFTER</code>句を使用すると、タスク間の関係を定義できます。この関係の構造は、ほとんどのオーケストレーションツールが提供するように、有向非巡回グラフ（DAG）です。<code>AS</code>句では、タスクが実行されたときに何をすべきかを定義できます。この場合は、ストアドプロシージャを呼び出します。</p>
+<p><code>WHEN</code>句は非常に便利です。ストリームがデータの段階的な処理を可能にすることで、Snowflakeでどのように機能するかをすでに確認しました。さらに、（多数のテーブルを結合する）ビューに対してストリームを作成する方法と、そのビューに対してストリームを作成してそのデータを段階的に処理する方法も確認しました。この<code>WHEN</code>句では、指定されたストリームに新しいデータがある場合にtrueを返すシステム関数<code>SYSTEM$STREAM_HAS_DATA()</code>を呼び出しています。<code>WHEN</code>句が指定されている場合、仮想ウェアハウスはストリームに新しいデータがある場合のみ起動します。つまり、タスクの実行時に新しいデータがなければ、ウェアハウスは起動せず、課金もされません。処理する新しいデータがある場合にのみ課金されます。素晴らしいと思いませんか。</p>
+<p>前述のように、ルートタスクの<code>SCHEDULE</code>を定義しなかったため、このDAGは自動的には実行されません。このクイックスタートでは問題ありませんが、実際の状況ではスケジュールを定義します。詳細については、「<a href="https://docs.snowflake.com/ja/sql-reference/sql/create-task.html" target="_blank">タスクの作成</a>」を参照してください。</p>
+<p>タスクの詳細については、「<a href="https://docs.snowflake.com/ja/user-guide/tasks-intro.html" target="_blank">タスクの紹介</a>」を参照してください。</p>
+<h2 is-upgraded>タスクのメタデータ</h2>
+<p>Snowflakeは、ユーザーが実行するほとんどすべてのことのメタデータを保持し、そのメタデータをクエリ（およびクエリに関連するあらゆる種類のプロセスの作成）に利用できるようにします。タスクも同様で、Snowflakeはタスク実行のモニタリングに役立つ豊富なメタデータを保持しています。次に、タスク実行のモニタリングに使用できるSQLクエリのサンプルをいくつか紹介します。</p>
+<pre><code language="language-sql" class="language-sql">-- Get a list of tasks
+SHOW TASKS;
+
+-- Task execution history in the past day
+SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT =&gt; 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+
+-- Scheduled task runs
+SELECT
+    TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP, SCHEDULED_TIME) NEXT_RUN,
+    SCHEDULED_TIME,
+    NAME,
+    STATE
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY())
+WHERE STATE = &#39;SCHEDULED&#39;
+ORDER BY COMPLETED_TIME DESC;
+</code></pre>
+<h2 is-upgraded>タスクのモニタリング</h2>
+<p>Snowflakeでは、オペレーションプロセスやモニタリングプロセスを自由に作成できる一方で、Snowsight UIに豊富なタスク監視機能が用意されています。次の手順に従って試してみてください。</p>
+<ol type="1">
+<li>Snowsightのナビゲーションメニューで、「<strong>データ</strong>」 » 「**データベース」**をクリックします。</li>
+<li>右側のペインで、オブジェクトエクスプローラーを使用して、データベースとスキーマに移動します。</li>
+<li>選択したスキーマで、「<strong>タスク</strong>」を選択して展開します。</li>
+<li>タスクを選択します。「<strong>タスクの詳細」</strong>、「<strong>グラフ」</strong>、「**実行履歴」**のサブタブを含むタスク情報が表示されます。</li>
+<li>「**グラフ」**タブを選択します。タスクグラフが表示され、子タスクの階層が表示されます。</li>
+<li>詳細を表示するタスクを選択します。</li>
+</ol>
+<p>タスクグラフは次のように表示されます。</p>
+<p><img style="width: 800.00px" src="img/9e5fbd96d055e667.png"> 次にタスク実行履歴の例を示します。</p>
+<p><img style="width: 800.00px" src="img/73ed2e24c8cb0ba2.png"> 詳細とアカウントレベルのタスク履歴の表示については、「<a href="https://docs.snowflake.com/ja/user-guide/ui-snowsight-tasks.html" target="_blank">タスク履歴の表示</a>」ドキュメントを参照してください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="段階的な処理" duration="10">
+        <p>このステップでは、POS注文テーブルに新しいデータを追加し、エンドツーエンドのパイプライン全体を実行して新しいデータを処理します。このパイプライン全体は、Snowflakeの高度なストリーム/CDC機能を活用してデータを段階的に処理します。これは、コンテキストの中では、データフローの概要のステップ**#9**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>スクリプトの実行</h2>
+<p>これはSQLスクリプトなので、ネイティブのVS Code拡張機能を使用して実行します。<code>steps/09_process_incrementally.sql</code>スクリプトをVS Codeで開き、エディタウィンドウの右上にある「すべてのステートメントを実行」ボタンを使用して全体を実行します。</p>
+<p>実行中に何が起こっているのか簡単に説明しましょう。ステップ#2と同様に、Parquetから未加工のPOSテーブルにデータをロードします。ステップ#2では、<code>ORDER_HEADER</code>と<code>ORDER_DETAIL</code>の2022年のデータを除くすべての注文データをロードしました。ここでは、残りのデータをロードします。</p>
+<p>今回はPythonではなくSQLを使ってデータをロードしますが、プロセスは同じです。ウェアハウスのサイズを変更します。データをより速くロードできるようにスケールアップし、ロードが完了したらスケールダウンします。新しいデータがロードされたら、タスクDAGを再度実行します。今回は両方のタスクが実行され、新しいデータを処理します。</p>
+<h2 is-upgraded>タスク履歴の表示</h2>
+<p>前のステップと同様に、このタスクDAGを実行したときに何が起こったかを確認するには、スクリプトにある次のコメント化されたクエリをハイライトして実行します（CMD/CTRL+Enterキーを使用）。</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT =&gt; 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+</code></pre>
+<p>今回は、<code>HARMONIZED.POS_FLATTENED_V_STREAM</code>ストリームに新しいデータがあるため、<code>ORDERS_UPDATE_TASK</code>タスクがスキップされないことがわかります。数分後には、<code>ORDERS_UPDATE_TASK</code>タスクと<code>DAILY_CITY_METRICS_UPDATE_TASK</code>タスクの両方が正常に完了したことがわかります。</p>
+<h2 is-upgraded>タスクのクエリ履歴</h2>
+<p>タスクについて理解しておくべき重要なことは、タスクによって実行されたクエリはデフォルトのクエリ履歴UI設定では表示されないということです。先ほど実行されたクエリを表示するには、次の手順を実行する必要があります。</p>
+<ul>
+<li>後でスケジューリングされたタスクは「システム」として実行されるため、このテーブルの上部にあるフィルターを、ユーザー名を含めて削除します。</li>
+</ul>
+<p class="image-container"><img src="img/7c3c7f9b6d6e23ad.png"></p>
+<ul>
+<li>「フィルター」をクリックし、フィルターオプションの「ユーザータスクによって実行されたクエリ」を追加し、「フィルターを適用」をクリックします。</li>
+</ul>
+<p class="image-container"><img src="img/445b67a969de9a0d.png"></p>
+<p>これにより、タスクによって実行されたすべてのクエリが表示されます。クエリ履歴でそれぞれのMERGEコマンドを調べ、各タスクで処理されたレコード数を確認します。先ほどパイプライン全体を段階的に処理したことに注意してください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="CI/CDによる展開" duration="15">
+        <p>このステップでは、<code>FAHRENHEIT_TO_CELSIUS_UDF()</code> UDFに変更を加えてから、CI/CDパイプラインで展開します。サードパーティのPythonパッケージを使用するように<code>FAHRENHEIT_TO_CELSIUS_UDF()</code> UDFを更新し、それをフォークしたGitHubレポジトリにプッシュし、最後にGitHubアクションワークフローでSnowCLIを使用して展開します。これは、コンテキストの中では、データフローの概要のステップ**#10**に当たります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>華氏から摂氏への変換UDFの更新</h2>
+<p>ハードコードされた温度変換を<code>scipy</code>のパッケージに置き換えます。まず、<code>steps/05_fahrenheit_to_celsius_udf/app.py</code>スクリプトにいくつかの変更を加えます。このファイルでは<code>import</code>コマンドを追加し、<code>main()</code>関数の本文を置き換えます。<code>steps/05_fahrenheit_to_celsius_udf/app.py</code>スクリプトをVS Codeで開き、次のセクションを置き換えます。</p>
+<pre><code language="language-python" class="language-python">import sys
+
+def main(temp_f: float) -&gt; float:
+    return (float(temp_f) - 32) * (5/9)
+</code></pre>
+<p>次に置き換えます。</p>
+<pre><code language="language-python" class="language-python">import sys
+from scipy.constants import convert_temperature
+
+def main(temp_f: float) -&gt; float:
+    return convert_temperature(float(temp_f), &#39;F&#39;, &#39;C&#39;)
+</code></pre>
+<p>変更を忘れずに保存してください。</p>
+<p>2番目の変更は、<code>requirements.txt</code>ファイルに<code>scipy</code>を追加することです。VS Codeで<code>steps/05_fahrenheit_to_celsius_udf/requirements.txt</code>ファイルを開き、<code>scipy</code>を含む改行を追加して保存します。</p>
+<h2 is-upgraded>ローカルでの変更のテスト</h2>
+<p>UDFをローカルでテストするには、<code>steps/05_fahrenheit_to_celsius_udf/app.py</code>スクリプトを実行します。前のステップと同様に、ターミナルから実行します。上部のメニューバーにあるVS Codeでターミナルを開き（「ターミナル」 -&gt; 「新しいターミナル」）、<code>pysnowpark</code> conda環境がアクティブであることを確認してから、次のコマンドを実行します（ターミナルでレポジトリのルートが開いていることを前提とします）。</p>
+<pre><code language="language-bash" class="language-bash">cd steps/05_fahrenheit_to_celsius_udf
+pip install -r requirements.txt
+python app.py 35
+</code></pre>
+<p>今回は、依存パッケージが確実にインストールされるようにpip installも実行していることに注意してください。関数が正常に実行されたら、CI/CDで展開する準備が整います。</p>
+<h2 is-upgraded>フォークしたGitHubプロジェクトの設定</h2>
+<p>GitHubアクションワークフローがSnowflakeアカウントに接続できるようにするには、Snowflakeの認証情報をGitHubに保存する必要があります。GitHubのアクションシークレットは、CI/CDパイプラインで使用する値/変数を安全に保存するために使用されます。このステップでは、SnowCLIで使用するパラメータごとにシークレットを作成します。</p>
+<p>レポジトリから、ページ上部付近にある「<code>Settings</code>」タブをクリックします。「設定」ページで「<code>Secrets and variables</code>」をクリックし、左側のナビゲーションで「<code>Actions</code>」タブをクリックします。<code>Actions</code>シークレットが選択されているはずです。以下の各シークレットについて、右上にある「<code>New repository secret</code>」をクリックし、下記の名前と適切な値（必要に応じて調整）を入力します。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>シークレット名</p>
+</td><td colspan="1" rowspan="1"><p>シークレット値</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_ACCOUNT</p>
+</td><td colspan="1" rowspan="1"><p>myaccount</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_USER</p>
+</td><td colspan="1" rowspan="1"><p>myusername</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_PWD</p>
+</td><td colspan="1" rowspan="1"><p>mypassword</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_ROLE</p>
+</td><td colspan="1" rowspan="1"><p>HOL_ROLE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_WAREHOUSE</p>
+</td><td colspan="1" rowspan="1"><p>HOL_WH</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_DATABASE</p>
+</td><td colspan="1" rowspan="1"><p>HOL_DB</p>
+</td></tr>
+</table>
+<p> &gt; aside positive &gt;  &gt; **ヒント** - SNOWSQL_ACCOUNTのアカウント名の構成方法の詳細については、「[Snowflake Pythonコネクターインストールガイド](https://docs.snowflake.com/ja/user-guide/python-connector-install.html#step-2-verify-your-installation)」にあるアカウント名の説明を参照してください。 </p>
+<p>すべてのシークレットの追加が完了すると、ページは次のようになります。</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e73a0db76e9a8d36.png"></p>
+<aside class="special"><p><strong>ヒント</strong> - シークレットを管理するためのさらに優れたソリューションとして、<a href="https://docs.github.com/en/actions/reference/environments" target="_blank">GitHubアクション環境</a>を活用できます。この環境では、シークレットをグループ化し、環境ごとに保護ルールを定義できます。</p>
+</aside>
+<h2 is-upgraded>フォークしたレポジトリへの変更のプッシュ</h2>
+<p>変更の準備とテストが完了し、Snowflake認証情報がGitHubに保存されたので、それらをローカルレポジトリにコミットしてから、フォークしたレポジトリにプッシュしましょう。これはコマンドラインから実行できますが、このステップでは簡単にするためにVS Codeを使用して実行します。</p>
+<p>まず、左側のナビゲーションバーにある「ソース管理」拡張機能を開くと、変更のある2つのファイルが表示されます。それぞれのファイル名の右側にある<code>+</code>（プラス）記号をクリックして、変更をステージングします。次に、「メッセージ」ボックスにメッセージを入力し、青の「<code>Commit</code>」ボタンをクリックして変更をローカルにコミットします。ボタンをクリックする前は、次のように表示されます。</p>
+<p><img style="width: 400.00px" src="img/d7162d064a13eec4.png"> この時点では、これらの変更はローカルにコミットされているだけで、GitHubのフォークしたレポジトリにはまだプッシュされていません。これを行うには、青の「<code>Sync Changes</code>」ボタンをクリックして、これらのコミットをGitHubにプッシュします。ボタンをクリックする前は、次のように表示されます。</p>
+<p class="image-container"><img style="width: 400.00px" src="img/37fe1faef57932c6.png"></p>
+<h2 is-upgraded>GitHubアクションワークフローの表示</h2>
+<p>このレポジトリには、非常にシンプルなGitHubアクションCI/CDパイプラインがすでに設定されています。このワークフローのコードを確認するには、VS Codeで<code>.github/workflows/build_and_deploy.yaml</code>ファイルを開きます。</p>
+<p>GitHubのフォークしたレポジトリに変更をプッシュすると、すぐにワークフローが開始されます。結果を見るには、GitHubレポジトリのトップページに戻って次の手順を実行します。</p>
+<ul>
+<li>レポジトリから、ページの中央上部にある「<code>Actions</code>」タブをクリックします。</li>
+<li>左側のナビゲーションバーで、「<code>Deploy Snowpark Apps</code>」というワークフロー名をクリックします。</li>
+<li>最新の特定の実行の名前をクリックします（入力したコメントと一致する必要があります）。</li>
+<li>実行概要ページで<code>deploy</code>ジョブをクリックし、さまざまなステップの出力を参照します。特に、<code>Deploy Snowpark apps</code>ステップの出力を確認するとよいでしょう。</li>
+</ul>
+<p><img style="width: 800.00px" src="img/9d1cc680295508b7.png"><code>Deploy Snowpark apps</code>ステップの出力はすでに見覚えがあり、前のステップでSnowCLIを実行したときにVS Codeのターミナルに表示されたものと同じはずです。唯一異なるのは出力の順序ですが、何が起きているかはわかるはずです。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ティアダウン" duration="2">
+        <p>クイックスタートが終了し、クリーンアップしたい場合は、<code>steps/11_teardown.sql</code>スクリプトを実行するだけです。これはSQLスクリプトなので、ネイティブのVS Code拡張機能を使用して実行します。<code>steps/11_teardown.sql</code>スクリプトをVS Codeで開き、エディタウィンドウの右上にある「すべてのステートメントを実行」ボタンを使用して全体を実行します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめ" duration="4">
+        <p>このクイックスタートでは多くのことを学習しました。ここまでで、Snowpark Pythonストアドプロシージャを使用して堅牢なデータエンジニアリングパイプラインを構築しました。このパイプラインはデータを段階的に処理し、Snowflakeタスクとオーケストレーションされ、CI/CDパイプラインで展開されます。また、Snowflakeの新しい開発者CLIツールとVisual Studio Code拡張機能の使用方法も学習しました。以下に簡単な要約を図で示します。</p>
+<p><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"> しかし、実際にはSnowparkでできることをほんの少しかじっただけです。これで、Snowpark Pythonを使用して独自のデータエンジニアリングパイプラインを構築するために必要な構成要素と例を入手できたと思います。では、これから何を構築しますか？</p>
+<h2 is-upgraded>ここまで学んだ内容</h2>
+<p>このクイックスタートでは多くのことを学習しましたが、ここではそのハイライトを紹介します。</p>
+<ul>
+<li>Snowflakeのテーブルフォーマット</li>
+<li>COPYによるデータの取り込み</li>
+<li>スキーマ推論</li>
+<li>データシェアリング/マーケットプレイス（ETLの代わり）</li>
+<li>段階的な処理のためのストリーム（CDC）</li>
+<li>ビューに対するストリーム</li>
+<li>Python UDF（サードパーティパッケージを使用）</li>
+<li>Pythonストアドプロシージャ</li>
+<li>Snowpark DataFrame API</li>
+<li>Snowpark Pythonプログラマビリティ</li>
+<li>ウェアハウスの伸縮性（動的スケーリング）</li>
+<li>Visual Studio Code Snowflakeネイティブ拡張（PuPr、Git統合）</li>
+<li>SnowCLI（PuPr）</li>
+<li>タスク（ストリームトリガーを使用）</li>
+<li>タスクの監視</li>
+<li>GitHubアクション（CI/CD）の統合</li>
+</ul>
+<h2 is-upgraded>関連リソース</h2>
+<p>最後に、関連リソースを簡単にまとめます。</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python" target="_blank">GitHubのソースコード</a></li>
+<li><a href="https://docs.snowflake.com/ja/developer-guide/snowpark/python/index.html" target="_blank">Python用Snowpark開発者ガイド</a><ul>
+<li><a href="https://docs.snowflake.com/ja/developer-guide/udf/python/udf-python.html" target="_blank">Python UDFの記述</a></li>
+<li><a href="https://docs.snowflake.com/ja/sql-reference/stored-procedures-python.html" target="_blank">Snowpark（Python）でのストアドプロシージャの記述</a></li>
+<li><a href="https://docs.snowflake.com/ja/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Snowpark PythonでのDataFramesの使用</a></li>
+</ul>
+</li>
+<li>関連ツール <ul>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">Snowflake Visual Studio Code拡張機能</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowcli" target="_blank">SnowCLIツール</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Anthropic on Snowflake Cortex</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_anthropic_on_snowflake_cortex"
+                  title="Getting Started with Anthropic on Snowflake Cortex"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll learn how to build an RAG-based (Retrieval Augmented Generation)  application that creates an intelligent assistant for documents and other text-based knowledge. The application uses Anthropic&#39;s Claude Large Language Model (LLM),  in <a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake&#39;s Cortex AI</a> alongside Cortex Search and Streamlit. The application addresses end-to-end RAG development to show how to do PDF processing, vector embeddings, retrieval and generation all inside Snowflake to enable natural language interactions with your documents through Claude&#39;s advanced language understanding capabilities all with unified governance across the application full-stack.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Data pipeline: Setting up PDF processing in Snowflake using Cortex Parse Document</li>
+<li>Vector search/index: Utilizing Cortex Search Service for hybrid (semantic and keyword) search</li>
+<li>Generation: Deliver answers to chat app with Anthropic&#39;s Claude</li>
+<li>Front End: Developing an interactive chat interface using Streamlit</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An end-to-end application that enables users to:</p>
+<ul>
+<li>Upload and process PDF documents</li>
+<li>Search through documents using a hybrid search (vector and keyword) similarity</li>
+<li>Engage in conversational Q&amp;A about document content</li>
+<li>View source documents for responses</li>
+<li>Maintain chat history for contextual conversations</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account in <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability" target="_blank">AWS US West 2 (Oregon)</a> . To use Anthropic from another region please enable <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference" target="_blank">cross-region inference</a>.</li>
+<li>Account must have these features enabled: <ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <aside class="warning"><p> NOTE: If you are new to Snowflake, you may be wondering why you need to think about database and schemas to get started. Because Snowflake was built with data as the foundational asset that powers projects, these two things are used to organize and manage access and governance to data in Snowflake. You can learn more about how you can use and manage these in our <a href="https://docs.snowflake.com/en/sql-reference/ddl-database" target="_blank">documentation</a>.</p>
+<p>For this app, let&#39;s assume we will give users of the app access to all the documents that are stored in a stage (the location where a raw data file is stored). Let&#39;s create a stage where documents are stored and then let&#39;s create a database and schema, both with the same name, where we will store the AI-ready (parsed and chunked) documents.</p>
+</aside>
+<h2 is-upgraded>Create Database and Schema</h2>
+<p>Create a new database and schema for your project:</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS anthropic_rag;
+CREATE SCHEMA IF NOT EXISTS anthropic_rag;
+</code></pre>
+<h2 is-upgraded>Create Table for Text on the Documents</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE DOCS_TEXT_TABLE (
+   FILE_NAME STRING,
+   TEXT STRING
+);
+</code></pre>
+<h2 is-upgraded>Create Document Storage Stage</h2>
+<p>Create a stage to store your PDF documents:</p>
+<pre><code language="language-sql" class="language-sql">CREATE STAGE IF NOT EXISTS Documents
+  ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;)
+  DIRECTORY = (ENABLE = true);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upload Documents" duration="0">
+        <ol type="1">
+<li>Download sample <a href="https://github.com/Snowflake-Labs/sfguides-getting-started-with-anthropic-on-snowflake-cortex/blob/main/data/docs.zip" target="_blank">PDFs</a></li>
+<li>Navigate to Data &gt; Databases &gt; ANTHROPIC_RAG &gt; DOCUMENTS &gt; Stages <img alt="upload file" src="img/a23672f1ae069344.gif"></li>
+<li>Click &#34;Upload Files&#34; button in top right</li>
+<li>Select your PDF files</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Notebook" duration="5">
+        <ol type="1">
+<li>Click on <a href="https://github.com/Snowflake-Labs/sfguides-getting-started-with-anthropic-on-snowflake-cortex/blob/main/sfguides-getting-started-with-anthropic-on-snowflake-cortex.ipynb" target="_blank">Getting Started with Anthropic Notebook</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</li>
+<li>In your Snowflake account:<ul>
+<li>On the left hand navigation menu, click on Projects » Notebooks</li>
+<li>On the top right, click on Notebook down arrow and select <strong>Import .ipynb</strong> file from the dropdown menu <img alt="upload file" src="img/bc45367f96d26ce6.png"></li>
+<li>Select the file you downloaded in step 1 above</li>
+</ul>
+</li>
+<li>In the Create Notebook popup:<ul>
+<li>For Notebook location, select <strong>anthropic_rag</strong> for your database and schema</li>
+<li>Select your <strong>Warehouse</strong></li>
+<li>Click on Create button</li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Environment Setup" duration="5">
+        <ul>
+<li><code>snowflake-ml-python</code>: For Snowflake Cortex capabilities</li>
+<li><code>snowflake</code>: For Snowflake capabilities</li>
+</ul>
+<pre><code language="language-py" class="language-py"># Import python packages
+import pandas as pd
+import json
+
+from snowflake.snowpark.context import get_active_session
+from snowflake.cortex import Complete, EmbedText768
+from snowflake.snowpark.types import VectorType, FloatType
+from snowflake.core.table import Table, TableColumn
+from snowflake.core import CreateMode, Root
+from snowflake.snowpark.functions import cast, col
+
+
+session = get_active_session()
+current_warehouse = session.get_current_warehouse()
+database_name = session.get_current_database()
+schema_name = session.get_current_schema()
+role_name = session.get_current_role()
+service_name = &#39;document_search_service&#39;
+root = Root(session)
+database = root.databases[database_name]
+schema = database.schemas[schema_name]
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement Document Processing" duration="15">
+        <h2 is-upgraded>Understanding Document Processing Flow</h2>
+<p>Before diving into the code, let&#39;s understand the key components of document processing:</p>
+<p>The implementation uses Cortex Parse Document to extract text from PDFs and process them efficiently:</p>
+<ol type="1">
+<li>Document Parsing:<ul>
+<li>Uses Snowflake Cortex Parse Document</li>
+<li>Handles PDF extraction automatically</li>
+<li>Manages OCR when needed</li>
+<li>Structures output consistently</li>
+</ul>
+</li>
+<li>Data Organization:<ul>
+<li>Stores raw text with file references</li>
+<li>Prepares for search service creation</li>
+<li>Maintains document traceability</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Code Implementation</h2>
+<pre><code language="language-py" class="language-py">def process(file_name: str):
+    query = &#34;&#34;&#34;
+        SELECT TO_VARCHAR(
+            SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
+                ?,
+                ?,
+                {&#39;mode&#39;: &#39;OCR&#39;}):content
+        ) AS OCR;
+    &#34;&#34;&#34;
+
+    resp = session.sql(query, params=[stage_name, file_name]).collect()
+    text = resp[0][&#39;OCR&#39;]
+    
+    df = pd.DataFrame({
+        &#39;TEXT&#39; : [text],
+        &#39;FILE_NAME&#39;: file_name
+    })
+    
+    return df
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Process Documents" duration="10">
+        <h2 is-upgraded>Understanding the Process</h2>
+<p>While you could run your own embedding, index management and search using Snowflake Cortex embed function, vector data type support and vector similarity functions, we are going to build this using <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#cortex-search-for-rag" target="_blank">Cortex Search</a> - a RAG engine that automates the embedding/vector generation and management and provides a built-in hybrid search to enhance result accuracy vs. semantic search alone.</p>
+<p>The embedding process transforms text chunks into vector representations for semantic search. Here&#39;s what happens in each step:</p>
+<p>Document Processing:</p>
+<ul>
+<li>Extract text from documents</li>
+<li>Structure data in DataFrame</li>
+<li>Load into text table</li>
+</ul>
+<h2 is-upgraded>Code Implementation</h2>
+<pre><code language="language-py" class="language-py"># Extract file names and process files
+file_names = [file[&#39;name&#39;].split(&#39;/&#39;)[1] for file in files]
+
+# Download and process files into a DataFrame
+final_dataframe = pd.concat([
+    process(file_name)
+    for file_name in file_names
+], ignore_index=True)
+
+snowpark_df = session.create_dataframe(final_dataframe).select(
+    col(&#34;file_name&#34;),
+    col(&#34;text&#34;)
+)
+
+# Write the transformed data directly to the target table
+snowpark_df.write.mode(&#34;overwrite&#34;).save_as_table(&#34;docs_text_table&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Cortex Search Service" duration="0">
+        <h2 is-upgraded>Understanding the Service</h2>
+<p>Search Service:</p>
+<ul>
+<li>Creates hybrid search capability</li>
+<li>Manages embeddings automatically</li>
+<li>Enables both semantic and keyword search</li>
+</ul>
+<h2 is-upgraded>Key Components Explained 📚</h2>
+<h3 is-upgraded>Required Parameters</h3>
+<ul>
+<li><code>ON</code>: Specifies the column containing the text to be indexed</li>
+<li><code>ATTRIBUTES</code>: Additional columns to include in search results (e.g., file_name)</li>
+<li><code>WAREHOUSE</code>: Compute warehouse for processing the embeddings</li>
+<li><code>TARGET_LAG</code>: Maximum allowed lag for index updates</li>
+<li><code>EMBEDDING_MODEL</code>: Model used to generate text embeddings</li>
+<li>Source query: The SELECT statement defining the data to index</li>
+</ul>
+<h3 is-upgraded>Configuration Options 🔧</h3>
+<ol type="1">
+<li>Target Lag Settings:<ul>
+<li>Shorter lag times mean more frequent updates</li>
+<li>Common values: ‘1 hour&#39;, ‘1 day&#39;, ‘1 week&#39;</li>
+<li>Balance freshness needs with compute costs</li>
+</ul>
+</li>
+<li>Embedding Model Options:<ul>
+<li>‘snowflake-arctic-embed-l-v2.0&#39;: Latest Snowflake embedding model</li>
+<li>Optimized for English language content</li>
+<li>384-dimensional embeddings</li>
+</ul>
+</li>
+<li>Warehouse Considerations:<ul>
+<li>Choose size based on data volume</li>
+<li>Consider compute costs vs update frequency</li>
+<li>Monitor warehouse utilization</li>
+</ul>
+</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE CORTEX SEARCH SERVICE &#123;&#123;service_name}}
+  ON text
+  ATTRIBUTES file_name
+  WAREHOUSE = &#123;&#123;current_warehouse}}
+  TARGET_LAG = &#39;1 day&#39;
+  EMBEDDING_MODEL = &#39;snowflake-arctic-embed-l-v2.0&#39;
+  AS (
+    SELECT
+        text,
+        file_name
+    FROM docs_text_table
+);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Streamlit Application" duration="20">
+        <h2 is-upgraded>Understanding the Chat System Architecture</h2>
+<p>The chat interface integrates several sophisticated components:</p>
+<ol type="1">
+<li>Session Management:<ul>
+<li>Maintains conversation state</li>
+<li>Handles message history</li>
+<li>Manages user context</li>
+<li>Enables conversation persistence</li>
+</ul>
+</li>
+<li>Context Retrieval System with Snowflake Cortex Search:<ul>
+<li>Performs semantic and keyword search</li>
+<li>Ranks relevant chunks</li>
+<li>Combines multiple sources</li>
+<li>Optimizes context window</li>
+</ul>
+</li>
+<li>Prompt Engineering:<ul>
+<li>Constructs dynamic prompts</li>
+<li>Incorporates chat history</li>
+<li>Maintains conversation coherence</li>
+<li>Optimizes Claude&#39;s responses</li>
+</ul>
+</li>
+<li>Response Generation:<ul>
+<li>Processes Claude&#39;s output</li>
+<li>Formats responses</li>
+<li>Adds source attribution</li>
+<li>Handles error cases</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Setting Up the Streamlit App</h2>
+<ol type="1">
+<li>Navigate to Streamlit in Snowflake:<ul>
+<li>Click on the <strong>Streamlit</strong> tab in the left navigation pane</li>
+<li>Click on <strong>+ Streamlit App</strong> button in the top right</li>
+</ul>
+</li>
+<li>Configure App Settings:<ul>
+<li>Enter a name for your app (e.g., ANTHROPIC_CHAT_APP)</li>
+<li>Select a warehouse to run the app (Small warehouse is sufficient)</li>
+<li>Choose the <strong>ANTHROPIC_RAG</strong> database and schema</li>
+</ul>
+</li>
+<li>Create the app file:</li>
+</ol>
+<p>Because the app front-end is running in Snowflake, all the interactions with the Anthropic model and Cortex Search service are done via the Python interface. If you want to integrate these services with an externally hosted UI, we recommend using the REST APIs for <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api" target="_blank">Cortex LLM inference</a> and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#rest-api" target="_blank">Cortex Search</a>.</p>
+<p>Here we add our packages that we will use for our project:</p>
+<ul>
+<li><code>snowflake-ml-python 1.7.1</code>: For Snowflake Cortex capabilities</li>
+<li><code>snowflake</code>: For Snowflake capabilities</li>
+<li>In the code editor, paste the following code:</li>
+</ul>
+<pre><code language="language-py" class="language-py">import json
+import streamlit as st
+from snowflake.core import Root
+from snowflake.snowpark.context import get_active_session
+from snowflake.cortex import Complete
+
+session = get_active_session()
+root = Root(session)
+
+database_name = session.get_current_database()
+schema_name = session.get_current_schema()
+service_name = &#39;document_search_service&#39;
+
+# Configuration
+num_results = 3  # Number of results
+model_name = &#34;claude-4-sonnet&#34;  # The model we are using
+history_length = 5
+
+def init_messages():
+    &#34;&#34;&#34;
+    Initialize the session state for chat messages. If the session state indicates that the
+    conversation should be cleared or if the &#34;messages&#34; key is not in the session state,
+    initialize it as an empty list.
+    &#34;&#34;&#34;
+    if st.session_state.clear_conversation or &#34;messages&#34; not in st.session_state:
+        st.session_state.messages = []
+        st.session_state.suggestions = []
+        st.session_state.active_suggestion = None
+        
+
+def init_config_options():
+    &#34;&#34;&#34;
+    Initialize the chat interface configuration and display existing chat history.
+    Provides a button to clear conversation history and maintains chat state.
+    &#34;&#34;&#34;
+
+    st.session_state.num_chat_messages = history_length
+    st.button(&#34;Clear conversation&#34;, key=&#34;clear_conversation&#34;)
+    
+    if &#34;messages&#34; not in st.session_state:
+        st.session_state.messages = []
+
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message[&#34;role&#34;]):
+            st.markdown(message[&#34;content&#34;])
+
+def get_chat_history():
+    &#34;&#34;&#34;
+    Retrieve the chat history from the session state limited to the number of messages
+
+    Returns:
+        list: The list of chat messages from the session state.
+    &#34;&#34;&#34;
+    start_index = max(
+        0, len(st.session_state.messages) - st.session_state.num_chat_messages
+    )
+    return st.session_state.messages[start_index : len(st.session_state.messages) - 1]
+
+def make_chat_history_summary(chat_history, question):
+    &#34;&#34;&#34;
+    Generate a summary of the chat history combined with the current question to extend the query
+    context. Use the language model to generate this summary.
+
+    Args:
+        chat_history (str): The chat history to include in the summary.
+        question (str): The current user question to extend with the chat history.
+
+    Returns:
+        str: The generated summary of the chat history and question.
+    &#34;&#34;&#34;
+    
+    prompt = f&#34;&#34;&#34;
+        Given the following conversation history and new question, generate a detailed query that incorporates relevant context from the chat history. The query should be written in natural, conversational language and include any important details, preferences, or constraints mentioned previously.
+
+        &lt;chat_history&gt;
+        {chat_history}
+        &lt;/chat_history&gt;
+        
+        &lt;question&gt;
+        {question}
+        &lt;/question&gt;
+        
+        Please generate a single, comprehensive query that combines the above information. The query should be self-contained and allow for a complete response without requiring additional context.
+    &#34;&#34;&#34;
+
+    summary = Complete(model_name, prompt)
+
+    return summary
+
+def cortex_search(my_question):
+    search_service = (root
+      .databases[database_name]
+      .schemas[schema_name]
+      .cortex_search_services[service_name]
+    )
+
+    resp = search_service.search(
+      query=my_question,
+      columns=[&#34;text&#34;, &#34;file_name&#34;],
+      limit=num_results
+    )
+
+    results = json.loads(resp.to_json())[&#34;results&#34;]
+    prompt_context = &#34;&#34;
+
+    # Building the context from the search results
+    for result in results:
+        prompt_context += result[&#34;text&#34;]
+    prompt_context = prompt_context.replace(&#34;&#39;&#34;, &#34;&#34;)
+
+    file_name = results[0][&#39;file_name&#39;]
+        
+    return prompt_context, file_name
+
+def create_prompt(user_question):
+    &#34;&#34;&#34;
+    Create a prompt for the language model by combining the user question with context retrieved
+    from the cortex search service and chat history (if enabled). Format the prompt according to
+    the expected input format of the model.
+
+    Args:
+        user_question (str): The user&#39;s question to generate a prompt for.
+
+    Returns:
+        str: The generated prompt for the language model.
+    &#34;&#34;&#34;
+
+    chat_history = get_chat_history()
+    if chat_history != []:
+        question_summary = make_chat_history_summary(chat_history, user_question)
+        prompt_context, file_name  = cortex_search(question_summary)
+    else:
+        prompt_context, file_name = cortex_search(user_question)
+        question_summary = &#39;&#39;
+
+    prompt = f&#34;&#34;&#34;You are a documentation specialist focused on providing precise answers based on provided documentation. 
+
+        Input Context:
+        Context: {prompt_context}
+        Question: {question_summary}
+        Chat History: {chat_history}
+        
+        Instructions:
+        1. Analyze the provided context carefully
+        2. Frame responses to build upon any relevant chat history
+        3. Structure answers as follows:
+           - Direct answer to the question
+           - Required prerequisites or dependencies
+           - Step-by-step implementation (if applicable)
+           - Important limitations or warnings
+        
+        If information is not found in context:
+        1. Explicitly state what information is missing
+        2. Avoid assumptions or external references
+        3. Specify what additional context would help answer the question
+        
+        Remember: Only reference information from the provided context.
+        
+        Response:&#34;&#34;&#34;
+    return prompt, file_name
+
+def complete(model_name, prompt):
+    &#34;&#34;&#34;
+    Generate a completion for the given prompt using the specified model.
+
+    Args:
+        model_name (str): The name of the model to use for completion.
+        prompt (str): The prompt to generate a completion for.
+
+    Returns:
+        str: The generated completion.
+    &#34;&#34;&#34;
+    
+    df_response = Complete(model_name, prompt)
+    return df_response
+
+def display_response(my_question):
+    with st.status(&#34;In progress...&#34;) as status:
+        # Get the response from the AI model
+        response, name = complete(model_name, my_question)
+        
+        # Display the response from the model
+        st.markdown(response)
+        status.update(label=&#34;Done!&#34;, state=&#34;complete&#34;, expanded=True)
+        
+        # Display the source document name
+        with st.container():
+            display_name = f&#34;This information came from {name}&#34;
+            st.markdown(f&#34;This information came from {name}&#34;)
+
+# Main code
+def main():
+    st.title(f&#34;:speech_balloon: Chatbot with Snowflake Cortex with Anthropic Claude&#34;)
+
+    init_config_options()
+    init_messages()
+
+    icons = {&#34;assistant&#34;: &#34;❄️&#34;, &#34;user&#34;: &#34;👤&#34;}
+    
+    if question := st.chat_input(&#34;Ask a question...&#34;):
+        # Add user message to chat history
+        st.session_state.messages.append({&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: question})
+        # Display user message in chat message container
+        with st.chat_message(&#34;user&#34;, avatar=icons[&#34;user&#34;]):
+            st.markdown(question.replace(&#34;$&#34;, &#34;\$&#34;))
+
+        # Display assistant response in chat message container
+        with st.chat_message(&#34;assistant&#34;, avatar=icons[&#34;assistant&#34;]):
+            message_placeholder = st.empty()
+            # question = question.replace(&#34;&#39;&#34;, &#34;&#34;)
+            with st.spinner(&#34;Thinking...&#34;):
+                # Generate the response
+                prompt, file_name = create_prompt(question)
+                generated_response = complete(model_name, prompt)
+                
+                # Store the generated response directly in session state
+                st.session_state.gen_response = generated_response
+                
+                # Display the generated response
+                message_placeholder.markdown(generated_response)
+
+        st.session_state.messages.append(
+            {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: generated_response}
+        )
+        
+
+if __name__ == &#34;__main__&#34;:
+    session = get_active_session()
+    main()
+
+</code></pre>
+<ol type="1" start="4">
+<li>Run: <ul>
+<li>Click the <strong>Run</strong> button to deploy your app</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Implementation Components</h2>
+<p>The chat system consists of several key functions:</p>
+<ol type="1">
+<li>Message Initialization:<ul>
+<li>Purpose: Sets up chat session state</li>
+<li>Features: <ul>
+<li>Conversation clearing</li>
+<li>State management</li>
+<li>Suggestion handling</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Cortex Search Service:<ul>
+<li>Purpose: Finds relevant document context</li>
+<li>Features: <ul>
+<li>Keyword and Vector Search</li>
+<li>Context assembly</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Prompt Creation:<ul>
+<li>Purpose: Builds Claude-optimized prompts</li>
+<li>Features: <ul>
+<li>History integration</li>
+<li>Context formatting</li>
+<li>Instruction clarity</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Performance Tips" duration="5">
+        <p>To optimize your RAG system:</p>
+<ol type="1">
+<li>Document Processing:<ul>
+<li>Use appropriate chunk sizes (default: 1500 characters)</li>
+<li>Adjust overlap for better context (default: 300 characters)</li>
+<li>Monitor processing times for large documents</li>
+</ul>
+</li>
+<li>Search Optimization:<ul>
+<li>Tune number of context chunks (default: 3)</li>
+<li>Consider similarity thresholds</li>
+<li>Monitor response times</li>
+</ul>
+</li>
+<li>Chat Experience:<ul>
+<li>Adjust history length for context (default: 5 messages)</li>
+<li>Balance context window size</li>
+<li>Consider memory usage with long conversations</li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations! You&#39;ve built a sophisticated document Q&amp;A system using Snowflake&#39;s Cortex capabilities and Anthropic&#39;s Claude. The system combines PDF processing, vector search, and conversational AI to create an intelligent document assistant.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to process PDF documents in Snowflake</li>
+<li>How to implement semantic search with vector embeddings</li>
+<li>How to build a RAG system with chat history</li>
+<li>How to create an interactive Streamlit interface</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/automating_document_processing_workflows_with_document_ai/index.html?index=..%2F..index#0" target="_blank">Intelligent document field extraction and analytics with Document AI</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/index.html?index=..%2F..index#0" target="_blank">Build conversational analytics app (text-to-SQL) with Cortex Analyst</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

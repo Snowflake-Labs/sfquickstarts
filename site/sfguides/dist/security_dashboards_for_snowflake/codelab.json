@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "security_dashboards_for_snowflake",
+  "duration": 41,
+  "title": "Snowflake Security Dashboards",
+  "summary": "Walkthrough of creating security dashboards for Snowflake based on Snowflake audit and config data",
+  "source": "security_dashboards_for_snowflake/security_dashboards_for_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cybersecurity",
+    "audit"
+  ],
+  "tags": [
+    "dashboards",
+    "security",
+    "snowsight",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "security_dashboards_for_snowflake"
+}

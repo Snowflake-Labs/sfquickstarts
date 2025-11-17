@@ -1,0 +1,242 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowpark for Python with Scikit-learn</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpark_python_scikit"
+                  title="Getting Started with Snowpark for Python with Scikit-learn"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>By completing this guide, you will be able to go from raw data to build a machine learning model that can help to predict house prices.</p>
+<p>Here is a summary of what you will be able to learn in each step by following this quickstart:</p>
+<ul>
+<li><strong>Setup Environment</strong>: Use write_pandas and tables to ingest raw data from local file system into Snowflake</li>
+<li><strong>Data Engineering</strong>: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications.</li>
+<li><strong>Machine Learning using scikit learn</strong>: Prepare data and run ML Training in Snowflake using scikit-learn and log the model to Snowflake Model Registry.</li>
+</ul>
+<p>In case you are new to some of the technologies mentioned above, here&#39;s a quick summary with links to documentation.</p>
+<h2 is-upgraded>What is Snowpark?</h2>
+<p>The Snowpark API provides an intuitive library for querying and processing data at scale in Snowflake. Using a library for any of three languages, you can build applications that process data in Snowflake without moving data to the system where your application code runs, and process at scale as part of the elastic and serverless Snowflake engine.</p>
+<p>Snowflake currently provides Snowpark libraries for three languages: Java, Python, and Scala.</p>
+<p class="image-container"><img alt="Snowpark" src="img/e3af2bf0e02ce1bb.png"></p>
+<p>Learn more about <a href="https://www.snowflake.com/snowpark/" target="_blank">Snowpark</a>.</p>
+<h2 is-upgraded>What is scikit-learn?</h2>
+<p>It is one of the most popular <a href="https://scikit-learn.org/" target="_blank">open source</a> machine learning libraries for Python that also happens to be pre-installed and available for developers to use in Snowpark for Python via <a href="https://snowpark-python-packages.streamlit.app/" target="_blank">Snowflake Anaconda</a> channel. This means that you can use it in Snowpark for Python User-Defined Functions and Stored Procedures without having to manually install it and manage all of its dependencies.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to ingest data in Snowflake</li>
+<li>How to do data explorations and understanding with Pandas and visualization</li>
+<li>How to encode the data for algorithms to use</li>
+<li>How to normalize the data</li>
+<li>How to training models with Scikit-Learn and Snowpark (including using Snowpark Optimized warehouse)</li>
+<li>How to evaluate models for accuracy</li>
+<li>How to deploy models on Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>You will need to accept acknowledge the Snowflake Third Party Terms by following Anaconda link in previous step.</li>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clone GitHub Repository" duration="8">
+        <p>This section covers cloning of the GitHub repository and creating a Python 3.10 environment.</p>
+<ol type="1">
+<li>Clone <a href="https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn" target="_blank">GitHub repository</a></li>
+<li>Download the miniconda installer from <a href="https://conda.io/miniconda.html" target="_blank">https://conda.io/miniconda.html</a>. <em>(OR, you may use any other Python environment with Python 3.10)</em>.</li>
+<li>Open <code>environment.yml</code> and paste in the following config:</li>
+</ol>
+<pre><code language="language-yaml" class="language-yaml">name: snowpark_scikit_learn
+channels:
+  - https://repo.anaconda.com/pkgs/snowflake/
+  - nodefaults
+dependencies:
+  - python=3.10
+  - pip
+  - snowflake-snowpark-python==1.23.0
+  - snowflake-ml-python==1.6.4
+  - snowflake==1.0.0
+  - ipykernel
+  - matplotlib
+  - seaborn
+</code></pre>
+<ol type="1" start="4">
+<li>From the root folder, create conda environment by running below command.</li>
+</ol>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>If you are using a machine wth Apple M1 chip, follow <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/setup" target="_blank">these instructons</a> to create the virtual environment and install Snowpark Python instead of what&#39;s described below.</li>
+</ul>
+</aside>
+<pre><code language="language-python" class="language-python">conda env create -f environment.yml
+conda activate snowpark_scikit_learn
+</code></pre>
+<ol type="1" start="5">
+<li>Download and install <a href="https://code.visualstudio.com/" target="_blank">VS Code</a> or you could use juypter notebook or any other IDE of your choice</li>
+<li>Update <a href="https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/config.py" target="_blank">config.py</a> with your Snowflake account details and credentials.</li>
+</ol>
+<aside class="warning"><p> Note: For the account parameter, specify your <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html" target="_blank">account identifier</a> and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*</p>
+</aside>
+<h2 is-upgraded>Troubleshooting <code>pyarrow</code> related issues</h2>
+<ul>
+<li>If you have <code>pyarrow</code> library already installed, uninstall it before installing Snowpark.</li>
+<li>If you do not have <code>pyarrow</code> installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.</li>
+<li>Do not reinstall a different version of <code>pyarrow</code> after installing Snowpark.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Ingest" duration="10">
+        <p>The Notebook linked below covers the following data ingestion tasks.</p>
+<ol type="1">
+<li>Download data file to be used in the lab</li>
+<li>Read downloaded data as pandas dataframe</li>
+<li>Connect to Snowflake using session object</li>
+<li>Create database, schema and warehouse</li>
+<li>Load pandas dataframe object into Snowflake table</li>
+</ol>
+<h2 is-upgraded>Data Ingest Notebook in Jupyter or Visual Studio Code</h2>
+<p>To get started, follow these steps:</p>
+<ol type="1">
+<li>In a terminal window, browse to this folder and run <code>jupyter notebook</code> at the command line. (You may also use other tools and IDEs such Visual Studio Code.)</li>
+<li>Open and run through the cells in <a href="https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/1_snowpark_housing_data_ingest.ipynb" target="_blank">1_snowpark_housing_data_ingest.ipynb</a></li>
+</ol>
+<aside class="special"><p> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to <strong><em>snowpark_scikit_learn</em></strong>– which is the name of the environment created in <strong>Clone GitHub Repository</strong> step.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Exploration" duration="20">
+        <p>The Notebook linked below covers the following data exploration tasks.</p>
+<ol type="1">
+<li>Establish secure connection from Snowpark Python to Snowflake</li>
+<li>Compare Snowpark dataframe to Pandas dataframe</li>
+<li>Use describe function to understand data</li>
+<li>Build some visualisation using seaborn and pyplot</li>
+</ol>
+<h2 is-upgraded>Data Exploration Notebook in Jupyter or Visual Studio Code</h2>
+<p>To get started, follow these steps:</p>
+<ol type="1">
+<li>If not done already, in a terminal window, browse to this folder and run <code>jupyter notebook</code> at the command line. (You may also use other tools and IDEs such Visual Studio Code.)</li>
+<li>Open and run through the cells in <a href="https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/2_data_exploration_transformation.ipynb" target="_blank">2_data_exploration_transformation.ipynb</a></li>
+</ol>
+<aside class="special"><p> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to <strong><em>snowpark_scikit_learn</em></strong>– which is the name of the environment created in <strong>Clone GitHub Repository</strong> step.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Machine Learning using Scikit learn" duration="30">
+        <aside class="warning"><p> PREREQUISITE: Successful completion of previous steps</p>
+</aside>
+<p>The Notebook linked below covers the following machine learning tasks.</p>
+<ol type="1">
+<li>Establish secure connection from Snowpark Python to Snowflake</li>
+<li>Get features and target from Snowflake table into Snowpark DataFrame</li>
+<li>Create Snowflake stage for the <a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-python" target="_blank">Python Stored Procedure</a> code</li>
+<li>Prepare features using scikit learn for model training</li>
+<li>Create a <a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-python" target="_blank">Python Stored Procedure</a> to deploy model training code on Snowflake</li>
+<li>Optinally use Snowpark optimised warehouse for model training</li>
+<li>Log the model to <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a> and use it for inference on new data points</li>
+</ol>
+<p class="image-container"><img alt="End-To-End-ML" src="img/1d8b2e86fb835a5c.png"></p>
+<h2 is-upgraded>Machine Learning Notebook in Jupyter or Visual Studio Code</h2>
+<p>To get started, follow these steps:</p>
+<ol type="1">
+<li>If not done already, in a terminal window, browse to this folder and run <code>jupyter notebook</code> at the command line. (You may also use other tools and IDEs such Visual Studio Code.)</li>
+<li>Open and run through the <a href="https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/3_snowpark_end_to_end_ml.ipynb" target="_blank">3_snowpark_end_to_end_ml.ipynb</a></li>
+</ol>
+<aside class="special"><p> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to <strong><em>snowpark_scikit_learn</em></strong> – which is the name of the environment created in <strong>Clone GitHub Repository</strong> step.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully completed the lab using Snowpark for Python and scikit-learn.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to ingest data in Snowflake</li>
+<li>How to do data explorations and understanding with Pandas and visualization</li>
+<li>How to encode the data for algorithms to use</li>
+<li>How to normalize the data</li>
+<li>How to training models with Scikit-Learn and Snowpark (including using Snowpark Optimized warehouse)</li>
+<li>How to evaluate models for accuracy</li>
+<li>How to deploy models on Snowflake and do inferencing</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://developers.snowflake.com/demos/predict-home-prices-using-machine-learning/" target="_blank">Full demo on Snowflake Demo Hub</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html" target="_blank">Advanced: Snowpark for Python Data Engineering Guide</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html" target="_blank">Advanced: Snowpark for Python Machine Learning Guide</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md" target="_blank">Snowpark for Python Demos</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark for Python Developer Guide</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

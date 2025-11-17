@@ -1,0 +1,283 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building an MFA Audit System with Streamlit in Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="mfa-audit"
+                  title="Building an MFA Audit System with Streamlit in Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Learn how to create an interactive Multi-Factor Authentication (MFA) audit system using Streamlit in Snowflake Notebooks. This application helps security administrators monitor user MFA compliance and automatically notify relevant stakeholders about users who haven&#39;t enabled MFA.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create and query a user dataset containing MFA status</li>
+<li>How to set up email notifications in Snowflake</li>
+<li>How to build an interactive Streamlit interface for MFA monitoring</li>
+<li>How to implement automated email reporting for non-compliant users</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An interactive Streamlit application that displays user MFA status and sends formatted email reports to system administrators about users who haven&#39;t enabled MFA.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to Snowflake Notebooks</li>
+<li>System administrator privileges in Snowflake</li>
+<li>Basic understanding of SQL and Python</li>
+<li>Valid email address for receiving notifications</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <h2 is-upgraded>Open Snowflake Notebook</h2>
+<p>You can retrieve the <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/MFA_Audit_of_Users/MFA_Audit_of_Users_with_Streamlit_in_Snowflake_Notebooks.ipynb" target="_blank">MFA Audit Snowflake Notebook</a> and follow along with the tutorial.</p>
+<aside class="special"><p> NOTE: On the above mentioned GitHub page, please click on the download icon (upon hover it should display &#34;Download raw file&#34;).</p>
+</aside>
+<h2 is-upgraded>Creating the User Dataset</h2>
+<p>In this quickstart, we&#39;ll use an artificially generated <a href="https://sfquickstarts.s3.us-west-1.amazonaws.com/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv" target="_blank">demo data</a> explained here after.</p>
+<h3 is-upgraded>Approach 1: Creation via SQL Query</h3>
+<p>The following query sets up the necessary administrative permissions, compute resources, database structures, and data staging areas to load MFA user data from an external S3 bucket.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN; -- Sets current role to ACCOUNTADMIN
+CREATE OR REPLACE WAREHOUSE MFA_DEMO_WH; -- By default, this creates an XS Standard Warehouse
+CREATE OR REPLACE DATABASE MFA_DEMO_DB;
+CREATE OR REPLACE SCHEMA MFA_DEMO_SCHEMA;
+CREATE OR REPLACE STAGE MFA_DEMO_ASSETS; -- Store data files
+
+-- create csv format
+CREATE FILE FORMAT IF NOT EXISTS MFA_DEMO_DB.MFA_DEMO_SCHEMA.CSVFORMAT 
+    SKIP_HEADER = 1 
+    TYPE = &#39;CSV&#39;;
+
+-- Create stage and load external demo data from S3
+CREATE STAGE IF NOT EXISTS MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DEMO_DATA 
+    FILE_FORMAT = MFA_DEMO_DB.MFA_DEMO_SCHEMA.CSVFORMAT 
+    URL = &#39;s3://sfquickstarts/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv&#39;;
+    -- https://sfquickstarts.s3.us-west-1.amazonaws.com/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv
+
+LS @MFA_DEMO_DATA; -- List contents of the stage we just created
+</code></pre>
+<p>Next, we&#39;ll copy the staged data from an S3 bucket into a newly created <code>MFA_DATA</code> table.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a new data table called MFA_DEMO
+CREATE OR REPLACE TABLE MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DATA (
+    USER_ID NUMBER,
+    NAME VARCHAR(100),
+    CREATED_ON TIMESTAMP,
+    DELETED_ON TIMESTAMP,
+    LOGIN_NAME VARCHAR(100),
+    DISPLAY_NAME VARCHAR(100),
+    FIRST_NAME VARCHAR(50),
+    LAST_NAME VARCHAR(50),
+    EMAIL VARCHAR(255),
+    MUST_CHANGE_PASSWORD BOOLEAN,
+    HAS_PASSWORD BOOLEAN,
+    COMMENT VARCHAR(255),
+    DISABLED BOOLEAN,
+    SNOWFLAKE_LOCK BOOLEAN,
+    DEFAULT_WAREHOUSE VARCHAR(100),
+    DEFAULT_NAMESPACE VARCHAR(100),
+    DEFAULT_ROLE VARCHAR(100),
+    EXT_AUTHN_DUO BOOLEAN,
+    EXT_AUTHN_UID VARCHAR(100),
+    HAS_MFA BOOLEAN,
+    BYPASS_MFA_UNTIL TIMESTAMP,
+    LAST_SUCCESS_LOGIN TIMESTAMP,
+    EXPIRES_AT TIMESTAMP,
+    LOCKED_UNTIL_TIME TIMESTAMP,
+    HAS_RSA_PUBLIC_KEY BOOLEAN,
+    PASSWORD_LAST_SET_TIME TIMESTAMP,
+    OWNER VARCHAR(100),
+    DEFAULT_SECONDARY_ROLE VARCHAR(100),
+    TYPE VARCHAR(50)
+);
+
+-- Copy the data from your stage to this newly created table
+COPY INTO MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DATA
+    FROM @MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DEMO_DATA
+</code></pre>
+<h3 is-upgraded>Approach 2: Creation via GUI</h3>
+<ol type="1">
+<li>In Snowflake Notebook, click on <code>+</code> → <code>Table</code> → <code>From File</code> in the left sidebar menu (see screenshot below)</li>
+<li>Create a table called <code>CHANINN_DEMO_DATA.PUBLIC.MFA_DATA</code>. Particularly, you&#39;ll see a pop-up, go ahead and select a warehouse, upload the CSV file, specify the database (<code>CHANINN_DEMO_DATA</code>), schema (<code>PUBLIC</code>) and table name (<code>MFA_DATA</code>).</li>
+<li>Upload the <a href="https://sfquickstarts.s3.us-west-1.amazonaws.com/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv" target="_blank">demo data file</a></li>
+</ol>
+<p class="image-container"><img alt="image" src="img/b7075b42f8ae587f.PNG"></p>
+<h2 is-upgraded>Setting up Email Notifications</h2>
+<p>Create a notification integration for email communications by entering the following into a SQL cell:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE NOTIFICATION INTEGRATION my_email_int
+  TYPE=EMAIL
+  ENABLED=TRUE;
+</code></pre>
+<p>Running this query should return the following confirmation: <img alt="image" src="img/6bbe1c8a7a6c76df.PNG"></p>
+<aside class="special"><p> IMPORTANT: This setup ensures you have the necessary privileges to create notification integrations</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the MFA Status Query" duration="5">
+        <h2 is-upgraded>Writing the Query</h2>
+<p>Next, we&#39;ll retrieve a subset of columns to display (e.g. <code>USER_ID</code>, <code>LOGIN_NAME</code>, <code>EMAIL</code> and <code>HAS_MFA</code>). Note that we&#39;ll filter this by the user MFA status:</p>
+<pre><code language="language-sql" class="language-sql">SELECT USER_ID, LOGIN_NAME, EMAIL, HAS_MFA
+FROM CHANINN_DEMO_DATA.PUBLIC.MFA_DATA
+WHERE HAS_MFA = &#39;FALSE&#39;
+</code></pre>
+<h2 is-upgraded>Testing Email Notifications</h2>
+<p>Verify the email integration works:</p>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$SEND_EMAIL(
+    &#39;my_email_int&#39;,
+    &#39;your-name@email-address.com&#39;,
+    &#39;Email subject goes here&#39;,
+    &#39;Hello world! This is a test message!&#39;
+);
+</code></pre>
+<aside class="special"><p> IMPORTANT: Replace <code>your-name@email-address.com</code> with the email address tied to your user account.</p>
+</aside>
+<p>Running the above SQL query will return the following confirmation output:</p>
+<p class="image-container"><img alt="image" src="img/6c95ea47f9a03434.PNG"></p>
+<p>The notification email looks as follows:</p>
+<p class="image-container"><img alt="image" src="img/a4280b0daa19583e.PNG"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building the Streamlit Interface" duration="10">
+        <h2 is-upgraded>Creating the Interactive Dashboard</h2>
+<p>Build the Streamlit application with filtering capabilities and email notifications.</p>
+<p>Before running the code, please replace <code>your-name@email-address.com</code> with the email address tied to your user account.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+import streamlit as st
+
+session = get_active_session()
+
+# DataFrame of users and their MFA status
+st.header(&#39;MFA activation status&#39;)
+
+mfa_selection = st.selectbox(&#39;Select an MFA status:&#39;, (&#39;All&#39;, &#39;MFA Activated&#39;, &#39;MFA Not Activated&#39;))
+if mfa_selection == &#39;All&#39;:
+    df = session.sql(
+              &#34;&#34;&#34;SELECT USER_ID, LOGIN_NAME, EMAIL, HAS_MFA 
+                    FROM CHANINN_DEMO_DATA.PUBLIC.MFA_DATA&#34;&#34;&#34;
+            ).to_pandas()
+    paragraph = &#34;&lt;p&gt;Here&#39;s the Multi-Factor Authentication status of all users. Please refer users to the &lt;a href=&#39;https://docs.snowflake.com/en/user-guide/security-mfa&#39;&gt;Docs page on MFA&lt;/a&gt; to activate MFA.&lt;/p&gt;&#34;
+if mfa_selection == &#39;MFA Activated&#39;:
+    df = session.sql(
+              &#34;SELECT USER_ID, LOGIN_NAME, EMAIL, HAS_MFA FROM CHANINN_DEMO_DATA.PUBLIC.MFA_DATA WHERE HAS_MFA = &#39;TRUE&#39;&#34;
+            ).to_pandas()
+    paragraph = &#34;&lt;p&gt;Congratulations, these users have activated their Multi-Factor Authentication!&lt;/p&gt;&#34;
+if mfa_selection == &#39;MFA Not Activated&#39;:
+    df = session.sql(
+              &#34;SELECT USER_ID, LOGIN_NAME, EMAIL, HAS_MFA FROM CHANINN_DEMO_DATA.PUBLIC.MFA_DATA WHERE HAS_MFA = &#39;FALSE&#39;&#34;
+            ).to_pandas()
+    paragraph = &#34;&lt;p&gt;It appears that the following users have not activated Multi-Factor Authentication. Please refer users to the &lt;a href=&#39;https://docs.snowflake.com/en/user-guide/security-mfa&#39;&gt;Docs page on MFA&lt;/a&gt; to activate MFA.&lt;/p&gt;&#34;
+st.dataframe(df)
+
+# Send Email
+if st.button(&#39;Send Report&#39;):
+    email= &#39;your-name@email-address.com&#39;
+    email_subject = &#34;Important: Activate Multi-Factor Authentication for User&#39;s Account&#34;
+    header = &#39;&lt;p&gt;Dear System Administrator,&lt;/p&gt;&#39;
+    body = header + &#39;\n&#39; + paragraph + &#39;\n&#39; + df.to_html(index=False, justify=&#39;left&#39;)
+
+    session.call(&#39;SYSTEM$SEND_EMAIL&#39;,
+                             &#39;my_email_int&#39;,
+                              email,
+                              email_subject,
+                              body,
+                             &#39;text/html&#39;)
+    st.success(&#39;Report sent!&#39;, icon=&#39;✅&#39;)
+</code></pre>
+<p>Once we run the code cell, make a selection on the select box drop-down widget section and click on <code>Send Report</code>, which if successful should return the <strong>Report sent!</strong> confirmation message:</p>
+<p class="image-container"><img alt="image" src="img/748cdafde201242e.gif"></p>
+<p>Here&#39;s how the MFA report that has been delivered to your email inbox looks like:</p>
+<p class="image-container"><img alt="image" src="img/7891cdbb63026f1b.PNG"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You&#39;ve successfully built an MFA audit system that helps monitor and manage user security compliance through an interactive Streamlit interface with automated email notifications.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create and query user security data in Snowflake</li>
+<li>How to set up and use email notifications</li>
+<li>How to build an interactive dashboard with Streamlit</li>
+<li>How to automate security compliance reporting with Streamlit</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-mfa" target="_blank">Multi-factor authentication (MFA)</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/notifications/email-notifications" target="_blank">Sending email notifications</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/notifications/email-stored-procedures" target="_blank">Using SYSTEM$SEND_EMAIL</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+</ul>
+<p>Happy coding!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a private Custom API in Python and Flask using Ockam</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_a_private_custom_api_in_python"
+                  title="Build a private Custom API in Python and Flask using Ockam"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Many builders want to share some of the data stored in Snowflake, over an http API, with various enterprise applications. This tutorial will go through how to build, deploy, and host a <strong>private</strong> custom API Powered by Snowflake.</p>
+<p>We will use <a href="https://www.ockam.io/" target="_blank">Ockam</a> to <strong>privately</strong> share this API with other enterprise applications. This private API will not have an endpoint that is exposed to the Internet. The tutorial will, instead, show you how to create end-to-end encrypted Ockam Portals from your enterprise applications to the API in Snowflake. The API would then only be accessible at private endpoints that are only available within your enterprise&#39;s VPC or other private environments.</p>
+<p>This approach ensures that your API cannot be attacked from the Internet and its data will remain highly secure.</p>
+<p class="image-container"><img alt="Use Ockam to call private Custom APIs in Snowpark Container Services from anywhere in your enterprise." src="img/c8a0d3c8e023d460.png"></p>
+<p>This API consists of reporting endpoints from data stored in Snowflake. After completing this guide, you will have built a custom API built with <a href="https://flask.palletsprojects.com/" target="_blank">Python Flask</a>.</p>
+<p>The dataset is the <a href="https://docs.snowflake.com/en/user-guide/sample-data-tpch" target="_blank">TPC-H</a> data set included in your Snowflake account.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, warehouse, compute pool, repository, network rule, external access integration, and service in Snowflake</li>
+<li>Privileges necessary to access the tables in the <code>SNOWFLAKE_SAMPLE_DATA.TPCH_SF10</code> database and schema</li>
+<li>Access to run SQL in the Snowflake console or SnowSQL</li>
+<li>Basic experience using git, GitHub, and Codespaces</li>
+<li>Intermediate knowledge of Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to configure and build a custom API Powered by Snowflake</li>
+<li>How to build, publish, and deploy a container with the API in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://snowflake.com" target="_blank">Snowflake</a> Account in an AWS commercial region</li>
+<li><a href="https://github.com/" target="_blank">GitHub</a> Account with credits for Codespaces</li>
+<li><a href="https://www.ockam.io/" target="_blank">Ockam</a> Account to securely expose your private API</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>API Powered by Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up a Warehouse" duration="1">
+        <p>The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE WAREHOUSE DATA_API_WH WITH WAREHOUSE_SIZE=&#39;xsmall&#39;;
+</code></pre>
+<h2 is-upgraded>Create the Application Role in Snowflake</h2>
+<p>The application will run as a new role with minimal privileges. To create the role, connect to Snowflake and run the following SQL statements to create the role and grant it access to the data needed for the application.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+CREATE ROLE DATA_API_ROLE;
+
+GRANT USAGE ON WAREHOUSE DATA_API_WH TO ROLE DATA_API_ROLE;
+CREATE DATABASE IF NOT EXISTS SNOWFLAKE_SAMPLE_DATA FROM SHARE SFC_SAMPLES.SAMPLE_DATA;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE DATA_API_ROLE;
+
+GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up your Development Environment" duration="3">
+        <p>The code used in this guide is hosted in GitHub. You will need a new codespace from <a href="https://github.com/sfc-gh-bculberson/lab_data_api_python" target="_blank">this GitHub repository</a>.</p>
+<p>To create a new codespace, browse to this GitHub <a href="https://github.com/sfc-gh-bculberson/lab_data_api_python" target="_blank">repository</a> in a browser. You will need to login to GitHub if you are not already logged in to access codespaces. After logging in, click on the green &#34;&lt;&gt; Code&#34; button and &#34;create codespace on main&#34; button.</p>
+<p>You will then be redirected into codespaces where your development environment will load and all code from the GitHub repository will be loaded in the project.</p>
+<h2 is-upgraded>Endpoints</h2>
+<p>The API creates two sets of endpoints, one for using the Snowflake connector:</p>
+<ol type="1">
+<li><code>https://&lt;host&gt;/connector/customers/top10</code>, which takes the following optional query parameters -<code>start_range</code> - the start date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-01-01</code>. <ul>
+<li><code>end_range</code> - the end date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-03-31</code>.</li>
+</ul>
+</li>
+<li><code>https://&lt;host&gt;/connector/clerk/&lt;CLERKID&gt;/yearly_sales/&lt;YEAR&gt;</code>, which takes two required path parameters: <ul>
+<li><code>CLERKID</code> - the clerk ID. Use just the numbers, such as <code>000000001</code>.</li>
+<li><code>YEAR</code> - the year to use, such as <code>1995</code>.</li>
+</ul>
+</li>
+</ol>
+<p>And the same ones using Snowpark:</p>
+<ol type="1">
+<li><code>https://&lt;host&gt;/snowpark/customers/top10</code>, which takes the following optional query parameters: <ul>
+<li><code>start_range</code> - the start date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-01-01</code>.</li>
+<li><code>end_range</code> - the end date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-03-31</code>.</li>
+</ul>
+</li>
+<li><code>https://&lt;host&gt;/snowpark/clerk/&lt;CLERKID&gt;/yearly_sales/&lt;YEAR&gt;</code>, which takes two required path parameters: <ul>
+<li><code>CLERKID</code> - the clerk ID. Use just the numbers, such as <code>000000001</code>.</li>
+<li><code>YEAR</code> - the year to use, such as <code>1995</code>.</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Code</h2>
+<p>The <code>src/</code> directory has all the source code for the API. The <code>connector.py</code> file contains all the entrypoints for the API endpoints using the <a href="https://docs.snowflake.com/en/user-guide/python-connector.html" target="_blank">Snowflake Connector for Python</a>. The <code>customers_top10()</code> function is one of the API endpoints we needed for this API which finds the top 10 customers by sales in a date range. Review the code and the SQL needed to retrieve the data from Snowflake and serialize it to JSON for the response. This endpoint also takes two optional query string parameters <code>start_range</code> and <code>end_range</code>.</p>
+<pre><code language="language-python" class="language-python">@connector.route(&#39;/customers/top10&#39;)
+def customers_top10():
+    # Validate arguments
+    sdt_str = request.args.get(&#39;start_range&#39;) or &#39;1995-01-01&#39;
+    edt_str = request.args.get(&#39;end_range&#39;) or &#39;1995-03-31&#39;
+    try:
+        sdt = datetime.datetime.strptime(sdt_str, dateformat)
+        edt = datetime.datetime.strptime(edt_str, dateformat)
+    except:
+        abort(400, &#34;Invalid start and/or end dates.&#34;)
+    sql_string = &#39;&#39;&#39;
+        SELECT
+            o_custkey
+          , SUM(o_totalprice) AS sum_totalprice
+        FROM snowflake_sample_data.tpch_sf10.orders
+        WHERE o_orderdate &gt;= &#39;{sdt}&#39;
+          AND o_orderdate &lt;= &#39;{edt}&#39;
+        GROUP BY o_custkey
+        ORDER BY sum_totalprice DESC
+        LIMIT 10
+    &#39;&#39;&#39;
+    sql = sql_string.format(sdt=sdt, edt=edt)
+    try:
+        res = conn.cursor(DictCursor).execute(sql)
+        return make_response(jsonify(res.fetchall()))
+    except:
+        abort(500, &#34;Error reading from Snowflake. Check the logs for details.&#34;)
+</code></pre>
+<p>You can also review the other endpoints in <a href="https://github.com/sfc-gh-bculberson/lab_data_api_python/blob/main/src/connector.py" target="_blank">connector.py</a> to see how simple it is to host multiple endpoints.</p>
+<p>If you would also like to see how to build endpoints using the Snowflake Snowpark API, review <a href="https://github.com/sfc-gh-bculberson/lab_data_api_python/blob/main/src/snowpark.py" target="_blank">snowpark.py</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building the Application Container" duration="1">
+        <p>To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the codespace terminal:</p>
+<pre><code language="language-bash" class="language-bash">docker build -t dataapi .
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Image Registry" duration="1">
+        <p>To create the image registry and the database which contains it, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE DATABASE API;
+
+GRANT ALL ON DATABASE API TO ROLE DATA_API_ROLE;
+CREATE SCHEMA IF NOT EXISTS API.PRIVATE;
+GRANT ALL ON SCHEMA API.PRIVATE TO ROLE DATA_API_ROLE;
+
+USE DATABASE API;
+USE SCHEMA PRIVATE;
+CREATE OR REPLACE IMAGE REPOSITORY API;
+GRANT READ ON IMAGE REPOSITORY API TO ROLE DATA_API_ROLE;
+SHOW IMAGE REPOSITORIES;
+</code></pre>
+<aside class="special"><p> Note the <code>repository_url</code> in the response as that will be needed in the next step.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pushing the Container to the Repository" duration="1">
+        <p>Run the following command in the codespace terminal, replacing the <code>&lt;repository_url&gt;</code> with your repository in the previous step, to login to the container repository. You will be prompted for your Snowflake username and password to login to your repository.</p>
+<pre><code language="language-bash" class="language-bash">docker login &lt;repository_url&gt;
+docker build -t &lt;repository_url&gt;/dataapi .
+docker push &lt;repository_url&gt;/dataapi
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Compute Pool" duration="1">
+        <p>To create the compute pool to run the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE COMPUTE POOL API_POOL
+  MIN_NODES = 1
+  MAX_NODES = 5
+  INSTANCE_FAMILY = CPU_X64_XS;
+
+GRANT USAGE ON COMPUTE POOL API_POOL TO ROLE DATA_API_ROLE;
+GRANT MONITOR ON COMPUTE POOL API_POOL TO ROLE DATA_API_ROLE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Application Service" duration="1">
+        <p>To create the service to host the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE DATA_API_ROLE;
+
+USE ROLE DATA_API_ROLE;
+CREATE SERVICE API.PRIVATE.API
+ IN COMPUTE POOL API_POOL
+ FROM SPECIFICATION
+$$
+spec:
+  container:
+  - name: api
+    image: /api/private/api/dataapi:latest
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 128M
+      limits:
+        cpu: 1
+        memory: 256M
+  endpoint:
+  - name: api
+    port: 8001
+    public: false
+$$
+QUERY_WAREHOUSE = DATA_API_WH;
+</code></pre>
+<p>It will take a few minutes for your service to initialize. You can check its status with these commands:</p>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$GET_SERVICE_STATUS(&#39;api&#39;);
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;api.private.api&#39;, 0, &#39;api&#39;);
+</code></pre>
+<p>After your service has started, you can get the endpoints with this command:</p>
+<pre><code language="language-sql" class="language-sql">SHOW ENDPOINTS IN SERVICE API;
+</code></pre>
+<p>Note that the service is not public and that it doesn&#39;t have an ingress URL assigned. In the next step, you will learn how to reach the service.</p>
+<p>To verify, check that the DNS name of the API is an internal domain:</p>
+<pre><code language="language-sql" class="language-sql">SHOW SERVICES;
+</code></pre>
+<aside class="special"><p> Note the service&#39;s DNS name from the <code>dns_name</code>. You will need this in the next step when creating the Ockam service.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the Private API Securely" duration="5">
+        <h3 is-upgraded>Get started with Ockam</h3>
+<p><a href="https://www.ockam.io/signup" target="_blank">Signup for Ockam</a> and run the following commands in the codespace terminal:</p>
+<pre><code language="language-sh" class="language-sh"># Install Ockam Command
+curl --proto &#39;=https&#39; --tlsv1.2 -sSfL https://install.command.ockam.io | bash &amp;&amp; source &#34;$HOME/.ockam/env&#34;
+
+# Enroll with Ockam Orchestrator
+ockam enroll
+
+# Create an enrollment ticket for the node that will run inside container services
+ockam project ticket --usage-count 1 --expires-in 1h \
+  --attribute snowflake-api-service-outlet --relay snowflake-api-service-relay &gt; ticket
+
+# Print the egress allow list for your Ockam project
+ockam project show --jq &#39;.egress_allow_list[]&#39;
+</code></pre>
+<aside class="special"><p> Note the <code>egress_allow_list</code> in the response as that will be needed in the next step.</p>
+</aside>
+<h3 is-upgraded>Create an Ockam node in Snowpark Container Services</h3>
+<p>Run the following command in the codespace terminal to push the latest Ockam image to the image repository:</p>
+<pre><code language="language-sh" class="language-sh">docker pull ghcr.io/build-trust/ockam
+docker tag ghcr.io/build-trust/ockam &lt;repository_url&gt;/ockam
+docker push &lt;repository_url&gt;/ockam
+</code></pre>
+<p>Next, create a new service in Snowflake to run the Ockam node. Run the following command in the Snowflake console or SnowSQL:</p>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>Replace <code>&lt;EGRESS_ALLOW_LIST&gt;</code> values in <code>VALUE_LIST</code> with the <code>egress_allow_list</code> you just noted.</li>
+<li>Replace <code>&lt;OCKAM_ENROLLMENT_TICKET&gt;</code> with the contents of the <code>ticket</code> generated with the <code>ockam project ticket</code> command. You will find it in the root directory of your codespace.</li>
+<li>Replace <code>&lt;API_DNS_NAME&gt;</code> with the DNS name of the API service you noted in the previous step.</li>
+</ul>
+</aside>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+-- Update VALUE_LIST with ockam egress details
+CREATE OR REPLACE NETWORK RULE OCKAM_OUT TYPE = &#39;HOST_PORT&#39; MODE = &#39;EGRESS&#39;
+VALUE_LIST = (&#34;&lt;EGRESS_ALLOW_LIST&gt;&#34;);
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OCKAM
+ALLOWED_NETWORK_RULES = (OCKAM_OUT) ENABLED = true;
+
+GRANT USAGE ON INTEGRATION OCKAM TO ROLE DATA_API_ROLE;
+
+USE ROLE DATA_API_ROLE;
+
+CREATE SERVICE API_OCKAM_OUTLET
+IN COMPUTE POOL API_POOL
+FROM SPECIFICATION
+$$
+spec:
+  containers:
+  - name: ockam-outlet
+    image: /api/private/api/ockam:latest
+    args:
+      - node
+      - create
+      - --foreground
+      - --enrollment-ticket
+      - &#34;&lt;OCKAM_ENROLLMENT_TICKET&gt;&#34;
+      - --node-config
+      - |
+        relay: snowflake-api-service-relay
+        tcp-outlet:
+          to: &lt;API_DNS_NAME&gt;:8001
+          allow: snowflake-api-service-inlet
+    env:
+        OCKAM_DISABLE_UPGRADE_CHECK: true
+        OCKAM_OPENTELEMETRY_EXPORT: false
+$$
+EXTERNAL_ACCESS_INTEGRATIONS = (OCKAM);
+</code></pre>
+<p>After your service has started, you can check the service status with these commands:</p>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$GET_SERVICE_STATUS(&#39;API_OCKAM_OUTLET&#39;);
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;API_OCKAM_OUTLET&#39;, &#39;0&#39;, &#39;ockam-outlet&#39;, 1000);
+</code></pre>
+<h3 is-upgraded>Create an Ockam node next to the API Client</h3>
+<p>Finally, create an Ockam node in the environment where your API client is running.</p>
+<p>Run the following command in the codespace terminal:</p>
+<pre><code language="language-sh" class="language-sh">docker run --rm -d  --name ockam-inlet -p 8001:8001 \
+  ghcr.io/build-trust/ockam node create --foreground \
+  --enrollment-ticket &#34;$(ockam project ticket --usage-count 1 --expires-in 1h --attribute snowflake-api-service-inlet)&#34; \
+  --configuration &#34;
+    tcp-inlet:
+      from: 0.0.0.0:8001
+      via: snowflake-api-service-relay
+      allow: snowflake-api-service-outlet
+  &#34;
+</code></pre>
+<h2 is-upgraded>Testing using cURL</h2>
+<p>The API can now be tested using the cURL command-line tool from a new codespace terminal.</p>
+<h3 is-upgraded>Top 10 Customers</h3>
+<p>To retrieve the top 10 customers in the date range of <code>1995-02-01</code> to <code>1995-02-14</code> using the Snowflake Connector for Python, run:</p>
+<pre><code language="language-bash" class="language-bash">curl -X GET &#34;http://localhost:8001/connector/customers/top10?start_range=1995-02-01&amp;end_range=1995-02-14&#34;
+</code></pre>
+<p>To retrieve the top 10 customers in the date range of <code>1995-02-01</code> to <code>1995-02-14</code> using the Snowflake Snowpark API, run:</p>
+<pre><code language="language-bash" class="language-bash">curl -X GET &#34;http://localhost:8001/snowpark/customers/top10?start_range=1995-02-01&amp;end_range=1995-02-14&#34;
+</code></pre>
+<p>If you call the endpoint without specifying the <code>start_range</code> then <code>1995-01-01</code> will be used. If you call the endpoint without specifying the <code>end_range</code> then <code>1995-03-31</code> will be used.</p>
+<h3 is-upgraded>Monthly sales for a given year for a sales clerk</h3>
+<p>To retrieve the monthly sales for clerk <code>000000002</code> for the year <code>1995</code> using the Snowflake Connector for Python, run:</p>
+<pre><code language="language-bash" class="language-bash">curl -X GET &#34;http://localhost:8001/connector/clerk/000000002/yearly_sales/1995&#34;
+</code></pre>
+<p>To retrieve the monthly sales for clerk <code>000000002</code> for the year <code>1995</code> using the Snowflake Snowpark API, run:</p>
+<pre><code language="language-bash" class="language-bash">curl -X GET &#34;http://localhost:8001/connector/clerk/000000002/yearly_sales/1995&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stopping the API" duration="1">
+        <p>To stop the API, you can suspend the service. From the Snowflake console or SnowSQL, run:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE DATA_API_ROLE;
+ALTER SERVICE API.PRIVATE.API SUSPEND;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="2">
+        <p>To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as <code>DATA_API_ROLE</code> run:</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE DATA_API_ROLE;
+
+DROP SERVICE API.PRIVATE.API;
+DROP SERVICE API_OCKAM_OUTLET;
+</code></pre>
+<p>Then, as <code>ACCOUNTADMIN</code> run:</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+
+DROP ROLE IF EXISTS DATA_API_ROLE;
+DROP DATABASE IF EXISTS API;
+DROP INTEGRATION IF EXISTS OCKAM;
+DROP COMPUTE POOL IF EXISTS API_POOL;
+DROP WAREHOUSE IF EXISTS DATA_API_WH;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully built and deployed a custom private API in Python powered by Snowflake, Ockam, and Flask. You created an http API to share data stored in Snowflake with enterprise applications.</p>
+<p>You configured the necessary Snowflake resources, built and containerized the application, and <strong>privately</strong> shared the API over end-to-end encrypted Ockam Portals. Your API does not have an endpoint that is exposed to the Internet. Instead, you created and tested  a private endpoint to your API.</p>
+<p>Finally, you learned how to manage and clean up the deployed services.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to configure and build a custom API Powered by Snowflake</li>
+<li>How to create private endpoints to your API using Ockam</li>
+<li>How to create and manage Snowflake resources such as warehouses, roles, and compute pools</li>
+<li>How to containerize your application using Docker</li>
+<li>How to deploy and run your application in Snowflake</li>
+<li>How to test private API endpoints</li>
+<li>How to manage and clean up deployed services</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/sfc-gh-bculberson/lab_data_api_python" target="_blank">Code for the project on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark for Python Developer Guide</a></li>
+<li><a href="https://docs.ockam.io/" target="_blank">Ockam Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html" target="_blank">Snowpark for Python API Reference</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/python-connector.html" target="_blank">Snowflake Connector for Python</a></li>
+<li><a href="https://docs.github.com/en/codespaces" target="_blank">GitHub Codespaces Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/sample-data-tpch" target="_blank">TPC-H Dataset Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

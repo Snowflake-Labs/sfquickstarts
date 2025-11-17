@@ -1,0 +1,36 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_azure_openai_and_snowflake",
+  "duration": 70,
+  "title": "Getting Started with Azure OpenAI and Snowflake",
+  "summary": "This is a quickstart for using Snowflake with Azure OpenAI and AzureML",
+  "source": "getting_started_with_azure_openai_and_snowflake/getting_started_with_azure_openai_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "getting-started",
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "azure",
+    "dataengineering",
+    "datascience",
+    "genai",
+    "gettingstarted",
+    "llm",
+    "marketplace",
+    "openai",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_azure_openai_and_snowflake"
+}

@@ -1,16 +1,15 @@
 author: Ian Funnell
 id: load-integrate-data-matillion-data-productivity-cloud
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Load and Integrate data from multiple sources using the Matillion Data Productivity Cloud
-categories: featured,getting-started,data-engineering,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Getting Started, Matillion, Data Integration, Partner, Data Transformation
 
 # Getting Started with Matillion Data Productivity Cloud
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This Quickstart will show you how to load and integrate enterprise data into Snowflake quickly and efficiently using the Matillion Data Productivity Cloud.
 
@@ -38,7 +37,6 @@ Matillion is the data pipeline platform that brings push-down ELT and AI to Snow
 
 <!-- ------------------------ -->
 ## Create your Matillion and Snowflake accounts
-Duration: 5
 
 If you already have a Matillion and Snowflake account, just [log in to the Matillion Data Productivity Cloud](https://hub.matillion.com/) and go straight to the next step in this Quickstart.
 
@@ -79,13 +77,12 @@ The last setup screen invites you to choose a target platform.
 It will take a couple of minutes for Matillion to create a free, empty, trial Snowflake account and connect everything together.
 Once that's done you'll end up in the Matillion Data Productivity Cloud's main ETL [pipeline designer interface](https://docs.matillion.com/data-productivity-cloud/designer/docs/designer-overview/).
 
-For reference here's a video that takes you through all the steps above.
+For reference [here's a video](https://www.youtube.com/watch?v=G2Rc7K_8pZw) that takes you through all the steps above.
 
-<video id="G2Rc7K_8pZw"></video>
+
 
 <!-- ------------------------ -->
 ## Create a Development branch
-Duration: 1
 
 Matillion development is tightly integrated with git, so when you are [logged in to the Matillion Data Productivity Cloud](https://hub.matillion.com/) and developing ETL pipelines, you're always working in the context of a git branch. This Quickstart will demonstrate the **feature branching** strategy.
 
@@ -103,7 +100,6 @@ Meanwhile, click on the new branch name to enter the [Pipeline Designer](https:/
 
 <!-- ------------------------ -->
 ## Create Static Metadata
-Duration: 5
 
 The first data to be loaded into Snowflake is a few fixed records of reference information, which will be used later. This kind of setup is sometimes known as "seed" data.
 
@@ -131,41 +127,17 @@ Complete the properties of the new Fixed Flow by setting:
 
 **Columns**
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Name</i></td>
-            <td><i>Datatype</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>WORKSHEET_NAME</td>
-            <td>VARCHAR</td>
-        </tr>
-    </tbody>
-</table>
+| Name | Datatype |
+| --- | --- |
+| WORKSHEET_NAME | VARCHAR |
 
 **Values**
 
-<table>
-    <thead>
-        <tr>
-            <td><i>WORKSHEET_NAME</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ITEMS</td>
-        </tr>
-        <tr>
-            <td>ORDERS</td>
-        </tr>
-        <tr>
-            <td>ORDER_ITEMS</td>
-        </tr>
-    </tbody>
-</table>
+| WORKSHEET_NAME |
+| --- |
+| ITEMS |
+| ORDERS |
+| ORDER_ITEMS |
 
 > aside negative
 >
@@ -205,7 +177,6 @@ Now you have some reference data in Snowflake, it's time for the next step.
 
 <!-- ------------------------ -->
 ## Load Sales data from Excel
-Duration: 6
 
 In this step you will start to work with some real data.
 
@@ -289,7 +260,6 @@ The pipeline should validate cleanly now.
 
 <!-- ------------------------ -->
 ## Load Customer data from JSON
-Duration: 5
 
 In this step, you will add a new, semi-structured data source to your `GreenWave Technologies Demo` Orchestration pipeline.
 
@@ -345,7 +315,6 @@ Expand the Task History to view the Task Details, and check that the row count i
 
 <!-- ------------------------ -->
 ## Flatten and relationalize semi-structured data
-Duration: 4
 
 In the pipeline designer interface, create another new Transformation pipeline, named `Calculate Profit and Revenue` this time.
 
@@ -377,7 +346,6 @@ To prepare for the next step, rename the Extract Nested Data component to `ACC` 
 
 <!-- ------------------------ -->
 ## Data Integration
-Duration: 7
 
 At this stage four tables have been extracted and loaded: `GW_ORDERS`, `GW_ITEMS` and `GW_ORDER_ITEMS` from Excel, and the newly flattened `GW_CUSTOMER_ACCOUNTS` from the JSON file. They are related like this:
 
@@ -399,50 +367,20 @@ Some minor datatype fixes are needed before integrating, so add a [Convert Type]
 
 Repeat for `GW_ORDER_ITEMS`, naming it `ORDER_ITEM` with these conversions:
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Column</i></td>
-            <td><i>Type</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ITEM_RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>ORDER_RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>QUANTITY</td><td>NUMBER</td>
-        </tr>
-    </tbody>
-</table>
+| Column | Type |
+| --- | --- |
+| ITEM_RID | NUMBER |
+| ORDER_RID | NUMBER |
+| RID | NUMBER |
+| QUANTITY | NUMBER |
 
 ... and for `GW_ITEMS`, naming it `ITEM_REF` with these conversions:
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Column</i></td>
-            <td><i>Type</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>RID</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>COST</td><td>NUMBER</td>
-        </tr>
-        <tr>
-            <td>PRICE</td><td>NUMBER</td>
-        </tr>
-    </tbody>
-</table>
+| Column | Type |
+| --- | --- |
+| RID | NUMBER |
+| COST | NUMBER |
+| PRICE | NUMBER |
 
 Now for the data integration, find and drag on a [Join](https://docs.matillion.com/data-productivity-cloud/designer/docs/join/) component. Link all **four** inputs to it, and configure it as follows:
 
@@ -464,34 +402,14 @@ Now for the data integration, find and drag on a [Join](https://docs.matillion.c
 
 - Column Mappings:
 
-<table>
-    <thead>
-        <tr>
-            <td><i>Source Column</i></td>
-            <td><i>Target Column</i></td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>O.ORDER_DATE</td><td>ORDER_DATE</td>
-        </tr>
-        <tr>
-            <td>OI.QUANTITY</td><td>QUANTITY</td>
-        </tr>
-        <tr>
-            <td>I.NAME</td><td>ITEM_NAME</td>
-        </tr>
-        <tr>
-            <td>I.PRICE</td><td>PRICE</td>
-        </tr>
-        <tr>
-            <td>I.COST</td><td>COST</td>
-        </tr>
-        <tr>
-            <td>A.account_name</td><td>ACCOUNT_NAME</td>
-        </tr>
-    </tbody>
-</table>
+| Source Column | Target Column |
+| --- | --- |
+| O.ORDER_DATE | ORDER_DATE |
+| OI.QUANTITY | QUANTITY |
+| I.NAME | ITEM_NAME |
+| I.PRICE | PRICE |
+| I.COST | COST |
+| A.account_name | ACCOUNT_NAME |
 
 Once this is configured and validates successfully, open the **Sample data** panel and check the results. You should find the same number of records (999) as there were in `GW_ORDER_ITEMS`, with these columns:
 
@@ -501,7 +419,6 @@ Now all the data is in place to start adding the derived columns including profi
 
 <!-- ------------------------ -->
 ## Calculate Profit and Revenue
-Duration: 2
 
 Matillion has several ways to add derived fields, and the most commonly used is the [Calculator](https://docs.matillion.com/data-productivity-cloud/designer/docs/calculator/) component.
 
@@ -523,7 +440,6 @@ Use the **Sample data** panel to check that the three new columns have been adde
 
 <!-- ------------------------ -->
 ## Aggregating with Copilot assistance
-Duration: 2
 
 The profit and revenue data is still at order item level, but the reporting need is at a higher granularity. So it must be aggregated as a final step before presentation.
 
@@ -552,7 +468,6 @@ The data transformation and integration is complete! The last piece of developme
 
 <!-- ------------------------ -->
 ## Orchestrating the ETL pipelines
-Duration: 1
 
 To get the transformation and integration to run at the right time, first go right back to the `GreenWave Technologies Demo` orchestration pipeline.
 
@@ -570,7 +485,6 @@ This means the transformation pipeline will always run at the right time: after 
 
 <!-- ------------------------ -->
 ## Merge the Development branch
-Duration: 2
 
 All this pipeline work has been happening in the `development` git branch. Now it's completed, it's time to merge this feature branch back into main.
 
@@ -597,7 +511,6 @@ Now all the pipelines are in the main branch. You can delete the feature branch,
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations on completing this lab!
 
@@ -618,11 +531,10 @@ You have experienced how Matillion's close integration with Snowflake benefits t
 
 Continue to use your free trial of Matillion and Snowflake: load and process your own sample or real data, investigating some of the more advanced platform features that are not covered in this lab.
 
-- Read the definitive Snowflake guide to [maximizing your free trial](https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
+- Read the definitive Snowflake guide to [maximizing your free trial](/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/)
 - Visit the [Matillion](https://www.matillion.com/) [product tour](https://www.matillion.com/tour) and interactive demo experience
 - Learn how to [bring the power of AI to data engineering](https://www.matillion.com/ai)
 - Take a training course from the [Matillion Academy](https://academy.matillion.com/trainings)
 
-A full video demonstration of this lab is also available:
-<video id="FGaf-6TcGYU"></video>
+A full [video demonstration](https://www.youtube.com/watch?v=FGaf-6TcGYU) of this lab is also available.
 

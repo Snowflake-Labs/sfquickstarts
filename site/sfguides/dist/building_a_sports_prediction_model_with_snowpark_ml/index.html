@@ -1,0 +1,236 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Predicting Sporting Outcomes with Snowpark ML</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="building_a_sports_prediction_model_with_snowpark_ml"
+                  title="Predicting Sporting Outcomes with Snowpark ML"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this guide, we&#39;ll be walking through all the steps you&#39;ll need to go through to build a prediction model for the Euro 2024 Football (Soccer) Tournament. Leveraging features like Snowpark, Snowpark ML, and the Snowflake Model Registry, this guide will be using historical results and international rankings to create a model and then simulate all 51 games of the tournament.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a Snowflake account or use of the <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial</a></li>
+<li>Either; <ul>
+<li>Snowflake Notebooks, or</li>
+<li>A <a href="https://hex.tech" target="_blank">Hex</a> Account</li>
+</ul>
+</li>
+<li>Familiarity with Snowpark</li>
+<li>Familiarity with Data Science Modelling</li>
+<li>A love of Football</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Using Snowpark for Feature Engineering</li>
+<li>Using Snowpark ML for Hyper Parameter Tuning</li>
+<li>Using Snowpark ML for Model Training</li>
+<li>Storing Models in the Snowflake Model Registry</li>
+<li>Using Models from the Snowflake Model Registry in queries (Snowpark and SQL)</li>
+<li>Using Snowflake Notebooks for all of the above activities</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An end-to-end Snowpark ML pipeline for predicting the outcome of Euro 2024!</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Environment" duration="10">
+        <aside class="special"><p>Please make sure you have downloaded the following <a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml" target="_blank">git repo</a>.</p>
+</aside>
+<p>If you do not have a Snowflake account, you can register for a <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial</a>. The cloud provider (AWS, Azure, Google Cloud), and Region (US East, EU, e.g.) do <em>not</em> matter for this lab. However, we suggest you select the region which is physically closest to you.</p>
+<p>To easily follow the instructions, resize your browser windows so you can view this Quickstart and your Snowflake environment side-by-side. If possible, even better is to use a secondary display dedicated to the Quickstart.</p>
+<h2 is-upgraded>Create a Warehouse, Database, and Stages</h2>
+<p>Run the following SQL commands in a Snowsight Worksheet to setup your environment:</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS EURO2024;
+CREATE STAGE IF NOT EXISTS EURO2024.PUBLIC.DATA;
+CREATE STAGE IF NOT EXISTS EURO2024.PUBLIC.PYTHON_LOAD;
+
+CREATE WAREHOUSE IF NOT EXISTS EURO2024_WH
+    WAREHOUSE_SIZE = &#39;XSMALL&#39; 
+    AUTO_SUSPEND=60 
+    AUTO_RESUME=True;
+</code></pre>
+<p>Note they can also be found in <a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml/blob/main/setup/setup.sql" target="_blank">setup.sql</a>.</p>
+<h2 is-upgraded>Staging the Data</h2>
+<p>Next you will need to upload the data files in the repo into the <code>DATA</code> stage you just created.</p>
+<ol type="1">
+<li>Open Snowight UI, and navigate to <code>DATA / DATABASES / EURO_2024</code></li>
+<li>Click on the <code>PUBLIC</code> schema, then <code>STAGES</code>, and then click on the <code>DATA</code> Stage</li>
+<li>In the top right corner, click on the <code>+FILES</code> option and add the <code>fixtures.csv</code>, <code>rankings.csv</code>, and <code>results.csv</code> files - make sure to click on the <strong>UPLOAD</strong> button.</li>
+</ol>
+<p class="image-container"><img style="width: 400.00px" src="img/97933e80362325f7.png"></p>
+<h2 is-upgraded>Loading the Notebooks</h2>
+<p>Finally we need to load the 5 notebooks from the repo found here:</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml/tree/main/notebooks_snowflake" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml/tree/main/notebooks_hex" target="_blank">Hex Notebooks</a></li>
+</ul>
+<p>This should include the following files:</p>
+<ul>
+<li><code>1_euro2024_data_ingest.ipynb</code></li>
+<li><code>2_euro2024_feature_engineering.ipynb</code></li>
+<li><code>3_euro2024_modelling.ipynb</code></li>
+<li><code>4_euro2024_create_sprocs_udtfs.ipynb</code></li>
+<li><code>5_euro2024_predictions.ipynb</code></li>
+</ul>
+<p>To load the notebooks in Snowflake&#39;s Notebook environment:</p>
+<ol type="1">
+<li>Within Snowsight navigate to <code>PROJECTS / NOTEBOOKS</code></li>
+<li>Click on the dropdown option on the <code>+NOTEBOOK</code> in the top right, and select <strong>Import from .ipynb</strong></li>
+<li>Check that the Database is set to <code>EURO2024</code>, the <code>PUBLIC</code> scheme is select, and the warehouse is set as <code>EURO2024_WH</code></li>
+</ol>
+<p class="image-container"><img alt="notebook_upload" style="width: 400.00px" src="img/cbbb6a55cb5f53ea.png"></p>
+<p>To load the notebooks in Hex, please follow <a href="https://learn.hex.tech/docs/explore-data/projects/import-export" target="_blank">these instructions</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ingesting the Data into Tables" duration="8">
+        <aside class="special"><p>Please make sure you have downloaded the following <a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml" target="_blank">git repo</a>.</p>
+</aside>
+<p>Run through the cells in the <code>1_euro2024_data_ingest.ipynb</code></p>
+<p>In this notebook you will be ingesting the data from the staged files, and creating 3 tables containing the historical games, the historical team ranking, and the fixtures for the upcoming tournament.</p>
+<p>At the end of this step, you should see 3 new tables in the <code>EURO_2024</code> database;</p>
+<ul>
+<li><code>results</code></li>
+<li><code>rankings</code></li>
+<li><code>fixture</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Engineering" duration="15">
+        <aside class="special"><p>Please make sure you have downloaded the following <a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml" target="_blank">git repo</a>.</p>
+</aside>
+<p>Run through the cells in the <code>2_euro2024_data_transformation.ipynb</code></p>
+<p>In this notebook you will be executing various feature engineering steps to build our dataset for training. In summary the steps will be:</p>
+<ul>
+<li>Determining the Rank of each team at the date of the historical match, and then calculating the delta between them.</li>
+<li>Calculating the trail performance of each team, for the prior 10 games (wins, losses and goal difference).</li>
+<li>Pulling in the location to specify whether there is a home advantage (this is determined by the <code>Neutral</code> column).</li>
+<li>Combining all this with the historical match data into a single dataset that can be used for Model Training.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Operations" duration="15">
+        <aside class="special"><p>Please make sure you have downloaded the following <a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml" target="_blank">git repo</a>.</p>
+</aside>
+<p>Run through the cells in the <code>3_euro2024_modelling.ipynb</code></p>
+<p>In this notebook you will be using Snowpark ML and Snowflake Model Registry to perform the following:</p>
+<ol type="1">
+<li>Scale up the warehouse in a single line of code.</li>
+<li>Use Snowpark ML to run Hyperparameter Tuning to determine the best parameter set for the highest accuracy.</li>
+<li>Scale down the warehouse.</li>
+<li>Using the parameter outputs from HP Tuning, train a new Model using Snowpark ML.</li>
+<li>Saving the newly trained Model to the Snowflake Model Registry.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating Stored Procedures and UDTFs" duration="10">
+        <aside class="special"><p>Please make sure you have downloaded the following <a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml" target="_blank">git repo</a>.</p>
+</aside>
+<p>Run through the cells in the <code>4_euro2024_create_sprocs_udtfs.ipynb</code></p>
+<p>In this notebook you will be registering a set of re-usable stored procedures and UDTFs that will be used after each simualation of the tournament:</p>
+<ul>
+<li><code>calc_game_outcome(float, str, float)</code> - a UDTF to combine the 2 predictions into 1 and return number of points.</li>
+<li><code>calc_game_outcome_knockout(float, str, float, float)</code> - a IDTF to combine the 2 predictions into 1 and determine the winner, simulating penalties if needed.</li>
+<li><code>prep_prediction_data(int, int)</code> - a stored procedure that contains all the feature engineering code so we can prep the prediction data.</li>
+<li><code>process_group_predictions()</code> - a stored procedure to process through the end of the group games, and determine the group standings.</li>
+<li><code>calculate_r16_games()</code> - a stored procedure to calculate the new fixtures after the group phase.</li>
+<li><code>process_knockout_predictions()</code> - a stored procedure to process after every knockout round, and determine the results.</li>
+<li><code>calc_knockout_games(str)</code> - a stored procedure to calculate the next set of games.</li>
+</ul>
+<p>At the end of this step, we will have a model, and all the functions and procedures needed to simulate the entire tournament!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Simulating the Euro 2024 Tournament" duration="15">
+        <aside class="special"><p>Please make sure you have downloaded the following <a href="https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml" target="_blank">git repo</a>.</p>
+</aside>
+<p>Run through the cells in the <code>5_euro2024_predictions.ipynb</code></p>
+<p>In the final notebook, you will be stepping through all rounds of the Euro 2024 tournament and using the model you created in step 4 to run predictions for every game.</p>
+<p>At the end of this stage, we will have a predicted winner of the tournament. Great job!</p>
+<p class="image-container"><img alt="england" style="width: 400.00px" src="img/48f7372c166f73d1.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <p>Congratulation! - you&#39;ve completed all the steps to build a full end-to-end model pipeline with Snowpark ML, seen how to persist models into the Snowflake Model Registry, and then used these Models for inference with both Snowpark Python and SQL.</p>
+<h2 is-upgraded>Where to go from here</h2>
+<p>This guide was an introduction into the techniques for feature engineering, model training and inference. If you wanted to extend this you could introduce more features, experiment with different model types, and add some automation into the pipeline using streams and tasks. In theory the concept could be used to predict any sporting event where you can obtain historical data.</p>
+<p>For more information on what we&#39;ve covered today please check out these links:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">Snowpark ML</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry" target="_blank">Snowpark Model Registry</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

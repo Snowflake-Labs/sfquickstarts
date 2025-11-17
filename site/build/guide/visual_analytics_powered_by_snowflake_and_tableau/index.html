@@ -1,0 +1,390 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Visual Analytics Powered by Snowflake and Tableau</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="visual_analytics_powered_by_snowflake_and_tableau"
+                  title="Visual Analytics Powered by Snowflake and Tableau"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Join Snowflake and Tableau for an instructor-led hands-on lab to build governed, visual, and interactive analytics quickly and easily on Food Truck data.</p>
+<p class="image-container"><img alt="img" src="img/f4d544f7efde0ec0.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Loading semi-structured data into Snowflake</li>
+<li>Querying Iceberg data in external DataLakes</li>
+<li>Snowflake Generative AI Functions</li>
+<li>Building Visualization using Tableau on Snowflake data.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Using structured and semi-structured data in Snowflake</li>
+<li>Creating Snowflake managed Iceberg tables to access external datalakes</li>
+<li>Using Snowflake Cortex functions to Translate non-english reviews, and extract Sentiment</li>
+<li>A simple Tableau dashboard, and Pulse metric to visualize Snowflake data.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake, AWS and Tableau</li>
+<li><a href="https://trial.snowflake.com/" target="_blank">Snowflake</a> account or free trial *** choose AWS and Enterprise ***</li>
+<li><a href="https://aws.amazon.com" target="_blank">AWS</a> account or free trial *** choose same region as Snowflake Account ***</li>
+<li><a href="https://www.tableau.com/products/online/request-trial" target="_blank">Tabelau Online</a> account or free trial</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Setup" duration="2">
+        <ol type="1">
+<li>Create a Snowflake enterprise trial account</li>
+<li>Login to your Snowflake account</li>
+</ol>
+<h2 is-upgraded>Snowflake User Interface</h2>
+<p class="image-container"><img alt="Snowflake Login" src="img/625c714ad2628384.png"></p>
+<h2 is-upgraded>Download Scripts and Create Worksheet from SQL</h2>
+<p class="image-container"><img alt="Create Worksheets" src="img/a4eb16a6c3b7608d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Manage Semi-Structured Data" duration="5">
+        <h2 is-upgraded>Run the scripts in a Snowsight or VSCode</h2>
+<h3 is-upgraded>Create Snowflake Database and Warehouse</h3>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/create_db_wh.sql" target="_blank">Click here to download  create_db_wh.sql</a></p>
+<h3 is-upgraded>Grant Privileges on Snowflake Objects</h3>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/grant_perms.sql" target="_blank">Click here to download grantperms.sql</a></p>
+<h3 is-upgraded>Create Snowflake Stages and Native Tables</h3>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/create_objects.sql" target="_blank">Click here to download createobjects.sql</a></p>
+<h3 is-upgraded>Load data into Raw Tables</h3>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/tab_load_raw.sql" target="_blank">Click here to download tabloadraw.sql</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DataLake Integration" duration="15">
+        <h2 is-upgraded>Create the necessary AWS Configuration</h2>
+<h3 is-upgraded>Download the Customer Reviews files to your laptop</h3>
+<p>unzip the file before you load into AWS bucket <a href="assets/2022.zip" target="_blank">click here to download for reviews zipfile</a></p>
+<p><strong>Login to AWS Account, and create a bucket in the same region as your Snowflake account</strong></p>
+<p class="image-container"><img alt="img" src="img/e15c57f97c1f7beb.png"></p>
+<h3 is-upgraded>Upload the folder from your laptop to the S3 bucket.</h3>
+<p class="image-container"><img alt="img" src="img/27a3f8b2c24c502d.png"></p>
+<h3 is-upgraded>Take a note of your AWS Account ID.</h3>
+<p class="image-container"><img alt="img" src="img/a79c94d79612bb6f.png"></p>
+<p><strong>Now, in your Snowflake account let us run scripts to integrate with AWS</strong></p>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/aws_integration.sql" target="_blank">Copy from below or click here to download SQL</a></p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE frostbyte_tasty_bytes;
+USE SCHEMA raw_customer;
+
+CREATE or REPLACE STORAGE INTEGRATION frostbyte_tasty_bytes.raw_customer.int_tastybytes_truckreviews
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = &#39;S3&#39;
+  STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::&lt;your AWS account ID&gt;:role/&lt;give a new name for IAM role&gt;&#39; -- ex: snow_s3_access_role
+  ENABLED = TRUE
+  STORAGE_ALLOWED_LOCATIONS = (&#39;s3://&lt;name of your S3 bucket&gt;&#39;);
+
+
+
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes.raw_customer.ff_csv
+    TYPE = &#39;csv&#39;
+    SKIP_HEADER = 1   
+    FIELD_DELIMITER = &#39;|&#39;;
+
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes.raw_customer.stg_truck_reviews
+    STORAGE_INTEGRATION = int_tastybytes_truckreviews
+    URL = &#39;s3://&lt;name of your S3 bucket&gt;/&#39;
+    FILE_FORMAT = ff_csv;
+
+-- You will need the output of these values in AWS CloudFormation in Next Steps
+DESC INTEGRATION frostbyte_tasty_bytes.raw_customer.int_tastybytes_truckreviews; 
+</code></pre>
+<h3 is-upgraded>You need following values from Storage Integration for next steps</h3>
+<p class="image-container"><img alt="desc_storintegration" src="img/646c4748849fe8b2.png"></p>
+<h2 is-upgraded>Launch the AWS CloudFormation</h2>
+<p><strong>Click the template and login to AWS </strong><a href="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Snowflake-storage-integration&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/CFTs/storageInt.json" target="_blank">CloudFormationTemplate</a></p>
+<p class="image-container"><img alt="cftemplate" src="img/3dc2cd23e591a6e4.png"></p>
+<h3 is-upgraded>Copy the values below</h3>
+<p class="image-container"><img alt="storagedetails" src="img/b82a4f04622d9d61.png"></p>
+<p><strong>Select defaults for remaining screens and submit</strong></p>
+<h3 is-upgraded>Validate AWS access by running below SQL in Snowflake</h3>
+<pre><code language="language-sql" class="language-sql"> --- Test if your AWS Storage is Accessible 
+SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION(&#39;&lt;integration_name&gt;&#39;,    &#39;s3://&lt;bucket&gt;/&#39;,    &#39;validate_all.txt&#39;, &#39;all&#39;); 
+</code></pre>
+<h4 is-upgraded>Output should show success for READ and LIST</h4>
+<p>{ &#34;status&#34; : &#34;success&#34;,&#34;actions&#34; : { &#34;READ&#34; : { &#34;status&#34; : &#34;success&#34; }, &#34;LIST&#34; : { &#34;status&#34; : &#34;success&#34; }} }</p>
+<h2 is-upgraded>Create Snowflake managed Iceberg Tables to access Datalake and query reviews data</h2>
+<p>Download the script or run below sql <a href="https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/query_iceberg.sql" target="_blank">Query Review Data</a></p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+USE DATABASE  frostbyte_tasty_bytes;
+USE SCHEMA raw_customer;
+--- Test if your AWS Storage is Accessible 
+SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION(&#39;&lt;integration_name&gt;&#39;,    &#39;s3://&lt;bucket&gt;/&#39;,    &#39;validate_all.txt&#39;, &#39;all&#39;); 
+
+
+CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
+    STORAGE_LOCATIONS =
+        (
+            (
+                NAME = &#39;reviews-s3-volume&#39;
+                STORAGE_PROVIDER = &#39;S3&#39;
+                STORAGE_BASE_URL = &#39;s3://&lt;bucket_name&gt;&#39; --s3://jnanreviews 
+                STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::&lt;aws-account-id&gt;:role/&lt;snow_role&gt;&#39; --ex:snow_s3_access_role 
+                STORAGE_AWS_EXTERNAL_ID = &#39;external_id&#39; -- enter your external id 
+            )
+            
+        )ALLOW_WRITES=true; 
+
+-- Create Iceberg Tables to track metadata 
+CREATE OR REPLACE ICEBERG TABLE iceberg_truck_reviews
+        (
+        source_name VARCHAR,
+        quarter varchar,
+        order_id BIGINT,
+        truck_id INT,
+        language VARCHAR, 
+        review VARCHAR,
+        primary_city VARCHAR,
+        customer_id varchar,
+        year date,
+        month date,
+        truck_brand VARCHAR,
+        review_date date
+        )
+        CATALOG = &#39;SNOWFLAKE&#39;
+        EXTERNAL_VOLUME = &#39;vol_tastybytes_truckreviews&#39;
+        BASE_LOCATION = &#39;reviews-s3-volume&#39;; 
+
+
+-- Insert  Metadata from External Files 
+INSERT INTO iceberg_truck_reviews
+(
+        source_name,
+        quarter,
+        order_id,
+        truck_id,
+        language, 
+        review,
+        primary_city ,
+        customer_id ,
+        year ,
+        month ,
+        truck_brand ,
+        review_date 
+)
+SELECT 
+       SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 4) as source_name,
+       CONCAT(SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 2),&#39;/&#39; ,SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 3)) as quarter,
+       $1 as order_id,
+       $2 as truck_id,
+       $3 as language,
+       $5 as review,
+       $6 as primary_city, 
+       $7 as customer_id,
+       $8 as year,
+       $9 as month,
+       $10 as truck_brand,
+       DATEADD(day,-UNIFORM(0,180,RANDOM()),CURRENT_DATE()) as review_date
+FROM @stg_truck_reviews 
+(FILE_FORMAT =&gt; &#39;FF_CSV&#39;,
+PATTERN =&gt; &#39;.*reviews.*[.]csv&#39;) 
+;
+
+
+-- Create a view on the Iceberg Reviews, and run Cortex AI to extract Sentiment
+USE SCHEMA analytics;
+
+-- We have non-english reviews from global customers
+SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review, review_date from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language !=&#39;en&#39; order by review_date desc;
+
+-- Snowflake Cortex makes it easy for us to translate and extract sentiment out of unstructured data
+CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_unified_reviews as             
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(review) , review_date  from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language=&#39;en&#39;
+    UNION    
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(snowflake.cortex.translate(review,language,&#39;en&#39;)), review_date  from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews where language !=&#39;en&#39;;
+
+
+select * from frostbyte_tasty_bytes.analytics.product_unified_reviews limit 100;
+
+-- Sentiment Grouped By City and Brand 
+
+CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_sentiment AS 
+SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(review_date)) as avg_review_sentiment 
+FROM frostbyte_tasty_bytes.analytics.product_unified_reviews
+group by primary_city, truck_brand;
+
+
+-- Query the average the query sentiment by city and brand 
+select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Tableau to Snowflake" duration="20">
+        <p>Navigate to https://online.tableau.com/ and login to Tableau Cloud (Online) using your login credentials.</p>
+<p>If using a trial site, make sure you have agent and Pulse enabled - see this video for instructions https://www.youtube.com/watch?v=I9jQt0xM_JY&amp;ab_channel=Tableau</p>
+<p>You will be redirected to the Tableau Cloud (Online) Home page. Within the blue &#34;Welcome to your Tableau site&#34; banner, click into the &#34;New&#34; dropdown and select &#34;Workbook&#34;.</p>
+<p class="image-container"><img alt="A" src="img/273b14bf5b3a32f4.png"></p>
+<p>You will be automatically prompted to connect to a data source. Within the &#34;Connect to Data&#34; popup window, select &#34;Connectors&#34;. Find <em>Snowflake</em> in the grid. Note: you may need to use the horizontal bottom scrollbar at the bottom of the window and scroll to the right of the &#34;Connections&#34; tab.</p>
+<p class="image-container"><img alt="A" src="img/c3dafb802e77a599.png"></p>
+<p>Enter the Server name. Note that you will need to remove the ‘https://&#39; from the name (see screenshot). You can find the server name [insert instructions here] Change the authentication method to username/password, enter your credentials &amp; then click the blue &#34;Sign in&#34; button.</p>
+<p class="image-container"><img alt="A" src="img/24088ad013666afb.png"></p>
+<p>Within the connections pane, make the following selections:</p>
+<ul>
+<li>Warehouse: your warehouse</li>
+<li>Database: FROSTBYTE_TASTY_BYTES</li>
+<li>Schema: ANALYTICS</li>
+</ul>
+<p>A list of tables will appear:</p>
+<p class="image-container"><img alt="A" src="img/2b4b65be6eb8c48b.png"></p>
+<p>Click and drag the ‘ORDERS_V&#39; table where it says &#34;Drag tables here&#34;.</p>
+<p>Next, click and drag the ‘PRODUCT_FINAL REVIEWS&#39; to the Canvas. This will create a relationship. In Tableau, a relationship is a flexible way to do multi-table analysis without creating one large flat table. Make sure that the fields are mapped correctly by matching ‘Primary City&#39;, ‘Truck ID&#39;, and ‘Order ID&#39;.</p>
+<p class="image-container"><img alt="A" src="img/3ee580ec599e13bf.png"></p>
+<p>Drag Customer Loyalty Metrics out to the canvas, and map Orders and Customer Loyalty Metrics table by joining on ‘Customer ID&#39;.</p>
+<p class="image-container"><img alt="Joins" src="img/6146ffd5c5684b1c.png"></p>
+<p>Let&#39;s publish this data source and call it ‘Frostbyte&#39;. Embed the credentials for now.</p>
+<p class="image-container"><img alt="list_ds" src="img/84da16d70d1c27f8.png"></p>
+<p>Click Publish.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize Data" duration="0">
+        <p>Now we are ready to visualize our data! Click ‘Go to Frostbye&#39;. From the published data source, click ‘New&#39; and select ‘New Workbook&#39;. In the bottom left of the screen, click &#34;Sheet 1&#34;.</p>
+<p class="image-container"><img alt="publish" src="img/3b8b3483324bac32.png"></p>
+<p class="image-container"><img alt="workbook" src="img/5a0593cb0df75228.png"><br></p>
+<p>We&#39;ll start by getting a quick sense of how each Truck Brand is doing in terms of reviews. Start a Tableau Agent session by clicking the astro logo in the top right corner. Click ‘Got it&#39; to initiate the session. Then, click ‘Suggestions&#39;.</p>
+<p class="image-container"><img alt="agent" src="img/be4f17d77201d83c.png"></p>
+<p class="image-container"><img alt="suggest" src="img/d6f72adb200a00ca.png"></p>
+<p> Click on any suggestion. It may take time for Tableau Agent to index your data. See how it will build the visualization for you, and also give you feedback in the agent chat itself.  <br></p>
+<p class="image-container"><img alt="Options" src="img/1580afca4bf4bf8f.png"></p>
+<p>Next, type in ‘Compare average reviews by truck brand&#39; and hit enter. See how the visualization is created.</p>
+<p class="image-container"><img alt="Wiz" src="img/70fe63ce227774b1.png"></p>
+<p>Now Tableau Agent is iterative, so lets add complexity to the viz by dragging and dropping. we don&#39;t have to just use the chat to build this. Drag ‘Primary City&#39; from the sentiment table to the rows shelf, to the left of ‘Truck Brand Name&#39;.</p>
+<p class="image-container"><img alt="Tableau_Dash" src="img/5d2a66bc530d4e7f.png"></p>
+<p>Now we can see the breakdown of sentiment for each truck in each city- and look, there is some average negative sentiment! Let&#39;s focus on only those trucks. Next, let&#39;s use an agent to filter the data. Type in ‘filter to only trucks with negative average reviews for each city&#39; and hit enter.</p>
+<p class="image-container"><img alt="Tableau_Agent" src="img/24a528ac8040061f.png"></p>
+<p>Wow, this might be something to take note of. We should help those truck owners out and figure out how we can increase our service or quality, since it seems customers are disappointed and have bad associations with those trucks in those cities.</p>
+<p class="image-container"><img alt="completed_wkbk" src="img/296360c872e458e0.png"></p>
+<p>Finally, we&#39;ll want to see if it&#39;s a busy truck, and how many orders are coming through those trucks, to figure out where to focus first. I&#39;ll drag out ‘Count Orders_V&#39; onto the Color tab in the details pane.</p>
+<p class="image-container"><img alt="Publish_wkbk" src="img/2f21bf103a84ef22.png"></p>
+<p>Looks like we should focus on trucks in Mumbai first, as they are getting the most orders, and have negative reviews.</p>
+<p>Save the workbook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Publish" duration="0">
+        <p class="image-container"><img alt="Publish_final_reviews" src="img/cf2b72748e69e82b.png"></p>
+<p>Lets see if we can track that over time and get alerts on any dropping review sentiment using Tableau Pulse. Save this <img alt="Close" src="img/591722cb26fd00d6.png"></p>
+<p> Next, navigate to Tableau Pulse. Click ‘New Metric Definition&#39;. </p>
+<p class="image-container"><img alt="Pulse" src="img/addd59cdbff93b46.png"></p>
+<p class="image-container"><img alt="pulse_metric" src="img/c2558414fca457c6.png"></p>
+<p>Select the data source you just published named ‘Frostbyte&#39;.</p>
+<p><img alt="create_def" src="img/763ea79aa3af478c.png"> Name your pulse metric ‘Average Review Sentiment&#39; and fill out the values in the screenshot. We want to track average final review sentiment over the date. Select ‘Review Sentiment&#39;, ‘Average aggregation, and ‘Review Date&#39; as the time dimension.</p>
+<p class="image-container"><img alt="save_metric" src="img/1880eb8131b3c137.png"></p>
+<p>Add filters such as ‘Truck Brand Name&#39; and ‘Primary City&#39;.</p>
+<p class="image-container"><img alt="filter" src="img/bc2575e069a912c2.png"></p>
+<p class="image-container"><img alt="Save_Insight" src="img/a03c6d02a8c97bd0.png"></p>
+<p>Click Next, Next, until you get to the Records and Transitions page. Since we don&#39;t have unique identifiers for the reviews, we will turn this setting off.</p>
+<p class="image-container"><img alt="sent_metric" src="img/37b6f529cb35df76.png"></p>
+<p>Your Metric should look something like this. Click save, and your published metric should load automatically. <img alt="present_metric" src="img/f183a5990869aca4.png"></p>
+<p>New: Set a goal to 0.25, or a value between 0 and 1, to get notified every time average sentiment across all trucks goes below that number.</p>
+<p class="image-container"><img alt="Goal" src="img/a5a77f3eec8ec6da.png"></p>
+<p>Click Save.</p>
+<p>Congratulations! You have successfully completed the Tableau portion.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="0">
+        <p><a href="https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/tb_reset_vhol.sql" target="_blank">Download tb_reset_vhol.sql </a> or run below sql</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(NUMBER(35,4));
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.inch_to_millimeter(NUMBER(35,4));
+
+--USE ROLE sysdmin;
+DROP DATABASE IF EXISTS frostbyte_tasty_bytes;   
+DROP DATABASE IF EXISTS frostbyte_weathersource;
+DROP WAREHOUSE IF EXISTS demo_build_wh; 
+DROP WAREHOUSE IF EXISTS tasty_de_wh;
+DROP WAREHOUSE IF EXISTS tasty_bi_wh;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations! you have successfully completed the lab.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>In this lab we loaded semi-structured data from TastyBytes food truck, read externaldatalake using Iceberg tables.</li>
+<li>Leverage Snowflake Cortex to translate and extract sentiment scores.</li>
+<li>Use Tableau Pulse metrics to track against CSAT goals.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p><a href="https://docs.snowflake.com/en/user-guide/semistructured-concepts.html" target="_blank">Semi-structured Data</a></p>
+<p><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" target="_blank">Iceberg Tables</a></p>
+<p><a href="https://other-docs.snowflake.com/en/data-marketplace.html" target="_blank">Snowflake Marketplace</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

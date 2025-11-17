@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "snowflake-northstar-data-engineering",
+  "duration": 57,
+  "title": "Getting Started – Data Engineering with Snowflake",
+  "summary": "Build an end-to-end data pipeline in Snowflake using the I-T-D framework.",
+  "source": "snowflake-data-engineering-northstar/snowflake-data-engineering-northstar.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowflake-northstar-data-engineering"
+}

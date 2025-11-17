@@ -1,0 +1,216 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Running Distributed PyTorch Models on Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-running-distributed-pytorch-models-on-snowflake"
+                  title="Getting Started with Running Distributed PyTorch Models on Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p class="image-container"><img src="img/97f4b82b030faa33.png"></p>
+<p>This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using <a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a>. This involves:</p>
+<ul>
+<li>Extracting features from customer, menu, and purchase history.</li>
+<li>Preprocessing data.</li>
+<li>Training a PyTorch DLRM model with distributed processing on GPUs.</li>
+<li>Registering the model and serving it for inference with GPUs in containers.</li>
+<li>Running predictions and visualizing recommendations on Streamlit.</li>
+<li>Displaying personalized menu item recommendations along with purchase history in a Streamlit app.</li>
+</ul>
+<p>In addition, this end-to-end ML solution using <a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a> aims to address the common challenges in building ML workflows, such as:</p>
+<p><strong>Eliminating Silos and Governance Challenges:</strong> Ensuring a seamless and integrated environment for ML development, from data processing to model serving, to tackle the issue of isolated workflows and governance difficulties.</p>
+<p><strong>Simplifying Infrastructure Management:</strong> Providing a no-configuration, no-data-movement, and no-infrastructure-management setup, allowing users to focus purely on ML development and deployment.</p>
+<p><strong>Enhancing Consistency and Efficiency:</strong> Unifying feature engineering for both training and serving within Snowflake ML to ensure consistency and efficiency throughout the ML lifecycle.</p>
+<p><strong>Scalable Model Training:</strong> Leveraging GPU-based processing for scalable and efficient model training.</p>
+<p><strong>Integrated Development and Production Environments:</strong> Offering a single platform for data processing, feature engineering, training, and serving, which facilitates comprehensive tracking and lineage of ML artifacts from start to finish.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>A Snowflake Account. Sign up for a <a href="https://signup.snowflake.com/" target="_blank">30-day free trial</a> account, if required.</li>
+<li>(Optional) Completed <a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0" target="_blank">Getting Started with Snowflake Notebook Container Runtime</a></li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to extract features from customer, menu, and purchase history.</li>
+<li>How to preprocess data using the Snowflake ML APIs.</li>
+<li>How to train a PyTorch DLRM model with distributed processing on GPUs.</li>
+<li>How to register the model and deploy it to Snowflake&#39;s Container Runtime (public preview).</li>
+<li>How to run predictions and visualize recommendations on Streamlit.</li>
+<li>How to display personalized menu item recommendations along with purchase history in a Streamlit app.</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account with Accountadmin access</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>From Snowflake Notebooks on Container Runtime (public preview), you will complete the following in this quickstart:</p>
+<ul>
+<li>A feature extraction pipeline from customer, menu, and purchase history.</li>
+<li>A preprocessing pipeline.</li>
+<li>A trained PyTorch DLRM model with distributed processing on GPUs.</li>
+<li>A model served for inference in containers.</li>
+</ul>
+<p>Afterward, we will also show you how to build a Streamlit app for running predictions and visualizing recommendations.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <p>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</p>
+<p>Run the SQL from the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/scripts/setup.sql" target="_blank">file</a> in the worksheet to create Snowflake objects (database, schema, tables),</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture" duration="3">
+        <p>The architecture of the Tasty Bytes ML solution is designed to generate personalized upsell and cross-sell recommendations. Here&#39;s a detailed walkthrough of how we use components of Snowflake ML to complete this workflow:</p>
+<p class="image-container"><img src="img/fdd108e65197620d.png"></p>
+<p><strong>Extracting Features:</strong> This begins with the ingestion of data into Snowflake. Data sources include customer profiles, menu details, and purchase histories. Snowflake Notebooks can be leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. The team automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps.</p>
+<p><strong>Preprocessing Data:</strong> Next, the extracted data is preprocessed to make it suitable for machine learning. The Snowflake ML APIs are utilized for this purpose. Using Snowflake ML, the team writes data transformation and feature engineering code in Python. Snowflake&#39;s parallel processing capabilities handle large-scale data efficiently, enabling quick and seamless preprocessing. Additionally, the Snowflake Feature Store is used to create and manage reusable features, simplifying the computation of complex aggregations and moving window calculations with simple Python commands. This ensures consistency and efficiency in feature engineering.</p>
+<p><strong>Training a PyTorch DLRM Model with Distributed Processing on GPUs:</strong> With preprocessed data ready, the model training phase begins. We are using PyTorch Deep Learning Recommendation Model (DLRM), which is well-suited for generating personalized recommendations. Using the Snowflake ML APIs, feature transformations are performed and the data is prepared for training. The actual training occurs in the Container Runtime, which includes prepackaged environments with popular Python packages and deep learning frameworks like PyTorch. This environment supports GPU nodes, enabling distributed training that scales efficiently without the need for heavy infrastructure management.</p>
+<p><strong>Registering the Model and Serving It in Containers with GPUs:</strong> After the model is trained, it is registered and deployed. The Snowflake Model Registry serves as the central hub for managing the model&#39;s lifecycle, tracking versions, and maintaining metadata. The trained DLRM model is registered here, making it ready for deployment. Deployment is fully managed by Snowflake , ensuring consistency between development and production. This environment maintains the same packages and configurations, allowing the model to be deployed seamlessly on Snowflake warehouses or Snowpark Container Services for access to GPUs.</p>
+<p><strong>Running Predictions and Visualizing Recommendations on Streamlit:</strong> With the model deployed, predictions are generated. The deployed model processes incoming data to produce personalized upsell and cross-sell recommendations. To make these insights accessible, we are leveraging Streamlit to build interactive dashboards. Streamlit provides a user-friendly interface where business users can explore the model&#39;s predictions and visualizations. This interactive platform makes it easy to understand and act upon the insights generated by the model.</p>
+<p><strong>Displaying Personalized Menu Item Recommendations Along with Purchase History in a Streamlit App:</strong> The predictions generated by the model, which include personalized upsell and cross-sell recommendations, are displayed in the Streamlit app. This app shows the recommendations alongside relevant customer purchase history, providing a comprehensive view of the insights generated by the model.</p>
+<p>This architecture integrates various Snowflake features to create a robust end-to-end ML solution. From data ingestion and preprocessing to model training, deployment, and visualization, each component plays a crucial role in ensuring the efficiency, scalability, and consistency of the ML workflow. By leveraging Snowflake ML, the Tasty Bytes team successfully addresses common challenges in ML workflows, empowering their business with actionable insights to drive sales growth.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Notebook" duration="5">
+        <p>This notebook demonstrates how to create and manage feature views within a feature store. By facilitating collaboration across teams, it enables seamless reuse of features while bridging the gap between training and serving environments. In this example, we train and deploy a deep learning model to generate personalized recommendations for loyalty customers, aiming to drive engagement and improve performance for underperforming food trucks at Tasty Bytes.</p>
+<ul>
+<li>Navigate to Snowsight and change role to <strong>TASTYBYTESENDTOENDML_DATA_SCIENTIST</strong></li>
+<li>Select the Notebooks tab.</li>
+<li>Import the following Snowflake Notebook in Snowsight: <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/notebooks/0_start_here.ipynb" target="_blank">0_start_here.ipynb</a></li>
+</ul>
+<p class="image-container"><img src="img/6c1dd82171f0970c.png"></p>
+<ul>
+<li>Create notebook with the settings in the screenshot.</li>
+</ul>
+<p class="image-container"><img src="img/d4c47175b78c3922.png"></p>
+<ul>
+<li>Once created, Click on Notebook Settings in the top right corner inside Snowflake Notebooks</li>
+</ul>
+<p class="image-container"><img src="img/2f4f9c98880dde40.png"></p>
+<ul>
+<li>Enable <strong>TASTYBYTESENDTOENDML_ALLOW_ALL_ACCESS_INTEGRATION</strong> as per screenshot</li>
+</ul>
+<p class="image-container"><img src="img/4b4320d6d0bd4f0e.png"></p>
+<ul>
+<li>Click each cell or Run all to run the Notebook</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit Application" duration="3">
+        <p>The Streamlit app showcases the deep learning model&#39;s predictions, featuring personalized upsell and cross-sell recommendations alongside relevant customer purchase history. This comprehensive view helps users easily understand and leverage the insights generated by the model. The app provides recommendations by gathering data, processing features, and utilizing a model registry for deployed deep learning model inference to deliver menu item suggestions. Various filter options are available to tailor the recommendations based on specific use cases. Users also have the option to save these results for campaigns and marketing efforts.</p>
+<h2 is-upgraded>Run Streamlit Application</h2>
+<p>To set up the Streamlit in Snowflake Application,</p>
+<ol type="1">
+<li>Navigate to Snowsight.</li>
+<li>Select the Streamlit tab.</li>
+<li>Click on <strong>+ Streamlit App</strong> to create streamlit App. Use the configuration from below screenshot to create the Application.</li>
+<li>Once the App is created, replace the example code with the streamlit code in the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/streamlit/Menu_Item_Recommendations_App.py" target="_blank">file</a></li>
+<li>Add <strong>snowflake-ml-python</strong> and <strong>pytorch</strong> packages to the app and Run the Application.</li>
+</ol>
+<p class="image-container"><img src="img/683c30ea31231e88.png"></p>
+<h2 is-upgraded>Application Flow</h2>
+<p>This application generates menu item recommendations based on the filters selected in the user interface. For example, you can filter by country (e.g., Spain) and city (e.g., Barcelona). Additional filters such as <strong>trucks not visited</strong> and <strong>menu items not ordered</strong> can be applied to refine the recommendations for upselling and cross-selling opportunities.</p>
+<p>When you click the <strong>Get Recommendations</strong> button, the application filters the data based on your selections, processes the features for the model, and runs the deep learning model inference to generate menu item recommendations along with purchase history for better context. You also have the option to save these results for use in campaigns and marketing efforts. By clicking the <strong>Save</strong> button, the results are saved to the Stage.</p>
+<p class="image-container"><img src="img/106ef4c4c382cb2a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to extract features from customer, menu, and purchase history.</li>
+<li>How to preprocess data.</li>
+<li>How to train a PyTorch DLRM model with distributed processing on GPUs.</li>
+<li>How to register the model and deploy it to a container runtime environment.</li>
+<li>How to run predictions and visualize recommendations on Streamlit.</li>
+<li>How to display personalized menu item recommendations along with purchase history in a Streamlit app.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://www.youtube.com/watch?v=9uqcNBIY14g" target="_blank">Demo Video on Youtube</a></li>
+<li><a href="https://medium.com/snowflake/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution-452d16a39553" target="_blank">Blog</a></li>
+<li><a href="https://developers.snowflake.com/solution/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution/" target="_blank">Solution Center</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks: Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Feature Store: Documentation</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview?utm_cta=snowpark-dg-hero-card" target="_blank">Model Registry: Documentation</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+</ul>
+<h2 is-upgraded>Related Quickstarts</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/#0" target="_blank">Getting Started with Snowflake Notebooks on Container Runtime</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0" target="_blank">Train an XGBoost Model with GPUs using Snowflake Notebooks</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/#0" target="_blank">Defect Detection Using Distributed PyTorch With Snowflake Notebooks</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/#0" target="_blank">Scale Embeddings with Snowflake Notebooks on Container Runtime</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0" target="_blank">Getting Started with Snowflake MLeg</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

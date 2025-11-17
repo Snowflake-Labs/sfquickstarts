@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "marketing_data_foundation_starter_v3",
+  "duration": 28,
+  "title": "Marketing Data Foundation Starter Guide V3",
+  "summary": "Marketing Data Foundation Starter Guide V3",
+  "source": "marketing_data_foundation_starter_v3/marketing_data_foundation_starter_v3.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "marketing"
+  ],
+  "tags": [
+    "dataengineering",
+    "marketing",
+    "nativeapplication",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "marketing_data_foundation_starter_v3"
+}

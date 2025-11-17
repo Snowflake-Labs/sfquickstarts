@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "snowpark_python_top_tips_for_optimal_performance",
+  "duration": 70,
+  "title": "Snowpark Python: Top Tips for Optimal Performance",
+  "summary": "Snowpark Python: Key Tips for Optimal Performance",
+  "source": "snowpark_python_top_tips_for_optimal_performance/snowpark_python_top_tips_for_optimal_performance.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "bestpractices",
+    "dataengineering",
+    "gettingstarted",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowpark_python_top_tips_for_optimal_performance"
+}

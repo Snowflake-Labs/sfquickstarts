@@ -1,0 +1,317 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Streaming Data Pipeine in Python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_a_streaming_data_pipeline_in_python"
+                  title="Build a Streaming Data Pipeine in Python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Snowflake is a powerful platform to process streaming data and do near real-time reporting.</p>
+<p>In this guide, we will use the Snowflake Streaming v2 (SSv2) REST API to ingest data into Snowflake tables seconds from generation. The dataset is a randomly generated dataset one would find from ski resorts. It generates Resort Tickets, Lift Rides, and Season Passes in Python and enqueues the data in a SQLite database. The streamer component reads data from the database and sends it to Snowflake and cleans up the database from data sent.</p>
+<p>To have fast and efficient near real-time reporting, we will use Dynamic Tables to materialize reports which are then queried from a Streamlit application deployed in the account.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a service user, database, and warehouse in Snowflake</li>
+<li>Access to run SQL in the Snowflake console or SnowSQL</li>
+<li>Basic experience using git, GitHub, and Codespaces</li>
+<li>Intermediate knowledge of Python and SQL</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to send data from Python to Snowflake Streaming v2 REST API</li>
+<li>How to prepare data for reporting using Dynamic Tables</li>
+<li>How to create a basic Streamlit application for reporting</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://snowflake.com" target="_blank">Snowflake</a> Account in an AWS commercial region</li>
+<li><a href="https://github.com/" target="_blank">GitHub</a> Account with credits for Codespaces</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Streaming pipeline to do near real-time reporting</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Launch the Codespace in GitHub" duration="0">
+        <p>Navigate to the <a href="https://github.com/sfc-gh-bculberson/Summit2025-DE214" target="_blank">code repository</a> in GitHub.</p>
+<p>Click on the green Code Button, go to the Codespaces tab, and click the green Create codespace on main. You must be logged into GitHub to see the Codespaces tab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Service User &amp; Role" duration="4">
+        <p>To send data to Snowflake, the client must have a Service User&#39;s credentials. We will use key-pair authentication in this guide to authenticate to Snowflake and create a custom role with minimal privileges.</p>
+<p>To generate the keypair run the following commands in the terminal in the codespace.</p>
+<pre><code language="language-bash" class="language-bash">openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+</code></pre>
+<p>COPY the contents of the public key in rsa_key.pub from codespaces to the clipboard.</p>
+<p>Login to Snowsight or use SnowSQL to execute the following commands replacing <code>===YOUR_PUBLIC_KEY_HERE===</code> with the key copied previously:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE WAREHOUSE IF NOT EXISTS STREAMING_INGEST;
+CREATE ROLE IF NOT EXISTS STREAMING_INGEST;
+CREATE USER STREAMING_INGEST LOGIN_NAME=&#39;STREAMING_INGEST&#39; DEFAULT_WAREHOUSE=&#39;STREAMING_INGEST&#39;, DEFAULT_NAMESPACE=&#39;STREAMING_INGEST.STREAMING_INGEST&#39;, DEFAULT_ROLE=&#39;STREAMING_INGEST&#39;, TYPE=SERVICE, RSA_PUBLIC_KEY=&#39;===YOUR_PUBLIC_KEY_HERE===&#39;;
+GRANT ROLE STREAMING_INGEST TO USER STREAMING_INGEST;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE STREAMING_INGEST TO USER IDENTIFIER($USERNAME);
+
+GRANT USAGE ON WAREHOUSE STREAMING_INGEST TO ROLE STREAMING_INGEST;
+GRANT OPERATE ON WAREHOUSE STREAMING_INGEST TO ROLE STREAMING_INGEST;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Database and Schema for data" duration="2">
+        <p>This step will create the database and the schema where all the data is landed. This database will also store the notebook which sets up the data pipeline, the streamlit which displays the reports, and all tasks and dynamic tables created for this guide.</p>
+<p>Login to Snowsight or use SnowSQL to execute the following commands:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE IF NOT EXISTS STREAMING_INGEST;
+USE DATABASE STREAMING_INGEST;
+ALTER DATABASE STREAMING_INGEST SET USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS=10;
+CREATE SCHEMA IF NOT EXISTS STREAMING_INGEST;
+USE SCHEMA STREAMING_INGEST;
+GRANT OWNERSHIP ON DATABASE STREAMING_INGEST TO ROLE STREAMING_INGEST;
+GRANT OWNERSHIP ON SCHEMA STREAMING_INGEST.STREAMING_INGEST TO ROLE STREAMING_INGEST;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE STREAMING_INGEST;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Tables and Pipes needed for data" duration="2">
+        <p>This step creates the pipes which are needed to accept data from the clients and the tables which store the data from the pipes.</p>
+<p>Login to Snowsight or use SnowSQL to execute the following commands:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE STREAMING_INGEST;
+USE DATABASE STREAMING_INGEST;
+USE SCHEMA STREAMING_INGEST;
+
+CREATE OR REPLACE TABLE RESORT_TICKET(TXID varchar(255), RFID varchar(255), RESORT varchar(255), PURCHASE_TIME datetime, PRICE_USD DECIMAL(7,2), EXPIRATION_TIME date, DAYS number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
+
+CREATE OR REPLACE PIPE RESORT_TICKET_PIPE AS
+COPY INTO RESORT_TICKET
+FROM TABLE (
+      DATA_SOURCE (
+      TYPE =&gt; &#39;STREAMING&#39;
+  )
+)
+MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
+
+CREATE OR REPLACE TABLE SEASON_PASS(TXID varchar(255), RFID varchar(255), PURCHASE_TIME datetime, PRICE_USD DECIMAL(7,2), EXPIRATION_TIME date, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
+
+CREATE OR REPLACE PIPE SEASON_PASS_PIPE AS
+COPY INTO SEASON_PASS
+FROM TABLE (
+      DATA_SOURCE (
+      TYPE =&gt; &#39;STREAMING&#39;
+  )
+)
+MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
+
+CREATE OR REPLACE TABLE LIFT_RIDE(TXID varchar(255), RFID varchar(255), RESORT varchar(255), LIFT varchar(255), RIDE_TIME datetime, ACTIVATION_DAY_COUNT integer);
+
+CREATE OR REPLACE PIPE LIFT_RIDE_PIPE AS
+COPY INTO LIFT_RIDE
+FROM TABLE (
+      DATA_SOURCE (
+      TYPE =&gt; &#39;STREAMING&#39;
+  )
+)
+MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write Streaming Application" duration="0">
+        <p>To authenticate to Snowflake, you will need to setup the environment with credentials to your account.</p>
+<p>This will all be done in the codespace created previously.</p>
+<p>Make a copy of the env file to edit by running this command in the codespace terminal.</p>
+<pre><code language="language-bash" class="language-bash">cp .env.example .env
+</code></pre>
+<p>Edit the account name in the .env file (SNOWFLAKE_ACCOUNT) to match your Snowflake account name.</p>
+<p>If you do not know your account name, you can run this sql in Snowsight or via snowsql.</p>
+<pre><code language="language-sql" class="language-sql">select current_account();
+</code></pre>
+<p>Paste in your private key from the rsa_key.p8 file into the .env file (PRIVATE_KEY).</p>
+<p>Set the appropriate value for the host where your Snowflake endpoint resides (SNOWFLAKE_HOST). You can get the Account/Server URL from the Account Details in Snowsight.</p>
+<h2 is-upgraded>Stream the Data to Snowflake</h2>
+<p>This repository will generate sample data and supplies the framework and dependencies needed for you to stream data to Snowflake. You need to write the code to stream data to Snowflake.</p>
+<p>You will write the main body of the function stream_data in streamer.py. The pipe_name and 2 data access functions are passed to this function. All configuration parameters needed are in the streamer.py under <code># parameters</code>.</p>
+<p>fn_get_data takes 2 parameters, the first parameter is the offset to read data from ex: (SELECT * where &gt; offset) and the second parameter is the maximum number of records to read. It will return a list of json strings which can be sent to Snowflake.</p>
+<p>Example usage:</p>
+<pre><code language="language-python" class="language-python">rows = fn_get_data(latest_committed_offset_token, BATCH_SIZE)
+</code></pre>
+<p>fn_delete_data takes 1 parameter: the offset to delete data up to and including ex: (DELETE * where offset &lt;= offset).</p>
+<pre><code language="language-python" class="language-python">fn_delete_data(current_committed_offset_token)
+</code></pre>
+<p>The first thing the stream_data fn should do is to create a SnowflakeStreamingIngestClient. This client will allow you to operate on Channels which are needed to send data to Snowflake.</p>
+<p>To create a SnowflakeStreamingIngestClient, you will need to pass it the channel name and kwargs: account, user, database, schema, private_key, ROWSET_DEV_VM_TEST_MODE.</p>
+<pre><code language="language-python" class="language-python">client = SnowflakeStreamingIngestClient(client_name, account=account_name, host=host_name, user=user_name, database=database_name, schema=schema_name, private_key=private_key, ROWSET_DEV_VM_TEST_MODE=&#34;false&#34;)
+</code></pre>
+<p>This client can be used to open a channel you will need to send data. client.open_channel function takes the channel_name, database_name, schema_name, and the pipe_name as arguments.</p>
+<pre><code language="language-python" class="language-python">channel = client.open_channel(channel_name, database_name, schema_name, pipe_name)
+</code></pre>
+<p>To know where this process left off on last run (or if this is the first run) you can pull the current committed offset. This is available by calling channel.get_latest_committed_offset_token()</p>
+<pre><code language="language-python" class="language-python">latest_committed_offset_token = channel.get_latest_committed_offset_token()
+</code></pre>
+<p>If this returns None, there has been no data sent to Snowflake, otherwise it will be the latest offset sent.</p>
+<p>The channel should be long lived, so there should be an event loop grabbing data. Data can be pulled using fn_get_data from the that offset, or 0 if this is the first data.</p>
+<p>Data is returned from the fn_get_data in a list of json strings, but the insert_rows function expects line delimited json. This can easily be converted using join and a list comprehension. You wll also need to get the last offset in the rows you are sending to set the correct offset token.</p>
+<pre><code language="language-python" class="language-python">nl_json = &#34;\n&#34;.join([row[1] for row in rows])
+latest_committed_offset_token = rows[-1][0]
+channel.insert_rows(nl_json, offset_token=latest_committed_offset_token)
+</code></pre>
+<p>In order to cleanup you will also want to occasionally delete the local data from the committed offset (retrieved from Snowflake). You can use the fn_delete_data function to do so. This should also be done in the event loop.</p>
+<h2 is-upgraded>Test the Streaming Application</h2>
+<p>In the codespace, build and start the docker container.</p>
+<pre><code language="language-bash" class="language-bash">docker compose build
+docker compose up
+</code></pre>
+<h2 is-upgraded>Verify Data is Streaming</h2>
+<p>Run the following sql to verify data is arriving in your account.</p>
+<p>Verify Season Passes are being streamed:</p>
+<pre><code language="language-sql" class="language-sql">select * from SEASON_PASS limit 10;
+</code></pre>
+<p>Verify Resort Tickets are being streamed:</p>
+<pre><code language="language-sql" class="language-sql">select * from RESORT_TICKET limit 10;
+</code></pre>
+<p>Verify Lift Rides are being streamed:</p>
+<pre><code language="language-sql" class="language-sql">select * from LIFT_RIDE limit 10;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import the Notebook" duration="0">
+        <p>We have created a notebook you can use to get started building the streaming data pipeline.</p>
+<p><a href="https://github.com/sfc-gh-bculberson/Summit2025-DE214/raw/refs/heads/main/transformation_notebook.ipynb" target="_blank">Download</a> the Notebook from Github.</p>
+<p>Login to Snowsight, click on the bottom left to get the Navigation Menu and Switch Role to STREAMING_INGEST.</p>
+<p class="image-container"><img alt="Switch Role" src="img/6410addeb446c32f.png"></p>
+<p>Click on the +, Notebook, and Import .ipynb File.</p>
+<p class="image-container"><img alt="Import .ipynb" src="img/db0e03310c8fd758.png"></p>
+<p>Name the notebook transformation_notebook, select the db STREAMING_INGEST and the schema STREAMING_INGEST.</p>
+<p>Select Run on warehouse and use the query warehouse STREAMING_INGEST and notebook warehouse STREAMING_INGEST.</p>
+<p>This will run everything on one warehouse to keep it as efficient as possible.</p>
+<p>Click Create.</p>
+<p class="image-container"><img alt="Create Notebook" src="img/e6295ebb89be24ec.png"></p>
+<p>Add the Snowflake.Core package which is required by this notebook.</p>
+<p class="image-container"><img alt="Create Notebook" src="img/d6b09a7c826d2392.png"></p>
+<p>Follow the Notebook cells to build the data pipeline objects.</p>
+<p>After complete, you will have a data pipeline built on the streaming data using: views, dynamic tables, and triggered tasks.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Streamlit Application" duration="0">
+        <p>A Streamlit Application will be created to demonstrate how the data prepared previously could be leveraged in an analytic dashboard inside your organization.</p>
+<p>To create a new Streamlit Application Click on +, Streamlit App, and New Streamlit App.</p>
+<p class="image-container"><img alt="Create Streamlit 1" src="img/f2adb5614fcb482a.png"></p>
+<p>Choose the App title STREAMING_INGEST, App location in STREAMING_INGEST database and STREAMING_INGEST schema, and run on the warehouse STREAMING_INGEST.</p>
+<p class="image-container"><img alt="Create Streamlit 2" src="img/41caf38cd0f568e3.png"></p>
+<p>Add the Package plotly and pandas.</p>
+<p class="image-container"><img alt="Import Plotly" src="img/b6fb6c5df2b6bb01.png"></p>
+<p class="image-container"><img alt="Import Pandas" src="img/72a84c59a9894f6.png"></p>
+<p>Overwrite all the contents of the streamlit_app.py file in the editor with the <a href="https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py" target="_blank">application code</a> available in the Github repository.</p>
+<p>Run the Streamlit to see the visualizations from the data pipeline built in this guide.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="2">
+        <p>To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as <code>ACCOUNTADMIN</code> run:</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE STREAMING_INGEST;
+DROP DATABASE IF EXISTS STREAMING_INGEST;
+
+USE ROLE ACCOUNTADMIN;
+DROP WAREHOUSE IF EXISTS STREAMING_INGEST;
+DROP USER IF EXISTS STREAMING_INGEST;
+DROP ROLE IF EXISTS STREAMING_INGEST;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <h2 is-upgraded>What we covered</h2>
+<ul>
+<li>Creating a table and pipe to receive streaming data</li>
+<li>Sending data to the Snowpipe Streaming API from Python</li>
+<li>Using a Notebook to create a near real-time Data Pipeline leveraging Dynamic Tables</li>
+<li>Querying the streaming data from a Notebook and Streamlit</li>
+</ul>
+<h2 is-upgraded>Next steps</h2>
+<p>Snowflake documentation and quickstarts will provide more information you will need to build a robust streaming data pipeline. Review these resources to learn more.</p>
+<ul>
+<li><a href="https://docs.snowflake.com/LIMITEDACCESS/snowpipe-streaming-rowset-api/rowset-api-intro" target="_blank">Review Rowset API Introduction</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-intro" target="_blank">Dynamic Tables Introduction</a></li>
+<li>Quickstart on <a href="https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html" target="_blank">Dynamic Tables</a></li>
+<li>Quickstart on <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_python_streamlit/index.html" target="_blank">Streamlit</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

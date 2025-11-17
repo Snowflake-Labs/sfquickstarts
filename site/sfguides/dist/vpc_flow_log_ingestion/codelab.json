@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "vpc_flow_log_ingestion",
+  "duration": 30,
+  "title": "AWS VPC Flow Logs Ingestion",
+  "summary": "This tutorial is a guide for ingestion AWS VPC Flowlogs into Snowflake. It demonstrates configuration of VPC flowlogs on AWS, ingestion using an external stage with Snowpipe and sample queries for CSPM and threat detection.",
+  "source": "vpc_flow_log_ingestion/vpc_flow_log_ingestion.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cybersecurity",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "cspm",
+    "cybersecurity",
+    "siem",
+    "vpcflowlogs",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "vpc_flow_log_ingestion"
+}

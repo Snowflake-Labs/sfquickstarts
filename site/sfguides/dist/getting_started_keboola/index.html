@@ -1,0 +1,354 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Keboola</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_keboola"
+                  title="Getting Started with Keboola"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfquickstarts/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Modern Data Stack requires setup and maintenance and Snowflake goes a long way to lowering the bar.</p>
+<p>Our Powered By Snowflake partner Keboola offers Data Platform as a Service, helping users further accelerate data projects by delivering a ready-to-use managed platform. It includes all the technologies a data team needs. Therefore enabling everyone to capitalize on Snowflake&#39;s capabilities and acting as an avenue to the incredible modern no-maintenance and no-code solution.</p>
+<p>This Quickstart will guide you to build a complete data pipeline from ingestion, transformation, orchestration to presentation in a Streamlit application.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll discover</h2>
+<ul>
+<li>How to start working with Keboola</li>
+<li>How to create a flow based on Keboola template</li>
+<li>How to configure Keboola template</li>
+<li>How to work with SQL transformation in Snowflake</li>
+<li>Introduction to Snowpark Python UDF</li>
+<li>How to run Keboola flow</li>
+<li>How to visualize data with Streamlit</li>
+</ul>
+<h2 is-upgraded><img alt="Template" src="img/cb1dd556083643c8.png"> What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://trial.snowflake.com/" target="_blank">Snowflake</a> account or free trial with an ACCOUNTADMIN user.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A complete data pipeline from Shopify. The Keboola template will automatically join, clean and transform data into Snowflake. Within few clicks, Keboola will generate all necessary steps plus a Streamlit Application to interact with data. The template will also generate a Snowpark UDF to create RFM segmentation. This will help you to optimize the monetization of your online traffic.</li>
+</ul>
+<p class="image-container"><img alt="Template" src="img/3090b79e1f50a2af.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Keboola Account with Partner Connect" duration="5">
+        <h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Login to <strong>Snowflake Snowsight</strong>.</li>
+<li>Switch role to <strong>ACCOUNTADMIN</strong>.</li>
+<li>Click <strong>Admin &gt; Partner Connect</strong>.</li>
+<li>Search for <strong>Keboola</strong>. <img alt="kebPC" src="img/bedaed7d5158e28b.png"></li>
+<li>Click <strong>Keboola</strong> tile.</li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<ol type="1">
+<li>See objects that will be created in Snowflake.</li>
+<li>Click <strong>Connect</strong>.<br><img alt="PartnerConnect" src="img/9e36f7ed308240da.png"></li>
+</ol>
+<h2 is-upgraded>Step 3</h2>
+<ol type="1">
+<li>Click <strong>Activate</strong>.<br><img alt="PartnerConnect" src="img/44d4c525a1e1fb42.png"></li>
+</ol>
+<h2 is-upgraded>Troubleshooting</h2>
+<p>You must have a verified email in your profile. Otherwise you&#39;ll get the following message:</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/c203817058fae7f3.png"></p>
+<p>You also MUST have a first name and last name in your profile:</p>
+<p>Open your profile:</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/cc602e74fe73a5ff.png"></p>
+<p>Add email, first and last name:</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/5799ea25d8f3402e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activate Keboola Account" duration="2">
+        <h2 is-upgraded>Define your Keboola password</h2>
+<p>After you have clicked &#34;Activate&#34; from the previous section, you&#39;ll land on Keboola&#39;s Welcome page to define your password:</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/7a6a5fd589c3fee7.png"></p>
+<h2 is-upgraded>Enable full features</h2>
+<p>Congratulation, you have now a Keboola account!</p>
+<p>We need to enable all features for this lab. It&#39;s a simple process.</p>
+<p>Click on &#34;Enable All Features&#34; link:</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/4d45ac6f6d934f50.png"></p>
+<p>Copy the SQL code from the Keboola UI:</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/59ef214b5e5c3d0c.png"></p>
+<p>In Snowflake Snowsight, open a new worksheet, paste the code and select &#34;Run All&#34;, be sure all rows are executed!</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/e14d66f248d5d096.png"></p>
+<p>Go back to Keboola, you should see the following:</p>
+<p class="image-container"><img alt="PartnerConnect" src="img/fad7ff0055f0fe77.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get Snowflake Account URL" duration="1">
+        <p>Here we&#39;ll prepare everything for Keboola to write into Snowflake account, remember Partner Connect flow already created a DB (PC_KEBOOLA_DB) and a warehouse (PC_KEBOOLA_WH):</p>
+<ul>
+<li>Get hostname information, note for later usage</li>
+</ul>
+<p>Login to Snowflake trial account</p>
+<ul>
+<li>Get host name:</li>
+</ul>
+<p class="image-container"><img alt="PartnerConnect" src="img/b8bbabc310e66d25.png"></p>
+<p>At the left bottom of the screen, hover the account and click on &#34;Copy account URL&#34;.</p>
+<p>Paste the content in safe place to reuse later.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Instantiate the Template" duration="3">
+        <p>We need first to activate the Data Apps feature in Keboola:</p>
+<p>In the top right corner, select your user and navigate to &#34;Settings&#34;</p>
+<p class="image-container"><img alt="Template Creation" src="img/12a42edb502f2358.png"></p>
+<p>Activate the Data Apps Feature:</p>
+<p class="image-container"><img alt="Template Creation" src="img/d0a03ab9b6488663.png"></p>
+<p>Let&#39;s move to Keboola platform, after you have created your Keboola trial account, login to the platform and navigate to the &#34;Templates&#34; tabs.</p>
+<p>In the searchbar, type &#34;RFM&#34;</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Be sure you select the correct template &#34;Shopify RFM Analysis with Streamlit&#34;.</p>
+<p class="image-container"><img alt="Template Creation" src="img/c5e75e9be8b2fce4.png"></p>
+<p>Click the green button &#34;+ USE TEMPLATE&#34;</p>
+<p class="image-container"><img alt="Template Creation" src="img/2449e5db9804e290.png"></p>
+<p>You&#39;ll see more details on the template, click the top right green button &#34;+ USE TEMPLATE&#34;</p>
+<p class="image-container"><img alt="Template Creation" src="img/cca5a4770ccfc975.png"></p>
+<p>Enter a name and click &#34; -&gt; NEXT STEP&#34;</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure the Template" duration="5">
+        <p>For this lab, we&#39;ll use dummy Shopify data so we don&#39;t need to configure the Shopify Component.</p>
+<p>The template configuration constists in setting-up connection information to each component needed to run the flow.</p>
+<p>For our lab, we&#39;ll need to setup only Snowflake.</p>
+<p class="image-container"><img alt="Template Creation" src="img/ac37c92919322623.png"></p>
+<p>We need to enter Snowflake information in the &#34;Snowflake Destination&#34; step of the flow:</p>
+<p>Click on &#34;Edit Configuration&#34;</p>
+<p class="image-container"><img alt="Template Creation" src="img/906c9a9bc8b59034.png"></p>
+<p>Add the information we created during step 4 (Get Snowflake Account URL)</p>
+<p class="image-container"><img alt="Template Creation" src="img/2be018885b54ab3e.png"></p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Hostname is the URL you copied in Snowflake WITHOUT &#34;https://&#34;</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Port is &#34;443&#34;</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Username is your Snowflake user name</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Password is your Snowflake password</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Database Name is &#34;PC_KEBOOLA_DB&#34;</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Schema Name is &#34;PUBLIC&#34;</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> Warehouse is &#34;PC_KEBOOLA_WH&#34;</p>
+<p>Save the template:</p>
+<p class="image-container"><img alt="Template" src="img/a92386ba31a742f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure the Data App Secrets" duration="5">
+        <h2 is-upgraded>Get Keboola token:</h2>
+<p>From the Streamlit application, we can write back data thanks to Keboola API.</p>
+<p>We need first to get an API token. Follow the steps to generate this token.</p>
+<p>Navigate to token page in Keboola:</p>
+<p class="image-container"><img alt="Template Creation" src="img/dd156c661bc7cee2.gif"></p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png">  Generate the token, do not forget to set &#34;Full Access&#34; and to copy the value, paste into a text file!</p>
+<p class="image-container"><img alt="Template Creation" src="img/e9302e09e436bc2c.gif"></p>
+<h2 is-upgraded>Get Snowflake account name:</h2>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> At the left bottom of the screen, hover the account and click on &#34;Copy account URL&#34; paste into a text file!</p>
+<p class="image-container"><img alt="Template Creation" src="img/b8bbabc310e66d25.png"></p>
+<p>Navigate to the Flow page: <img alt="Template" src="img/2a276cd8f81d8039.png"></p>
+<p>Select the Flow: <img alt="Template" src="img/82b7b7ac51eaefc7.png"></p>
+<p>Scroll down in the Flow and select the &#34;RFM Analysis Data App&#34;, click on &#34;Edit Configuration&#34;:</p>
+<p class="image-container"><img alt="Template" src="img/47000cd35b4cadfe.png"></p>
+<p>Change the values according to your Snowflake account and Keboola API token:</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> user and password are your SNOWFLAKE user and password</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> account is the snowflake URL you have pasted in your text file</p>
+<p><img alt="Template" src="img/cb1dd556083643c8.png"> keboola_key is the keboola API token you have pasted in your text file</p>
+<p class="image-container"><img alt="Template Creation" src="img/66a72664b7d3ca1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Flow" duration="10">
+        <p>The template generated a Keboola Flow. A flow is a sequence of actions.</p>
+<p>Navigate to the Flow page: <img alt="Template" src="img/2a276cd8f81d8039.png"></p>
+<p>Select the Flow: <img alt="Template" src="img/82b7b7ac51eaefc7.png"></p>
+<p>Run the Flow:</p>
+<p class="image-container"><img alt="Template" src="img/920a40695c4c846.png"></p>
+<p>Monitor the run:</p>
+<p class="image-container"><img alt="Template" src="img/c705f36857f007ee.png"></p>
+<p>The inital run can take about 10mn, subsequent will take only few mn.</p>
+<p>Success!</p>
+<p class="image-container"><img alt="Template" src="img/ed915281a9288a43.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="See results in Snowflake" duration="2">
+        <p>Open your Snowflake web tab and check the PC_KEBOOLA_DB content.</p>
+<p>You should see the tables created:</p>
+<p class="image-container"><img alt="Template" src="img/357f8aacd3e8e9ae.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open Streamlit" duration="5">
+        <p>We have seen Keboola Shopify template in action. We have now a complete set of tables in Snowflake with Shopify sales data including an RFM segmentation, ready to use!</p>
+<p><em>RFM stands for Recency, Frequency, and Monetary value, each corresponding to some key customer charasteritics. These RFM metrics are important indicators of a customer&#39;s behavior because frequency and monetary value affects a customer&#39;s lifetime value, and recency affects retention, a measure of engagement</em></p>
+<p>In this section, we&#39;ll leverage this segmentation in the Streamlit application, automatically created from the template.</p>
+<p>This application will :</p>
+<ul>
+<li>Connect to your Snowflake account</li>
+<li>Connect to your Keboola project</li>
+<li>Give you an overview of the generated RFM Segmentation</li>
+<li>Simulate Revenue impact of discount on targeted segment(s)</li>
+<li>Get targeted customer list and expected discount to trigger a marketing campaign</li>
+<li>Write back this information in Keboola for a next flow to create the campaign</li>
+</ul>
+<p>Navigate to the Data Apps section</p>
+<p class="image-container"><img alt="Template Creation" src="img/43637dc38d16f09.png"></p>
+<p>Open the Data App</p>
+<p class="image-container"><img alt="Template Creation" src="img/ed4a840a5fdd8d80.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Play with Data" duration="5">
+        <p>If your Snowflake information are correct, after clicking &#34;Connect&#34; you should see:</p>
+<p class="image-container"><img alt="Template Creation" src="img/1ff167df7b3baaeb.png"></p>
+<h2 is-upgraded>RFM Segmentation Overview</h2>
+<p>You see here the generated segmentation and the number of customers assigned to.</p>
+<p class="image-container"><img alt="Template Creation" src="img/234e11b4ccbfadd0.png"></p>
+<h2 is-upgraded>Simulate discount</h2>
+<p>You can select the segment(s) you want to assign discount:</p>
+<p class="image-container"><img alt="Template Creation" src="img/99ab807039d334d8.png"></p>
+<p>You can then adjust discount level and expected revenue increase.</p>
+<p class="image-container"><img alt="Template Creation" src="img/cb184a7da844c1bb.png"></p>
+<p>This will calculate the impact on the total revenue</p>
+<p class="image-container"><img alt="Template Creation" src="img/50254e31625b8d2b.png"></p>
+<h2 is-upgraded>Generated list of targeted customers</h2>
+<p>Scrolling down the page, you&#39;ll find an always adjusted list of customers (based on selected segments) and the level of discount.</p>
+<p>This list can be used to trigger a marketing campaign:</p>
+<p class="image-container"><img alt="Template Creation" src="img/ab758d4187b4ccea.png"></p>
+<h2 is-upgraded>Write the table back into Keboola</h2>
+<p>Finally press the &#34;UPLOAD&#34; button:</p>
+<p class="image-container"><img alt="Template Creation" src="img/95f13c99b0f74bf5.png"></p>
+<p>Wait until the upload is finished:</p>
+<p class="image-container"><img alt="Template Creation" src="img/d6944640150dd671.png"></p>
+<p>Check the table in Keboola:</p>
+<p class="image-container"><img alt="Template Creation" src="img/bd7b03726f4e4c10.png"></p>
+<p>YOU&#39;RE DONE WITH THE LAB !!  🍾</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="0">
+        <h2 is-upgraded>You choose the wrong template</h2>
+<p>Delete the associated Flow</p>
+<p class="image-container"><img alt="Template Creation" src="img/f72b94110c5bc869.png"></p>
+<p>Delete the Components</p>
+<p class="image-container"><img alt="Template Creation" src="img/b5ac6fdf2548bfe4.png"></p>
+<p>Delete the Storage</p>
+<p class="image-container"><img alt="Template Creation" src="img/322bb4d9cc65be07.png"></p>
+<p>Same player, start again :-)</p>
+<h2 is-upgraded>Your Snowflake credentials are wrong</h2>
+<p>Navigate to the Components tab, click on the Snowflake Data Destination:</p>
+<p class="image-container"><img alt="Template Creation" src="img/50ee2bb63bd6fddd.png"></p>
+<p>Select &#34;Database Credentials&#34; on the right:</p>
+<p class="image-container"><img alt="Template Creation" src="img/69691cc7e8757d22.png"></p>
+<p>Udpate and test your credentials:</p>
+<p class="image-container"><img alt="Template Creation" src="img/c10e2ef5f7ce3f88.png"></p>
+<h2 is-upgraded>Your DB name, schema, warehouse name are wrong</h2>
+<p>Navigate to the Components tab, click on the Snowflake Data Destination:</p>
+<p class="image-container"><img alt="Template Creation" src="img/50ee2bb63bd6fddd.png"></p>
+<p>Select &#34;Database Credentials&#34; on the right:</p>
+<p class="image-container"><img alt="Template Creation" src="img/69691cc7e8757d22.png"></p>
+<p>Check the DB, Schema, Warehouse:</p>
+<p class="image-container"><img alt="Template Creation" src="img/c10e2ef5f7ce3f88.png"></p>
+<h2 is-upgraded>Your Data Application secrets are wrong</h2>
+<p>Navigate to the Data Apps section:</p>
+<p class="image-container"><img alt="Template" src="img/43637dc38d16f09.png"></p>
+<p>Open the configuration:</p>
+<p class="image-container"><img alt="Template" src="img/5f8c4fc79cb4c135.png"></p>
+<p>Correct the secrets:</p>
+<p class="image-container"><img alt="Template Creation" src="img/66a72664b7d3ca1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You&#39;ve successfully built a complete data pipeline from ingestion, transformation, orchestration, to presentation in a Streamlit application!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Connect to your Snowflake account to Keboola project</li>
+<li>Instanciate Keboola template</li>
+<li>Automatically generate RFM segmentation</li>
+<li>Connect Snowflake and Keboola to Streamlit application</li>
+<li>Write back data from Streamlit to Keboola</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://help.keboola.com/" target="_blank">Keboola documentation</a></li>
+<li><a href="https://github.com/sfc-gh-aalteirac/streamlit_keboola_vhol_pc" target="_blank">Github Streamlit source code</a></li>
+<li><a href="https://pypi.org/project/streamlit-keboola-api/" target="_blank">Keboola Streamlit Component</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

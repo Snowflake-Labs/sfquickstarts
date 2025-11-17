@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_extracting_insights_with_docai",
+  "duration": 38,
+  "title": "Extracting Insights from Unstructured Data with Document AI",
+  "summary": "Walkthrough extracting data from PDF Inspection Reports using Document AI",
+  "source": "tasty_bytes_extracting_insights_with_docai/tasty_bytes_extracting_insights_with_doc_ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started"
+  ],
+  "tags": [
+    "documentai",
+    "gettingstarted",
+    "tastybytes",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_extracting_insights_with_docai"
+}

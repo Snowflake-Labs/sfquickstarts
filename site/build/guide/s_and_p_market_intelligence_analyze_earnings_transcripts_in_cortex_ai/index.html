@@ -1,0 +1,259 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>S&amp;P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai"
+                  title="S&amp;P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Earnings calls play a pivotal role in shaping investor perceptions. The quality of communication between executives and analysts can significantly influence company performance. On-topic and proactive executives, who deliver proactive presentations, anticipate market queries, and provide clear, on-topic answers to analysts&#39; questions—consistently outperform their peers. Conversely, off-topic and reactive executives, who fail to address analysts&#39; key inquiries during presentations, and provide off-topic responses—significantly underperform.</p>
+<p>Executives&#39; ability to anticipate investor concerns and maintain a focused dialogue fosters confidence and strategic communication. In contrast, failing to provide clarity when analysts seek additional information can lead to misalignment and breakdowns in transparency. A long (short) portfolio of on-topic and proactive (off-topic and reactive) generates +515bps of annualized alpha.</p>
+<p>This QuickStart with its notebook serves as a introduction for the research detailed in Quantitative Research &amp; Solutions&#39; recent publication, <a href="https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom" target="_blank">&#34;Questioning the Answers: LLM&#39;s enter the Boardroom.&#34;</a> It analyses executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers. This research harnesses alpha using LLM tools, including vector embeddings, vector cosine similarity, and the LLM question answering. There is a longer version available upon request that also covers how to create the input data from the datasets described in section 2, please reach out to <a href="mailto:QRS@spglobal.com" target="_blank">QRS@spglobal.com</a> for access to the longer version.</p>
+<p>Through this QuickStart, you will learn how to use <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowflake Cortex LLM functions</a> on earnings call using the <a href="https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts" target="_blank">Machine Readable Transcripts</a> dataset from S&amp;P Global Market Intelligence.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to use Snowflake Notebooks</li>
+<li>how to create and use vector embeddings on text data</li>
+<li>how to compare vector embeddings using similarity functions</li>
+<li>how to use generate prompts based on data and use it with Cortex COMPLETE</li>
+</ul>
+<h2 is-upgraded>What is Snowflake Cortex?</h2>
+<p>Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:</p>
+<p>LLM Functions: SQL and Python functions that leverage large language models (LLMs) for understanding, querying, translating, summarizing, and generating free-form text.</p>
+<p>ML Functions: SQL functions that perform predictive analysis such as forecasting and anomaly detection using machine learning to help you gain insights into your structured data and accelerate everyday analytics.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/guides-overview-ai-features" target="_blank">Snowflake Cortex</a>.</p>
+<h2 is-upgraded>S&amp;P Global Market Intelligence datasets</h2>
+<p>The <a href="https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom" target="_blank">&#34;Questioning the Answers: LLM&#39;s enter the Boardroom.&#34;</a> research is using the datasets below from the Snowflake Marketplace. Access to those are not necessary for running this QuickStart, where we are using a sample dataset.</p>
+<p>To reproduce the full research using the complete datasets then request access to those below using the links or contact <a href="mailto:SnowflakeMarketplace@spglobal.com" target="_blank">SnowflakeMarketplace@spglobal.com</a>.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Name</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><a href="https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2N/s-p-global-market-intelligence-s-p-capital-iq-financials" target="_blank"> S&amp;P Capital IQ Financials</a></p>
+</td><td colspan="1" rowspan="1"><p>S&amp;P Capital IQ Financials provides global standardized financial statement data for over 180,000 companies, including over 95,000 active and inactive public companies, and As Reported data for over 150,000 companies. S&amp;P Capital IQ Standardized Financials allows you to extend the scope of your historical analysis and back-testing models with consistent data from all filings of a company&#39;s historical financial periods including press releases, original filings, and all restatements.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><a href="https://app.snowflake.com/marketplace/listing/GZT0Z8P3D38/s-p-global-market-intelligence-global-events" target="_blank">Global Events</a></p>
+</td><td colspan="1" rowspan="1"><p>The Global Events dataset provides details on upcoming and past corporate events such as earnings calls, shareholder/analyst meetings, expected earnings release dates and more. With deep history back to 2003, clients can leverage this dataset to derive signals and support trading models across asset classes, trading styles and frequencies. This dataset also helps in research &amp; analysis, risk management &amp; compliance, and trade surveillance workflows.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><a href="https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts" target="_blank">Machine Readable Transcripts</a></p>
+</td><td colspan="1" rowspan="1"><p>The Machine Readable Transcripts dataset aggregates data from earnings calls delivered in a machine-readable format for Natural Language Processing (NLP) applications with metadata tagging. Leverage Machine Readable Transcripts to keep track of event information for specific companies including dates, times, dial-in and replay numbers and investor relations contact information. Easily combine data from earnings, M&amp;A, guidance, shareholder, company conference presentations and special calls with traditional datasets to develop proprietary analytics.</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed <aside class="special"><p>Clone or download the <a href="https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai" target="_blank">git repo</a></p>
+</aside>
+</li>
+<li>A Snowflake account. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with a role that has the ability to create database, schema, tables, warehouse and notebooks. If not, you will need to register for a free trial or use a different role.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>In this QuickStart we will analyse executive on-topicness and proactiveness using the analysts&#39; questions, executives&#39; answers and LLM answers with the help of Snowflake Cortex AI functions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup The Environment" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>This section covers cloning of the GitHub repository, creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..) and importing the notebook to be used.</p>
+<h2 is-upgraded>Clone The Git Repository</h2>
+<p>The very first step is to clone the <a href="https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai" target="_blank">GitHub repository</a>. This repository contains all the code you will need to successfully complete this QuickStart Guide.</p>
+<p>Using HTTPS:</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai.git
+</code></pre>
+<p>OR, using SSH:</p>
+<pre><code language="language-shell" class="language-shell">git clone git@https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai.git
+</code></pre>
+<p>You can also use the Git integration feature of Snowflake Notebooks, in order to do that you need to fork the <a href="https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai" target="_blank">GitHub repository</a> to be allowed to commit changes. For instructions how to set up Git integration for your Snowflake account see <a href="https://docs.snowflake.com/developer-guide/git/git-setting-up" target="_blank">here</a> and for using it with Snowflake Notebooks see <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit" target="_blank">this page</a>. You can refer to <a href="https://www.youtube.com/watch?v=4GOa1eUccmQ" target="_blank">this video</a> for a walkthrough on how you can set up Git integration and use it with Snowflake Notebooks.</p>
+<h2 is-upgraded>Create Database, Schema, Table And Warehouse To Be Used</h2>
+<p>Run the following SQL commands in a SQL worksheet to create the objects needed for running this QuickStart. You can also find the code in the <a href="https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/blob/main/setup.sql" target="_blank">setup.sql</a> file.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+
+-- Create a specic role to use for this QuiCkStart
+-- This is needed in order to use Notbokks with container runtimes
+CREATE ROLE SP_LLM_QS_ROLE;
+
+-- Grant the role to the current user
+SET THIS_USER = CURRENT_USER();
+grant ROLE SP_LLM_QS_ROLE to USER IDENTIFIER($THIS_USER);
+
+-- Create a datbase where we will store the data and the notebook
+CREATE OR REPLACE DATABASE SP_LLM_QS;
+
+-- Create a Warehouse to use for executing SQL
+CREATE WAREHOUSE IF NOT EXISTS SP_LLM_QS_WH;
+
+-- Grant ownership and all priviligies on the database and warehouse to the new role
+GRANT OWNERSHIP ON DATABASE SP_LLM_QS TO ROLE SP_LLM_QS_ROLE;
+GRANT ALL PRIVILEGES ON DATABASE SP_LLM_QS TO ROLE SP_LLM_QS_ROLE;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE SP_LLM_QS TO ROLE SP_LLM_QS_ROLE;
+
+GRANT OWNERSHIP ON WAREHOUSE SP_LLM_QS_WH TO ROLE SP_LLM_QS_ROLE;
+GRANT ALL PRIVILEGES ON WAREHOUSE SP_LLM_QS_WH TO ROLE SP_LLM_QS_ROLE;
+
+-- Use th role for the rest of this script
+USE ROLE SP_LLM_QS_ROLE;
+USE DATABASE SP_LLM_QS;
+USE SCHEMA PUBLIC;
+
+
+-- Create a file format to be used when loading the sample data
+CREATE or REPLACE file format csvformat
+	TYPE=CSV
+    PARSE_HEADER = TRUE
+    FIELD_DELIMITER=&#39;|&#39;
+    TRIM_SPACE=TRUE
+    FIELD_OPTIONALLY_ENCLOSED_BY=&#39;&#34;&#39;
+    REPLACE_INVALID_CHARACTERS=TRUE
+    DATE_FORMAT=AUTO
+    TIME_FORMAT=AUTO
+    TIMESTAMP_FORMAT=AUTO;
+
+-- Create a stage that reference a AWS s3 bucket that has the sample data file
+CREATE or REPLACE stage sp_data_stage
+  file_format = csvformat
+  url = &#39;s3://sfquickstarts/sfguide_s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai/&#39;;
+
+-- Verify that we can read the S3 bucket from snowflake
+ls @sp_data_stage;
+
+-- Create the table to load the data into
+CREATE OR REPLACE TABLE SAMPLE_TRANSCRIPT ( 
+    CALLDATE DATE , 
+    ENTEREDDATE DATE , 
+    FISCALYEARQUARTER VARCHAR , 
+    CALENDARYEARQUARTER VARCHAR , 
+    TRADINGITEMID NUMBER(38, 0) , 
+    COMPANYID NUMBER(38, 0) , 
+    COMPANYNAME VARCHAR , 
+    HEADLINE VARCHAR , 
+    TRANSCRIPTID NUMBER(38, 0) , 
+    SPEAKERTYPENAME VARCHAR , 
+    TRANSCRIPTPERSONNAME VARCHAR , 
+    TRANSCRIPTPERSONID NUMBER(38, 0) , 
+    PROID NUMBER(38, 1) , 
+    TRANSCRIPTCOMPONENTTYPEID NUMBER(38, 0) , 
+    TRANSCRIPTCOMPONENTTYPENAME VARCHAR , 
+    TRANSCRIPTCOMPONENTID NUMBER(38, 0) , 
+    COMPONENTORDER NUMBER(38, 0) , 
+    SENTENCEORDER NUMBER(38, 0) , 
+    COMPONENTTEXT VARCHAR , 
+    PROCESSEDTEXT VARCHAR 
+); 
+
+-- Load the data
+COPY INTO SAMPLE_TRANSCRIPT
+  FROM @sp_data_stage
+    MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
+
+-- Verify that we have data in our table
+SELECT * FROM SAMPLE_TRANSCRIPT LIMIT 10;
+
+</code></pre>
+<h2 is-upgraded>Create Snowflake Notebook</h2>
+<h3 is-upgraded>Navigate To Snowflake Notebooks</h3>
+<ol type="1">
+<li>Navigate to the Notebooks section by clicking <strong>Projects</strong> and then <strong>Notebooks</strong><img alt="Navigate to Notebooks" src="img/665466c6401b64db.png"></li>
+<li>Click on the *<em>down arrow</em> next to <strong>+ Notebook</strong><img alt="New notebook drop down" src="img/bf689d454571002d.png"></li>
+<li>If you have set up a git integration, choose  <strong>Create from repository</strong>. If not, then choose <strong>import .ipynb file</strong>.<img alt="New notebook from menu" src="img/c2af89124ced6055.png"></li>
+</ol>
+<h3 is-upgraded>Import .ipynb File</h3>
+<ol type="1">
+<li>Navigate to where you have cloned the <a href="https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai" target="_blank">GitHub repository</a> and select <strong>0_start_here.ipynb</strong> and click <strong>Open<br></strong><img alt="Select Notebook File" src="img/c311b7ef710d1224.png"></li>
+<li>Give the notebook a name, then select <strong>SP_LLM_QS</strong> and <strong>PUBLIC</strong> for <strong>Notebook location</strong>, <strong>Run on Container</strong>  for <strong>Python Environment</strong>, default for <strong>Runtime</strong> and <strong>Compute Pool</strong> and <strong>SP_LLM_QS_WH</strong> for <strong>Query warehouse</strong> and click <strong>Create<br></strong><img alt="Select Notebook File" src="img/e6673b9d0ac2f10c.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Analyze Earnings Transcripts with LLMs in Cortex AI" duration="30">
+        <p>During this step you will learn how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts&#39; questions, executives&#39; answers and LLM answers.</p>
+<p>This includes:</p>
+<ul>
+<li>Generate embeddings on call transcripts</li>
+<li>Compare similarities between questions and answers using cosine similarity</li>
+<li>Generate LLM based answers to questions using Cortex COMPLETE</li>
+</ul>
+<p>Follow along and run each of the cells in <a href="https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/blob/main/0_start_here.ipynb" target="_blank">the Notebook</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="4">
+        <p>Congratulations, you have successfully completed this QuickStart! Through this QuickStart, we were able to showcase how you can use <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowflake Cortex LLM functions</a> on earnings call using the <a href="https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts" target="_blank">Machine Readable Transcripts</a> and additional dataset from S&amp;P Global Market Intelligence.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>In this QuickStart you have learned how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts&#39; questions, executives&#39; answers and LLM answers by:</p>
+<ul>
+<li>using Snowflake Notebooks to run the code</li>
+<li>create and use vector embeddings on text data</li>
+<li>use generate dynamic prompts based on data and use it with Cortex COMPLETE</li>
+<li>compare questions, answers and LLM answers using cosine similarity</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai" target="_blank">Source Code on GitHub</a></li>
+<li>Access the research <a href="https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom" target="_blank">&#34;Questioning the Answers: LLM&#39;s enter the Boardroom.&#34;</a></li>
+<li>Request access to the longer version of the notebook via <a href="mailto:QRS@spglobal.com" target="_blank">QRS@spglobal.com</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

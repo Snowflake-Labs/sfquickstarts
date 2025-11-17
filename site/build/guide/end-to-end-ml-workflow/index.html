@@ -1,0 +1,762 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build an End-to-End ML Workflow in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="end-to-end-ml-workflow"
+                  title="Build an End-to-End ML Workflow in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this guide, you&#39;ll learn how to build and deploy a complete machine learning workflow entirely within Snowflake ML. You&#39;ll work through a mortgage lending prediction use case, implementing each stage of the ML lifecycle from feature engineering to model deployment and monitoring.</p>
+<p>This tutorial showcases Snowflake&#39;s ML capabilities, including:</p>
+<ul>
+<li>Feature Store for defining and managing features</li>
+<li>Snowflake ML APIs for model training and hyperparameter optimization</li>
+<li>Model Registry for versioning and lifecycle management</li>
+<li>ML Observability for tracking performance and drift</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to build a model in Snowflake Notebooks on Container Runtime</li>
+<li>How to deploy a model for inference seamlessly with Snowflake Model Registry</li>
+<li>How to monitor a model during production with ML Observability</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You&#39;ll build a complete mortgage lending prediction system that:</p>
+<ol type="1">
+<li>Engineers features from loan application data</li>
+<li>Trains baseline and optimized XGBoost models</li>
+<li>Registers models with metadata and metrics</li>
+<li>Monitors model performance over time</li>
+<li>Provides model explanations using SHAP values</li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a> with ACCOUNTADMIN access.  Sign up for a 30-day free trial account, if required.</li>
+<li>Basic understanding of Python and machine learning concepts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p>Firstly, run this SQL setup script to create the notebook:</p>
+<pre><code language="language-sql" class="language-sql">-- Using ACCOUNTADMIN, create a new role for this exercise 
+USE ROLE ACCOUNTADMIN;
+SET USERNAME = (SELECT CURRENT_USER());
+SELECT $USERNAME;
+CREATE OR REPLACE ROLE E2E_SNOW_MLOPS_ROLE;
+
+-- Grant necessary permissions to create databases, compute pools, and service endpoints to new role
+GRANT CREATE DATABASE on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE; 
+GRANT CREATE COMPUTE POOL on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE;
+GRANT BIND SERVICE ENDPOINT on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE;
+
+-- grant new role to user and switch to that role
+GRANT ROLE E2E_SNOW_MLOPS_ROLE to USER identifier($USERNAME);
+USE ROLE E2E_SNOW_MLOPS_ROLE;
+
+-- Create warehouse
+CREATE OR REPLACE WAREHOUSE E2E_SNOW_MLOPS_WH WITH WAREHOUSE_SIZE=&#39;MEDIUM&#39;;
+
+-- Create Database 
+CREATE OR REPLACE DATABASE E2E_SNOW_MLOPS_DB;
+
+-- Create Schema
+CREATE OR REPLACE SCHEMA MLOPS_SCHEMA;
+
+-- Create compute pool
+CREATE COMPUTE POOL IF NOT EXISTS MLOPS_COMPUTE_POOL 
+ MIN_NODES = 1
+ MAX_NODES = 1
+ INSTANCE_FAMILY = CPU_X64_M;
+
+-- Using accountadmin, grant privilege to create network rules and integrations on newly created db
+USE ROLE ACCOUNTADMIN;
+GRANT CREATE NETWORK RULE on SCHEMA MLOPS_SCHEMA to ROLE E2E_SNOW_MLOPS_ROLE;
+GRANT CREATE INTEGRATION on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE;
+USE ROLE E2E_SNOW_MLOPS_ROLE;
+
+
+ --Create network rule and api integration to install packages from pypi
+CREATE OR REPLACE NETWORK RULE mlops_pypi_network_rule
+ MODE = EGRESS
+ TYPE = HOST_PORT
+ VALUE_LIST = (&#39;pypi.org&#39;, &#39;pypi.python.org&#39;, &#39;pythonhosted.org&#39;,  &#39;files.pythonhosted.org&#39;);
+
+ -- Create external access integration on top of network rule for pypi access
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION mlops_pypi_access_integration
+ ALLOWED_NETWORK_RULES = (mlops_pypi_network_rule)
+ ENABLED = true;
+
+-- Create an API integration with Github
+CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_E2E_SNOW_MLOPS
+   api_provider = git_https_api
+   api_allowed_prefixes = (&#39;https://github.com/Snowflake-Labs&#39;)
+   enabled = true
+   comment=&#39;Git integration with Snowflake Demo Github Repository.&#39;;
+
+-- Create the integration with the Github demo repository
+CREATE OR REPLACE GIT REPOSITORY GITHUB_REPO_E2E_SNOW_MLOPS
+   ORIGIN = &#39;https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ml-workflow-in-snowflake&#39; 
+   API_INTEGRATION = &#39;GITHUB_INTEGRATION_E2E_SNOW_MLOPS&#39; 
+   COMMENT = &#39;Github Repository &#39;;
+
+-- Fetch most recent files from Github repository
+ALTER GIT REPOSITORY GITHUB_REPO_E2E_SNOW_MLOPS FETCH;
+
+-- Copy notebook into snowflake configure runtime settings
+CREATE OR REPLACE NOTEBOOK E2E_SNOW_MLOPS_DB.MLOPS_SCHEMA.TRAIN_DEPLOY_MONITOR_ML
+FROM &#39;@E2E_SNOW_MLOPS_DB.MLOPS_SCHEMA.GITHUB_REPO_E2E_SNOW_MLOPS/branches/main/&#39; 
+MAIN_FILE = &#39;train_deploy_monitor_ML_in_snowflake.ipynb&#39; QUERY_WAREHOUSE = E2E_SNOW_MLOPS_WH
+RUNTIME_NAME = &#39;SYSTEM$BASIC_RUNTIME&#39; 
+COMPUTE_POOL = &#39;MLOPS_COMPUTE_POOL&#39;
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+alter NOTEBOOK E2E_SNOW_MLOPS_DB.MLOPS_SCHEMA.TRAIN_DEPLOY_MONITOR_ML set EXTERNAL_ACCESS_INTEGRATIONS = ( &#39;mlops_pypi_access_integration&#39; )
+
+--DONE! Now you can access your newly created notebook with your E2E_SNOW_MLOPS_ROLE and run through the end-to-end workflow!
+</code></pre>
+<h2 is-upgraded>Open Notebook</h2>
+<p>Now we can navigate to the Notebooks tab in Snowsight to open up the newly created notebook called <strong>TRAIN_DEPLOY_MONITOR_ML</strong></p>
+<p>Be sure to run this with the newly created <strong>E2E_SNOW_MLOPS_ROLE</strong>!</p>
+<p>The notebook is also hosted in this <a href="https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ml-workflow-in-snowflake/blob/main/train_deploy_monitor_ML_in_snowflake.ipynb" target="_blank">GitHub Repo</a> for reference.</p>
+<h2 is-upgraded>Environment Configuration</h2>
+<p>We&#39;ll be building the model using a Snowflake Notebook. In addition to the ability to pip install any package of choice, Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more! For this tutorial, we&#39;ll need to install one additional package:</p>
+<pre><code language="language-python" class="language-python">!pip install shap
+</code></pre>
+<h2 is-upgraded>Initialize Snowflake Session and Variables</h2>
+<p>Set up your environment variables and initialize your Snowflake session:</p>
+<pre><code language="language-python" class="language-python">#Update this VERSION_NUM to version your features, models etc!
+VERSION_NUM = &#39;0&#39;
+DB = &#34;E2E_SNOW_MLOPS_DB&#34; 
+SCHEMA = &#34;MLOPS_SCHEMA&#34; 
+COMPUTE_WAREHOUSE = &#34;E2E_SNOW_MLOPS_WH&#34; 
+
+import pandas as pd
+import numpy as np
+import sklearn
+import math
+import pickle
+import shap
+from datetime import datetime
+import streamlit as st
+from xgboost import XGBClassifier
+
+# Snowflake ML
+from snowflake.ml.registry import Registry
+from snowflake.ml.modeling.tune import get_tuner_context
+from snowflake.ml.modeling import tune
+from entities import search_algorithm
+
+#Snowflake feature store
+from snowflake.ml.feature_store import FeatureStore, FeatureView, Entity, CreationMode
+
+# Snowpark session
+from snowflake.snowpark import DataFrame
+from snowflake.snowpark.functions import col, to_timestamp, min, max, month, dayofweek, dayofyear, avg, date_add, sql_expr
+from snowflake.snowpark.types import IntegerType
+from snowflake.snowpark import Window
+
+#setup snowpark session
+from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+</code></pre>
+<h2 is-upgraded>Load and Prepare Data</h2>
+<p>Load the mortgage lending demo data:</p>
+<pre><code language="language-python" class="language-python">try:
+    print(&#34;Reading table data...&#34;)
+    df = session.table(&#34;MORTGAGE_LENDING_DEMO_DATA&#34;)
+    df.show(5)
+except:
+    print(&#34;Table not found! Uploading data to snowflake table&#34;)
+    df_pandas = pd.read_csv(&#34;MORTGAGE_LENDING_DEMO_DATA.csv.zip&#34;)
+    session.write_pandas(df_pandas, &#34;MORTGAGE_LENDING_DEMO_DATA&#34;, auto_create_table=True)
+    df = session.table(&#34;MORTGAGE_LENDING_DEMO_DATA&#34;)
+    df.show(5)
+</code></pre>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>Make sure your Snowflake account has the necessary privileges to create tables and execute ML operations</li>
+<li>Ensure your warehouse is properly sized for ML workloads</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Engineering" duration="15">
+        <p>In this section, we&#39;ll create features from our raw mortgage lending data using Snowpark APIs.</p>
+<h2 is-upgraded>Create Feature Transformations</h2>
+<p>First, let&#39;s examine the time range of our data:</p>
+<pre><code language="language-python" class="language-python">df.select(min(&#39;TS&#39;), max(&#39;TS&#39;))
+</code></pre>
+<p>Now, let&#39;s create a dictionary of feature transformations:</p>
+<pre><code language="language-python" class="language-python">#Create a dict with keys for feature names and values containing transform code
+feature_eng_dict = dict()
+
+#Get current date and time
+current_time = datetime.now()
+df_max_time = datetime.strptime(str(df.select(max(&#34;TS&#34;)).collect()[0][0]), &#34;%Y-%m-%d %H:%M:%S.%f&#34;)
+
+#Find delta between latest existing timestamp and today&#39;s date
+timedelta = current_time- df_max_time
+
+#Timstamp features
+feature_eng_dict[&#34;TIMESTAMP&#34;] = date_add(to_timestamp(&#34;TS&#34;), timedelta.days-1)
+feature_eng_dict[&#34;MONTH&#34;] = month(&#34;TIMESTAMP&#34;)
+feature_eng_dict[&#34;DAY_OF_YEAR&#34;] = dayofyear(&#34;TIMESTAMP&#34;) 
+feature_eng_dict[&#34;DOTW&#34;] = dayofweek(&#34;TIMESTAMP&#34;)
+
+#Income and loan features
+feature_eng_dict[&#34;LOAN_AMOUNT&#34;] = col(&#34;LOAN_AMOUNT_000s&#34;)*1000
+feature_eng_dict[&#34;INCOME&#34;] = col(&#34;APPLICANT_INCOME_000s&#34;)*1000
+feature_eng_dict[&#34;INCOME_LOAN_RATIO&#34;] = col(&#34;INCOME&#34;)/col(&#34;LOAN_AMOUNT&#34;)
+
+county_window_spec = Window.partition_by(&#34;COUNTY_NAME&#34;)
+feature_eng_dict[&#34;MEAN_COUNTY_INCOME&#34;] = avg(&#34;INCOME&#34;).over(county_window_spec)
+feature_eng_dict[&#34;HIGH_INCOME_FLAG&#34;] = (col(&#34;INCOME&#34;)&gt;col(&#34;MEAN_COUNTY_INCOME&#34;)).astype(IntegerType())
+
+feature_eng_dict[&#34;AVG_THIRTY_DAY_LOAN_AMOUNT&#34;] =  sql_expr(&#34;&#34;&#34;AVG(LOAN_AMOUNT) OVER (PARTITION BY COUNTY_NAME ORDER BY TIMESTAMP  
+                                                            RANGE BETWEEN INTERVAL &#39;30 DAYS&#39; PRECEDING AND CURRENT ROW)&#34;&#34;&#34;)
+
+df = df.with_columns(feature_eng_dict.keys(), feature_eng_dict.values())
+df.show(3)
+</code></pre>
+<h2 is-upgraded>Create a Snowflake Feature Store</h2>
+<p>Now, let&#39;s create a Feature Store to track our engineered features:</p>
+<pre><code language="language-python" class="language-python">fs = FeatureStore(
+    session=session, 
+    database=DB, 
+    name=SCHEMA, 
+    default_warehouse=COMPUTE_WAREHOUSE,
+    creation_mode=CreationMode.CREATE_IF_NOT_EXIST
+)
+</code></pre>
+<h2 is-upgraded>Register Entity and Feature View</h2>
+<p>Define an entity for our loan data:</p>
+<pre><code language="language-python" class="language-python">#First try to retrieve an existing entity definition, if not define a new one and register
+try:
+    #retrieve existing entity
+    loan_id_entity = fs.get_entity(&#39;LOAN_ENTITY&#39;) 
+    print(&#39;Retrieved existing entity&#39;)
+except:
+    #define new entity
+    loan_id_entity = Entity(
+        name = &#34;LOAN_ENTITY&#34;,
+        join_keys = [&#34;LOAN_ID&#34;],
+        desc = &#34;Features defined on a per loan level&#34;)
+    #register
+    fs.register_entity(loan_id_entity)
+    print(&#34;Registered new entity&#34;)
+</code></pre>
+<p>Create a feature view with our engineered features:</p>
+<pre><code language="language-python" class="language-python">#Create a dataframe with just the ID, timestamp, and engineered features
+feature_df = df.select([&#34;LOAN_ID&#34;]+list(feature_eng_dict.keys()))
+
+#define and register feature view
+loan_fv = FeatureView(
+    name=&#34;Mortgage_Feature_View&#34;,
+    entities=[loan_id_entity],
+    feature_df=feature_df,
+    timestamp_col=&#34;TIMESTAMP&#34;,
+    refresh_freq=&#34;1 day&#34;)
+
+#add feature level descriptions
+loan_fv = loan_fv.attach_feature_desc(
+    {
+        &#34;MONTH&#34;: &#34;Month of loan&#34;,
+        &#34;DAY_OF_YEAR&#34;: &#34;Day of calendar year of loan&#34;,
+        &#34;DOTW&#34;: &#34;Day of the week of loan&#34;,
+        &#34;LOAN_AMOUNT&#34;: &#34;Loan amount in $USD&#34;,
+        &#34;INCOME&#34;: &#34;Household income in $USD&#34;,
+        &#34;INCOME_LOAN_RATIO&#34;: &#34;Ratio of LOAN_AMOUNT/INCOME&#34;,
+        &#34;MEAN_COUNTY_INCOME&#34;: &#34;Average household income aggregated at county level&#34;,
+        &#34;HIGH_INCOME_FLAG&#34;: &#34;Binary flag to indicate whether household income is higher than MEAN_COUNTY_INCOME&#34;,
+        &#34;AVG_THIRTY_DAY_LOAN_AMOUNT&#34;: &#34;Rolling 30 day average of LOAN_AMOUNT&#34;
+    }
+)
+
+loan_fv = fs.register_feature_view(loan_fv, version=VERSION_NUM, overwrite=True)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dataset Generation and Preprocessing" duration="10">
+        <h2 is-upgraded>Generate Dataset from Feature View</h2>
+<p>Now that we have our features registered, let&#39;s generate a dataset for model training:</p>
+<pre><code language="language-python" class="language-python">ds = fs.generate_dataset(
+    name=f&#34;MORTGAGE_DATASET_EXTENDED_FEATURES_{VERSION_NUM}&#34;,
+    spine_df=df.select(&#34;LOAN_ID&#34;, &#34;TIMESTAMP&#34;, &#34;LOAN_PURPOSE_NAME&#34;,&#34;MORTGAGERESPONSE&#34;),
+    features=[loan_fv],
+    spine_timestamp_col=&#34;TIMESTAMP&#34;,
+    spine_label_cols=[&#34;MORTGAGERESPONSE&#34;]
+)
+
+ds_sp = ds.read.to_snowpark_dataframe()
+ds_sp.show(5)
+</code></pre>
+<h2 is-upgraded>Preprocess Data for Model Training</h2>
+<p>Let&#39;s encode categorical variables and prepare our data for training:</p>
+<pre><code language="language-python" class="language-python">import snowflake.ml.modeling.preprocessing as snowml
+from snowflake.snowpark.types import StringType
+
+OHE_COLS = ds_sp.select([col.name for col in ds_sp.schema if col.datatype ==StringType()]).columns
+OHE_POST_COLS = [i+&#34;_OHE&#34; for i in OHE_COLS]
+
+# Encode categoricals to numeric columns
+snowml_ohe = snowml.OneHotEncoder(input_cols=OHE_COLS, output_cols = OHE_COLS, drop_input_cols=True)
+ds_sp_ohe = snowml_ohe.fit(ds_sp).transform(ds_sp)
+
+#Rename columns to avoid double nested quotes and white space chars
+rename_dict = {}
+for i in ds_sp_ohe.columns:
+    if &#39;&#34;&#39; in i:
+        rename_dict[i] = i.replace(&#39;&#34;&#39;,&#39;&#39;).replace(&#39; &#39;, &#39;_&#39;)
+
+ds_sp_ohe = ds_sp_ohe.rename(rename_dict)
+
+# Split data into train and test sets
+train, test = ds_sp_ohe.random_split(weights=[0.70, 0.30], seed=0)
+train = train.fillna(0)
+test = test.fillna(0)
+
+# Convert to pandas for model training
+train_pd = train.to_pandas()
+test_pd = test.to_pandas()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Baseline Model Training" duration="10">
+        <h2 is-upgraded>Train a Baseline XGBoost Model</h2>
+<p>Let&#39;s train a simple XGBoost classifier as our baseline model:</p>
+<pre><code language="language-python" class="language-python">#Define model config
+xgb_base = XGBClassifier(
+    max_depth=50,
+    n_estimators=3,
+    learning_rate = 0.75,
+    booster = &#39;gbtree&#39;)
+
+#Split train data into X, y
+X_train_pd = train_pd.drop([&#34;TIMESTAMP&#34;, &#34;LOAN_ID&#34;, &#34;MORTGAGERESPONSE&#34;],axis=1)
+y_train_pd = train_pd.MORTGAGERESPONSE
+
+#train model
+xgb_base.fit(X_train_pd,y_train_pd)
+</code></pre>
+<h2 is-upgraded>Evaluate Baseline Model Performance</h2>
+<p>Let&#39;s check how our baseline model performs on the training data:</p>
+<pre><code language="language-python" class="language-python">from sklearn.metrics import f1_score, precision_score, recall_score
+train_preds_base = xgb_base.predict(X_train_pd)
+
+f1_base_train = round(f1_score(y_train_pd, train_preds_base),4)
+precision_base_train = round(precision_score(y_train_pd, train_preds_base),4)
+recall_base_train = round(recall_score(y_train_pd, train_preds_base),4)
+
+print(f&#39;F1: {f1_base_train} \nPrecision {precision_base_train} \nRecall: {recall_base_train}&#39;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Registry and Evaluation" duration="15">
+        <h2 is-upgraded>Create a Model Registry</h2>
+<p>Let&#39;s create a Snowflake Model Registry to track our models:</p>
+<pre><code language="language-python" class="language-python">from snowflake.ml.registry import Registry
+
+# Define model name
+model_name = f&#34;MORTGAGE_LENDING_MLOPS_{VERSION_NUM}&#34;
+
+# Create a registry to log the model to
+model_registry = Registry(session=session, 
+                          database_name=DB, 
+                          schema_name=SCHEMA,
+                          options={&#34;enable_monitoring&#34;: True})
+</code></pre>
+<h2 is-upgraded>Register Baseline Model</h2>
+<p>Now, let&#39;s register our baseline model in the registry:</p>
+<pre><code language="language-python" class="language-python">base_version_name = &#39;XGB_BASE&#39;
+
+try:
+    mv_base = model_registry.get_model(model_name).version(base_version_name)
+    print(&#34;Found existing model version!&#34;)
+except:
+    print(&#34;Logging new model version...&#34;)
+    mv_base = model_registry.log_model(
+        model_name=model_name,
+        model=xgb_base, 
+        version_name=base_version_name,
+        sample_input_data = train.drop([&#34;TIMESTAMP&#34;, &#34;LOAN_ID&#34;, &#34;MORTGAGERESPONSE&#34;]).limit(100),
+        comment = &#34;&#34;&#34;ML model for predicting loan approval likelihood.
+                    This model was trained using xgboost classifier.
+                    Hyperparameters used were:
+                    max_depth=50, n_estimators=3, learning_rate = 0.75, algorithm = gbtree.
+                    &#34;&#34;&#34;,
+    )
+    mv_base.set_metric(metric_name=&#34;Train_F1_Score&#34;, value=f1_base_train)
+    mv_base.set_metric(metric_name=&#34;Train_Precision_Score&#34;, value=precision_base_train)
+    mv_base.set_metric(metric_name=&#34;Train_Recall_score&#34;, value=recall_base_train)
+</code></pre>
+<h2 is-upgraded>Create Production Tag and Apply to Model</h2>
+<p>Let&#39;s create a tag for our production model:</p>
+<pre><code language="language-python" class="language-python">#Create tag for PROD model
+session.sql(&#34;CREATE OR REPLACE TAG PROD&#34;)
+
+#Apply prod tag 
+m = model_registry.get_model(model_name)
+m.comment = &#34;Loan approval prediction models&#34; #set model level comment
+m.set_tag(&#34;PROD&#34;, base_version_name)
+</code></pre>
+<h2 is-upgraded>Evaluate Baseline Model on Test Data</h2>
+<p>Let&#39;s see how our baseline model performs on the test data:</p>
+<pre><code language="language-python" class="language-python">reg_preds = mv_base.run(test, function_name = &#34;predict&#34;).rename(col(&#39;&#34;output_feature_0&#34;&#39;), &#34;MORTGAGE_PREDICTION&#34;)
+
+preds_pd = reg_preds.select([&#34;MORTGAGERESPONSE&#34;, &#34;MORTGAGE_PREDICTION&#34;]).to_pandas()
+f1_base_test = round(f1_score(preds_pd.MORTGAGERESPONSE, preds_pd.MORTGAGE_PREDICTION),4)
+precision_base_test = round(precision_score(preds_pd.MORTGAGERESPONSE, preds_pd.MORTGAGE_PREDICTION),4)
+recall_base_test = round(recall_score(preds_pd.MORTGAGERESPONSE, preds_pd.MORTGAGE_PREDICTION),4)
+
+#log metrics to model registry model
+mv_base.set_metric(metric_name=&#34;Test_F1_Score&#34;, value=f1_base_test)
+mv_base.set_metric(metric_name=&#34;Test_Precision_Score&#34;, value=precision_base_test)
+mv_base.set_metric(metric_name=&#34;Test_Recall_score&#34;, value=recall_base_test)
+
+print(f&#39;F1: {f1_base_test} \nPrecision {precision_base_test} \nRecall: {recall_base_test}&#39;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Hyperparameter Optimization" duration="20">
+        <p>Our baseline model shows signs of overfitting, with performance dropping significantly from training to test data. Let&#39;s use Snowflake&#39;s distributed hyperparameter optimization to improve our model.</p>
+<h2 is-upgraded>Set Up Hyperparameter Optimization</h2>
+<pre><code language="language-python" class="language-python">X_train = train.drop(&#34;MORTGAGERESPONSE&#34;, &#34;TIMESTAMP&#34;, &#34;LOAN_ID&#34;)
+y_train = train.select(&#34;MORTGAGERESPONSE&#34;)
+X_test = test.drop(&#34;MORTGAGERESPONSE&#34;,&#34;TIMESTAMP&#34;, &#34;LOAN_ID&#34;)
+y_test = test.select(&#34;MORTGAGERESPONSE&#34;)
+
+from snowflake.ml.data import DataConnector
+from snowflake.ml.modeling.tune import get_tuner_context
+from snowflake.ml.modeling import tune
+from entities import search_algorithm
+
+#Define dataset map
+dataset_map = {
+    &#34;x_train&#34;: DataConnector.from_dataframe(X_train),
+    &#34;y_train&#34;: DataConnector.from_dataframe(y_train),
+    &#34;x_test&#34;: DataConnector.from_dataframe(X_test),
+    &#34;y_test&#34;: DataConnector.from_dataframe(y_test)
+    }
+
+# Define a training function
+def train_func():
+    # A context object provided by HPO API to expose data for the current HPO trial
+    tuner_context = get_tuner_context()
+    config = tuner_context.get_hyper_params()
+    dm = tuner_context.get_dataset_map()
+
+    model = XGBClassifier(**config, random_state=42)
+    model.fit(dm[&#34;x_train&#34;].to_pandas().sort_index(), dm[&#34;y_train&#34;].to_pandas().sort_index())
+    f1_metric = f1_score(
+        dm[&#34;y_train&#34;].to_pandas().sort_index(), model.predict(dm[&#34;x_train&#34;].to_pandas().sort_index())
+    )
+    tuner_context.report(metrics={&#34;f1_score&#34;: f1_metric}, model=model)
+
+tuner = tune.Tuner(
+    train_func=train_func,
+    search_space={
+        &#34;max_depth&#34;: tune.randint(1, 10),
+        &#34;learning_rate&#34;: tune.uniform(0.01, 0.1),
+        &#34;n_estimators&#34;: tune.randint(50, 100),
+    },
+    tuner_config=tune.TunerConfig(
+        metric=&#34;f1_score&#34;,
+        mode=&#34;max&#34;,
+        search_alg=search_algorithm.RandomSearch(random_state=101),
+        num_trials=8,
+        max_concurrent_trials=4,
+    ),
+)
+</code></pre>
+<h2 is-upgraded>Run Hyperparameter Optimization</h2>
+<pre><code language="language-python" class="language-python">#Train several model candidates (note this may take 1-2 minutes)
+tuner_results = tuner.run(dataset_map=dataset_map)
+
+#Select best model results and inspect configuration
+tuned_model = tuner_results.best_model
+</code></pre>
+<h2 is-upgraded>Evaluate Optimized Model</h2>
+<p>Let&#39;s evaluate our optimized model on both training and test data:</p>
+<pre><code language="language-python" class="language-python">#Generate predictions
+xgb_opt_preds = tuned_model.predict(train_pd.drop([&#34;TIMESTAMP&#34;, &#34;LOAN_ID&#34;, &#34;MORTGAGERESPONSE&#34;],axis=1))
+
+#Generate performance metrics
+f1_opt_train = round(f1_score(train_pd.MORTGAGERESPONSE, xgb_opt_preds),4)
+precision_opt_train = round(precision_score(train_pd.MORTGAGERESPONSE, xgb_opt_preds),4)
+recall_opt_train = round(recall_score(train_pd.MORTGAGERESPONSE, xgb_opt_preds),4)
+
+print(f&#39;Train Results: \nF1: {f1_opt_train} \nPrecision {precision_opt_train} \nRecall: {recall_opt_train}&#39;)
+
+#Generate test predictions
+xgb_opt_preds_test = tuned_model.predict(test_pd.drop([&#34;TIMESTAMP&#34;, &#34;LOAN_ID&#34;, &#34;MORTGAGERESPONSE&#34;],axis=1))
+
+#Generate performance metrics on test data
+f1_opt_test = round(f1_score(test_pd.MORTGAGERESPONSE, xgb_opt_preds_test),4)
+precision_opt_test = round(precision_score(test_pd.MORTGAGERESPONSE, xgb_opt_preds_test),4)
+recall_opt_test = round(recall_score(test_pd.MORTGAGERESPONSE, xgb_opt_preds_test),4)
+
+print(f&#39;Test Results: \nF1: {f1_opt_test} \nPrecision {precision_opt_test} \nRecall: {recall_opt_test}&#39;)
+</code></pre>
+<h2 is-upgraded>Register Optimized Model</h2>
+<pre><code language="language-python" class="language-python">#Log the optimized model to the model registry
+optimized_version_name = &#39;XGB_Optimized&#39;
+
+try:
+    mv_opt = model_registry.get_model(model_name).version(optimized_version_name)
+    print(&#34;Found existing model version!&#34;)
+except:
+    print(&#34;Logging new model version...&#34;)
+    mv_opt = model_registry.log_model(
+        model_name=model_name,
+        model=tuned_model, 
+        version_name=optimized_version_name,
+        sample_input_data = train.drop([&#34;TIMESTAMP&#34;, &#34;LOAN_ID&#34;, &#34;MORTGAGERESPONSE&#34;]).limit(100),
+        comment = &#34;snow ml model built off feature store using HPO model&#34;,
+    )
+    mv_opt.set_metric(metric_name=&#34;Train_F1_Score&#34;, value=f1_opt_train)
+    mv_opt.set_metric(metric_name=&#34;Train_Precision_Score&#34;, value=precision_opt_train)
+    mv_opt.set_metric(metric_name=&#34;Train_Recall_score&#34;, value=recall_opt_train)
+
+    mv_opt.set_metric(metric_name=&#34;Test_F1_Score&#34;, value=f1_opt_test)
+    mv_opt.set_metric(metric_name=&#34;Test_Precision_Score&#34;, value=precision_opt_test)
+    mv_opt.set_metric(metric_name=&#34;Test_Recall_score&#34;, value=recall_opt_test)
+</code></pre>
+<h2 is-upgraded>Update Default Model and Production Tag</h2>
+<pre><code language="language-python" class="language-python">#Set the optimized model to be the default model version
+model_registry.get_model(model_name).default = optimized_version_name
+
+#Update the PROD tagged model to be the optimized model version
+m.unset_tag(&#34;PROD&#34;)
+m.set_tag(&#34;PROD&#34;, optimized_version_name)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Explainability" duration="15">
+        <p>Snowflake offers built-in explainability capabilities for models logged in the Model Registry. Let&#39;s generate SHAP values to understand how input features impact our models&#39; predictions.</p>
+<h2 is-upgraded>Generate SHAP Values</h2>
+<pre><code language="language-python" class="language-python">#Create a sample of records for explanation
+test_pd_sample=test_pd.rename(columns=rename_dict).sample(n=2500, random_state = 100).reset_index(drop=True)
+
+#Compute shapley values for each model
+base_shap_pd = mv_base.run(test_pd_sample, function_name=&#34;explain&#34;)
+opt_shap_pd = mv_opt.run(test_pd_sample, function_name=&#34;explain&#34;)
+</code></pre>
+<h2 is-upgraded>Visualize Feature Importance</h2>
+<pre><code language="language-python" class="language-python">import shap 
+
+# Summary plot for base model
+shap.summary_plot(np.array(base_shap_pd.astype(float)), 
+                  test_pd_sample.drop([&#34;LOAN_ID&#34;,&#34;MORTGAGERESPONSE&#34;, &#34;TIMESTAMP&#34;], axis=1), 
+                  feature_names = test_pd_sample.drop([&#34;LOAN_ID&#34;,&#34;MORTGAGERESPONSE&#34;, &#34;TIMESTAMP&#34;], axis=1).columns)
+
+# Summary plot for optimized model
+shap.summary_plot(np.array(opt_shap_pd.astype(float)), 
+                  test_pd_sample.drop([&#34;LOAN_ID&#34;,&#34;MORTGAGERESPONSE&#34;, &#34;TIMESTAMP&#34;], axis=1), 
+                  feature_names = test_pd_sample.drop([&#34;LOAN_ID&#34;,&#34;MORTGAGERESPONSE&#34;, &#34;TIMESTAMP&#34;], axis=1).columns)
+</code></pre>
+<h2 is-upgraded>Analyze Feature Impact</h2>
+<p>Let&#39;s analyze how specific features impact our models&#39; predictions:</p>
+<pre><code language="language-python" class="language-python">#Merge shap vals and actual vals together for easier plotting
+all_shap_base = test_pd_sample.merge(base_shap_pd, right_index=True, left_index=True, how=&#39;outer&#39;)
+all_shap_opt = test_pd_sample.merge(opt_shap_pd, right_index=True, left_index=True, how=&#39;outer&#39;)
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Analyze income impact
+asb_filtered = all_shap_base[(all_shap_base.INCOME&gt;0) &amp; (all_shap_base.INCOME&lt;250000)]
+aso_filtered = all_shap_opt[(all_shap_opt.INCOME&gt;0) &amp; (all_shap_opt.INCOME&lt;250000)]
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 6))
+fig.suptitle(&#34;INCOME EXPLANATION&#34;)
+sns.scatterplot(data = asb_filtered, x =&#39;INCOME&#39;, y = &#39;INCOME_explanation&#39;, ax=axes[0])
+sns.regplot(data = asb_filtered, x =&#34;INCOME&#34;, y = &#39;INCOME_explanation&#39;, scatter=False, color=&#39;red&#39;, line_kws={&#34;lw&#34;:2},ci =100, lowess=False, ax =axes[0])
+axes[0].set_title(&#39;Base Model&#39;)
+sns.scatterplot(data = aso_filtered, x =&#39;INCOME&#39;, y = &#39;INCOME_explanation&#39;,color = &#34;orange&#34;, ax = axes[1])
+sns.regplot(data = aso_filtered, x =&#34;INCOME&#34;, y = &#39;INCOME_explanation&#39;, scatter=False, color=&#39;blue&#39;, line_kws={&#34;lw&#34;:2},ci =100, lowess=False, ax =axes[1])
+axes[1].set_title(&#39;Opt Model&#39;)
+plt.show()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Monitoring Setup" duration="15">
+        <p>Let&#39;s set up model monitoring to track our models&#39; performance over time.</p>
+<h2 is-upgraded>Save Training and Test Data</h2>
+<pre><code language="language-python" class="language-python">train.write.save_as_table(f&#34;DEMO_MORTGAGE_LENDING_TRAIN_{VERSION_NUM}&#34;, mode=&#34;overwrite&#34;)
+test.write.save_as_table(f&#34;DEMO_MORTGAGE_LENDING_TEST_{VERSION_NUM}&#34;, mode=&#34;overwrite&#34;)
+</code></pre>
+<h2 is-upgraded>Create Inference Stored Procedure</h2>
+<pre><code language="language-python" class="language-python">from snowflake import snowpark
+
+def demo_inference_sproc(session: snowpark.Session, table_name: str, modelname: str, modelversion: str) -&gt; str:
+    reg = Registry(session=session)
+    m = reg.get_model(model_name)
+    mv = m.version(modelversion)
+    
+    input_table_name=table_name
+    pred_col = f&#39;{modelversion}_PREDICTION&#39;
+
+    # Read the input table to a dataframe
+    df = session.table(input_table_name)
+    results = mv.run(df, function_name=&#34;predict&#34;).select(&#34;LOAN_ID&#34;,&#39;&#34;output_feature_0&#34;&#39;).withColumnRenamed(&#39;&#34;output_feature_0&#34;&#39;, pred_col)
+
+    final = df.join(results, on=&#34;LOAN_ID&#34;, how=&#34;full&#34;)
+    # Write results back to Snowflake table
+    final.write.save_as_table(table_name, mode=&#39;overwrite&#39;,enable_schema_evolution=True)
+
+    return &#34;Success&#34;
+
+# Register the stored procedure
+session.sproc.register(
+    func=demo_inference_sproc,
+    name=&#34;model_inference_sproc&#34;,
+    replace=True,
+    is_permanent=True,
+    stage_location=&#34;@ML_STAGE&#34;,
+    packages=[&#39;joblib&#39;, &#39;snowflake-snowpark-python&#39;, &#39;snowflake-ml-python&#39;],
+    return_type=StringType()
+)
+</code></pre>
+<h2 is-upgraded>Run Inference on Training and Test Data</h2>
+<pre><code language="language-sql" class="language-sql">CALL model_inference_sproc(&#39;DEMO_MORTGAGE_LENDING_TRAIN_0&#39;,&#39;MORTGAGE_LENDING_MLOPS_0&#39;, &#39;XGB_BASE&#39;);
+CALL model_inference_sproc(&#39;DEMO_MORTGAGE_LENDING_TEST_0&#39;,&#39;MORTGAGE_LENDING_MLOPS_0&#39;, &#39;XGB_BASE&#39;);
+CALL model_inference_sproc(&#39;DEMO_MORTGAGE_LENDING_TRAIN_0&#39;,&#39;MORTGAGE_LENDING_MLOPS_0&#39;, &#39;XGB_OPTIMIZED&#39;);
+CALL model_inference_sproc(&#39;DEMO_MORTGAGE_LENDING_TEST_0&#39;,&#39;MORTGAGE_LENDING_MLOPS_0&#39;, &#39;XGB_OPTIMIZED&#39;);
+</code></pre>
+<h2 is-upgraded>Create Model Monitors</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE MODEL MONITOR MORTGAGE_LENDING_BASE_MODEL_MONITOR
+WITH
+    MODEL=MORTGAGE_LENDING_MLOPS_0
+    VERSION=XGB_BASE
+    FUNCTION=predict
+    SOURCE=DEMO_MORTGAGE_LENDING_TEST_0
+    BASELINE=DEMO_MORTGAGE_LENDING_TRAIN_0
+    TIMESTAMP_COLUMN=TIMESTAMP
+    PREDICTION_CLASS_COLUMNS=(XGB_BASE_PREDICTION)  
+    ACTUAL_CLASS_COLUMNS=(MORTGAGERESPONSE)
+    ID_COLUMNS=(LOAN_ID)
+    WAREHOUSE=E2E_SNOW_MLOPS_WH
+    REFRESH_INTERVAL=&#39;1 hour&#39;
+    AGGREGATION_WINDOW=&#39;1 day&#39;;
+
+CREATE OR REPLACE MODEL MONITOR MORTGAGE_LENDING_OPTIMIZED_MODEL_MONITOR
+WITH
+    MODEL=MORTGAGE_LENDING_MLOPS_0
+    VERSION=XGB_OPTIMIZED
+    FUNCTION=predict
+    SOURCE=DEMO_MORTGAGE_LENDING_TEST_0
+    BASELINE=DEMO_MORTGAGE_LENDING_TRAIN_0
+    TIMESTAMP_COLUMN=TIMESTAMP
+    PREDICTION_CLASS_COLUMNS=(XGB_OPTIMIZED_PREDICTION)  
+    ACTUAL_CLASS_COLUMNS=(MORTGAGERESPONSE)
+    ID_COLUMNS=(LOAN_ID)
+    WAREHOUSE=E2E_SNOW_MLOPS_WH
+    REFRESH_INTERVAL=&#39;12 hours&#39;
+    AGGREGATION_WINDOW=&#39;1 day&#39;;
+</code></pre>
+<h2 is-upgraded>Query Model Drift Metrics</h2>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM TABLE(MODEL_MONITOR_DRIFT_METRIC(
+&#39;MORTGAGE_LENDING_BASE_MODEL_MONITOR&#39;, -- model monitor to use
+&#39;DIFFERENCE_OF_MEANS&#39;, -- metric for computing drift
+&#39;XGB_BASE_PREDICTION&#39;, -- column to compute drift on
+&#39;1 DAY&#39;,  -- day granularity for drift computation
+DATEADD(DAY, -90, CURRENT_DATE()), -- end date
+DATEADD(DAY, -60, CURRENT_DATE()) -- start date
+))
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>You just walked through a guided experience building and deploying a complete end-to-end machine learning workflow within Snowflake ML for a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model logging and management with Snowflake Model Registry, and model performance tracking and drift detection via ML Observability.</p>
+<p>Ready for more? After you complete this quickstart, you can try one of the following additional examples:</p>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0" target="_blank">Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#3" target="_blank">Scale Embeddings with Snowflake Notebooks on Container Runtime</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0" target="_blank">Getting Started with Running Distributed PyTorch Models on Snowflake</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0" target="_blank">Defect Detection Using Distributed PyTorch With Snowflake Notebooks</a></li>
+</ul>
+<p>Related Resources</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview" target="_blank">Snowflake ML Docs</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

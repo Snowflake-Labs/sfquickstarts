@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "cordial_bidirectional_data_share",
+  "duration": 76,
+  "title": "Create a Bidirectional Data Share with Cordial",
+  "summary": "Set up a secure bidirectional data share with Cordial.",
+  "source": "cordial_bidirectional_data_share/cordial_bidirectional_data_share.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-sharing",
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "cordial",
+    "dataengineering",
+    "datasharing",
+    "gettingstarted",
+    "personalizedmarketing",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "cordial_bidirectional_data_share"
+}

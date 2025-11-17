@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_snowflake_it",
+  "duration": 90,
+  "title": "Guida introduttiva a Snowflake - Da zero a Snowflake",
+  "summary": "Questa è un’introduzione generale a Snowflake che spiega come effettuare il login, eseguire query e caricare dati.",
+  "source": "getting_started_with_snowflake_it/getting_started_with_snowflake_it.md",
+  "theme": "",
+  "status": [
+    "pubblicato"
+  ],
+  "category": [
+    "in-evidenza",
+    "guida-introduttiva"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "guidaintroduttiva",
+    "it"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowflake_it"
+}

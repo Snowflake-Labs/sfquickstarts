@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "getting_started_external_functions_aws",
+  "duration": 57,
+  "title": "Getting Started With External Functions on AWS",
+  "summary": "Getting Started With External Functions on AWS",
+  "source": "external-functions-aws/external-functions-aws.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "aws",
+    "dataengineering",
+    "externalfunctions",
+    "gettingstarted",
+    "sql"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_external_functions_aws"
+}

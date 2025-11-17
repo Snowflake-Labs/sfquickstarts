@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "coherent_spark_connector",
+  "duration": 6,
+  "title": "Coherent Spark Connector - use business logic from Excel spreadsheets in Snowflake",
+  "authors": "Dustin Smith, Alan Hung",
+  "summary": "Use business logic from Excel in Snowflake with Coherent Spark",
+  "source": "coherent_spark_connector/coherent_spark_connector.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "coherent",
+    "coherentspark",
+    "excel",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "coherent_spark_connector"
+}

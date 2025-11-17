@@ -1,0 +1,165 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake ML Lineage</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-snowflake-ml-lineage"
+                  title="Getting Started with Snowflake ML Lineage"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/ml-lineage" target="_blank">ML Lineage</a> provides comprehensive tracing of data as it flows through your machine learning pipeline. This feature enables you to track the lineage between various data artifacts, including source tables/views/stages, feature views, datasets, registered models, and deployed model services. Additionally, ML Lineage captures the relationships between cloned artifacts and artifacts of similar types, ensuring a complete view of data transformations and dependencies within your pipeline. A possible pipeline is illustrated below:</p>
+<p class="image-container"><img alt="ml-lineage" src="img/eb4d8ce24638734d.png"></p>
+<p>This quickstart will introduce ML Lineage by building an ML pipeline containing lineage at every step. You will see how source data, Feature Store, Datasets, and models all are connected via lineage for easy tracking.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use ML Lineage for Feature Views, Datasets and Models via a Snowflake Notebook</li>
+<li>How to view the ML Lineage DAG in Snowsight</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> account with Enterprise Edition or higher</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An entire ML pipeline connected via Snowflake ML Lineage</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Your Account" duration="5">
+        <h2 is-upgraded>Account Setup</h2>
+<p>Complete the following steps to setup your account:</p>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and the following SQL in the worksheet</li>
+<li>Adjust &lt;YOUR_USER&gt; to your user</li>
+<li>Run all commands to create Snowflake objects</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE ML_LINEAGE_ROLE;
+GRANT ROLE ML_LINEAGE_ROLE to USER &lt;YOUR_USER&gt;;
+
+-- grant lineage
+GRANT VIEW LINEAGE ON ACCOUNT TO ROLE ML_LINEAGE_ROLE;
+
+-- create our virtual warehouse
+CREATE OR REPLACE WAREHOUSE ML_LINEAGE_WH AUTO_SUSPEND = 60;
+GRANT ALL ON WAREHOUSE ML_LINEAGE_WH TO ROLE ML_LINEAGE_ROLE;
+
+-- Next create a new database and schema,
+CREATE OR REPLACE DATABASE ML_LINEAGE_DATABASE;
+CREATE OR REPLACE SCHEMA ML_LINEAGE_SCHEMA;
+
+GRANT OWNERSHIP ON DATABASE ML_LINEAGE_DATABASE TO ROLE ML_LINEAGE_ROLE COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE ML_LINEAGE_DATABASE TO ROLE ML_LINEAGE_ROLE COPY CURRENT GRANTS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Notebook" duration="0">
+        <ul>
+<li>Download the notebook from this <a href="https://github.com/Snowflake-Labs/getting-started-with-snowflake-ml-lineage/blob/main/notebooks/0_start_here.ipynb" target="_blank">link</a></li>
+<li>Change role to ML_LINEAGE_ROLE</li>
+<li>Navigate to Projects &gt; Notebooks in Snowsight</li>
+<li>Click Import .ipynb from the + Notebook dropdown</li>
+<li>Create a new notebok with the following settings <ul>
+<li>Notebook Location: ML_LINEAGE_DATABASE, ML_LINEAGE_SCHEMA</li>
+<li>Run on Warehouse</li>
+<li>Warehouse: ML_LINEAGE_WH</li>
+</ul>
+</li>
+<li>Create Notebook</li>
+<li>Upload the image located <a href="https://github.com/Snowflake-Labs/getting-started-with-snowflake-ml-lineage/blob/main/scripts/img" target="_blank">here</a> using the plus button on the notebook file explorer</li>
+<li>Click Packages in the top right, add snowflake-ml-python</li>
+<li>Run cells in the notebook!</li>
+</ul>
+<p class="image-container"><img alt="create-notebooks" src="img/c1f97938477c44f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>ML Lineage provides a powerful tool for tracking and understanding data flow throughout your machine learning pipeline. By capturing relationships between data artifacts—such as source tables, feature views, datasets, models, and services—ML Lineage ensures full visibility into data transformations and dependencies. In this quickstart you saw how many different objects within Snowflake ML are connected via lineage.</p>
+<p>Start your journey now to unlock the full potential of ML Lineage!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use ML Lineage for Feature Views, Datasets and Models via a Snowflake Notebook</li>
+<li>How to view the ML Lineage DAG in Snowsight</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/ml-lineage" target="_blank">ML Lineage</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Feature Store</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowflake-ml/dataset" target="_blank">Datasets</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowflake-ml/modeling" target="_blank">Snowpark ML Modeling</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

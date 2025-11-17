@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_ocr_and_rag_with_snowflake_notebooks",
+  "duration": 65,
+  "title": "Getting Started with OCR and RAG with Snowflake Notebooks",
+  "summary": "Getting Started with OCR and RAG with Snowflake Notebooks",
+  "source": "getting_started_with_ocr_and_rag_with_snowflake_notebooks/getting_started_with_ocr_and_rag_with_snowflake_notebooks.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "gettingstarted",
+    "snowflakecortex",
+    "snowflakenotebooks",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_ocr_and_rag_with_snowflake_notebooks"
+}

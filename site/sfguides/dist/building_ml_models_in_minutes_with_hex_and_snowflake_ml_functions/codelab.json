@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "building_ml_models_in_minutes_with_hex_and_snowflake_ml_functions",
+  "duration": 58,
+  "title": "Building ML Models In Minutes With Hex And Snowflake ML Functions",
+  "summary": "This lab will walk you through how to use Snowflake ML Functions and Hex.",
+  "source": "hex_snowflake_ml_functions/snowflake_ml_functions.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "hex",
+    "notebooks",
+    "partnerconnect",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "building_ml_models_in_minutes_with_hex_and_snowflake_ml_functions"
+}

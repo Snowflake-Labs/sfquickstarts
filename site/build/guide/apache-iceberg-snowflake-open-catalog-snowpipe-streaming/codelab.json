@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "apache-iceberg-snowflake-open-catalog-snowpipe-streaming",
+  "duration": 50,
+  "title": "Apache Iceberg and Snowflake Open Catalog: Unlock Data Lake Interoperability with Apache Polaris",
+  "summary": "Learn how Apache Iceberg integrates with Snowflake Open Catalog, a managed service for Apache Polaris, to enhance data lake interoperability and analytics performance. Discover key benefits and use cases for modern data architectures.",
+  "source": "apache_iceberg_snowflake_open_catalog_snowpipe_streaming/apache-iceberg-snowflake-open-catalog-snowpipe-streaming.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "apache-iceberg-snowflake-open-catalog-snowpipe-streaming"
+}

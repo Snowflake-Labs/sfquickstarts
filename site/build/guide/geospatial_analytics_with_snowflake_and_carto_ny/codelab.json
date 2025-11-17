@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "geospatial_analytics_with_snowflake_and_carto_ny",
+  "duration": 140,
+  "title": "Geospatial Analytics for Retail with Snowflake and CARTO",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "geo_analysis_retail/geo_analysis_retail.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "geospatial_analytics_with_snowflake_and_carto_ny"
+}

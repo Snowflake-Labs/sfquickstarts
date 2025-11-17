@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-mediawallah-enrichment-native-app",
+  "duration": 30,
+  "title": "Getting Started with MediaWallah Enrichment Application",
+  "summary": "This is a guide to use MediaWallah’s Enrichment Application",
+  "source": "getting-started-with-mediawallah-enrichment-native-app/getting-started-with-mediawallah-enrichment-native-app.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "getting-started",
+    "data-applications"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "enrichment",
+    "gettingstarted",
+    "graph",
+    "identity",
+    "matchtest",
+    "mediawallah",
+    "resolution",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-mediawallah-enrichment-native-app"
+}

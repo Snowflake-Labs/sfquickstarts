@@ -1,0 +1,38 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask",
+  "duration": 29,
+  "title": "Developing React Native Application using Snowflake Hybrid Tables",
+  "summary": "Developing Tasty Bytes React Native Data Application using Snowflake, Hybrid Tables, SQLAlchemy, Flask",
+  "source": "developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "app-development",
+    "hybrid-tables",
+    "sql-alchemy",
+    "flask",
+    "react"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "dataengineering",
+    "flask",
+    "gettingstarted",
+    "hybridtables",
+    "react",
+    "sqlalchemy",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask"
+}

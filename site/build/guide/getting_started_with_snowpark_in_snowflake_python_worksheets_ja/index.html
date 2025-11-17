@@ -1,0 +1,242 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowflake PythonワークシートによるSnowpark入門</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpark_in_snowflake_python_worksheets_ja"
+                  title="Snowflake PythonワークシートによるSnowpark入門"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="概要" duration="5">
+        <p>このガイドを完了すると、Snowflake UI内からSnowpark for Pythonを試すことができるようになります。最後には、Snowflake PythonワークシートでSnowparkを使用してコアデータエンジニアリングタスクを実行する方法について理解を深めることができます。</p>
+<h2 is-upgraded>Snowparkとは</h2>
+<p>Python、Java、Scalaなどの非SQLコードを安全にデプロイして処理するSnowflakeのライブラリとランタイムのセットです。</p>
+<p><strong>使い慣れたクライアント側ライブラリ</strong> - Snowparkは、高度に統合されたDataFrame型のプログラミングとOSS互換のAPIをデータ実務者の好みの言語で利用できるようにします。より効率的なMLモデリング（公開プレビュー）とML運用（プライベートプレビュー）のためのSnowpark ML APIも含まれています。</p>
+<p><strong>柔軟なランタイムコンストラクト</strong> - Snowparkは、ユーザーがカスタムロジックを取り込んで実行できるようにする柔軟なランタイムコンストラクトを提供します。開発者は、ユーザー定義関数とストアドプロシージャを使用して、データパイプライン、MLモデル、データアプリケーションをシームレスに構築できます。</p>
+<p>詳しくは、<a href="https://www.snowflake.com/snowpark/" target="_blank">Snowpark</a>をご覧ください。</p>
+<p class="image-container"><img alt="Snowpark" src="img/9f7d4fd72f4d8a3f.png"></p>
+<h2 is-upgraded>Pythonワークシートとは</h2>
+<p>PythonワークシートはSnowsightの新しいタイプのワークシートで、Snowparkをより早く使い始めるのに役立ちます。ユーザーはSnowflake内でデータパイプライン、MLモデル、アプリケーションを直接開発でき、Python用に追加のIDE（開発UI）をスピンアップ、設定、維持する必要はありません。これらのワークシートは、Snowparkアプリケーションをスケジュールするためのプロシージャに変換することもできます。</p>
+<h2 is-upgraded>学習する内容</h2>
+<ul>
+<li>SnowflakeテーブルからSnowpark DataFramesにデータをロードする方法</li>
+<li>Snowpark DataFramesで探索的データ分析を実行する方法</li>
+<li>Snowpark DataFramesを使用して複数のテーブルからデータをピボットおよび結合する方法</li>
+<li>変換されたデータをSnowflakeテーブルに保存する方法</li>
+<li>Pythonワークシートをストアドプロシージャとして展開する方法</li>
+</ul>
+<h2 is-upgraded>構築するもの</h2>
+<p>ダウンストリームでの分析やアプリケーションで使用できる準備されたデータセット。たとえば、機械学習モデルのトレーニングです。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="開始する" duration="10">
+        <h2 is-upgraded>Snowflakeトライアルアカウントを作成する</h2>
+<p>こちらの<a href="https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets" target="_blank">リンク</a>をクリックして、30日間の無料トライアルに登録します（「<strong>Snowflake PythonワークシートによるSnowpark入門</strong>」というタイトルのトライアル設定ページに戻ります）。最寄りの地域をお勧めします。最も一般的なエンタープライズエディションをお勧めしますが、このラボではどのエディションでも使用できます。</p>
+<h2 is-upgraded>ラボにログインして設定する</h2>
+<p>Snowflakeアカウントにログインします。このラボにアクセスし、サンプルデータとコードを設定するには、次のリンクをクリックしてください。</p>
+<p>重要：以下に説明するラボ設定を続行するには、アカウント管理者ロールが必要です。注意：新しいトライアルアカウントを作成した場合は、自動的にアカウント管理者ロールが付与されます。</p>
+<p><a href="https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets" target="_blank"><paper-button class="colored" raised>ラボ環境を設定する</paper-button></a></p>
+<p>上のボタンをクリックすると、「<strong>Getting Started with Snowpark in Snowflake Python Worksheets</strong>」というタイトルのトライアルページが表示され、**「ラボを設定」**をクリックするよう促されます。所要時間は1分以内で、データとサンプルPythonコードによる設定が説明付きで提供されます。</p>
+<p>==================================================================================================</p>
+<p class="image-container"><img alt="デプロイ" src="img/243c2ac72aba4fe.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SnowflakeテーブルからSnowpark DataFramesにデータをロードする" duration="3">
+        <p>まず、Snowpark Pythonライブラリをインポートしましょう。</p>
+<pre><code language="language-python" class="language-python"># Import Snowpark for Python
+import snowflake.snowpark as snowpark
+</code></pre>
+<h2 is-upgraded>集約されたキャンペーン支出と売上データをロードする</h2>
+<p>キャンペーン支出テーブルには、検索エンジン、ソーシャルメディア、メール、動画などのデジタル広告チャネル全体の1日の支出を示すために集約された広告クリックデータが含まれています。収益テーブルには、10年間の収益データが含まれています。</p>
+<p>この例では、次のコードを使用して、<strong><em>campaign_spend</em></strong>テーブルと<strong><em>monthly_revenue</em></strong>テーブルからデータをロードします。</p>
+<pre><code language="language-python" class="language-python">snow_df_spend = session.table(&#39;campaign_spend&#39;)
+snow_df_revenue = session.table(&#39;monthly_revenue&#39;)
+</code></pre>
+<p>他にも、Snowpark DataFramesにデータをロードする方法をいくつか紹介します。</p>
+<ul>
+<li>session.sql(&#34;select col1, col2... from tableName&#34;)</li>
+<li>session.read.options({&#34;field_delimiter&#34;: &#34;,&#34;, &#34;skip_header&#34;: 1}).schema(user_schema).csv(&#34;@mystage/testCSV.csv&#34;)</li>
+<li>session.read.parquet(&#34;@stageName/path/to/file&#34;)</li>
+<li>session.create_dataframe([1,2,3], schema=[&#34;col1&#34;])</li>
+</ul>
+<p>ヒント：<a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/dataframe.html" target="_blank">Snowpark DataFrames</a>を参照してください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="データトランスフォーメーション" duration="10">
+        <p>このセクションでは、2つのDataFramesの集約と結合を含む一連の変換を実行します。</p>
+<p>まず、必要な関数をすべてインポートしましょう。</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.functions import month,year,col,sum
+</code></pre>
+<h2 is-upgraded>全チャネルの年間および月間の総支出額</h2>
+<p><strong><em>group_by()</em></strong> および <strong><em>agg()</em></strong> Snowpark DataFrame関数を使用して、<strong>チャネルごとの年間/月間総コスト</strong>を確認できるようにデータを変換してみましょう。</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_per_channel = snow_df_spend.group_by(year(&#39;DATE&#39;), month(&#39;DATE&#39;),&#39;CHANNEL&#39;).agg(sum(&#39;TOTAL_COST&#39;).as_(&#39;TOTAL_COST&#39;)).with_column_renamed(&#39;&#34;YEAR(DATE)&#34;&#39;,&#34;YEAR&#34;).with_column_renamed(&#39;&#34;MONTH(DATE)&#34;&#39;,&#34;MONTH&#34;).sort(&#39;YEAR&#39;,&#39;MONTH&#39;)
+</code></pre>
+<p>ヒント：<a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/functions.html" target="_blank">関数</a>の完全なリストを参照してください。</p>
+<p>この変換の結果を表示するには、Snowpark DataFrameの <strong><em>show()</em></strong> 関数を使用して、 <strong>出力</strong> タブに出力します。</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Spend per Year and Month For All Channels&#34;)
+snow_df_spend_per_channel.show()
+</code></pre>
+<h2 is-upgraded>全チャネルを通じた総支出額</h2>
+<p><strong><em>pivot()</em></strong> および <strong><em>sum()</em></strong> Snowpark DataFrame関数を使用して、各行が年間/月間のチャネル全体の総コストを表すようにキャンペーン支出データをさらに変換してみましょう。</p>
+<p>この変換を行うことで、収益テーブルと結合し、モデルトレーニングのために、入力特徴量とターゲット変数を1つのテーブルにまとめることができるようになります。</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_per_month = snow_df_spend_per_channel.pivot(&#39;CHANNEL&#39;,[&#39;search_engine&#39;,&#39;social_media&#39;,&#39;video&#39;,&#39;email&#39;]).sum(&#39;TOTAL_COST&#39;).sort(&#39;YEAR&#39;,&#39;MONTH&#39;)
+snow_df_spend_per_month = snow_df_spend_per_month.select(
+    col(&#34;YEAR&#34;),
+    col(&#34;MONTH&#34;),
+    col(&#34;&#39;search_engine&#39;&#34;).as_(&#34;SEARCH_ENGINE&#34;),
+    col(&#34;&#39;social_media&#39;&#34;).as_(&#34;SOCIAL_MEDIA&#34;),
+    col(&#34;&#39;video&#39;&#34;).as_(&#34;VIDEO&#34;),
+    col(&#34;&#39;email&#39;&#34;).as_(&#34;EMAIL&#34;)
+)
+</code></pre>
+<p>この変換の結果を表示するには、Snowpark DataFrameの <strong><em>show()</em></strong> 関数を使用して、出力タブに出力します。</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Spend Across All Channels&#34;)
+snow_df_spend_per_month.show()
+</code></pre>
+<h2 is-upgraded>年間および月間の総収益データ</h2>
+<p>次に、 <strong><em>group_by()</em></strong> および <strong><em>agg()</em></strong> 関数を使用して売上データを年間/月間の収益に変換してみましょう。</p>
+<pre><code language="language-python" class="language-python">snow_df_revenue_per_month = snow_df_revenue.group_by(&#39;YEAR&#39;,&#39;MONTH&#39;).agg(sum(&#39;REVENUE&#39;)).sort(&#39;YEAR&#39;,&#39;MONTH&#39;).with_column_renamed(&#39;SUM(REVENUE)&#39;,&#39;REVENUE&#39;)
+</code></pre>
+<p>この変換の結果を表示するには、Snowpark DataFrameの <strong><em>show()</em></strong> 関数を使用して、出力タブに出力します。</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Revenue per Year and Month&#34;)
+snow_df_revenue_per_month.show()
+</code></pre>
+<h2 is-upgraded>すべてのチャネルの年間および月間の総支出と総収益を結合する</h2>
+<p>次に、この収益データと変換されたキャンペーン支出データを結合し、入力特徴量（チャネルあたりの費用など）とターゲット変数（収益など）をさらなる分析とモデルトレーニングのために1つのテーブルにロードできるようにしましょう。</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_and_revenue_per_month = snow_df_spend_per_month.join(snow_df_revenue_per_month, [&#34;YEAR&#34;,&#34;MONTH&#34;])
+</code></pre>
+<p>この変換の結果を表示するには、Snowpark DataFrameの <strong><em>show()</em></strong> 関数を使用して、出力タブに出力します。</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Spend and Revenue per Year and Month Across All Channels&#34;)
+snow_df_spend_and_revenue_per_month.show()
+</code></pre>
+<h2 is-upgraded>クエリ実行計画を調べる</h2>
+<p>Snowparkでは、<strong><em>explain()</em></strong> Snowpark DataFrame関数を使用して、DataFrameクエリと実行計画を簡単に確認できます。</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_and_revenue_per_month.explain()
+</code></pre>
+<p>上記の記述の出力は <strong>出力</strong> タブで確認できます。</p>
+<h2 is-upgraded>出力タブ</h2>
+<p>ワークシートを実行した後の <strong>出力</strong> タブは次のようになります。</p>
+<p class="image-container"><img alt="ワークシート" src="img/ac0cf51f6ca475ed.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="変換されたデータを保存する" duration="1">
+        <p>変換されたデータをSnowflakeテーブル <strong><em>SPEND_AND_REVENUE_PER_MONTH</em></strong> に保存して、さらなる分析やモデルトレーニングに使用できるようにしましょう。</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_and_revenue_per_month.write.mode(&#39;overwrite&#39;).save_as_table(&#39;SPEND_AND_REVENUE_PER_MONTH&#39;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="変換されたデータを表示して返す" duration="1">
+        <p>Pythonワークシートの戻り値の1つは <strong><em>Table()</em></strong> 型であり、この例ではこれを設定することで、変換されたデータをSnowpark DataFrameとして表示して返すことができます。</p>
+<pre><code language="language-python" class="language-python">return snow_df_spend_and_revenue_per_month
+</code></pre>
+<p>上記のステートメントの出力は、以下に示す <strong>結果</strong> タブで確認できます。</p>
+<h2 is-upgraded>結果タブ</h2>
+<p>ワークシートを実行した後の <strong>結果</strong> タブは次のようになります。</p>
+<p class="image-container"><img alt="ワークシート" src="img/ac0cf51f6ca475ed.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ストアドプロシージャとして展開する" duration="2">
+        <p>オプションで、このワークシートをPythonストアドプロシージャとして展開して、<a href="https://docs.snowflake.com/en/user-guide/tasks-intro" target="_blank">Snowflakeタスク</a>などを使用してスケジュールできるようにすることもできます。このワークシートを展開するには、右上の「<strong>展開</strong>」ボタンをクリックし、以下の指示に従います。</p>
+<p class="image-container"><img alt="デプロイ" src="img/451aa8ae3ac38799.png"></p>
+<p>==================================================================================================</p>
+<p class="image-container"><img alt="デプロイ" src="img/4d0b09c660902d51.png"></p>
+<h2 is-upgraded>ストアドプロシージャを表示する</h2>
+<p>展開されると、ストアドプロシージャの詳細は、<strong>「データ」 » 「データベース」 » 「SNOWPARK_DEMO_SCHEMA」 » 「プロシージャ</strong>」で確認できます。</p>
+<p class="image-container"><img alt="デプロイ" src="img/7127631efb64d195.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめとリソース" duration="0">
+        <p>おめでとうございます。Snowflake PythonワークシートでSnowparkを使用してデータエンジニアリングタスクを正常に実行できました。</p>
+<p>このクイックスタートガイドに関するフィードバックをお待ちしています。こちらの<a href="https://docs.google.com/forms/d/e/1FAIpQLScpCO4ekMB9kitQ6stQZ1NLqZf3VqbQfDrf7yRIwMQjty57_g/viewform?usp=sf_link" target="_blank">フィードバックフォーム</a>からフィードバックをお寄せください。</p>
+<h2 is-upgraded>学習した内容</h2>
+<ul>
+<li>SnowflakeテーブルからSnowpark DataFramesにデータをロードする方法</li>
+<li>Snowpark DataFramesで探索的データ分析を実行する方法</li>
+<li>Snowpark DataFramesを使用して複数のテーブルからデータをピボットおよび結合する方法</li>
+<li>変換されたデータをSnowflakeテーブルに保存する方法</li>
+<li>Pythonワークシートをストアドプロシージャとして展開する方法</li>
+</ul>
+<h2 is-upgraded>次のステップ</h2>
+<p>データを段階的に処理する方法、Snowflakeタスクでデータパイプラインをオーケストレーションする方法、これらをCI/CDパイプラインで展開する方法、Snowflakeの新しい開発者CLIツールとVisual Studio Code拡張機能を使用する方法を学ぶには、引き続き<a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html" target="_blank">Snowpark Pythonを使用してデータエンジニアリングパイプライン</a>を深く掘り下げてください。</p>
+<h2 is-upgraded>関連リソース</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets" target="_blank">Pythonワークシート開発者ガイド</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html" target="_blank">Snowpark for Pythonを使用したデータエンジニアリングとMLの入門</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html" target="_blank">上級：Snowpark for Python機械学習ガイド</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md" target="_blank">Snowpark for Pythonデモ</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark for Python開発者ガイド</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

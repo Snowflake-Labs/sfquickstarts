@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "building_dynamic_tables_in_snowflake_with_coalesce",
+  "duration": 37,
+  "title": "Building Dynamic Tables in Snowflake with Coalesce",
+  "summary": "Building Dynamic Tables in SNowflake with Coalesce",
+  "source": "building_dynamic_tables_in_snowflake_with_coalesce/building_dynamic_tables_in_snowflake_with_coalesce.md",
+  "theme": "",
+  "status": [
+    "final"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "building_dynamic_tables_in_snowflake_with_coalesce"
+}

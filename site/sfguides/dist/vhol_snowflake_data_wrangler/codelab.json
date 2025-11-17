@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "vhol_snowflake_data_wrangler",
+  "duration": 77,
+  "title": "Data-centric Approach to Machine Learning Using Snowflake and Amazon SageMaker Data Wrangler",
+  "authors": "andries.engelbrecht@snowflake.com",
+  "summary": "This lab will walk you through how to apply a data-centric approach to Machine Learning with Snowflake and Amazon SageMaker.",
+  "source": "vhol_snowflake_data_wrangler/vhol_snowflake_data_wrangler.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "datamarketplace",
+    "datawrangler",
+    "featureengineering",
+    "financialservices",
+    "machinelearning",
+    "sagemaker",
+    "storageintegration",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "vhol_snowflake_data_wrangler"
+}

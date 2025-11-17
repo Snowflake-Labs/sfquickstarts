@@ -1,0 +1,218 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowpark for Machine Learning on Vertex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpark_for_machine_learning_on_vertexai"
+                  title="Getting Started with Snowpark for Machine Learning on Vertex AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p>Python is the language of choice for Data Science and Machine Learning workloads. Snowflake has long supported Python via the Python Connector, allowing data scientists to interact with data stored in Snowflake from their preferred Python environment. This did, however, require data scientists to write verbose SQL queries. To provide a more friendly, expressive, and extensible interface to Snowflake, we built Snowpark Python, a native Python experience with a pandas and PySpark-like API for data manipulation. This includes a client-side API to allow users to write Python code in a Spark-like API without the need to write verbose SQL. Python UDF and Stored Procedure support also provides more general additional capabilities for compute pushdown.</p>
+<p>Snowpark includes client-side APIs and server-side runtimes that extends Snowflake to popular programming languages including Scala, Java, and Python. Ultimately, this offering provides a richer set of tools for Snowflake users (e.g. Python&#39;s extensibility and expressiveness) while still leveraging all of Snowflake&#39;s core features, and the underlying power of SQL, and provides a clear path to production for machine learning products and workflows.</p>
+<p>A key component of Snowpark for Python is that you can &#34;Bring Your Own IDE&#34;- anywhere that you can run a Python kernel, you can run client-side Snowpark Python. You can use it in your code development the exact same way as any other Python library or module. In this quickstart, we will be using Jupyter Notebooks, but you could easily replace Jupyter with any IDE of your choosing.</p>
+<p>Vertex AI is Google&#39;s unified artificial intelligence platform designed to streamline the process of building, deploying, and scaling machine learning models. Integrating a wide range of services, Vertex AI allows data scientists and engineers to efficiently manage end-to-end workflows, from data preparation and model training to hyperparameter tuning and model deployment. Its robust features include easy access to AutoML for automated model generation, custom training with user-defined algorithms, and support for popular frameworks like TensorFlow, PyTorch, and XGBoost. By leveraging Google Cloud&#39;s powerful infrastructure, Vertex AI ensures scalability, reduced latency, and operational efficiency, enabling organizations to derive actionable insights from their data more effectively.</p>
+<p>This quickstart is designed to service as an introduction to using Vertex AI with Snowpark for model development and deployment to Snowflake. The idea is that users can build off this quickstart or integrate components into their existing Vertex AI workloads.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>Familiarity with Vertex AI and a Google Cloud account</li>
+<li>Familiarity with <a href="https://www.udemy.com/course/draft/579706/" target="_blank">Python</a></li>
+</ul>
+<h2 is-upgraded>You&#39;ll Learn</h2>
+<ul>
+<li>Using a Jupyter Notebook in Vertex AI with Snowpark</li>
+<li>Loading and transforming data via Snowpark</li>
+<li>Defining User Defined Functions for distributed scoring of machine learning models</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li><a href="https://cloud.google.com/free?hl=en" target="_blank">Google Cloud Account</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end data science workflow leveraging Snowpark for Python</p>
+<ul>
+<li>to load, clean and prepare data</li>
+<li>to train a machine learning model using Python in a Vertex AI Workbench notebook</li>
+<li>to deploy the trained models in Snowflake using Python User Defined Functions (UDFs)</li>
+</ul>
+<p>The end-to-end workflow will look like this: <img src="img/dd6eed3a15d2eb25.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Case" duration="5">
+        <p>In this use case you will build a binary model based on the ‘Machine Predictive Maintenance Classification&#39; dataset from <a href="https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification" target="_blank">Kaggle</a>. We supplement this dataset with data from the Snowflake <a href="https://www.snowflake.com/en/data-cloud/marketplace/" target="_blank">data marketplace</a>.</p>
+<p>The use case uses information related to machine diagnostics (torque, rotational speed) and environmental features (air temperature, humidity) to predict the likelihood of a failure.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Snowflake Environment" duration="5">
+        <p>The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+
+CREATE OR REPLACE DATABASE HOL_DB;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Double check Anaconda Terms (Instructions provided here)" duration="0">
+        <p>https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda</p>
+<ol type="1">
+<li>Sign in to Snowsight.</li>
+<li>Select Admin » Billing &amp; Terms.</li>
+<li>In the Anaconda section, select Enable.</li>
+<li>In the Anaconda Packages dialog, click the link to review the Snowflake Third Party Terms page.</li>
+<li>If you agree to the terms, select Acknowledge &amp; Continue.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Vertex AI Environment" duration="5">
+        <p>If you haven&#39;t used Vertex AI you will have to create a Vertex AI service inside of a Google Cloud project. You can review material <a href="https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform" target="_blank">here</a> though it is straightforward to create the service by searching &#34;Vertex AI&#34; in the Google Cloud console and starting up the service.</p>
+<p>Once you have a Vertex AI service created you will proceed to the &#34;Workbench&#34; blade, select &#34;Instances&#34; the select &#34;Create New&#34;. You can rename the instance but leave all of the default configurations as shown.</p>
+<p class="image-container"><img src="img/163e44007b5ec261.png"></p>
+<p>Start the instance and wait several minutes for the instance to start then click &#34;Open JupyterLab&#34; and open a terminal window.</p>
+<p class="image-container"><img src="img/27f426f2e7c4abbc.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clone Github Repo" duration="5">
+        <p>In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-vertexai
+</code></pre>
+<p>Click into the folder on the side that has been copied. Click into the folder open up notebook &#34;0_...&#34; and make sure that you&#39;re using a Python 3 kernel.</p>
+<p class="image-container"><img src="img/60fc19bc39dc8653.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load data into Snowflake" duration="5">
+        <p>Now work through the set up script. Uncomment the &#34;pip install&#34; code at the top in order to install the libraries you need. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the <code>ACCOUNTADMIN</code> role will work, but note that this wouldn&#39;t be used in a production setting.</p>
+<p>You will need to enter your user and account credentials, and it is important that your <code>account</code> is in the correct format as outlined in the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region" target="_blank">Snowflake documentation</a>. Your <code>host</code> will be your <code>account</code> ID followed by <code>.snowflakecomputing.com</code>, for example:</p>
+<pre><code language="language-python" class="language-python">connection_parameters = {
+    &#34;account&#34;: &#34;hk12345.eu-west-2.aws&#34;,
+    &#34;host&#34;: &#34;hk12345.eu-west-2.aws.snowflakecomputing.com&#34;,
+    &#34;user&#34;: &lt;your_user&gt;, 
+    &#34;password&#34;: &lt;your_password&gt;,
+    &#34;role&#34;: &lt;your_role&gt;, # using &#34;ACCOUNTADMIN&#34; may simplify things in an isolated lab environment
+    }
+</code></pre>
+<p>Tip for finding Snowflake account ID:</p>
+<pre><code language="language-sql" class="language-sql">use role orgadmin;
+show organization accounts;
+</code></pre>
+<p>Scroll to account_url and copy the URL</p>
+<p>i.e. https://hvxehhp-bxb87833.snowflakecomputing.com</p>
+<p>Account = hvxehhp-bxb87833 Host = hvxehhp-bxb87833.snowflakecomputing.com</p>
+<p>Note: for simplicity in this lab you will need to enter your account and user credentials directly in your notebook. For a production setup, this would be a security risk so Google Secret Manager or a similar tool would be appropriate.</p>
+<p>Once complete with the script, check back to your Snowflake environment to make sure that your data has loaded. Review the steps as you go: you just used a little bit of Snowpark to get that data loaded via the <code>session.write_pandas</code> function! <img src="img/ecb9ca7955157dc7.png"></p>
+<h2 is-upgraded>Troubleshooting <code>pyarrow</code> related issues</h2>
+<ul>
+<li>If you have <code>pyarrow</code> library already installed, uninstall it from terminal before installing Snowpark.</li>
+<li>If you do not have <code>pyarrow</code> installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.</li>
+<li>Do not reinstall a different version of <code>pyarrow</code> after installing Snowpark.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build and Deploy Model" duration="10">
+        <p>Now open and work through the <code>1...</code> workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.</p>
+<p>Once that notebook is complete you will have deployed a model to the Snowpark Model Registry and have access to inference functions in Snowflake! Inference can be done via Snowpark Python code or Snowflake SQL. Let&#39;s generate predictions with this udf with Snowflake SQL. Copy and paste the code below into your snowflake environment to generate inference.</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+select GET(aml_model!predict_proba(AIR_TEMPERATURE_K,
+       PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
+       TOOL_WEAR_MIN, HUMIDITY_RELATIVE_AVG), &#39;output_feature_1&#39;) as predicted_failure, * from maintenance_hum;
+</code></pre>
+<p class="image-container"><img src="img/614c617ce40ea605.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Additional Considerations" duration="5">
+        <p>This quickstart is just that, a quick way to get you started with using Vertex AI with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.</p>
+<p>Looking specifically at Vertex AI two additional considerations that you may want to consider are:</p>
+<ol type="1">
+<li>Rather than using an pre-built image then installing packages, you may want to create your own custom image that includes the Snowpark packages and other packages that you commonly use.</li>
+<li>You may know that the Snowpark sandbox on Snowflake includes Anaconda supported packages which includes the scikitlearn package that was used to build the logistic regression model. If you use other packages to build your models that are not supported by Anaconda you will have to install <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html" target="_blank">third party packages in the Snowpark sandbox</a>.</li>
+</ol>
+<h2 is-upgraded>What We covered</h2>
+<ul>
+<li>Using Vertex AI Workbench with Snowpark</li>
+<li>Loading and transforming data via Snowpark with pushdown compute</li>
+<li>Deploying models to Snowflake via a User Defined Function</li>
+</ul>
+<h2 is-upgraded>Additional Considerations</h2>
+<ul>
+<li>There are some great blogs on Medium regarding Snowpark and using Snowflake with the Google Cloud Platform</li>
+<li><a href="https://medium.com/snowflake/operationalizing-snowpark-python-part-one-892fcb3abba1" target="_blank">Operationalizing Snowpark</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

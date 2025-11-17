@@ -1,0 +1,179 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Introduction to Snowflake Feature Store with Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="intro-to-feature-store"
+                  title="Introduction to Snowflake Feature Store with Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>The Snowflake Feature Store offers a comprehensive solution for data scientists and machine learning (ML) engineers to create, manage, and utilize ML features within their data science workflows in <a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a>. Features, which are enriched or transformed data, serve as essential inputs for machine learning models. For instance, a feature might extract the day of the week from a timestamp to help the model identify weekly patterns, such as predicting that sales are typically 20% lower on Wednesdays. Other features often involve data aggregation or time-shifting. The process of defining these features, known as feature engineering, is crucial to developing high-quality ML applications.</p>
+<p>This is part 1 of a 3-part introduction quickstart series to Snowflake Feature Store (part 2 <a href="https://quickstarts.snowflake.com/guide/overview-of-feature-store-api/index.html?index=..%2F..index#0" target="_blank">here</a> and part 3 <a href="https://quickstarts.snowflake.com/guide/develop-and-manage-ml-models-with-feature-store-and-model-registry/index.html?index=..%2F..index#0" target="_blank">here</a>). In this quickstart, you will learn how to build the key components of a feature store workflow, including entities, feature views, and datasets. Entities represent the real-world objects or concepts that your features describe, such as customers or products. Feature views provide a structured way to define and store these features, allowing for consistent and efficient retrieval. Finally, datasets are collections of features that are prepared for model training or inference. By the end of this quickstart, you&#39;ll have a solid understanding of how to create and manage these components within the Snowflake Feature Store, setting the foundation for building robust and scalable machine learning pipelines.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a Snowflake account with Accountadmin.</li>
+<li>Access to run Notebooks in Snowflake</li>
+<li>Foundational knowledge of Data Science workflows</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>The key features of Snowflake Feature Store including <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities" target="_blank">entities</a>, <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views" target="_blank">feature views</a>, and <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/modeling#generating-datasets-for-training" target="_blank">datasets</a>.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An Snowflake Feature Store pipeline that generates a dataset for model training</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Your Account" duration="2">
+        <p>Complete the following steps to setup your account:</p>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and the following SQL in the worksheet</li>
+<li>Run all commands to create Snowflake objects</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+USE DATABASE SNOWFLAKE;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE FEATURE_STORE_LAB_USER;
+BEGIN
+    LET current_user_name := CURRENT_USER();
+    EXECUTE IMMEDIATE &#39;GRANT ROLE FEATURE_STORE_LAB_USER TO USER &#39; || current_user_name;
+END;
+
+-- create our virtual warehouse
+CREATE OR REPLACE WAREHOUSE FEATURE_STORE_WH AUTO_SUSPEND = 60;
+
+GRANT ALL ON WAREHOUSE FEATURE_STORE_WH TO ROLE FEATURE_STORE_LAB_USER;
+
+-- use our feature_store_wh virtual warehouse 
+USE WAREHOUSE FEATURE_STORE_WH;
+
+-- Next create a new database and schema,
+CREATE OR REPLACE DATABASE FEATURE_STORE_DATABASE;
+CREATE OR REPLACE SCHEMA FEATURE_STORE_SCHEMA;
+
+GRANT OWNERSHIP ON DATABASE FEATURE_STORE_DATABASE TO ROLE FEATURE_STORE_LAB_USER COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FEATURE_STORE_DATABASE  TO ROLE FEATURE_STORE_LAB_USER COPY CURRENT GRANTS;
+
+-- Setup is now complete
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Notebook" duration="10">
+        <ul>
+<li>Download the notebook from this <a href="https://github.com/Snowflake-Labs/sfguide-intro-to-feature-store-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb" target="_blank">link</a></li>
+<li>Change role to FEATURE_STORE_LAB_USER</li>
+<li>Navigate to Projects &gt; Notebooks in Snowsight</li>
+<li>Click Import .ipynb from the + Notebook dropdown</li>
+<li>Create a new notebok with the following settings <ul>
+<li>Notebook Location: FEATURE_STORE_DATABASE, FEATURE_STORE_SCHEMA</li>
+<li>Run on Warehouse</li>
+<li>Warehouse: FEATURE_STORE_WH</li>
+</ul>
+</li>
+<li>Create Notebook</li>
+<li>Click Packages in the top right, add <code>snowflake-ml-python</code></li>
+<li>Run cells in the notebook!</li>
+</ul>
+<p class="image-container"><img alt="notebook-preview" src="img/1fb69da29960a9b1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>The Snowflake Feature Store provides a powerful, all-in-one solution for data scientists and ML engineers to create, manage, and utilize machine learning features effectively.  In this quickstart, you&#39;ve learned the essentials of building a feature store workflow, including entities, feature views, and datasets. Now, take the next step and apply these concepts to build robust, scalable ML pipelines within Snowflake. Check out the links below and start building you Feature Stores today!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li><strong>Understanding the Snowflake Feature Store</strong>: Gained insight into how the Snowflake Feature Store helps manage and utilize ML features in data science workflows.</li>
+<li><strong>Building Key Components</strong>: <ul>
+<li><strong>Entities</strong>: Defined real-world objects or concepts that features describe, such as customers or products.</li>
+<li><strong>Feature Views</strong>: Learned how to structure and store features for consistent and efficient retrieval.</li>
+<li><strong>Datasets</strong>: Prepared collections of features for model training or inference.</li>
+</ul>
+</li>
+<li><strong>Workflow Integration</strong>: Developed an understanding of how these components work together to create a robust and scalable ML pipeline.</li>
+</ul>
+<h2 is-upgraded>Related Quickstarts</h2>
+<ul>
+<li>Part 2: <a href="https://quickstarts.snowflake.com/guide/overview-of-feature-store-api/index.html?index=..%2F..index#0" target="_blank">Getting Started with Snowflake Feature Store API</a></li>
+<li>Part 3: <a href="https://quickstarts.snowflake.com/guide/develop-and-manage-ml-models-with-feature-store-and-model-registry/index.html?index=..%2F..index#0" target="_blank">Develop and Manage ML Models with Feature Store and Model Registry</a></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Snowflake Feature Store</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities" target="_blank">Entities</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views" target="_blank">Feature Views</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/modeling#generating-datasets-for-training" target="_blank">Datasets</a>.</li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_with_snowpark_python_and_dbt",
+  "duration": 54,
+  "title": "Data Engineering with Snowpark Python and dbt",
+  "summary": "This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python and dbt",
+  "source": "data_engineering_with_snowpark_python_and_dbt/data_engineering_with_snowpark_python_and_dbt.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "dbt",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_with_snowpark_python_and_dbt"
+}

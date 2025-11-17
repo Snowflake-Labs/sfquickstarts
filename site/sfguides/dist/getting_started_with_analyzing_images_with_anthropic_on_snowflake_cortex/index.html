@@ -1,0 +1,223 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Analyzing Images with Anthropic on Snowflake Cortex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_analyzing_images_with_anthropic_on_snowflake_cortex"
+                  title="Getting Started with Analyzing Images with Anthropic on Snowflake Cortex AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll learn how to build an end-to-end application for image analysis using AI models through Snowflake Cortex AI. This application leverages multimodal capabilities of models like Claude 4 Sonnet and Pixtral-large to extract insights, detect emotions, and generate descriptions from images - all within the Snowflake ecosystem.</p>
+<p><em>Note: SNOWFLAKE.CORTEX.COMPLETE multimodal capability is currently in Public Preview.</em></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Setting up a Snowflake environment for image processing</li>
+<li>Creating storage structures for image data</li>
+<li>Using Snowflake Cortex to analyze images with AI models</li>
+<li>Building an interactive image analysis application</li>
+<li>Implementing batch processing for multiple images</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A full-stack application that enables users to:</p>
+<ul>
+<li>Upload and store images in Snowflake</li>
+<li>Extract detailed insights from images using AI models</li>
+<li>Identify scenes, objects, text, and emotions in images</li>
+<li>Generate custom descriptions based on specific prompts</li>
+<li>Process images individually or in batch</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account in a <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability" target="_blank">supported region for Cortex functions</a></li>
+<li>Account must have these features enabled: <ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <p>To set up your Snowflake environment for image analysis:</p>
+<ol type="1">
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-image-classification-with-anthropic-snowflake-cortex/blob/main/setup.sql" target="_blank">setup.sql</a> file</li>
+<li>Open a new worksheet in Snowflake</li>
+<li>Paste the contents of setup.sql or upload and run the file</li>
+<li>The script will create: <ul>
+<li>A new database and schema for your project</li>
+<li>An image storage stage</li>
+<li>Table for processing images</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Upload Images</h2>
+<p>After running the setup script:</p>
+<ol type="1">
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-image-classification-with-anthropic-snowflake-cortex/blob/main/data/data.zip" target="_blank">data.zip</a> and unzip for sample photos</li>
+<li>Navigate to Data &gt; Databases &gt; IMAGE_ANALYSIS &gt; IMAGES &gt; Stages</li>
+<li>Click &#34;Upload Files&#34; button in top right</li>
+<li>Select your image files</li>
+<li>Verify upload success:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ls @image_analysis.images;
+</code></pre>
+<p>You should see your uploaded files listed with their sizes.</p>
+<aside class="special"><p> TIP: For best results, ensure your images are:</p>
+<ul>
+<li>Clear and well-lit</li>
+<li>In common formats (PNG, JPEG, WEBP)</li>
+<li>No larger than 20MB</li>
+<li>Have sufficient resolution for details you want to analyze</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Snowflake Notebook" duration="15">
+        <p>Let&#39;s create a notebook to further explore image analysis techniques:</p>
+<ol type="1">
+<li>Navigate to Projects &gt; Notebooks in Snowflake</li>
+<li>Click &#34;+ Notebook&#34; button in the top right</li>
+<li>To import the existing notebook: <ul>
+<li>Click the dropdown arrow next to &#34;+ Notebook&#34;</li>
+<li>Select &#34;Import .ipynb&#34; from the dropdown menu</li>
+<li>Upload the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-image-classification-with-anthropic-snowflake-cortex/blob/main/image_analysis_notebook.ipynb" target="_blank">image_analysis_notebook.ipynb</a> file</li>
+</ul>
+</li>
+<li>In the Create Notebook popup: <ul>
+<li>Select your IMAGE_ANALYSIS database and schema</li>
+<li>Choose an appropriate warehouse</li>
+<li>Click &#34;Create&#34; to finish the import</li>
+</ul>
+</li>
+</ol>
+<p>The notebook includes:</p>
+<ul>
+<li>Setup code for connecting to your Snowflake environment</li>
+<li>Functions for analyzing images with different AI models</li>
+<li>Example analysis with various prompt types</li>
+<li>Batch processing capabilities for multiple images</li>
+<li>Comparison between Claude 3.5 Sonnet and Pixtral-large models</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Streamlit Application" duration="15">
+        <p>Let&#39;s create a Streamlit application for interactive image analysis:</p>
+<h2 is-upgraded>Setting Up the Streamlit App</h2>
+<p>To create and configure your Streamlit application in Snowflake:</p>
+<ol type="1">
+<li>Navigate to Streamlit in Snowflake:<ul>
+<li>Click on the <strong>Streamlit</strong> tab in the left navigation pane</li>
+<li>Click on <strong>+ Streamlit App</strong> button in the top right</li>
+</ul>
+</li>
+<li>Configure App Settings:<ul>
+<li>Enter a name for your app (e.g., &#34;Image Analyzer&#34;)</li>
+<li>Select your preferred warehouse</li>
+<li>Choose IMAGE_ANALYSIS as your database and schema</li>
+</ul>
+</li>
+<li>Create the app:<ul>
+<li>In the editor, paste the complete code provided in the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-image-classification-with-anthropic-snowflake-cortex/blob/main/image_analysis_streamlit.py" target="_blank">image_analysis_streamlit.py</a> file</li>
+<li>Click &#34;Run&#34; to launch your application</li>
+</ul>
+</li>
+</ol>
+<p>The application provides:</p>
+<ul>
+<li>A model selector dropdown (Claude 4 Sonnet or Pixtral-large)</li>
+<li>Analysis type selection</li>
+<li>Custom prompt capability</li>
+<li>Image selection and display</li>
+<li>Prompt display for transparency</li>
+<li>Results viewing</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an end-to-end image analysis application using AI models via Snowflake Cortex. This solution allows you to extract valuable insights from images, detect emotions, analyze scenes, and generate rich descriptions - all within the Snowflake environment.</p>
+<p>To continue your learning journey, explore creating more advanced prompting techniques, building domain-specific image analysis systems, or integrating this capability with other Snowflake data workflows.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up Snowflake for image storage and processing</li>
+<li>How to use AI models like Claude 4 Sonnet and Pixtral-large for multimodal analysis</li>
+<li>How to create custom prompts for specialized image analysis</li>
+<li>How to build a Streamlit application for interactive image analysis</li>
+<li>How to implement batch processing for multiple images</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api" target="_blank">Snowflake Cortex Documentation</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting-started-with-tool-use-on-cortex-and-anthropic-claude/index.html?index=..%2F..index#0" target="_blank">Anthropic Tool Use on Snowflake Cortex Quickstart</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_anthropic_on_snowflake_cortex/index.html?index=..%2F..index#0" target="_blank">Anthropic RAG on Snowflake Cortex Quickstart</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

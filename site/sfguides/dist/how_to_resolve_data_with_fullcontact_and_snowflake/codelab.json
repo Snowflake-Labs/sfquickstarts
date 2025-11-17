@@ -1,0 +1,23 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "how_to_resolve_data_with_fullcontact_and_snowflake",
+  "duration": 11,
+  "title": "How To Resolve Data with FullContact and Snowflake",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "how_to_resolve_data_with_fullcontact_and_snowflake/how_to_resolve_data_with_fullcontact_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "how_to_resolve_data_with_fullcontact_and_snowflake"
+}

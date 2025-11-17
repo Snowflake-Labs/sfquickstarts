@@ -1,0 +1,253 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Guide to Triggering Real-Time Notifications Using Dynamic Tables and Census Live Syncs</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs"
+                  title="A Guide to Triggering Real-Time Notifications Using Dynamic Tables and Census Live Syncs"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this guide, you will learn how to set up a live sync between Census and Snowflake to move data to your activation platforms in real time.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A working live sync between Snowflake and an activation platform via Census.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to ensure your Snowflake account is ready for live syncs</li>
+<li>How to prepare your destination within Census</li>
+<li>How to create a table within Snowflake</li>
+<li>How to create a sync within Census and configure the live sync option</li>
+<li>How to verify your live sync is functioning properly</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Census workspace with a Snowflake advanced engine connection</li>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake workspace</a></li>
+<li>An account with at least one <a href="https://www.getcensus.com/integrations?search=&integration-type=Destination&category=" target="_blank">Census destination platform</a>. If you don&#39;t have an existing Census account, you can start a trial <a href="https://app.getcensus.com/?_gl=1*mlyah6*_gcl_aw*R0NMLjE3MjQzMzg5MzkuQ2owS0NRand3NXUyQmhEZUFSSXNBTEJ1TG5QS3htaThKS216NlBpZlFoRTNDSGd5QmZoR21qN3lqRFU0ZmZ4NzlkdndLaU1MdzVDOFFINGFBbWVxRUFMd193Y0I.*_gcl_au*MTQzNDczNzM2LjE3MjIyMjQ2NDg." target="_blank">here</a>. If you don&#39;t have access to your activation apps, we recommend Google Sheets as a beginner destination.</li>
+<li><strong>Either:</strong> pre-existing connections between Census, Snowflake and your destination platform, OR the credentials to add connections between Census, Snowflake and your destination platform</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introduction To Live Syncs With Census" duration="5">
+        <p>Live syncs allow Census+Snowflake users to leverage real-time insights in their activation platforms by building low-latency data flows without incurring the cost of running high-frequency queries.</p>
+<p>Live syncs will work with native and dynamic tables within Snowflake. They are not compatible with views or full refresh dynamic tables. Census live syncs require Snowflake advanced engine connections to run properly.</p>
+<p>Snowflake permissions are complex and there are many ways to configure access for Census. The script below is known to work correctly and follows <a href="https://docs.snowflake.com/en/user-guide/security-access-control-configure.html#creating-read-only-roles" target="_blank">Snowflake&#39;s best practices</a> for creating read-only roles in a role hierarchy:</p>
+<pre><code language="language-sql" class="language-sql">-- Create a role for the census user
+CREATE ROLE CENSUS_ROLE;
+
+-- Ensure the sysadmin role inherits any privileges the census role is granted. Note that this does not grant sysadmin privileges to the census role
+GRANT ROLE CENSUS_ROLE TO ROLE SYSADMIN;
+
+-- Create a warehouse for the census role, optimizing for cost over performance
+CREATE WAREHOUSE CENSUS_WAREHOUSE WITH WAREHOUSE_SIZE = XSMALL AUTO_SUSPEND = 60 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = FALSE;
+GRANT USAGE ON WAREHOUSE CENSUS_WAREHOUSE TO ROLE CENSUS_ROLE;
+GRANT OPERATE ON WAREHOUSE CENSUS_WAREHOUSE TO ROLE CENSUS_ROLE;
+GRANT MONITOR ON WAREHOUSE CENSUS_WAREHOUSE TO ROLE CENSUS_ROLE;
+
+-- Create the census user
+-- Do not set DEFAULT_WORKSPACE, this will impact which tables are visible to Census
+CREATE USER CENSUS WITH DEFAULT_ROLE = CENSUS_ROLE DEFAULT_WAREHOUSE = CENSUS_WAREHOUSE PASSWORD = &#39;&lt;strong, unique password&gt;&#39;;
+GRANT ROLE CENSUS_ROLE TO USER CENSUS;
+
+-- Let the census user read the data you want to sync
+-- This database and schema must have a different name than CENSUS
+GRANT USAGE ON DATABASE &#34;&lt;your database&gt;&#34; TO ROLE CENSUS_ROLE;
+GRANT USAGE ON SCHEMA &#34;&lt;your database&gt;&#34;.&#34;&lt;your schema&gt;&#34; TO ROLE CENSUS_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA &#34;&lt;your database&gt;&#34;.&#34;&lt;your schema&gt;&#34; TO ROLE CENSUS_ROLE;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA &#34;&lt;your database&gt;&#34;.&#34;&lt;your schema&gt;&#34; TO ROLE CENSUS_ROLE;
+GRANT SELECT ON ALL VIEWS IN SCHEMA &#34;&lt;your database&gt;&#34;.&#34;&lt;your schema&gt;&#34; TO ROLE CENSUS_ROLE;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA &#34;&lt;your database&gt;&#34;.&#34;&lt;your schema&gt;&#34; TO ROLE CENSUS_ROLE;
+GRANT USAGE ON ALL FUNCTIONS IN SCHEMA &#34;&lt;your database&gt;&#34;.&#34;&lt;your schema&gt;&#34; TO ROLE CENSUS_ROLE;
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA &#34;&lt;your database&gt;&#34;.&#34;&lt;your schema&gt;&#34; TO ROLE CENSUS_ROLE;
+
+-- Required for Advanced Sync Engine, not required for Basic Sync Engine:
+--  Create a private bookkeeping database where Census can store sync state,
+--  perform faster unloads, and keep Warehouse Writeback logs
+
+CREATE DATABASE &#34;CENSUS&#34;;
+GRANT ALL PRIVILEGES ON DATABASE &#34;CENSUS&#34; TO ROLE CENSUS_ROLE;
+-- If you want to explicitly grant the required permissions instead of using GRANT ALL you can use the following command
+--GRANT USAGE, CREATE TABLE, CREATE VIEW,MODIFY, MONITOR ON DATABASE &#34;CENSUS&#34;.&#34;CENSUS&#34; TO ROLE CENSUS_ROLE
+
+CREATE SCHEMA &#34;CENSUS&#34;.&#34;CENSUS&#34;;
+GRANT ALL PRIVILEGES ON SCHEMA &#34;CENSUS&#34;.&#34;CENSUS&#34; TO ROLE CENSUS_ROLE;
+-- If you want to explicitly grant the required permissions instead of using GRANT ALL you can use the following command
+--GRANT CREATE TABLE, CREATE VIEW, MODIFY, MONITOR, CREATE STAGE  ON SCHEMA &#34;CENSUS&#34;.&#34;CENSUS&#34; TO ROLE CENSUS_ROLE
+
+GRANT CREATE STAGE ON SCHEMA &#34;CENSUS&#34;.&#34;CENSUS&#34; TO ROLE CENSUS_ROLE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure a New Connection in Census" duration="5">
+        <ol type="1">
+<li>Visit the Sources section on Census, and press New Source, selecting Snowflake from the list. Select <strong>Advanced sync engine</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/b56164ea8b80906c.png"></p>
+<ol type="1" start="2">
+<li>Census will ask you to provide the <strong>following</strong>:<ul>
+<li><strong>Snowflake Account Name</strong>This is the URL prefix you use to connect or log into Snowflake. It may include a service region or cloud provider: <code>https://<account_name>.snowflake-computing.com/</code>See the <a href="https://docs.snowflake.com/en/user-guide/jdbc-configure.html#connection-parameters" target="_blank">Snowflake documentation</a> for more information about the supported options.</li>
+<li><strong>Query Execution Warehouse</strong> - this should match the warehouse you&#39;ve created in the above instructions - for example <code>CENSUS_WAREHOUSE</code></li>
+<li><strong>User</strong> - the user you use to log into Snowflake</li>
+<li><strong>Database Name</strong> (optional) - default database to log into</li>
+<li><strong>Schema Name</strong> (optional) - default schema to log into</li>
+<li><strong>Authentication</strong> - Select keypair as the authentication method. After saving the connection, Census will generate a public/private keypair and provide instructions for configuring your Snowflake user account to use it.</li>
+</ul>
+</li>
+<li>Once you provide the required information, click <strong>Connect</strong> to finish the connection to Snowflake.</li>
+<li>After the connection is saved, go ahead and press the <strong>Test</strong> button. This will validate that you&#39;ve completed the above steps correctly. Once you&#39;ve got a checkmark for all four steps, you&#39;re good to go!</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure at least one destination within Census" duration="5">
+        <p>Within Census, navigate to the Destinations menu and select <strong>+ New Destination</strong></p>
+<p class="image-container"><img src="img/b7a7f81f3e2e4c93.png"></p>
+<p>Then, select the platform you wish to connect.</p>
+<p class="image-container"><img src="img/e12dbc051c9432cd.png"></p>
+<p>Each platform will have a slightly different process for configuring the connection on the destination side. Find your connection <a href="https://docs.getcensus.com/destinations/overview" target="_blank">here</a> for detailed instructions. Here are some of our more popular connectors:</p>
+<ul>
+<li><a href="https://docs.getcensus.com/destinations/available-destinations/braze" target="_blank">Braze</a></li>
+<li><a href="https://docs.getcensus.com/destinations/available-destinations/marketo" target="_blank">Marketo</a></li>
+<li><a href="https://docs.getcensus.com/destinations/available-destinations/drift" target="_blank">Drift</a></li>
+<li><a href="https://docs.getcensus.com/destinations/available-destinations/google-ads" target="_blank">Google Ads</a></li>
+<li><a href="https://docs.getcensus.com/sources/available-sources/google-sheets#create-a-google-sheets-connection" target="_blank">Google Sheets</a></li>
+</ul>
+<aside class="warning"><p>Send, replace, and upload and swap mirror destinations are not supported by Live Syncs.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a table" duration="2">
+        <p>Tables can be either standard Snowflake tables or Dynamic Tables.</p>
+<h2 is-upgraded>(Optional) Creating a Dynamic Table</h2>
+<p>Dynamic Tables are specifically optimized for low-latency transformations and can simplify data engineering pipelines as data is loaded into Snowflake. Read more about Dynamic Tables <a href="https://www.snowflake.com/blog/dynamic-tables-delivering-declarative-streaming-data-pipelines/" target="_blank">here</a>.</p>
+<p class="image-container"><img src="img/5ebebf7bb335b90f.png"></p>
+<h2 is-upgraded>Creating and Simulating a Live Sync on a table.</h2>
+<p>Ensure change tracking is enabled on your table.</p>
+<p class="image-container"><img src="img/bcf5bc6a8060006e.png"></p>
+<p>Insert the data you wish to sync into your table.</p>
+<p class="image-container"><img src="img/4397fa41e375b5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Sync within Census" duration="5">
+        <ol type="1">
+<li>Navigate to the <strong>Add New...</strong> menu and select <strong>Sync</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/5230756ad839969e.png"></p>
+<ol type="1" start="2">
+<li>Select your Snowflake table as the source and your chosen app as the destination.</li>
+<li>Select a sync behavior. The simplest options are <strong>map records</strong> and <strong>update or create</strong>, but you may modify these as needed.</li>
+</ol>
+<p class="image-container"><img src="img/3fa616132a40ceb2.png"></p>
+<ol type="1" start="4">
+<li>Select your sync keys and field mappings. These will allow your apps to identify the correct data within the Snowflake table.</li>
+</ol>
+<p class="image-container"><img src="img/31f73eff9eea7d52.png"></p>
+<ol type="1" start="5">
+<li>You may optionally choose to test your sync to ensure a working connection and verify the data that will be updated. This is particularly useful for SaaS apps that have fees associated with updating data, as it allows you to preview the volume of data to be changed.</li>
+<li>Select <strong>Live</strong> as the run mode. And click <strong>Create</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/93d675b0cc6f24e1.png"></p>
+<ol type="1" start="7">
+<li>Your sync may take a few minutes to provision. Wait until this process is complete before proceeding further.</li>
+</ol>
+<p class="image-container"><img src="img/6dc977d77269a1b1.png"></p>
+<ol type="1" start="8">
+<li>When a sync shows &#34;working&#34; status, it&#39;s ready to receive data.</li>
+</ol>
+<p class="image-container"><img src="img/6cac2396c06b864c.png"></p>
+<ol type="1" start="9">
+<li>Verify that the sync was successful by checking the &#34;destination&#34; header after adding data to your source table - the number of successfully synced records should now read 1.</li>
+</ol>
+<p class="image-container"><img src="img/96ad2628daf4a639.png"></p>
+<aside class="special"><p>Selecting &#34;Map records&#34; as a sync behavior will keep records in sync between the source and destination, while selecting &#34;Activate events&#34; can be used to trigger actions in the destination when new records are added to the source.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <p>Congratulations! You have successfully created a live sync between Snowflake and your activation platform via Census. You are now fully prepared to begin activating the data in your Snowflake tables in real time.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Preparing your Snowflake account to be ready for live syncs</li>
+<li>Configuring your destination within Census</li>
+<li>Creating a table within Snowflake</li>
+<li>Configure your live sync within Census</li>
+<li>Verify your live sync is functioning properly</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.getcensus.com/basics/live-syncs" target="_blank">Census Live Syncs documentation</a></li>
+<li><a href="https://docs.getcensus.com/sources/available-sources/snowflake" target="_blank">Census Snowflake source documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

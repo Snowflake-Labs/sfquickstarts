@@ -1,0 +1,38 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "Streamline_Healthcare_CDC_DDB_And_Openflow",
+  "duration": 68,
+  "title": "Streamlining Healthcare Claims Change Data Capture Processing Using Amazon DynamoDB and Snowflake OpenFlow",
+  "authors": "James Sun, Snowflake",
+  "summary": "This guide will walk you through how to build CDC pipelines to synchronize the front-end DynamoDB and back-end Snowflake tables for processing real-time insurance claims",
+  "source": "streamline_healthcare_cdc_ddb_and_openflow/streamline_healthcare_cdc_ddb_and_openflow.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "getting-started",
+    "openflow",
+    "hcls"
+  ],
+  "tags": [
+    "cdc",
+    "changedatacapture",
+    "cloudformation",
+    "dynamodb",
+    "gettingstarted",
+    "hcls",
+    "healthcare",
+    "openflow",
+    "snowflake",
+    "streaming",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "Streamline_Healthcare_CDC_DDB_And_Openflow"
+}

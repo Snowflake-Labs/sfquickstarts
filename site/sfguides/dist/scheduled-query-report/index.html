@@ -1,0 +1,257 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build an Interactive Scheduled Query Execution Report</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="scheduled-query-report"
+                  title="Build an Interactive Scheduled Query Execution Report"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Learn how to create an interactive report for monitoring and analyzing scheduled query executions in Snowflake. Using Snowflake Notebooks with Streamlit integration, you&#39;ll build a dashboard that provides insights into query performance, failure patterns, and execution timing.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to retrieve and analyze scheduled query execution data</li>
+<li>Creating interactive visualizations with Streamlit in Snowflake Notebooks</li>
+<li>Building heatmaps to visualize query execution patterns</li>
+<li>Analyzing query performance and failure metrics</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An interactive dashboard featuring:</p>
+<ul>
+<li>Time-based filtering of query execution data</li>
+<li>Heatmap visualization of query execution patterns</li>
+<li>Summary statistics for task execution states</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic familiarity with SQL and Python</li>
+<li>Understanding of Snowflake tasks and scheduled queries</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <h2 is-upgraded>Download the Notebook</h2>
+<p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Scheduled_Query_Execution_Report/Scheduled_Query_Execution_Report.ipynb" target="_blank">Scheduled_Query_Execution_Report.ipynb</a> to download the Notebook from GitHub.</p>
+<h2 is-upgraded>Python Packages</h2>
+<p>Snowflake Notebooks comes pre-installed with common Python libraries for data science and machine learning, including numpy, pandas, matplotlib, and more! For additional packages, simply click on the Packages drop-down in the top right corner of your notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Retrieve Query Execution Data" duration="10">
+        <h2 is-upgraded>Write the SQL Query</h2>
+<p>Create a query to fetch execution history from the <code>task_history</code> view (this SQL cell is named <code>sql_data</code>, which we&#39;ll call upon shortly):</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    name,
+    database_name,
+    query_id,
+    query_text,
+    schema_name,
+    scheduled_time,
+    query_start_time,
+    completed_time,
+    DATEDIFF(&#39;second&#39;, query_start_time, completed_time) as execution_time_seconds,
+    state,
+    error_code,
+    error_message
+FROM snowflake.account_usage.task_history
+WHERE scheduled_time &gt;= DATEADD(days, -1, CURRENT_TIMESTAMP())
+ORDER BY scheduled_time DESC;
+</code></pre>
+<p>This returns the following output:</p>
+<p class="image-container"><img alt="image" src="img/14586a6d646f3b83.PNG"></p>
+<h2 is-upgraded>Convert to DataFrame</h2>
+<p>Transform the SQL results into a Pandas DataFrame, which we&#39;ll soon use in the query execution report app:</p>
+<pre><code language="language-python" class="language-python">sql_data.to_pandas()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Query Execution Report" duration="15">
+        <h2 is-upgraded>Create Interactive Interface</h2>
+<p>Here, we&#39;ll create an interactive slider for dynamically selecting the number of days to analyze. This would then trigger the filtering of the DataFrame to the specified number of days.</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+import streamlit as st
+import altair as alt
+
+# Create date filter slider
+st.subheader(&#34;Select time duration&#34;)
+days = st.slider(&#39;Select number of days to analyze&#39;, 
+                 min_value=10, 
+                 max_value=90, 
+                 value=30, 
+                 step=10)
+</code></pre>
+<p>This produces the following interactive slider widget that allow users to select the number of days:</p>
+<p class="image-container"><img alt="image" src="img/b809ceaef2c99604.PNG"></p>
+<h2 is-upgraded>Data Preparation</h2>
+<p>Next, we&#39;ll reshape the data by calculating the frequency count by hour and task name, which will subsequently be used for creating the heatmap in the next step.</p>
+<pre><code language="language-python" class="language-python"># Filter data according to day duration
+latest_date = pd.to_datetime(df[&#39;SCHEDULED_TIME&#39;]).max()
+cutoff_date = latest_date - pd.Timedelta(days=days)
+filtered_df = df[pd.to_datetime(df[&#39;SCHEDULED_TIME&#39;]) &gt; cutoff_date].copy()
+    
+# Prepare data for heatmap
+filtered_df[&#39;HOUR_OF_DAY&#39;] = pd.to_datetime(filtered_df[&#39;SCHEDULED_TIME&#39;]).dt.hour
+filtered_df[&#39;HOUR_DISPLAY&#39;] = filtered_df[&#39;HOUR_OF_DAY&#39;].apply(lambda x: f&#34;{x:02d}:00&#34;)
+    
+# Calculate frequency count by hour and task name
+agg_df = filtered_df.groupby([&#39;NAME&#39;, &#39;HOUR_DISPLAY&#39;, &#39;STATE&#39;]).size().reset_index(name=&#39;COUNT&#39;)
+
+st.warning(f&#34;Analyzing data for the last {days} days!&#34;)
+</code></pre>
+<h2 is-upgraded>Data Visualization</h2>
+<p>Now, we&#39;ll create a heatmap and display summary statistics table that will allow us to gain insights on the task name and their corresponding state (e.g. <code>SUCCEEDED</code>, <code>FAILED</code>, <code>SKIPPED</code>).</p>
+<pre><code language="language-python" class="language-python">chart = alt.Chart(agg_df).mark_rect(
+    stroke=&#39;black&#39;,
+    strokeWidth=1
+).encode(
+    x=alt.X(&#39;HOUR_DISPLAY:O&#39;, 
+            title=&#39;Hour of Day&#39;,
+            axis=alt.Axis(
+                labels=True,
+                tickMinStep=1,
+                labelOverlap=False
+            )),
+    y=alt.Y(&#39;NAME:N&#39;, 
+            title=&#39;&#39;,
+            axis=alt.Axis(
+                labels=True,
+                labelLimit=200,
+                tickMinStep=1,
+                labelOverlap=False,
+                labelPadding=10
+            )),
+    color=alt.Color(&#39;COUNT:Q&#39;, 
+                    title=&#39;Number of Executions&#39;),
+    row=alt.Row(&#39;STATE:N&#39;, 
+                title=&#39;Task State&#39;,
+                header=alt.Header(labelAlign=&#39;left&#39;)),
+    tooltip=[
+        alt.Tooltip(&#39;NAME&#39;, title=&#39;Task Name&#39;),
+        alt.Tooltip(&#39;HOUR_DISPLAY&#39;, title=&#39;Hour&#39;),
+        alt.Tooltip(&#39;STATE&#39;, title=&#39;State&#39;),
+        alt.Tooltip(&#39;COUNT&#39;, title=&#39;Number of Executions&#39;)
+    ]
+).properties(
+    height=100,
+    width=450
+).configure_view(
+    stroke=None,
+    continuousWidth=300
+).configure_axis(
+    labelFontSize=10
+)
+
+# Display the chart
+st.subheader(f&#39;Task Execution Frequency by State ({days} Days)&#39;)
+st.altair_chart(chart)
+</code></pre>
+<p>Here&#39;s the resulting heatmap:</p>
+<p class="image-container"><img alt="image" src="img/31ceab219cc5138a.PNG"></p>
+<h2 is-upgraded>Add Summary Statistics</h2>
+<p>Finally, we&#39;ll calculate the summary statistics of execution history using <code>groupby()</code> and <code>agg()</code> functions, which we&#39;ll display in a table format using <code>st.dataframe()</code>:</p>
+<pre><code language="language-python" class="language-python">st.subheader(&#34;Summary Statistics&#34;)
+summary_df = filtered_df.groupby(&#39;NAME&#39;).agg({
+    &#39;STATE&#39;: lambda x: pd.Series(x).value_counts().to_dict()
+}).reset_index()
+
+# Format the state counts as separate columns
+state_counts = pd.json_normalize(summary_df[&#39;STATE&#39;]).fillna(0).astype(int)
+summary_df = pd.concat([summary_df[&#39;NAME&#39;], state_counts], axis=1)
+
+st.dataframe(summary_df)
+</code></pre>
+<p>And here&#39;s the DataFrame: <img alt="image" src="img/5c88a4227a7171c3.PNG"></p>
+<p>In the above example, we&#39;ve incrementally built the query execution report in chunks. It should however be mentioned that instead, we could have also piece together all the code blocks mentioned above to generate the interactive query execution report in one run.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an interactive dashboard for analyzing scheduled query executions in Snowflake. This tool will help you monitor query performance and identify potential issues in your scheduled tasks.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Retrieved and analyzed query execution data from Snowflake</li>
+<li>Created an interactive time-based filter using Streamlit</li>
+<li>Built a heatmap visualization</li>
+<li>Generated summary statistics for task execution states</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage" target="_blank">Account Usage Views</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage/task_history" target="_blank">Task History View</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-use-with-snowflake" target="_blank">Using Notebooks with Snowflake</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+</ul>
+<p>Happy coding!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

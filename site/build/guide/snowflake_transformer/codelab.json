@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "snowflake_transformer",
+  "duration": 21,
+  "title": "A Dive Into Slowly Changing Dimensions with Snowpark and StreamSets",
+  "authors": "Brenna Buuck, StreamSets",
+  "summary": "A Dive into Slowly Changing Dimensions with Snowpark",
+  "source": "streamsets_snowflake_transformer/snowflake_transformer.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowflake_transformer"
+}

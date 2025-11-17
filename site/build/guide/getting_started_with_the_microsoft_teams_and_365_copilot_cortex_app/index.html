@@ -1,0 +1,326 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with The Microsoft Teams and 365 Copilot Cortex App</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app"
+                  title="Getting Started with The Microsoft Teams and 365 Copilot Cortex App"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>In this quickstart you learn to build a Snowflake Cortex Agent and connect to it from a Teams or MS 365 Copilot App. In this Quickstart, after Setting Up the Snowflake Environment there will be a section for configuring the app connectivity then using the app; this Quickstart can be followed all the way through but you may be focused on one experience or another depending on your role and interest :grin:</p>
+<p>Snowflake Cortex Agents orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.</p>
+<p>A Teams 365 Copilot app is an AI-powered productivity assistant integrated into Microsoft Teams and Microsoft 365 Services (Word, Excel, Outlook, etc.). It&#39;s part of Microsoft&#39;s broader Copilot ecosystem, which embeds generative AI into everyday work apps and can connect to services like Snowflake Cortex Agents.</p>
+<p>CURRENTLY THIS IS ONLY AVAILABLE FOR SNOWFLAKE ACCOUNTS DEPLOYED IN AZURE US EAST 2</p>
+<h2 is-upgraded>Use Case</h2>
+<p>In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.</p>
+<p>Snowflake Cortex has proven to be a best-in-class platform for building GenAI services (Search and Analyst) and agents with your data and now customers can seamlessly connect to Cortex Agents in Teams and 365 Copilots alongside all of their Microsoft GenAI experiences.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>A Teams account or 365 with Copilot (with administrator privileges if following that section)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Creating Snowflake Cortex Services for Search, Analyst and Agents</li>
+<li>Securely connecting Teams and 365 Copilot App to Cortex Agents</li>
+<li>Using the Teams and 365 App with Cortex Agents!</li>
+</ul>
+<p>First we will build a simple Cortex agent that leverages Analyst and Search Services on structured and unstructured data respectively. <img src="img/df2366fc08dd0fb5.png"></p>
+<p>Next, we will confifure connectivity to connect the Teams/Copilot 365 App to Cortex then use it, with the underlying architecture like below. <img src="img/f049b5fdf17f5cad.png"> The authentication and user flow goes like this:</p>
+<ol type="1">
+<li>User authenticates to Entra ID and via the Bot Resource to authenticate into their Snowflake Account.</li>
+<li>The user then interacts with the MS app and the Bot Resource sends the request, along with the token from step 1, to the Bot backend with the user.</li>
+<li>The Bot Backend stores and retrieves the tenant level configuration and prompts the Cortex Agent API and executes queries against the SQL API when needed.</li>
+<li>Responses traverse through the Bot Backend, through the Bot Resource back to the application and to the user.</li>
+</ol>
+<p>...</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>A Teams account or 365 with Copilot (with administrator privileges if following that section)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake Search Service</li>
+<li>A Snowflake Analyst Service</li>
+<li>A Snowflake Agent</li>
+<li>A Teams or 365 Copilot App that connects to the Cortex Agent</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="9">
+        <pre><code language="language-sql" class="language-sql">-- Create database and schema
+CREATE OR REPLACE DATABASE sales_intelligence;
+CREATE OR REPLACE SCHEMA sales_intelligence.data;
+CREATE OR REPLACE WAREHOUSE sales_intelligence_wh;
+
+-- Create tables for sales data
+CREATE TABLE sales_conversations (
+    conversation_id VARCHAR,
+    transcript_text TEXT,
+    customer_name VARCHAR,
+    deal_stage VARCHAR,
+    sales_rep VARCHAR,
+    conversation_date TIMESTAMP,
+    deal_value FLOAT,
+    product_line VARCHAR
+);
+
+CREATE TABLE sales_metrics (
+    deal_id FLOAT PRIMARY KEY,
+    customer_name VARCHAR,
+    deal_value FLOAT,
+    close_date DATE,
+    sales_stage VARCHAR,
+    win_status BOOLEAN,
+    sales_rep VARCHAR,
+    product_line VARCHAR
+);
+
+-- First, let&#39;s insert data into sales_conversations
+INSERT INTO sales_conversations 
+(conversation_id, transcript_text, customer_name, deal_stage, sales_rep, conversation_date, deal_value, product_line)
+VALUES
+
+(&#39;CONV001&#39;, &#39;Initial discovery call with TechCorp Inc&#39;&#39;s IT Director and Solutions Architect. Client showed strong interest in our enterprise solution features, particularly the automated workflow capabilities. Main discussion centered around integration timeline and complexity. They currently use Legacy System X for their core operations and expressed concerns about potential disruption during migration. Team asked detailed questions about API compatibility and data migration tools. Action items: 1) Provide detailed integration timeline document 2) Schedule technical deep-dive with their infrastructure team 3) Share case studies of similar Legacy System X migrations. Client mentioned Q2 budget allocation for digital transformation initiatives. Overall positive engagement with clear next steps.&#39;, &#39;TechCorp Inc&#39;, &#39;Discovery&#39;, &#39;Sarah Johnson&#39;, &#39;2024-01-15 10:30:00&#39;, 75000, &#39;Enterprise Suite&#39;),
+
+(&#39;CONV002&#39;, &#39;Follow-up call with SmallBiz Solutions&#39;&#39; Operations Manager and Finance Director. Primary focus was on pricing structure and ROI timeline. They compared our Basic Package pricing with Competitor Y&#39;&#39;s small business offering. Key discussion points included: monthly vs. annual billing options, user license limitations, and potential cost savings from process automation. Client requested detailed ROI analysis focusing on: 1) Time saved in daily operations 2) Resource allocation improvements 3) Projected efficiency gains. Budget constraints were clearly communicated - they have a maximum budget of $30K for this year. Showed interest in starting with basic package with room for potential upgrade in Q4. Need to provide competitive analysis and customized ROI calculator by next week.&#39;, &#39;SmallBiz Solutions&#39;, &#39;Negotiation&#39;, &#39;Mike Chen&#39;, &#39;2024-01-16 14:45:00&#39;, 25000, &#39;Basic Package&#39;),
+
+(&#39;CONV003&#39;, &#39;Strategy session with SecureBank Ltd&#39;&#39;s CISO and Security Operations team. Extremely positive 90-minute deep dive into our Premium Security package. Customer emphasized immediate need for implementation due to recent industry compliance updates. Our advanced security features, especially multi-factor authentication and encryption protocols, were identified as perfect fits for their requirements. Technical team was particularly impressed with our zero-trust architecture approach and real-time threat monitoring capabilities. They&#39;&#39;ve already secured budget approval and have executive buy-in. Compliance documentation is ready for review. Action items include: finalizing implementation timeline, scheduling security audit, and preparing necessary documentation for their risk assessment team. Client ready to move forward with contract discussions.&#39;, &#39;SecureBank Ltd&#39;, &#39;Closing&#39;, &#39;Rachel Torres&#39;, &#39;2024-01-17 11:20:00&#39;, 150000, &#39;Premium Security&#39;),
+
+(&#39;CONV004&#39;, &#39;Comprehensive discovery call with GrowthStart Up&#39;&#39;s CTO and Department Heads. Team of 500+ employees across 3 continents discussed current challenges with their existing solution. Major pain points identified: system crashes during peak usage, limited cross-department reporting capabilities, and poor scalability for remote teams. Deep dive into their current workflow revealed bottlenecks in data sharing and collaboration. Technical requirements gathered for each department. Platform demo focused on scalability features and global team management capabilities. Client particularly interested in our API ecosystem and custom reporting engine. Next steps: schedule department-specific workflow analysis and prepare detailed platform migration plan.&#39;, &#39;GrowthStart Up&#39;, &#39;Discovery&#39;, &#39;Sarah Johnson&#39;, &#39;2024-01-18 09:15:00&#39;, 100000, &#39;Enterprise Suite&#39;),
+
+(&#39;CONV005&#39;, &#39;In-depth demo session with DataDriven Co&#39;&#39;s Analytics team and Business Intelligence managers. Showcase focused on advanced analytics capabilities, custom dashboard creation, and real-time data processing features. Team was particularly impressed with our machine learning integration and predictive analytics models. Competitor comparison requested specifically against Market Leader Z and Innovative Start-up X. Price point falls within their allocated budget range, but team expressed interest in multi-year commitment with corresponding discount structure. Technical questions centered around data warehouse integration and custom visualization capabilities. Action items: prepare detailed competitor feature comparison matrix and draft multi-year pricing proposals with various discount scenarios.&#39;, &#39;DataDriven Co&#39;, &#39;Demo&#39;, &#39;James Wilson&#39;, &#39;2024-01-19 13:30:00&#39;, 85000, &#39;Analytics Pro&#39;),
+
+(&#39;CONV006&#39;, &#39;Extended technical deep dive with HealthTech Solutions&#39;&#39; IT Security team, Compliance Officer, and System Architects. Four-hour session focused on API infrastructure, data security protocols, and compliance requirements. Team raised specific concerns about HIPAA compliance, data encryption standards, and API rate limiting. Detailed discussion of our security architecture, including: end-to-end encryption, audit logging, and disaster recovery protocols. Client requires extensive documentation on compliance certifications, particularly SOC 2 and HITRUST. Security team performed initial architecture review and requested additional information about: database segregation, backup procedures, and incident response protocols. Follow-up session scheduled with their compliance team next week.&#39;, &#39;HealthTech Solutions&#39;, &#39;Technical Review&#39;, &#39;Rachel Torres&#39;, &#39;2024-01-20 15:45:00&#39;, 120000, &#39;Premium Security&#39;),
+
+(&#39;CONV007&#39;, &#39;Contract review meeting with LegalEase Corp&#39;&#39;s General Counsel, Procurement Director, and IT Manager. Detailed analysis of SLA terms, focusing on uptime guarantees and support response times. Legal team requested specific modifications to liability clauses and data handling agreements. Procurement raised questions about payment terms and service credit structure. Key discussion points included: disaster recovery commitments, data retention policies, and exit clause specifications. IT Manager confirmed technical requirements are met pending final security assessment. Agreement reached on most terms, with only SLA modifications remaining for discussion. Legal team to provide revised contract language by end of week. Overall positive session with clear path to closing.&#39;, &#39;LegalEase Corp&#39;, &#39;Negotiation&#39;, &#39;Mike Chen&#39;, &#39;2024-01-21 10:00:00&#39;, 95000, &#39;Enterprise Suite&#39;),
+
+(&#39;CONV008&#39;, &#39;Quarterly business review with GlobalTrade Inc&#39;&#39;s current implementation team and potential expansion stakeholders. Current implementation in Finance department showcasing strong adoption rates and 40% improvement in processing times. Discussion focused on expanding solution to Operations and HR departments. Users highlighted positive experiences with customer support and platform stability. Challenges identified in current usage: need for additional custom reports and increased automation in workflow processes. Expansion requirements gathered from Operations Director: inventory management integration, supplier portal access, and enhanced tracking capabilities. HR team interested in recruitment and onboarding workflow automation. Next steps: prepare department-specific implementation plans and ROI analysis for expansion.&#39;, &#39;GlobalTrade Inc&#39;, &#39;Expansion&#39;, &#39;James Wilson&#39;, &#39;2024-01-22 14:20:00&#39;, 45000, &#39;Basic Package&#39;),
+
+(&#39;CONV009&#39;, &#39;Emergency planning session with FastTrack Ltd&#39;&#39;s Executive team and Project Managers. Critical need for rapid implementation due to current system failure. Team willing to pay premium for expedited deployment and dedicated support team. Detailed discussion of accelerated implementation timeline and resource requirements. Key requirements: minimal disruption to operations, phased data migration, and emergency support protocols. Technical team confident in meeting aggressive timeline with additional resources. Executive sponsor emphasized importance of going live within 30 days. Immediate next steps: finalize expedited implementation plan, assign dedicated support team, and begin emergency onboarding procedures. Team to reconvene daily for progress updates.&#39;, &#39;FastTrack Ltd&#39;, &#39;Closing&#39;, &#39;Sarah Johnson&#39;, &#39;2024-01-23 16:30:00&#39;, 180000, &#39;Premium Security&#39;),
+
+(&#39;CONV010&#39;, &#39;Quarterly strategic review with UpgradeNow Corp&#39;&#39;s Department Heads and Analytics team. Current implementation meeting basic needs but team requiring more sophisticated analytics capabilities. Deep dive into current usage patterns revealed opportunities for workflow optimization and advanced reporting needs. Users expressed strong satisfaction with platform stability and basic features, but requiring enhanced data visualization and predictive analytics capabilities. Analytics team presented specific requirements: custom dashboard creation, advanced data modeling tools, and integrated BI features. Discussion about upgrade path from current package to Analytics Pro tier. ROI analysis presented showing potential 60% improvement in reporting efficiency. Team to present upgrade proposal to executive committee next month.&#39;, &#39;UpgradeNow Corp&#39;, &#39;Expansion&#39;, &#39;Rachel Torres&#39;, &#39;2024-01-24 11:45:00&#39;, 65000, &#39;Analytics Pro&#39;);
+
+-- Now, let&#39;s insert corresponding data into sales_metrics
+INSERT INTO sales_metrics 
+(deal_id, customer_name, deal_value, close_date, sales_stage, win_status, sales_rep, product_line)
+VALUES
+(&#39;001&#39;, &#39;TechCorp Inc&#39;, 75000, &#39;2024-02-15&#39;, &#39;Closed&#39;, true, &#39;Sarah Johnson&#39;, &#39;Enterprise Suite&#39;),
+
+(&#39;002&#39;, &#39;SmallBiz Solutions&#39;, 25000, &#39;2024-02-01&#39;, &#39;Lost&#39;, false, &#39;Mike Chen&#39;, &#39;Basic Package&#39;),
+
+(&#39;003&#39;, &#39;SecureBank Ltd&#39;, 150000, &#39;2024-01-30&#39;, &#39;Closed&#39;, true, &#39;Rachel Torres&#39;, &#39;Premium Security&#39;),
+
+(&#39;004&#39;, &#39;GrowthStart Up&#39;, 100000, &#39;2024-02-10&#39;, &#39;Pending&#39;, false, &#39;Sarah Johnson&#39;, &#39;Enterprise Suite&#39;),
+
+(&#39;005&#39;, &#39;DataDriven Co&#39;, 85000, &#39;2024-02-05&#39;, &#39;Closed&#39;, true, &#39;James Wilson&#39;, &#39;Analytics Pro&#39;),
+
+(&#39;006&#39;, &#39;HealthTech Solutions&#39;, 120000, &#39;2024-02-20&#39;, &#39;Pending&#39;, false, &#39;Rachel Torres&#39;, &#39;Premium Security&#39;),
+
+(&#39;007&#39;, &#39;LegalEase Corp&#39;, 95000, &#39;2024-01-25&#39;, &#39;Closed&#39;, true, &#39;Mike Chen&#39;, &#39;Enterprise Suite&#39;),
+
+(&#39;008&#39;, &#39;GlobalTrade Inc&#39;, 45000, &#39;2024-02-08&#39;, &#39;Closed&#39;, true, &#39;James Wilson&#39;, &#39;Basic Package&#39;),
+
+(&#39;009&#39;, &#39;FastTrack Ltd&#39;, 180000, &#39;2024-02-12&#39;, &#39;Closed&#39;, true, &#39;Sarah Johnson&#39;, &#39;Premium Security&#39;),
+
+(&#39;010&#39;, &#39;UpgradeNow Corp&#39;, 65000, &#39;2024-02-18&#39;, &#39;Pending&#39;, false, &#39;Rachel Torres&#39;, &#39;Analytics Pro&#39;);
+
+-- Enable change tracking
+ALTER TABLE sales_conversations SET CHANGE_TRACKING = TRUE;
+
+-- Create the search service
+CREATE OR REPLACE CORTEX SEARCH SERVICE sales_conversation_search
+  ON transcript_text
+  ATTRIBUTES customer_name, deal_stage, sales_rep
+  WAREHOUSE = sales_intelligence_wh
+  TARGET_LAG = &#39;1 hour&#39;
+  AS (
+    SELECT
+        transcript_text,
+        customer_name,
+        deal_stage,
+        sales_rep,
+        conversation_date
+    FROM sales_conversations
+    WHERE conversation_date &gt;= &#39;2024-01-01&#39; 
+);
+
+CREATE OR REPLACE STAGE models DIRECTORY = (ENABLE = TRUE);
+</code></pre>
+<p>To set up Cortex Analyst you will have to upload a semantic file.</p>
+<ul>
+<li>Download <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml" target="_blank">sales_metrics_model.yaml</a> (NOTE: Do NOT right-click to download.)</li>
+<li>Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS</li>
+<li>Click &#34;+ Files&#34; in the top right</li>
+<li>Browse and select sales_metrics_model.yaml file</li>
+<li>Click &#34;Upload&#34;</li>
+</ul>
+<p>Cortex Analyst is a highly accurate text to sql generator and in order to produce highly accurate results a semantic file such as this one is required. Cortex Analyst will use this semantic file along with user prompts to generate accurate SQL.</p>
+<p>To set up Cortex Analyst you will have to upload a semantic file.</p>
+<ul>
+<li>Download <a href="https://github.com/Snowflake-Labs/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/cortex_agent_definition.json" target="_blank">cortex_agent_definition.json</a> (NOTE: Do NOT right-click to download.)</li>
+<li>Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS</li>
+<li>Click &#34;+ Files&#34; in the top right</li>
+<li>Browse and select cortex_agent_definition.json file</li>
+<li>Click &#34;Upload&#34;</li>
+</ul>
+<p>And last we will run this below script to grant the appropriate privileges to the PUBLIC role (or whatever role you can use).</p>
+<pre><code language="language-sql" class="language-sql">GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA DATA TO ROLE PUBLIC;
+GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE PUBLIC;
+GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
+GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="App Connectivity" duration="12">
+        <p>A Global Administrator for your Microsoft Entra ID tenant must use the two links below to grant the necessary permissions for the applications. Please review the permissions requested on each consent screen before accepting.</p>
+<p> with your organization&#39;s tenant identifier: https://login.microsoftonline.com//adminconsent?client_id=5a840489-78db-4a42-8772-47be9d833efe</p>
+<p class="image-container"><img src="img/91162d55217b9444.png"></p>
+<p>Replace  with your organization&#39;s tenant identifier: https://login.microsoftonline.com//adminconsent?client_id=bfdfa2a2-bce5-4aee-ad3d-41ef70eb5086</p>
+<p class="image-container"><img src="img/d6e8cfb5fd35c310.png"></p>
+<p>Admins should also make sure the Snowflake users have an email address in their Snowflake user that matches their Microsoft tenant.</p>
+<p>Admins should execute the below code to create the security integration necessary to authenticate with Entra ID.  with your organization&#39;s tenant identifier:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE SECURITY INTEGRATION entra_id_cortex_agents_integration 
+TYPE = EXTERNAL_OAUTH 
+ENABLED = TRUE 
+EXTERNAL_OAUTH_TYPE = AZURE 
+EXTERNAL_OAUTH_ISSUER = &#39;https://login.microsoftonline.com/&lt;TENANT-ID&gt;/v2.0&#39;
+EXTERNAL_OAUTH_JWS_KEYS_URL = &#39;https://login.microsoftonline.com/&lt;TENANT-ID&gt;/discovery/v2.0/keys&#39;
+EXTERNAL_OAUTH_AUDIENCE_LIST = (&#39;0f24a786-17be-4e2b-bcc8-54f6b1ac897c&#39;) EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM = (&#39;email&#39;, &#39;upn&#39;)
+EXTERNAL_OAUTH_SNOWFLAKE_USER_MAPPING_ATTRIBUTE = &#39;email_address&#39; 
+EXTERNAL_OAUTH_ANY_ROLE_MODE = &#39;ENABLE&#39;
+</code></pre>
+<p>Search for &#34;Snowflake Cortex Agents&#34; in the Teams App Store and click &#34;Add&#34;.</p>
+<p>The first user from your organization to interact with the agent will be guided through a one-time setup process to connect your Snowflake account for the whole organization. This user must have administrative permissions in the target Snowflake account to complete the setup.</p>
+<p>Depending on your organization&#39;s Microsoft Teams policies, a Teams Administrator may need to approve or unblock the application before it is available to users. Reach to <a href="https://learn.microsoft.com/en-us/microsoftteams/manage-apps" target="_blank">Overview of app management and governance in Teams admin center&#34;</a> article in order to get more information on managing access to Teams Applications across an organization. ADD SCREENSHPT HERE OF ADD</p>
+<p>Upon the first interaction with the agent, you will be prompted to log in with your Microsoft account.</p>
+<p>The agent will inform you that no Snowflake account is configured for your organization and will ask for your Snowflake account URL. Clicking &#34;I&#39;m the Snowflake administrator&#34; action will unveil a simple form, where you can provide your account&#39;s URL. -The full URL to enter is your_organization-your_account.snowflakecomputing.com. <img src="img/f593e5dc0c7b4719.png"></p>
+<p>Initial Verification: The agent will perform several checks:</p>
+<ul>
+<li>Verifies that the URL leads to a valid Snowflake instance.</li>
+<li>Confirms your Microsoft user has access to this Snowflake instance via the security integration.</li>
+<li>Checks that your user holds administrative privileges in the Snowflake account.</li>
+<li>Ensures the Snowflake account is hosted in the Azure East US 2 region.</li>
+</ul>
+<p>Enter Configuration Details: Once the initial verification is successful, a form will appear requesting the following configuration details:</p>
+<ul>
+<li>Account Alias: A user-friendly name for this Snowflake connection (e.g., &#34;Production Analytics,&#34; &#34;Dev Environment&#34;), which will be used in UI to refer to this Snowflake account.</li>
+<li>Agent Definition Path: The fully qualified path to the agent&#39;s JSON definition file on your Snowflake stage.</li>
+<li>Warehouse: The name of the Snowflake warehouse the agent will use to run queries. <img src="img/9f9e89f3bd70f2df.png"></li>
+</ul>
+<p>Final Validation: After you submit the configuration, the agent performs a final validation:</p>
+<ul>
+<li>Checks that the JSON file exists at the specified path and contains a valid agent definition.</li>
+<li>Performs a test API call to the agent to ensure it can respond correctly.</li>
+</ul>
+<p>If all checks pass, the Snowflake configuration has been successfully added for your organization. All users from your Microsoft tenant can now interact with the agent using this Snowflake account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Application" duration="0">
+        <p>Access the App from 365 Copilot or Teams experience. The experience will be mostly the same with some minor variations in the UI. See the two screenshots below.</p>
+<h3 is-upgraded>Teams</h3>
+<p class="image-container"><img src="img/f4a0a922b431eb9e.png"></p>
+<h3 is-upgraded>365 Copilot</h3>
+<p class="image-container"><img src="img/5d3d5b375cfdcf64.png"></p>
+<p>You can start by asking &#34;view available commands&#34; to then access the admin panel, get help or choose a new snowflake account. <img src="img/a2e1f385b338855c.png"></p>
+<p>For now you can view available prompts. <img src="img/52346aec62ec9348.png"></p>
+<p>Select (or ask by typing) &#34;what was the largest deal size&#34; to see the answer. <img src="img/99f7c01a34ed812a.png"></p>
+<p>And you are now ready to go! You can continue asking questions like:</p>
+<ul>
+<li>plot our largest deals by deal size?</li>
+<li>how was the call with Securebank?</li>
+<li>what was the worst customer call we had?</li>
+<li>show the deals that are currently pending</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Technical Considerations</h2>
+<p>This quickstart showed you how to connect MS Teams and 365 Copilots Snowflake Cortex using the new App. Hopefully you&#39;re just getting started and you can build bigger Cortex Agents to help support business users query all types of data with plain text from Teams and 365 Copilot!</p>
+<h2 is-upgraded>What you learned</h2>
+<p>By following this quickstart, you learned how to:</p>
+<ul>
+<li>Create Snowflake Cortex Services for Search, Analyst and Agents</li>
+<li>Securely connect Teams and 365 Copilot App to Cortex Agents</li>
+<li>Use the Teams and 365 App with Cortex Agents</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li>Learn more about the complete <a href="https://www.snowflake.com/en/product/features/cortex/" target="_blank">Snowflake Cortex set of features</a></li>
+<li>Learn more about using <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Agents in Cortex</a></li>
+<li>Learn more about using <a href="https://www.microsoft.com/en-us/microsoft-365/products-apps-services" target="_blank">MS 365</a></li>
+<li>Learn more about using <a href="https://www.microsoft.com/en-us/microsoft-copilot/organizations" target="_blank">MS Copilot</a></li>
+<li>The official <a target="_blank">Teams 365 Copilot Cortex App Docs</a></li>
+<li><a href="https://cloudpartners.transform.microsoft.com/download?assetname=assets%2FCopilot-Partner-Demo-Snowflake-v2505.mp4" target="_blank">Demo Video</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

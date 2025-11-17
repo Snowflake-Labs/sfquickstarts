@@ -1,0 +1,206 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Machine Learning with Snowpark and Apache Airflow</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="ml_with_snowpark_and_apache_airflow"
+                  title="Machine Learning with Snowpark and Apache Airflow"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p class="image-container"><img alt="header" src="img/ee68cbaac2be23ca.png"></p>
+<p>Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.</p>
+<p>This includes Snowpark ML, the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. Snowpark ML unifies data pre-processing, feature engineering, model training and integrated deployment into a single, easy-to-use Python library.</p>
+<p>Snowpark ML has 2 components:</p>
+<ul>
+<li>Snowpark ML Modeling enables the use of popular ML frameworks such as Scikit-learn and XGBoost for feature engineering and model training without moving data out of Snowflake.</li>
+<li>Snowpark ML Operations (PuPr) includes the Snowpark Model Registry, which enables scalable, secure deployment and management of models in Snowflake.</li>
+</ul>
+<p>Manage and deploy models and their metadata easily into Snowflake warehouses as UDFs, or Snowpark Container Services as Service endpoints for batch inference</p>
+<p>This virtual hands-on lab demonstrates how to use Apache Airflow to orchestrate a machine learning pipeline leveraging Snowpark ML for model development, deployment, and managementfeature engineering and model managementtracking. While Snowpark ML has its own  provides integrated support for models similar to scikit-learn directly in Snowflake, this code demonstrates a &#34;bring-your-own&#34; model approach showing the use of open-source scikit-learn along with Snowpark ML mModel rRegistry and model serving in an Airflow task rather than Snowpark UDF. It also shows the use of the Snowflake XCom backend which supports security and governance by serializing all task in/output to Snowflake tables and stages while storing in the Airflow XCom table a URI pointer to the data.</p>
+<p>This workflow includes:</p>
+<ul>
+<li>Sourcing structured, unstructured, and semistructured data from different systems</li>
+<li>Extracting, transforming, and loading with the Snowpark for Python provider for Airflow</li>
+<li>Ingesting with Astronomer&#39;s Python SDK for Airflow</li>
+<li>Audio file transcription with OpenAI Whisper</li>
+<li>Natural language embeddings with OpenAI Embeddings and the Weaviate provider for Airflow</li>
+<li>Vector search with Weaviate</li>
+<li>Sentiment classification with LightGBM</li>
+<li>ML model management with Snowpark</li>
+</ul>
+<p>Let&#39;s get started.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>This guide assumes you have a basic working knowledge of Python, Airflow, and Snowflake</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use Airflow to manage your Machine Learning Operations (MLOps)</li>
+<li>How to leverage Snowpark&#39;s compute for your Machine Learning workflows</li>
+<li>How to use Snowpark &amp; Airflow together to create horizontally and vertically scalable ML pipelines</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ol type="1">
+<li>Snowflake 1a. <strong>A Snowflake Account.</strong> 1b. <strong>A Snowflake User created with appropriate permissions.</strong> This user will need sys/accountadmin level permissions to create and manipulate the necessary databases. 1c. Follow <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda" target="_blank">these instructions</a> to enable Anaconda Packages in your trial account</li>
+<li>GitHub 2a. <strong>A GitHub Account.</strong> If you don&#39;t already have a GitHub account you can create one for free. Visit the <a href="https://github.com/join" target="_blank">Join GitHub</a> page to get started. 2b. <strong>Download the Project&#39;s GitHub Repository.</strong> To do this workshop, you&#39;ll need to download the following Repo onto your local machine: https://github.com/astronomer/airflow-snowparkml-demo/tree/main</li>
+<li>Integrated Development Environment (IDE) 3a. <strong>Your favorite IDE with Git integration.</strong> If you don&#39;t already have a favorite IDE that integrates with Git, open-source <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a> is a good option.</li>
+<li>Docker 4a. <strong>Docker Desktop on your laptop.</strong>  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the <a href="https://docs.docker.com/desktop/" target="_blank">Docker setup instructions</a>.</li>
+<li>Astro CLI 5a. <strong>Astro CLI Installed</strong>  We will be using the Astro CLI to easily create and run a local Airflow environment. Please install it on your local machine by following these <a href="https://docs.astronomer.io/astro/cli/install-cli" target="_blank">instructions</a></li>
+<li>OpenAI API key 6a. <strong>Optional Step to Enable Chatbot Functionality</strong> We have pre-embedded all the documents so an openai key is not needed for the ingestion process. However, if you want to run the Streamlit app at the end of the workshop, you will need the key to tokenize the search and questions.</li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Machine Learning Pipeline called &#34;Customer Analytics&#34; that predicts customer lifetime value based on customer sentiment</li>
+</ul>
+<p class="image-container"><img alt="header" src="img/c93156c034bcb6fe.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Environment Setup and Repo Overview" duration="2">
+        <p>First, Clone <a href="https://github.com/astronomer/airflow-snowparkml-demo/tree/main" target="_blank">this repository</a> and navigate into its directory in terminal, before opening the folder up in the code editor of your choice.</p>
+<pre><code>git clone https://github.com/astronomer/airflow-snowparkml-demo/
+
+cd airflow-snowparkml-demo
+</code></pre>
+<p>After you&#39;ve downloaded the repo, open the <code>airflow-snowparkml-demo</code> folder in the IDE of your choice! The folder structure should look like the below:</p>
+<p class="image-container"><img alt="filestructure" src="img/c3073c1a99bd1b8e.png"></p>
+<p>Since we&#39;re using so many different tools installed via the requirements/packages files, it&#39;s worth going through them so you understand the systems being used in the ‘Customer Analytics&#39; DAG.</p>
+<p>Repository Contents Overview:</p>
+<p><code>Requirements.txt</code></p>
+<p><code>/tmp/airflow_provider_weaviate-1.0.0-py3-none-any.whl</code>: This beta package allows us to connect to Weaviate for embedding generation.</p>
+<p><code>/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl</code>: This beta package allows us to connect to Snowpark.</p>
+<p><code>snowflake-ml-python==1.0.7</code>: A package that provides machine learning functionalities or integrations for Snowflake within Python.</p>
+<p><code>pandas~=1.5</code>: A powerful and flexible open-source data analysis and manipulation library for Python.</p>
+<p><code>scikit-learn==1.3.0</code>: A machine learning library in Python that provides simple and efficient tools for data analysis and modeling.</p>
+<p>We will also show how to use a Python virtual environment to simplify Snowpark requirements if that is necessary in your Airflow environment.  For that we will create a <code>requirements-snowpark.txt</code> file with the following libraries:</p>
+<p><code>psycopg2-binary</code>: A standalone package that provides a PostgreSQL adapter.</p>
+<p><code>snowflake_snowpark_python[pandas]>=1.5.1</code>: An extension of the Snowflake Python Connector that provides an intuitive, pythonic API for querying and processing data in Snowflake.</p>
+<p><code>/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl</code>: This beta provider simplifies the process of making secure connections to Snowflake, the process of building Airflow tasks with Snowpark code and the passing of Snowpark dataframes between tasks.</p>
+<p><code>virtualenv</code>: A tool in Python used to create isolated Python virtual environments, which we&#39;ll need to create a 3.8 Python virtual environment to connect to Snowpark.</p>
+<p><code>Packages.txt</code></p>
+<p><code>Build-essential</code>: A collection of essential development tools, including the GNU Compiler Collection (GCC), the GNU Debugger (GDB), and other libraries and tools. It is required to compile and install many other software packages, including FFmpeg.</p>
+<p><code>ffmpeg</code>: A free and open-source software project consisting of a suite of libraries and programs for handling video, audio, and other multimedia files and streams. We&#39;ll use this to transcribe support calls with OpenAI Whisper.</p>
+<p><code>docker-compose.override.yml</code></p>
+<p>This file is allowing us to build a local weaviate vector database using Docker on <code>port:8081</code> alongside our Airflow environment, which we&#39;ll use to store our unstructured data embeddings for efficient sentiment analysis. This method can be used to spin up many different services for easier local testing, like streamlit to visualize your data, or Minio for mimicking an S3-like filesystem.</p>
+<p>Step 2:</p>
+<p>Navigate to the <code>.env</code> file and update the <code>AIRFLOW_CONN_SNOWFLAKE_DEFAULT</code> with your own credentials. These will be used to connect to Snowflake. The Snowflake account field of the connection should use the new <code>ORG_NAME-ACCOUNT_NAME</code> format as per Snowflake Account Identifier policies. The <code>ORG</code> and <code>ACCOUNT</code> names can be found in the confirmation email or in the Snowflake login link (ie. https://xxxxxxx-yyy11111.snowflakecomputing.com/console/login) Do not specify a region when using this format for accounts. If you need help finding your <code>ORG_NAME-ACCOUNT_NAME</code>, use <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">this guide</a></p>
+<p>NOTE: Database and Schema names should remain as <code>DEMO</code>, and the warehouse name should remain <code>COMPUTE_WH</code>. This is because the Customer_Analytics DAG will create tables with these names and reference them throughout the DAG, so if you use different names you&#39;ll need to alter the DAG code to reflect them.</p>
+<p><code>AIRFLOW_CONN_SNOWFLAKE_DEFAULT='{"conn_type": "snowflake", "login": "<USER_NAME>", "password": "<PASSWORD>", "schema": "DEMO", "extra": {"account": "<ORG_NAME>-<ACCOUNT_NAME>", "warehouse": "COMPUTE_WH", "database": "DEMO", "region": "", "role": "ACCOUNTADMIN", "authenticator": "snowflake", "session_parameters": null, "application": "AIRFLOW"}}'</code></p>
+<p>NOTE: The use of <code>ACCOUNTADMIN</code> in this demo is only to simplify setup of the quickstart. It is, of course, not advisable to use this role for production.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Start Environment and Run DAG" duration="0">
+        <p>Now that you&#39;ve gotten your environment set up, open up a terminal window in your <code>airflow-snowparkml-demo</code> folder and run the following command:</p>
+<pre><code>astro dev start
+</code></pre>
+<p>This will build our local Airflow environment using the Docker engine and the Astro CLI. After your Airflow environment has finished starting up, open up the UI by navigating to <code>localhost:8080</code> in the browser and use admin/admin as the username/password to login.</p>
+<p>After you&#39;ve opened the UI, unpause the <code>customer_analytics</code> DAG and press the play icon to start it.</p>
+<p class="image-container"><img alt="header" src="img/f18c068b56b1f9a.png"></p>
+<p>This DAG demonstrates an end-to-end application workflow to generate predictions on customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCom backend and the Snowpark Model Registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DAG Explanation" duration="0">
+        <p class="image-container"><img alt="header" src="img/c93156c034bcb6fe.png"></p>
+<p>Task <code>create_snowflake_objects</code>: Our first task creates Snowflake objects (databases, schemas, stages, etc.) prior to running any tasks, since we are assuming you are starting with a fresh trial account. This is implemented using the new setup/teardown task feature, and has a corresponding clean up task at the end of the DAG. This means that no matter what, temp tables used for this project will be deleted after usage to prevent unnecessary consumption, mimicking how you might use them in a production setting. It also adds a handy dotted line to link the two tasks in the Airflow UI, which you can see in the above screenshot.</p>
+<p>The DAG then runs the <code>enter</code> task group, which includes 3 tasks to set up a Weaviate database, and create a Snowpark model registry if none exists already:</p>
+<p class="image-container"><img alt="header" src="img/39d42f97a696b26c.png"></p>
+<p>Task <code>download_weaviate_backup</code>: In order to speed up the demo process, the data has already been ingested into Weaviate and vectorized. The data was then backed up and stored in the cloud for easy restore. This task will download the backup .zip and make it available in a docker mounted filesystem for the restore_weaviate task.</p>
+<p>Task <code>restore_weaviate</code>: This task exists to speedup the demo in subsequent runs. By restoring prefetched embeddings to Weaviate the later tasks will skip embeddings and only make calls to OpenAI for data it hasn&#39;t yet embedded.</p>
+<p>Task <code>check_model_registry</code>: This task checks if a Snowpark model registry exists in the specified database and schema. If not, it creates one and returns a dictionary containing the database and schema information.</p>
+<p>The second task group <code>structured_data</code> uses several dynamically generated task groups to load many structured datasets into our Snowflake database, before transforming them using snowpark, all in parallel.</p>
+<p class="image-container"><img alt="header" src="img/fb94a182d7088ee8.png"></p>
+<p>Task Group <code>load_structured_data</code>: This task group creates parallel tasks to upload many structured datasets from an Astronomer hosted S3 bucket into our Snowflake database.</p>
+<p>Task Group <code>transform_structured</code>: This task group uses Snowpark python to transform the structured data to get them in the proper format for the presentation layer and joining with prediction on the unstructured data and the sentiment classifier.</p>
+<p>Our third task group, <code>unstructured data</code>, runs in parallel with the <code>structured data</code> task group to load unstructured call and twitter comment data to a Snowflake stage, before transcribing those calls and generating embeddings from this data. These embeddings are information dense representations of the semantic meaning of all of this text data, which are used for text search, text similarity, and other natural language processing tasks.</p>
+<p class="image-container"><img alt="header" src="img/c1b4c984d07f00f7.png"></p>
+<p>The following 3 tasks are grouped into a Task group called <code>load_unstructured_data</code></p>
+<p>Task <code>load_support_calls_to_stage</code>: This task creates or replaces staging table within Snowflake, and then uses Snowpark python to extract call data and load it into that staging table. This stage is a directory table which means that we can query the structure like any other table.</p>
+<p>Task <code>load_twitter_comments</code>: This task uses the Astro SDK Load File operator to load a parquet file of twitter comments into a table called STG_TWITTER_COMMENTS.</p>
+<p>Task <code>load_comment_training</code>: This task loads a comment training parquet file into a Snowflake table called STG_COMMENT_TRAINING</p>
+<p>Task <code>transcribe_calls</code>: This task uses Snowpark to transcribe the raw support calls we uploaded to the directory table previously. We will query the file location (URI) and use that to read the file and transcribe the audio with OpenAI Whipser</p>
+<p>Task Group <code>generate_embeddings</code>: This task group generates embeddings for our training comment data, twitter comment data, and for our transcribed support call data. These embeddings are generated as part of importing them into the Weaviate vector database.</p>
+<p>Task <code>train_sentiment_classifier</code>: After all our structured and unstructured data has been extracted, transformed/transcribed, and loaded, we then use it to train our sentiment classifier model in Snowpark.  The embedding vectors in Weaviate along with a sentiment-labeled dataset allow us to train a very simple classifier.  While model tuning and optimization are outside the scope of this demo those steps could also be performed in parallel tasks. After we&#39;ve trained our model, we&#39;ll then register it into our Snowflake model registry so that we can use it to generate sentiment predictions. One of the biggest advantages of this approach is that we can run our model on the data within Snowpark. It is not necessary to extract the data to cloud object storage for inference.  Instead we can read directly from Snowflake during inference.  Alternatively, SnowparkML allows users to easily create user-defined functions with the Taskflow api.</p>
+<p>Task Group <code>score_sentiment</code>: After we&#39;ve trained our sentiment classifier, we can then use it to evaluate the sentiment of our twitter comments and transcribed support calls. Again, we&#39;ll do this within Snowpark so we can run this model on our Snowflake data without needing to make a copy in cloud storage. We&#39;ll then save the prediction results and return them as tables so that we can use them to generate visual reports next.</p>
+<p>Task <code>create_presentation_tables</code>: Now that we&#39;ve got our sentiment analysis model predictions generated, this task uses Snowpark to take those raw predictions and organize them into a human readable table for reporting.</p>
+<p>Task <code>cleanup_temp_tables</code>: For our final task, we&#39;ll clear all the temporary tables we used during data processing using a teardown task. Using a tear-down task means that all your temp tables will be deleted even if upstream tasks have failed. This avoids the situation where you&#39;ll have table fragments persist after failed model runs because their failure stopped a clean-up task from triggering.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring Results" duration="0">
+        <p>After your pipeline has finished running, go into the grid view and check that all tasks ran successfully. Then, go into your Snowflake environment and check the newly created <code>PRED_CUSTOMER_CALLS</code> and <code>PRED_TWITTER_COMMENTS</code> to see the finished result of your model training. They should look like the examples below:</p>
+<p class="image-container"><img alt="header" src="img/49c406db9498c2dd.png"><img alt="header" src="img/d05a9927d7ae0716.png"></p>
+<h2 is-upgraded>View Streamlit Dashboard</h2>
+<p>We can now view our analyzed data on a <a href="https://streamlit.io/" target="_blank">Streamlit</a> dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.</p>
+<pre><code language="language-bash" class="language-bash">astro dev bash -w
+</code></pre>
+<p>Then, run the following command to start a streamlit application.</p>
+<pre><code language="language-bash" class="language-bash">cd include/streamlit/src
+python -m streamlit run ./streamlit_app.py
+</code></pre>
+<p><img alt="header" src="img/155f1785d8383026.png"> After you&#39;ve done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! The Question Answering interface in the Customer Analytics dashboard uses the Weaviate Q&amp;A module which has integrations with LLM providers like OpenAI.  The Q&amp;A module (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/qna-openai) accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents&#39; (tweets, transcripts, etc.) vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents are provided as search results.  Because this is not a text search you can ask a question like &#34;Who does Thomas like best?&#34; and it will provide related tweets that talk about Thomas and Bertie as best friends. <img alt="header" src="img/39b2ea4c0e69812a.png"> One could also easily add generative search to the dashboard.  The generative search (https://weaviate.io/developers/weaviate/modules/reader-generator-modules/generative-openai) module accepts a question and uses OpenAI embeddings to vectorize the question (https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/text2vec-openai).  The question vector is then compared against all documents&#39; vectors in the vector database using cosine similarity (https://weaviate.io/developers/weaviate/search/similarity).  The resulting documents related to the question are then used as context for a generated answer.  The question along with contextual documents are fed to ChatGPT with instructions to answer the question with the provided context.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

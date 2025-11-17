@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "end-to-end-ml-workflow",
+  "duration": 115,
+  "title": "Build an End-to-End ML Workflow in Snowflake",
+  "summary": "Learn how to build an end-to-end machine learning workflow in Snowflake, from feature engineering to model deployment and monitoring.",
+  "source": "end-to-end-ml-workflow/end-to-end-ml-workflow.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "streamlit",
+    "snowflake"
+  ],
+  "tags": [
+    "featurestore",
+    "machinelearning",
+    "modelmonitoring",
+    "modelregistry",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "end-to-end-ml-workflow"
+}

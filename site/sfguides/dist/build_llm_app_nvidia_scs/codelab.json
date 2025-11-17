@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_llm_app_nvidia_scs",
+  "duration": 60,
+  "title": "Build LLM App Powered By NVIDIA on Snowpark Container Services",
+  "authors": "Karuna Nadadur, Kamesh Sampath",
+  "summary": "Build LLM App Powered By NVIDIA on Snowpark Container Services",
+  "source": "build_llm_app_nvidia_scs/build_llm_app_nvidia_scs.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started",
+    "llm",
+    "snowpark-container-services",
+    "nvidia",
+    "snowflake-native-app"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "build_llm_app_nvidia_scs"
+}

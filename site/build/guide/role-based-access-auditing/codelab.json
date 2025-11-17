@@ -1,0 +1,36 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "role-based-access-auditing",
+  "duration": 50,
+  "title": "Build Role-Based Access Audit Dashboards in Snowflake Notebooks",
+  "summary": "Build a utility notebook to audit and report on user roles and privileges in Snowflake Notebooks.",
+  "source": "role-based-access-auditing/role-based-access-auditing.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "cybersecurity",
+    "audit",
+    "streamlit",
+    "notebooks",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "datavisualization",
+    "python",
+    "role-basedaccesscontrol",
+    "securityaudit",
+    "snowflake",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "role-based-access-auditing"
+}

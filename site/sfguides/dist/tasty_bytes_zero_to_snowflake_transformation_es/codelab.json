@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "tasty_bytes_zero_to_snowflake_transformation_es",
+  "duration": 10,
+  "title": "Tasty Bytes - De cero a Snowflake - Transformación",
+  "summary": "Tasty Bytes - De cero a Snowflake - Transformación",
+  "source": "tasty_bytes_zero_to_snowflake_transformation_es/tb_zts_transformation_es.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured"
+  ],
+  "tags": [
+    "dataengineering",
+    "datawarehouse",
+    "es",
+    "gettingstarted",
+    "introducción",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_zero_to_snowflake_transformation_es"
+}

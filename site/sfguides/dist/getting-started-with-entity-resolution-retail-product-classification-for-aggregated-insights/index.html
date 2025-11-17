@@ -1,0 +1,217 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Entity Resolution: Retail Product Classification for Aggregated Insights</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-entity-resolution-retail-product-classification-for-aggregated-insights"
+                  title="Getting Started with Entity Resolution: Retail Product Classification for Aggregated Insights"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p class="image-container"><img alt="banner" src="img/c078e7944f15b35d.png"></p>
+<p> Retailers and e-commerce platforms often face challenges in aggregating data about their products, which limits them in various aspects such as supply chain management, competitive pricing, demand forecasting, inventory optimization and much, much more. The root of this issue can be attributed to the lack of standardized UPCs or product descriptions across these various retailers and e-commerce platforms, resulting in a complex system that creates a need for companies to spend hundreds of thousands on DBT jobs or various other approaches to harmonizing their product data.</p>
+<p>Addressing these challenges with a centralized, AI-driven approach can empower these retailers to gain actionable insights off their product perforamnce based on the data available.</p>
+<p>Built using Snowflake Cortex, this guide demonstrates the process of entity resolution to achieve product matches with Snowflake Cortex, and developing a Streamlit chatbot assistant to query and analyze the provided product data without the direct need for SQL.</p>
+<p>This guide covers:</p>
+<ul>
+<li><strong>Data Harmonization</strong>: Addressing inconsistencies in product descriptions, codes, and categories between retailers to create a unified dataset.</li>
+<li><strong>Product Matching</strong>: Generating embeddings off of cleaned product descriptions, and identifying likely matches using cosine similarity.</li>
+<li><strong>Validation with AI</strong>: Leveraging Snowflake&#39;s LLM integration to validate matches and provide justification on rejected matches.</li>
+<li><strong>Interactive Insights</strong>: Building a chatbot to easily obtain actionable insights on performance metrics, such as purchases and views.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> and <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python</a> for data processing</li>
+<li>How to use <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM functions</a> (Cortex Complete) for access to industry-leading large language models (LLMs)</li>
+<li>How to build a chatbot application using Cortex Analyst and <a href="https://docs.streamlit.io/" target="_blank">Streamlit</a> in Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li>A Snowflake account with a role that has the ability to create database, schema, tables, and stages. If not, you will need to register for a <a href="https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC&_fsi=05dxBvxS&_fsi=05dxBvxS" target="_blank">free trial</a> or use a different role.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A Notebook to process and harmonize product data and build a product matching engine using Cortex AI</li>
+<li>A Streamlit Chatbot to interact with the aggregated data and extract actionable insights using Natural Language</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture" duration="0">
+        <p>The architecture of the Entity Resolution solution is designed to generate and validate product matches.</p>
+<p>Here&#39;s a detailed walkthrough of how we use Snowflake&#39;s AI features to complete this workflow:</p>
+<p class="image-container"><img src="img/7d0158d289bb8605.png"></p>
+<p><strong>Preprocessing Data</strong>: This process begins with data from Similarweb Ltd, a provider on Snowflake Marketplace. The dictionary for their dataset includes product UPCs, descriptions, and performance on company websites, measured by estimated view and purchase data from various retailers and e-commerce platforms. From there, we simply create tables to provide two product catalogs to match between. The descriptions of the products are cleaned, having special characters removed so they do not influence feature extraction.</p>
+<p><strong>Generate Embeddings</strong>: Snowflake Notebooks are leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. This automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps. In our case, the cleaned product descriptions from the last step are used to create vector embeddings via Snowflake&#39;s <code>EMBED_TEXT_768</code> function.</p>
+<p><strong>Embedding-Based Matching</strong>: After extracting feature-rich embeddings for product descriptions, the next step involves leveraging these dense vector representations to measure similarity between items. Vector similarity metrics such as cosine similarity are calculated to identify matching items; this approach enables precise product matching even when descriptions vary in format or content. Pairs of products that have a similarity score over a 0.9 are listed as proposed product matches for further review. Embedding-based matching plays a critical role in resolving entities and linking products effectively, ensuring a robust matching framework in diverse datasets.</p>
+<p><strong>Reviewing Product Matches via Cortex Complete</strong>: To enhance the accuracy and contextual understanding of product matches, proposed matches are fed into a large language model (LLM) through Snowflake&#39;s Cortex Complete functionality. This advanced step provides an additional layer of review, where the LLM determines whether a proposed match should be approved or rejected. Each product pair is fed to the LLM along with relevant metadata, which evaluates these inputs and approves matches where the descriptions, brands, and other attributes align. For rejected matches, the LLM identifies and generates a detailed list of differences, providing clarity on the mismatched attributes such as size, model, or additional features. Upon approval, the LLM generates a unified product title that consolidates the key features of both items in the pair. Additionally, it outputs a unified product category and a harmonized brand name, ensuring consistency across downstream systems. This structured output facilitates seamless integration into reporting, cataloging, and supply chain processes. By leveraging the natural language understanding capabilities of an LLM, this approach not only automates the validation of matches but also provides insightful outputs to improve the product-matching pipeline. Snowflake&#39;s Cortex Complete ensures secure and scalable integration of the LLM into the workflow, enabling high-quality reviews at scale. The end result of this step is a table of processed product matches, which we can then split into tables of approved and rejected matches.</p>
+<p><strong>Interacting with Data via Streamlit</strong>: With the processed matches now stored in tables, our matched products are ready! Our original data had information about product performance on the websites of retailers and e-commerce platforms in the form of estimated views and purchases. This data is now available for the same product at two different retailers in our table. But, to make these insights accessible, we are leveraging Streamlit to build an interactive chatbot using Snowflake&#39;s Cortex Analyst. Streamlit provides a user-friendly interface where business users can explore the finalized dataset using natural language, converted to SQL queries by Analyst, and returned in natural language for easy interpretation. This demo involves various teams and personas across retail and e-commerce, not all of which may know how to interact with the data using code. This Streamlit application removes the need to do so, allowing professionals in supply chain, competitive intelligence, and so on to have access to aggregated product data and insights!</p>
+<p>This architecture integrates various Snowflake features to create a robust end-to-end AI solution. From data ingestion and preprocessing to LLM functions and an interactive chatbot, each component plays a crucial role in ensuring the efficiency, scalability, and consistency of the workflow. By leveraging Snowflake, this demo empowers team with insights from aggregated product data and accesible insights!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data from Marketplace" duration="0">
+        <p> The first step of this quickstart is to get the data we&#39;ll be using from Snowflake Marketplace:</p>
+<ul>
+<li>On the left hand side of Snowsight, navigate to Data Products, then Marketplace.</li>
+<li>Search for Similarweb Ltd, and click on their provider page.</li>
+<li>Find the <code>Amazon and E-commerce Websites Product Views and Purchases</code> dataset.</li>
+<li>Click Get on the top right, then Options <ul>
+<li>Don&#39;t edit the name of the database</li>
+<li>Give access to the database to PUBLIC</li>
+<li>Click Get</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/2f12fe4c8d98e340.png"></p>
+<p>A SQL worksheet will be added to your account; feel free to explore the data we&#39;ll be working with! There is also more information on the page of the dataset, including a brief summary of the business needs it can address, as well as a data dictionary to give a precursor to the sorts of values it contains.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Setup" duration="0">
+        <p> To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click &#34;+ Create&#34; to create a new Worksheet, and choose &#34;SQL Worksheet&#34;. <img src="img/310a0a390077bb02.png"><br><br></p>
+<p>Paste and run the <a href="https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts" target="_blank">setup.sql</a> <strong>line by line</strong> in the worksheet to create objects (warehouse, database, schema, stage).</p>
+<p>Now on the left hand side, navigate to Data &gt; Databases and find the <code>PRODUCT_MATCHING_DB</code> database and <code>MATCH</code> schema we just defined.</p>
+<p class="image-container"><img src="img/aaf0156ee28a5ed9.png"></p>
+<p>Click ‘+ Files&#39; in the top right of the stage. We&#39;ll be downloading a semantic model from the github repository, and uploading it to a stage. <strong>Follow these steps</strong>:</p>
+<ul>
+<li><em>Semantic Model:</em> Download the <code>matches_semantic_model.yml</code> file from this <a href="https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/streamlit/model" target="_blank">link</a> and upload it to the <code>MODEL</code> stage. <img src="img/c76604d5c961050e.png"></li>
+</ul>
+<p>For the Cortex Analyst we will use later to power our chatbot, the semantic model is crucial for driving context-aware searches and matches. It structures raw data into interconnected concepts and relationships, empowering Cortex to produce precise, meaningful results. By aligning domain-specific terms with user queries, the model aids analysts in identifying patterns and gaining insights while mitigating issues related to identifying specific products or terms.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Access Notebook" duration="0">
+        <p>Please download the <a href="https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/notebooks" target="_blank">notebook</a> from the repo.</p>
+<p>For the Notebook, please follow these steps:</p>
+<ul>
+<li>Navigate to Projects &gt; Notebooks in Snowsight</li>
+<li>Click Import .ipynb from the + Notebook dropdown, and upload the .ipynb</li>
+<li>Configure the notebook settings as follows: <ul>
+<li>Notebook database: PRODUCT_MATCHING_DB</li>
+<li>Notebook scehma: MATCH</li>
+<li>Warehouse: PRODUCT_MATCHING_DS_WH</li>
+<li>Make sure &#34;Run on warehouse&#34; is selected!</li>
+</ul>
+</li>
+<li>Create Notebook</li>
+<li>Click Packages in the top right, add the latest version of <code>snowflake</code></li>
+<li>Run the cells in the notebook!</li>
+</ul>
+<p>Please note the notebook will take about 10 minutes to run!</p>
+<p class="image-container"><img src="img/48c83ec07339c0b3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Streamlit Application" duration="0">
+        <p>Similarly to the notebook, we will be creating the streamlit application <strong>directly on Snowsight</strong>!</p>
+<p>For the Streamlit application, please follow these steps:</p>
+<ul>
+<li>On the bottom left of Snowsight, please click on your initials, and change your role to <code>PRODUCT_MATCHING_DATA_ANALYST</code></li>
+<li>Then, navigate to Projects &gt; Streamlit in Snowsight</li>
+<li>Click + Streamlit App, and configure the settings as follows: <ul>
+<li>Application name: Retail Analyst</li>
+<li>Notebook database: <code>PRODUCT_MATCHING_DB</code></li>
+<li>Notebook scehma: <code>MATCH</code></li>
+<li>Warehouse: <code>PRODUCT_MATCHING_DS_WH</code></li>
+</ul>
+</li>
+<li>Create Application</li>
+</ul>
+<p>Snowflake will create a default Streamlit application for you with example code. Please copy the contents of the <code>streamlit_app.py</code> file from this <a href="https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/streamlit" target="_blank">link</a>, and replace the code on the left hand side. Afterwards, please click the Close Editor option on the bottom left to view the Streamlit application!</p>
+<p class="image-container"><img src="img/f3ba827248beefb5.png"></p>
+<p>The semantic model from earlier is being used earlier in this app! It powers advanced data analysis by structuring and interpreting concepts in the dataset, enabling the chatbot to respond meaningfully. By integrating this model, the app can answer complex questions, and provide insights based on relationships in the data. This foundation ensures the chatbot delivers contextually relevant and actionable outputs.</p>
+<p>With this <strong>Chatbot</strong> you can now interact with product data using an intuitive Q&amp;A interface powered by Snowflake Cortex. Ask questions about listings, comparative sales and views data, and general brand performance comparisons. Search for specific details, and receive concise answers along with the queries generated by <strong>Cortex Analyst</strong>.</p>
+<p class="image-container"><img src="img/1550aba06451adc5.png"></p>
+<p>Here are some example questions you can ask the chatbot:</p>
+<ol type="1">
+<li>What Logitech keyboards are sold at both Staples and Office Depot?</li>
+<li>How is the Apple Beats Pill+ selling at both retailers?</li>
+<li>Find me the 5 products with the greatest disparity in purchases at these retailers. <br></li>
+</ol>
+<p>Once you ask a question, the assistant begins processing it, translating your natural language prompt into a SQL query it then runs against the table we generated from running the Notebook! Once the process completes, the assistant provides a concise answer to your question in the chat window. Below the answer, you&#39;ll see sections titled ‘SQL Query&#39; and ‘Results&#39;. Click on these to see the query the Analyst ran to determine the answer to your question, and the returned data it based it&#39;s answer on. <img src="img/412f176226cd8d5f.png"></p>
+<p>Since our data from Similarweb Ltd is based around estimated product views and purchases on websites, we can ask comparative questions about specific products or about the retailers at large. However, different data involving the stocks of specific products, their costs across retailers or e-commerce platforms, and so on, can make this solution viable for teams dedicated towards supply chain, competitive pricing and much, much more!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p> In this guide, you learned how to use Snowflake&#39;s Notebooks and Cortex AI to harmonize retailer data, finding shared product offerings and aggregating their performane data. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use Snowflake Notebooks and Snowpark Python for data processing</li>
+<li>How to leverage Snowflake AI functions to create and compare embeddings</li>
+<li>How to use Cortex LLM functions (Cortex Complete) for access to industry-leading large language models (LLMs)</li>
+<li>How to develop an application using Streamlit</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex.html" target="_blank">Snowflake Cortex Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

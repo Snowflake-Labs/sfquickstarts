@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-feature-store-and-dbt",
+  "duration": 14,
+  "title": "Getting Started with Snowflake Feature Store and dbt",
+  "summary": "This guide will go through everything you need to get started with dbt and Snowflake Feature Store",
+  "source": "getting-started-with-feature-store-and-dbt/getting-started-with-feature-store-and-dbt.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "data-science-\u0026-ml",
+    "getting-started",
+    "notebooks"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-feature-store-and-dbt"
+}

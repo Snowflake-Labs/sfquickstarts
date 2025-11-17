@@ -1,0 +1,159 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Optimizing Network Operations with Snowflake Cortex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis"
+                  title="Optimizing Network Operations with Snowflake Cortex AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img src="img/f292a553276a9427.png"></p>
+<p>This quickstart helps you develop a streamlit application utilizes cell tower data, support ticket call transcripts, and customer loyalty insights to optimize network operations with Cortex AI. It helps network teams prioritize which cell towers to address when resolving issues and includes a Cortex Analyst chatbot for querying and interacting with the network data.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to optimize network operations using Cortex AI</li>
+<li>How to use cell tower data, support ticket call transcripts, and customer loyalty insights to prioritize cell tower repairs</li>
+<li>How to interact with network data using the Cortex Analyst chatbot</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account with Accountadmin access</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A solution that provides an overview of cell tower performance through an interactive map</li>
+<li>A chatbot that enables intuitive interaction with cell tower data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="5">
+        <p>In the Snowsight, Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</p>
+<p>Run the SQL from the <a href="https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/blob/main/scripts/setup.sql" target="_blank">file</a> in the worksheet to create Snowflake objects (database, schema, tables).</p>
+<p>The above scripts creates sentiment scores for call transcripts using CORTEX SENTIMENT function which will then be used in the Streamlit App.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ingest the Semantic Model YAML" duration="2">
+        <p>In the Snowsight, Navigate to Data, click on Databases.</p>
+<ul>
+<li>Search for the database TELCO_NETWORK_OPTIMIZATION_PROD and click on it</li>
+<li>Expand RAW schema in the database</li>
+<li>Click on Data stage which was created as part of the SQL script</li>
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/blob/main/streamlit/model/semantic_mode.yaml" target="_blank">Semantic Model File</a> and upload to the stage.</li>
+<li>Once done, it should look like below</li>
+</ul>
+<p class="image-container"><img src="img/c58c6be895dee097.png"></p>
+<p>This semantic model file will then be used by the Cortex Analyst Chatbot in the Streamlit App.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit App" duration="10">
+        <p>To run the Streamlit Application,</p>
+<ul>
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/tree/main" target="_blank">repo</a></li>
+<li>From your local Terminal, cd into the streamlit directory <code>cd sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis-main/streamlit/</code></li>
+<li>You would need to update the secrets before you run the Streamlit Application. From the same Terminal window, run <code>vi .streamlit/secrets.toml</code> and update the account with your snowflake account, user with your snowflake user name and password with your snowflake password. Once updated, hit escape in the keyboard and type <code>:wq</code> to update and close the file</li>
+<li>Now, let&#39;s install the packages needed to run the application by running <code>pip3 install -r requirements.txt</code></li>
+<li>Now to launch the application Run <code>streamlit run CellTowerMetrics.py</code> and the application will be launched in your local browser.</li>
+<li>Once the app is launched, if MFA is enabled in your account, you would need to approve the MFA to connect to the Snowflake.</li>
+</ul>
+<p>The Streamlit App has two pages: Cell Tower Metrics and Cortex Analyst Chatbot.</p>
+<h2 is-upgraded>Cell Tower Metrics</h2>
+<p>The process of analyzing cell tower performance begins with viewing a visual map that displays the performance of individual cell towers, allowing for the analysis of their failure and success rates. The map automatically highlights the most problematic cells, enabling quick identification. By clicking on a failing cell, users can access detailed metrics, including selection and grid cell success and failure rates. For each cell, additional insights are provided, such as failure rates, customer loyalty status by cell, and sentiment scores derived from call transcripts. These insights empower network engineers to make informed decisions about which cells to prioritize for maintenance. Furthermore, Cortex AI leverages this data to recommend the cells that should be addressed first, considering failure rates, loyalty status, and sentiment scores, to optimize network operations effectively.</p>
+<p class="image-container"><img src="img/dad88af756439cbf.png"></p>
+<h2 is-upgraded>Cortex Analyst Chatbot</h2>
+<p>The chatbot allows you to ask any questions related to cell tower data using natural language. It retrieves insights directly from the table and provides responses in natural language, making the interaction intuitive and user-friendly. Some sample questions you can ask Chatbot:</p>
+<ul>
+<li>What are the top 3 reasons of failures with their descriptions?</li>
+<li>What are the top 10 cells having release cause 38 as a release code?</li>
+<li>What are the top 10 cells that are congested?</li>
+<li>For the top 10 cells congested, list the 10 most impacted MSISDN.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to optimize network operations using Cortex AI</li>
+<li>How to use cell tower data, support ticket call transcripts, and customer loyalty insights to prioritize cell tower repairs</li>
+<li>How to interact with network data using the Cortex Analyst chatbot</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/tree/main" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

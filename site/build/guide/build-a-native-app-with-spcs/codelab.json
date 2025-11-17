@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build-a-native-app-with-spcs",
+  "duration": 60,
+  "title": "Build a Snowflake Native App with Snowpark Container Services",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "build-a-native-app-with-spcs/build-a-native-app-with-spcs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataapplications",
+    "gettingstarted",
+    "nativeapps",
+    "snowparkcontainerservices",
+    "spcs",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build-a-native-app-with-spcs"
+}

@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex",
+  "duration": 21,
+  "title": "Build a Retrieval Augmented Generation(RAG) based LLM assistant using  Streamlit, OpenAI and LlamaIndex",
+  "summary": "This guide will provide step-by-step details for building an LLM chatbot that answers questions based on Snowflake Quickstart Blogs",
+  "source": "build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "app-development",
+    "marketing"
+  ],
+  "tags": [
+    "chatbot",
+    "generativeai",
+    "gettingstarted",
+    "llms",
+    "openai",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex"
+}

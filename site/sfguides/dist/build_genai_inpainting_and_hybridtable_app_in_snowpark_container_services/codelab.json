@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services",
+  "duration": 65,
+  "title": "Build GenAI Inpainting and Hybrid Table App in Snowpark Container Services",
+  "summary": "Through this quickstart guide, you will explore GenAI inpainting and Hybrid tables with everything running within a Streamlit app in Snowpark Container Services",
+  "source": "build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services/build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science-\u0026-ai",
+    "streamlit"
+  ],
+  "tags": [
+    "containers",
+    "gettingstarted",
+    "snowpark",
+    "snowparkcontainerservices",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services"
+}

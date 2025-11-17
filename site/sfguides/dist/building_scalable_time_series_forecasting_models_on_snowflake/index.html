@@ -1,0 +1,226 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building Scalable Time Series Forecasting Models on Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="building_scalable_time_series_forecasting_models_on_snowflake"
+                  title="Building Scalable Time Series Forecasting Models on Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Forecasting is a business process that predicts future events over time based on historical time-series data, and has cross-industry applicability and utility in nearly every organization. Multiple business units can benefit from this modelling technique to more accurately predict performance, demand, or or any activity that can lead to improved business reactivity and optimization.</p>
+<p>The Forecast Model Builder accelerates time to value by offering modeling flexibility, a low code environment, and automated model deployment through Snowflake Model Registry. This solution walks through a complete time series forecasting workflow, from Exploratory Data Analysis (EDA) to model training, and finally batch inference in Snowflake. By leveraging XGBoost, Snowpark, and Snowflake&#39;s Model Registry, we create a scalable and efficient forecasting solution.</p>
+<p class="image-container"><img alt="App" src="img/ef6287dfd4c28016.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Github account and access to the <a href="https://github.com/Snowflake-Labs/emerging-solutions-toolbox" target="_blank">Emerging Solutions Toolbox Github Repository for Forecast Model Builder</a>.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>This guide will walk you through the process of:</p>
+<ul>
+<li>Performing Exploratory Data Analysis on your Time Series Data</li>
+<li>Executing Feature Engineering, Advanced Modeling and Model Registration for your single or multi-series partitioned data</li>
+<li>Running inferencing against the models stored in the Registry</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account (ideally with CREATE DATABASE permissions). If you do not have a Snowflake account, you can register for a <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial</a>.</li>
+<li>The aforementioned Github Repository</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An end-to-end Snowflake Notebook based forecasting solution for your time series data.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture and Key Technologies" duration="0">
+        <p class="image-container"><img alt="App" src="img/fd7a2a5bc3bd072d.png"></p>
+<p>This solution leverages several key Snowflake features:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank"><strong>Snowflake Notebooks</strong></a> is a unified development interface in Snowsight that offers an interactive, cell-based programming environment for Python, SQL, and Markdown. In Snowflake Notebooks, you can leverage your Snowflake data to perform exploratory data analysis, develop machine learning models, and perform other data science and data engineering workflows, all within the same interface.</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview" target="_blank"><strong>Snowflake Model Registry</strong></a>: After training a model, operationalizing the model and running inference in Snowflake starts with logging the model in the Snowflake Model Registry. The Model Registry lets you securely manage models and their metadata in Snowflake, regardless of origin and type, and makes running inference easy.</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/partitioned-models" target="_blank"><strong>Partitioned Models</strong></a>: Many datasets can be partitioned into multiple independent subsets. For example, a dataset containing sales data for a chain of stores can be partitioned by store number. A separate model can then be trained for each partition. Training and inference operations on the partitions can be parallelized, reducing the wall-clock time for these operations. Furthermore, since individual stores likely differ significantly in how their features affect their sales, this approach can lead to more accurate inference at the store level.</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank"><strong>Snowpark API</strong></a> is a developer framework that allows data engineers, data scientists, and developers to write code in Python, Java, or Scala to build data pipelines, machine learning workflows, and data applications directly within Snowflake.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank"><strong>Container Runtime for ML</strong></a> is a set of preconfigured customizable environments built for machine learning on Snowpark Container Services, covering interactive experimentation and batch ML workloads such as model training, hyperparameter tuning, batch inference and fine tuning. They include the most popular machine learning and deep learning frameworks. Used with Snowflake notebooks, they provide an end-to-end ML experience.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Solution Setup" duration="2">
+        <p>To setup the Forecast Model Builder solution in Snowflake you will:</p>
+<ol type="1">
+<li>Download from Github and then import the <a href="https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-forecast-model-builder/FORECAST_MODEL_BUILDER_DEPLOYMENT.ipynb" target="_blank">Forecast_Model_Builder_Deployment.ipynb notebook</a> to Snowsight.  (For instructions on how create a new Snowflake Notebook from an existing file, please see <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#create-a-new-notebook" target="_blank">this documentation</a> and follow the instructions for creating a notebook from an existing file.)</li>
+<li>Follow the deployment instructions found in the <a href="https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-forecast-model-builder/README.md" target="_blank">Forecast Model Builder README</a> to run the deployment notebook.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploratory Data Analysis" duration="2">
+        <p>Understanding the structure and patterns of time series data is crucial for building accurate forecasting models. This notebook walks through an <strong>Exploratory Data Analysis (EDA)</strong> of time series data, providing statistical summaries and visual insights to inform model development.</p>
+<p><strong>Key Highlights</strong></p>
+<ul>
+<li><strong>Seasonality</strong> in time series modeling refers to patterns that repeat at fixed intervals, such as daily, weekly, monthly, or yearly cycles. These patterns can significantly impact the accuracy of time series models, and understanding seasonality is crucial for making accurate predictions. Using Seasonal Decomposition and ACF/PACF analysis, we can understand seasonality better and build models that account for seasonality.<em>Seasonality Visualizations</em><ul>
+<li>Actuals plot</li>
+<li>Seasonal decomposition</li>
+<li>ACF/PACF</li>
+</ul>
+</li>
+<li><strong>Stationarity</strong> in time series modeling refers to the property of a time series where its statistical properties, such as the mean, variance, and autocorrelation structure, remain constant over time.  The ADF test is a unit root test that will check whether a time series is stationary.  When time series are non-stationary, other data engineering techniques are necessary to account for the changing time series.<em>Stationarity Tests</em><ul>
+<li>Augmented Dickey-Fuller</li>
+</ul>
+</li>
+<li><strong>Baseline Analysis (Optional)</strong> performs basic non-ML-based forecasting (baseline modeling) on your data which can be used as a comparison for advanced modeling later</li>
+</ul>
+<p>By the end of this notebook, you will have a deep understanding of the dataset&#39;s characteristics, enabling informed decisions on feature engineering and model selection for accurate time series forecasting.</p>
+<p>To run the EDA Notebook:</p>
+<ol type="1">
+<li>Go to Projects &gt; Notebooks in Snowsight.  You should see notebooks for EDA, MODELING &amp; INFERENCE with your Project prefix.</li>
+<li>Open the notebook &lt;YOUR_PROJECT_NAME&gt;_EDA.</li>
+<li>In the upper right hand corner of your UI, click the down arrow next to the word Start and select ‘Edit compute settings&#39;.</li>
+<li>Select ‘Run on container&#39; and click Save.  You will also do this for the Modeling and Inference notebooks.  (Please note that you will need to use a role other than ACCOUNTADMIN, SECURITYADMIN or ORGADMIN to run the notebook on a container.)</li>
+<li>Follow the instructions provided in the each notebook cell.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Engineering and Advanced Modeling" duration="4">
+        <p>In this notebook, we explore a <strong>partitioned time series modeling approach</strong> using <strong>XGBoost</strong> and <strong>Snowflake&#39;s Snowpark</strong>, enabling efficient and scalable forecasting for large datasets.</p>
+<p><strong>Key Highlights</strong></p>
+<ul>
+<li><strong>Feature Engineering for Time Series</strong>  This notebook applies various transformations, including rolling averages, date-based feature expansion, and aggregations to enhance predictive power.</li>
+<li><strong>Snowflake Integration</strong> Leveraging <strong>Snowpark DataFrames</strong>, we ensure seamless data processing within Snowflake&#39;s environment, reducing the need for external data movement.</li>
+<li><strong>XGBoost for Forecasting</strong> The model is trained using <strong>XGBoost</strong>, a powerful gradient boosting algorithm, with hyperparameter tuning and evaluation.</li>
+<li><strong>Efficient Model Deployment</strong>  The workflow includes exporting trained models and registering them in <strong>Snowflake&#39;s Model Registry</strong> for scalable inference.</li>
+</ul>
+<p>By the end of this notebook, you&#39;ll have a structured approach to forecasting time series data using Snowflake &amp; XGBoost, optimizing performance while maintaining flexibility across different datasets.</p>
+<p>To run the Feature Engineering and Advanced Modeling Notebook:</p>
+<ol type="1">
+<li>Go to Projects &gt; Notebooks in Snowsight.</li>
+<li>Open the notebook &lt;YOUR_PROJECT_NAME&gt;_MODELING.</li>
+<li>Switch to Container Runtime.</li>
+<li>Follow the instructions provided in the each notebook cell.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Inferencing" duration="4">
+        <p>This notebook is designed to perform <strong>inference</strong> using the trained time series model from the modeling pipeline. It leverages <strong>Snowflake&#39;s Snowpark</strong> environment to efficiently make predictions on new data, ensuring seamless integration between model training and deployment.</p>
+<p><strong>Key Highlights</strong></p>
+<ul>
+<li><strong>Model Deployment &amp; Inference</strong> Uses a pre-trained model from the <strong>Snowflake Model Registry</strong> to generate forecasts on fresh time series data.</li>
+<li><strong>Feature Engineering for Predictions</strong> Applies time-based transformations, including rolling averages and datetime feature expansion, to maintain consistency between training and inference.</li>
+<li><strong>Snowflake-Powered Data Processing</strong> Processes large-scale inference data directly within Snowflake, leveraging Snowpark&#39;s <strong>distributed computing capabilities</strong> to avoid unnecessary data movement.</li>
+<li><strong>Efficient Forecast Storage</strong> Saves inference results into a dedicated Snowflake table, ensuring that forecasts are readily available for downstream analysis and business applications.</li>
+</ul>
+<p>By the end of this notebook, you&#39;ll have a scalable and efficient pipeline for time series inference, enabling real-time and batch forecasting within Snowflake&#39;s powerful data ecosystem.</p>
+<p>To run the Inferencing Notebook:</p>
+<ol type="1">
+<li>Go to Projects &gt; Notebooks in Snowsight.</li>
+<li>Open the notebook &lt;YOUR_PROJECT_NAME&gt;_INFERENCE.</li>
+<li>Switch to Container Runtime.</li>
+<li>Follow the instructions provided in the each notebook cell.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>By following this structured workflow, businesses can build scalable, reliable, and high-performing forecasting models. Whether applied to retail traffic, sales predictions, or resource allocation, this pipeline ensures that forecasting models are accurate, interpretable, and easy to deploy in production.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>After completing all the notebooks in this series, a user has gained a <strong>comprehensive understanding of time series forecasting</strong> and how to implement it efficiently using <strong>Snowflake, Snowpark, and XGBoost</strong>. Specifically, they have learned:</p>
+<p><strong>1. Exploring Time Series Data (EDA)</strong></p>
+<ul>
+<li>Visualizing trends, seasonality, and anomalies</li>
+<li>Applying stationarity tests like Augmented Dickey-Fuller (ADF)</li>
+<li>Understanding autocorrelation through ACF/PACF plots</li>
+</ul>
+<p><strong>2. Feature Engineering for Time Series Forecasting</strong></p>
+<ul>
+<li>Generating rolling averages, date-based features, and holiday indicators</li>
+<li>Handling missing data and optimizing features for a machine learning model</li>
+</ul>
+<p><strong>3. Building and Training a Forecast Model</strong></p>
+<ul>
+<li>Implementing a <strong>partitioned time series approach</strong> using <strong>XGBoost</strong></li>
+<li>Leveraging <strong>Snowpark</strong> for large-scale, in-database model training</li>
+<li>Evaluating model accuracy and performance</li>
+</ul>
+<p><strong>4. Deploying and Running Forecast Inference</strong></p>
+<ul>
+<li>Loading a trained model and applying it to new data</li>
+<li>Ensuring consistency between <strong>training and inference pipelines</strong></li>
+<li>Storing predictions in <strong>Snowflake tables</strong> for real-time access</li>
+</ul>
+<p>By following this workflow, a user is now equipped with the knowledge to build, deploy, and scale time series forecasting models efficiently within Snowflake, enabling data-driven decision-making in real-world business scenarios. 🚀</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html#0" target="_blank">A Getting Started Guide with Snowflake Notebooks</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0" target="_blank">Getting Started with Snowflake Notebook Container Runtime</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0" target="_blank">Train an XGBoost Model with GPUs using Snowflake Notebooks</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

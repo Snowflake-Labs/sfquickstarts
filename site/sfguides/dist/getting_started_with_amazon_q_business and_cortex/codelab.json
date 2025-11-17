@@ -1,0 +1,38 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_amazon_q_business and_cortex",
+  "duration": 60,
+  "title": "Getting Started with Amazon Q Business and Cortex",
+  "summary": "This is a quickstart for using Amazon Q Business with Cortex",
+  "source": "getting_started_with_amazon_q_business and_cortex/getting_started_with_amazon_q_business and_cortex.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-engineering",
+    "aws",
+    "cortex",
+    "genai",
+    "amazon",
+    "q",
+    "search",
+    "llm",
+    "copilot"
+  ],
+  "tags": [
+    "copilot",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_amazon_q_business and_cortex"
+}

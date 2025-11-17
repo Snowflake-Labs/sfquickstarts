@@ -1,0 +1,408 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Comprehensive Guide: Creating GraphQL API on Top of Snowflake Using Propel</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="a_comprehensive_guide_creating_graphql_api_on_top_of_snowflake_using_propel"
+                  title="A Comprehensive Guide: Creating GraphQL API on Top of Snowflake Using Propel"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this guide, we walk through how to use <a href="https://www.propeldata.com/" target="_blank">Propel</a> to create a GraphQL API on top of Snowflake. While there are other methods to interface with Snowflake—such as Snowflake&#39;s REST API and language-specific connectors—this guide will concentrate on the Propel method. For a broader understanding of all three methods, refer to the comprehensive guide on Snowflake Medium: <a href="https://medium.com/snowflake/snowflake-api-comprehensive-guide-to-3-methods-with-examples-c633f4eb35e1" target="_blank">Snowflake API: Comprehensive Guide to 3 Methods With Examples</a>.</p>
+<h2 is-upgraded><strong>Overview of Using Propel</strong></h2>
+<p>Propel offers a seamless way to create fast, efficient GraphQL APIs over your Snowflake data. This method is particularly advantageous for scenarios demanding low latency and high concurrency, such as customer-facing analytics dashboards.</p>
+<p>If you prefer a video overview, feel free to take a look at our interview with Snowflake&#39;s Daniel Myers on Snowflake&#39;s YouTube channel: <a href="https://www.youtube.com/watch?v=AO87CZOK7Ko" target="_blank">Using Propel To Accelerate The Process Of Creating Analytics For Web And Mobile Applications</a>.</p>
+<h2 is-upgraded><strong>Prerequisites</strong></h2>
+<ul>
+<li>Basic understanding of Snowflake and GraphQL</li>
+<li>Access to Snowflake instance</li>
+<li><a href="https://console.propeldata.com/get-started/" target="_blank">A Propel account</a></li>
+</ul>
+<h2 class="checklist" is-upgraded><strong>What You&#39;ll Learn</strong></h2>
+<ul class="checklist">
+<li>Setting up data in Snowflake for Propel integration</li>
+<li>Configuring Propel to work with Snowflake</li>
+<li>Creating and testing GraphQL APIs on top of your Snowflake data</li>
+</ul>
+<h2 is-upgraded><strong>What You&#39;ll Build</strong></h2>
+<ul>
+<li>A low-latency, high-concurrency GraphQL API on top of Snowflake using Propel</li>
+</ul>
+<p>Let&#39;s proceed.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Example Data (Optional)" duration="0">
+        <h2 is-upgraded><strong>Overview</strong></h2>
+<p>This section provides a step-by-step guide to setting up example data in Snowflake. This step is optional, and if you already have data in Snowflake, you can use that for this tutorial.</p>
+<h2 is-upgraded><strong>Why Example Data?</strong></h2>
+<p>Setting up example data can be particularly useful for understanding how to integrate and manipulate data when creating a GraphQL API using Propel. It provides a practical example to work with, ensuring you can effectively follow the steps in this guide.</p>
+<h2 is-upgraded><strong>Example Data Description</strong></h2>
+<p>The example data simulates taco orders from various restaurants, with details like timestamp, restaurant name, taco type, toppings, and total price.</p>
+<p class="image-container"><img alt="Propel Example Table" src="img/8d1feb4ce53e161d.png"></p>
+<h2 is-upgraded><strong>Setting Up Example Data</strong></h2>
+<p>Follow these steps to set up your example data:</p>
+<ol type="1">
+<li><strong>Create the Table:</strong> Run this SQL query in Snowflake to create a <strong><code>taco_orders</code></strong> table:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE TABLE taco_orders (
+    TIMESTAMP TIMESTAMP_NTZ,
+    ORDER_ID STRING,
+    RESTAURANT_NAME STRING,
+    TACO_NAME STRING,
+    TORTILLA_NAME STRING,
+    SAUCE_NAME STRING,
+    TOPPINGS VARIANT,
+    QUANTITY INTEGER,
+    TACO_UNIT_PRICE FLOAT,
+    TACO_TOTAL_PRICE FLOAT
+);
+</code></pre>
+<ol type="1" start="2">
+<li><strong>Insert Sample Data:</strong> Execute this query to insert sample data into the <strong><code>taco_orders</code></strong> table:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">INSERT INTO taco_orders 
+(TIMESTAMP, ORDER_ID, RESTAURANT_NAME, TACO_NAME, TORTILLA_NAME, SAUCE_NAME, TOPPINGS, QUANTITY, TACO_UNIT_PRICE, TACO_TOTAL_PRICE) 
+SELECT &#39;2023-09-14T07:32:24.234208Z&#39;, &#39;a1234567-b8c9-0123-d456-e789f012a345&#39;, &#39;El Buen Sabor&#39;, &#39;Breakfast&#39;, &#39;Corn&#39;, &#39;Salsa Roja&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Guacamole&#39;), 3, 3, 9 UNION ALL
+SELECT &#39;2023-09-14T07:33:25.234209Z&#39;, &#39;b2345678-c9d0-1234-e567-f890a123b456&#39;, &#39;La Taqueria&#39;, &#39;Barbacoa&#39;, &#39;Flour&#39;, &#39;Chimichurri&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Radishes&#39;), 2, 3.5, 7 UNION ALL
+SELECT &#39;2023-09-14T07:34:26.234210Z&#39;, &#39;c3456789-d0e1-2345-f678-9012a345c678&#39;, &#39;Taqueria Cancun&#39;, &#39;Veggie&#39;, &#39;Whole Wheat&#39;, &#39;Chipotle Mayo&#39;, ARRAY_CONSTRUCT(&#39;Black beans&#39;, &#39;White beans&#39;), 4, 2.75, 11 UNION ALL
+SELECT &#39;2023-09-14T07:35:27.234211Z&#39;, &#39;d4567890-e1f2-3456-a789-0123b456d789&#39;, &#39;Los Compadres&#39;, &#39;Grilled Fish&#39;, &#39;Corn&#39;, &#39;Queso Blanco&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Guacamole&#39;), 1, 4, 4 UNION ALL
+SELECT &#39;2023-09-14T07:36:28.234212Z&#39;, &#39;e5678901-f234-4567-b890-1234c567e890&#39;, &#39;Farolito&#39;, &#39;Carne Asada&#39;, &#39;Flour&#39;, &#39;Habanero Hot Sauce&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Radishes&#39;, &#39;Onions&#39;), 3, 3.5, 10.5 UNION ALL
+SELECT &#39;2023-09-14T07:37:29.234213Z&#39;, &#39;f6789012-a345-5678-c901-2345d678f901&#39;, &#39;Taqueria Vallarta&#39;, &#39;Chorizo&#39;, &#39;Whole Wheat&#39;, &#39;Cilantro Lime&#39;, ARRAY_CONSTRUCT(&#39;Guacamole&#39;, &#39;Cheese&#39;), 2, 3.25, 6.5 UNION ALL
+SELECT &#39;2023-09-14T07:38:30.234214Z&#39;, &#39;01234567-b8c9-6789-d012-e345f678a234&#39;, &#39;El Buen Sabor&#39;, &#39;Pollo&#39;, &#39;Corn&#39;, &#39;Mango Salsa&#39;, ARRAY_CONSTRUCT(&#39;Guacamole&#39;, &#39;Cheese&#39;), 4, 3, 12 UNION ALL
+SELECT &#39;2023-09-14T07:39:31.234215Z&#39;, &#39;12345678-c9d0-7890-e123-f456a789b012&#39;, &#39;La Taqueria&#39;, &#39;Al Pastor&#39;, &#39;Flour&#39;, &#39;Salsa Verde&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Radishes&#39;), 1, 3.5, 3.5 UNION ALL
+SELECT &#39;2023-09-14T07:40:32.234216Z&#39;, &#39;23456789-d0e1-8901-f234-a567b890c123&#39;, &#39;Taqueria Cancun&#39;, &#39;Veggie&#39;, &#39;Whole Wheat&#39;, &#39;Chipotle Mayo&#39;, ARRAY_CONSTRUCT(&#39;Black beans&#39;, &#39;White beans&#39;), 3, 2.75, 8.25 UNION ALL
+SELECT &#39;2023-09-14T07:41:33.234217Z&#39;, &#39;34567890-e1f2-9012-a345-b678c901d234&#39;, &#39;Los Compadres&#39;, &#39;Grilled Fish&#39;, &#39;Corn&#39;, &#39;Queso Blanco&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Guacamole&#39;), 2, 4, 8 UNION ALL
+SELECT &#39;2023-09-14T07:26:18.234202Z&#39;, &#39;a1b2c3d4-e5f6-4789-a012-b345c678d901&#39;, &#39;El Buen Sabor&#39;, &#39;Pollo&#39;, &#39;Corn&#39;, &#39;Mango Salsa&#39;, ARRAY_CONSTRUCT(&#39;Guacamole&#39;, &#39;Cheese&#39;), 2, 3, 6 UNION ALL
+SELECT &#39;2023-09-14T07:27:19.234203Z&#39;, &#39;b2c3d4e5-f6a7-4890-b123-c456d789e012&#39;, &#39;La Taqueria&#39;, &#39;Al Pastor&#39;, &#39;Flour&#39;, &#39;Salsa Verde&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Radishes&#39;), 4, 3.5, 14 UNION ALL
+SELECT &#39;2023-09-14T07:28:20.234204Z&#39;, &#39;c3d4e5f6-a7b8-4901-c234-d567e890f123&#39;, &#39;Taqueria Cancun&#39;, &#39;Veggie&#39;, &#39;Whole Wheat&#39;, &#39;Chipotle Mayo&#39;, ARRAY_CONSTRUCT(&#39;Black beans&#39;, &#39;White beans&#39;), 3, 2.75, 8.25 UNION ALL
+SELECT &#39;2023-09-14T07:29:21.234205Z&#39;, &#39;d4e5f6a7-b8c9-4012-d345-e678f901a234&#39;, &#39;Los Compadres&#39;, &#39;Grilled Fish&#39;, &#39;Corn&#39;, &#39;Queso Blanco&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Guacamole&#39;), 1, 4, 4 UNION ALL
+SELECT &#39;2023-09-14T07:30:22.234206Z&#39;, &#39;e5f6a7b8-c9d0-4123-e456-f789a012b345&#39;, &#39;Farolito&#39;, &#39;Carne Asada&#39;, &#39;Flour&#39;, &#39;Habanero Hot Sauce&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Radishes&#39;, &#39;Onions&#39;), 2, 3.5, 7 UNION ALL
+SELECT &#39;2023-09-14T07:31:23.234207Z&#39;, &#39;f6a7b8c9-d0e1-4234-f567-8901a234b567&#39;, &#39;Taqueria Vallarta&#39;, &#39;Chorizo&#39;, &#39;Whole Wheat&#39;, &#39;Cilantro Lime&#39;, ARRAY_CONSTRUCT(&#39;Guacamole&#39;, &#39;Cheese&#39;), 4, 3.25, 13 UNION ALL
+SELECT &#39;2023-09-14T07:22:14.234198Z&#39;, &#39;04861317-09f9-4dc8-a93d-f10e06d78ff0&#39;, &#39;Los Compadres&#39;, &#39;Carnitas&#39;, &#39;Whole Wheat&#39;, &#39;Chipotle Mayo&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Radishes&#39;), 3, 3.25, 9.75 UNION ALL
+SELECT &#39;2023-09-14T07:23:15.234199Z&#39;, &#39;0d8e653f-557b-4dab-a596-7fbee99703e7&#39;, &#39;La Taqueria&#39;, &#39;Grilled Fish&#39;, &#39;Whole Wheat&#39;, &#39;Queso Blanco&#39;, ARRAY_CONSTRUCT(&#39;Lime&#39;, &#39;Guacamole&#39;, &#39;White beans&#39;), 4, 4, 16 UNION ALL
+SELECT &#39;2023-09-14T07:24:16.234200Z&#39;, &#39;ab45cd73-a7ad-4c07-98f8-7d4b98fb6c2d&#39;, &#39;La Taqueria&#39;, &#39;Veggie&#39;, &#39;Flour&#39;, &#39;Salsa Verde&#39;, ARRAY_CONSTRUCT(&#39;Black beans&#39;, &#39;Cheese&#39;), 1, 2.75, 2.75 UNION ALL
+SELECT &#39;2023-09-14T07:25:17.234201Z&#39;, &#39;4be5efdf-5ea6-409f-8814-26d9d03b8f85&#39;, &#39;Taqueria Cancun&#39;, &#39;Grilled Fish&#39;, &#39;Whole Wheat&#39;, &#39;Mango Salsa&#39;, ARRAY_CONSTRUCT(&#39;Radishes&#39;), 4, 4, 16;
+</code></pre>
+<ol type="1" start="3">
+<li><strong>Verify Data Insertion:</strong> To check the data, execute:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM taco_orders;
+</code></pre>
+<p>This query will display the data you&#39;ve inserted like this:</p>
+<p class="image-container"><img alt="Propel Example Result" src="img/c59311908e04dd6d.png"></p>
+<h2 is-upgraded><strong>Next Steps</strong></h2>
+<p>With your data ready, either the example data or your own, you can move on to the next steps.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Propel: Overview and Setup" duration="0">
+        <h2 is-upgraded><strong>Introduction to Propel</strong></h2>
+<p>In this part of the guide, we&#39;ll explore using <a href="https://www.propeldata.com/" target="_blank">Propel</a>, an analytics platform with a semantic layer, to create a high-performance GraphQL API over your Snowflake data.</p>
+<h2 is-upgraded><strong>Advantages of Using Propel</strong></h2>
+<p>Propel offers significant benefits for handling Snowflake data in a GraphQL API:</p>
+<ol type="1">
+<li><strong>Low Latency:</strong> With a separate caching and storage system, Propel significantly speeds up analytics data querying, typically achieving millisecond response times.</li>
+<li><strong>High Concurrency:</strong> The serverless architecture of Propel enables scaling to handle a virtually unlimited number of concurrent users or requests.</li>
+<li><strong>Better Timezone Handling:</strong> Propel simplifies the process of querying and serving data in different timezones, a crucial feature for global applications.</li>
+<li><strong>Organized Code:</strong> Propel reduces the complexity of managing multiple SQL queries, making multi-tenant use cases more manageable.</li>
+</ol>
+<h2 is-upgraded><strong>Ideal Use Cases</strong></h2>
+<p>Propel is particularly useful in scenarios demanding low latency and high concurrency, such as customer-facing analytics dashboards.</p>
+<h2 is-upgraded><strong>Setting Up Propel with Example Data</strong></h2>
+<p>To utilize Propel with the example taco order data:</p>
+<ol type="1">
+<li><strong>Confirm Data Setup:</strong> Ensure you have the example data by running:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM taco_orders;    
+</code></pre>
+<p>in the correct database and schema. This verifies that the example data has been properly created.</p>
+<p class="image-container"><img alt="Propel Example Result 2" src="img/3a9adff4a3e4a044.png"></p>
+<ol type="1" start="2">
+<li><strong>Enable Change Tracking:</strong> Before setting up Propel, enable CHANGE_TRACKING on your <strong><code>taco_orders</code></strong> table (or your own table) with this query:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER TABLE TACO_ORDERS SET CHANGE_TRACKING = TRUE;
+</code></pre>
+<h2 is-upgraded><strong>Next Steps</strong></h2>
+<p>With your data setup confirmed and change tracking enabled, you&#39;re now ready to dive into configuring Propel to work with your Snowflake data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring Snowflake for Propel Integration" duration="0">
+        <p>This section will guide you through the process of configuring your Snowflake environment to integrate seamlessly with Propel. This involves setting up a dedicated Snowflake user, role, and warehouse for Propel, and optionally configuring Snowflake Network Policies to include Propel&#39;s IP addresses.</p>
+<h2 is-upgraded><strong>Step 1: Sign Up for Propel</strong></h2>
+<p>Before starting the configuration, make sure you have signed up for a Propel account. Visit <a href="https://www.propeldata.com/" target="_blank">Propel&#39;s website</a> and complete the sign-up process.</p>
+<p class="image-container"><img alt="Sign up on Propel" src="img/39379e011701d5f8.png"></p>
+<h2 is-upgraded><strong>Step 2: Create Snowflake User, Role, and Warehouse for Propel</strong></h2>
+<p>It&#39;s recommended to create a dedicated user, role, and warehouse in Snowflake for Propel. This enhances security by adhering to the principle of least privilege and facilitates cost monitoring and control. Here&#39;s a script to set up these components:</p>
+<pre><code language="language-sql" class="language-sql">begin;
+
+    use role accountadmin;
+    /* Create variables for user, password, role, warehouse, database, and schema (needs to be uppercase for objects) */
+    set role_name = &#39;PROPELLER&#39;;
+    set user_name = &#39;PROPEL_USER&#39;;
+    set warehouse_name = &#39;PROPELLING&#39;;
+
+    /* Must be at least 8 characters long, contain at least 1 digit, 1 uppercase letter and 1 lowercase letter */
+    set user_password = &#39;&#39;;               /* Replace with a strong password */
+    set database_name = &#39;ANALYTICS&#39;;      /* Replace with your Snowflake database name */
+    set schema_name = &#39;ANALYTICS.PUBLIC&#39;; /* Replace with your Snowflake schema name */
+
+    /* Grant sysadmin role access to the database */
+    grant usage,modify
+    on database identifier($database_name)
+    to role sysadmin;
+
+    /* Grant sysadmin role access to the schema */
+    grant usage,modify
+    on schema identifier($schema_name)
+    to role sysadmin;
+
+    /* Change role to securityadmin for user / role steps */
+    use role securityadmin;
+
+    /* Create a role for Propel */
+    create role if not exists identifier($role_name);
+    grant role identifier($role_name) to role SYSADMIN;
+
+     /* Change role to sysadmin for warehouse and database steps */
+    use role sysadmin;
+
+    /* Create a warehouse for Propel */
+    create warehouse if not exists identifier($warehouse_name)
+    warehouse_size = xsmall
+    warehouse_type = standard
+    auto_suspend = 60
+    auto_resume = true
+    initially_suspended = true;
+
+    /* Change role to securityadmin for user / role steps */
+    use role securityadmin;
+
+    /* Create a user for Propel */
+    create user if not exists identifier($user_name)
+    password = $user_password
+    default_role = $role_name
+    default_warehouse = $warehouse_name;
+
+    grant role identifier($role_name) to user identifier($user_name);
+
+    /* Change role to accountadmin for warehouse and database steps */
+    use role accountadmin;
+
+    /* Grant Propel role access to the warehouse */
+    grant usage, monitor
+    on warehouse identifier($warehouse_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role access to the database */
+    grant usage, monitor
+    on database identifier($database_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role access to the schema */
+    grant create procedure, create stage, create task, create stream, usage
+    on schema identifier($schema_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role select on all tables in the schema */
+    grant select on all tables
+    in schema identifier($schema_name)
+    to role identifier($role_name);
+
+    /* Grant Propel role select on all future tables in the schema */
+    grant select on future tables
+    in schema identifier($schema_name)
+    to role identifier($role_name);
+
+    grant execute task on account
+    to role identifier($role_name);
+
+commit;
+</code></pre>
+<p>This script will:</p>
+<ul>
+<li><strong>Create a Propel-specific Role:</strong> This role (<strong><code>PROPELLER</code></strong>) is tailored for Propel&#39;s access and operations within Snowflake.</li>
+<li><strong>Establish a Dedicated Warehouse:</strong> The script sets up a warehouse (<strong><code>PROPELLING</code></strong>) specifically for Propel, with pre-configured settings.</li>
+<li><strong>Generate a Propel User:</strong> A user (<strong><code>PROPEL_USER</code></strong>) is created and assigned the Propel role and warehouse as defaults.</li>
+<li><strong>Grant Necessary Permissions:</strong> The script ensures the Propel role has the required permissions on the warehouse, database, and schema. This includes select permissions on all current and future tables in the specified schema.</li>
+</ul>
+<p><strong>Note:</strong> Replace placeholder values in the script (such as <strong><code>user_password</code></strong>, <strong><code>database_name</code></strong>, and <strong><code>schema_name</code></strong>) with your specific details before execution.</p>
+<h2 is-upgraded><strong>Step 3: (Optional) Configure Snowflake Network Policy</strong></h2>
+<p>If your Snowflake environment uses Network Policies, you might need to update them to allow Propel&#39;s IP addresses:</p>
+<ul>
+<li>3.17.239.162</li>
+<li>3.15.73.135</li>
+<li>18.219.73.236</li>
+</ul>
+<p>This ensures that Propel can communicate with your Snowflake instance without any network restrictions.</p>
+<h2 is-upgraded><strong>Conclusion and Next Steps</strong></h2>
+<p>With the Snowflake user, role, and warehouse now set up for Propel, and the network policies updated (if applicable), your Snowflake environment is ready for integration with Propel. This foundation allows you to proceed with building and optimizing your GraphQL API using Propel.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Data Pool in Propel for Your Snowflake Data" duration="0">
+        <p>Having configured your Snowflake environment for Propel integration, the next step is to create a Data Pool in Propel. Data Pools are Propel&#39;s proprietary storage system designed for fast, efficient analytical queries.</p>
+<h2 is-upgraded><strong>Initiate Data Pool Creation</strong></h2>
+<ol type="1">
+<li>In the Propel Console, locate the menu on the left-hand side and click on &#34;Data Pools&#34;.</li>
+<li>Click on the plus sign (+) to initiate the creation of a new Data Pool.</li>
+</ol>
+<p class="image-container"><img alt="Propel New Data Pool" src="img/fc57635f2b5cb48c.png"></p>
+<ol type="1" start="3">
+<li>In the new screen, select Snowflake as your data source.</li>
+</ol>
+<p class="image-container"><img alt="Propel Data Source Selection" src="img/26a2439d4f28bbf8.png"></p>
+<h2 is-upgraded><strong>Adding Credentials</strong></h2>
+<ol type="1">
+<li>Click on &#34;Add new credentials&#34;.</li>
+</ol>
+<p class="image-container"><img alt="Propel Add New Credentials" src="img/4b40b3dc519062e1.png"></p>
+<ol type="1" start="2">
+<li>Provide a unique name for your credentials.</li>
+<li>Enter the required Snowflake details: account, database, schema, warehouse, role, user, and password.<strong>Note:</strong> Your Snowflake account format should be &#34;accountId.region.cloud&#34; (e.g., &#34;fn25463.us-east-2.aws&#34;). Exclude the &#34;<a href="http://snowflakecomputing.com/" target="_blank">snowflakecomputing.com</a>&#34; domain.</li>
+</ol>
+<p class="image-container"><img alt="Propel Credential Details" src="img/1403671a816111cb.png"></p>
+<ol type="1" start="4">
+<li>After entering all details, click &#34;Create and test Credentials&#34;. <ul>
+<li>Upon successful connection, you should see a &#34;Connected&#34; status message.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Propel Credentials Connected" src="img/b466a57f7c6bc738.png"></p>
+<h2 is-upgraded><strong>Setting Up Data Pool Configuration</strong></h2>
+<ol type="1">
+<li>Continue with the setup flow.</li>
+<li>Select the table and columns for use in your Data Pool. <ul>
+<li>You can opt for the default selection, which includes all columns. <img alt="Propel Data Pool Configuration" src="img/cacb3d5a9c55ec79.png"></li>
+</ul>
+</li>
+<li>For the &#34;Primary timestamp&#34;, choose &#34;TIMESTAMP&#34;.</li>
+<li>For &#34;Unique ID&#34;, select &#34;ORDER_ID&#34;. <img alt="Propel Data Pool Configuration 2" src="img/69dd7e71eda9b2d1.png"></li>
+</ol>
+<h2 is-upgraded><strong>Finalizing the Data Pool</strong></h2>
+<ol type="1">
+<li>Click &#34;Next&#34; and review your setup to ensure accuracy. <img alt="Propel Data Pool Review" src="img/e41675e40ddf0b75.png"></li>
+<li>You have the option to preview your data to confirm that it&#39;s loading correctly. <img alt="Propel Data Pool Preview" src="img/338e2aa64722680f.png"></li>
+</ol>
+<h2 is-upgraded><strong>Conclusion</strong></h2>
+<p>After these steps, your Data Pool in Propel will be set up, integrating your Snowflake data for efficient querying. This setup is crucial for building and optimizing your GraphQL API using Propel and Snowflake data.</p>
+<h2 is-upgraded><strong>Next Steps</strong></h2>
+<p>With your Data Pool in place, you can proceed to the next phase of developing your GraphQL API using Propel on Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating Metrics for GraphQL API Queries" duration="0">
+        <p>After establishing a Data Pool in Propel, the next crucial step is to create Metrics. Metrics in Propel enable the creation of effective GraphQL queries for your data.</p>
+<h2 is-upgraded><strong>Initiating Metric Creation</strong></h2>
+<ol type="1">
+<li>Click on &#34;New&#34; in the left-hand side menu of the Propel Console.</li>
+<li>Select &#34;Metric&#34; to begin the process.</li>
+</ol>
+<p class="image-container"><img alt="Propel New Metric" src="img/ead8f18c96bedef4.png"></p>
+<h2 is-upgraded><strong>Configuring Metric Details</strong></h2>
+<p>Provide essential information for your new Metric:</p>
+<ul>
+<li><strong>Name:</strong> Give it a unique identifier, such as &#34;Taco Soft Revenue&#34;.</li>
+<li><strong>Description:</strong> Offer a brief explanation, like &#34;Metric to keep track of taco revenue&#34;.</li>
+<li><strong>Data Pool:</strong> Choose the Data Pool you created earlier (e.g., &#34;Taco Test&#34;).</li>
+<li><strong>Metric Type:</strong> Select the type of calculation, such as &#34;SUM&#34;.</li>
+<li><strong>Measure:</strong> Pick the specific data field to measure, like &#34;TACO_TOTAL_PRICE&#34;.</li>
+</ul>
+<p>This Metric configuration is aimed at tracking the revenue generated from taco sales.</p>
+<p class="image-container"><img alt="Propel Metric Details" src="img/5c22d99f58f86632.png"></p>
+<h2 is-upgraded><strong>Selecting Dimensions</strong></h2>
+<ol type="1">
+<li>Choose the columns that will serve as dimensions.</li>
+<li>These dimensions are filters you can apply to your Metric data.</li>
+</ol>
+<p class="image-container"><img alt="Propel Metric Dimensions" src="img/55524dcc02333439.png"></p>
+<ol type="1" start="3">
+<li>After filling out all the required fields, click &#34;Create&#34;.</li>
+</ol>
+<h2 is-upgraded><strong>Conclusion</strong></h2>
+<p>Creating Metrics is a pivotal step in setting up your GraphQL API. These Metrics will enable you to query specific data points within your Snowflake data through Propel. With the Metrics set up, you&#39;re now one step closer to testing and utilizing your GraphQL API.</p>
+<h2 is-upgraded><strong>Next Steps</strong></h2>
+<p>With the Metrics created, you can move forward to the final stages of testing and deploying your GraphQL API, harnessing the power of Propel and Snowflake for efficient data querying and analytics.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing the GraphQL API with Your Snowflake Data" duration="0">
+        <h2 is-upgraded><strong>Overview</strong></h2>
+<p>The final step in leveraging Propel with Snowflake is to test the GraphQL API created based on your Metrics. This step is crucial for ensuring that your API is functioning correctly and is ready for practical use.</p>
+<h2 is-upgraded><strong>Accessing the Playground for Testing</strong></h2>
+<ol type="1">
+<li>After setting up your Metric, locate and click on the &#34;Playground&#34; option within the Propel Console.</li>
+<li>The Playground is an interactive environment where you can test GraphQL queries against your Metrics.</li>
+</ol>
+<p class="image-container"><img alt="Propel Playground" src="img/6b7750ed21feecc4.png"></p>
+<h2 is-upgraded><strong>Testing the GraphQL API</strong></h2>
+<p>You can learn more about how to use this GraphQL API, as well as check examples in a few different languages on the <a href="https://www.propeldata.com/docs/query-your-data" target="_blank">Query your data</a> page on our documentation.</p>
+<h2 is-upgraded><strong>Next Steps</strong></h2>
+<p>With successful testing, you can confidently proceed to implement your GraphQL API in real-world scenarios, making the most of your Snowflake data through Propel&#39;s powerful querying capabilities.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

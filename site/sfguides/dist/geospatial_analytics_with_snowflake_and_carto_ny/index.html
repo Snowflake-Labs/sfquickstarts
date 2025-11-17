@@ -1,0 +1,778 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Geospatial Analytics for Retail with Snowflake and CARTO</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="geospatial_analytics_with_snowflake_and_carto_ny"
+                  title="Geospatial Analytics for Retail with Snowflake and CARTO"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the <code>GEOGRAPHY</code> data type, help you understand geospatial formats supported by Snowflake, walk you through the use of a variety of functions on a sample geospatial data set from the Snowflake Marketplace, and show you how to analyze and visualize your Snowflake data using CARTO&#39;s Analytics Toolbox.</p>
+<p class="image-container"><img alt="Carto+SF" src="img/adae07c4e927acb5.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Quick Video <a href="https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc." target="_blank">Introduction to Snowflake</a></li>
+<li>Snowflake <a href="https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc." target="_blank">Data Loading Basics Video</a></li>
+<li><a href="https://docs.carto.com/get-started/#carto-in-a-nutshell" target="_blank">CARTO in a nutshell</a> web guide</li>
+<li><a href="https://www.youtube.com/watch?v=9W_Attbs-fY" target="_blank">CARTO Spatial Extension for Snowflake</a> video</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to acquire geospatial data from the Snowflake Marketplace</li>
+<li>how to interpret the <code>GEOGRAPHY</code> data type</li>
+<li>how to understand the different formats that <code>GEOGRAPHY</code> can be expressed in</li>
+<li>how to unload/load geospatial data</li>
+<li>how to use parser, constructor, and calculation geospatial functions in queries</li>
+<li>how to perform geospatial joins</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A supported Snowflake <a href="https://docs.snowflake.com/en/user-guide/setup.html" target="_blank">Browser</a></li>
+<li>Sign-up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Trial</a> OR have access to an existing Snowflake account with the <code>ACCOUNTADMIN</code> role or the <code>IMPORT SHARE</code> privilege. Pick the Enterprise edition to try</li>
+<li>Search Optimization for Geospatial.</li>
+<li>Sign-up for a <a href="http://app.carto.com/signup" target="_blank">CARTO Trial</a> (OR have access to an existing CARTO account )</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A sample use case that involves points-of-interest in New York City.</li>
+</ul>
+<p class="image-container"><img alt="Mapping UI" src="img/28d963c50a81ca13.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Acquire Marketplace Data and Analytics Toolbox" duration="20">
+        <p>The first step in the guide is to acquire a geospatial data set that you can freely use to explore the basics of Snowflake&#39;s geospatial functionality. The best place to acquire this data is the Snowflake Marketplace!</p>
+<p>We will also be accessing another asset from the Snowflake Marketplace: The CARTO Analytics Toolbox - a composed set of user-defined functions that extend the geospatial capabilities of Snowflake. The listing gives you access to Open Source modules supporting different spatial indexes and other operations: quadkeys, H3, S2, placekey, geometry constructors, accessors, transformations, etc.</p>
+<h2 is-upgraded>Access Snowflake&#39;s Web UI</h2>
+<p><a href="https://app.snowflake.com/" target="_blank">app.snowflake.com</a></p>
+<p>If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your <a href="https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name" target="_blank">account name</a> and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.</p>
+<p>Click <code>Sign-in</code> and you will be prompted for your user name and password.</p>
+<aside class="special"><p> If this is not the first time you are logging into the Snowflake UI, you should see a &#34;Select an account to sign into&#34; prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).</p>
+</aside>
+<h2 is-upgraded>Increase Your Account Permission</h2>
+<p>The Snowflake web interface has a lot to offer, but for now, switch your current role from the default <code>SYSADMIN</code> to <code>ACCOUNTADMIN</code>. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.</p>
+<aside class="special"><p> If you don&#39;t have the <code>ACCOUNTADMIN</code> role, switch to a role with <code>IMPORT SHARE</code> privileges instead.</p>
+</aside>
+<p class="image-container"><img style="width: 500.00px" src="img/b9575209bfee61ca.png"></p>
+<h2 is-upgraded>Create a Virtual Warehouse (if needed)</h2>
+<p>If you don&#39;t already have access to a Virtual Warehouse to run queries, you will need to create one.</p>
+<ul>
+<li>Navigate to the <code>Admin > Warehouses</code> screen using the menu on the left side of the window</li>
+<li>Click the big blue <code>+ Warehouse</code> button in the upper right of the window</li>
+<li>Create an X-Small Warehouse as shown in the screen below</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/310377487cd5f493.png"></p>
+<p>Be sure to change the <code>Suspend After (min)</code> field to 1 min to avoid wasting compute credits.</p>
+<h2 is-upgraded>Acquire Data from the Snowflake Marketplace</h2>
+<p>Now you can acquire sample geospatial data from the Snowflake Marketplace.</p>
+<ul>
+<li>Navigate to the <code>Marketplace</code> screen using the menu on the left side of the window</li>
+<li>Search for <code>OpenStreetMap New York</code> in the search bar</li>
+<li>Find and click the <code>Sonra OpenStreetMap New York</code> tile</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/51709726ab0c4598.png"></p>
+<ul>
+<li>Once in the listing, click the big blue <code>Get</code> button</li>
+</ul>
+<aside class="warning"><p> On the <code>Get</code> screen, you may be prompted to complete your <code>user profile</code> if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue <code>Save</code> button. You will be returned to the <code>Get</code> screen.</p>
+</aside>
+<p class="image-container"><img style="width: 500.00px" src="img/6a297840e849c382.png"></p>
+<ul>
+<li>On the <code>Get Data</code> screen, change the name of the database from the default to <code>OSM_NEWYORK</code>, as this name is shorter and all of the future instructions will assume this name for the database.</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/f30ed448dcebe9b1.png"></p>
+<p>Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace.</p>
+<h2 is-upgraded>Install CARTO Analytics Toolbox from the Snowflake Marketplace</h2>
+<p>Now you can acquire CARTO&#39;s Analytics Toolbox from the Snowflake Marketplace. This will share UDFs (User defined functions) to your account that will allow you to perform even more geospatial analytics.</p>
+<ul>
+<li>Similar to how you did with the data in the previous steps, navigate to the Marketplace screen using the menu on the left side of the window</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/1ea45be8fefae346.png"></p>
+<ul>
+<li>Search for <code>CARTO</code> in the search bar</li>
+<li>Find and click the <code>Analytics Toolbox</code> tile</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/8989fbb85e5b9106.png"></p>
+<p>Click on big blue <code>Get</code> button In the options, name the database <code>CARTO</code> and optionally add more roles that can access the database</p>
+<p class="image-container"><img style="width: 500.00px" src="img/fb30ccaee6fed7f6.png"></p>
+<ul>
+<li>Click on <code>Get</code> and then <code>Done</code>.</li>
+</ul>
+<p>Congratulations! Now you have data and the analytics toolbox!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Snowflake and CARTO" duration="5">
+        <p>Let&#39;s connect your Snowflake to CARTO so you can run and visualize the queries in the following exercises of this workshop.</p>
+<p>Access the CARTO Workspace: <a href="http://app.carto.com/" target="_blank">app.carto.com</a></p>
+<h2 is-upgraded>Connection to Snowflake</h2>
+<p>Go to the Connections section in the Workspace, where you can find the list of all your current connections.</p>
+<p class="image-container"><img style="width: 500.00px" src="img/2ab71efc3b74e7c.png"></p>
+<p>To add a new connection, click on <code>New connection</code> and follow these steps:</p>
+<ol type="1">
+<li>Select Snowflake.</li>
+<li>Click the <code>Setup connection</code> button.</li>
+<li>Enter the connection parameters and credentials.</li>
+</ol>
+<p>These are the parameters you need to provide:</p>
+<ul>
+<li><strong>Name</strong> for your connection: You can register different connections with the Snowflake connector. You can use the name to identify the connections.</li>
+<li><strong>Username</strong>: Name of the user account.</li>
+<li><strong>Password</strong>: Password for the user account.</li>
+<li><strong>Account</strong>: Hostname for your account . One way to get it is to check the Snowflake activation email which contains the account_name within the URL ( &lt;account_name&gt;.snowflakecomputing.com ). Just enter what&#39;s on the account_name, i.e ok36557.us-east-2.aws</li>
+<li><strong>Warehouse (optional)</strong>: Default warehouse that will run your queries. Use MY_WH.</li>
+</ul>
+<aside class="warning"><p> Use MY_WH or the name of the data warehouse you created in the previous step otherwise some queries will fail because CARTO won&#39;t know which warehouse to run them against.</p>
+</aside>
+<ul>
+<li><strong>Database (optional)</strong>. Default database to run your queries. Leave Blank.</li>
+<li><strong>Role (optional)</strong>. Default Role to run your queries. Use ACCOUNTADMIN.</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/145cf59e5e2bba4a.png"></p>
+<p>Once you have entered the parameters, you can click the Connect button. CARTO will try to connect to your Snowflake account. If everything is OK, your new connection will be registered.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understand Geospatial Formats" duration="20">
+        <p>Now we will run different queries to understand how the <code>GEOGRAPHY</code> data type works in Snowflake. Navigate to the query editor by clicking on <code>Worksheets</code> on the top left navigation bar.</p>
+<h2 is-upgraded>Open a New Worksheet and Choose Your Warehouse</h2>
+<ul>
+<li>Click the + Worksheet button in the upper right of your browser window. This will open a new window.</li>
+<li>In the new Window, make sure <code>ACCOUNTADMIN</code> and <code>MY_WH</code> (or whatever your warehouse is named) are selected in the upper right of your browser window.</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/5989a872daa3c6a.png"></p>
+<ul>
+<li>In the object browser on the left, select Databases tab and expand the <code>OSM_NEWYORK</code> database, the <code>NEW_YORK</code> schema, and the <code>Views</code> grouping to see the various views that you have access to in this shared database. The data provider has chosen to share only database views in this listing. You will use some of these views throughout the guide.</li>
+</ul>
+<p class="image-container"><img style="width: 400.00px" src="img/c84332f49fc54745.png"></p>
+<p>Now you are ready to run some queries.</p>
+<h2 is-upgraded>The GEOGRAPHY data type</h2>
+<p>Snowflake&#39;s <code>GEOGRAPHY</code> data type is similar to the <code>GEOGRAPHY</code> data type in other geospatial databases in that it treats all points as longitude and latitude on a spherical earth instead of a flat plane. This is an important distinction from other geospatial types (such as <code>GEOMETRY</code>), but this guide won&#39;t be exploring those distinctions. More information about Snowflake&#39;s specification can be found <a href="https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html" target="_blank">here</a>.</p>
+<p>Look at one of the views in the shared database which has a <code>GEOGRAPHY</code> column by running the following queries. Copy &amp; paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue &#34;Play&#34; button in the upper right of your browser window, or press <code>CTRL+Enter</code> or <code>CMD+Enter</code> (Windows or Mac) to run the query.</p>
+<pre><code>// Set the working database schema
+use schema osm_newyork.new_york;
+</code></pre>
+<p>The <a href="https://docs.snowflake.com/en/sql-reference/sql/use-schema.html" target="_blank">use schema</a> command sets the active database.schema for your future queries so you do not have to fully qualify your objects.</p>
+<pre><code>// Describe the v_osm_ny_shop_electronics view 
+desc view v_osm_ny_shop_electronics;
+</code></pre>
+<p>The <a href="https://docs.snowflake.com/en/sql-reference/sql/desc.html" target="_blank">desc or describe</a> command shows you the definition of the view, including the columns, their data type, and other relevant details. Notice the <code>coordinates</code> column is defined of <code>GEOGRAPHY</code> type. This is the column you will focus on in the next steps.</p>
+<h2 is-upgraded>View GEOGRAPHY Output Formats</h2>
+<p>Snowflake supports 3 primary geospatial formats and 2 additional variations on those formats. They are:</p>
+<ul>
+<li><strong>GeoJSON</strong>: a JSON-based standard for representing geospatial data</li>
+<li><strong>WKT &amp; EWKT</strong>: a &#34;Well Known Text&#34; string format for representing geospatial data and the &#34;Extended&#34; variation of that format</li>
+<li><strong>WKB &amp; EWKB</strong>: a &#34;Well Known Binary&#34; format for representing geospatial data in binary and the &#34;Extended&#34; variation of that format</li>
+</ul>
+<p>These formats are supported for ingestion (files containing those formats can be loaded into a <code>GEOGRAPHY</code> typed column), query result display, and data unloading to new files. You don&#39;t need to worry about how Snowflake stores the data under the covers, but rather how the data is displayed to you or unloaded to files through the value of a session variable called <code>GEOGRAPHY_OUTPUT_FORMAT</code>.</p>
+<p>Run the query below to make sure the current format is GeoJSON.</p>
+<pre><code>// Set the output format to GeoJSON
+alter session set geography_output_format = &#39;GEOJSON&#39;;
+</code></pre>
+<p>The <a href="https://docs.snowflake.com/en/sql-reference/sql/alter-session.html" target="_blank">alter session</a> command lets you set a parameter for your current user session, which in this case is the <code>GEOGRAPHY_OUTPUT_FORMAT</code>. The default value for this parameter is <code>'GEOJSON'</code>, so normally you wouldn&#39;t have to run this command if you want that format, but this guide wants to be certain the next queries are run with the <code>'GEOJSON'</code> output.</p>
+<p>Now run the following query against the <code>V_OSM_NY_SHOP_ELECTRONICS</code> view.</p>
+<pre><code>// Query the v_osm_ny_shop_electronics view for rows of type &#39;node&#39; (long/lat points)
+select coordinates, name from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  where type = &#39;node&#39; limit 25;
+</code></pre>
+<p>In the result set, notice the <code>coordinates</code> column and how it displays a JSON representation of a point. It should look something like this:</p>
+<pre><code>{   &#34;coordinates&#34;: [     -7.390351649999999e+01,     4.074499730000000e+01   ],   &#34;type&#34;: &#34;Point&#34; }
+</code></pre>
+<p>If you click on a cell in the <code>coordinates</code> column of the query result, the JSON representation will also show in the cell panel on the right side of the query window, and it includes a button that allows you to copy that JSON text (see screenshot below). You will use this capability in later exercises.</p>
+<p class="image-container"><img style="width: 500.00px" src="img/ed4fec447036b4f5.png"></p>
+<p>Now run the next query.</p>
+<pre><code>// Query the v_osm_ny_shop_electronics view for rows of type &#39;way&#39; (a collection of many points)
+select coordinates, name from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  where type = &#39;way&#39; limit 25;
+</code></pre>
+<p>Click on a cell in the <code>coordinates</code> column of the query result. Notice in the cell panel how the JSON is expanded with many more points in the JSON array. This shows you the difference between a geospatial representation of a single point, vs a representation of many points.</p>
+<p>Now look at the same queries but in a different format. Run the following query:</p>
+<pre><code>// Set the output format to WKT
+alter session set geography_output_format = &#39;WKT&#39;;
+</code></pre>
+<p>Run the previous two queries again. With each run, click on a cell in the <code>coordinates</code> column and examine the output.</p>
+<pre><code>select coordinates, name from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  where type = &#39;node&#39; limit 25;
+select coordinates, name from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  where type = &#39;way&#39; limit 25;
+</code></pre>
+<p>WKT looks different than GeoJSON, and is arguably more readable. Here you can more clearly see the <a href="https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html#geospatial-object-types" target="_blank">geospatial object types</a> which are represented below in the example output:</p>
+<pre><code>// An example of a POINT
+POINT(-74.0266511 40.6346599)
+// An example of a POLYGON
+POLYGON((-74.339971 43.0631175,-74.3397734 43.0631363,-74.3397902 43.0632306,-74.3399878 43.0632117,-74.339971 43.0631175))
+</code></pre>
+<aside class="special"><p> You will use several different geospatial object types in this guide, and the guide will explain them more in later sections as you use them.</p>
+</aside>
+<p>Lastly, look at WKB output. Run the following query:</p>
+<pre><code>// Set the output format to WKB
+alter session set geography_output_format = &#39;WKB&#39;;
+</code></pre>
+<p>And run the two queries again, click on a cell in the <code>coordinates</code> column each time.</p>
+<pre><code language="language-SQL" class="language-SQL">select coordinates, name from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  where type = &#39;node&#39; limit 25;
+select coordinates, name from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  where type = &#39;way&#39; limit 25;
+</code></pre>
+<p>Notice how WKB is incomprehensible to a human reader. Other than the length of the binary value, it&#39;s hard to tell the difference between the <code>POINT</code> and the <code>POLYGON</code>. However, this format is handy in data loading/unloading, as you&#39;ll see in the next section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Unload/Load Data" duration="20">
+        <p>Now that you understand the different output formats, you can create new files from the electronics view, then load those files into new tables with the <code>GEOGRAPHY</code> data type. You will also encounter your first examples of geospatial parsers and constructors.</p>
+<h2 is-upgraded>Create New WKB Files From Queries</h2>
+<p>In this step we&#39;re going to use Snowflake&#39;s <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html" target="_blank">COPY into location</a> feature to take the output of a query and create a file in your local <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html#user-stages" target="_blank">user stage</a>. Because your output format is set to WKB, the geospatial column in that table will be represented in the WKB format in the new files.</p>
+<aside class="warning"><p> The WKB format is being chosen here for its simplicity within a file. Since WKB is a single alpha-numeric string with no delimiters, spaces, or other difficult characters, it is excellent for storing geospatial data in a file. That doesn&#39;t mean other formats are to be avoided in real world use cases, but WKB will make your work easier in this guide.</p>
+</aside>
+<p>Make sure we&#39;re using the WKB output format by running this query again:</p>
+<pre><code>alter session set geography_output_format = &#39;WKB&#39;;
+</code></pre>
+<p>If you&#39;re not familiar with the anatomy of a <code>COPY</code> command, the code comments below will break down the code of the first query, which copies a few columns and all rows from the electronics view:</p>
+<pre><code>// Define the write location (@~/ = my user stage) and file name for the file 
+copy into @~/osm_ny_shop_electronics_all.csv 
+// Define the query that represents the data output
+from (select id,coordinates,name,type from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics ) 
+// Indicate the comma-delimited file format and tell it to double-quote strings
+file_format=(type=csv field_optionally_enclosed_by=&#39;&#34;&#39;) 
+// Tell Snowflake to write one file and overwrite it if it already exists
+single=true overwrite=true;
+</code></pre>
+<p>Run the query above and you should see an output that indicates the number of rows that were unloaded.</p>
+<p>Run the second unload query below, which adds some filtering to the output query and a parser:</p>
+<pre><code>copy into @~/osm_ny_shop_electronics_points.csv 
+from (
+  select id,coordinates,name,type,st_x(coordinates),st_y(coordinates) 
+  from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  where type=&#39;node&#39;
+) file_format=(type=csv field_optionally_enclosed_by=&#39;&#34;&#39;) 
+single=true overwrite=true;
+</code></pre>
+<p>In this query, the parsers <code>ST_X</code> and <code>ST_Y</code> are extracting the longitude and latitude from a <code>GEOGRAPHY POINT</code> object. These parsers only accept single points as an input, so you had to filter the query on <code>type = 'node'</code>. In Snowflake, the ‘x&#39; coordinate is always the longitude and the ‘y&#39; coordinate is always the latitude, and as you will see in a future constructor, the longitude is always listed first.</p>
+<h2 is-upgraded>LIST and Query User Staged Files</h2>
+<p>You should now have 2 files in your user stage. Verify they are there by running the <a href="https://docs.snowflake.com/en/sql-reference/sql/list.html" target="_blank">list</a> command. The ‘osm&#39; string will act as a filter to tell the command to show only the files beginning with ‘osm&#39;.</p>
+<pre><code>list @~/osm;
+</code></pre>
+<p>You can query a simple file directly in the stage by using the ‘$&#39; notation below to represent each delimited column in the file, which in this case Snowflake assumes to be a comma-delimited CSV. Run this query:</p>
+<pre><code>select $1,$2,$3,$4 from @~/osm_ny_shop_electronics_all.csv;
+</code></pre>
+<p>Notice how the second column displays the WKB geospatial data in double-quotes because of how you created the file. This will not load directly into a <code>GEOGRAPHY</code> data type, so you need to further define the file format. Run each query below to create a local database and a new file format in that database. You will also switch your <code>GEOGRAPHY</code> output format back to WKT to improve readability of future queries.</p>
+<pre><code>// Create a new local database
+create or replace database geocodelab;
+// Change your working schema to the public schema in that database
+use schema geocodelab.public;
+// Create a new file format in that schema
+create or replace file format geocsv type = &#39;csv&#39; field_optionally_enclosed_by=&#39;&#34;&#39;;
+// Set the output format back to WKT
+alter session set geography_output_format = &#39;WKT&#39;;
+</code></pre>
+<p>Now query the ‘all&#39; files in the stage using the file format:</p>
+<pre><code>select $1,TO_GEOGRAPHY($2),$3,$4 
+from @~/osm_ny_shop_electronics_all.csv 
+(file_format =&gt; &#39;geocsv&#39;);
+</code></pre>
+<p>Notice the use of the <code>TO_GEOGRAPHY</code> constructor which tells Snowflake to interpret the WKB binary string as geospatial data and construct a <code>GEOGRAPHY</code> type. The WKT output format allows you to see this representation in a more readable form. You can now load this file into a table that includes a <code>GEOGRAPHY</code> typed column by running the two queries below:</p>
+<pre><code>// Create a new &#39;all&#39; table in the current schema
+create or replace table electronics_all 
+(id number, coordinates geography, name string, type string);
+// Load the &#39;all&#39; file into the table
+copy into electronics_all from @~/osm_ny_shop_electronics_all.csv 
+file_format=(format_name=&#39;geocsv&#39;);
+</code></pre>
+<p>You should see all rows loaded successfully into the table with 0 errors seen.</p>
+<p>Now turn your attention to the other ‘points&#39; file. If you recall, you used <code>ST_X</code> and <code>ST_Y</code> to make discrete longitude and latitude columns in this file. It is not uncommon to receive data which contains these values in different columns, and you can use the <code>ST_MAKEPOINT</code> constructor to combine two discrete longitude and latitude columns into one <code>GEOGRAPHY</code> typed column. Run this query:</p>
+<pre><code>select $1,ST_MAKEPOINT($5,$6),$3,$4,$5,$6 
+from @~/osm_ny_shop_electronics_points.csv 
+(file_format =&gt; &#39;geocsv&#39;);
+</code></pre>
+<aside class="warning"><p> Notice in <code>ST_MAKEPOINT</code> that the longitude column is listed first. Despite the common verbal phrase &#34;lat long,&#34; you always put longitude before latitude to represent a geospatial POINT object in Snowflake.</p>
+</aside>
+<p>Now create a table and load the ‘points&#39; file into that table. Run these two queries.</p>
+<pre><code>// Create a new &#39;points&#39; table in the current schema
+create or replace table electronics_points 
+(id number, coordinates geography, name string, type string, 
+long number(38,7), lat number(38,7));
+// Load the &#39;points&#39; file into the table
+copy into electronics_points from (
+  select $1,ST_MAKEPOINT($5,$6),$3,$4,$5,$6 
+  from @~/osm_ny_shop_electronics_points.csv
+) file_format=(format_name=&#39;geocsv&#39;);
+</code></pre>
+<p>You should see all rows loaded successfully into the table with 0 errors seen.</p>
+<aside class="special"><p> In the ‘all&#39; file load statement, you didn&#39;t have to specify a query to load the file because when you have a column in a file that is already in a Snowflake supported geospatial format, and load that value into a <code>GEOGRAPHY</code> typed column, Snowflake automatically does the geospatial construction for you. In the ‘points&#39; file, however, you must use a transform query to construct two discrete columns into a single <code>GEOGRAPHY</code> column using a geospatial constructor function.</p>
+</aside>
+<p>To conclude this section, you can query your recently loaded tables using the two queries below:</p>
+<pre><code>select * from electronics_all;
+select * from electronics_points;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Calculations and More Constructors" duration="20">
+        <p>Now that you have the basic understand of how the <code>GEOGRAPHY</code> data type works and what a geospatial representation of data looks like in various output formats, it&#39;s time to walkthrough a scenario that requires you to run and visualize geospatial queries to answer some questions.</p>
+<aside class="special"><p> It&#39;s worth noting here that the scenario in the next three sections is more akin to what a person would do with a map application on their mobile phone, rather than how geospatial data would be used in fictional business setting. This was chosen intentionally to make this guide and these queries more relatable to the person doing the guide, rather than trying to create a realistic business scenario that is relatable to all industries, since geospatial data is used very differently across industries.</p>
+</aside>
+<p>Before you begin the scenario, switch the active schema back to the shared database and make sure the output format is either GeoJSON or WKT, as you will be using another website (i.e CARTO) to visualize the query results. Which output you choose will be based on your personal preference - WKT is easier for the casual person to read, while GeoJSON is arguably more common. When querying from CARTO the default (<code>GEOJSON</code>) will be used so no need to worry about changing it from that context.</p>
+<p>Also note that from here on out, SQL statements and functions that have been previously covered will no longer have their usage explained in the code comments or the text of the guide. Run the two queries below:</p>
+<pre><code>use schema osm_newyork.new_york;
+// Run just one of the below queries based on your preference
+alter session set geography_output_format = &#39;GEOJSON&#39;;
+alter session set geography_output_format = &#39;WKT&#39;;
+</code></pre>
+<h2 is-upgraded>The Scenario</h2>
+<p>Pretend that you are currently living in your apartment near Times Square in New York City. You need to make a shopping run to Best Buy and the liquor store, as well as grab a coffee at a coffee shop. Based on your current location, what are the closest stores or shops to do these errands, and are they the most optimal locations to go to collectively? Are there other shops you could stop at along the way?</p>
+<p>Start with running a query that represents your current location. This location has been preselected for the guide using a website that returns longitude and latitude when you click on a location on a map. Run this query in the Snowlake editor:</p>
+<pre><code>select to_geography(&#39;POINT(-73.986226 40.755702)&#39;);
+</code></pre>
+<p>Notice there is no <code>from</code> clause in this query, which allows you to construct a <code>GEOGRAPHY</code> object in a simple <code>select</code> statement.</p>
+<aside class="warning"><p> POINT(-73.986226 40.755702) is already a geography object in WKT format, so there was no real need to convert it again, but it was important to show the most basic way to use TO_GEOGRAPHY to construct a simple geography object.</p>
+</aside>
+<p>Now let&#39;s do the query in CARTO Builder to see where the point is.</p>
+<ul>
+<li>Create a new map. Use a the navigation menu on the left to got to Maps and then click on (+) New Map).</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/472b34fe09cde957.png"></p>
+<ul>
+<li>Click on the &#34;Add Source From&#34;</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/b71e3ce57c61dd15.png"></p>
+<ul>
+<li>Then click on <code>Custom Query</code> and make sure you have selected Snowflake Connection that you have created in previous steps.</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/5759a2f2d97f449f.gif"></p>
+<ul>
+<li>Now paste the query and click on the green <code>Run</code> button.</li>
+</ul>
+<pre><code>select to_geography(&#39;POINT(-73.986226 40.755702)&#39;) as geom;
+</code></pre>
+<aside class="warning"><p> CARTO requires that the column containing geospatial data be named <code>geom</code> so that is why we add as geom in the query. If you don&#39;t do this it will fail.</p>
+</aside>
+<ul>
+<li>Use the map zoom controls (+/- buttons) and click the zoom in )+) button until you can see the point better. You should see something like the screenshot below, though you may see more depending on your browser window size.</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/a6843aa000ad2b1a.png"></p>
+<aside class="special"><p> Feel free to use this as your SQL Editor for the next steps, you can delete and re-run the queries from the workshop here.</p>
+</aside>
+<p>The green dot represents the <code>POINT</code> object location. Now you know where you are!</p>
+<p class="image-container"><img style="width: 500.00px" src="img/5803acbf7e601afc.png"></p>
+<h2 is-upgraded>Find the Closest Locations</h2>
+<p>In the next step, you are going to run queries to find the closest Best Buy, liquor store, and coffee shop to your current location from above. These queries are very similar and will do several things:</p>
+<ul>
+<li>One will query the electronics view, the other two will query the food &amp; beverages view, applying appropriate filters to find the thing we&#39;re looking for.</li>
+<li>All queries will use the <code>ST_DWITHIN</code> function in the <code>where</code> clause to filter out stores that aren&#39;t within the stated distance. The function takes two points and a distance to determine whether those two points are less than or equal to the stated distance from each other, returning <code>true</code> if they are and <code>false</code> if they are not. In this function, you will use the <code>coordinates</code> column from each view to scan through all of the Best Buys, liquor stores, or coffee shops and compare them to your current location <code>POINT</code>, which you will construct using the previously used <code>ST_MAKEPOINT</code>. You will then use 1600 meters for the distance value, which is roughly equivalent to a US mile.</li>
+<li>Note that in the queries below, the syntax <code>ST_DWITHIN(...) = true</code> is used for readability, but the <code>= true</code> is not required for the filter to work. It is required if you were to need an <code>= false</code> condition.</li>
+<li>All queries will also use the <code>ST_DISTANCE</code> function, which actually gives you a value in meters representing the distance between the two points. When combined with <code>order by</code> and <code>limit</code> clauses, this will help you return only the row that is the smallest distance, or closest.</li>
+<li>Also note in <code>ST_DISTANCE</code> that you use the constructor <code>TO_GEOGRAPHY</code> for your current location point instead of the <code>ST_MAKEPOINT</code> constructor that you used earlier in <code>ST_DWITHIN</code>. This is to show you that that <code>TO_GEOGRAPHY</code> is a general purpose constructor where <code>ST_MAKEPOINT</code> specifically makes a <code>POINT</code> object, but in this situation they resolve to the same output. Sometimes there is more than one valid approach to construct a geospatial object.</li>
+</ul>
+<p>Run the following queries (the first one has comments similar to above):</p>
+<pre><code>// Find the closest Best Buy
+select id, coordinates as geom, name, addr_housenumber, addr_street, 
+// Use st_distance to calculate the distance between your location and Best Buy
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  
+// Filter just for Best Buys
+where name = &#39;Best Buy&#39; and 
+// Filter for Best Buys that are within about a US mile (1600 meters)
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+// Order the results by the calculated distance and only return the lowest
+order by 6 limit 1;
+</code></pre>
+<pre><code>// Find the closest liquor store
+select id, coordinates as geom, name, addr_housenumber, addr_street, 
+st_distance(geom,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages  
+where shop = &#39;alcohol&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 6 limit 1;
+</code></pre>
+<pre><code>// Find the closest coffee shop
+select id, coordinates as geom, name, addr_housenumber, addr_street, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages  
+where shop = &#39;coffee&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 6 limit 1;
+</code></pre>
+<p>In each case, the query returns a <code>POINT</code> object, which you aren&#39;t going to do anything with just yet, but now you have the queries that return the desired results. It would be really nice, however, if you could easily visualize how these points relate to each other.</p>
+<h2 is-upgraded>Collect Points Into a Line</h2>
+<p>In the next step of this section, you&#39;re going to ‘collect&#39; the points using <code>ST_COLLECT</code> and make a <code>LINESTRING</code> object with the <code>ST_MAKELINE</code> constructor. You will then be able to visualize this line on CARTO.</p>
+<ul>
+<li>The first step in the query to is create a common table expression (CTE) query that unions together the queries you ran in the above step (keeping just the <code>coordinates</code> and <code>distance_meters</code> columns). This CTE will result in a 4 row output - 1 row for your current location, 1 row for the Best Buy location, 1 row for the liquor store, and 1 row for the coffee shop.</li>
+<li>You will then use <code>ST_COLLECT</code> to aggregate those 4 rows in the <code>coordinates</code> column into a single geospatial object, a <code>MULTIPOINT</code>. This object type is a collection of <code>POINT</code> objects that are interpreted as having no connection to each other other than they are grouped. A visualization tool will not connect these points, just plot them, so in the next step you&#39;ll turn these points into a line.</li>
+<li>Finally you need to do is convert that <code>MULTIPOINT</code> object into a <code>LINESTRING</code> object using <code>ST_MAKELINE</code>, which takes a set of points as an input and turns them into a <code>LINESTRING</code> object. Whereas a <code>MULTIPOINT</code> has points with no assumed connection, the points in a <code>LINESTRING</code> will be interpreted as connected in the order they appear. Needing a collection of points to feed into <code>ST_MAKELINE</code> is the reason why you did the <code>ST_COLLECT</code> step above, and the only thing you need to do to the query above is wrap the <code>ST_COLLECT</code> in an <code>ST_LINESTRING</code> like so:</li>
+</ul>
+<p>Run this query and examine the output:</p>
+<pre><code>// Create the CTE &#39;locations&#39;
+with locations as (
+(select to_geography(&#39;POINT(-73.986226 40.755702)&#39;) as coordinates, 
+0 as distance_meters)
+union all
+(select coordinates as geom, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics 
+where name = &#39;Best Buy&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select coordinates as geom, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages 
+where shop = &#39;alcohol&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select coordinates as geom, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages 
+where shop = &#39;coffee&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1))
+// Query the CTE result set, aggregating the coordinates into one object
+Select st_makeline(st_collect(coordinates),to_geography(&#39;POINT(-73.986226 40.755702)&#39;)) as geom from locations;
+</code></pre>
+<aside class="special"><p> You may be wondering why your current position point was added as an additional point in the line when you already included it as the first point in the MULTIPOINT collection above? Stay tuned for why you need this later, but logically it makes sense that you plan to go back to your New York City apartment at the end of your shopping trip.</p>
+</aside>
+<p>You should get this:</p>
+<p class="image-container"><img style="width: 500.00px" src="img/2eabfff67725870e.png"></p>
+<p>Yikes! You can see in the image above that the various shops are in three different directions from your original location. That could be a long walk. Fortunately, you can find out just how long by wrapping a <code>ST_DISTANCE</code> function around the <code>LINESTRING</code> object, which will calculate the length of the line in meters. Run the query below:</p>
+<pre><code>// Create the CTE &#39;locations&#39;
+with locations as (
+(select to_geography(&#39;POINT(-73.986226 40.755702)&#39;) as coordinates, 
+0 as distance_meters)
+union all
+(select coordinates as geom, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics 
+where name = &#39;Best Buy&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select coordinates as geom, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages 
+where shop = &#39;alcohol&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select coordinates as geom, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages 
+where shop = &#39;coffee&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1))
+// Query the CTE result set, aggregating the coordinates into one object
+Select st_makeline(st_collect(coordinates),to_geography(&#39;POINT(-73.986226 40.755702)&#39;)) as geom ,
+st_length(geom)  as distance
+from locations;
+</code></pre>
+<p>You can view non-geospatial parameters by adding a hover pop-up interaction. See GIF below:</p>
+<p class="image-container"><img style="width: 500.00px" src="img/72dbd5a161654d94.gif"></p>
+<p>Wow! Almost 2120 meters!</p>
+<aside class="warning"><p> It is correct to note that this distance represents a path based on how a bird would fly, rather than how a human would navigate the streets. The point of this exercise is not to generate walking directions, but rather to give you a feel of the various things you can parse, construct, and calculate with geospatial data and functions in Snowflake. CARTO actually lets you to <a href="https://docs.carto.com/analytics-toolbox-snowflake/examples/trade-areas-based-on-isolines/" target="_blank">calculate drive/walk routes within Snowflake with its Location Data Services module</a> if you&#39;re interested in a more accurate calculation.</p>
+</aside>
+<p>Now move to the next section to see how you can optimize your shopping trip.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Joins" duration="10">
+        <p>In the previous section, all of your queries to find the closest Best Buy, liquor store, and coffee shop were based on proximity to your Times Square apartment. But wouldn&#39;t it make more sense to see, for example, if there was a liquor store and/or coffee shop closer to Best Buy? You can use geospatial functions in a table join to find out.</p>
+<h2 is-upgraded>Is There Anything Closer to Best Buy?</h2>
+<p>You have been using two views in your queries so far: <code>v_osm_ny_shop_electronics</code>, where stores like Best Buy are catalogued, and <code>v_osm_ny_shop_food_beverage</code>, where liquor stores and coffee shops are catalogued. To find the latter near the former, you&#39;ll join these two tables. The new queries introduce a few changes:</p>
+<ul>
+<li>The electronics view will serve as the primary view in the query, where you&#39;ll put a filter on the known Best Buy store using its id value from the view.</li>
+<li>Instead of the <code>JOIN</code> clause using a common <code>a.key = b.key</code> foreign key condition, the <code>ST_DWITHIN</code> function will serve as the join condition (remember before the note about not needing to include the <code>= true</code> part).</li>
+<li>The <code>ST_DISTANCE</code> calculation is now using the Best Buy coordinate and all of the other coordinates in the food &amp; beverage view to determine the closest liquor store and coffee shop location to Best Buy.</li>
+</ul>
+<p>Run the two queries below and create a new layer for each:</p>
+<aside class="special"><p> In order to create a new layer ( and keep the query done in the previous step) click on the blue <code>(+) Add source from</code> button, copy the query and click run. .</p>
+</aside>
+<p>First run:</p>
+<pre><code>// Join to electronics to find a liquor store closer to Best Buy
+select fb.id,fb.coordinates as geom,fb.name,fb.addr_housenumber,fb.addr_street,
+// The st_distance calculation uses coordinates from both views
+st_distance(e.coordinates,fb.coordinates) as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  e 
+// The join is based on being within a certain distance
+join OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
+// Hard-coding the known Best Buy id below
+where e.id = 1428036403 and fb.shop = &#39;alcohol&#39; 
+// Ordering by distance and only showing the lowest
+order by 6 limit 1;
+</code></pre>
+<p class="image-container"><img style="width: 500.00px" src="img/eed32ff53b19762c.png"></p>
+<p>And then run:</p>
+<pre><code>// Join to electronics to find a coffee shop closer to Best Buy
+select fb.id,fb.coordinates as geom,fb.name,fb.addr_housenumber,fb.addr_street,
+st_distance(e.coordinates,fb.coordinates) as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  e 
+join OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
+where e.id = 1428036403 and fb.shop = &#39;coffee&#39; 
+order by 6 limit 1;
+</code></pre>
+<aside class="warning"><p> Make sure you style the result to make the point / lines bigger or more colorful so that you can see them.</p>
+</aside>
+<p>If you note in the result of each query, the first query found a different liquor store closer to Best Buy, whereas the second query returned the same coffee shop from your original search, so you&#39;ve optimized as much as you can.</p>
+<p class="image-container"><img style="width: 500.00px" src="img/5c5bfbb66a75df7a.png"></p>
+<aside class="warning"><p> The id of the selected Best Buy was hard coded into the above queries to keep them easier to read and to keep you focused on the join clause of these queries, rather than introducing sub queries to dynamically calculate the nearest Best Buy. Those sub queries would have created longer queries that were harder to read.</p>
+</aside>
+<aside class="special"><p> If you&#39;re feeling adventurous, go read about other possible relationship functions that could be used in the join for this scenario <a href="https://docs.snowflake.com/en/sql-reference/functions-geospatial.html" target="_blank">here</a>.</p>
+</aside>
+<h2 is-upgraded>Calculate a New Linestring</h2>
+<p>Now that you know that there is a better option for the liquor store, substitute the above liquor store query into the original linestring query to produce a different object. For visualization sake, the order of the statements in the unions have been changed, which affects the order of the points in the object.</p>
+<pre><code>with locations as (
+(select to_geography(&#39;POINT(-73.986226 40.755702)&#39;) as coordinates, 
+0 as distance_meters)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages  
+where shop = &#39;coffee&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  e 
+join OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
+where e.id = 1428036403 and fb.shop = &#39;alcohol&#39; 
+order by 2 limit 1)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  
+where name = &#39;Best Buy&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1))
+select st_makeline(st_collect(coordinates),
+to_geography(&#39;POINT(-73.986226 40.755702)&#39;)) as geom from locations;
+</code></pre>
+<p>Copy the result cell from the above query and paste it into the first layer A. You should get this:</p>
+<p class="image-container"><img style="width: 500.00px" src="img/27987f9401dd6dfe.png"></p>
+<p>Much better! This looks like a more efficient shopping path. Check the new distance by running this query:</p>
+<pre><code>with locations as (
+(select to_geography(&#39;POINT(-73.986226 40.755702)&#39;) as coordinates, 
+0 as distance_meters)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages  
+where shop = &#39;coffee&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  e 
+join OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
+where e.id = 1428036403 and fb.shop = &#39;alcohol&#39; 
+order by 2 limit 1)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  
+where name = &#39;Best Buy&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1))
+select st_makeline(st_collect(coordinates),
+to_geography(&#39;POINT(-73.986226 40.755702)&#39;)) as geom,
+st_length(geom) as distance
+from locations;
+</code></pre>
+<p class="image-container"><img style="width: 500.00px" src="img/da6700dceea03fac.png"></p>
+<p>Nice! 1537 meters, which is a savings of about 583 meters, or a third of a mile. By joining the two shop views together, you were able to find an object in one table that is closest to an object from another table to optimize your route. Now that you have a more optimized route, can you stop at any other shops along the way? Advance to the next section to find out.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Additional Calculations and Constructors" duration="15">
+        <p>The <code>LINESTRING</code> object that was created in the previous section looks like a nice, clean, four-sided polygon. As it turns out, a <code>POLYGON</code> is another geospatial object type that you can construct and work with. Where you can think of a <code>LINESTRING</code> as a border of a shape, a <code>POLYGON</code> is the filled version of the shape itself. The key thing about a <code>POLYGON</code> is that it must end at its beginning, where a <code>LINESTRING</code> does not need to return to the starting point.</p>
+<aside class="special"><p> Remember in a previous section when you added your Times Square Apartment location to both the beginning and the end of the LINESTRING? In addition to the logical explanation of returning home after your shopping trip, that point was duplicated at the beginning and end so you can construct a POLYGON in this section!</p>
+</aside>
+<h2 is-upgraded>Construct a Polygon</h2>
+<p>Constructing a <code>POLYGON</code> is done with the <code>ST_MAKEPOLYGON</code> function, just like the <code>ST_MAKELINE</code>. The only difference is where <code>ST_MAKELINE</code> makes a line out of points, <code>ST_MAKEPOLYGON</code> makes a polygon out of lines. Therefore, the only thing you need to do to the previous query that constructed the line is to wrap that construction with <code>ST_MAKEPOLYGON</code> like this:</p>
+<pre><code language="language-step_8" class="language-step_8">select st_makepolygon(st_makeline(st_collect(coordinates),
+to_geography(&#39;POINT(-73.986226 40.755702)&#39;)))
+</code></pre>
+<p>This really helps illustrate the construction progression: from individual points, to a collection of points, to a line, to a polygon. Run this query to create your polygon:</p>
+<pre><code>with locations as (
+(select to_geography(&#39;POINT(-73.986226 40.755702)&#39;) as coordinates, 
+0 as distance_meters)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages  
+where shop = &#39;coffee&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  e 
+join OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
+where e.id = 1428036403 and fb.shop = &#39;alcohol&#39; 
+order by 2 limit 1)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  
+where name = &#39;Best Buy&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1))
+select st_makepolygon(st_makeline(st_collect(coordinates),
+to_geography(&#39;POINT(-73.986226 40.755702)&#39;))) as geom
+from locations
+</code></pre>
+<p>Click on <code>(+) Add source from</code> and copy the result cell from the above query. You should get this:</p>
+<p class="image-container"><img style="width: 500.00px" src="img/e10b87e3c621c8f0.png"></p>
+<p>And just like before where you could calculate the distance of a <code>LINESTRING</code> using <code>ST_DISTANCE</code>, you can calculate the perimeter of a <code>POLYGON</code> using <code>ST_PERIMETER</code>, which you wrap around the polygon construction in the same way you wrapped around the line construction. Run this query to calculate the perimeter:</p>
+<pre><code>with locations as (
+(select to_geography(&#39;POINT(-73.986226 40.755702)&#39;) as coordinates, 
+0 as distance_meters)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages  
+where shop = &#39;coffee&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1)
+union all
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  e 
+join OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
+where e.id = 1428036403 and fb.shop = &#39;alcohol&#39; 
+order by 2 limit 1)
+union all
+(select coordinates, 
+st_distance(coordinates,to_geography(&#39;POINT(-73.986226 40.755702)&#39;))::number(6,2) 
+as distance_meters 
+from OSM_NEWYORK.NEW_YORK.v_osm_ny_shop_electronics  
+where name = &#39;Best Buy&#39; and 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+order by 2 limit 1))
+select st_makepolygon(st_makeline(st_collect(coordinates),
+to_geography(&#39;POINT(-73.986226 40.755702)&#39;))) as geom,
+st_perimeter(geom) as perimeter_meters
+from locations
+</code></pre>
+<p class="image-container"><img style="width: 500.00px" src="img/f694a913cf54390d.png"></p>
+<p>Nice! That query returned the same 1537 meters you got before as the distance of the <code>LINESTRING</code>, which makes sense, because the perimeter of a <code>POLYGON</code> is the same distance as a <code>LINESTRING</code> that constructs a <code>POLYGON</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Spatial Indexes" duration="15">
+        <h2 is-upgraded>The Scenario, Part 2</h2>
+<p>The lease for our very nice Times Square apartment has ended so we have to find a new apartment! You love coffee shops, specifically Starbucks, so let&#39;s find an area where we have the MOST Starbuck locations.</p>
+<p>Open a new map and let&#39;s map all the starbucks in NYC:</p>
+<pre><code>SELECT GEOG AS GEOM, store_name
+FROM CARTO.public.starbucks_locations_usa
+WHERE CITY = &#39;New York&#39;
+</code></pre>
+<p class="image-container"><img style="width: 500.00px" src="img/b7f85fdf1fe7c342.png"></p>
+<aside class="warning"><p> We are using a sample dataset included in the CARTO Analytics Toolbox named <code>starbucks_locations_usa</code>. You can find it under <code>PUBLIC</code>. So the full qualified name should be something like <code>CARTO.public.starbucks_locations_usa</code>.</p>
+</aside>
+<p>Now let&#39; s aggregate using a spatial index. We are going to calculate how many Starbucks locations fall within each quadkey grid cell of resolution 15. This query adds two new columns to our dataset: geom, representing the boundary of each of the Quadkey grid cells where there&#39;s at least one Starbucks, and agg_total, containing the total number of locations that fall within each cell. Finally, we can visualize the result.</p>
+<pre><code>WITH data AS (
+  SELECT carto.carto.QUADINT_FROMGEOGPOINT(geog, 15) AS qk,
+  COUNT(*) as agg_total
+  FROM carto.public.starbucks_locations_usa
+  WHERE geog IS NOT null
+  AND CITY = &#39;New York&#39;
+  GROUP BY qk
+)
+SELECT
+  qk,
+  agg_total,
+  carto.carto.QUADINT_BOUNDARY(qk) AS geom
+FROM
+  data
+</code></pre>
+<p class="image-container"><img style="width: 500.00px" src="img/1255bf9ed4c6b9f.png"></p>
+<p>You can click on the layer and go into the Fill Color palette to color by <code>agg_total</code>.</p>
+<p>Finally add widget to filter the area with the most starbucks:</p>
+<p class="image-container"><img style="width: 500.00px" src="img/c212c6cc816e234c.png"></p>
+<p>Congratulations! You have borrowed your search!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="5">
+        <p>In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the <code>GEOGRAPHY</code> data type and its associated formats work, created data files with geospatial data in it, loaded those files into new tables with <code>GEOGRAPHY</code> typed columns, and queried geospatial data using parser, constructor, transformation and calculation functions on single tables and multiple tables with joins. You then saw how newly constructed geospatial objects could be visualized in CARTO!</p>
+<p>You are now ready to explore the larger world of Snowflake <a href="https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html" target="_blank">geospatial support</a> and <a href="https://docs.snowflake.com/en/sql-reference/functions-geospatial.html" target="_blank">geospatial functions</a> as well as <a href="https://docs.carto.com/analytics-toolbox-snowflake/overview/getting-started/" target="_blank">CARTO&#39;s Analytics Toolbox for Snowflake</a>!</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<p>How to acquire a shared database from the Snowflake Marketplace.</p>
+<p>The <code>GEOGRAPHY</code> data type, its formats <code>GeoJSON</code>, <code>WKT</code>, <code>EWKT</code>, <code>WKB</code>, and <code>EWKB</code>, and how to switch between them.</p>
+<p>How to unload and load data files with geospatial data.</p>
+<p>How to use parsers like <code>ST_X</code> and <code>ST_Y</code>.</p>
+<p>How to use constructors like <code>TO_GEOGRAPHY</code>, <code>ST_MAKEPOINT</code>, <code>ST_MAKELINE</code>, and <code>ST_MAKEPOLYGON</code>.</p>
+<p>How to use a transformation like <code>ST_COLLECT</code>.</p>
+<p>How to perform measurement calculations like <code>ST_DISTANCE</code>, <code>ST_LENGTH</code>, and <code>ST_PERIMETER</code>.</p>
+<p>How to perform relational calculations like <code>ST_DWITHIN</code> and <code>ST_WITHIN</code>.</p>
+<p>How to use Spatial Indexes to Aggregate data using the CARTO Analytics Toolbox</p>
+<p>Creating Map Dashboards!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "accelerate_your_graphql_development_on_snowflake_with_hasura",
+  "duration": 20,
+  "title": "Accelerate Your GraphQL Development on Snowflake with Hasura",
+  "summary": "Instantly Build GraphQL APIs on Your Snowflake Data with Hasura",
+  "source": "accelerate_your_graphql_development_on_snowflake_with_hasura/accelerate_your_graphql_development_on_snowflake_with_hasura.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "app-development",
+    "data-engineering",
+    "featured",
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "api",
+    "gettingstarted",
+    "graphql",
+    "hasura",
+    "quickstart",
+    "rest",
+    "web"
+  ],
+  "feedback": "https://github.com/matt-hasura",
+  "url": "accelerate_your_graphql_development_on_snowflake_with_hasura"
+}

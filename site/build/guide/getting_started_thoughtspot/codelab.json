@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_thoughtspot",
+  "duration": 0,
+  "title": "Build a ReactJS app with ThoughtSpot and Snowflake",
+  "summary": "Build an interactive react app with ThoughtSpot and Snowflake",
+  "source": "getting_started_thoughtspot/getting_started_thoughtspot.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "app-development",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_thoughtspot"
+}

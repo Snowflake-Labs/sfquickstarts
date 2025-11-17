@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-snowflake-python-api",
+  "duration": 73,
+  "title": "Getting Started with the Snowflake Python API",
+  "summary": "Learn how to get started with Snowflake’s Python API to manage Snowflake objects and tasks.",
+  "source": "getting-started-snowflake-python-api/getting-started-snowflake-python-api.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-snowflake-python-api"
+}

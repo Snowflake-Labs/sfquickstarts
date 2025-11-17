@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "devops_dcm_schemachange_jenkins",
+  "duration": 54,
+  "title": "DevOps: Database Change Management with schemachange and Jenkins",
+  "summary": "This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Jenkins",
+  "source": "devops_dcm_schemachange_jenkins/devops_dcm_schemachange_jenkins.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "devops"
+  ],
+  "tags": [
+    "dataengineering",
+    "devops",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "devops_dcm_schemachange_jenkins"
+}

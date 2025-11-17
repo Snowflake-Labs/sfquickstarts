@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "connectors_example_push_based_java",
+  "duration": 44,
+  "title": "Native Connector - Java (Push Based)",
+  "summary": "Overview of building Snowflake push based connectors using Java and Native Apps.",
+  "source": "connectors_example_push_based_java/example_push_based_java_connector.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "connectors",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "connectors",
+    "nativeapps",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "connectors_example_push_based_java"
+}

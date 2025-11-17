@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python",
+  "duration": 68,
+  "title": "Leverage dbt Cloud to Generate ML ready pipelines using Snowpark python",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python/leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python"
+}

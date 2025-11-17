@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "hex-churn-model",
+  "duration": 65,
+  "title": "Churn modeling using Snowflake and Hex",
+  "summary": "This lab will walk you through how to use Snowflake and Hex.",
+  "source": "churn_modeling_in_hex/churn_modeling_in_hex.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "hex",
+    "notebooks",
+    "partnerconnect",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "hex-churn-model"
+}

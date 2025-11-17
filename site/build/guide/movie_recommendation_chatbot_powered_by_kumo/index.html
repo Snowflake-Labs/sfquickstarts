@@ -1,0 +1,828 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Personalized Movie Recommendation Chatbot Powered by Kumo in Snowflake Native App</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="movie_recommendation_chatbot_powered_by_kumo"
+                  title="Personalized Movie Recommendation Chatbot Powered by Kumo in Snowflake Native App"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this guide, you will learn how to build a personalized movie recommendation chatbot using <a href="https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo?search=kumo" target="_blank">Kumo (as a Snowflake Native App</a>), Snowflake&#39;s Cortex Search Service, Cortex AI, and Streamli<strong>t</strong>. This chatbot enhances the streaming experience by providing personalized movie recommendations based on user viewing history and movie relationships.</p>
+<p>Specifically, you will learn how to develop a chatbot that can answer the following types of queries:</p>
+<ul>
+<li><strong>Item-to-User Predictions</strong> – Personalized recommendations based on a user&#39;s past viewing history (e.g., <em>&#34;What should I watch next?&#34;</em>).</li>
+<li><strong>Item-to-Item Predictions</strong> – Identifying similar movies based on shared genres, themes, or cast members (e.g., <em>&#34;Is this movie similar to that one?&#34;</em>).</li>
+</ul>
+<p>By handling both types of queries, the chatbot enhances content discovery, helping users navigate vast streaming libraries more efficiently.</p>
+<h2 is-upgraded>What is Kumo?</h2>
+<p>Kumo is an advanced ML platform that leverages <a href="https://kumo.ai/research/graph-neural-networks-gnn/" target="_blank"><em>Graph Neural Networks (GNNs)</em></a> to deliver predictions directly from your Snowflake relational data. Kumo ML models are powered by a GNN architecture, inspired by several academic papers in recent history. Data scientists simply need to write a <a href="https://kumo.ai/docs/predictive-query" target="_blank"><em>predictive query</em></a>, and then the Kumo platform will automatically craft the proper neural architecture for their data. As a result of this approach, Kumo is able to achieve great predictive performance out of the box, across a wide range of challenging scenarios.</p>
+<p>Kumo simplifies the end-to-end ML process by eliminating the need for extensive data preparation, model tuning, and feature engineering, allowing data scientists to focus on generating valuable predictions and insights.</p>
+<p>To learn more, please visit <a href="https://docs.kumo.ai/docs/welcome-to-kumo" target="_blank">Kumo&#39;s documentation</a>.</p>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>Storing Kumo-generated movie recommendations in Snowflake</li>
+<li>Setting up Cortex Search Services for Retrieval-Augmented Generation (RAG)</li>
+<li>Using Cortex AI to retrieve relevant movie context and enhance chatbot responses</li>
+<li>Building an interactive Streamlit UI for user interactions</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>You&#39;ll create a movie recommendation chatbot built on Snowflake, powered by Kumo predictions, handling both user-to-movie and movie-to-movie queries seamlessly.</p>
+<h2 is-upgraded>Pre-requisites</h2>
+<ul>
+<li>Familiarity with <a href="https://signup.snowflake.com/" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>A valid Kumo account installed as a <a href="https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo?_fsi=RSY006de&_fsi=RSY006de" target="_blank">native Snowflake app</a></li>
+<li>Familiarity with Kumo and how to run a batch prediction. For a step-by-step guide on a similar use case, check out <a href="https://quickstarts.snowflake.com/guide/leveraging_kumo_for_smarter_recommendations/index.html?index=..%2F..index#0" target="_blank">this quickstart tutorial</a>, or refer to <a href="https://kumo.ai/docs/examples/predictive-query" target="_blank">Kumo documentation</a> for more examples.</li>
+<li>The <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 1M dataset</a> set up on Snowflake</li>
+<li>Basic understanding of how to do <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/tutorials/cortex-search-tutorial-2-chat" target="_blank">RAG on Snowflake</a></li>
+</ul>
+<aside class="special"><p> 💡 </p>
+<p>NOTE: If you haven&#39;t already done so, please <a href="https://docs.kumo.ai/docs/installing-kumo-on-spcs?_fsi=RSY006de&_fsi=RSY006de" target="_blank">follow these instructions</a> to install Kumo as a native Snowflake app.</p>
+</aside>
+<p>To improve readability, we modified the movies table by</p>
+<p>•	Splitting the title and year into separate columns.</p>
+<p>•	Reformatting genres from pipe-separated to comma-separated.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE KUMO_DB.MOVIELENS1M.NEW_MOVIES_TABLE AS
+SELECT 
+    MOVIEID,
+    TRIM(SUBSTR(TITLE, 1, LENGTH(TITLE) - 6)) AS TITLE_ONLY, 
+    CAST(SUBSTR(TITLE, LENGTH(TITLE) - 4, 4) AS INT) AS YEAR, 
+    REPLACE(GENRE, &#39;|&#39;, &#39;,&#39;) AS GENRE_MODIFIED 
+FROM 
+    KUMO_DB.MOVIELENS1M.MOVIES;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Batch Prediction Workflows in Kumo" duration="10">
+        <p>We will generate movie recommendations using two batch prediction workflows:</p>
+<ol type="1">
+<li><strong>item-to-user</strong> predictions (personalized recommendations)</li>
+<li><strong>item-to-item</strong> predictions (finding similar movies)</li>
+</ol>
+<p>These predictions will be stored in Snowflake and used to power the chatbot.</p>
+<p>While the train-validation loop is not covered here, it plays a key role in building reliable link prediction models and refining recommendations.</p>
+<h2 is-upgraded>Item-to-User</h2>
+<p>For the item-to-user batch prediction workflow, your goal is to predict top 25 movies a user is likely to rate (watch) in the next 30 days. Using Kumo, construct a graph where:</p>
+<ul>
+<li><strong>Nodes</strong> represent users and movies</li>
+<li><strong>Edges</strong> represent user-movie interactions (ratings)</li>
+</ul>
+<p><img alt="img" src="img/4ef4e7b2bf6988d2.png"> You can then run the following Predictive Query:</p>
+<pre><code>PREDICT LIST_DISTINCT(RATINGS.MOVIEID, 0, 30, days)
+RANK TOP 25
+FOR EACH USERS.USERID
+</code></pre>
+<p>After running this Predictive Query and a batch prediction workflow, you&#39;ll get two outputs:</p>
+<ul>
+<li><strong>Predictions:</strong> Top 25 movie recommendations per user</li>
+<li><strong>Embeddings:</strong> Feature representations for each user and movie</li>
+</ul>
+<p>These outputs can be exported into two Snowflake tables directly from Kumo.</p>
+<p class="image-container"><img alt="img" src="img/5bd58a08cf9ee43.png"></p>
+<p class="image-container"><img alt="img" src="img/1f87a75c002234bf.png"></p>
+<h2 is-upgraded>Item-to-Item</h2>
+<p>For the item-to-item batch prediction workflow, your goal is to generate the top 10 similar movies for each movie by analyzing co-occurrence patterns (movies rated by the same user on the same day).</p>
+<p>First, create a co-occurrence table in Snowflake:</p>
+<pre><code language="language-sql" class="language-sql">CREATE TABLE KUMO_DB.MOVIELENS1M.RATING_PAIRS AS
+SELECT
+  A.USERID,
+  A.MOVIEID AS MOVIEID1,
+  A.RATING AS RATING1,
+  B.MOVIEID AS MOVIEID2,
+  B.RATING AS RATING2,
+  CAST(A.TIMESTAMP AS DATE) AS REVIEW_DATE
+FROM
+  KUMO_DB.MOVIELENS1M.RATINGS A
+JOIN
+  KUMO_DB.MOVIELENS1M.RATINGS B
+ON
+  A.USERID = B.USERID -- Same user
+  AND CAST(A.TIMESTAMP AS DATE) = CAST(B.TIMESTAMP AS DATE) -- Same date
+  AND A.MOVIEID &lt; B.MOVIEID -- To avoid duplicates and self-pairs
+</code></pre>
+<p>Using this table and two copies of the Movies table, construct a graph connecting related movies.</p>
+<p class="image-container"><img alt="img" src="img/5978df7b86ddb552.png"></p>
+<p>You can then run the following Predictive Query:</p>
+<pre><code>PREDICT LIST_DISTINCT(RATING_PAIRS.MOVIEID2, 0, 30)
+RANK TOP 10
+FOR EACH MOVIES.MOVIEID
+</code></pre>
+<p>After running this Predictive Query and obtaining a batch prediction workflow, you will get two outputs:</p>
+<ul>
+<li><strong>Predictions:</strong> Top 10 movie predictions for each movie in the left hand side table over the next 30 days</li>
+<li><strong>Embeddings:</strong> Two sets of movie embeddings for both the left hand side and right hand side tables</li>
+</ul>
+<p>Just as in the item to user workflow, these results can be exported to two Snowflake tables directly from Kumo.</p>
+<p class="image-container"><img alt="img" src="img/c73d3e2042fcdd29.png"></p>
+<p class="image-container"><img alt="img" src="img/a67eaca221a4420f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Store Predictions in Snowflake" duration="5">
+        <p>At this stage, you should have four tables stored in Snowflake: item-to-user predictions, item-to-user embeddings, item-to-item predictions, and item-to-item embeddings. You also have the original movies and users tables from the MovieLens dataset that includes information about the movies and users themselves. In this demo, you will mainly be focusing on the movies, users, and the two predictions tables.</p>
+<p>In order to achieve the best search results, you will need to restructure our tables. The following walks through the data transformations applied on these tables.</p>
+<h2 is-upgraded>User Table</h2>
+<p>The original Users table contains multiple columns, such as age group, occupation code, etc. To simplify searches, you will consolidate this information into a single table with two columns: USER_ID and USER_INFO. The USER_INFO column will combine details from the original columns into a single descriptive entry.</p>
+<p>For instance, for an entry like this on the original customer table:</p>
+<pre><code>*{&#34;USERID&#34;: 1, &#34;GENDER&#34;:&#34;F&#34;, &#34;AGEGROUP&#34;:1, &#34;OCCUPATIONCODE&#34;:10, &#34;ZIPCODE&#34;: 48067}*
+</code></pre>
+<p>The corresponding entry in the new table would be:</p>
+<pre><code>*{&#34;USER_ID&#34;:1,&#34;USER_INFO&#34;:&#34;Customer with ID 1 is a female. They are uner 18 years old. Their occupation is K-12 student. Their zip code is &#39;48067&#39;&#34;}*
+</code></pre>
+<p>Use the following SQL command on a Snowflake worksheet to perform this transformation:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE KUMO_CHATBOT.PUBLIC.USER_INFO AS
+SELECT 
+    USERID AS USER_ID,
+    CONCAT(
+        &#39;Customer with ID &#39;, USERID, &#39; is a &#39;,
+        CASE 
+            WHEN GENDER = &#39;M&#39; THEN &#39;male&#39;
+            WHEN GENDER = &#39;F&#39; THEN &#39;female&#39;
+            ELSE &#39;unknown&#39;
+        END,
+        &#39;. They are &#39;,
+        CASE 
+            WHEN AGEGROUP = 1 THEN &#39;under 18 years old&#39;
+            WHEN AGEGROUP = 18 THEN &#39;18-24 years old&#39;
+            WHEN AGEGROUP = 25 THEN &#39;25-34 years old&#39;
+            WHEN AGEGROUP = 35 THEN &#39;35-44 years old&#39;
+            WHEN AGEGROUP = 45 THEN &#39;45-49 years old&#39;
+            WHEN AGEGROUP = 50 THEN &#39;50-55 years old&#39;
+            WHEN AGEGROUP = 56 THEN &#39;56+ years old&#39;
+            ELSE &#39;of an unknown age group&#39;
+        END,
+        &#39;. Their occupation is &#39;,
+        CASE 
+            WHEN OCCUPATIONCODE = 0 THEN &#39;other or not specified&#39;
+            WHEN OCCUPATIONCODE = 1 THEN &#39;academic/educator&#39;
+            WHEN OCCUPATIONCODE = 2 THEN &#39;artist&#39;
+            WHEN OCCUPATIONCODE = 3 THEN &#39;clerical/admin&#39;
+            WHEN OCCUPATIONCODE = 4 THEN &#39;college/grad student&#39;
+            WHEN OCCUPATIONCODE = 5 THEN &#39;customer service&#39;
+            WHEN OCCUPATIONCODE = 6 THEN &#39;doctor/health care&#39;
+            WHEN OCCUPATIONCODE = 7 THEN &#39;executive/managerial&#39;
+            WHEN OCCUPATIONCODE = 8 THEN &#39;farmer&#39;
+            WHEN OCCUPATIONCODE = 9 THEN &#39;homemaker&#39;
+            WHEN OCCUPATIONCODE = 10 THEN &#39;K-12 student&#39;
+            WHEN OCCUPATIONCODE = 11 THEN &#39;lawyer&#39;
+            WHEN OCCUPATIONCODE = 12 THEN &#39;programmer&#39;
+            WHEN OCCUPATIONCODE = 13 THEN &#39;retired&#39;
+            WHEN OCCUPATIONCODE = 14 THEN &#39;sales/marketing&#39;
+            WHEN OCCUPATIONCODE = 15 THEN &#39;scientist&#39;
+            WHEN OCCUPATIONCODE = 16 THEN &#39;self-employed&#39;
+            WHEN OCCUPATIONCODE = 17 THEN &#39;technician/engineer&#39;
+            WHEN OCCUPATIONCODE = 18 THEN &#39;tradesman/craftsman&#39;
+            WHEN OCCUPATIONCODE = 19 THEN &#39;unemployed&#39;
+            WHEN OCCUPATIONCODE = 20 THEN &#39;writer&#39;
+            ELSE &#39;unknown&#39;
+        END,
+        &#39;. Their zip code is &#39;&#39;&#39;, ZIPCODE, &#39;&#39;&#39;.&#39;
+    ) AS USER_INFO
+FROM 
+    KUMO_DB.MOVIELENS1M.USERS;
+</code></pre>
+<p>The occupation code and age group mapping are describe in the README file of the MovieLens 1M dataset.</p>
+<h2 is-upgraded>Movie Table</h2>
+<p>The original Movies table contains multiple columns, such as Title and Genre. Similar to what you did with the customer table, consolidate this information into two columns: MOVIE_ID and MOVIE_INFO.</p>
+<p>For instance, considering the following movie:</p>
+<pre><code>*{&#34;MOVIEID&#34;: 1, &#34;TITLE&#34;:&#34;Toy Story&#34;, &#34;YEAR&#34;:1995, &#34;GENRE&#34;:&#34;Animation, Children&#39;s, Comedy&#34;}*
+</code></pre>
+<p>The corresponding entry in the new table would be:</p>
+<pre><code>*{&#34;MOVIE_ID&#34;: 1, &#34;MOVIE_INFO&#34;: &#34;Movie 1 is called &#39;Toy Story&#39;. It is released in 1995. It is falls under Animation, Children&#39;s, Comedy genres&#34;}*
+</code></pre>
+<p>Use the following SQL command on a Snowflake worksheet to perform this transformation:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE KUMO_CHATBOT.PUBLIC.MOVIE_INFO AS
+SELECT 
+    MOVIEID AS MOVIE_ID,
+    CONCAT(
+        &#39;Movie &#39;, MOVIEID, &#39; is called &#39;&#39;&#39;, TITLE_ONLY, &#39;&#39;&#39;. It was released in &#39;, YEAR, 
+        &#39;. It falls under &#39;, 
+        GENRE_MODIFIED, 
+        CASE 
+            WHEN LENGTH(GENRE_MODIFIED) - LENGTH(REPLACE(GENRE_MODIFIED, &#39;,&#39;, &#39;&#39;)) = 0 THEN &#39; genre.&#39;
+            ELSE &#39; genres.&#39;
+        END
+    ) AS MOVIE_INFO
+FROM 
+    KUMO_DB.MOVIELENS1M.NEW_MOVIES_TABLE;
+</code></pre>
+<h2 is-upgraded>Item-to-User Predictions Table</h2>
+<p>In a similar vein to the users and movies tables, you will structure this table into two columns: USER_ID and a PREDICTION_DETAILS</p>
+<p>A sample entry would look as follows:</p>
+<pre><code>*{&#34;USER_ID&#34;:1,&#34;PREDICTION_DETAILS&#34;: &#34;The 1st prediction for user 1 is movie 3897 with score 12.142295837. Movie 3897 is called &#39;Almost Famous&#39;. It was released in 2000. It falls under Comedy,Drama genres. The 2nd prediction for user 1 is movie 3578 with score 11.983965874. Movie 3578 is called &#39;Gladiator&#39;. It was released in 2000. It falls under Action, ... The 25th prediction for user 1 is ...&#34;}*
+</code></pre>
+<p>Use the following SQL command on a Snowflake worksheet to perform this transformation:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE KUMO_CHATBOT.PUBLIC.MOVIE2USER_PREDICTION_WITHDETAILS AS(
+WITH RankedPredictions AS (
+    SELECT 
+        p.ENTITY AS USER_ID,
+        ROW_NUMBER() OVER (PARTITION BY p.ENTITY ORDER BY p.SCORE DESC) AS PREDICTION_RANK,
+        p.CLASS AS MOVIE_ID,
+        p.SCORE,
+        m.MOVIE_INFO
+    FROM KUMO_DB.MOVIELENS1M.ITEM_TO_USER_PREDICTIONS p
+    JOIN KUMO_CHATBOT.PUBLIC.MOVIE_INFO m ON p.CLASS = m.MOVIE_ID
+),
+PredictionDetails AS (
+    SELECT 
+        USER_ID,
+        PREDICTION_RANK,
+        CONCAT(
+            &#39;The &#39;, 
+            CASE 
+                WHEN PREDICTION_RANK % 10 = 1 AND PREDICTION_RANK NOT IN (11) THEN PREDICTION_RANK || &#39;st&#39;
+                WHEN PREDICTION_RANK % 10 = 2 AND PREDICTION_RANK NOT IN (12) THEN PREDICTION_RANK || &#39;nd&#39;
+                WHEN PREDICTION_RANK % 10 = 3 AND PREDICTION_RANK NOT IN (13) THEN PREDICTION_RANK || &#39;rd&#39;
+                ELSE PREDICTION_RANK || &#39;th&#39;
+            END,
+            &#39; prediction for user &#39;, USER_ID, 
+            &#39; is movie &#39;, MOVIE_ID, 
+            &#39; with score &#39;, SCORE, &#39;. &#39;, 
+            MOVIE_INFO
+        ) AS PREDICTION_DETAIL
+    FROM RankedPredictions
+)
+SELECT 
+    USER_ID,
+    LISTAGG(PREDICTION_DETAIL, &#39; &#39;) WITHIN GROUP (ORDER BY PREDICTION_RANK) AS PREDICTION_DETAILS
+FROM PredictionDetails
+GROUP BY USER_ID
+ORDER BY USER_ID
+)
+</code></pre>
+<h2 is-upgraded>Item-to-Item Predictions Table</h2>
+<p>You will structure this table into two columns as well: MOVIE_ID and a PREDICTION_DETAILS.</p>
+<p>A sample entry for this table would look as follows:</p>
+<pre><code>*{&#34;MOVIE_ID&#34;:1,&#34;PREDICTIONS&#34;:&#34;The 1st prediction for movie 1 is movie 1265 with score 2.741351366. Movie 1265 is called &#39;Groundhog Day&#39;. It was released in 1993. It falls under Comedy,Romance genres. The 2nd prediction for movie 1 is movie 3114 with score 2.713413... The 10th prediction for movie 1 is ...&#34;}* 
+</code></pre>
+<p>Use the following SQL command on a Snowflake worksheet to perform this transformation:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE KUMO_CHATBOT.PUBLIC.MOVIE2MOVIE_PREDICTION_WITHDETAILS AS(
+WITH RankedPredictions AS (
+    SELECT 
+        p.ENTITY AS MOVIE_ID,
+        ROW_NUMBER() OVER (PARTITION BY p.ENTITY ORDER BY p.SCORE DESC) AS PREDICTION_RANK,
+        p.CLASS AS PREDICTED_MOVIE_ID,
+        p.SCORE,
+        m.MOVIE_INFO
+    FROM 
+        KUMO_DB.MOVIELENS1M.ITEM_TO_ITEM_PREDICTIONS p
+    JOIN 
+        KUMO_CHATBOT.PUBLIC.MOVIE_INFO m 
+    ON 
+        p.CLASS = m.MOVIE_ID
+),
+PredictionDetails AS (
+    SELECT 
+        MOVIE_ID,
+        PREDICTION_RANK,
+        CONCAT(
+            &#39;The &#39;, 
+            CASE 
+                WHEN PREDICTION_RANK % 10 = 1 AND PREDICTION_RANK NOT IN (11) THEN PREDICTION_RANK || &#39;st&#39;
+                WHEN PREDICTION_RANK % 10 = 2 AND PREDICTION_RANK NOT IN (12) THEN PREDICTION_RANK || &#39;nd&#39;
+                WHEN PREDICTION_RANK % 10 = 3 AND PREDICTION_RANK NOT IN (13) THEN PREDICTION_RANK || &#39;rd&#39;
+                ELSE PREDICTION_RANK || &#39;th&#39;
+            END,
+            &#39; prediction for movie &#39;, MOVIE_ID, 
+            &#39; is movie &#39;, PREDICTED_MOVIE_ID, 
+            &#39; with score &#39;, SCORE, &#39;. &#39;, 
+            MOVIE_INFO) AS PREDICTION_DETAIL
+    FROM RankedPredictions
+)
+SELECT 
+    MOVIE_ID,
+    LISTAGG(PREDICTION_DETAIL, &#39; &#39;) WITHIN GROUP (ORDER BY PREDICTION_RANK) AS PREDICTION_DETAILS
+FROM PredictionDetails
+GROUP BY MOVIE_ID
+ORDER BY MOVIE_ID
+)
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Cortex Search Services" duration="10">
+        <p>By now, you have formatted the four tables (user information, movie information, item-to-user predictions and item-to-item predictions) and are now ready to build two Cortex Search Services one for item-to-item queries and the other for item-to-user queries.</p>
+<h2 is-upgraded>Item-to-User Search Service</h2>
+<p>The item-to-user search service queries two primary tables: <strong>item-to-user predictions</strong> and <strong>user information</strong>. It retrieves data by user_id from both tables, combines the results, and provides them as a unified output in the search service.</p>
+<p>Use the following SQL code on a Snowflake worksheet to set up this service:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE CORTEX SEARCH SERVICE KUMO_CHATBOT.PUBLIC.item_to_user_service
+ON search_text
+ATTRIBUTES ENTITY_TYPE, USER_ID
+WAREHOUSE = WAREHOUSE_SMALL
+TARGET_LAG = &#39;1 hour&#39;
+AS
+    -- Search predictions from MOVIE2USER_PREDICTIONS_ENRICHED
+    SELECT
+        &#39;PREDICTIONS&#39; AS ENTITY_TYPE,
+        USER_ID,
+        PREDICTIONS AS search_text
+    FROM
+        KUMO_CHATBOT.PUBLIC.MOVIE2USER_PREDICTION_WITHDETAILS
+
+    UNION ALL
+
+    -- Search customer info from CUSTOMER_INFO table
+    SELECT
+        &#39;USER_INFO&#39; AS ENTITY_TYPE,
+        USER_ID,
+        USER_INFO AS search_text
+    FROM
+        KUMO_CHATBOT.PUBLIC.USER_INFO;
+</code></pre>
+<p>The resulting search service enables querying across predictions and user details in a unified manner.</p>
+<h2 is-upgraded>Item-to-Item Search Service</h2>
+<p>The item-to-item search service queries two primary tables: <strong>item-to-item predictions</strong> and <strong>movie information</strong>. It retrieves data by movie_id from both tables, combines the results, and provides them as a unified output in the search service.</p>
+<p>Use the following SQL code on a Snowflake worksheet to set up this service:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE CORTEX SEARCH SERVICE KUMO_CHATBOT.PUBLIC.item_to_item_service
+ON search_text
+ATTRIBUTES ENTITY_TYPE, MOVIE_ID
+WAREHOUSE = WAREHOUSE_SMALL
+TARGET_LAG = &#39;1 hour&#39;
+AS
+    -- Search predictions from ITEM_TO_ITEM_PREDICTIONS_ENRICHED
+    SELECT
+        &#39;PREDICTIONS&#39; AS ENTITY_TYPE,
+        MOVIE_ID,
+        PREDICTIONS AS search_text
+    FROM
+        KUMO_CHATBOT.PUBLIC.MOVIE2MOVIE_PREDICTION_WITHDETAILS
+
+    UNION ALL
+
+    -- Search item information from ITEM_INFO table
+    SELECT
+        &#39;MOVIE_INFO&#39; AS ENTITY_TYPE,
+        MOVIE_ID,
+        MOVIE_INFO AS search_text
+    FROM
+        KUMO_CHATBOT.PUBLIC.MOVIE_INFO;
+
+</code></pre>
+<p>The resulting search services enable querying across predictions and movie details in a unified manner.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Classify Response" duration="5">
+        <p>With the search services registered, the next step is to integrate it with Cortex AI and Streamlit.</p>
+<p>The pipeline works as follows:</p>
+<ol type="1">
+<li><strong>Classify the user query</strong> as either item-to-item or item-to-user.</li>
+<li><strong>Call the appropriate search service</strong> based on the classification.</li>
+<li><strong>Generate the final response</strong> using Cortex AI with a Retrieval-Augmented Generation (RAG) approach.</li>
+</ol>
+<p>Note Snowflake just released Snowflake Agents in public preview, which provides an agentic approach to orchestration. In this case we&#39;ll create the flow ourselves.</p>
+<p>Below is the code to classify a given user query:</p>
+<pre><code language="language-python" class="language-python">def classify_query(model, query):
+    &#34;&#34;&#34;
+        Generates classification for given query using the specified model.
+
+        Args:
+            model(str): The name of the model to use for classification
+            prompt(str): The prompt to generate the classification for
+
+        Returns:
+            str: The generated classification
+    &#34;&#34;&#34;
+    classification_prompt = f&#34;&#34;&#34;Please classify the given user query as either item to item
+                                or item to user. If classifying as item to item, print &#34;ITEM&#34; with
+                                no additional text, and no whitespace. If classifying as item to user, print &#34;CUSTOMER&#34;
+                                with no additional text, and no whitespace. If the prompt involves a user id, it will be
+                                an item to user prompt. If the prompt involves movie ids, it will be an
+                                item to item prompt.
+                                Here is the user query: {query}
+                                Please return the appropriate classfication.
+                                
+                            &#34;&#34;&#34;
+    #st.write(classification_prompt)
+    return complete(model, classification_prompt)
+</code></pre>
+<p>You will use a user-selected model to process and classify the query with the given prompt.</p>
+<p>Once the classification is determined, the following logic is used to select the corresponding search service and generate a response:</p>
+<pre><code language="language-python" class="language-python">with st.chat_message(&#34;assistant&#34;, avatar=icons[&#34;assistant&#34;]):
+            message_placeholder = st.empty()
+            question = question.replace(&#34;&#39;&#34;, &#34;&#34;)
+            with st.spinner(&#34;Thinking...&#34;):
+                selected_search = &#34;&#34;
+                if classification == &#34;CUSTOMER&#34;:
+                    selected_search = &#34;ITEM_TO_USER_SERVICE&#34;
+                elif classification == &#34;ITEM&#34;:
+                    selected_search = &#34;ITEM_TO_ITEM_SERVICE&#34;
+                elif classification == None:
+                    selected_search = None
+                generated_response = 
+                if classification is None:
+                    generated_response = &#34;I could not classify the query. Please try again.&#34;
+                else:
+                    generated_response = complete(
+                        st.session_state.model_name, create_prompt(question, selected_search)
+                    )
+                message_placeholder.markdown(generated_response)
+
+        st.session_state.messages.append(
+            {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: generated_response}
+        )
+</code></pre>
+<p>This logic maps the classification to the appropriate search service and creates a final prompt that incorporates the query context. The final prompt is then passed to the user-selected model to generate the response.</p>
+<p>The final prompt is structured as followed:</p>
+<pre><code language="language-python" class="language-python">def create_prompt(user_question, selected_service_name):
+    &#34;&#34;&#34;
+    Create a prompt for the language model by combining the user question with context retrieved
+    from the cortex search service and chat history (if enabled). Format the prompt according to
+    the expected input format of the model.
+
+    Args:
+        user_question (str): The user&#39;s question to generate a prompt for.
+
+    Returns:
+        str: The generated prompt for the language model.
+    &#34;&#34;&#34;
+
+    customer_id = st.session_state.customer_id
+    if customer_id:
+        user_question = f&#34;[User ID: {customer_id}]{user_question}&#34;
+
+    
+    if st.session_state.use_chat_history:
+        chat_history = get_chat_history()
+        if chat_history != []:
+            question_summary = make_chat_history_summary(chat_history, user_question)
+            prompt_context = query_cortex_search_service(question_summary, selected_service_name)
+        else:
+            prompt_context = query_cortex_search_service(user_question, selected_service_name)
+    else:
+        prompt_context = query_cortex_search_service(user_question, selected_service_name)
+        chat_history = &#34;&#34;
+
+    prompt = f&#34;&#34;&#34;
+            [INST]
+            You are a helpful AI chat assistant with RAG capabilities. When a user asks you a question,
+            you will also be given context provided between &lt;context&gt; and &lt;/context&gt; tags. Use that context
+            with the user&#39;s chat history provided in the between &lt;chat_history&gt; and &lt;/chat_history&gt; tags
+            to provide a summary that addresses the user&#39;s question. Ensure the answer is coherent, concise,
+            and directly relevant to the user&#39;s question.
+
+            If the user asks a generic question which cannot be answered with the given context or chat_history,
+            just say &#34;I don&#39;t know the answer to that question.
+
+            Don&#39;t saying things like &#34;according to the provided context&#34;.
+
+            &lt;chat_history&gt;
+            {chat_history}
+            &lt;/chat_history&gt;
+            &lt;context&gt;
+            {prompt_context}
+            &lt;/context&gt;
+            &lt;question&gt;
+            {user_question}
+            &lt;/question&gt;
+            [/INST]
+            Answer:
+        &#34;&#34;&#34;
+    return prompt
+</code></pre>
+<p>This function ensures the prompt is well-structured and provides sufficient information from both chat history and context retrieved from the search service, for the model to generate accurate responses.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Put it All Together: Streamlit" duration="15">
+        <p>With the core logic in place, the final step is implementing the user interface using Streamlit. The UI code integrates the classification, search services, and response generation to provide a seamless chat experience.</p>
+<p>Below is the code for Streamlit implementation:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+from snowflake.core import Root  # requires snowflake&gt;=0.8.0
+from snowflake.snowpark.context import get_active_session
+
+# Initialize Snowflake session
+session = get_active_session()
+
+MODELS = [
+    &#34;claude-3-5-sonnet&#34;,
+    &#34;mistral-large&#34;,
+    &#34;snowflake-arctic&#34;,
+    &#34;llama3-70b&#34;,
+    &#34;llama3-8b&#34;,
+]
+
+# Initialization functions
+def init_messages():
+    if st.session_state.clear_conversation or &#34;messages&#34; not in st.session_state:
+        st.session_state.messages = []
+
+def init_customer_id():
+    if &#34;customer_id&#34; not in st.session_state:
+        st.session_state.customer_id = None
+
+def init_service_metadata():
+    if &#34;service_metadata&#34; not in st.session_state:
+        services = session.sql(&#34;SHOW CORTEX SEARCH SERVICES;&#34;).collect()
+        service_metadata = []
+        if services:
+            for s in services:
+                svc_name = s[&#34;name&#34;]
+                svc_search_col = session.sql(
+                    f&#34;DESC CORTEX SEARCH SERVICE {svc_name};&#34;
+                ).collect()[0][&#34;search_column&#34;]
+                service_metadata.append(
+                    {&#34;name&#34;: svc_name, &#34;search_column&#34;: svc_search_col}
+                )
+        st.session_state.service_metadata = service_metadata
+
+def init_config_options():
+    st.sidebar.button(&#34;Clear conversation&#34;, key=&#34;clear_conversation&#34;)
+    st.sidebar.toggle(&#34;Debug&#34;, key=&#34;debug&#34;, value=False)
+    st.sidebar.toggle(&#34;Use chat history&#34;, key=&#34;use_chat_history&#34;, value=True)
+
+    with st.sidebar.expander(&#34;Advanced options&#34;):
+        st.selectbox(&#34;Select model:&#34;, MODELS, key=&#34;model_name&#34;)
+        st.number_input(
+            &#34;Select number of context chunks&#34;,
+            value=5,
+            key=&#34;num_retrieved_chunks&#34;,
+            min_value=1,
+            max_value=10,
+        )
+        st.number_input(
+            &#34;Select number of messages to use in chat history&#34;,
+            value=5,
+            key=&#34;num_chat_messages&#34;,
+            min_value=1,
+            max_value=10,
+        )
+
+    st.sidebar.expander(&#34;Session State&#34;).write(st.session_state)
+
+# Add login feature
+def add_login_feature():
+    with st.sidebar:
+        st.header(&#34;User Login&#34;)
+        customer_id = st.text_input(
+            &#34;Enter User ID&#34;,
+            value=st.session_state.customer_id or &#34;&#34;,
+            placeholder=&#34;input ID here&#34;
+        )
+        if st.button(&#34;Log In&#34;):
+            if customer_id.strip():
+                st.session_state.customer_id = customer_id.strip()
+                st.success(f&#34;Logged in as User ID: {st.session_state.customer_id}&#34;)
+            else:
+                st.error(&#34;User ID cannot be empty.&#34;)
+        if st.session_state.customer_id:
+            if st.button(&#34;Log Out&#34;):
+                st.session_state.customer_id = None
+                st.info(&#34;Logged out.&#34;)
+
+def get_chat_history():
+    return st.session_state.get(&#34;messages&#34;, [])
+
+# Generate summary of chat history
+def make_chat_history_summary(chat_history, question):
+    &#34;&#34;&#34;
+    If chat history exists, generate a summary. Otherwise, return the question as is.
+    &#34;&#34;&#34;
+    if not chat_history:
+        return question
+    
+    prompt = f&#34;&#34;&#34;
+    [INST]
+    Based on the chat history below and the current question, generate an extended query incorporating relevant context.
+    
+    &lt;chat_history&gt;
+    {chat_history}
+    &lt;/chat_history&gt;
+    &lt;question&gt;
+    {question}
+    &lt;/question&gt;
+    [/INST]
+    &#34;&#34;&#34;
+    return complete(st.session_state.model_name, prompt)
+
+# Query cortex search service
+def query_cortex_search_service(query, user_id, selected_service_name):
+    &#34;&#34;&#34;
+    Query the selected Cortex Search Service with the given query and user ID to retrieve exact matches.
+    &#34;&#34;&#34;
+    db, schema = session.get_current_database(), session.get_current_schema()
+    cortex_search_service = (
+        root.databases[db]
+        .schemas[schema]
+        .cortex_search_services[selected_service_name]
+    )
+
+    if selected_service_name==&#34;ITEM_TO_USER_SERVICE&#34;:
+        # Since Cortex Search does not support direct filtering, the best approach is:
+        # Retrieve a larger number of results 
+        # and then Manually filter results to enforce the exact match.
+        context_documents = cortex_search_service.search(
+            query=query,
+            #filters={&#34;USER_ID&#34;:int(user_id)},
+            columns=[&#34;USER_ID&#34;, &#34;SEARCH_TEXT&#34;],
+            limit=1000 #increase retrieve limit
+        )
+        # filter down results on user_id
+        results = [r for r in context_documents.results if int(r[&#34;USER_ID&#34;]) == int(user_id)]
+    else:
+        context_documents = cortex_search_service.search(
+            query=query,
+            columns=[],
+            limit=st.session_state.num_retrieved_chunks
+    )
+        results = context_documents.results
+    if not context_documents.results:
+        return f&#34;No relevant recommendations found for USER_ID {user_id}.&#34;
+
+    # Ensure we are getting the correct column to search
+    search_col = next(
+        (s[&#34;search_column&#34;] for s in st.session_state.service_metadata if s[&#34;name&#34;] == selected_service_name),
+        None
+    )
+    if not search_col:
+        raise ValueError(f&#34;Invalid service name: {selected_service_name}&#34;)
+
+    # Combine retrieved context documents into a single string
+    context_str = &#34;\n&#34;.join(f&#34;Context document {i+1}: {r[search_col]}&#34; for i, r in enumerate(results))
+
+    if not results:
+        context_str = f&#34;No relevant recommendations found for USER_ID {user_id}&#34;
+
+    if st.session_state.debug:
+        st.sidebar.text_area(f&#34;Retrieved Context for USER_ID {user_id}&#34;, context_str, height=500)
+
+    return context_str
+    
+
+# Complete using the model
+def complete(model, prompt):
+    return session.sql(&#34;SELECT snowflake.cortex.complete(?,?)&#34;, (model, prompt)).collect()[0][0]
+
+# Classify query
+def classify_query(model, query):
+
+    classification_prompt = f&#34;&#34;&#34;Please classify the given user query as either item to item
+                                or item to user. If classifying as item to item, print &#34;ITEM&#34; with
+                                no additional text, and no whitespace. If classifying as item to user, print &#34;CUSTOMER&#34;
+                                with no additional text, and no whitespace. If the prompt involves a user id, it will be
+                                an item to user prompt. If the prompt involves movie ids, it will be an
+                                item to item prompt.
+                                Here is the user query: {query}
+                                Please return the appropriate classfication.
+                            &#34;&#34;&#34;
+    return complete(model, classification_prompt).strip()
+
+# Generate prompt for the assistant
+def create_prompt(user_question, selected_service_name):
+    customer_id = st.session_state.customer_id
+    if customer_id:
+        user_question = f&#34;[Customer ID: {customer_id}]{user_question}&#34;
+
+    if st.session_state.use_chat_history:
+        chat_history = get_chat_history()
+        question_summary = make_chat_history_summary(chat_history, user_question) if chat_history else user_question
+        prompt_context = query_cortex_search_service(question_summary,customer_id, selected_service_name)
+    else:
+        prompt_context = query_cortex_search_service(user_question, customer_id,selected_service_name)
+
+    prompt = f&#34;&#34;&#34;
+            [INST]
+            You are a helpful AI chat assistant. When a user asks you a question,
+            use the context provided below to answer it concisely and directly.
+
+            &lt;context&gt;{prompt_context}&lt;/context&gt;
+            &lt;question&gt;{user_question}&lt;/question&gt;
+            [/INST]
+            Answer:
+        &#34;&#34;&#34;
+    return prompt
+
+# Main function
+def main():
+    st.title(&#34;:speech_balloon: AI Movie Conceirge Powered by Kumo&#34;)
+
+    init_customer_id()
+    add_login_feature()
+    init_service_metadata()
+    init_config_options()
+    init_messages()
+
+    icons = {&#34;assistant&#34;: &#34;❄️&#34;, &#34;user&#34;: &#34;👤&#34;}
+
+    for message in st.session_state.messages:
+        with st.chat_message(message[&#34;role&#34;], avatar=icons[message[&#34;role&#34;]]):
+            st.markdown(message[&#34;content&#34;])
+
+    disable_chat = &#34;service_metadata&#34; not in st.session_state
+    if question := st.chat_input(&#34;How can I help you today?...&#34;, disabled=disable_chat):
+        st.session_state.messages.append({&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: question})
+        with st.chat_message(&#34;user&#34;, avatar=icons[&#34;user&#34;]):
+            st.markdown(question)
+
+        with st.chat_message(&#34;assistant&#34;, avatar=icons[&#34;assistant&#34;]):
+            message_placeholder = st.empty()
+            with st.spinner(&#34;Thinking...&#34;):
+                classification = classify_query(st.session_state.model_name, question)
+                selected_service = &#34;ITEM_TO_USER_SERVICE&#34; if classification == &#34;CUSTOMER&#34; else &#34;ITEM_TO_ITEM_SERVICE&#34;
+                generated_response = complete(
+                    st.session_state.model_name, create_prompt(question, selected_service)
+                )
+                message_placeholder.markdown(generated_response)
+
+        st.session_state.messages.append({&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: generated_response})
+
+if __name__ == &#34;__main__&#34;:
+    session = get_active_session()
+    root = Root(session)
+    main()
+</code></pre>
+<p>Refer to <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/tutorials/cortex-search-tutorial-2-chat" target="_blank">Snowflake&#39;s tutorial on RAG</a> for more information about the other components of this code.</p>
+<p>The final user interface looks like:</p>
+<p class="image-container"><img alt="img" src="img/a14f698464008e8b.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Conclusion</h2>
+<p>We ran two batch prediction workflows on Kumo, prepared the data with necessary preprocessing, created two search services to support a Retrieval-Augmented Generation (RAG) approach, and integrated these components with Cortex AI and Streamlit to build a complete user interface.</p>
+<p>By leveraging Kumo, Cortex AI, and Streamlit, we created an AI Movie Concierge that enhances streaming experiences with personalized and contextual recommendations.</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>How to generate item-to-item and item-to-user predictions using Kumo</li>
+<li>How to process prediction results, user and movie information to optimize search</li>
+<li>How to build Cortex search services</li>
+<li>How to classify user queries and select the proper search service</li>
+<li>How to build a user interface using Streamlit</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.kumo.ai/docs/" target="_blank">Kumo Documentation</a></li>
+<li><a href="https://docs.kumo.ai/docs/installing-kumo-on-spcs" target="_blank">Installing Kumo on SPCS</a></li>
+<li><a href="https://docs.kumo.ai/docs/troubleshooting-and-support" target="_blank">Kumo Native Snowflake App Troubleshooting Guide</a></li>
+<li><a href="https://docs.kumo.ai/docs/tutorial" target="_blank">Predictive Query Tutorial</a></li>
+<li><a href="https://docs.kumo.ai/docs/primary-commands" target="_blank">Predictive Query Reference</a></li>
+</ul>
+<p>If you have any questions, reach out to your Kumo account manager or Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Suppress existing customers from a Youtube campaign with Hightouch and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake"
+                  title="Suppress existing customers from a Youtube campaign with Hightouch and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Hightouch helps marketers activate their customer data from Snowflake to over 125 different applications.  The <a href="https://hightouch.com/blog/what-is-data-activation" target="_blank">Data Activation</a> platform, powered by Reverse ETL, provides both a SQL-based UI as well as a no-code <a href="https://hightouch.com/platform/audiences" target="_blank">audience builder</a> to help teams across an organization complete what is now being called the &#34;last mile&#34; of the <a href="https://hightouch.com/blog/reverse-etl-bringing-the-modern-data-stack-full-circle" target="_blank">Modern Data Stack</a>.</p>
+<p class="image-container"><img alt="Snowflake and Hightouch stack" src="img/e32f19247c9f16f4.jpg"></p>
+<p>Audience targeting strategies have become increasingly important in modern marketing due to the rising cost of advertising and the increasing expectations of consumers. While there are <a href="https://hightouch.com/blog/driving-paid-media-roas-through-audience-activation" target="_blank">many ways</a> organizations can target customers, one of the simplest strategies to optimize advertising spend is suppression audiences.</p>
+<p>A suppression audience is a group of customers who are excluded from a marketing campaign to ensure that they do not see irrelevant ads. Suppression audiences can be created using various segments, such as current customers, churned customers, or those with low purchasing propensity. The idea behind suppression audiences is simple: you define who you do not want to target with your ads. By excluding certain groups from your campaign, you can focus on delivering relevant marketing to your desired audience. There are several reasons a company might want to suppress or exclude existing purchasers from their ad campaign. Firstly, it may be a product, like a subscription, that can only be purchased once. Another reason is that you may simply want to use different messaging for different audiences. Existing customers may be excluded in one campaign and exclusively targeted in another. Finally, it may be a product with a long replenishment cycle, so that purchasers are excluded from messaging for a certain amount of time after their purchase.</p>
+<p>In this Quickstart, we will cover this last example, a suppression audience use-case where recent purchasers are added as an excluded (suppression) audience segment in a Youtube campaign run through Google Ads. Leveraging existing customer data in Snowflake, we will build a purchaser audience with Hightouch&#39;s no-code audience builder and sync an audience of users who recently made a purchase to Google Ads.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Basic experience with Snowflake and SQL</li>
+<li>Access to <a href="https://hightouch.com/get-started" target="_blank">Hightouch</a> with the <a href="https://hightouch.com/docs/audiences/overview" target="_blank">Audiences</a> feature enabled. Reach out for a <a href="https://hightouch.com/demo" target="_blank">demo</a> if needed.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create test data in Snowflake</li>
+<li>How to connect Hightouch to Snowflake</li>
+<li>How to create an audience in Hightouch and Sync it to Google Ads</li>
+<li>How to suppress audiences in Google Ads for Youtube campaigns</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An audience for suppression within Google Ads</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your audience within Snowflake &amp; connect Hightouch" duration="4">
+        <p>First, you need to have the data that you want to push prepared within Snowflake.</p>
+<h2 is-upgraded>Log in to Snowflake</h2>
+<p>If you already have a Snowflake account, you can use your credentials to log in.  If you do not already have an account, you can visit [https://signup.snowflake.com/]https://signup.snowflake.com/ to sign up for a 30-day free trial.  You will want to make sure that the account you use in Snowflake has the permissions to create a new database, schema, and warehouse to be used by Hightouch.</p>
+<h2 is-upgraded>Set-up Hightouch through Partner Connect</h2>
+<p>You can set up a database, schema, and warehouse for use with Hightouch by setting up Hightouch through Partner Connect in Snowsight.  See the [https://hightouch.com/blog/hightouch-snowflake-partner-connect](detailed instructions) on the Hightouch Blog for more details.</p>
+<ol type="1">
+<li>Click the <strong>Partner Connect</strong> tab under <strong>Admin</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Partner Connect" src="img/72fe7f4daaf609c.png"></p>
+<ol type="1" start="2">
+<li>Search for Hightouch (or scroll to the <strong>Data Integration</strong> section), and select it.</li>
+</ol>
+<p class="image-container"><img alt="Select Hightouch" src="img/f9f509b29d85efae.png"></p>
+<ol type="1" start="3">
+<li>View the Database, Warehouse, User, and Role that will be created for the integration, and click <strong>Launch</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Click Launch" src="img/13fe609775e2a1fd.png"></p>
+<ol type="1" start="4">
+<li>When the creation is complete, you will see a pop-up telling you that the creation has finished.  Click <strong>Activate</strong> to be taken to Hightouch to log in.</li>
+</ol>
+<p class="image-container"><img alt="Click Activate" src="img/b50215b9319f2331.png"></p>
+<ol type="1" start="5">
+<li>Log in to Hightouch using your Hightouch credentials, and you will have a Data Source from Snowflake created in Hightouch.</li>
+</ol>
+<h2 is-upgraded>Create test data</h2>
+<p>First, we need to create a database and schema to hold the data.</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE HIGHTOUCH_QUICKSTART;
+CREATE SCHEMA HIGHTOUCH_QUICKSTART.DEMO;
+
+USE HIGHTOUCH_QUICKSTART.DEMO;
+</code></pre>
+<p>Next, we create the customers and sales data, and a view to unify them to make the audience.</p>
+<pre><code language="language-sql" class="language-sql">-- create customer list
+CREATE OR REPLACE TABLE customers AS
+SELECT sha1(seq4()) as user_id,
+  &#39;user&#39;||seq4()||&#39;_&#39;||uniform(1, 3, random(1))||&#39;@email.com&#39; as email,
+    case when uniform(1,6,random(2))=1 then &#39;Less than $20,000&#39;
+       when uniform(1,6,random(2))=2 then &#39;$20,000 to $34,999&#39;
+       when uniform(1,6,random(2))=3 then &#39;$35,000 to $49,999&#39;
+       when uniform(1,6,random(2))=3 then &#39;$50,000 to $74,999&#39;
+       when uniform(1,6,random(2))=3 then &#39;$75,000 to $99,999&#39;
+  else &#39;Over $100,000&#39; end as household_income,
+  round(18+uniform(0,10,random(3))+uniform(0,50,random(4)),-1)+5*uniform(0,1,random(5)) as age_band,
+    case when uniform(1,10,random(6))&lt;4 then &#39;Single&#39;
+       when uniform(1,10,random(6))&lt;8 then &#39;Married&#39;
+       when uniform(1,10,random(6))&lt;10 then &#39;Divorced&#39;
+  else &#39;Widowed&#39; end as marital_status
+  FROM table(generator(rowcount =&gt; 100000));
+
+-- verify the data
+select * from customers;
+
+-- create random sales for those customers
+CREATE OR REPLACE TABLE sales AS
+select sha1(uniform(1, 100000, random(3)))::varchar(40) as user_id
+  ,dateadd(second, uniform(1, 5256576, random(4)), (&#39;2022-09-01&#39;::timestamp)) as sale_timestamp
+  ,uniform(10000,20000,random(5)) as cost_cents
+from table(generator(rowcount=&gt;50000));
+
+-- verify the data
+select * from sales;
+
+-- create a view for easy lookup
+create or replace view PC_HIGHTOUCH_DB.public.customer_sales as
+select c.user_id, c.email, c.household_income, c.age_band, c.marital_status,
+ max(s.sale_timestamp) as latest_sale, sum(cost_cents)/100 as ltv_dollars
+from HIGHTOUCH_QUICKSTART.DEMO.customers c
+ inner join HIGHTOUCH_QUICKSTART.DEMO.sales s on s.user_id=c.user_id
+group by c.user_id, c.email, c.household_income, c.age_band, c.marital_status;
+
+-- verify the data
+select * from customer_sales;
+</code></pre>
+<p>Now we need to grant access to the view to Hightouch.</p>
+<pre><code language="language-sql" class="language-sql">GRANT SELECT ON VIEW PC_HIGHTOUCH_DB.public.customer_sales TO ROLE PC_HIGHTOUCH_ROLE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create audience and configure destination in Hightouch" duration="8">
+        <p>Now that we have our test data, we can create the audience in Hightouch and push it to Google Ads.  Connecting to Hightouch from Snowflake via Partner Connect already created the data source within Hightouch.</p>
+<h2 is-upgraded>Creating a Google Ads destination</h2>
+<p>To push data to Google Ads for use with a Youtube campaign, we need to create a destination.</p>
+<ol type="1">
+<li>Navigate to destinations and click <strong>Add Destination</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Add destination" src="img/763c6be0dbf53cf9.png"></p>
+<ol type="1" start="2">
+<li>Search for Google Ads, select it, and click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Select Google Ads" src="img/a5d0d8281236e79c.png"></p>
+<ol type="1" start="3">
+<li>Log in to Google Ads to authorize the connection. Once authorized, click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Login to Google Ads" src="img/4e9d50b9b12978fb.png"><img alt="Continue after login" src="img/c360b8a928a50ab5.png"></p>
+<ol type="1" start="4">
+<li>Name the destination (ex. Sample Google Ads Destination) and then click <strong>Finish</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Name destination" src="img/87fcfd0d60de6fae.png"></p>
+<h2 is-upgraded>Create a Parent Model</h2>
+<p>A parent model must first be defined for Hightouch to understand what Snowflake data to query. <em>The creation of a parent model is a one time setup that can be ignored if already completed.</em></p>
+<ol type="1">
+<li>Navigate to Audiences and click <strong>Configure parent model</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Configure parent model" src="img/2986faae4923c7a4.png"></p>
+<ol type="1" start="2">
+<li>Select your Snowflake data source.</li>
+</ol>
+<p class="image-container"><img alt="Select data source" src="img/947e3f88bce83122.png"></p>
+<ol type="1" start="3">
+<li>You will be presented with multiple options for setting up your parent model. For this Quickstart, select the <strong>Select a Table or View option</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Select Table or View" src="img/6e8430ddecb912f4.png"></p>
+<ol type="1" start="4">
+<li>Define your customer table by selecting the table that you&#39;d like to build the model off of - in this case, the Customer Sales Table we created earlier in the Quickstart. Once selected, click <strong>Preview</strong> to ensure the data is available, and then click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Select Customer Sales" src="img/f9f875589dd95551.png"></p>
+<ol type="1" start="5">
+<li>Finalize the parent model settings by naming the model (Customer Sales), and defining your Primary Key (User_ID). Additionally, select your Content Label Fields which will display when previewing members of this audience (Email and UserId) and then click <strong>Finish</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Finalize parent model" src="img/45ea04f26ee9f4ee.png"></p>
+<p><em>Note: Hightouch supports a number of entity relationships like </em><a href="https://hightouch.com/blog/audience-builder-upgrade" target="_blank"><em>Related Models</em></a><em> and Event Models to enable more complex targeting, however we are going to just leverage a parent model in this Quickstart. For more information, visit: </em><a href="https://hightouch.com/docs/audiences/schema" target="_blank"><em>https://hightouch.com/docs/audiences/schema</em></a>.</p>
+<h2 is-upgraded>Create Purchaser Audience</h2>
+<p>With the parent model defined, users can now leverage Hightouch&#39;s no-code audience builder to create any audience of customers.</p>
+<ol type="1">
+<li>Navigate to the <strong>Audiences</strong> tab and click on <strong>Add audience</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Add audience" src="img/a02f136f5057c9dd.png"></p>
+<ol type="1" start="2">
+<li>Select the parent model of interest (in this case Customer Sales).</li>
+</ol>
+<p class="image-container"><img alt="Select parent model" src="img/bbd928c1ca5ccc98.png"></p>
+<ol type="1" start="3">
+<li>Add the segmentation logic to identify those who have purchased within the last two months by clicking <strong>Add condition</strong>, then <strong>Have a property</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Add condition" src="img/5231f2e3de619758.png"></p>
+<ol type="1" start="4">
+<li>Click <strong>Select property</strong>, <strong>Latest Sale</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Select property" src="img/a8b912c081ae5c5.png"></p>
+<ol type="1" start="5">
+<li>Set the date criteria to be <strong>after previous 2 months</strong>.</li>
+</ol>
+<p class="image-container"><img alt="After previous 2 months" src="img/2803573761d9c7ff.png"></p>
+<ol type="1" start="6">
+<li>Click <strong>Preview results</strong> to see the users who will be included in the audience.</li>
+</ol>
+<p class="image-container"><img alt="Preview results" src="img/815efd91e26d8a6e.png"></p>
+<ol type="1" start="7">
+<li>Once previewed, click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Continue after preview" src="img/bdce1f7771864803.png"></p>
+<ol type="1" start="8">
+<li>Name the audience &#34;Recent Purchasers,&#34; and then click <strong>Finish</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Finish audience" src="img/1d7d0b4e242e0658.png"></p>
+<h2 is-upgraded>Sync Audience to Google Ads</h2>
+<p>With the audience now created, we need to configure how often it is pushed to Google Ads for use with the Youtube campaign.</p>
+<ol type="1">
+<li>Click on the recent-purchasers audience we just created and then click <strong>Add a sync</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Add sync" src="img/45b05729f1e0f744.png"></p>
+<ol type="1" start="2">
+<li>Select the Google Ads destination that we set up previously.</li>
+</ol>
+<p class="image-container"><img alt="Select Google destination" src="img/a1f0c6c0ed8cb6e2.png"></p>
+<ol type="1" start="3">
+<li>Select the Google Ads account you would like to sync the audience to.</li>
+<li>Select <strong>Customer match user list</strong> as the sync type.</li>
+</ol>
+<p class="image-container"><img alt="Customer match user list" src="img/6caae109a5d4fab5.png"></p>
+<ol type="1" start="5">
+<li>Set your user list type as &#34;Contact_Info&#34;.</li>
+<li>Map the email column in the audience to the destination.</li>
+</ol>
+<p class="image-container"><img alt="Map email" src="img/70fe3748dc09b9b7.png"></p>
+<ol type="1" start="7">
+<li>Select <strong>Create a new user list</strong>.</li>
+<li>Under &#34;Would you like Hightouch to automatically hash your PII data?&#34; select &#34;Yes, automatically hash PII for me.&#34; Then click <strong>Continue</strong>.</li>
+<li>Select the type of schedule for sending data. It should be set depending on how often the data changes and the cadence of your campaign. For this example, we can select &#34;Interval&#34; and select every 12 hours to sync the data twice daily.</li>
+</ol>
+<p class="image-container"><img alt="Map email" src="img/c11540cfff6070fb.png"></p>
+<ol type="1" start="6">
+<li>Click <strong>Finish</strong>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Suppressing audience within YouTube campaign" duration="0">
+        <p>This section will tell you how to exclude the audience from your Youtube campaign using Google Ads.  For more details, see the <a href="https://support.google.com/google-ads/answer/2549058?hl=en" target="_blank">Google documentation</a>.</p>
+<ol type="1">
+<li>Click on the <strong>Audiences</strong> tab.</li>
+<li>Click <strong>Edit Exclusions</strong>.</li>
+<li>Under the &#34;Exclude from&#34; drop-down menu, select the campaign you want this audience excluded from.</li>
+<li>Click the checkmark next to the audience that has synced from Hightouch.</li>
+<li>Click <strong>Save Audience Segment Exclusions</strong>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Especially in challenging macroeconomic environments, it is important that ad campaigns are targeted to the right people. In this example, we showed how we could use Snowflake and Hightouch to suppress recent purchasers from an ad campaign running with YouTube.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to create test data in Snowflake</li>
+<li>How to connect Hightouch to Snowflake</li>
+<li>How to create an audience in Hightouch and Sync it to Google Ads</li>
+<li>How to suppress audiences in Google Ads for Youtube campaigns</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

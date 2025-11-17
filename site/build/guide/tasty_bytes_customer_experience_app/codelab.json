@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_customer_experience_app",
+  "duration": 32,
+  "title": "Tasty Bytes - Enhance Customer Experience Using Unstructured Data",
+  "summary": "This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience.",
+  "source": "tasty_bytes_customer_experience_app/tasty_bytes_customer_experience_app.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "tasty-bytes",
+    "cortex"
+  ],
+  "tags": [
+    "gettingstarted",
+    "snowflakecortex",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_customer_experience_app"
+}

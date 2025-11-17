@@ -1,0 +1,537 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Running Apache Airflow on SPCS</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="airflow-spcs"
+                  title="Running Apache Airflow on SPCS"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this guide, we will be walking you through how to deploy Apache Airflow application with Celery Executor in Snowpark Container Services.</p>
+<p>This application is made up of the following containers:</p>
+<ul>
+<li><strong>Airflow Webserver</strong>: Provides a user interface for managing and monitoring workflows. It allows users to trigger tasks, view logs, and visualize DAGs (Directed Acyclic Graphs).</li>
+<li><strong>Airflow Scheduler</strong>: Monitors the DAGs and schedules the tasks to run. It determines the order of task execution based on the dependencies defined in the DAGs.</li>
+<li><strong>Airflow Workers</strong>: Executes tasks distributed by the Airflow scheduler using Celery for parallel processing.</li>
+<li><strong>Postgres</strong>: Serves as the metadata database, storing the state of the DAGs, task instances, users, roles, and other operational data necessary for Airflow to function.</li>
+<li><strong>Redis</strong>:Acts as a message broker, facilitating communication between the scheduler and the Celery workers. It queues the tasks that the scheduler hands off to the workers for execution.</li>
+</ul>
+<p>Together, these components enable efficient scheduling, execution, and monitoring of complex workflows in Airflow.</p>
+<p class="image-container"><img alt="Architecture" src="img/2555c7e1415ceae6.png"></p>
+<p>Here is a summary of what you will be doing in each step by following this quickstart:</p>
+<ul>
+<li><strong>Setup Environment</strong>: Setup deidicated Airflow SPCS database,schema, role, compute pools, Image repository etc.</li>
+<li><strong>SnowGIT Integration</strong>: Sync your Airflow environment with your Github repo to scan for DAG files.</li>
+<li><strong>Build Docker Images</strong>: Build Airflow, Postgres, Redis &amp; Git Docker images and push them to Snowflake image repository</li>
+<li><strong>Create Service Specifications</strong>: Create Service specification files for Airflow Service, Redis Service, Postgres Service and upload these files to Snowflake Internal stage.</li>
+<li><strong>Create Services</strong>: Create Airflow, Redis, Postgres services</li>
+<li><strong>Run DAG</strong>: Run a sample DAG</li>
+<li><strong>Clean up</strong>: If you don&#39;t plan to explore other tutorials, you should remove billable resources you created.</li>
+</ul>
+<h2 is-upgraded>What is Apache Airflow?</h2>
+<p>Apache Airflow is an open-source platform to programmatically author, schedule, and monitor workflows. Using Directed Acyclic Graphs (DAGs), Airflow allows users to define workflows as code, ensuring flexibility, scalability, and maintainability. It&#39;s widely used in various scenarios, from ETL processes and data pipeline automation to machine learning model training and deployment.</p>
+<p>Learn more about <a href="https://airflow.apache.org/docs/" target="_blank">Apache Airflow</a>.</p>
+<h2 is-upgraded>What is Snowpark Container Services?</h2>
+<p>Snowpark Container Services (SPCS) is a feature provided by Snowflake that allows users to run containerized workloads within the Snowflake environment. It is designed to enable the execution of custom code and applications in a scalable and efficient manner, leveraging the Snowflake data platform&#39;s infrastructure</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview/" target="_blank">Snowpark Container Services</a>.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>Apache Airflow application with Celery Executor, using a PostgreSQL database as the metadata store backed by block storage, and persisting task logs in a Snowflake internal stage.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>The working mechanics of Snowpark Container Services</li>
+<li>How to build and push a containerized Docker image to SPCS along with code and other files</li>
+<li>How to create SnowGIT integration with your Github repository</li>
+<li>How to create External Access Integration</li>
+<li>How to deploy Apache Airflow with Celery Executor in SPCS</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with access to SnowPark Container Services.</li>
+<li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker</a> installed locally for building images.</li>
+<li>Basic knowledge of Apache Airflow and containerized deployments.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <h2 is-upgraded>Create Snowflake Objects</h2>
+<p>Log into <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> using your credentials to create Snowflake objects.</p>
+<ol type="1">
+<li>In a new SQL worksheet, run the following SQL commands to complete <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/common-setup#introduction" target="_blank">Common Setup for SPCS</a>.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE ROLE airflow_admin_rl;
+
+CREATE DATABASE IF NOT EXISTS airflow_db;
+GRANT OWNERSHIP ON DATABASE airflow_db TO ROLE airflow_admin_rl COPY CURRENT GRANTS;
+
+CREATE OR REPLACE WAREHOUSE airflow_wh WITH
+  WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+GRANT USAGE ON WAREHOUSE airflow_wh TO ROLE airflow_admin_rl;
+
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE airflow_admin_rl;
+
+GRANT ROLE airflow_admin_rl TO USER &lt;user_name&gt;;
+
+</code></pre>
+<ol type="1" start="2">
+<li>In the same SQL worksheet, run the following SQL commands to create <a href="https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool" target="_blank">compute pool</a> for each of the Airflow services (Webserver, Scheduler, Celery Worker, Redis and Postgres).</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+/* Compute pool for host Postgres and Redis services */
+CREATE COMPUTE POOL postgres_redis
+  MIN_NODES = 1
+  MAX_NODES = 1
+  INSTANCE_FAMILY = CPU_X64_S;
+
+/* Compute pool for Airflow Webserver and Scheduler services */
+CREATE COMPUTE POOL airflow_server
+  MIN_NODES = 1
+  MAX_NODES = 1
+  INSTANCE_FAMILY = CPU_X64_S;
+
+/* Compute pool for Airflow Workers, set max_nodes to 2 for auto scaling */
+CREATE COMPUTE POOL airflow_workers
+  MIN_NODES = 1
+  MAX_NODES = 2
+  INSTANCE_FAMILY = CPU_X64_S;
+
+/* Grant access on these compute pools to role airflow_admin_rl */
+GRANT USAGE, MONITOR ON COMPUTE POOL postgres_redis to ROLE airflow_admin_rl;
+GRANT USAGE, MONITOR ON COMPUTE POOL airflow_server to ROLE airflow_admin_rl;
+GRANT USAGE, MONITOR ON COMPUTE POOL airflow_workers to ROLE airflow_admin_rl;
+</code></pre>
+<p class="image-container"><img alt="Compute Pools" src="img/c56e0e385f0cfacb.png"></p>
+<ol type="1" start="3">
+<li>Run the following SQL commands in SQL worksheet to create <a href="https://docs.snowflake.com/en/sql-reference/sql/create-image-repository" target="_blank">image repository</a> to upload docker images for these services, also create <a href="https://docs.snowflake.com/en/sql-reference/sql/create-stage" target="_blank">internal stage</a> to upload service specification files.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE airflow_admin_rl;
+USE DATABASE airflow_db;
+USE WAREHOUSE airflow_wh;
+
+CREATE SCHEMA IF NOT EXISTS airflow_schema;
+USE SCHEMA airflow_db.airflow_schema;
+CREATE IMAGE REPOSITORY IF NOT EXISTS airflow_repository;
+CREATE STAGE IF NOT EXISTS service_spec DIRECTORY = ( ENABLE = true );
+</code></pre>
+<ol type="1" start="4">
+<li>Create Snowflake secret objects to store passwords for Postgres, Redis and <a href="https://airflow.apache.org/docs/apache-airflow/stable/security/secrets/fernet.html#fernet" target="_blank">Airflow Fernet Key</a>. Refer to this <a href="https://airflow.apache.org/docs/apache-airflow/stable/security/secrets/fernet.html#generating-fernet-key" target="_blank">document</a> to generate Fernet Key.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+
+CREATE SECRET airflow_fernet_key
+    TYPE = password
+    username = &#39;airflow_fernet_key&#39;
+    password = &#39;########&#39;
+    ;
+
+CREATE SECRET airflow_postgres_pwd
+    TYPE = password
+    username = &#39;postgres&#39;
+    password = &#39;########&#39;
+    ;
+
+CREATE SECRET airflow_redis_pwd
+    TYPE = password
+    username = &#39;airflow&#39;
+    password = &#39;########&#39;
+    ;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SnowGIT and External Access Integration" duration="5">
+        <ol type="1">
+<li>Create a <a href="https://docs.snowflake.com/en/developer-guide/git/git-setting-up" target="_blank">SnowGIT integration</a>. You will use this integration in the Airflow service to scan for DAG files from the repository. As soon as a DAG file is added or updated in the GitHub repo, it will be made available to the Airflow UI.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+
+/* create a secret object to store Github personal access token */
+CREATE OR REPLACE SECRET git_airflow_secret
+  TYPE = password
+  USERNAME = &#39;&lt;username&gt;&#39;
+  PASSWORD = &#39;patghp_token&#39;
+  ;
+
+GRANT USAGE ON SECRET git_airflow_secret  TO ROLE accountadmin;
+
+USE ROLE accountadmin;
+CREATE OR REPLACE API INTEGRATION airflow_git_api_integration
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = (&#39;https://github.com/my-account&#39;)
+  ALLOWED_AUTHENTICATION_SECRETS = (airflow_db.airflow_schema.git_airflow_secret)
+  ENABLED = TRUE;
+
+GRANT USAGE ON INTEGRATION airflow_git_api_integration TO ROLE airflow_admin_rl;
+
+USE ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+
+CREATE OR REPLACE GIT REPOSITORY airflow_dags_repo
+  API_INTEGRATION = airflow_git_api_integration
+  GIT_CREDENTIALS = airflow_db.airflow_schema.git_airflow_secret
+  ORIGIN = &#39;https://github.com/my-account/repo.git&#39;;
+
+SHOW GIT BRANCHES IN airflow_dags_repo;
+
+/* we will mount this stage as a volume to the Airflow service. git-sync container copies the DAGs to this stage. */
+CREATE STAGE IF NOT EXISTS airflow_dags ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+
+/* we will mount this stage as a volume to the Airflow service where it will store task logs. */
+CREATE STAGE IF NOT EXISTS airflow_logs ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+</code></pre>
+<p class="image-container"><img alt="SnowGIT" src="img/39e3ddc780347f22.png"></p>
+<ol type="1" start="2">
+<li>In SPCS by default outbound traffic is disabled. To enable it you will have to create a <a href="https://docs.snowflake.com/en/sql-reference/sql/create-network-rule" target="_blank">Netwrok Rule</a> and <a href="https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration" target="_blank">External Access Integration</a>. This integration will be  passed as an input to Airflow Service.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+
+CREATE OR REPLACE NETWORK RULE airflow_spcs_egress_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = (
+  &#39;my-account.snowflakecomputing.com&#39;,
+  &#39;api.slack.com&#39;,
+  &#39;hooks.slack.com&#39;,
+  &#39;events.pagerduty.com&#39;);
+
+GRANT USAGE ON NETWORK RULE airflow_spcs_egress_rule TO ROLE accountadmin;
+
+USE ROLE accountadmin;
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION airflow_spcs_egress_access_integration
+  ALLOWED_NETWORK_RULES = (airflow_db.airflow_schema.airflow_spcs_egress_rule)
+  ENABLED = true;
+
+GRANT USAGE ON  INTEGRATION airflow_spcs_egress_access_integration to role airflow_admin_rl;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Docker Images" duration="15">
+        <p>In this section you will be build the docker images and push them to Snowflake Image Repository.</p>
+<ol type="1">
+<li>Make sure you have the URL of the repository where you want to upload the images. To get this URL, you can execute the SHOW IMAGE REPOSITORIES command, using SnowSQL CLI or the Snowsight web interface. The command returns the repository URL, including the organization name and the account name.</li>
+<li>Open a terminal window, and change to the directory of your choice.</li>
+<li>Clone the GitHub repository.</li>
+</ol>
+<pre><code>git clone https://github.com/Snowflake-Labs/spcs-templates.git
+</code></pre>
+<ol type="1" start="4">
+<li>Go to <code>airflow-spcs</code> directory. This directory has Dockerfiles for Airflow, Postgres, Redis and Git.</li>
+<li>To enable Docker to upload images on your behalf to your image repository, you must use the docker login command to authenticate to the Snowflake registry:</li>
+</ol>
+<pre><code>docker login &lt;registry_hostname&gt; -u &lt;username&gt;
+</code></pre>
+<p><em>Note: The &lt;registry_hostname&gt; is the hostname part of the repository URL. For example, myorg-myacct.registry.snowflakecomputing.com. </em> is your Snowflake username. Docker will prompt you for your password.</p>
+<ol type="1" start="6">
+<li>Build Airflow Image. The base image used in Dockerfile is <code>apache/airflow:slim-2.7.3-python3.10</code>. If you want to use an another version of Airflow you can update the Dockerfile for the same.</li>
+</ol>
+<pre><code>docker build  --rm --platform linux/amd64 -t &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/airflow:2.7.3 -f ./airflow/airflow/Dockerfile .
+</code></pre>
+<ol type="1" start="7">
+<li>Build Postgres Image. The base image used in Dockerfile is <code>postgres:14.10</code>.</li>
+</ol>
+<pre><code>docker build  --rm --platform linux/amd64 -t &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/postgres:14.10 -f ./airflow/postgres/Dockerfile .
+</code></pre>
+<ol type="1" start="8">
+<li>Build Redis Image. The base image used in Dockerfile is <code>redis:7.0</code>.</li>
+</ol>
+<pre><code>docker build  --rm --platform linux/amd64 -t &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/redis:7.0 -f ./airflow/redis/Dockerfile .
+</code></pre>
+<ol type="1" start="9">
+<li>Build git-sync Image.</li>
+</ol>
+<pre><code>docker build  --rm --platform linux/amd64 -t &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/gitsync:latest -f ./airflow/git-sync/Dockerfile .
+</code></pre>
+<ol type="1" start="10">
+<li>Push images to Snowflake Image Repository</li>
+</ol>
+<pre><code>docker push &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/airflow:2.7.3
+docker push &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/postgres:14.10
+docker push &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/redis:7.0
+docker push &lt;registry_hostname&gt;/airflow_db/airflow_schema/airflow_repository/gitsync:latest
+</code></pre>
+<ol type="1" start="11">
+<li>Run this command to list the images in Snowflake Image Repository.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+SHOW IMAGES IN IMAGE REPOSITORY airflow_repository;
+</code></pre>
+<p class="image-container"><img alt="Image Repository" src="img/cfc29067d85d05b5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Service Specification files" duration="5">
+        <p>In each of the service directory of the cloned repository you will see <code>.template</code> files. We rendere these <code>.template</code> files by running <code>render_template.py</code> script. It uses values from <code>values.yaml</code> file. You can modify values in <code>values.yaml</code> file to customize the application as per your needs.</p>
+<ol type="1">
+<li>Open a terminal window, and change directory to <code>airflow-spcs/airflow/template</code></li>
+<li>Run below script, it will generate <code>airflow/airflow_server.yaml</code>, <code>airflow/airflow_worker.yaml</code>, <code>postgres/postgres.yaml</code>, <code>redis/redis.yaml</code> and  <code>git-sync/gitsync.yaml</code> files.</li>
+</ol>
+<pre><code language="language-python" class="language-python">python render_template.py
+</code></pre>
+<ol type="1" start="3">
+<li>Upload these specification files to <code>@airflow_db.airflow_schema.service_spec</code>. You can upload directly from Snowsight or you can use <a href="https://docs.snowflake.com/en/user-guide/snowsql" target="_blank">SnowSQL CLI</a> to upload from terminal.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE  ROLE airflow_admin_rl;
+put file://~/airflow_spcs/redis/redis.yaml @airflow_db.airflow_schema.service_spec AUTO_COMPRESS=FALSE OVERWRITE=TRUE; 
+put file://~/airflow_spcs/postgres/postgres.yaml @airflow_db.airflow_schema.service_spec AUTO_COMPRESS=FALSE OVERWRITE=TRUE; 
+put file://~/airflow_spcs/airflow/airflow_server.yaml @airflow_db.airflow_schema.service_spec AUTO_COMPRESS=FALSE OVERWRITE=TRUE; 
+put file://~/airflow_spcs/airflow/airflow_worker.yaml @airflow_db.airflow_schema.service_spec AUTO_COMPRESS=FALSE OVERWRITE=TRUE; 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Services" duration="8">
+        <p>Run below commands in Snowsight to create Redis, Postgres, Airflow services.</p>
+<pre><code language="language-sql" class="language-sql">USE  ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+
+/* creates Postgres service */
+CREATE SERVICE postgres_service
+  IN COMPUTE POOL postgres_redis
+  FROM @service_spec
+  SPECIFICATION_FILE=&#39;postgres.yaml&#39;
+  MIN_INSTANCES=1
+  MAX_INSTANCES=1;
+
+/* check status of the service */
+SELECT SYSTEM$GET_SERVICE_STATUS(&#39;postgres_service&#39;);
+/* check container logs of the service */
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;postgres_service&#39;, &#39;0&#39;,&#39;postgres&#39;);
+</code></pre>
+<p class="image-container"><img alt="Postgres Log" src="img/3e97ca86ee2c7fa3.png"></p>
+<pre><code language="language-sql" class="language-sql">/* creates Redis service */
+CREATE SERVICE redis_service
+  IN COMPUTE POOL postgres_redis
+  FROM @service_spec
+  SPECIFICATION_FILE=&#39;redis.yaml&#39;
+  MIN_INSTANCES=1
+  MAX_INSTANCES=1;
+
+/* check status of the service */
+SELECT SYSTEM$GET_SERVICE_STATUS(&#39;redis_service&#39;);
+/* check container logs of the service */
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;redis_service&#39;, &#39;0&#39;,&#39;redis&#39;);
+</code></pre>
+<p class="image-container"><img alt="Redis Log" src="img/de61ee65025b1ccd.png"></p>
+<pre><code language="language-sql" class="language-sql">/* creates Airflow webserver, Scheduler and Git-Sync services */
+CREATE SERVICE airflow_service
+  IN COMPUTE POOL airflow_server
+  FROM @service_spec
+  SPECIFICATION_FILE=&#39;airflow_server.yaml&#39;
+  MIN_INSTANCES=1
+  MAX_INSTANCES=1
+  EXTERNAL_ACCESS_INTEGRATIONS = (airflow_spcs_egress_access_integration);
+
+/* check status of the service */
+SELECT SYSTEM$GET_SERVICE_STATUS(&#39;airflow_service&#39;);
+/* check container logs of the service */
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;airflow_service&#39;, &#39;0&#39;,&#39;webserver&#39;);
+</code></pre>
+<p class="image-container"><img alt="Webserver Log" src="img/a17594554b550463.png"></p>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$GET_SERVICE_LOGS(&#39;airflow_service&#39;, &#39;0&#39;,&#39;scheduler&#39;);
+</code></pre>
+<p class="image-container"><img alt="Scheduler Log" src="img/bf9570447ac498a9.png"></p>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$GET_SERVICE_LOGS(&#39;airflow_service&#39;, &#39;0&#39;,&#39;git-sync&#39;);
+/* creates Airflow Workers service */
+CREATE SERVICE airflow_worker
+  IN COMPUTE POOL airflow_workers
+  FROM @service_spec
+  SPECIFICATION_FILE=&#39;airflow_worker.yaml&#39;
+  MIN_INSTANCES=1
+  MAX_INSTANCES=2
+  EXTERNAL_ACCESS_INTEGRATIONS = (airflow_spcs_egress_access_integration);
+
+/* check status of the service */
+SELECT SYSTEM$GET_SERVICE_STATUS(&#39;airflow_worker&#39;);
+/* check container logs of the service */
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;airflow_worker&#39;, &#39;0&#39;,&#39;worker&#39;);
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;airflow_worker&#39;, &#39;1&#39;,&#39;worker&#39;);
+</code></pre>
+<p class="image-container"><img alt="Worker Log" src="img/40dfef31b9d18cfa.png"></p>
+<p>If you have changed Docker image or changed service specification files, run below command to restart the service with latest changes.</p>
+<pre><code language="language-sql" class="language-sql">USE  ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+ALTER SERVICE airflow_worker FROM @service_spec SPECIFICATION_FILE=&#39;airflow_worker.yaml&#39;;
+</code></pre>
+<p>You can share this app with other Snowflake roles within the same account. Run the below grant command for the same.</p>
+<pre><code language="language-sql" class="language-sql">USE  ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+GRANT SERVICE ROLE airflow_service!ALL_ENDPOINTS_USAGE TO ROLE &lt;role-name&gt;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run a DAG" duration="5">
+        <p>Once all the services have created successfully and the containers are in running state, run the below command in Snowsight to get the endpoint for Airflow UI.</p>
+<pre><code language="language-sql" class="language-sql">USE  ROLE airflow_admin_rl;
+USE SCHEMA airflow_db.airflow_schema;
+SHOW ENDPOINTS IN SERVICE airflow_service;
+</code></pre>
+<p class="image-container"><img alt="End Points" src="img/7b3482a31b402d.png"></p>
+<p>Copy <code>webserver</code> container <code>ingress_url</code> to the browser, after successful authentication you will be redirected to Airflow Login page.</p>
+<p class="image-container"><img alt="Airflow Login" src="img/e53153361f500362.png"></p>
+<p>Pass the credentials as <code>airflow/airflow</code>. You will be redirected to Airflow DAGs home page.</p>
+<p>In the home page, you will be seeing below two DAGs which are extracted from Snowflake stage <code>@airflow_db.airflow_schema.airflow_dags</code> mounted as a volume to Airflow containers.</p>
+<p class="image-container"><img alt="Airflow DAGs" src="img/b2f9347a299e8023.png"></p>
+<p>Enable <code>sample_python_dag</code>, this should run once.</p>
+<p class="image-container"><img alt="Sample DAG" src="img/affa1840b9ee2e7.png"></p>
+<p>Task Logs are persisted in Snowflake&#39;s internal stage <code>@airflow_db.airflow_schema.airflow_logs</code></p>
+<p class="image-container"><img alt="Task Logs" src="img/e1927feef4c1f728.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean up" duration="2">
+        <p>Snowflake charges for the Compute Pool nodes that are active for your account. (See <a href="https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-compute-pool" target="_blank">Working With Compute Pools</a>). To prevent unwanted charges, first stop all services that are currently running on a compute pool. Then, either suspend the compute pool (if you intend to use it again later) or drop it.</p>
+<ol type="1">
+<li>Stop all the services on the compute pool</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE airflow_admin_rl;
+ALTER COMPUTE POOL postgres_redis STOP ALL;
+ALTER COMPUTE POOL airflow_server STOP ALL;
+ALTER COMPUTE POOL airflow_workers STOP ALL;
+</code></pre>
+<ol type="1" start="2">
+<li>Drop the compute pool</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">DROP COMPUTE POOL postgres_redis;
+DROP COMPUTE POOL airflow_server;
+DROP COMPUTE POOL airflow_workers;
+</code></pre>
+<ol type="1" start="3">
+<li>Clean up the image registry (remove all images), drop SnowGIT repository and the internal stage objects(remove specifications)</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">DROP IMAGE REPOSITORY airflow_repository;
+DROP GIT REPOSITORY airflow_dags_repo;
+DROP STAGE service_spec;
+DROP STAGE airflow_logs;
+DROP STAGE airflow_dags;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Additional Consideration" duration="5">
+        <p>Steps to Integrate Airflow with Okta for RBAC.</p>
+<ol type="1">
+<li>In Airflow Dockerfile (<code>/airflow/airflow/Dockerfile</code>) uncomment below line and save the file. Build the docker image and push it to Snowflake image repository</li>
+</ol>
+<pre><code>#ADD --chown=airflow:root ./airflow/airflow/webserver_config.py /opt/airflow/webserver_config.py
+</code></pre>
+<ol type="1" start="2">
+<li>Create Snowflake secret object to store Okta app <code>Client_Id</code> and <code>Client_Secret</code></li>
+<li>In <code>/template/values.yaml</code> file uncomment below secret objects also set <code>AIRFLOW__WEBSERVER__AUTHENTICATE</code> and  <code>AIRFLOW__WEBSERVER__RBAC</code> variables to True.</li>
+</ol>
+<pre><code>      # - snowflakeSecret: airflow_db.airflow_schema.airflow_user
+      #   secretKeyRef: password
+      #   envVarName: SNOWFLAKE_CONNECTIONS_SNOWHOUSE_PASSWORD
+      # - snowflakeSecret: airflow_db.airflow_schema.airflow_spcs_okta
+      #   secretKeyRef: username
+      #   envVarName: AIRFLOW_WEB_CLIENT_ID
+      # - snowflakeSecret: airflow_db.airflow_schema.airflow_spcs_okta
+      #   secretKeyRef: password
+      #   envVarName: AIRFLOW_WEB_CLIENT_SECRET
+      AIRFLOW__WEBSERVER__AUTHENTICATE: False # Change its value to True if you are planning to put the UI behind Okta
+      AIRFLOW__WEBSERVER__RBAC: False # Change its value to True if you are planning to put the UI behind Okta
+</code></pre>
+<ol type="1" start="4">
+<li>Run <code>rendere_templates.py</code> script and upload <code>airflow_server.yaml</code> file to <code>@service_spec</code> stage. Once done, restart <code>airflow_server</code> service.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations! You&#39;ve successfully hosted Apache Airflow with Celery Executor on Snowpark Container Services. Running Airflow on Snowpark Container Services simplifies the process of setting up a robust, production-ready orchestration environment. By leveraging Snowflake&#39;s integrated ecosystem and scalable infrastructure, you can focus on building and managing your data workflows without the overhead of traditional deployment complexities. Start leveraging the power of Airflow on SPCS today and experience the benefits of a seamless, efficient deployment process.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>The working mechanics of Snowpark Container Services</li>
+<li>How to build and push a containerized Docker image to SPCS along with code and data files</li>
+<li>How to create SnowGIT integration with your Github repository</li>
+<li>How to create External Access Integration</li>
+<li>How to deploy Apache Airflow with Celery Executor in SPCS</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://airflow.apache.org/docs/" target="_blank">Apache Airflow</a></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-celery/stable/celery_executor.html" target="_blank">Celery Executor</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview/" target="_blank">Snowpark Container Services</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/git/git-setting-up" target="_blank">SnowGIT</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-secret" target="_blank">Snowflake Secret Objects</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

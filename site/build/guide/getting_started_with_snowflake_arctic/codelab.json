@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_snowflake_arctic",
+  "duration": 30,
+  "title": "A Getting Started Guide With Snowflake Arctic and Snowflake Cortex",
+  "summary": "This guide provides the instructions for writing a Streamlit application that uses Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and Snowflake Cortex task-specific LLM functions to perform operations like translate text between languages or score the sentiment of a piece of text.",
+  "source": "getting_started_with_snowflake_arctic/getting_started_with_snowflake_arctic.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "getting_started_with_snowflake_arctic"
+}

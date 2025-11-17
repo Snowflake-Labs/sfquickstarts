@@ -1,16 +1,15 @@
 author: Anthony Melatti
 id: doc-ai-invoice-reconciliation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/document-ai
+language: en
 summary: Snowflake Document AI for Automated Invoice Reconciliation
-categories: document-ai, Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Unstructured Data, Data Engineering, Document AI, Document Extraction, Invoice Reconciliation
 
 # Document AI Invoice Reconciliation
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This QuickStart is designed to help you build out an automated invoice reconciliation pipeline in Snowflake using Document AI, which is designed for seamless and reusable document processing. The pipeline enables users to load their invoice files into a Snowflake stage and leverages streams, tasks, and Document AI's Table Extraction feature for efficient data extraction, validation, and downstream integration.
 
@@ -55,7 +54,6 @@ Additionally, you can create your own customized, fine-tuned Document AI model t
 
 <!-- ------------------------ -->
 ## Snowflake Environment
-Duration: 10
 
 The `docai_invoice_qs_setup.sql` script is designed to set up the necessary environment for the Document AI pipeline. When executed in your Snowflake account, it will:
 - Create a new role called **DOC_AI_QS_ROLE** and assign it the appropriate permissions for DocAI + building an automated pipeline.
@@ -73,7 +71,6 @@ This will configure the necessary infrastructure to support invoice ingestion an
 
 <!-- ------------------------ -->
 ## Document AI Model
-Duration: 20 
 
 Download sample documents from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation). These AI-generated sample invoices will be used to demonstrate processing multiple Document AI models in a single pipeline.
 
@@ -113,7 +110,6 @@ For this quickstart, we don't need to train our Document AI model before publish
 
 <!-- ------------------------ -->
 ## Invoice Reconciliation Pipeline
-Duration: 15
 
 The `docai_invoice_qs_reconcile.sql` script is designed to set up the infrastructure for the invoice reconciliation layers, as well as kick it off by supplying invoice data to our bronze database. When executed in your Snowflake account, it will:
 - Create two stored procedures **SP_RUN_ITEM_RECONCILIATION()** and **SP_RUN_TOTALS_RECONCILIATION()** that contain our invoice reconciliation logic.

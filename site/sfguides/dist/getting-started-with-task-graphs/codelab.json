@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-task-graphs",
+  "duration": 12,
+  "title": "Getting Started with Snowflake Task Graphs",
+  "summary": "This quickstart sets up an example Snowflake task graph to showcase its features.",
+  "source": "getting-started-with-task-graphs/getting-started-with-task-graphs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-task-graphs"
+}

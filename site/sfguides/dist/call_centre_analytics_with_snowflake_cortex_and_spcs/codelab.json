@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "call_centre_analytics_with_snowflake_cortex_and_spcs",
+  "duration": 35,
+  "title": "Call Centre Analytics with Snowflake Cortex LLM and Snowpark Container Services",
+  "summary": "This guide will provide step-by-step details for building call centre analytics using Snowflake Cortex LLM functions and Snowpark Container Services",
+  "source": "call_centre_analytics_with_snowflake_cortex_and_spcs/call_centre_analytics_with_snowflake_cortex_and_spcs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "gen-ai"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "call_centre_analytics_with_snowflake_cortex_and_spcs"
+}

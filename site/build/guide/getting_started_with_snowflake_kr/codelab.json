@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_snowflake_kr",
+  "duration": 90,
+  "title": "Snowflake 시작하기 - 제로부터 Snowflake까지",
+  "summary": "This is a broad introduction of Snowflake and covers how to login, run queries, and load data.",
+  "source": "getting_started_with_snowflake_kr/getting_started_with_snowflake.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "kr",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowflake_kr"
+}

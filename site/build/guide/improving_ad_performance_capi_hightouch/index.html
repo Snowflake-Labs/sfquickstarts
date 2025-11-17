@@ -1,0 +1,233 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Improving ad performance with Facebook&#39;s Conversion API (CAPI), using Hightouch and Snowflake.</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="improving_ad_performance_capi_hightouch"
+                  title="Improving ad performance with Facebook&#39;s Conversion API (CAPI), using Hightouch and Snowflake."
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Hightouch helps marketers activate their customer data from Snowflake to over 125 different applications.  The <a href="https://hightouch.com/blog/what-is-data-activation" target="_blank">Data Activation</a> platform, powered by Reverse ETL, provides both a SQL-based UI as well as a no-code <a href="https://hightouch.com/platform/audiences" target="_blank">audience builder</a> to help teams across an organization complete what is now being called the &#34;last mile&#34; of the <a href="https://hightouch.com/blog/reverse-etl-bringing-the-modern-data-stack-full-circle" target="_blank">Modern Data Stack</a>.</p>
+<p class="image-container"><img alt="Snowflake and Hightouch stack" src="img/e32f19247c9f16f4.jpg"></p>
+<p>Performance marketing and data teams leverage Hightouch to integrate Snowflake with Facebook&#39;s <a href="https://hightouch.com/blog/the-marketers-guide-to-facebook-capi" target="_blank">Conversions API (CAPI)</a>. CAPI provides a reliable solution for tracking and sharing customer interactions with Facebook, overcoming the challenges posed by ad blockers, cookie restrictions, and evolving privacy policies.</p>
+<p>Rather than relying on the Facebook pixel, with Hightouch, you can send events directly from Snowflake to Facebook CAPI. Doing so allows you to enrich your conversion events with your rich first-party data in Snowflake to send better signals that unlock better audience targeting, attribution reporting, and campaign optimization.</p>
+<p>Check out this <a href="https://hightouch.com/blog/the-power-of-conversion-apis" target="_blank">webinar</a> to learn more about the importance of server-side conversion signals.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Basic experience with Snowflake and SQL</li>
+<li>Access to a <a href="https://app.snowflake.com" target="_blank">Snowflake account</a> with user and event data.</li>
+<li>Access to <a href="https://hightouch.com/" target="_blank">Hightouch</a>.</li>
+<li>Access to a Facebook ads account.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to connect Hightouch to Snowflake and Facebook</li>
+<li>How to select the data you&#39;ll sync to Facebook</li>
+<li>How to sync data from Snowflake  to Facebook&#39;s Conversion API (CAPI)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A recurring sync of enriched purchase events from Snowflake to Facebook CAPI</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example use-case" duration="0">
+        <p>Imagine you&#39;re a retailer using Facebook ads to drive traffic to your online and brick-and-mortar stores. You currently rely on the Facebook pixel to track user behaviors like page views, add to cart, and purchase events. However, recent changes in iOS tracking and the prevalence of ad-blockers are causing the pixel to miss conversions. Additionally, the Facebook pixel doesn&#39;t account for in-store purchases, which drive a significant portion of your sales.</p>
+<p>To address these challenges, you can leverage Hightouch to send conversion events enriched with first-party data from Snowflake to Facebook&#39;s Conversion API, improving the accuracy and effectiveness of your campaigns.</p>
+<p class="image-container"><img alt="Hightouch CAPI architecture" src="img/a4bd5d4dc5956f3c.png"></p>
+<p>In this Quickstart, we will cover sending conversion events to Facebook. Leveraging our event data in Snowflake, in addition to propensity models and first-party data, we will, in just a few minutes, setup automated and observable pipelines that can be replicated across to other paid media platforms.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Hightouch to Snowflake" duration="4">
+        <p>First, you need to have the data that you want to push prepared within Snowflake.</p>
+<h2 is-upgraded>Log in to Snowflake</h2>
+<p>If you already have a Snowflake account, you can use your credentials to log in.  If you do not already have an account, you can visit [https://signup.snowflake.com/]https://signup.snowflake.com/ to sign up for a 30-day free trial.  You will want to make sure that the account you use in Snowflake has the permissions to create a new database, schema, and warehouse to be used by Hightouch.</p>
+<h2 is-upgraded>Set-up Hightouch through Partner Connect</h2>
+<p>You can set up a database, schema, and warehouse for use with Hightouch by setting up Hightouch through Partner Connect in Snowsight.  See the [https://hightouch.com/blog/hightouch-snowflake-partner-connect](detailed instructions) on the Hightouch Blog for more details.</p>
+<ol type="1">
+<li>Click the <strong>Partner Connect</strong> tab under <strong>Admin</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Partner Connect" src="img/72fe7f4daaf609c.png"></p>
+<ol type="1" start="2">
+<li>Search for Hightouch (or scroll to the <strong>Data Integration</strong> section), and select it.</li>
+</ol>
+<p class="image-container"><img alt="Select Hightouch" src="img/f9f509b29d85efae.png"></p>
+<ol type="1" start="3">
+<li>View the Database, Warehouse, User, and Role that will be created for the integration, and click <strong>Launch</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Click Launch" src="img/13fe609775e2a1fd.png"></p>
+<ol type="1" start="4">
+<li>When the creation is complete, you will see a pop-up telling you that the creation has finished.  Click <strong>Activate</strong> to be taken to Hightouch to log in.</li>
+</ol>
+<p class="image-container"><img alt="Click Activate" src="img/b50215b9319f2331.png"></p>
+<ol type="1" start="5">
+<li>Log in to Hightouch using your Hightouch credentials, and you will have a Data Source from Snowflake created in Hightouch.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Hightouch to Facebook" duration="8">
+        <p>Next, we will connect Hightouch to Facebook to allow it to push data from Snowflake to Facebok.</p>
+<h2 is-upgraded>Creating a Facebook destination</h2>
+<p>To push data to Facebook for CAPI, we need to create a destination.</p>
+<ol type="1">
+<li>Navigate to destinations and click <strong>Add Destination</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Add destination" src="img/763c6be0dbf53cf9.png"></p>
+<ol type="1" start="2">
+<li>Search for Facebook Conversions, select it, and click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Search for Facebook Conversions" src="img/978bfaa4a69c63a6.png"></p>
+<ol type="1" start="3">
+<li>Connect to Facebook with 0Auth. This will open up a new window to input your credentials. Once done, click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Connect with OAuth" src="img/3a5682b4c7570443.png"></p>
+<ol type="1" start="4">
+<li>Enter your access token and pixel ID (more info <a href="https://developers.facebook.com/docs/marketing-api/conversions-api/get-started/" target="_blank">here</a>) and then click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Enter access token" src="img/edd98eedfadf4b5c.png"></p>
+<ol type="1" start="5">
+<li>Name the destination (ex. Facebook CAPI Destination) and then click <strong>Finish</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Name the destination" src="img/a4909d358c712ceb.png"></p>
+<h2 is-upgraded>Choose the data to sync to Facebook</h2>
+<p>Next, you want to create and define your data model. You can define your data using either a SQL editor, table selector, or your existing dbt models. For this scenario, we&#39;ll be using the SQL Editor.</p>
+<ol type="1">
+<li>Navigate to models in Hightouch and click <strong>Add model</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Add model" src="img/fb1dca4e033a06c6.png"></p>
+<ol type="1" start="2">
+<li>Select the Snowflake data source you connected earlier and click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Select data source" src="img/8fefd3ffeb8a12c8.png"></p>
+<ol type="1" start="3">
+<li>Select the SQL Editor.</li>
+</ol>
+<p class="image-container"><img alt="SQL Editor" src="img/75ee87a15990aade.png"></p>
+<ol type="1" start="4">
+<li>Input a query that joins your events table onto your customer table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM public.events e
+LEFT JOIN public.customer c ON e.customer_id = c.customer_id
+</code></pre>
+<p><em>Note: each row should be a unique event with a unique event ID and timestamp (within the last 7 days). You can additionally include any of the server event parameters or custom data parameters below. The more customer information you&#39;re able to provide, the higher the likelihood that Facebook will match events to the correct user profiles.</em></p>
+<ol type="1" start="5">
+<li>Click <strong>Preview</strong> to verify your model output looks good, then hit <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Preview model" src="img/556369d2a8cc2ba0.png"></p>
+<ol type="1" start="6">
+<li>Then name your model, select your primary key, and click <strong>Finish</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Name model" src="img/a58152d856ad37d8.png"></p>
+<h2 is-upgraded>Setup your sync from Snowflake to Facebook</h2>
+<p>With the model created, it&#39;s time to create your sync to Facebook.</p>
+<ol type="1">
+<li>Navigate to <strong>Syncs</strong> from the model you just created.</li>
+</ol>
+<p class="image-container"><img alt="Click Syncs" src="img/d155c1a85d819499.png"></p>
+<ol type="1" start="2">
+<li>Click <strong>Add a sync</strong></li>
+<li>Select your Facebook CAPI destination and click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Select destination" src="img/650e8a5807897d9e.png"></p>
+<ol type="1" start="4">
+<li>Select the Facebook CAPI account that you set up and choose which columns you want to sync to Facebook.</li>
+</ol>
+<p class="image-container"><img alt="Map columns" src="img/5c55e53a74a95615.png"></p>
+<ol type="1" start="5">
+<li>If you&#39;re dealing with PII data you can configure Hightouch automatically hash your data.</li>
+</ol>
+<p class="image-container"><img alt="Hash PII" src="img/7d80e92f0badd6ea.png"></p>
+<ol type="1" start="6">
+<li>After you&#39;ve mapped your columns, you can set your sync schedule. You have several choices on how to schedule the sync with Facebook. For example, it could happen on a set interval or with a CRON expression.</li>
+</ol>
+<p class="image-container"><img alt="Set sync schedule" src="img/6674cbacd2e70f9a.png"></p>
+<ol type="1" start="7">
+<li>With your sync configured, simply click <strong>Run</strong> and your audience will begin syncing to Facebook. By sending these enriched events with first-party data, Facebook will now be able to match your events to user profiles more effectively.</li>
+</ol>
+<p class="image-container"><img alt="Run sync" src="img/540755aba5ac024a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>By implementing Facebook Conversions API (CAPI) with Snowflake and Hightouch, you can in just a matter of minutes setup a flexible and observable solution to routing conversion events to any paid media platform. This integration will enable you to harness the full power of Facebook&#39;s advertising platform and improve the effectiveness of your campaigns.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to connect Snowflake to Hightouch</li>
+<li>How to connect Hightouch to</li>
+<li>How to create a model in Hightouch</li>
+<li>How to setup a sync to Facebook CAPI with Hightouch</li>
+</ul>
+<h2 is-upgraded>Additional resources</h2>
+<ul>
+<li><a href="https://hightouch.com/playbooks/send-better-signals-with-facebook-conversion-api" target="_blank">Hightouch Playbook: Send Better Signals with the Facebook Conversion API</a></li>
+<li><a href="https://hightouch.com/blog/the-power-of-conversion-apis" target="_blank">Hightouch Blog: The Power of Conversion APIs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

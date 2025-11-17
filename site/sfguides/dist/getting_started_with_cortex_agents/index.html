@@ -1,0 +1,217 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Agents</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_cortex_agents"
+                  title="Getting Started with Cortex Agents"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Modern organizations face the challenge of managing both structured data (like metrics and KPIs) and unstructured data (such as customer conversations, emails, and meeting transcripts). The ability to analyze and derive insights from both types of data is crucial for understanding customer needs, improving processes, and driving business growth.</p>
+<p>In this quickstart, you&#39;ll learn how to build an Intelligent Sales Assistant that leverages Snowflake&#39;s capabilities for analyzing sales conversations and metrics. Using Cortex Agents and Streamlit, we&#39;ll create an interactive and intuitive assistant.</p>
+<h2 is-upgraded>What is Snowflake Cortex?</h2>
+<p>The platform leverages three powerful Snowflake Cortex capabilities:</p>
+<h3 is-upgraded>Cortex Analyst</h3>
+<ul>
+<li>Converts natural language questions into SQL queries</li>
+<li>Understands semantic models defined in YAML files</li>
+<li>Enables querying data without writing SQL manually</li>
+<li>Handles complex analytical questions about sales metrics</li>
+<li>Achieves over 90% accuracy through user-generated semantic models that capture domain knowledge and business context</li>
+</ul>
+<h3 is-upgraded>Cortex Search</h3>
+<ul>
+<li>Delivers best-in-class search performance through a hybrid approach combining semantic and keyword search</li>
+<li>Leverages an advanced embedding model (E5) to understand complex semantic relationships</li>
+<li>Enables searching across unstructured data with exceptional accuracy and speed</li>
+<li>Supports real-time indexing and querying of large-scale text data</li>
+<li>Returns contextually relevant results ranked by relevance scores</li>
+</ul>
+<h3 is-upgraded>Cortex Agents</h3>
+<p>The Cortex Agents is a stateless REST API endpoint that:</p>
+<ul>
+<li>Seamlessly combines Cortex Search&#39;s hybrid search capabilities with Cortex Analyst&#39;s 90%+ accurate SQL generation</li>
+<li>Streamlines complex workflows by handling: <ul>
+<li>Context retrieval through semantic and keyword search</li>
+<li>Natural language to SQL conversion via semantic models</li>
+<li>LLM orchestration and prompt management</li>
+</ul>
+</li>
+<li>Enhances response quality through: <ul>
+<li>In-line citations to source documents</li>
+<li>Built-in answer abstaining for irrelevant questions</li>
+<li>Multi-message conversation context management</li>
+</ul>
+</li>
+<li>Optimizes application development with: <ul>
+<li>Single API call integration</li>
+<li>Streamed responses for real-time interactions</li>
+<li>Reduced latency through efficient orchestration</li>
+</ul>
+</li>
+</ul>
+<p>These capabilities work together to:</p>
+<ol type="1">
+<li>Search through sales conversations for relevant context</li>
+<li>Go from Text to SQL to answer analytical questions</li>
+<li>Combine structured and unstructured data analysis</li>
+<li>Provide natural language interactions with your data</li>
+</ol>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Setting up a sales intelligence database in Snowflake</li>
+<li>Creating and configuring Cortex Search services</li>
+<li>Building a Streamlit interface for sales analytics</li>
+<li>Implementing semantic search for sales conversations</li>
+<li>Creating a question-answering system using LLMs</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A full-stack application that enables users to:</p>
+<ul>
+<li>Search through sales conversations using semantic similarity</li>
+<li>Analyze sales metrics and patterns</li>
+<li>Ask questions about sales data and get AI-powered responses</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>Before you begin, make sure you have the following:</p>
+<ul>
+<li><strong>Snowflake Account</strong>: Access to Snowflake with sufficient privileges to create databases, schemas, tables, and upload files. You will also need to set up an RSA public key for the user in (Snowflake)[https://app.snowflake.com].</li>
+<li><strong>Cortex Agents Access</strong>: You will need access to Snowflake Cortex service, <strong>Cortex Agents</strong>, <strong>Cortex Search</strong>, and <strong>Cortex Analyst</strong> features.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Workspace" duration="10">
+        <p><strong>Step 1.</strong> In Snowsight, create a SQL Worksheet and open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom.</p>
+<p>This script will:</p>
+<ul>
+<li>Create the database, schema, and warehouse</li>
+<li>Create tables for sales conversations and metrics</li>
+<li>Load sample sales data</li>
+<li>Enable change tracking for real-time updates</li>
+<li>Configure Cortex Search service</li>
+<li>Create a stage for semantic models</li>
+</ul>
+<p><strong>Step 2.</strong> Upload the semantic model:</p>
+<ul>
+<li>Download <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml" target="_blank">sales_metrics_model.yaml</a>(NOTE: Do NOT right-click to download.)</li>
+<li>Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS</li>
+<li>Click &#34;+ Files&#34; in the top right</li>
+<li>Browse and select sales_metrics_model.yaml file</li>
+<li>Click &#34;Upload&#34;</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit Application" duration="15">
+        <p><strong>Step 1.</strong> Click on <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py" target="_blank">Intelligent Sales Assistant Streamlit App</a>. (NOTE: Do NOT right-click to download.)</p>
+<p><strong>Step 2.</strong> In your Snowflake account:</p>
+<ul>
+<li>On the left hand navigation menu, click on Streamlit</li>
+<li>On the top left click the <strong>Streamlit App</strong></li>
+<li>In the Create Streamlit App dialog, select <strong>sales_intelligence</strong> for your database and <strong>data</strong> as your schema</li>
+<li>Select your <strong>Warehouse</strong></li>
+<li>Click on Create button</li>
+</ul>
+<aside class="special"><p> Make sure your database and schema match the ones created in the setup step.</p>
+</aside>
+<p><strong>Step 3.</strong></p>
+<ul>
+<li>Copy and Paste contents from the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py" target="_blank">streamlit.py</a> into your new Streamlit App</li>
+</ul>
+<p><strong>Step 4.</strong> Great questions to ask</p>
+<ul>
+<li>What are our top 3 client deals? <img alt="Top 3 Deals" src="img/c69f50ce0c4fac81.png"></li>
+<li>Tell me about the call with Securebank? <img alt="Securebank Conversation" src="img/63c1955e1c1da94c.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an Intelligent Sales Assistant using Snowflake Cortex capabilities. This application demonstrates the power of combining structured and unstructured data analysis through:</p>
+<ul>
+<li>Natural language interactions with your sales data</li>
+<li>Semantic search across sales conversations</li>
+<li>Automated SQL generation for analytics</li>
+<li>Real-time streaming responses</li>
+<li>Interactive chat interface</li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li><strong>Cortex Agents</strong>: How to integrate and use the stateless REST API for combining search and analysis capabilities</li>
+<li><strong>Cortex Search</strong>: How to leverage hybrid search combining semantic and keyword approaches for more accurate results</li>
+<li><strong>Cortex Analyst</strong>: How to convert natural language to SQL using semantic models for high-accuracy analytics</li>
+<li><strong>Integration</strong>: How to combine these capabilities into a cohesive application using Streamlit</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowflake Cortex Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/tutorials/cortex-search-tutorial-1-search" target="_blank">Cortex Search Tutorial</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

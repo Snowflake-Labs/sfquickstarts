@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator",
+  "duration": 140,
+  "title": "Create a Route Optimization and Vehicle Route Plan Simulator",
+  "summary": "This tutorial leverages Snowflake Container Services, native apps, Geospatial Analytics, Streamlit, Cortex and the Open Route Service to optimize vehicle routes in order to distribute goods to chosen destinations on time.",
+  "source": "create-a-route-optimisation-and-vehicle-route-plan-simulator/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-sharing",
+    "cortex",
+    "solution-examples",
+    "streamlit"
+  ],
+  "tags": [
+    "advancedanalytics",
+    "dataengineering",
+    "geospatial",
+    "nativeapps",
+    "snowparkcontainerservices",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator"
+}

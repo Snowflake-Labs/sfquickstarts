@@ -1,0 +1,194 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AI Video Search with Snowflake and Twelve Labs</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="ai-video-search-with-snowflake-and-twelveLabs"
+                  title="AI Video Search with Snowflake and Twelve Labs"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p>This guide outlines the process for creating a video search and summarization workflow in Snowflake Notebook on Container Runtime. Videos stored in the cloud storage are processed to generate embeddings using the Twelve Labs API, with parallelization achieved through a Snowpark Python User Defined Table Function (UDTF). These embeddings are stored in a Snowflake table using the VECTOR datatype, enabling efficient similarity searches with VECTOR_COSINE_SIMILARITY. Text queries are converted into embeddings using the same API to find the top N matching video clips. Audio from these clips is extracted using MoviePy and transcribed with Whisper. Finally, Cortex Complete is used to summarize the results, including video details, timestamps, and transcripts.</p>
+<h2 is-upgraded>What is Container Runtime?</h2>
+<p>Snowflake Notebooks on Container Runtime enable advanced data science and machine learning workflows directly within Snowflake. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference while seamlessly running SQL queries. Unlike virtual warehouses, Container Runtime for ML offers greater flexibility and tailored compute options for complex workloads. <strong><em>NOTE: This feature is currently in Public Preview.</em></strong></p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Container Runtime</a>.</p>
+<h2 is-upgraded>What is Twelve Labs?</h2>
+<p>Twelve Labs is a platform that provides AI-powered video understanding tools. It enables developers to extract meaningful insights from video content by creating embeddings that represent visual and audio features, allowing for advanced search, categorization, and analysis. With APIs for generating embeddings and querying them for similarity, Twelve Labs is ideal for tasks like content-based retrieval, scene detection, and semantic search in videos. It integrates seamlessly into workflows, making it easier to process and analyze large-scale video data efficiently.</p>
+<p>Learn more about <a href="https://www.twelvelabs.io/" target="_blank">Twelve Labs</a>.</p>
+<h2 is-upgraded>What is Snowflake Cortex?</h2>
+<p>Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview" target="_blank">Snowflake Cortex</a>.</p>
+<h2 is-upgraded>What is Whisper?</h2>
+<p>OpenAI&#39;s Whisper is an open-source automatic speech recognition (ASR) model designed for high-quality transcription and translation of spoken language. Trained on diverse multilingual data, it handles various languages, accents, and challenging audio conditions like background noise. Whisper supports transcription, language detection, and translation to English, making it versatile for applications such as subtitles, accessibility tools, and voice interfaces. Available in multiple model sizes, it balances performance and resource needs, enabling seamless integration into real-world projects.</p>
+<p>Learn more about <a href="https://openai.com/index/whisper/" target="_blank">Whisper</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a> with ACCOUNTADMIN role.</li>
+<li>Access to a <a href="https://www.twelvelabs.io/" target="_blank">Twelve Labs account and API key</a>.</li>
+<li>Access to video(s) uploaded to a publicly accessible URL.</li>
+</ul>
+<aside class="special"><p> NOTE: In this guide, three sample videos have been provided.</p>
+</aside>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li><strong>Generate Video Embeddings</strong>: Use the Twelve Labs API to create embeddings for videos stored in the cloud storage.</li>
+<li><strong>Parallel Processing</strong>: Leverage a Python UDTF to process the videos in parallel.</li>
+<li><strong>Store Embeddings</strong>: Save the video embeddings in a Snowflake table using the VECTOR datatype.</li>
+<li><strong>Similarity Search</strong>: Use VECTOR_COSINE_SIMILARITY to find the top <em>N</em> matching clips for a given text query. The query is converted into embeddings via the Twelve Labs API.</li>
+<li><strong>Transcription</strong>: Use MoviePy to extract audio from the top <em>N</em> video clips, then transcribe them with Whisper.</li>
+<li><strong>Summarize Results</strong>: Utilize Cortex Complete to summarize results, including video name/URL, clip start and end times (in seconds), and the transcript of each clip.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>AI videos processing and search app using Twelve Labs, Whisper, Streamlit, and Snowflake Cortex in Snowflake Notebook on Container Runtime running in Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p><strong>Step 1.</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-ai-video-search-with-snowflake-and-twelveLabs/blob/main/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom.</p>
+<p><strong>Step 2.</strong> In Snowsight, switch your user role to <code>DASH_CONTAINER_RUNTIME_ROLE</code>.</p>
+<p><strong>Step 3.</strong> Click on <a href="https://github.com/Snowflake-Labs/sfguide-ai-video-search-with-snowflake-and-twelveLabs/blob/main/Gen_AI_Video_Search.ipynb" target="_blank">Gen_AI_Video_Search.ipynb</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</p>
+<p><strong>Step 4.</strong> In Snowsight:</p>
+<ul>
+<li>On the left hand navigation menu, click on <strong>Projects » Notebooks</strong></li>
+<li>On the top right, click on <strong>Notebook</strong> down arrow and select <strong>Import .ipynb file</strong> from the dropdown menu</li>
+<li>Select <strong>Gen_AI_Video_Search.ipynb</strong> file you downloaded in the step above</li>
+<li>In the Create Notebook popup <ul>
+<li>For Notebook location, select <code>DASH_DB</code> and <code>DASH_SCHEMA</code></li>
+<li>For SQL warehouse, select <code>DASH_WH_S</code></li>
+<li>For Python environment, select <code>Run on container</code></li>
+<li>For Runtime, select <code>Snowflake ML Runtime CPU 1.0</code></li>
+<li>For Compute pool, select <code>CPU_X64_XS</code></li>
+<li>Click on <strong>Create</strong> button</li>
+</ul>
+</li>
+</ul>
+<p><strong>Step 5.</strong> Open Notebook</p>
+<ul>
+<li>Click in the three dots at the very top-right corner and select <code>Notebook settings</code> » <code>External access</code></li>
+<li>Turn on <strong>ALLOW_ALL_ACCESS_INTEGRATION</strong></li>
+<li>Click on <strong>Save</strong> button</li>
+<li>Click on <strong>Start</strong> button on top right</li>
+</ul>
+<aside class="special"><p> NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from <strong>Starting</strong> to <strong>Active</strong>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Notebook" duration="15">
+        <aside class="warning"><p> PREREQUISITE: Successful completion of steps outlined under <strong>Setup</strong>.</p>
+</aside>
+<p>Here&#39;s the code walkthrough of the <a href="https://github.com/Snowflake-Labs/sfguide-ai-video-search-with-snowflake-and-twelveLabs/blob/main/Gen_AI_Video_Search.ipynb" target="_blank">Gen_AI_Video_Search.ipynb</a> notebook that you downloaded and imported into your Snowflake account.</p>
+<p><strong>Cell 1:</strong> Install Python packages and other libraries</p>
+<p><strong>Cell 2:</strong> Import installed libraries</p>
+<p><strong>Cell 3:</strong> This is where we provide a list of publicly accessible URLs of videos.  <em>NOTE: In this guide, three sample videos have been provided.</em></p>
+<p><strong>Cell 4:</strong> Create and register <code>create_video_embeddings</code> Snowpark Python User Defined Table Function (UDTF) for creating embeddings for the videos using Twelve Labs.</p>
+<p>Things to note in the UDTF:</p>
+<ul>
+<li><code>session.add_import('@"DASH_DB"."DASH_SCHEMA"."DASH_PKGS"/twelvelabs.zip')</code> adds the <strong>twelvelabs</strong> Python package that will create the video embeddings</li>
+<li><code>packages=['httpx','pydantic']</code> adds the additional packages required and also readily available in the Snowflake Anaconda channel</li>
+<li><code>external_access_integrations=['twelvelabs_access_integration'],</code> and <code>secrets={'cred': 'twelve_labs_api'}</code> adds the external access integration and the twelvelabs API (secret) that will authorize the UDTF to securely access Twelve Labs account to create the video embeddings</li>
+<li><code>    output_schema=StructType([ StructField("embedding", VectorType(float,1024)), StructField("start_offset_sec", FloatType()), StructField("end_offset_sec", FloatType()), StructField("embedding_scope", StringType()) ])</code> defines the schema with columns and their datatypes that will be the output of this UDTF. Notice the <strong>VectorType</strong> of the <code>embedding</code> column</li>
+</ul>
+<p><strong>Cell 5:</strong> Create a Snowpark DataFrame using the list of videos and for each video call <code>create_video_embeddings</code> UDTF to generate embeddings. Note that the parallel processing of each video is achieved by <code>.over(partition_by="url")</code>. Then, save those embeddings in a Snowflake table called <code>video_embeddings</code>.</p>
+<p><strong>Cell 6:</strong> Download open source <code>whisper</code> model and define the following Python functions: * download_video * extract_audio_from_video * transcribe_with_whisper * transcribe_video * transcribe_video_clip</p>
+<p><strong>Cell 7:</strong> Replace <code>tlk_XXXXXXXXXXXXXXXXXX</code> with your Twelve Labs API Key. Here we define Python function <code>similarity_scores</code> that uses Twelve Labs to create embeddings for a given text – <em>entered_text</em> passed in as a parameter. Then, similarity scores are generated using Snowflake function <strong>VECTOR_COSINE_SIMILARITY</strong> between text embeddings and video embeddings stored in <code>video_embeddings</code> table. This function returns top <em>N</em> records (based on <em>max_results</em> passed in as a parameter) with columns VIDEO_URL, START_OFFSET_SEC, END_OFFSET_SEC, and SIMILARITY_SCORE.</p>
+<p><strong>Cell 8:</strong> Streamlit application that takes <strong>Search Text</strong>, <strong>Max Results</strong>, and <strong>Summary LLM</strong> as user input. Then, it first calls <code>similarity_scores</code> function to get top <em>N</em> video clip records along with their similarity scores. For each clip, it then calls <code>transcribe_video_clip</code> function passing in its VIDEO_URL, START_OFFSET_SEC, END_OFFSET_SEC to generate the clip transcription. Finally, it calls <code>snowflake.cortex.Complete</code> to summarize the output.</p>
+<h2 is-upgraded>Search Examples</h2>
+<p>For all search results, the app displays the URL of the video, the clip start and end times, similarity score generated by VECTOR_COSINE_SIMILARITY, clip transcript generated by open source whisper model, as well as the summary generated by Snowflake Cortex.</p>
+<p>In all of the following examples, notice the highlighted clip start and end times as well as the timestamps in the respective videos.</p>
+<h3 is-upgraded>Example 1</h3>
+<p><strong>Search text</strong>: <code>snowflake intelligence</code></p>
+<p class="image-container"><img alt="Search blender foundation" src="img/b60dc9d88f8b9e81.png"></p>
+<p class="image-container"><img alt="Clip snowflake intelligence" src="img/e9eba471cc90233c.png"></p>
+<h3 is-upgraded>Example 2</h3>
+<p><strong>Search text</strong>: <code>blender foundation</code></p>
+<p class="image-container"><img alt="Search blender foundation" src="img/34b16c557a308aed.png"></p>
+<p class="image-container"><img alt="Clip blender foundation" src="img/743b7bb8dff5cdc4.png"></p>
+<h3 is-upgraded>Example 3</h3>
+<p><strong>Search text</strong>: <code>bunny</code></p>
+<p class="image-container"><img alt="Search bunny" src="img/6b781d555443ef41.png"></p>
+<p class="image-container"><img alt="Clip blender foundation" src="img/979dea191893aa39.png"></p>
+<aside class="special"><p> So AWESOME! Feel free to play around with different search texts, LLM models, and also try it out with your own videos.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully created a interactive AI videos processing and search app using Twelve Labs, Whisper, Streamlit, and Snowflake Cortex in Snowflake Notebook on Container Runtime running in Snowflake.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Generate Video Embeddings: Use the Twelve Labs API to create embeddings for videos stored in the cloud storage.</li>
+<li>Parallel Processing: Leverage a Python UDTF to process the videos in parallel.</li>
+<li>Store Embeddings: Save the video embeddings in a Snowflake table using the VECTOR datatype.</li>
+<li>Similarity Search: Use VECTOR_COSINE_SIMILARITY to find the top <em>N</em> matching clips for a given text query. The query is converted into embeddings via the Twelve Labs API.</li>
+<li>Transcription: Use MoviePy to extract audio from the top <em>N</em> video clips, then transcribe them with Whisper.</li>
+<li>Summarize Results: Utilize Cortex Complete to summarize results, including video name/URL, clip start and end times (in seconds), and the transcript of each clip.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-ai-video-search-with-snowflake-and-twelveLabs" target="_blank">GitHub Repo</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks on Container Runtime</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

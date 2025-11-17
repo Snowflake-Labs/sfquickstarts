@@ -1,0 +1,253 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Modernize XML Processing for Financial Services with SQL XML Functions</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="xml-processing-sql"
+                  title="Modernize XML Processing for Financial Services with SQL XML Functions"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This quickstart guides users from financial services through processing XML data using Snowflake&#39;s SQL XML functions, specifically focusing on XML validation, parsing, element retrieval, and generation. It uses a trial XML dataset from the Snowflake Marketplace, &#34;CMBS Schedule AL - XML&#34;, to demonstrate these techniques through SQL commands and Snowflake Notebooks. Users learn to leverage SQL XML functions like <a href="https://docs.snowflake.com/en/sql-reference/functions/check_xml" target="_blank">CHECK_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/parse_xml" target="_blank">PARSE_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/xmlget" target="_blank">XMLGET</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/to_xml" target="_blank">TO_XML</a> to transform XML data for applications such as asset valuation, risk analysis, and regulatory reporting within the Snowflake environment.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com" target="_blank">Snowflake Account</a></li>
+<li>Privileges necessary to create a user, database, and virtual warehouse in Snowflake</li>
+<li>Intermediate knowledge of SQL</li>
+<li>Access to create and run <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Leveraging powerful SQL XML functions such as <a href="https://docs.snowflake.com/en/sql-reference/functions/check_xml" target="_blank">CHECK_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/parse_xml" target="_blank">PARSE_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/xmlget" target="_blank">XMLGET</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/to_xml" target="_blank">TO_XML</a></li>
+<li>Transforming data using <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a></li>
+<li>Accessing select Edgar filing data from <a href="https://app.snowflake.com/marketplace" target="_blank">Snowflake Marketplace</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account with ACCOUNTADMIN or a custom role with enough privileges</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Notebook for XML Data Processing with SQL XML functions on Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture" duration="3">
+        <p>This solution harnesses the power of Snowflake SQL XML functions to validate, parse, extract and render financial data in XML format.</p>
+<p class="image-container"><img src="img/559cdffe034a1b05.png"></p>
+<p><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a> serve as our interactive workspace. Through the skillful application of advanced SQL XML functions like <a href="https://docs.snowflake.com/en/sql-reference/functions/check_xml" target="_blank">CHECK_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/parse_xml" target="_blank">PARSE_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/xmlget" target="_blank">XMLGET</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/to_xml" target="_blank">TO_XML</a>, we demonstrate how to validate, parse, extract, transform and output XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="8">
+        <h2 is-upgraded>Data</h2>
+<p>We are using free trial XML data from Snowflake Marketplace: &#34;CMBS Schedule AL - XML&#34;.</p>
+<p>The paid dataset contains Schedule AL data from Edgar Form ABS-EE filings for 230+ CMBS deals across 9,500+ filings (monthly) and it is updated daily to capture all future ABS-EE filings as they are published in Edgar. This data, specifically Schedule AL remits, is intended for use in asset valuation and risk analysis. Investors use it to monitor changes in collateral valuations for CMBS bonds, while investors and loan originators use it to benchmark loan metrics like interest rates and debt yields. The schema includes Edgar identifiers and timestamps along with the XML filed for each submission: CIK, COMPANY_NAME, FILING_ID, FILING_DATE, CREATED_AT, FORM_SUBMISSION_ID, HEADER_JSON, SRC_XML.</p>
+<p>Find the dataset in the Snowflake Marketplace (left navigationan menu) using &#34;Search&#34; and typing: &#34;CMBS Schedule AL - XML&#34;. It will come-up as &#34;Free to Try&#34;.</p>
+<p class="image-container"><img src="img/5ce6d10a01e2c704.png"></p>
+<p>Click on &#34;CMBS_SCHEDULE_AI_XML&#34; dataset link and &#34;Start Trial&#34;.</p>
+<p class="image-container"><img src="img/939155a7065b4cc8.png"></p>
+<p>Keep the shared database name as CMBS_Schedule_AL__XML.</p>
+<h2 is-upgraded>Database</h2>
+<p>Login to your Snowflake account. Navigate to <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs" target="_blank">Worksheets</a>, click &#34;+&#34; in the top-right corner to create a new Worksheet and choose &#34;SQL Worksheet&#34;. Name it &#34;SQL XML Processing Setup&#34;.</p>
+<p>Paste the following block to your worksheet.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE IF NOT EXISTS XML_PROCESSING;
+
+USE DATABASE XML_PROCESSING;
+
+CREATE SCHEMA IF NOT EXISTS NOTEBOOKS;
+
+CREATE WAREHOUSE IF NOT EXISTS XML_WH WAREHOUSE_SIZE=XSMALL INITIALLY_SUSPENDED=TRUE;
+
+USE WAREHOUSE XML_WH;
+
+CREATE FILE FORMAT IF NOT EXISTS my_xml_format
+  TYPE = XML
+  COMPRESSION = NONE;
+
+CREATE STAGE IF NOT EXISTS XML_PROCESSING.DATA.XMLDATA_STAGE
+  DIRECTORY = (ENABLE = TRUE)
+  FILE_FORMAT = my_xml_format
+  ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+</code></pre>
+<p>You will create Snowflake objects (database, schema, warehouse) executing the above SQL block from your worksheet.</p>
+<p>You can execute all at once &#34; &gt; Run All&#34; or, one at the time, by selecting each statement and clicking on the &#34;Run&#34; button.</p>
+<p>You will create Snowflake objects (database, schema, warehouse) executing the above SQL block from your worksheet.</p>
+<p>You can execute all at once <img src="img/abb54cf41d3d56b8.png"> or, one at the time, by selecting each statement and clicking on the &#34;Run&#34; button.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SQL XML Processing" duration="10">
+        <p>You will learn how to create a notebook and to leverage powerful SQL XML functions such as <a href="https://docs.snowflake.com/en/sql-reference/functions/check_xml" target="_blank">CHECK_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/parse_xml" target="_blank">PARSE_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/xmlget" target="_blank">XMLGET</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/to_xml" target="_blank">TO_XML</a> to process XML data to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting, using &#34;CMBS Schedule AL - XML&#34; trial data from Snowflake Marketplace.</p>
+<p>Select &#34;Projects&#34; / &#34;Notebooks&#34; from the left navigation menu. Click &#34;+ Notebook&#34; from the top-right corner.</p>
+<p>Complete the opened form:</p>
+<p class="image-container"><img src="img/7bc32d3b674fcd99.png"></p>
+<p>Click &#34;Create&#34; and a default notebook with 3 cells will be created. Remove those three cells from the right corner of each cell by choosing &#34;Delete&#34;. Repeat it for each cell.</p>
+<p>Click &#34;+ Markdown&#34; and paste the following:</p>
+<pre><code language="language-markdown" class="language-markdown">#Processing XML with SQL
+Leverage SQL XML functions like CHECK_XML, PARSE_XML, XMLGET, and TO_XML to transform XML data for applications
+</code></pre>
+<p>Click &#34;+ Markdown&#34; and paste the following code:</p>
+<pre><code language="language-markdown" class="language-markdown">#Validate XML Data
+CHECK_XML checks whether a given string is well-formed XML.
+</code></pre>
+<p>Click &#34;+ SQL&#34; and paste the following code:</p>
+<pre><code language="language-sql" class="language-sql">SELECT DISTINCT CHECK_XML(SRC_XML)
+FROM CMBS_SCHEDULE_AL__XML.MARKETPLACE.EDGAR_PAID_CMBS_ABSEE_XML 
+WHERE COMPANY_NAME=&#39;COMM 2019-GC44 Mortgage Trust&#39;;
+// the output of the function when the XML is valid is null
+// used DISTINCT just to limit the output
+</code></pre>
+<p>Click &#34;+ Markdown&#34; and paste the following code:</p>
+<pre><code language="language-markdown" class="language-markdown">#Parsing XML Data
+PARSE_XML converts raw XML text into Snowflake&#39;s semi-structured format for storing and querying.
+</code></pre>
+<p>Click &#34;+ SQL&#34; and paste the following code:</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+   PARSE_XML(TO_VARCHAR(SRC_XML)), 
+   CIK, 
+   COMPANY_NAME, 
+   FILING_ID, 
+   FILING_DATE 
+FROM CMBS_SCHEDULE_AL__XML.MARKETPLACE.EDGAR_PAID_CMBS_ABSEE_XML 
+WHERE COMPANY_NAME=&#39;COMM 2019-GC44 Mortgage Trust&#39;;
+</code></pre>
+<p>Click &#34;+ Markdown&#34; and paste the following code:</p>
+<pre><code language="language-markdown" class="language-markdown">#Extracting XML Data Elements
+The XMLGET extracts specific XML elements from the parsed XML.
+</code></pre>
+<p>Click &#34;+ SQL&#34; and paste the following code:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+   CIK::string AS cik,
+   COMPANY_NAME::string AS company_name,
+   FILING_ID::string AS filing_id,
+   FILING_DATE::date AS filing_date,
+   CREATED_AT::date AS created_at,
+   FORM_SUBMISSION_ID::varchar(20) AS form_submission_id,
+   XMLGET(xml_doc.value, &#39;assetTypeNumber&#39;):&#34;$&#34;::string AS assetTypeNumber,
+   XMLGET(xml_doc.value, &#39;assetNumber&#39;):&#34;$&#34;::string AS assetNumber,
+   DATE(XMLGET(xml_doc.value, &#39;reportingPeriodBeginningDate&#39;):&#34;$&#34;, &#39;MM-DD-YYYY&#39;) AS reportingPeriodBeginningDate,
+   DATE(XMLGET(xml_doc.value, &#39;reportingPeriodEndDate&#39;):&#34;$&#34;, &#39;MM-DD-YYYY&#39;) AS reportingPeriodEndDate,
+   XMLGET(properties.value, &#39;propertyName&#39;):&#34;$&#34;::string AS propertyName,
+   XMLGET(properties.value, &#39;propertyAddress&#39;):&#34;$&#34;::string AS propertyAddress,
+   XMLGET(properties.value, &#39;propertyCity&#39;):&#34;$&#34;::string AS propertyCity,
+   XMLGET(properties.value, &#39;propertyState&#39;):&#34;$&#34;::string AS propertyState,
+   XMLGET(properties.value, &#39;propertyZip&#39;):&#34;$&#34;::string AS propertyZip,
+   XMLGET(properties.value, &#39;propertyCounty&#39;):&#34;$&#34;::string AS propertyCounty,
+   XMLGET(properties.value, &#39;propertyTypeCode&#39;):&#34;$&#34;::string AS propertyTypeCode
+FROM
+   CMBS_SCHEDULE_AL__XML.MARKETPLACE.EDGAR_PAID_CMBS_ABSEE_XML,
+   LATERAL FLATTEN(GET(CMBS_SCHEDULE_AL__XML.MARKETPLACE.EDGAR_PAID_CMBS_ABSEE_XML.SRC_XML, &#39;$&#39;)) xml_doc,
+   LATERAL FLATTEN(to_array(xml_doc.VALUE:&#34;$&#34; )) properties
+WHERE
+   GET(properties.value, &#39;@&#39;) = &#39;property&#39;
+     AND XMLGET(properties.value, &#39;propertyAddress&#39;):&#34;$&#34;::string IS NOT NULL
+     AND COMPANY_NAME=&#39;COMM 2019-GC44 Mortgage Trust&#39;
+     AND FILING_DATE=&#39;2020-07-01&#39;;
+</code></pre>
+<p>Click &#34;+ Markdown&#34; and paste the following code:</p>
+<pre><code language="language-markdown" class="language-markdown">#Generate XML
+TO_XML allows serializing XML objects into XML text.
+</code></pre>
+<p>Click &#34;+ SQL&#34; and paste the following code:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+   TO_XML(OBJECT_CONSTRUCT(&#39;CIK&#39;, CIK, &#39;COMPANY_NAME&#39;, COMPANY_NAME, &#39;ASSET_TYPE_NUMBER&#39;, XMLGET(xml_doc.value, &#39;assetTypeNumber&#39;):&#34;$&#34;::string))
+FROM
+   CMBS_SCHEDULE_AL__XML.MARKETPLACE.EDGAR_PAID_CMBS_ABSEE_XML,
+   LATERAL FLATTEN(GET(&#34;MARKETPLACE&#34;.&#34;EDGAR_PAID_CMBS_ABSEE_XML&#34;.SRC_XML, &#39;$&#39;)) xml_doc,
+   LATERAL FLATTEN(to_array(xml_doc.VALUE:&#34;$&#34; )) properties
+WHERE
+   GET(properties.value, &#39;@&#39;) = &#39;property&#39;
+     AND XMLGET(properties.value, &#39;propertyAddress&#39;):&#34;$&#34;::string IS NOT NULL
+     AND COMPANY_NAME=&#39;COMM 2019-GC44 Mortgage Trust&#39;
+     AND FILING_DATE=&#39;2020-07-01&#39;;
+</code></pre>
+<p>You got a notebook!!!</p>
+<p>You can run all cells using &#34;Run all&#34; from the top-right corner. You can run cells, one by one, using &#34;run this cell only&#34; for each cell.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="3">
+        <p>You did it! You have successfully completed the &#34;Modernize XML Processing for Financial Services with SQL XML Functions&#34;  quickstart  with notebooks and SQL XML functions.</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>Leverage SQL XML functions such as <a href="https://docs.snowflake.com/en/sql-reference/functions/check_xml" target="_blank">CHECK_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/parse_xml" target="_blank">PARSE_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/xmlget" target="_blank">XMLGET</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/to_xml" target="_blank">TO_XML</a></li>
+<li>Perform data engineering tasks using <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a></li>
+<li>Access data from <a href="https://app.snowflake.com/marketplace" target="_blank">Snowflake Marketplace</a></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/to_xml" target="_blank">TO_XML</a>: Serialize VARIANT objects back to XML strings</li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/xmlget" target="_blank">XMLGET</a>: Extract specific XML elements by tags</li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/parse_xml" target="_blank">PARSE_XML</a>: Convert XML strings to structured VARIANT objects</li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/check_xml" target="_blank">CHECK_XML</a>: Validate XML document structure</li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table#type-xml" target="_blank">Loading XML Data with COPY</a>: Use the COPY command</li>
+<li><a href="https://community.snowflake.com/s/article/introduction-to-loading-and-parsing-xml-data-using-sql" target="_blank">Loading and Parsing XML Data Using SQL</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

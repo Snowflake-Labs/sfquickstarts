@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_science_with_dataiku",
+  "duration": 77,
+  "title": "Accelerating Data Science with Snowflake and Dataiku",
+  "summary": "Accelerating Data Science with Snowflake and Dataiku",
+  "source": "data_science_with_dataiku/data_science_with_dataiku.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataiku",
+    "datascience",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_science_with_dataiku"
+}

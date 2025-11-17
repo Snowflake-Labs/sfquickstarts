@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting_started_with_synthetic_data_and_distillation_for_llms",
+  "duration": 16,
+  "title": "Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation",
+  "summary": "This guide provides the instructions for creating custom LLMs with synthetic data and distillation using Snowflake Cortex AI.",
+  "source": "getting-started-with-synthetic-data-and-distillation-for-llms/getting_started_with_synthetic_data_and_distillation_for_llms.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "cortexai",
+    "fine-tuning",
+    "gettingstarted",
+    "llama3.1405b",
+    "llama405b",
+    "meta",
+    "serverless",
+    "snowflakecortex",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_synthetic_data_and_distillation_for_llms"
+}

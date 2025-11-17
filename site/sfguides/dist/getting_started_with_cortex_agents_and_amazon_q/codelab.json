@@ -1,0 +1,41 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_cortex_agents_and_amazon_q",
+  "duration": 49,
+  "title": "Getting Started with Cortex Agents and Amazon Q",
+  "summary": "This is a quickstart for using Cortex Agents and Amazon Q",
+  "source": "getting_started_with_cortex_agents_and_amazon_q/getting_started_with_cortex_agents_and_amazon_q.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-engineering",
+    "aws",
+    "cortex",
+    "genai",
+    "amazon",
+    "q",
+    "search",
+    "llm",
+    "copilot",
+    "agents"
+  ],
+  "tags": [
+    "agents",
+    "amazon",
+    "copilot",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_cortex_agents_and_amazon_q"
+}

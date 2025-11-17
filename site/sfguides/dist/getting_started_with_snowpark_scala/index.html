@@ -1,0 +1,543 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started With Snowpark Scala</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpark_scala"
+                  title="Getting Started With Snowpark Scala"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Using the <a href="https://docs.snowflake.com/en/developer-guide/snowpark/index.html" target="_blank">Snowpark API</a>, you can query and manipulate data by writing code that uses objects (like a <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrame.html" target="_blank">DataFrame</a>) rather than SQL statements. Snowpark is designed to make building complex data pipelines easy, allowing you to interact with Snowflake directly without moving data. When you use the Snowpark API, the library uploads and runs your code in Snowflake so that you don&#39;t need to move the data to a separate system for processing.</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Scala application that uses the Snowpark library to process data in a stage</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create a DataFrame that loads data from a stage</li>
+<li>How to create a user-defined function for your Scala code</li>
+<li>How to create a stored procedure from your Scala function</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Scala</li>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> account hosted on Amazon Web Services (AWS) or Microsoft Azure.</li>
+<li><a href="https://git-scm.com/downloads" target="_blank">git</a></li>
+<li><a href="https://www.scala-sbt.org/" target="_blank">SBT</a></li>
+</ul>
+<p>You can also use a development tool or environment that supports SBT projects for Scala 2.12 (specifically, version 2.12.9 or later 2.12.x versions). Snowpark does not yet support versions of Scala after 2.12 (for example, Scala 2.13).</p>
+<p>Snowpark supports code compiled to run on Java 11.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Download the repository" duration="5">
+        <p>You&#39;ll find the demo in a Snowflake GitHub repository. After installing git, you can clone the repository using your terminal.</p>
+<h2 is-upgraded>Clone the repository</h2>
+<ol type="1">
+<li>Open a terminal window and run the following commands to change to the directory where you want the repository cloned, and then clone the repository.<pre>cd {directory_where_you_want_the_repository}
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-scala
+</pre>
+</li>
+<li>Change to the directory of the repository that you cloned:<pre>cd sfguide-snowpark-demo
+</pre>
+</li>
+</ol>
+<p>The repository&#39;s demo directory includes the following files:</p>
+<ul>
+<li><code>build.sbt</code>: This is the SBT build file for this demo project.</li>
+<li><code>snowflake_connection.properties</code>: Examples in this demo read settings from this file to connect to Snowflake. You will edit this file and specify the settings that you use to connect to a Snowflake database.</li>
+<li><code>src/main/scala/HelloWorld.scala</code>: This is a simple example that uses the Snowpark library. It connects to Snowflake, runs the <code>SHOW TABLES</code> command, and prints out the first three tables listed. Run this example to verify that you can connect to Snowflake.</li>
+<li><code>src/main/scala/UDFDemoSetup.scala</code>: This sets up the data and libraries needed for the user-defined function (UDF) for the demo. The UDF relies on a data file and JAR files that need to be uploaded to internal named stages. After downloading and extracting the data and JAR files, run this example to create those stages and upload those files.</li>
+<li><code>src/main/scala/UDFDemo.scala</code>: This is a simple code example that creates and calls a UDF.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure the settings for connecting to Snowflake" duration="5">
+        <p>The demo directory contains a <code>snowflake_connection.properties</code> file that the example code uses to <a href="https://docs.snowflake.com/en/developer-guide/snowpark/creating-session.html" target="_blank">create a session</a> to connect to Snowflake. You&#39;ll need to edit these properties so the code connects to your Snowflake account.</p>
+<h2 is-upgraded>Configure the connection settings</h2>
+<p>Edit this file and replace the <code>&lt;placeholder&gt;</code> values with the values that you use to connect to Snowflake. For example:</p>
+<pre>URL = https://myaccount.snowflakecomputing.com
+USER = myusername
+PRIVATE_KEY_FILE = /home/username/rsa_key.p8
+PRIVATE_KEY_FILE_PWD = my_passphrase_for_my_encrypted_private_key_file
+ROLE = my_role
+WAREHOUSE = my_warehouse
+DB = my_db
+SCHEMA = my_schema
+</pre>
+<ul>
+<li>Use a <a href="https://docs.snowflake.com/en/user-guide/organizations-connect.html" target="_blank">URL that includes your account identifier</a>. For more information about the format of the URL, see <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html" target="_blank">Account Identifiers</a>.</li>
+<li>The <code>ROLE</code> that you choose must have permissions to create stages and write tables in the specified database and schema.</li>
+<li>For the other properties, use any <a href="https://docs.snowflake.com/en/user-guide/jdbc-parameters.html" target="_blank">connection parameter supported by the JDBC Driver</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect to Snowflake" duration="5">
+        <p>In this step, you&#39;ll confirm that you can connect to Snowflake with the demo code and your connection properties.</p>
+<h2 is-upgraded>Confirm that you can connect to Snowflake</h2>
+<p>Using the <a href="https://www.scala-sbt.org/1.x/docs/Running.html" target="_blank">SBT command-line tool</a>, run the following command to build and run the <code>HelloWorld.scala</code> example to verify that you can connect to Snowflake:</p>
+<pre>sbt &#34;runMain HelloWorld&#34;
+</pre>
+<h2 is-upgraded>Code walkthrough</h2>
+<p>When the HelloWorld application runs successfully, take a look at the following walkthrough of its code and output.</p>
+<ul>
+<li>To establish a session, the application code creates a <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/Session.html" target="_blank">Session</a> object with the settings specified in <code>snowflake_connection.properties</code>.<pre><code language="language-scala" class="language-scala">val session = Session.builder.configFile(&#34;snowflake_connection.properties&#34;).create
+</code></pre>
+</li>
+<li>Next, the application code <a href="https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html" target="_blank">creates a DataFrame</a> to hold the results from executing the <code>SHOW TABLES</code> command:<pre><code language="language-scala" class="language-scala">val df = session.sql(&#34;show tables&#34;)
+</code></pre>
+Note that this does not execute the SQL statement. The output does not include any <code>INFO</code> messages that indicate that the Snowpark library executed the SQL statement:<pre>=== Creating a DataFrame to execute a SQL statement ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Actively querying parameter snowpark_lazy_analysis from server.
+</pre>
+</li>
+<li>A <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrame.html" target="_blank">DataFrame</a> in Snowpark is lazily evaluated, which means that statements are not executed until you call a method that performs an action. One such method is <code>show</code>, which prints out the first 10 rows in the DataFrame.<pre><code language="language-scala" class="language-scala">df.show()
+</code></pre>
+As you can see in the output, <code>show</code> executes the SQL statement. The results are returned to the DataFrame, and the first 10 rows in the DataFrame are printed out:<pre>=== Execute the SQL statement and print the first 10 rows ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25558-0504-b2b8-0000-438301da121e] show tables
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|&#34;created_on&#34;             |&#34;name&#34;             |&#34;database_name&#34;     |&#34;schema_name&#34;  |&#34;kind&#34;  |&#34;comment&#34;  |&#34;cluster_by&#34;  |&#34;rows&#34;  |&#34;bytes&#34;  |&#34;owner&#34;       |&#34;retention_time&#34;  |&#34;automatic_clustering&#34;  |&#34;change_tracking&#34;  |&#34;is_external&#34;  |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|2022-02-15 11:19:20.294  |DEMO_HAPPY_TWEETS  |SNOWPARK_DEMO_DATA  |PUBLIC         |TABLE   |           |              |22      |2560     |ACCOUNTADMIN  |1                 |OFF                     |OFF                |N              |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</pre>
+</li>
+</ul>
+<p>Now that you have verified that you can connect to Snowflake, you need to get the data and libraries to make the UDF work.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Download the data file and libraries for the demo" duration="10">
+        <p>In this step, you&#39;ll download the sample data file and libraries you need to run the user-defined function you&#39;re going to create. This demo uses the <a href="https://www.kaggle.com/kazanova/sentiment140" target="_blank">sentiment140</a> dataset and libraries from the <a href="https://stanfordnlp.github.io/CoreNLP/" target="_blank">CoreNLP project</a>.</p>
+<h2 is-upgraded>Download dependency JARs and sample data file</h2>
+<ol type="1">
+<li>Go to the <a href="https://www.kaggle.com/kazanova/sentiment140" target="_blank">sentiment140</a> page and click <strong>Download</strong> to download the ZIP archive containing the dataset.</li>
+<li>Unzip <code>training.1600000.processed.noemoticon.csv</code> from the <code>archive.zip</code> file that you downloaded.</li>
+<li><a href="https://nlp.stanford.edu/software/stanford-corenlp-full-2015-12-09.zip" target="_blank">Download version 3.6.0 of the CoreNLP libraries</a>.</li>
+<li>Unzip the libraries from the <code>stanford-corenlp-full-2015-12-09.zip</code> file that you downloaded.</li>
+<li>In your <code>sfguide-snowpark-demo</code> directory, create a temporary directory for the data and JAR files – for example, <code>mkdir files_to_upload</code>.</li>
+<li>Copy the following file extracted from <code>archive.zip</code> to your <code>sfguide-snowpark-demo/files_to_upload/</code> directory:<ul>
+<li><code>training.1600000.processed.noemoticon.csv</code></li>
+</ul>
+</li>
+<li>Copy the following files extracted from <code>stanford-corenlp-full-2015-12-09.zip</code> to your <code>sfguide-snowpark-demo/files_to_upload/</code> directory.<ul>
+<li><code>stanford-corenlp-3.6.0.jar</code></li>
+<li><code>stanford-corenlp-3.6.0-models.jar</code></li>
+<li><code>slf4j-api.jar</code></li>
+<li><code>ejml-0.23.jar</code></li>
+</ul>
+</li>
+</ol>
+<p>In <code>sfguide-snowpark-demo/files_to_upload/</code>, you should now see the following files:</p>
+<pre>$ pwd
+&lt;path&gt;/sfguide-snowpark-demo
+
+$ ls files_to_upload
+ejml-0.23.jar					stanford-corenlp-3.6.0.jar
+slf4j-api.jar					training.1600000.processed.noemoticon.csv
+stanford-corenlp-3.6.0-models.jar
+</pre>
+<p>Next, run the <code>UDFDemoSetup.scala</code> example to create the stages for these files, and upload the files to the stages.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upload the data file and libraries to internal stages" duration="20">
+        <p>In this section, you&#39;ll run the <code>UDFDemoSetup.scala</code> example to create <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html" target="_blank">internal stages</a> to hold the data file and libraries, then upload those files to the stages.</p>
+<p>Because the user-defined function in the demo executes in Snowflake, you have to upload the JAR files for these libraries to an internal stage to make them available to Snowflake. You also need to upload the dataset to a stage, where the demo will access the data.</p>
+<h2 is-upgraded>Upload dependency JARs and sample data file</h2>
+<p>Run the following command to run the code.</p>
+<pre>sbt &#34;runMain UDFDemoSetup&#34;
+</pre>
+<h2 is-upgraded>Code walkthrough</h2>
+<p>When the UDFDemoSetup application runs successfully, read the following to understand what it does.</p>
+<p>After creating a session, the application code calls <code>uploadDemoFiles</code> twice – once to upload the sample data CSV file, then again to upload the JAR files that will be dependencies of the UDF you&#39;ll create. The method uses the Snowpark library to create a stage for the uploaded files.</p>
+<ul>
+<li>The <code>uploadDemoFiles</code> method takes the name of the stage to which the files should be uploaded, along with a file pattern that matches the names of files to upload.<pre><code language="language-scala" class="language-scala">def uploadDemoFiles(stageName: String, filePattern: String): Unit = {
+</code></pre>
+What follows below describes what happens inside <code>uploadDemoFiles</code>.</li>
+<li>The code executes an SQL statement to create the stage. The <code>collect</code> method performs an action on a DataFrame, executing the SQL statement.<pre><code language="language-scala" class="language-scala">session.sql(s&#34;create or replace stage $stageName&#34;).collect()
+</code></pre>
+For this part of the example, you should see the following output when the method is creating the stage for the data files.<pre>=== Creating the stage @snowpark_demo_data ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Actively querying parameter snowpark_lazy_analysis from server.
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Actively querying parameter QUERY_TAG from server.
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25576-0504-b1f7-0000-438301d9f31e] alter session set query_tag = &#39;com.snowflake.snowpark.DataFrame.collect
+UDFDemoSetup$.uploadDemoFiles(UDFDemoSetup.scala:27)&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25576-0504-b2bc-0000-438301da22ba] create or replace stage snowpark_demo_data
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25576-0504-b1f7-0000-438301d9f322] alter session unset query_tag
+</pre>
+Later, when this method is called again to create the stage for the JAR files, you should see the following output.<pre>=== Creating the stage @snowpark_demo_udf_dependency_jars ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25578-0504-b1f7-0000-438301d9f326] alter session set query_tag = &#39;com.snowflake.snowpark.DataFrame.collect
+UDFDemoSetup$.uploadDemoFiles(UDFDemoSetup.scala:27)&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25578-0504-b2b8-0000-438301da122e] create or replace stage snowpark_demo_udf_dependency_jars
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25578-0504-b1f7-0000-438301d9f32a] alter session unset query_tag
+</pre>
+</li>
+<li>Next, the example uses the <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/FileOperation.html" target="_blank">FileOperation</a> object to upload files to the stage. You access an instance of this object through the <code>Session.file</code> method. To upload files (effectively running the <code>PUT</code> command), you call the <code>put</code> method of the FileOperation object. The <code>put</code> method returns an Array of <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/PutResult.html" target="_blank">PutResult</a> objects, each of which contains the results for a particular file.<pre><code language="language-scala" class="language-scala">val res = session.file.put(s&#34;$uploadDirUrl/$filePattern&#34;, stageName)
+res.foreach(r =&gt; Console.println(s&#34;  ${r.sourceFileName}: ${r.status}&#34;))
+</code></pre>
+You should see the following when the method is uploading the data file.<pre>=== Uploading files matching training.1600000.processed.noemoticon.csv to @snowpark_demo_data ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25576-0504-b2b8-0000-438301da1226] alter session set query_tag = &#39;com.snowflake.snowpark.FileOperation.put
+UDFDemoSetup$.uploadDemoFiles(UDFDemoSetup.scala:31)&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: ]  PUT file:///Users/straut/workfiles/git/sfguide-snowpark-demo/files_to_upload/training.1600000.processed.noemoticon.csv @snowpark_demo_data
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25578-0504-b2bc-0000-438301da22be] alter session unset query_tag
+  training.1600000.processed.noemoticon.csv: UPLOADED
+</pre>
+You should see the following when the method is uploading the JAR files.<pre>=== Uploading files matching *.jar to @snowpark_demo_udf_dependency_jars ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25578-0504-b2b8-0000-438301da1232] alter session set query_tag = &#39;com.snowflake.snowpark.FileOperation.put
+UDFDemoSetup$.uploadDemoFiles(UDFDemoSetup.scala:31)&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: ]  PUT file:///Users/straut/workfiles/git/sfguide-snowpark-demo/files_to_upload/*.jar @snowpark_demo_udf_dependency_jars
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a2557d-0504-b2b8-0000-438301da1236] alter session unset query_tag
+  slf4j-api.jar: UPLOADED
+  stanford-corenlp-3.6.0.jar: UPLOADED
+  ejml-0.23.jar: UPLOADED
+  stanford-corenlp-3.6.0-models.jar: UPLOADED
+</pre>
+</li>
+<li>The example then executes the <code>LS</code> command to list the files in the newly created stage and prints out the first 10 rows of output:<pre><code language="language-scala" class="language-scala">session.sql(s&#34;ls @$stageName&#34;).show()
+</code></pre>
+You should see the following when the method has uploaded the CSV file.<pre>=== Files in @snowpark_demo_data ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a25578-0504-b2bc-0000-438301da22c2] ls @snowpark_demo_data
+---------------------------------------------------------------------------------------------------------------------------------------
+|&#34;name&#34;                                              |&#34;size&#34;    |&#34;md5&#34;                                |&#34;last_modified&#34;                |
+---------------------------------------------------------------------------------------------------------------------------------------
+|snowpark_demo_data/training.1600000.processed.n...  |85088032  |da1aae6fe4879f916e740bd80af19685-17  |Tue, 15 Feb 2022 20:06:28 GMT  |
+---------------------------------------------------------------------------------------------------------------------------------------
+</pre>
+You should see the following when the method has uploaded the JAR files.<pre>=== Files in @snowpark_demo_udf_dependency_jars ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a2557d-0504-b2bc-0000-438301da22ca] ls @snowpark_demo_udf_dependency_jars
+----------------------------------------------------------------------------------------------------------------------------------------
+|&#34;name&#34;                                              |&#34;size&#34;     |&#34;md5&#34;                                |&#34;last_modified&#34;                |
+----------------------------------------------------------------------------------------------------------------------------------------
+|snowpark_demo_udf_dependency_jars/ejml-0.23.jar.gz  |189776     |92c4f90ad7fcb8fecbe0be3951f9b8a3     |Tue, 15 Feb 2022 20:13:38 GMT  |
+|snowpark_demo_udf_dependency_jars/slf4j-api.jar.gz  |22640      |b013b6f5f80f95a285e3169c4f0b85ce     |Tue, 15 Feb 2022 20:13:37 GMT  |
+|snowpark_demo_udf_dependency_jars/stanford-core...  |378223264  |e4b4fdfbec76cc7f8fed01e08eec4dc0-73  |Tue, 15 Feb 2022 20:08:39 GMT  |
+|snowpark_demo_udf_dependency_jars/stanford-core...  |6796432    |2c4a458b9a205395409349b56dc64f8d     |Tue, 15 Feb 2022 20:13:38 GMT  |
+----------------------------------------------------------------------------------------------------------------------------------------
+</pre>
+</li>
+</ul>
+<p>Next, run the <code>UDFDemo.scala</code> example to create the user-defined function.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the UDF demo" duration="10">
+        <p>In this step, you&#39;ll run the <code>UDFDemo.scala</code> demo application to create and call a user-defined function (UDF). Read the topics that follow to take a closer look at the example and the output to see how the Snowpark library does this.</p>
+<h2 is-upgraded>Create and call the UDF</h2>
+<p>Run the following command to run the code:</p>
+<pre>sbt &#34;runMain UDFDemo&#34;
+</pre>
+<p>This example does the following:</p>
+<ul>
+<li>Loads the data from the demo file into a DataFrame.</li>
+<li>Creates a user-defined function (UDF) that analyzes a string and determines the sentiment of the words in the string.</li>
+<li>Calls the UDF on each value in a column in the DataFrame.</li>
+<li>Creates a new DataFrame that contains: <ul>
+<li>The column with the original data</li>
+<li>A new column with the return value of the UDF</li>
+</ul>
+</li>
+<li>Creates a new DataFrame that just contains the rows where the UDF determined that the sentiment was happy.</li>
+</ul>
+<p>See the topics that follow for more on how this works.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load data from a stage and create a DataFrame" duration="5">
+        <p>The <code>collectTweetData</code> method creates a <code>DataFrame</code> to <a href="https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages" target="_blank">read CSV data from a file in a stage</a>. It does this with a <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrameReader.html" target="_blank">DataFrameReader</a> object.</p>
+<h2 is-upgraded>Code walkthrough</h2>
+<ul>
+<li>The method receives a Session object to use for connecting to Snowflake.<pre><code language="language-scala" class="language-scala">def collectTweetData(session: Session): DataFrame = {
+</code></pre>
+</li>
+<li>Importing names from <code>implicits</code> in the <code>session</code> <strong><em>variable</em></strong> allows you to use shorthand to refer to columns (for example, <code>'columnName</code> and <code>$"columnName"</code>) when passing arguments to DataFrame methods.<pre><code language="language-scala" class="language-scala">import session.implicits._
+</code></pre>
+</li>
+<li>Because the demo file is a CSV file, you must first define the schema for the file. In Snowpark, you do this by creating a <code>Seq</code> of <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/types/StructField.html" target="_blank">StructField</a> objects that identify the names and types of each column of data. These objects are members of the <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/types/index.html" target="_blank">com.snowflake.snowpark.types</a> package.<pre><code language="language-scala" class="language-scala">val schema = Seq(
+  StructField(&#34;target&#34;, StringType),
+  StructField(&#34;ids&#34;, StringType),
+  StructField(&#34;date&#34;, StringType),
+  StructField(&#34;flag&#34;, StringType),
+  StructField(&#34;user&#34;, StringType),
+  StructField(&#34;text&#34;, StringType),
+)
+</code></pre>
+</li>
+<li>Access a <code>DataFrameReader</code> object through the <code>Session.read</code> method. The <code>DataFrameReader</code> object provides methods that you use to specify the schema, options, and type of the file to load. These methods for setting the schema and options return a <code>DataFrameReader</code> object with the schema and options set. This allows you to chain these method calls, as shown below. The method for specifying the type of file (the <code>csv</code> method, in this case) returns a DataFrame that is set up to load the data from the specified file.<pre><code language="language-scala" class="language-scala">val origData = session
+  .read
+  .schema(StructType(schema))
+  .option(&#34;compression&#34;, &#34;gzip&#34;)
+  .csv(s&#34;@$dataStageName/$dataFilePattern&#34;)
+</code></pre>
+In this example, <code>dataStageName</code> and <code>dataFilePattern</code> refer to the name of the stage and the files that you uploaded to that stage earlier when you ran <code>UDFDemoSetup</code>. You might remember that DataFrames are lazily evaluated, which means that they don&#39;t load data until you call a method to retrieve the data. You can call additional methods to transform the DataFrame (as the next line of code does) before you call the method to retrieve the data.</li>
+<li>Next, the example returns a new DataFrame (<code>tweetData</code>) that just contains the column with the tweets (the column named <code>text</code>). The Dataframe contains the first 100 rows of data from the original DataFrame <code>origData</code>. The <code>drop</code> and <code>limit</code> methods in the example each return a new DataFrame that has been transformed by these methods. Because each method returns a new DataFrame that has been transformed by the method, you can chain the method calls, as shown below:<pre><code language="language-scala" class="language-scala">val tweetData = origData.drop(&#39;target, &#39;ids, &#39;date, &#39;flag, &#39;user).limit(100)
+</code></pre>
+</li>
+<li>At this point, the DataFrame <code>tweetData</code> does not contain the actual data. In order to load the data, you must call a method that performs an action (<code>show</code>, in this case).The example returns the DataFrame <code>tweetData</code>.<pre><code language="language-scala" class="language-scala">tweetData.show()
+return tweetData
+</code></pre>
+</li>
+</ul>
+<h2 is-upgraded>Output</h2>
+<p>For <code>collectTweetData</code>, you&#39;ll see output such as the following.</p>
+<pre>=== Setting up the DataFrame for the data in the stage ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Actively querying parameter snowpark_lazy_analysis from server.
+
+=== Retrieving the data and printing the text of the first 10 tweets
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b313-0000-438301da600a]  CREATE  TEMPORARY  FILE  FORMAT  If  NOT  EXISTS &#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.SN_TEMP_OBJECT_1879375406 TYPE  = csv COMPRESSION  =  &#39;gzip&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b313-0000-438301da600e]  SELECT  *  FROM ( SELECT  *  FROM ( SELECT &#34;TEXT&#34; FROM ( SELECT $1::STRING AS &#34;TARGET&#34;, $2::STRING AS &#34;IDS&#34;, $3::STRING AS &#34;DATE&#34;, $4::STRING AS &#34;FLAG&#34;, $5::STRING AS &#34;USER&#34;, $6::STRING AS &#34;TEXT&#34; FROM @snowpark_demo_data/training.1600000.processed.noemoticon.csv( FILE_FORMAT  =&gt; &#39;&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.SN_TEMP_OBJECT_1879375406&#39;))) LIMIT 100) LIMIT 10
+------------------------------------------------------
+|&#34;TEXT&#34;                                              |
+------------------------------------------------------
+|&#34;...
+</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Define a UDF" duration="5">
+        <p>The <code>createUDF</code> method sets up dependencies for a UDF that analyzes tweets for sentiment, then it creates the UDF in Snowflake.</p>
+<h2 is-upgraded>Code walkthrough</h2>
+<ul>
+<li>The method takes a <code>Session</code> object that is used to specify the dependencies of the UDF.<pre><code language="language-scala" class="language-scala">def createUDF(session: Session): UserDefinedFunction = {
+</code></pre>
+</li>
+<li>The UDF relies on libraries that are packaged in separate JAR files, so you will need to point the Snowpark library to those JAR files. Do this by calling the <code>Session.addDependency</code> method. The example adds these JAR files as dependencies:<pre><code language="language-scala" class="language-scala">session.addDependency(s&#34;@$jarStageName/stanford-corenlp-3.6.0.jar.gz&#34;)
+session.addDependency(s&#34;@$jarStageName/stanford-corenlp-3.6.0-models.jar.gz&#34;)
+session.addDependency(s&#34;@$jarStageName/slf4j-api.jar.gz&#34;)
+session.addDependency(s&#34;@$jarStageName/ejml-0.23.jar.gz&#34;)
+</code></pre>
+In this example, <code>jarStageName</code> refers to the name of the stage where you uploaded JAR files when you ran <code>UDFDemoSetup</code>.</li>
+<li>The example calls the <code>udf</code> function in the <code>com.snowflake.snowpark.functions</code> object to define the UDF. The UDF passes in each value in a column of data to the <code>analyze</code> method.<pre><code language="language-scala" class="language-scala">val sentimentFunc = udf(analyze(_))
+return sentimentFunc
+</code></pre>
+</li>
+</ul>
+<h2 is-upgraded>Output</h2>
+<ul>
+<li>The Snowpark library adds the JAR files for Snowpark and for your example as dependencies (like the dependencies that it specified earlier):<pre>[sbt-bg-threads-1]  INFO (Logging.scala:22) - Automatically added /Users/straut/workfiles/git/sfguide-snowpark-demo/target/bg-jobs/sbt_72da5f3e/target/cfe3f19b/f74dd7dd/snowpark-0.6.0.jar to session dependencies.
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Adding /Users/straut/workfiles/git/sfguide-snowpark-demo/target/bg-jobs/sbt_72da5f3e/job-1/target/6b26a7dc/681a6b89/snowparkdemo_2.12-0.1.jar to session dependencies
+</pre>
+</li>
+<li>Next, the Snowpark library creates a temporary stage for the JAR files...<pre>[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b311-0000-438301da500e] create temporary stage if not exists &#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Actively querying parameter QUERY_TAG from server.
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b313-0000-438301da6012] alter session set query_tag = &#39;com.snowflake.snowpark.functions$.udf
+UDFDemo$.createUDF(UDFDemo.scala:108)&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b313-0000-438301da6016] ls @&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b313-0000-438301da601a]  SELECT &#34;name&#34; FROM ( SELECT  *  FROM  TABLE ( RESULT_SCAN(&#39;01a255c9-0504-b313-0000-438301da6016&#39;)))
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b311-0000-438301da501a] alter session unset query_tag
+</pre>
+... and uploads to the stage the JAR files for Snowpark and for your application code. Snowpark also compiles your UDF and uploads the JAR file to the stage:<pre>[snowpark-2]  INFO (Logging.scala:22) - Uploading file file:/.../sfguide-snowpark-demo/target/bg-jobs/sbt_72da5f3e/job-1/target/6b26a7dc/681a6b89/snowparkdemo_2.12-0.1.jar to stage @&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694
+[snowpark-9]  INFO (Logging.scala:22) - Uploading file file:/.../sfguide-snowpark-demo/target/bg-jobs/sbt_72da5f3e/target/cfe3f19b/f74dd7dd/snowpark-0.6.0.jar to stage @&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694
+[snowpark-11]  INFO (Logging.scala:22) - Compiling UDF code
+[snowpark-11]  INFO (Logging.scala:22) - Finished Compiling UDF code in 765 ms
+[snowpark-11]  INFO (Logging.scala:22) - Uploading UDF jar to stage @&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694
+[snowpark-11]  INFO (Logging.scala:22) - Finished Uploading UDF jar to stage @&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694 in 1413 ms
+[snowpark-2]  INFO (Logging.scala:22) - Finished Uploading file file:/.../sfguide-snowpark-demo/target/bg-jobs/sbt_72da5f3e/job-1/target/6b26a7dc/681a6b89/snowparkdemo_2.12-0.1.jar to stage @&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694 in 2236 ms
+[snowpark-9]  INFO (Logging.scala:22) - Finished Uploading file file:/.../sfguide-snowpark-demo/target/bg-jobs/sbt_72da5f3e/target/cfe3f19b/f74dd7dd/snowpark-0.6.0.jar to stage @&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694 in 8482 ms
+</pre>
+</li>
+<li>Finally, the library defines the UDF in your database:<pre>[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255c9-0504-b313-0000-438301da6022] CREATE TEMPORARY FUNCTION &#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.tempUDF_1136829422(arg1 STRING) RETURNS INT LANGUAGE JAVA IMPORTS = (&#39;@snowpark_demo_udf_dependency_jars/stanford-corenlp-3.6.0-models.jar.gz&#39;,&#39;@snowpark_demo_udf_dependency_jars/slf4j-api.jar.gz&#39;,&#39;@&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694/f25d6649aab5cfb7a9429be961d73687/snowparkdemo_2.12-0.1.jar&#39;,&#39;@snowpark_demo_udf_dependency_jars/ejml-0.23.jar.gz&#39;,&#39;@&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694/85061e2a4c65715009267162d183eec1/snowpark-0.6.0.jar&#39;,&#39;@snowpark_demo_udf_dependency_jars/stanford-corenlp-3.6.0.jar.gz&#39;,&#39;@&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.snowSession_74229942898694/SNOWPARK_DEMO_DATAPUBLICtempUDF_1136829422_126127561/udfJar_591813027.jar&#39;) HANDLER=&#39;SnowUDF.compute&#39;
+</pre>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use the UDF to process the tweets" duration="5">
+        <p>The <code>processHappyTweets</code> method uses the UDF to analyze tweet text to discover which tweets are happy.</p>
+<p>Code walkthrough</p>
+<ul>
+<li>The method receives:<ul>
+<li>A <code>Session</code> for connecting to Snowflake.</li>
+<li>The UDF you created.</li>
+<li>A DataFrame representing the tweets.</li>
+</ul>
+<pre><code language="language-scala" class="language-scala">def processHappyTweets(session: Session, sentimentFunc: UserDefinedFunction, tweetData: DataFrame): Unit = {
+</code></pre>
+</li>
+<li>Import names from <code>implicits</code> in the <code>session</code> variable:<pre><code language="language-scala" class="language-scala">import session.implicits._
+</code></pre>
+</li>
+<li>Next, the example creates a new DataFrame, <code>analyzed</code>, that transforms the <code>tweetData</code> DataFrame by adding a column named <code>sentiment</code>. The <code>sentiment</code> column contains the results from calling the UDF (<code>sentimentFunc</code>) with the corresponding value in the <code>text</code> column.<pre><code language="language-scala" class="language-scala">val analyzed = tweetData.withColumn(&#34;sentiment&#34;, sentimentFunc(&#39;text))
+</code></pre>
+</li>
+<li>The example creates another DataFrame, <code>happyTweets</code>, that transforms the <code>analyzed</code> DataFrame to include only the rows where the <code>sentiment</code> contains the value <code>3</code>.<pre><code language="language-scala" class="language-scala">val happyTweets = analyzed.filter(&#39;sentiment === 3)
+</code></pre>
+</li>
+<li>Next, the example calls the <code>show</code> method to execute the SQL statements (including the UDF), retrieve the results into the Dataframe, and print the first 10 rows.<pre><code language="language-scala" class="language-scala">happyTweets.show()
+</code></pre>
+When the <code>show</code> method executes, you&#39;ll see output such as the following.<pre>=== Retrieving the data and printing the first 10 tweets ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255ca-0504-b311-0000-438301da5026]  CREATE  TEMPORARY  FILE  FORMAT  If  NOT  EXISTS &#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.SN_TEMP_OBJECT_1879375406 TYPE  = csv COMPRESSION  =  &#39;gzip&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255ca-0504-b311-0000-438301da502a]  SELECT  *  FROM ( SELECT  *  FROM ( SELECT &#34;TEXT&#34;, &#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.tempUDF_1136829422(&#34;TEXT&#34;) AS &#34;SENTIMENT&#34; FROM ( SELECT  *  FROM ( SELECT &#34;TEXT&#34; FROM ( SELECT $1::STRING AS &#34;TARGET&#34;, $2::STRING AS &#34;IDS&#34;, $3::STRING AS &#34;DATE&#34;, $4::STRING AS &#34;FLAG&#34;, $5::STRING AS &#34;USER&#34;, $6::STRING AS &#34;TEXT&#34; FROM @snowpark_demo_data/training.1600000.processed.noemoticon.csv( FILE_FORMAT  =&gt; &#39;&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.SN_TEMP_OBJECT_1879375406&#39;))) LIMIT 100)) WHERE (&#34;SENTIMENT&#34; = 3 :: int)) LIMIT 10
+--------------------------------------------------------------------
+|&#34;TEXT&#34;                                              |&#34;SENTIMENT&#34;  |
+--------------------------------------------------------------------
+|&#34;...
+</pre>
+</li>
+<li>Finally, the example <a href="https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-save-table" target="_blank">saves the data in the DataFrame to a table</a> named <code>demo_happy_tweets</code>. To do this, the example uses a <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrameWriter.html" target="_blank">DataFrameWriter</a> object, which is retrieved by calling the <code>DataFrame.write</code> method. The example overwrites any existing data in the table by passing <code>SaveMode.Overwrite</code> to the <code>mode</code> method of the <code>DataFrameWriter</code> object.<pre><code language="language-scala" class="language-scala">happyTweets.write.mode(Overwrite).saveAsTable(&#34;demo_happy_tweets&#34;)
+</code></pre>
+When the <code>saveAsTable</code> method executes, you&#39;ll see output such as the following.<pre>=== Saving the data to the table demo_happy_tweets ===
+
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255ca-0504-b311-0000-438301da502e]  CREATE  TEMPORARY  FILE  FORMAT  If  NOT  EXISTS &#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.SN_TEMP_OBJECT_1879375406 TYPE  = csv COMPRESSION  =  &#39;gzip&#39;
+[sbt-bg-threads-1]  INFO (Logging.scala:22) - Execute query [queryID: 01a255ca-0504-b313-0000-438301da602a]  CREATE  OR  REPLACE  TABLE demo_happy_tweets AS  SELECT  *  FROM ( SELECT  *  FROM ( SELECT &#34;TEXT&#34;, &#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.tempUDF_1136829422(&#34;TEXT&#34;) AS &#34;SENTIMENT&#34; FROM ( SELECT  *  FROM ( SELECT &#34;TEXT&#34; FROM ( SELECT $1::STRING AS &#34;TARGET&#34;, $2::STRING AS &#34;IDS&#34;, $3::STRING AS &#34;DATE&#34;, $4::STRING AS &#34;FLAG&#34;, $5::STRING AS &#34;USER&#34;, $6::STRING AS &#34;TEXT&#34; FROM @snowpark_demo_data/training.1600000.processed.noemoticon.csv( FILE_FORMAT  =&gt; &#39;&#34;SNOWPARK_DEMO_DATA&#34;.&#34;PUBLIC&#34;.SN_TEMP_OBJECT_1879375406&#39;))) LIMIT 100)) WHERE (&#34;SENTIMENT&#34; = 3 :: int))
+</pre>
+</li>
+</ul>
+<p>That&#39;s it for this part! So far, you&#39;ve uploaded Scala code as a user-defined function, then run the UDF to analyze tweet data for happy tweets.</p>
+<p>In the last step, you&#39;ll take the code you&#39;ve got already and turn it into a stored procedure in Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a stored procedure from the Scala code" duration="5">
+        <p>In this step, you&#39;ll take the code you&#39;ve just run and create a stored procedure from it. To do that, you&#39;ll copy the Scala code into a Snowflake worksheet, wrap the code in an SQL statement, and run it to create the stored procedure.</p>
+<p>The following steps use the <a href="https://docs.snowflake.com/en/user-guide/ui-web.html" target="_blank">new web interface</a>.</p>
+<p>For related documentation, be sure to read <a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-scala.html" target="_blank">Writing Stored Procedures in Snowpark (Scala)</a>.</p>
+<h2 is-upgraded>Create and run the stored procedure</h2>
+<ol type="1">
+<li>In the new web interface, create a new worksheet and call it <code>discoverHappyTweets</code>.</li>
+<li>In the worksheet editor, ensure that the session context matches the settings you specified in the snowflake_connection.properties file you edited earlier. For example:<ul>
+<li>From the dropdown in the upper left, select the role you specified.</li>
+<li>From the session context dropdown in the upper-right, select the role and warehouse values you specified.</li>
+<li>From the database dropdown, select the database and schema you specified.</li>
+</ul>
+</li>
+<li>Into the <code>discoverHappyTweets</code> worksheet, paste the following:<pre><code language="language-sql" class="language-sql">create or replace procedure discoverHappyTweets()
+returns string
+language scala
+runtime_version=2.12
+packages=(&#39;com.snowflake:snowpark:latest&#39;)
+imports=(&#39;@snowpark_demo_udf_dependency_jars/ejml-0.23.jar&#39;,&#39;@snowpark_demo_udf_dependency_jars/slf4j-api.jar&#39;,&#39;@snowpark_demo_udf_dependency_jars/stanford-corenlp-3.6.0-models.jar&#39;,&#39;@snowpark_demo_udf_dependency_jars/stanford-corenlp-3.6.0.jar&#39;)
+handler = &#39;UDFDemo.discoverHappyTweets&#39;
+target_path = &#39;@snowpark_demo_udf_dependency_jars/discoverHappyTweets.jar&#39;
+as
+$$
+
+/*Paste the UDFDemo object Scala code, including imports. You can optionally
+omit the main function.*/
+
+$$;
+</code></pre>
+This code creates a stored procedure called <code>discoverHappyTweets</code>. The documentation has more, but be sure to note the following:<ul>
+<li>The <code>packages</code> parameter specifies the Snowpark version to use.</li>
+<li>The <code>imports</code> parameter specifies JAR files needed as your code&#39;s dependencies. This is the list of JAR files you uploaded to Snowflake earlier.</li>
+<li>The <code>handler</code> parameter specifies the function Snowflake should call when executing the stored procedure.</li>
+<li>The <code>target_path</code> parameter specifies the name and location of the JAR to create when you run this code. Snowflake compiles the code and packages the compiled classes.</li>
+</ul>
+</li>
+<li>Into the section between the <code>$$</code> delimiters, paste the Scala code from <code>UDFDemo</code>. Be sure to include the <code>import</code> statements. Don&#39;t include the <code>main</code> function; you don&#39;t need it. In particular, Snowflake will inject a Session object in place of the one you were creating there. Snowflake will instead call the method you specified with the <code>handler</code> parameter.</li>
+<li>Run the code in the worksheet. Snowflake compiles the code in the body of <code>CREATE PROCEDURE</code> and packages it into a JAR file.</li>
+<li>Create a new worksheet and call it <code>call discoverHappyTweets</code>.</li>
+<li>Into the new worksheet, paste the following code:<pre><code language="language-sql" class="language-sql">call discoverHappyTweets();
+select * from demo_happy_tweets;
+</code></pre>
+</li>
+<li>In the worksheet, select both lines, then run the code in the worksheet. Beneath the worksheet, you should see messages as Snowflake calls the stored procedure. After the procedure call completes, these will be replaced with the results of the query – the list of happy tweets. Calling the stored procedure just executes the method or function associated with that stored procedure. The execution happens with that JAR file in the classpath.</li>
+</ol>
+<p>That&#39;s how easy it is to create a stored procedure. For bonus points, you could call the new stored procedure with a nightly task.</p>
+<pre><code language="language-sql" class="language-sql">create or replace task process_tweets_nightly
+warehouse = &#39;small&#39;
+schedule = &#39;1440 minute&#39;
+as
+call discoverHappyTweets();
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="1">
+        <p>Congratulations! You used Snowpark to perform sentiment analysis on tweets. You used a sample dataset of tweets for this guide. If you want to automatically ingest new tweets as they are written, follow the <a href="/guide/auto_ingest_twitter_data/" target="_blank">Auto Ingest Twitter Data into Snowflake</a> guide.</p>
+<h2 is-upgraded>What You Covered</h2>
+<ul>
+<li><strong>Data Loading</strong> - Loading Twitter data into Snowflake with Snowpark (Scala)</li>
+<li><strong>Data</strong> - Creating Dataframes from the CSV file and remove unwanted columns</li>
+<li><strong>Sentiment Analysis</strong> - Using Scala to perform sentiment analysis on a Dataframe of tweets</li>
+<li><strong>Snowpark UDF</strong> - Using Scala to write the data frame into a Snowflake table</li>
+<li><strong>Snowpark stored procedure</strong> - Using Snowflake to create a stored procedure in Scala</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/scala/index.html" target="_blank">Snowpark Developer Guide</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-scala" target="_blank">Source code example on Github</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

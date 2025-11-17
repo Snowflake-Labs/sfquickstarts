@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "snowpark-container-services-model-serving-guide",
+  "duration": 29,
+  "title": "Getting Started with Model Serving in Snowpark Container Services",
+  "summary": "Learn how to build and deploy a machine learning model for real-time inference using Snowpark Container Services and the Snowflake Model Registry.",
+  "source": "a-guide-on-model-serving-in-spcs/a-guide-on-model-serving-in-spcs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "machine-learning"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "modelserving",
+    "snowpark",
+    "spcs",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowpark-container-services-model-serving-guide"
+}

@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "vhol_fivetran",
+  "duration": 92,
+  "title": "Automating Data Pipelines to Drive Marketing Analytics with Snowflake \u0026 Fivetran",
+  "authors": "Snowflake",
+  "summary": "Automating Data Pipelines to Drive Marketing Analytics with Snowflake \u0026 Fivetran",
+  "source": "vhol_fivetran/vhol_fivetran.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "partner-integrations",
+    "marketing"
+  ],
+  "tags": [
+    "dbt",
+    "fivetran",
+    "gettingstarted",
+    "marketinganalytics",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/devlabs/issues",
+  "url": "vhol_fivetran"
+}

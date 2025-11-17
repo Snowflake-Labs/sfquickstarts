@@ -1,0 +1,463 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build LLM App Powered By NVIDIA on Snowpark Container Services</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_llm_app_nvidia_scs"
+                  title="Build LLM App Powered By NVIDIA on Snowpark Container Services"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>This quickstart primarily shows how to download a Large Language Model <a href="https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1" target="_blank">Mistral-7b-instruct v0.1</a> from <a href="https://huggingface.co/" target="_blank">HuggingFace</a> and then shrink the model size to fit in a smaller GPU(A10G-&gt;GPU_NV_M) on <a href="https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags" target="_blank">NemoLLM Inference Microservice NIMs</a> Container using the <a href="https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh" target="_blank">model_generator</a> and <a href="https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/instruct.yaml" target="_blank">instruct.yaml</a> provided by NVIDIA.</p>
+<p class="image-container"><img alt="Architecture" src="img/6525b2841ed0fc46.png"></p>
+<p>If you are interested in shrinking a different Large Language Model from Huggingface, you need a different <code>instruct.yaml</code> file that will generate a new model which will fit in a smaller GPU.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>Build Snowflake LLM Native App powered by NVIDIA Inference microservices</li>
+<li>Download Mistral-7b-instruct LLM from Huggingface</li>
+<li>Generate a new model using model generator on NIM container</li>
+<li>Publish Mistral Inference App as internal Snowflake Native Application</li>
+<li>Launch the Inference Server using Snowpark Container Services</li>
+<li>Expose the Inference Service as Streamlit Application</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<h3 is-upgraded>NVIDIA</h3>
+<p>In this example, we are not downloading the model hosted on <a href="https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags" target="_blank">nvcr.io</a>, but we will still be using <a href="https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags" target="_blank">NIMs Inference Microservices container</a> for optimized GPU performance.<a href="https://ngc.nvidia.com/" target="_blank">Register and create your login credentials</a> and get yourself added to a organisation/team.</p>
+<h3 is-upgraded>Huggingface</h3>
+<p>Since you are downloading the model from Huggingface, you need to</p>
+<ul>
+<li>Register and create a <a href="https://huggingface.co/" target="_blank">HuggingFace</a> user</li>
+<li>Create a <a href="https://huggingface.co/docs/hub/en/security-tokens" target="_blank">user access token</a> to clone a model using git_lfs into your destination. This is a required step to clone any Large Language model such as Mistral-7b-instruct v0.1</li>
+<li>Edit and update <a href="https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh" target="_blank">model_generator.sh</a> and replace the <code>user</code> and <code>token</code> with your huggingface user and access token that you created in the previous step.</li>
+</ul>
+<pre><code language="language-shell" class="language-shell">....
+git clone https://&lt;user&gt;:&lt;token&gt;@huggingface.co/mistralai/Mistral-7B-Instruct-v0.1 /blockstore/clone
+....
+</code></pre>
+<aside class="special"><p>The folder where the model (git clone) gets downloaded is a block storage that is mounted in the Snowpark Container Service. The model size is somewhere ~55 GB and then the new model that would be generated is ~14 GB. So as a best practice, we should mount and use the blockstorage when launching the Snowflake Container. Follow <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/block-storage-volume" target="_blank">documentation</a> on how to use block storage when creating the service in snowpark container</p>
+</aside>
+<aside class="warning"><p> This is a Native App - Snowpark Container Service implementing the NVIDIA NeMo Microservices inference service. You need to have the NA&lt;&gt;SPCS feature enabled in your account in the regions where it is available. So please reach out to your <strong>Snowflake Account Representative</strong> if you wish to build this App.</p>
+</aside>
+<ul>
+<li>A Snowflake account(Non Trial) with <a href="https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition" target="_blank">Standard Edition</a> will work for most of this lab, but if you&#39;d like to try governance features such as Data masking etc, you will need <a href="https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition" target="_blank">Enterprise</a> or <a href="https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition" target="_blank">Business Critical Edition</a>.</li>
+<li>A storage bucket with the same cloud provider in the same region that hosts your Snowflake account above. Direct credential access required as storage integrations are not supported for External Volumes.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Generator Explained" duration="5">
+        <p>Model Generator <a href="https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh" target="_blank">model_generator.sh</a> script downloads <code>Mistral LLM</code> model from Huggingface and using NIMs and <code>model_generator</code> package shrink the LLM model to fit to a smaller GPU (<code>A10G = GPU_NV_M</code>).</p>
+<p>Let us dissect the <a href="https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh" target="_blank">model_generator.sh</a> script and understand what the model generator does,</p>
+<ol type="1">
+<li>Create Folders to download model from huggingface and a folder to store the model generated.</li>
+</ol>
+<pre><code language="language-shell" class="language-shell">mkdir /blockstore/clone
+mkdir -p /blockstore/model/store
+</code></pre>
+<ol type="1" start="2">
+<li>Git Clone LLM model to Block Storage folder</li>
+</ol>
+<pre><code language="language-shell" class="language-shell">git clone https://&lt;user&gt;:&lt;token&gt;@huggingface.co/mistralai/Mistral-7B-Instruct-v0.1 /blockstore/clone
+</code></pre>
+<ol type="1" start="3">
+<li>Generate new model that is shrunk for A10G(GPU_NV_M) into the Blockstorage folder</li>
+</ol>
+<pre><code language="language-shell" class="language-shell">model_repo_generator llm --verbose --yaml_config_file=/home/ubuntu/instruct.yaml
+</code></pre>
+<ol type="1" start="4">
+<li>Finally create Soft links of the &#34;ensemble&#34; and &#34;trt_llm&#34; folders to the root /model-store folder.</li>
+</ol>
+<pre><code language="language-shell" class="language-shell">ln -s /blockstore/model/store/ensemble /model-store/ensemble
+ln -s /blockstore/model/store/trt_llm_0.0.1_trtllm /model-store/trt_llm_0.0.1_trtllm
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Inference Service Explained" duration="5">
+        <p>The Inference service executes the <code>model_generator.sh</code> to generate the model and launch the <code>triton</code> inference server with requested/assigned number of GPUs.</p>
+<p>The Inference service is configured using an YAML as shown,</p>
+<pre><code language="language-yaml" class="language-yaml">- name: inference
+    image: /NVIDIA_NEMO_MS_MASTER/code_schema/service_repo/nemollm-inference-ms:24.02.nimshf
+    command:
+    - /bin/bash
+    args:
+    - -c
+    - &#34;(ttyd -p 1235 -W bash &amp;&gt; /tmp/ttyd.log &amp;);sh modelgenerator.sh; nemollm_inference_ms --model mistral --openai_port=9999 --nemo_port=9998 --num_gpus=&#123;&#123;num_gpus_per_instance}}&#34;
+    env:
+      CUDA_VISIBLE_DEVICES: &#123;&#123;cuda_devices}}
+    resources:
+      requests:
+        nvidia.com/gpu: &#123;&#123;num_gpus_per_instance}}
+      limits:
+        nvidia.com/gpu: &#123;&#123;num_gpus_per_instance}}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Download Demo Sources" duration="1">
+        <p>Clone the guide demo sources,</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services
+</code></pre>
+<p>Navigate to the demo source folder, and export the source folder to an environment variable <code>$DEMO_HOME</code>,</p>
+<pre><code language="language-shell" class="language-shell">cd sfguide-build-ai-app-using-nvidia-snowpark-container-services
+export DEMO_HOME=&#34;$PWD&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Provider and Consumer Roles" duration="5">
+        <p>On your Snowsight worksheet run the following SQL commands to create the Snowflake Native App <code>Provider</code> and <code>Consumer</code> roles,</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE APPLICATION PACKAGE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE APPLICATION  ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE ;
+GRANT CREATE DATA EXCHANGE LISTING  ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT IMPORT SHARE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE SHARE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT MANAGE EVENT SHARING ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT CREATE DATA EXCHANGE LISTING ON ACCOUNT TO  ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE NVIDIA_LLM_APP_PROVIDER_ROLE WITH GRANT OPTION;
+
+GRANT ROLE NVIDIA_LLM_APP_PROVIDER_ROLE to USER &lt;USER_NAME&gt;;
+
+CREATE ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT CREATE APPLICATION  ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE ;
+GRANT IMPORT SHARE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT CREATE SHARE ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT MANAGE EVENT SHARING ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE;
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE NVIDIA_LLM_APP_CONSUMER_ROLE WITH GRANT OPTION;
+
+GRANT ROLE NVIDIA_LLM_APP_CONSUMER_ROLE to USER &lt;USER_NAME&gt;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Native App Prerequisite" duration="5">
+        <pre><code language="language-sql" class="language-sql">SET COMPUTE_POOL_NAME = &#39;my-compute-pool&#39;;
+-- ########## BEGIN INITIALIZATION  ######################################
+-- Create Compute pool using GPU_NV_M instance family
+CREATE COMPUTE POOL $COMPUTE_POOL_NAME
+  MIN_NODES=1
+  MAX_NODES=1
+  INSTANCE_FAMILY=GPU_NV_M; -- DO NOT CHANGE SIZE AS THE instruct.yaml is defined to work on A10G GPU with higher memory.
+                            -- GPU_NV_S may work but not guarenteed.
+
+SET APP_OWNER_ROLE = &#39;SPCS_PSE_PROVIDER_ROLE&#39;;
+SET APP_WAREHOUSE = &#39;XS_WH&#39;;
+SET APP_COMPUTE_POOL = $COMPUTE_POOL_NAME;
+SET APP_DISTRIBUTION = &#39;INTERNAL&#39;; -- change to external when you are ready to publish outside your snowflake organization
+
+USE ROLE identifier($APP_OWNER_ROLE);
+
+-- DROP DATABASE IF EXISTS NVIDIA_NEMO_MS_APP_PKG ; --OPTIONAL STEP IF YOU WANT TO DROP THE APPLICATION PACKAGE. DONT UNCOMMENT
+
+USE WAREHOUSE identifier($APP_WAREHOUSE);
+
+CREATE DATABASE IF NOT EXISTS NVIDIA_NEMO_MS_MASTER;
+USE DATABASE NVIDIA_NEMO_MS_MASTER;
+CREATE SCHEMA IF NOT EXISTS CODE_SCHEMA;
+USE SCHEMA CODE_SCHEMA;
+CREATE IMAGE REPOSITORY IF NOT EXISTS SERVICE_REPO;
+
+CREATE APPLICATION PACKAGE IF NOT EXISTS NVIDIA_NEMO_MS_APP_PKG;
+
+USE DATABASE NVIDIA_NEMO_MS_APP_PKG;
+CREATE SCHEMA IF NOT EXISTS CODE_SCHEMA;
+CREATE STAGE IF NOT EXISTS APP_CODE_STAGE;
+
+-- ##########  END INITIALIZATION   ######################################
+
+SHOW IMAGE REPOSITORIES;
+
+-- Copy the image repository URL and use it to push the image from Docker installed machine (AWS EC2 instance preferred) to Snowflake.
+-- STOP HERE AND UPLOAD ALL REQUIRED CONTAINERS INTO THE IMAGE REPO
+-- Follow steps in &#39;docker.md&#39; to run the commands using docker installed machine (AWS EC2 instance preferred).
+-- Follow Docker Setup steps to push images to snowflake image repository
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Docker Setup" duration="15">
+        <p>Register at <a href="https://org.ngc.nvidia.com/setup/api-key" target="_blank">https://org.ngc.nvidia.com/setup/api-key</a> and download your nvcr.io login credentials. Let use store the credentials in the environment variable named <code>$NVCR_DOCKER_USER</code> and <code>$NVCR_DOCKER_API_KEY</code>,</p>
+<p>Login to nvcr.io,</p>
+<pre><code language="language-shell" class="language-shell">echo -n &#34;$NVCR_DOCKER_API_KEY&#34; | docker login nvcr.io --user &#34;$NVCR_DOCKER_USER&#34; --password-stdin
+</code></pre>
+<h2 is-upgraded>Build Images</h2>
+<p>After successful login build the following images that will be used by the Snowflake Native app,</p>
+<pre><code language="language-shell" class="language-shell">cd &#34;$DEMO_HOME/docker&#34;
+</code></pre>
+<p>Build the image associated to the Inference service,</p>
+<pre><code language="language-shell" class="language-shell">docker build . -t inference:v01
+</code></pre>
+<p>Build the model storage image,</p>
+<pre><code language="language-shell" class="language-shell">docker build . -t model-store:v01
+</code></pre>
+<p>Build the Snowflake handler to manage the Snowflake and Streamlit environment,</p>
+<pre><code language="language-shell" class="language-shell">docker build . -t snowflake_handler:v01
+</code></pre>
+<p>Lab provides the Juypter lab environment,</p>
+<pre><code language="language-shell" class="language-shell">docker build . -t lab:v01
+</code></pre>
+<p>List the images we built so far,</p>
+<pre><code language="language-shell" class="language-shell">docker images
+</code></pre>
+<h2 is-upgraded>Push Images to Snowflake Image Registry</h2>
+<p>Get the Snowflake Image Registry URL using the command,</p>
+<pre><code language="language-sql" class="language-sql">SHOW SHOW IMAGE REPOSITORIES
+</code></pre>
+<p>Let use store the Snowflake Image Registry URL as <code>$SNOWFLAKE_IMAGE_REGISTRY_URL</code></p>
+<p>Login in to the Snowflake Image registry,</p>
+<pre><code language="language-shell" class="language-shell">echo &#34;$SNOWFLAKE_PASSWORD&#34; | docker login &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL&#34; --user &#34;$SNOWFLAKE_USER&#34; --password-stdin
+</code></pre>
+<p>Tag all the application images that we built earlier,</p>
+<pre><code language="language-shell" class="language-shell">docker tag inference:v01 &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/nemollm-inference-ms:24.02.nimshf&#34;
+docker tag model-store:v01 &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/nvidia-nemo-ms-model-store:v01&#34;
+docker tag snowflake_handler:v01 &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/snowflake_handler:v0.4&#34;
+docker tag lab:v01 &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/snowflake_jupyterlab:v0.1&#34;
+</code></pre>
+<p>Push all the images built earlier to <code>$SNOWFLAKE_IMAGE_REGISTRY_URL</code>,</p>
+<pre><code language="language-shell" class="language-shell">docker push &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/nemollm-inference-ms:24.02.nimshf&#34;
+docker push &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/nvidia-nemo-ms-model-store:v01&#34;
+docker push &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/snowflake_handler:v0.4&#34;
+docker push &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/snowflake_jupyterlab:v0.1&#34;
+</code></pre>
+<p>Check if the <code>instruct.yaml</code> and <code>modelgenerator.sh</code> files are available on the container images,</p>
+<pre><code language="language-shell" class="language-shell">docker run --rm=true &#34;$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_schema/service_repo/nemollm-inference-ms:24.02.nimshf&#34; -- ls
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="As a Provider" duration="10">
+        <pre><code language="language-sql" class="language-sql">USE ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
+</code></pre>
+<h2 is-upgraded>Create Native App</h2>
+<p>Create NIM Application by running the <a href="https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/Native%20App/Provider/02%20nims_app_pkg.sql" target="_blank">nims_app_pkg.sql</a> on your Snowsight worksheet.</p>
+<h2 is-upgraded>Test Application</h2>
+<p>Let us test the application before it is published,</p>
+<pre><code language="language-sql" class="language-sql">use database NVIDIA_NEMO_MS_APP;
+use schema app1;
+-- call core.start_app_instance($APP_INSTANCE);
+-- call core.stop_app_instance($APP_INSTANCE);
+-- call core.drop_app_instance($APP_INSTANCE);
+-- call core.restart_app_instance($APP_INSTANCE);
+call core.list_app_instance($APP_INSTANCE);
+call core.get_app_endpoint($APP_INSTANCE);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Publish Your Native App" duration="5">
+        <aside class="special"><p> Before you publish the App, try to test your App <a href="https://docs.snowflake.com/en/developer-guide/native-apps/installing-testing-application" target="_blank">locally</a></p>
+</aside>
+<p>Run the following script to publish the Native application,</p>
+<p>If you are sharing internally within your Snowflake Org, you can keep the App Distribution as <code>internal</code> but if you are sharing externally then you need to assign the App Distribution as <code>external</code>.</p>
+<pre><code language="language-sql" class="language-sql">-- ##### BEGIN CREATE/PATCH TEST APP (DO NOT REBUILD THE APP) RUN ONLY ONCE TO CREATE APP ###########
+DECLARE
+  APP_INSTANCE VARCHAR DEFAULT &#39;APP1&#39;;
+BEGIN
+  ALTER APPLICATION NVIDIA_NEMO_MS_APP UPGRADE USING VERSION V0_1;
+  CALL NVIDIA_NEMO_MS_APP.CORE.RESTART_APP_INSTANCE(:APP_INSTANCE);
+  LET rs1 RESULTSET := (CALL NVIDIA_NEMO_MS_APP.CORE.GET_APP_ENDPOINT(:APP_INSTANCE));
+  RETURN TABLE(rs1);
+END;
+-- ########## END CREATE TEST APP   ######################################
+
+
+-- ########## BEGIN PUBLISH (REQUIRED FOR EVERY UPGRADE)  ############################################
+ALTER APPLICATION PACKAGE NVIDIA_NEMO_MS_APP_PKG
+   SET DISTRIBUTION = $APP_DISTRIBUTION;
+
+DECLARE
+  max_patch VARCHAR;
+BEGIN
+  show versions in application package NVIDIA_NEMO_MS_APP_PKG;
+  select max(&#34;patch&#34;) INTO :max_patch FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) where &#34;version&#34; = &#39;V0_1&#39;;
+  LET rs RESULTSET := (EXECUTE IMMEDIATE &#39;ALTER APPLICATION PACKAGE NVIDIA_NEMO_MS_APP_PKG SET DEFAULT RELEASE DIRECTIVE VERSION = V0_1 PATCH = &#39;||:max_patch);
+  RETURN TABLE(rs);
+END;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="As a Consumer" duration="1">
+        <p>Follow the <a href="https://other-docs.snowflake.com/en/native-apps/consumer-about" target="_blank">steps</a> to download and install the Native App.</p>
+<h2 is-upgraded>Launch Snowflake Native App</h2>
+<p>After you have installed the App on the consumer account, use the following template to launch the Native App on the consumer account,</p>
+<pre><code language="language-sql" class="language-sql">set APP_INSTANCE=&#39;&lt;NAME&gt;&#39;;
+-- replace current_database() with a &#39;DATABASE NAME OF YOUR CHOICE&#39; if compute pool create fails
+set APP_DATABASE=current_database();
+set APP_COMPUTE_POOL=&#39;NVIDIA_NEMO_&#39;||$APP_INSTANCE;
+set APP_CUDA_DEVICES=&#39;&lt;LIST OF DEVICE NUMBERS&gt;&#39;;
+set APP_NUM_GPUS_PER_INSTANCE=1;
+set APP_NUM_INSTANCES=1;
+set APP_MAX_TOKEN=500;
+set APP_TEMPERATURE=0.0;
+set APP_TIMEOUT=1800;
+
+set APP_LOCAL_DB=$APP_DATABASE||&#39;_LOCAL_DB&#39;;
+set APP_LOCAL_SCHEMA=$APP_LOCAL_DB||&#39;.&#39;||&#39;EGRESS&#39;;
+set APP_LOCAL_EGRESS_RULE=$APP_LOCAL_SCHEMA||&#39;.&#39;||&#39;NVIDIA_MS_APP_RULE&#39;;
+set APP_LOCAL_EAI = $APP_DATABASE||&#39;_EAI&#39;;
+
+set APP_TEST_STMT=&#39;select &#39;||$APP_INSTANCE||&#39;.inference(\&#39;Who founded Snowflake? Please be brief.\&#39;,&#39;||$APP_MAX_TOKEN||&#39;,&#39;||$APP_TEMPERATURE||&#39;);&#39;;
+
+-- if this step fails , replace current_database() with a &#39;DATABASE NAME OF YOUR CHOICE&#39;
+CREATE COMPUTE POOL IF NOT EXISTS IDENTIFIER($APP_COMPUTE_POOL) FOR APPLICATION IDENTIFIER($APP_DATABASE)
+  MIN_NODES=1
+  MAX_NODES=1
+  INSTANCE_FAMILY=GPU_NV_M;
+
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($APP_LOCAL_DB);
+CREATE SCHEMA IF NOT EXISTS IDENTIFIER($APP_LOCAL_SCHEMA);
+
+CREATE or REPLACE NETWORK RULE IDENTIFIER($APP_LOCAL_EGRESS_RULE)
+  TYPE = &#39;HOST_PORT&#39;
+  MODE= &#39;EGRESS&#39;
+  VALUE_LIST = (&#39;0.0.0.0:443&#39;,&#39;0.0.0.0:80&#39;);
+
+-- If this statement is failing, it is because database NVIDIA_MS_APP_LOCAL_DB doesnt exist
+-- Check the value of $APP_LOCAL_DB and replace NVIDIA_MS_APP_LOCAL_DB with the value of $APP_LOCAL_DB
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION IDENTIFIER($APP_LOCAL_EAI)
+  ALLOWED_NETWORK_RULES = (NVIDIA_NEMO_MS_APP_LOCAL_DB.EGRESS.NVIDIA_MS_APP_RULE)
+  ENABLED = true;
+
+GRANT USAGE ON DATABASE IDENTIFIER($APP_LOCAL_DB) TO APPLICATION IDENTIFIER($APP_DATABASE);
+GRANT USAGE ON SCHEMA IDENTIFIER($APP_LOCAL_SCHEMA) TO APPLICATION IDENTIFIER($APP_DATABASE);
+GRANT USAGE ON NETWORK RULE IDENTIFIER($APP_LOCAL_EGRESS_RULE) TO APPLICATION IDENTIFIER($APP_DATABASE);
+
+GRANT USAGE ON INTEGRATION IDENTIFIER($APP_LOCAL_EAI) TO APPLICATION  IDENTIFIER($APP_DATABASE);
+GRANT USAGE ON COMPUTE POOL IDENTIFIER($APP_COMPUTE_POOL) TO APPLICATION IDENTIFIER($APP_DATABASE);
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO APPLICATION IDENTIFIER($APP_DATABASE);
+
+GRANT USAGE ON COMPUTE POOL IDENTIFIER($APP_COMPUTE_POOL) TO APPLICATION IDENTIFIER($APP_DATABASE);
+
+call core.initialize_app_instance(
+  $APP_INSTANCE
+  ,$APP_COMPUTE_POOL
+  ,$APP_CUDA_DEVICES
+  ,$APP_NUM_GPUS_PER_INSTANCE
+  ,$APP_NUM_INSTANCES
+  ,$APP_LOCAL_EAI
+  ,$APP_TIMEOUT);
+-- call core.start_app_instance($APP_INSTANCE);
+-- call core.stop_app_instance($APP_INSTANCE);
+-- call core.drop_app_instance($APP_INSTANCE);
+-- call core.restart_app_instance($APP_INSTANCE);
+call core.list_app_instance($APP_INSTANCE);
+call core.get_app_endpoint($APP_INSTANCE);
+-- SELECT $APP_TEST_STMT;
+</code></pre>
+<p>Wait for the Native Applications to be running, typically after the app has been successfully launched, the App will show the status as <code>Ready(Running)</code>.</p>
+<p>Use the following SQL to check the status and get Endpoint URL,</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE NVIDIA_NEMO_MS_APP;
+USE SCHEMA &lt;APP schema&gt;; -- This schema is based on where the app was created.
+CALL CORE.LIST_APP_INSTANCE(&#39;APP1&#39;); -- MAKE SURE ALL CONTAINERS ARE READY
+CALL CORE.GET_APP_ENDPOINT(&#39;APP1&#39;); -- GET APP ENDPOINTS TO ACCESS STREAMLIT APP
+</code></pre>
+<h2 is-upgraded>Exposing Consumer App using Streamlit</h2>
+<p>Get the Native App endpoint URL,</p>
+<pre><code language="language-sql" class="language-sql">CALL CORE.GET_APP_ENDPOINT(&#39;APP1&#39;)
+</code></pre>
+<p class="image-container"><img alt="Streamlit Endpoint URL" src="img/358ffc9b3a45a5d5.png"></p>
+<p>Copy the endpoint URL next to the Streamlit App and launch that URL on a browser to open the Streamlit App.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully created build and deployed a Snowflake LLM Native App powered by NVDIA using Snowpark Container Services.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>Learnt How-To,</p>
+<ul>
+<li>Build Snowflake LLM Native App powered by NVIDIA Inference microservices</li>
+<li>Download Mistral-7b-instruct LLM from Huggingface</li>
+<li>Generate a new model using model generator on NIM container</li>
+<li>Publish Mistral Inference App as internal Snowflake Native Application</li>
+<li>Launch the Inference Server using Snowpark Container Services</li>
+<li>Expose the Inference Service as Streamlit Application</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1" target="_blank">Mistral-7B-Instruct</a></li>
+<li><a href="https://developer.nvidia.com/nemo-microservices" target="_blank">NeMo Microservices</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/" target="_blank">Snowflake Native Apps</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

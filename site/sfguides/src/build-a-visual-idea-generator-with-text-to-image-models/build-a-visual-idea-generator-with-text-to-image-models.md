@@ -1,16 +1,15 @@
 author: Prabhath Nanisetty
 id: build-a-visual-idea-generator-with-text-to-image-models
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: A guide to building a visual concept/idea generator from unstructured data powered by Text2Image LLM models and Streamlit.
-categories: Data-Science-&-AI,Getting-Started,App-Development,Cortex,Data-Science-&-ML,Solution-Examples,Streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science & AI, Data Applications, Text to Image, Streamlit, Model Registry, Container Runtime Notebooks, Services, Innovation, Idea Generation, CPG Concept, Concept Testing, Ad Creative Automation
 
 # Build a Visual Concept/Idea Generator using a Text-to-Image AI Model
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 In this quickstart, you will learn how to easily build a Streamlit application that can generate images inspired by customer feedback or new innovation ideas. 
 
@@ -23,7 +22,7 @@ The challenge is that in both cases, once you have data and research, it's often
 
 You want to be able to provide your teams concepts like the one below to spark ideas for marketing campaigns:
 
-<img src="assets/diagram_final_concept.jpg" alt="image of paper towel with christmas patterns" width="450"/>
+![assets/diagram_final_concept.jpg](assets/diagram_final_concept.jpg)
 
 This particular concept has a brand logo, a potential idea for Christmas patterns, and a marketing tagline.
 
@@ -49,7 +48,6 @@ Wouldn't it be great if you could generate these automatically and easily? Well,
 
 <!-- ------------------------ -->
 ## About Concept / Idea Generation
-Duration: 5
 
 ### Overview
 Many companies have innovation teams that gather input from customers and research the market or industry in order to capture new innovation ideas for their products. A common practice in Retail & Consumer Goods is to understand both disruptive innovation, the development of fundamentally new products, or commercial innovation, the development of new packaging or smaller innovations.
@@ -98,7 +96,6 @@ Other models that have been tested and confirmed to work are listed below along 
 
 <!-- ------------------------ -->
 ## Setup Roles and Permissions
-Duration: 5
 
 In this section, we will set-up all the required Snowflake objects and permissions for this demo. We will be referencing the `1_set_up.sql` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql).
 
@@ -165,7 +162,6 @@ CREATE STAGE CONCEPT_GEN_INPUT_IMAGES
 
 <!-- ------------------------ -->
 ## Create Compute Engines
-Duration: 5
 
 ### Create warehouse and compute pools
 First we will create the warehouse to power our Notebook
@@ -203,7 +199,6 @@ CREATE COMPUTE POOL IF NOT EXISTS CONCEPT_GEN_POOL_L
 
 <!-- ------------------------ -->
 ## Setup Access to External Resources
-Duration: 5
 
 ### Create External Access Integrations
 In this step, we will create the External Access Integrations (EAIs) that we will need for our Notebooks and objects to access external resources outside of the Snowflake perimeter.
@@ -263,7 +258,7 @@ GRANT USAGE ON INTEGRATION EXTERNAL_LOGO_ACCESS_INTEGRATION TO ROLE CONCEPT_GEN_
 ### Create Sample Data
 In this demo, we will create a mock dataset of product ideas that have been taken from a combination of magazine articles, customer reviews, and qualitative interviews. 
 
-In a full automated architecture flow, this could be a table created from a RAG-based flow which sources from a document repository and converts the information into a structured table of customer comments. For more information on how to do this, you can read [this blog post(https://www.snowflake.com/en/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)] and explore quickstarts [like this one](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/#0).
+In a full automated architecture flow, this could be a table created from a RAG-based flow which sources from a document repository and converts the information into a structured table of customer comments. For more information on how to do this, you can read [this blog post(/en/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)] and explore quickstarts [like this one](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/).
 
 ``` sql
 CREATE OR REPLACE TABLE IDEA_REPOSITORY (
@@ -290,18 +285,17 @@ VALUES
 
 <!-- ------------------------ -->
 ## Run Demo in Notebook
-Duration: 30
 
 > aside negative
 >
-> Basic familiarity with Snowflake Notebooks is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Quickstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+> Basic familiarity with Snowflake Notebooks is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Quickstarts](/en/developers/guides/getting-started-with-snowflake-notebooks/)
 
 In this section, we will do a full end-to-end creation of a concept image all within a Snowflake Notebook! This will allow you to quickly see how this process works. At the end of this step, however, we cannot call the image model from elsewhere, say a Streamlit app or from your own Application - that requires a service which is detailed in the next section.
 
 ### What we will create
 At the end of this demo, we will create an image that contains a visualization of a product or marketing idea that also contains a brand logo and a marketing tagline.
 
-<img src="assets/diagram_final_concept.jpg" alt="image of paper towel with christmas patterns" width="450"/>
+![assets/diagram_final_concept.jpg](assets/diagram_final_concept.jpg)
 
 If you do not have a brand logo to use, you can use the [logo of a fictitious brand called "Charisma"](https://raw.githubusercontent.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/refs/heads/main/charisma_paper_towels.png) - located in the Github repo. You can either link to it via URL or upload it to the Snowflake stage you created in the set-up step.
 
@@ -326,7 +320,6 @@ There are a few different methods in this Notebook, so hitting Run All is not re
 
 <!-- ------------------------ -->
 ## Create an Image Model Service
-Duration: 30
 
 If we don't want to be limited in using a Snowflake Notebook, but instead want to embed this capability into an application or open up for an API, you will need to create a model service that can serve up the model easily.
 
@@ -409,11 +402,10 @@ This flow is what will guide our Streamlit application in the next section. Whil
 
 <!-- ------------------------ -->
 ## Create a Streamlit Application
-Duration: 5
 
 > aside negative
 >
-> Basic familiarity with Streamlit in Snowflake is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started) and [Quickstarts](https://quickstarts.snowflake.com/guide/tasty_bytes_price_optimization_using_snowflake_notebooks_and_streamlit/index.html?index=..%2F..index#0)
+> Basic familiarity with Streamlit in Snowflake is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started) and [Quickstarts](/en/developers/guides/tasty-bytes-price-optimization-using-snowflake-notebooks-and-streamlit/)
 
 In this section, we will create a Streamlit application that will follow a similar flow to the Notebook path in the last step, but with an easy-to-use UI for non-technical users. We will be referencing the `3_streamlit_app.py` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/3_streamlit_app.py) and can be loaded into a Streamlit app using Snowsight.
 
@@ -441,7 +433,6 @@ After an image has been generated all of the inputs as well as the output are sh
 
 <!-- ------------------------ -->
 ## Further Considerations
-Duration: 1
 
 This quickstart help you to quickly create a service and an accompanying Streamlit app for non-technical users to use. However, there are many other modalities for Idea generation that will be discussed below.
 
@@ -449,16 +440,15 @@ This quickstart help you to quickly create a service and an accompanying Streaml
 
 The orange areas highlighted in the image above represent the scope of this quickstart, however, for a full idea generation program, you may also want to consider the following:
 
-* **Automatically process unstructured data from documents.** Leverage information from industry reports, customer interviews, and reviews to develop the idea repository that we mocked in this quickstart. For this, you can process new documents with Cortex capabilities like Analyst and Search to automatically distill the information. See this [Quickstart](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html?index=..%2F..index#0) for ideas.
+* **Automatically process unstructured data from documents.** Leverage information from industry reports, customer interviews, and reviews to develop the idea repository that we mocked in this quickstart. For this, you can process new documents with Cortex capabilities like Analyst and Search to automatically distill the information. See this [Quickstart](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/) for ideas.
 
-* **Continuously generate concept images from new inbound ideas.** Once ideas are flowing into your idea repository, you can automatically kick off image generation using Dynamic Tables and Scheduled Tasks. See this [Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html?index=..%2F..index#0) for more information. This image database could be powered by a Streamlit app which exposes ideas across different topic areas for an end-user.
+* **Continuously generate concept images from new inbound ideas.** Once ideas are flowing into your idea repository, you can automatically kick off image generation using Dynamic Tables and Scheduled Tasks. See this [Quickstart](/en/developers/guides/getting-started-with-dynamic-tables/) for more information. This image database could be powered by a Streamlit app which exposes ideas across different topic areas for an end-user.
 
 * **Create Automated Review & Testing flows to get feedback about concepts.** Connect your image database with an activation target, such as a survey, to automatically activate to gather feedback or measure performance. For this step, you may want to enable [Cortex Guard](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete-cortex-guard) to ensure that input concepts or output images follow your safety and privacy policies.
 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 You have just built an entire idea generation engine from scratch and the best part is that you did not need to manage any complex cloud infrastructure other than setting up compute pools or custom configuring APIs to external LLMs. Snowflake took care of all that complexity for you!
 

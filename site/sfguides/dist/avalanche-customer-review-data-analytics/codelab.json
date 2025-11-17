@@ -1,0 +1,36 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "avalanche-customer-review-data-analytics",
+  "duration": 65,
+  "title": "Build a Customer Review Analytics Dashboard with Snowflake Cortex and Streamlit",
+  "summary": "Learn how to process and analyze customer review data using Snowflake’s data processing capabilities and visualization tools. This guide demonstrates how to extract insights from unstructured text data through sentiment analysis and visualization.",
+  "source": "avalanche-customer-review-data-analytics/avalanche-customer-review-data-analytics.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "analytics",
+    "streamlit",
+    "notebooks",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "cortex",
+    "dataanalytics",
+    "datavisualization",
+    "llm",
+    "sentimentanalysis",
+    "snowflake",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "avalanche-customer-review-data-analytics"
+}

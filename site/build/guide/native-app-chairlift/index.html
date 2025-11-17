@@ -1,0 +1,643 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Snowflake Native App to Analyze Chairlift Sensor Data</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="native-app-chairlift"
+                  title="Build a Snowflake Native App to Analyze Chairlift Sensor Data"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Introduction" duration="2">
+        <p>In this Quickstart, you&#39;ll build a Snowflake Native Application that can analyze sensor data from chairlifts at different locations at a ski resort. Let&#39;s explore the scenario from the perspective of the application provider and an application consumer.</p>
+<p>– <strong>Provider</strong> – The provider of the app is a chairlift manufacturer. The app, once installed by a consumer, can run against chairlift sensor data housed in the consumer&#39;s account, and provide the consumer with important analytics and insights on the condition of each chairlift.</p>
+<p>– <strong>Consumer</strong> – The consumer of the app is a customer of the chairlift manufacturer. They have purchased and installed chairlifts in various locations across a ski resort they own, and they collect raw sensor data from the chairlifts using a connector that ingests this data directly into their account. The provider&#39;s app runs against this data and helps the customer identify chairlifts in need of maintenance.</p>
+<p>Within the app, you&#39;ll create the following:</p>
+<ul>
+<li><strong>Dashboard</strong> – A dashboard with a list of sensor warnings from all chairlifts at the ski resort. You&#39;ll be able to filter by chairlift and by sensor type.</li>
+<li><strong>Configuration</strong> – A tab that allows an application admin to toggle sensor warnings about chairlifts.</li>
+<li><strong>Sensor data</strong> – Visualizations of raw sensor data across all chairlifts at the ski resorts.  You&#39;ll be able to filter by chairlift and by sensor type.</li>
+</ul>
+<p>Note that this Quickstart is limited to a single-account installation. Listing to the Snowflake Marketplace and versions / release directives are outside of the scope of this guide.</p>
+<p>Let&#39;s get started!</p>
+<p class="image-container"><img alt="Sensor data" src="img/cc019dc1d8b4fb12.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an application package</li>
+<li>How to create grants in the application package to control access to different parts of the app, depending on Snowflake role</li>
+<li>How to create a new version of the app</li>
+<li>How to install and run the app in a single Snowflake account using multiple roles</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<aside class="warning"><p><strong>Important</strong> Native Apps are currently only  available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.</p>
+</aside>
+<ul>
+<li>A Snowflake account (<a href="https://signup.snowflake.com/developers" target="_blank">trial</a>, or otherwise). See note above on AWS as cloud provider for the deployment.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake Native App</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clone GitHub repository" duration="2">
+        <p>Start by cloning the following GitHub repository, which contains the code we&#39;ll need to build the app:</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-native-apps-chairlift.git
+</code></pre>
+<p>Take a look at the directory structure:</p>
+<pre>sfguide-native-apps-chairlift/
+├─ LEGAL.md
+├─ LICENSE
+├─ README.md
+├─ app/
+│  ├─ README.md
+│  ├─ manifest.yml
+│  ├─ setup_script.sql
+│  ├─ sql_lib/
+│  │  ├─ ... (.sql files)
+│  ├─ src/
+│     ├─ ui/
+│        ├─ ... (.py files)
+├─ consumer/
+│  ├─ install-app.sql
+├─ prepare/
+│  ├─ consumer-data.sql
+│  ├─ consumer-roles.sql
+│  ├─ provider-data.sql
+│  ├─ provider-role.sql
+├─ provider/
+│  ├─ create-package.sql
+├─ tests/
+│  ├─ ... (.py files)
+├─ ...
+</pre>
+<p>The app&#39;s entry point (<strong>manifest.yml</strong>) and the app&#39;s source code reside in the <strong>app/</strong> directory. There are also three other directories in this repository: <strong>prepare/</strong>, <strong>consumer/</strong>, and <strong>provider/</strong>. These three directories are specific to this Quickstart, and the files in these folders will be used to properly set up account roles and objects within the Snowflake account for this native app. In practice, you may have your own directory structure outside of the <strong>app/</strong> folder, or other methods for achieving what the files in these other directories do.</p>
+<p>Here&#39;s an overview of the directories:</p>
+<p><strong>app/</strong></p>
+<ul>
+<li>The <strong>app/</strong> directory includes two required (and very important) files: The manifest file <strong>manifest.yml</strong> and the setup script <strong>setup_script.sql</strong>. The setup script can also reference other files. In our case, it references files in the <strong>sql_lib/</strong> directory, which include all stored procedures and user-defined functions (UDFs). The <strong>app/src/</strong> directory contains the source code for the app, like the front-end Streamlit files present in <strong>app/src/ui/</strong> directory. We&#39;ll take a deeper look at the <strong>app/</strong> directory in the next step.</li>
+</ul>
+<p><strong>prepare/</strong></p>
+<ul>
+<li>This directory is specific to this Quickstart. It contains files to prepare your Snowflake account by creating certain roles, granting privileges, and loading data. We&#39;ll execute the scripts in this folder before building the native app.</li>
+</ul>
+<p><strong>consumer/</strong></p>
+<ul>
+<li>This directory is specific to this Quickstart. It contains a SQL script to install the native app in the account and grant appropriate privileges. This will allow you to run the native app from the perspective of the consumer (i.e., a customer of the chairlift manufacturer).</li>
+</ul>
+<p><strong>provider/</strong></p>
+<ul>
+<li>This directory is specific to this Quickstart. It contains a SQL script to create the application package and grant privileges on provider data.</li>
+</ul>
+<p><strong>tests/</strong></p>
+<ul>
+<li>This directory contains unit tests for the Front-ends of the app which are built with Streamlit.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="The 
+app/ directory" duration="4">
+        <p>Let&#39;s take a deeper look at the <strong>app/</strong> directory for this app.</p>
+<pre>app/
+├─ README.md
+├─ manifest.yml
+├─ setup_script.sql
+├─ sql_lib/
+│  ├─ config_code-register_single_callback.sql
+│  ├─ config_data-configuration.sql
+│  ├─ shared_content-sensor_ranges.sql
+│  ├─ shared_content-sensor_service_schedules.sql
+│  ├─ shared_content-sensor_types_view.sql
+│  ├─ ui-v_configuration.sql
+│  ├─ ui-v_dashboard.sql
+│  ├─ ui-v_sensor_data.sql
+│  ├─ warnings_code-check_warnings.sql
+│  ├─ warnings_code-create_warning_check_task.sql
+│  ├─ warnings_code-update_warning_check_task_status.sql
+│  ├─ warnings_data-warnings.sql
+│  ├─ warnings_data-warnings_reading_cursor.sql
+├─ src/
+   ├─ ui/
+      ├─ chairlift_data.py
+      ├─ environment.yml
+      ├─ first_time_setup.py
+      ├─ references.py
+      ├─ ui_common.py
+      ├─ util.py
+      ├─ v_configuration.py
+      ├─ v_dashboard.py
+      ├─ v_sensor_data.py
+</pre>
+<p>This directory contains the source code for the native app. This Quickstart uses <strong>app/</strong> as the name of the folder, but in practice, this folder may take on any name you&#39;d like.</p>
+<p>Here&#39;s an overview of what this folder contains:</p>
+<p><strong>manifest.yml</strong></p>
+<ul>
+<li>A manifest file is a requirement when creating a native app. This file defines the runtime configuration for the application. It contains metadata about the app (version, etc.), artifacts required by the app, and log configuration settings. It also defines the privileges that the consumer must grant to the application when the application is installed in their account. Finally, it also contains references defined by the provider. Typically these references refer to tables and the corresponding privileges needed by the app to run against consumer data. For more information, see <a href="https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest" target="_blank">Creating the Manifest File</a>.</li>
+</ul>
+<p><strong>setup_script.sql</strong></p>
+<ul>
+<li>A setup script is a requirement when creating a native app. This script contains statements that are run when the consumer installs or upgrades an application, or when a provider installs or upgrades an application for testing. The location of this script should be specified in the manifest file. For more information, see <a href="https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script" target="_blank">Creating the Setup Script</a>.</li>
+</ul>
+<p><strong>sql_lib/</strong></p>
+<ul>
+<li>A directory that contains smaller SQL files that are included in the setup script. This helps keep the setup script short and well organized.</li>
+</ul>
+<p><strong>README.md</strong></p>
+<ul>
+<li>This file should provide a description of what the app does. This file is shown when viewing the app within Snowflake.</li>
+</ul>
+<p><strong>src/ui/</strong></p>
+<ul>
+<li>This directory is specific to this Quickstart, and contains all of the files and code used to create the front-end of the app. Front-ends for Snowflake Native Apps are built with Streamlit. You should peruse all of the files in this folder to get familiar with how the front-end is built, and pay special attention to the files that define the main views within the app, namely <strong>v_dashboard.py</strong>, <strong>v_sensor_data.py</strong>, and <strong>v_configuration.py</strong>. For more information, see <a href="https://docs.snowflake.com/en/developer-guide/native-apps/adding-streamlit" target="_blank">Adding Frontend Experience to Your Application with Streamlit</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test the App" duration="3">
+        <p>Let&#39;s take a deeper look at the files and directories related to testing this native app.</p>
+<pre>local_test_env.yml
+pytest.ini
+tests/
+├─ test_utils.py
+├─ test_v_configuration.py
+├─ test_v_dashboard.py
+├─ test_v_sensor_data.py
+</pre>
+<p>Here&#39;s an overview of the above files and directories:</p>
+<p><strong>local_test_env.yml</strong></p>
+<p>This file is a conda environment file that contains the dependencies allowing you to run the tests. To activate the testing environment:</p>
+<pre><code>conda env update -f local_test_env.yml
+conda activate chairlift-test
+</code></pre>
+<p>To deactivate it:</p>
+<pre><code>conda deactivate
+
+</code></pre>
+<p><strong>pytest.ini</strong></p>
+<p>This file contains the different settings for pytest tests. For example, it contains the location of source code on which the unit tests run.</p>
+<p><strong>tests/</strong></p>
+<p>This directory contains Streamlit unit tests. <strong>tests/test_utils.py</strong> contains common util functions and Pytest fixtures used for the unit tests. The other files in this directory contain the actual tests. The included tests leverage the <a href="https://docs.streamlit.io/develop/api-reference/app-testing" target="_blank">Streamlit App Testing</a> framework which allows automated testing of Streamlit elements.</p>
+<h2 is-upgraded>Running Unit tests</h2>
+<p>To run unit tests, make sure that <code>chairlift-test</code> conda environment is active, and then run the following command:</p>
+<pre><code>pytest -vv
+</code></pre>
+<p>You should observe all the tests passing.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up account roles" duration="4">
+        <p>Let&#39;s start building the app. You&#39;ll first need to configure certain roles and permissions within your Snowflake account. This will allow you to view the app as an app admin (for configuring the application after installation and/or dismissing sensor warnings), or as an app viewer (perhaps someone in charge of equipment maintenance at the resort keeps an eye on the condition of chairlifts).</p>
+<p>To create these roles and permissions, run the scripts below. You&#39;ll only need to execute these scripts once.</p>
+<p><strong>Execute prepare/provider-role.sql</strong></p>
+<p>Open a SQL worksheet in Snowsight and execute the following script:</p>
+<pre><code language="language-sql" class="language-sql">-- create provider role
+create role if not exists chairlift_provider;
+grant role chairlift_provider to role accountadmin;
+grant create application package on account to role chairlift_provider;
+grant create database on account to role chairlift_provider;
+
+-- ensure a warehouse is usable by provider
+create warehouse if not exists chairlift_wh;
+grant usage on warehouse chairlift_wh to role chairlift_provider;
+</code></pre>
+<p><strong>Execute prepare/consumer-roles.sql</strong></p>
+<p>Open a SQL worksheet in Snowsight and execute the following script:</p>
+<pre><code language="language-sql" class="language-sql">-- create consumer role
+create role if not exists chairlift_admin;
+create role if not exists chairlift_viewer;
+grant role chairlift_admin to role accountadmin;
+grant role chairlift_viewer to role accountadmin;
+grant create database on account to role chairlift_admin;
+grant create application on account to role chairlift_admin;
+grant execute task, execute managed task on account to role chairlift_admin with grant option;
+grant role chairlift_viewer to role chairlift_admin;
+
+-- ensure a warehouse is usable by consumer
+grant usage on warehouse chairlift_wh to role chairlift_admin;
+grant usage on warehouse chairlift_wh to role chairlift_viewer;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare objects in account" duration="5">
+        <p>Next, you&#39;ll run some scripts to set up some databases, schemas, and tables needed by the app.</p>
+<p>The scripts will do a couple of things:</p>
+<ul>
+<li>The provider scripts define roles, warehouses, and data types for the data emitted by the sensors (i.e., brake temperature, motor RPMs, etc.). This data is combined with the consumer data inside of the app, and is necessary so that the app can function as intended in the consumer&#39;s account. From this perspective, the provider is the chairlift manufacturer, and the app will run against raw sensor data in (and owned by) a consumer&#39;s account. Running the app against this data will provide the consumer with analytics and insights on the chairlifts they own, granted that the consumer installs the app and grants the proper privileges to the app.</li>
+<li>The consumer scripts mock fictional, raw sensor data about the chairlifts. In practice, this data could be ingested directly into the consumer&#39;s account with a connector that collects raw sensor data from the chairlifts. For the purposes of this Quickstart, we mock this data so that the provider&#39;s native app can run against this data that lives in the consumer&#39;s account.</li>
+</ul>
+<p>To set up the environment, run the scripts below. You&#39;ll only need to execute these scripts once.</p>
+<p><strong>Execute prepare/provider-data.sql</strong></p>
+<p>Open a SQL worksheet in Snowsight and execute the following script:</p>
+<pre><code language="language-sql" class="language-sql">use role chairlift_provider;
+use warehouse chairlift_wh;
+
+create database if not exists chairlift_provider_data;
+use database chairlift_provider_data;
+create schema if not exists core;
+use schema core;
+
+-- Sensor types with reading min range, max ranges, service intervals and lifetime of the sensor.
+create or replace table chairlift_provider_data.core.sensor_types (
+    id int,
+    name varchar,
+    min_range int,
+    max_range int,
+    service_interval_count int,
+    service_interval_unit varchar,
+    lifetime_count int,
+    lifetime_unit varchar,
+    primary key (id)
+);
+
+insert into chairlift_provider_data.core.sensor_types values
+    (1, &#39;Brake Temperature&#39;, -40, 40, 6, &#39;month&#39;, 5, &#39;year&#39;),
+    (2, &#39;Current Load&#39;, 20000, 50000, 3, &#39;month&#39;, 5, &#39;year&#39;),
+    (3, &#39;Bull-wheel RPM&#39;, 4000, 5000, 1, &#39;month&#39;, 1, &#39;year&#39;),
+    (4, &#39;Motor RPM&#39;, 2000, 2500, 1, &#39;month&#39;, 1, &#39;year&#39;),
+    (5, &#39;Motor Voltage&#39;, 110, 130, 2, &#39;month&#39;, 5, &#39;year&#39;),
+    (6, &#39;Current Temperature&#39;, -40, 40, 4, &#39;month&#39;, 5, &#39;year&#39;),
+    (7, &#39;Rope Tension&#39;, 70, 100, 3, &#39;month&#39;, 5, &#39;year&#39;),
+    (8, &#39;Chairlift Load&#39;, 50, 250, 3, &#39;month&#39;, 2, &#39;year&#39;),
+    (9, &#39;Chairlift Vibration&#39;, 30, 100, 3, &#39;month&#39;, 3, &#39;year&#39;);
+</code></pre>
+<p><strong>Execute prepare/consumer-data.sql</strong></p>
+<p>Open a SQL worksheet in Snowsight and execute the following script:</p>
+<pre><code language="language-sql" class="language-sql">use role chairlift_admin;
+use warehouse chairlift_wh;
+
+-- consumer data: streaming readings from sensors on their ski lift machines.
+create database if not exists chairlift_consumer_data;
+use database chairlift_consumer_data;
+create schema if not exists data;
+use schema data;
+
+-- what machines (chairlifts and stations) exist in the consumer\&#39;s ski resort?
+create or replace table machines (
+    uuid varchar,
+    name varchar,
+    latitude double,
+    longitude double,
+    primary key (uuid)
+);
+
+-- what sensors are configured and streaming data from those machines?
+create or replace table sensors (
+    uuid varchar,
+    name varchar,
+    sensor_type_id int,
+    machine_uuid varchar,
+    last_reading int,
+    installation_date date,
+    last_service_date date,
+    primary key (uuid),
+    foreign key (machine_uuid) references machines(uuid)
+);
+
+-- what readings have we received from the configured sensors?
+create table if not exists sensor_readings (
+    sensor_uuid varchar,
+    reading_time timestamp,
+    reading int,
+    primary key (sensor_uuid, reading_time),
+    foreign key (sensor_uuid) references sensors(uuid)
+);
+
+-- Sensor types with reading min range, max ranges, service intervals and lifetime of the sensor.
+-- Note that both the consumer and provider have a version of this table; you can think
+-- of this version as coming from an imaginary &#34;second app&#34; which is a connector that
+-- streams data into the consumer\&#39;s account from the sensors. Consumer owns their own data!
+create or replace table sensor_types (
+    id int,
+    name varchar,
+    min_range int,
+    max_range int,
+    service_interval_count int,
+    service_interval_unit varchar,
+    lifetime_count int,
+    lifetime_unit varchar,
+    primary key (id)
+);
+
+insert into sensor_types values
+    (1, &#39;Brake Temperature&#39;, -40, 40, 6, &#39;month&#39;, 5, &#39;year&#39;),
+    (2, &#39;Current Load&#39;, 20000, 50000, 3, &#39;month&#39;, 5, &#39;year&#39;),
+    (3, &#39;Bull-wheel RPM&#39;, 4000, 5000, 1, &#39;month&#39;, 1, &#39;year&#39;),
+    (4, &#39;Motor RPM&#39;, 2000, 2500, 1, &#39;month&#39;, 1, &#39;year&#39;),
+    (5, &#39;Motor Voltage&#39;, 110, 130, 2, &#39;month&#39;, 5, &#39;year&#39;),
+    (6, &#39;Current Temperature&#39;, -40, 40, 4, &#39;month&#39;, 5, &#39;year&#39;),
+    (7, &#39;Rope Tension&#39;, 70, 100, 3, &#39;month&#39;, 5, &#39;year&#39;),
+    (8, &#39;Chairlift Load&#39;, 50, 250, 3, &#39;month&#39;, 2, &#39;year&#39;),
+    (9, &#39;Chairlift Vibration&#39;, 30, 100, 3, &#39;month&#39;, 3, &#39;year&#39;);
+
+-- what is the most-recent reading we have from a given sensor?
+create view if not exists last_readings as
+    select uuid, name, last_reading from sensors;
+
+-- mock data in machines
+insert into machines(uuid, name) select uuid_string(), &#39;Base Station&#39;;
+insert into machines(uuid, name) select uuid_string(), &#39;Hilltop Station&#39;;
+insert into machines(uuid, name) select uuid_string(), &#39;Chairlift #1&#39;;
+insert into machines(uuid, name) select uuid_string(), &#39;Chairlift #2&#39;;
+insert into machines(uuid, name) select uuid_string(), &#39;Chairlift #3&#39;;
+
+-- mock data in sensors
+execute immediate $$
+declare
+    c1 cursor for
+        select uuid from machines where name = &#39;Base Station&#39; or name = &#39;Hilltop Station&#39;;
+    c2 cursor for
+        select uuid from machines where name in (&#39;Chairlift #1&#39;, &#39;Chairlift #2&#39;, &#39;Chairlift #3&#39;);
+begin
+    --for base and hilltop stations/machines
+    for machine in c1 do
+        let machine_uuid varchar default machine.uuid;
+        insert into sensors(uuid, name, sensor_type_id, machine_uuid, installation_date, last_service_date)
+            select uuid_string(), name, id, :machine_uuid, dateadd(day, -365, getdate()), dateadd(day, -1 * abs(hash(uuid_string()) % 365), getdate())
+                from sensor_types where id &lt; 8;
+    end for;
+    --for chairlifts machines
+    for machine in c2 do
+        let machine_uuid varchar default machine.uuid;
+        insert into sensors(uuid, name, sensor_type_id, machine_uuid, installation_date,last_service_date)
+            select uuid_string(), name, id, :machine_uuid, dateadd(day, -365, getdate()), dateadd(day, -1 * abs(hash(uuid_string()) % 365), getdate())
+                from sensor_types where id &gt; 7;
+    end for;
+end;
+$$
+;
+
+-- mock data in sensor_readings table
+create or replace procedure populate_reading()
+  returns varchar
+  language sql
+  as
+  $$
+    declare
+      starting_ts       timestamp;
+      rows_to_produce   integer;
+      sensors_cursor cursor for
+        select id, uuid, min_range, max_range
+          from sensors s join sensor_types sr
+                 on s.sensor_type_id = sr.id;
+    begin
+      --
+      -- starting_ts is the time of the last sensor reading we wrong or, if no
+      -- readings are available, 10 minutes in the past.
+      --
+      select coalesce(max(reading_time), dateadd(second, -30*20, current_timestamp()))
+               into :starting_ts
+        from sensor_readings;
+
+      --
+      -- produce one row for every thirty seconds from our starting time to now
+      --
+      rows_to_produce := datediff(second, starting_ts, current_timestamp()) / 30;
+
+      for sensor in sensors_cursor do
+        let sensor_uuid varchar default sensor.uuid;
+        let min_range integer default sensor.min_range;
+        let max_range integer default sensor.max_range;
+  
+        insert into sensor_readings(sensor_uuid, reading_time, reading)
+          select
+              :sensor_uuid,
+              dateadd(second, row_id * 30, :starting_ts),
+              case
+                when rand_value &lt; 10 then
+                  :min_range - abs(hash(uuid)) % 10
+                when rand_value &gt; 90 then
+                  :max_range + abs(hash(uuid)) % 10
+                else
+                  :min_range + abs(hash(uuid)) % (:max_range - :min_range)
+              end case
+          from ( 
+              select seq4() + 1            as row_id,
+                     uuid_string()         as uuid,
+                     abs(hash(uuid)) % 100 as rand_value
+                from table(generator(rowcount =&gt; :rows_to_produce)));
+      end for;
+
+      update sensors
+         set last_reading = r.reading
+        from sensors as s2, sensor_readings as r
+       where s2.uuid = sensors.uuid
+         and r.sensor_uuid = s2.uuid
+         and r.reading_time = 
+              (select max(reading_time)  
+                 from sensor_readings r2
+                where r2.sensor_uuid = s2.uuid);
+    end;
+  $$
+;
+
+-- Task to call the stored procedure to update the readings table every minute
+create or replace task populate_reading_every_minute
+    warehouse = chairlift_wh
+    schedule = &#39;1 minute&#39;
+as
+    call populate_reading();
+
+-- If you would like the data to be populated on a schedule, you can run:
+-- alter task chairlift_consumer_data.data.populate_reading_every_minute resume;
+
+-- To stop:
+-- alter task chairlift_consumer_data.data.populate_reading_every_minute suspend;
+
+-- Get some initial data in the readings table
+call populate_reading();
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create application package and install application using Snowflake CLI" duration="3">
+        <p>With the environment created, we can now create the application package for the app. You&#39;ll run a command that creates this package and does a few key things:</p>
+<ul>
+<li>Creates the application package for the native app</li>
+<li>Marks that the native app makes use of an external database in the provider&#39;s account</li>
+<li>Creates views and grants the setup script access to the views</li>
+</ul>
+<p>For more details, see the comments in the <strong>snowflake.yml</strong> file.</p>
+<p><strong>Deploy the application package</strong></p>
+<p>Open a new terminal in the root of the repository and execute the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow app run
+</code></pre>
+<p>This command will upload source files, create the application package, and install the application object automatically. When you run it again, it will perform the minimum steps necessary to ensure the application is up-to-date with your local copy.</p>
+<p>Snowflake CLI project is configured using <code>snowflake.yml</code> file.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the first version of the app" duration="2">
+        <p>Let&#39;s review what we&#39;ve covered so far:</p>
+<ul>
+<li>Created necessary account roles and objects, and granted proper privileges</li>
+<li>Created the application package and uploaded the app&#39;s source code to the application package</li>
+</ul>
+<p>Next, you&#39;ll create the first version of the app. Run the following command in your terminal:</p>
+<pre><code language="language-bash" class="language-bash">snow app version create develop
+</code></pre>
+<p>This command will create the first (new) version of the native app using the source code files that you uploaded earlier.</p>
+<aside class="special"><p><strong>PATCH VERSIONS</strong> Do not run the command below. It is included here to demonstrate how you can add a patch version of a native app.</p>
+</aside>
+<p>In the scenario where you update the source code for the app to roll out a fix (i.e., fixing a bug), you could add the updated source as a patch to the native app using the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow app version create develop --patch 1
+</code></pre>
+<p>This SQL command returns the new patch number, which will be used when installing the application as the consumer.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Allow restricted application access to a secondary role" duration="3">
+        <p>Now that the source code has been uploaded into the application package and the application was installed, we can grant appropriate privileges to a secondary consumer role named <strong>chairlift_viewer</strong>. Note that the version and/or patch values may need to be updated to install the application using a different version or patch.</p>
+<pre><code language="language-sql" class="language-sql">use role chairlift_admin;
+use warehouse chairlift_wh;
+
+-- allow our secondary viewer role restricted access to the app
+grant application role chairlift_app.app_viewer
+    to role chairlift_viewer;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up the application" duration="4">
+        <p>With the application installed, you can now run the app in your Snowflake account!</p>
+<ol type="1">
+<li>Set your role to <strong>CHAIRLIFT_ADMIN</strong>.</li>
+<li>Navigate to <strong>Apps</strong> within Snowsight (left hand side).</li>
+<li>Next, click <strong>Apps</strong> at the top of Snowsight.</li>
+<li>You should see the app installed under &#34;Installed Apps&#34;. Click <strong>CHAIRLIFT_APP</strong>. This will start the app. You&#39;ll be prompted to do some first-time setup by granting the app access to certain tables. After completing this setup, you&#39;ll have access to the main dashboard within the app. If you&#39;re encountering an error, ensure your role is set to <strong>CHAIRLIFT_ADMIN</strong> during first-time setup.</li>
+</ol>
+<p class="image-container"><img alt="First time setup" src="img/bb19522f8ee059d1.png"></p>
+<p>When running the app for the first time, you&#39;ll be prompted to create bindings. The bindings link references defined in the manifest file to corresponding objects in the Snowflake account. These bindings ensure that the application can run as intended. You&#39;ll also be prompted to grant the application privileges to execute a task based on a toggle within the app&#39;s user interface. For more information, see the <strong>first_time_setup.py</strong> and <strong>references.py</strong> files in the <strong>ui/</strong> folder within the repo.</p>
+<aside class="warning"><p><strong>NOTE</strong> Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to <strong>ORGADMIN</strong>, then navigate to &#34;<strong>Admin</strong> -&gt; <strong>Billing &amp; Terms</strong>&#34;. Click <strong>Enable</strong> and then acknowledge and continue in the ensuing modal. If, when navigating back to the app as <strong>CHAIRLIFT_ADMIN</strong>, you are again prompted to accept the terms, refresh your browser.</p>
+</aside>
+<p class="image-container"><img alt="Anaconda" src="img/feb8ec28efd424c5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the application" duration="6">
+        <p>You can run the app as an app admin or or app viewer. See the sections below for the differences between the two roles.</p>
+<p><strong>APP VIEWER</strong></p>
+<p>To run the app as an app viewer, switch your role to <strong>CHAIRLIFT_VIEWER</strong>, and navigate back to the app. You should have access to two views:</p>
+<p>– <strong>Dashboard</strong> – A list of warnings emitted by all chairlift sensors. You can filter by specific chairlift, or by a sensor type. You can also acknowledge warnings and dismiss them as needed.</p>
+<p>– <strong>Sensor data</strong> – Graphs of sensor data for each sensor type, over a given time interval, and segmented by chairlift. You can filter by specific chairlift, by a sensor type, or by date. You can also view raw sensor readings data.</p>
+<p class="image-container"><img alt="Sensor data" src="img/cc019dc1d8b4fb12.png"></p>
+<p><strong>APP ADMIN</strong></p>
+<p>To run the app as an app admin, switch your role to <strong>CHAIRLIFT_ADMIN</strong>, and navigate back to the app. You should have access to the two views above, as well as one additional view:</p>
+<p>– <strong>Configuration</strong> – The app admin is granted the following capabilities within this tab:</p>
+<ul>
+<li><strong>Enable a warning generation task</strong> – A maintenance warning is generated for any sensor reading that falls outside of the manufacturer&#39;s specified range for that sensor type. Toggling this checkbox (i.e., clicking it) will call the warning generation task. Every 60 seconds, the task will scan all sensor readings and conditionally generate a warning based on the sensor&#39;s reading.  You can view these generated warnings in the <strong>Dashboard</strong> view. Because this task runs every 60 seconds, this task can consume a lot of credits in your Snowflake account.  To avoid prolonged credit consumption, be sure to disable (i.e., uncheck) the checkbox, or consider the button below the checkbox. Its functionality is described below.</li>
+<li><strong>Generate new warnings (takes a while)</strong> button – Clicking this button will also call the warning generation task, but it will only run on-demand (i.e., only when the button is clicked, not every 60 seconds). As a result, it consumes fewer credits when compared to the continuously run task, but it may take a little longer to generate warnings. You can view these generated warnings in the <strong>Dashboard</strong> view. In addition, clicking the button will temporarily disable the checkbox above it.</li>
+</ul>
+<p>In this Quickstart, the <strong>Configuration</strong> tab is included to demonstrate how different roles in an account may be granted different privileges within the app. In practice, the app admin (or other roles) may have access to other areas or functionality of the app.</p>
+<aside class="warning"><p><strong>AVOID PROLONGED CREDIT CONSUMPTION</strong> Enabling warning generation via the checkbox will call a warning generation task every 60 seconds. <strong>To avoid prolonged credit consumption, be sure to disable the warning generation task by unchecking the checkbox.</strong></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean up" duration="1">
+        <p>Let&#39;s clean up your Snowflake account. In the same terminal you opened before, execute the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow app teardown
+</code></pre>
+<p>Then, run the following SQL commands in a worksheet:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE chairlift_admin;
+DROP DATABASE chairlift_consumer_data;
+
+USE ROLE ACCOUNTADMIN;
+DROP WAREHOUSE chairlift_wh;
+DROP ROLE chairlift_provider;
+DROP ROLE chairlift_viewer;
+DROP ROLE chairlift_admin;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! In just a few minutes, you built a Snowflake Native App that allows a consumer to generate maintenance-related insights based on raw sensor data from chairlifts they own at a ski resort. The app also grants select access to parts of the app depending on the Snowflake role selected.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to create a application package</li>
+<li>How to add source code to an application package</li>
+<li>How to create a new version (or patch) of the app</li>
+<li>How to install and run the native app in a consumer account</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart" target="_blank">Snowflake Native App Developer Toolkit</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">Official Native App documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial" target="_blank">Tutorial: Developing an Application with the Native Apps Framework</a></li>
+<li><a href="https://developers.snowflake.com/demos" target="_blank">Snowflake Demos</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/" target="_blank">Getting Started with Native Apps</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

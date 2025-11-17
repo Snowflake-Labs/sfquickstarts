@@ -1,0 +1,447 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Recommendation Engine with Amazon SageMaker</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="recommendation_engine_aws_sagemaker"
+                  title="Build a Recommendation Engine with Amazon SageMaker"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This guide will walk you through how to train a recommendation system using Amazon SageMaker with data stored in Snowflake. Along the way, we&#39;ll introduce you to the power of External Functions in Snowflake, showing you how we can use them to call external API endpoints.  The lessons found within will serve as an excellent introduction to bringing extensibility to your data pipelines.</p>
+<p>We&#39;ll be using the <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens dataset</a> to build a movie recommendation system. We&#39;ll use Snowflake as the dataset repository and Amazon SageMaker to train and deploy our Machine Learning model. The recommendations are powered by the SVD algorithm provided by the <a href="http://surpriselib.com/" target="_blank">Surprise</a> python library.</p>
+<p>You can view all source code of this guide on <a href="https://github.com/Snowflake-Labs/sfguide-recommender-pipeline" target="_blank">GitHub</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with command-line navigation</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Load datasets into Snowflake</li>
+<li>Prepare Amazon SageMaker for training and model deployment</li>
+<li>Deploy AWS Lambda Functions &amp; API Gateway Using Serverless Framework</li>
+<li>Model Training, Deployment, and Inference Using Snowflake External Functions</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>An IDE (such as <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>)</li>
+<li>A <a href="https://trial.snowflake.com/" target="_blank">Snowflake account</a> with <code>ACCOUNTADMIN</code> access.</li>
+<li>An AWS account with administrator access (or scoped IAM user with access to Lambda, API Gateway, SageMaker, AWS Systems Manager</li>
+<li><a href="https://www.docker.com/products/docker-desktop" target="_blank">Docker Desktop</a></li>
+<li><a href="https://www.serverless.com/" target="_blank">Serverless Framework</a> - Please note the Serverless version (2.43.0) does not satisfy the &#34;frameworkVersion&#34; (&gt;=1.2.0 &lt;2.0.0) in serverless.yml</li>
+<li>Make sure you have the <a href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html" target="_blank">AWS CLI version 2 installed</a> and <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html" target="_blank">configured</a> with credentials</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A custom training and inference docker image for SageMaker</li>
+<li>A serverless app to connect Snowflake and SageMaker using AWS Lambda and API Gateway</li>
+<li>SageMaker training, deployment, and inference instances</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load the data into Snowflake" duration="5">
+        <p>The first thing you&#39;ll need to do is download a small version of the dataset. Once downloaded, unzip the folder.</p>
+<p><a href="https://files.grouplens.org/datasets/movielens/ml-latest-small.zip" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download Dataset</paper-button></a></p>
+<p>We&#39;re going to take that data and load it into some tables on Snowflake. First, you&#39;ll want to sign in to Snowflake. Then run the following block of code to set the context, create a compute warehouse, and create the tables:</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+create database MOVIELENS;
+use schema movielens.public;
+
+CREATE OR REPLACE WAREHOUSE COMPUTE_WH WITH WAREHOUSE_SIZE = &#39;XSMALL&#39; 
+AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
+
+create table movies  (
+    movieid int,
+    title varchar,
+    genres varchar
+);
+
+create or replace table ratings (
+    userid int,
+    movieid int,
+    rating float,
+    timestamp timestamp_ntz
+);
+</code></pre>
+<p>Let&#39;s break down what this code is doing. Remember that data in Snowflake needs three things: a database, a schema, and compute. First, we <code>create</code> a database called &#34;MOVIELENS&#34;  using the public schema &#34;movielens.&#34;</p>
+<p>Then we <code>create</code> a warehouse called <code>COMPUTE_WH</code> and then, we <code>create</code> a table called &#34;movies&#34;. The table has three columns: &#34;movieid&#34;, &#34;title&#34;, and &#34;genres&#34;. We then <code>create</code> a second table called &#34;ratings&#34;. This table has four columns: &#34;userid&#34;, &#34;movieid&#34;, &#34;rating&#34;, and &#34;timestamp_ntz&#34;.</p>
+<p>Next, using the Snowflake UI menu bar, switch over to the Databases tab and select the <code>MOVIELENS</code> database you&#39;ve just created.</p>
+<p class="image-container"><img alt="Database Tab" src="img/6a6123c80ea56c66.png"></p>
+<p><strong>Note:</strong> Since this is a small dataset, we can use the Snowflake UI to load this dataset into Snowflake. We recommend using the Snowflake Snowpipe service, the <code>copy</code> command, or partner ETL tools to load data for larger datasets and automated loads.</p>
+<p>Now let&#39;s get some data into those empty tables. Navigate into the <code>MOVIES</code> table within the database. Now that you&#39;re inside a table, you can load data by clicking the <code>Load Data</code> button. You&#39;ll want to select an <code>XS</code> sized warehouse and hit <code>Next.</code></p>
+<p>Navigate to the files you downloaded earlier. You should see a file named <code>movies.csv</code>; that&#39;s what we&#39;ll be using. Select it, and hit <code>next.</code></p>
+<p>Snowflake needs additional information to parse CSV files. CSV files vary slightly in how they&#39;re organized, such as what character they use to separate data pieces.</p>
+<p>For this file, we&#39;ll be creating a new file format. Click the <code>+</code> button. Give it a name (such as &#34;MOVIELENS&#34;), and change the value of <code>Header lines to skip</code> to <code>1</code> and the <code>Field optionally enclosed by</code> to <code>Double Quote.</code> Click <code>Finish</code> and hit <code>Load</code> to load the <code>MOVIES</code> table.</p>
+<p class="image-container"><img alt="Create File Format" src="img/ada7ef0ed4b2a7b.png"></p>
+<p>Great! We&#39;ve loaded data into the <code>MOVIES</code> table. Now it&#39;s time to do the same for the <code>RATINGS</code> table. Navigate into the empty <code>RATINGS</code> table, and click the <code>Load Data</code> button, just like before. This time, however, you&#39;ll want to select the <code>ratings.csv</code> file. Luckily, you don&#39;t need to create another file format; this file is formatted just like the previous one, so you can reuse your <code>MOVIELENS</code> File Format.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create tables for local testing" duration="5">
+        <p>We&#39;ve got both tables of data into Snowflake! Now we can view our data. While we&#39;re at it, we can create some small testing tables when we test our SageMaker algorithm on our local machine:</p>
+<pre><code language="language-sql" class="language-sql">use warehouse COMPUTE_WH;
+select * from ratings limit 10;
+
+-- INPUT TABLE: small dataset for local testing
+create table ratings_train_data_local_test as
+(select USERID, MOVIEID, RATING from ratings limit 1000);
+
+-- OUTPUT TABLE: top 10 recommendations for local_testing
+create or replace table user_movie_recommendations_local_test
+(USERID int, TOP_10_RECOMMENDATIONS variant);
+</code></pre>
+<p>Fantastic! Now we can start dabbling in some machine learning code.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake and AWS credentials" duration="10">
+        <p>In Amazon SageMaker, you have the option of using &#34;built-in&#34; algorithms or creating your own custom algorithm using Docker images. This lab will be using a single Docker image to package up our training and model inference code. Let&#39;s get started!</p>
+<p>Open a terminal session and clone this repository:</p>
+<pre><code language="language-plaintext" class="language-plaintext">git clone https://github.com/Snowflake-Labs/sfguide-recommender-pipeline.git
+</code></pre>
+<p>Then navigate into the downloaded repository:</p>
+<pre><code language="language-plaintext" class="language-plaintext">cd sfguide-recommender-pipeline/
+</code></pre>
+<p>Within this directory, you will see two subdirectories: <code>sagemaker</code> and <code>sls</code>. The <code>sagemaker</code> directory contains all of our training and deployment code. The <code>sls</code> directory contains code &amp; definitions for serverless lambda functions that we can call from within Snowflake to automate our pipeline.</p>
+<p>Next, open this file in an IDE: <code>/sfguide-recommender-pipeline/sagemaker/container/recommendation_engine/train</code>. This is the Python script containing all our training code.</p>
+<p>Amazon SageMaker will run this <code>train</code> script when we tell it to begin training. Feel free to explore the <code>train()</code> method within this script to see what is going on. At a high level, the <code>train()</code> method performs the following steps:</p>
+<ul>
+<li>Retrieves a password from our credentials store (SSM).</li>
+<li>Connects to our Snowflake account and loads up a Pandas dataframe from an input table.</li>
+<li>Trains a collaborative filtering recommendation model using the Surprise library.</li>
+<li>Does bulk inference and stores the recommendation in an output table to calculate each user&#39;s top 10 recommendations.</li>
+<li>Saves the model artifact in S3 so SageMaker can deploy it at a later time.</li>
+</ul>
+<p>Go ahead and configure your Snowflake account&#39;s connection settings, found in lines 23-24, and save the changes.</p>
+<pre><code language="language-python" class="language-python">### SNOWFLAKE CONFIGURATION ###
+SF_ACCOUNT = &#39;&lt;your_snowflake_account&gt;&#39;
+SF_WH = &#39;&lt;your_snowflake_warehouse_name&gt;&#39;
+SF_USER = &#39;&lt;your_snowflake_username&gt;&#39;
+###############################
+</code></pre>
+<p>Notice that the Snowflake account password is missing from the configuration. We should never store any password in code. This way, if the code is ever exposed to the public, access to your account isn&#39;t compromised. This is a great use case for environment variables.</p>
+<p>In our case, we&#39;ll use AWS SSM to store our Snowflake password securely. We can do so with the following command; just fill in your Snowflake password in the <code>value</code> field. After making that change, run the command in the terminal:</p>
+<pre><code language="language-bash" class="language-bash">aws ssm put-parameter \
+    --name &#34;snf_password&#34; \
+    --type &#34;String&#34; \
+    --value &#34;&lt;your_snowflake_password&gt;&#34; \
+</code></pre>
+<p>If successful, you&#39;ll get an output like this below, you could have versions greatere than 1 if you have used the ssm settings before:</p>
+<pre><code>{
+    &#34;Version&#34;: 1,
+    &#34;Tier&#34;: &#34;Standard&#34;
+}
+</code></pre>
+<p>Next, let&#39;s package this code up in a Docker image. Get the docker daemon running by opening Docker Desktop. Then in the terminal, switch to the <code>/sagemaker/container</code> directory and run:</p>
+<pre><code language="language-plaintext" class="language-plaintext">docker build -t snf-recommender-lab:latest .
+</code></pre>
+<p><strong>Note:</strong> it might take a few minutes to finish when you build this image for the first time. You&#39;ll see it performing tasks throughout the process, though.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test the models locally" duration="10">
+        <p>In a real-world development cycle, you&#39;ll generally want to test code locally to make sure it runs error-free before sending it off to SageMaker. The code we&#39;re using is already developed (and error-free), but let&#39;s test it locally anyway.</p>
+<p>For local testing, SageMaker provides us with a testing framework located within the <code>/sagemaker/container/local_test</code> directory. Switch to this directory and test the training code locally:</p>
+<pre><code language="language-plaintext" class="language-plaintext">./train_local.sh snf-recommender-lab
+</code></pre>
+<p>You should see the results of the training in terms of RMSE and other metrics:</p>
+<pre><code language="language-plaintext" class="language-plaintext">                  Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std     
+RMSE (testset)    1.1164  1.0699  1.1076  1.1342  1.0849  1.1026  0.0228  
+MAE (testset)     0.9153  0.8675  0.8945  0.9485  0.8969  0.9045  0.0268  
+Fit time          0.05    0.05    0.05    0.05    0.05    0.05    0.00    
+Test time         0.00    0.00    0.00    0.00    0.00    0.00    0.00    
+Top 10 predictions for all users saved to Snowflake table named:  user_movie_recommendations_local_test
+Training complete.
+</code></pre>
+<p>At the end of the above output, the output table&#39;s name storing the bulk predictions&#39; results (the top 10 movie recommendations for each user) is printed. You can run the following SQL to see these results in Snowflake:</p>
+<pre><code language="language-sql" class="language-sql">select * from user_movie_recommendations_local_test limit 10;
+</code></pre>
+<p>The top 10 movie recommendations are stored in a <code>VARIANT</code> type that can hold any arbitraryJSON object. In this case, it&#39;s an array of movie IDs.</p>
+<p>Now let&#39;s talk about those metrics that measure the accuracy of the training. RMSE is short for Root Mean Square Error. It basically tells you how closely the data is to the line of best fit. The lower the error the better, so naturally, we want a low RMSE.</p>
+<p>In a little bit, we&#39;ll use the power of Amazon SageMaker to train over a more extensive training set and improve the RMSE.</p>
+<p>But first, let&#39;s test the inference code (implemented in <code>predictor.py</code>). We&#39;ll do this using another script in the <code>/sagemaker/container/local_test</code> directory called <code>serve_local.sh</code>. Run the following command:</p>
+<pre><code>./serve_local.sh snf-recommender-lab
+</code></pre>
+<p>That command will start a test web server on your local machine. Go ahead and open a new terminal window, navigate back into that same directory, and run:</p>
+<pre><code>./predict.sh payload.csv
+</code></pre>
+<p>The <code>payload.csv</code> has a few <code>userid</code> and <code>movieid</code> pairs to test the trained model. You should see the predicted ratings in the output:</p>
+<pre><code language="language-plaintext" class="language-plaintext">4.35892262701514
+4.35892262701514
+3.9207989638053626
+4.242178682153201
+</code></pre>
+<p>Notice we get four predicted ratings for four user/movie pairs in the <code>payload.csv</code> file. Our inference code works - nice!</p>
+<p>Both training and inference work on our local machine. Again, that was to be expected here, but getting it to work on your local machine first is a good practice in the real world.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upload the Docker image" duration="10">
+        <p>Now we can push the Docker image up to <a href="https://aws.amazon.com/ecr/" target="_blank">ECR</a>, so SageMaker can use it for training and deployment. Go ahead and switch to <code>sfguide-recommender-pipeline/sagemaker/container</code> and run:</p>
+<pre><code>./build_and_push.sh snf-recommender-lab
+</code></pre>
+<p><strong>Note:</strong> this will take a while the first time you run this since the whole Docker image needs to be uploaded to ECR.</p>
+<p>Once this has been run, we can move on to the next step in our journey to using SageMaker. Before we do so though, you&#39;ll need to grab the image name in the output. You&#39;ll set it as <code>training_image_ecr_path</code> in a file later on.</p>
+<pre><code language="language-plaintext" class="language-plaintext">This push refers to repository &lt;image_name&gt;
+</code></pre>
+<p>With that grabbed, we&#39;re on our way to using SageMaker!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up IAM role for Sagemaker" duration="5">
+        <p>Okay, so we&#39;re not <em>quite</em> to using SageMaker yet. First, we need to provision an Amazon API Gateway and the AWS Lambda functions that will help integrate Snowflake with SageMaker. We&#39;ll use the <a href="https://serverless.com" target="_blank">Serverless Framework</a> to help us programmatically define and provision this infrastructure.</p>
+<p>First, let&#39;s get some AWS settings squared away. We need to create an AWS IAM role to allow SageMaker training jobs to access needed services such as S3 and ECR.</p>
+<p>You can manage IAM roles by going to the AWS Management Console and opening the <a href="https://console.aws.amazon.com/iam/" target="_blank">IAM console</a>. From there, select <code>Roles</code> from the left navigation pane. Then click <code>Create role</code>. The role type is <code>AWS Service</code>. Then select <code>SageMaker</code>, which will allow you to select <code>SageMaker - Execution</code> under &#34;Select your use case&#34;.</p>
+<p>Great! Now move on to the permissions page. You need to choose these managed policies: <code>AmazonSageMakerFullAccess</code> and <code>AmazonSSMReadOnlyAccess</code>. NOTE: we will add <code>AmazonSageMakerFullAccess</code> policy first.</p>
+<p>Click through, give the role a specific name, and click create. After the role is created, go to the permissions tab and click on Attach Policy, search for <code>ssm</code> and pick <code>AmazonSSMReadOnlyAccess</code> and click apply. While in that role, find it and copy the <code>Role ARN value</code>. It&#39;s right at the top of the role&#39;s summary page. You&#39;ll need to copy it into <code>/sls/config.dev.yml</code>. Open the file in an IDE and set it as the <code>sagemaker_role_arn</code> variable.</p>
+<p>Remember that value we told you to remember so you could set it <code>training_image_ecr_path</code> in a file? Well, this is also that file! Go ahead and do so now.</p>
+<p>And finally, make sure you set the <code>region</code> value to the correct region. Checking if there are any <code>region</code> values to adjust is a good habit to get into. And be sure to save the file after all this!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up IAM role Snowflake External Functions" duration="3">
+        <p>Now, we need to create a role in your AWS account that Snowflake can assume and invoke the API Gateway. To do so, we&#39;ll need to make another AWS IAM role.</p>
+<p>We&#39;ll start in the same place as before, the <a href="https://console.aws.amazon.com/iam/" target="_blank">IAM console</a>. But now, when asked to select the type of trusted entity, choose &#34;Another AWS account.&#34; Then, under &#34;Specify accounts that can use this role,&#34; paste in your AWS account ID. Your AWS account ID is the number embedded in any of the ARNs you noted down in the previous steps. Remember, It&#39;s in your <code>config.dev.yml</code> file.</p>
+<pre><code language="language-plaintext" class="language-plaintext">arn:aws:iam::&lt;account_id&gt;/role/SageMakerRoleTest
+</code></pre>
+<p>Click on &#34;Next: Permissions.&#34; No permissions are needed right now, so just proceed to the next step. After you name and create the role, make note of the <code>Role ARN</code> once more. You&#39;ll place it in a file next.</p>
+<p>The file in question is once again the <code>config.dev.yml</code> file. Change the value for unique_id to your unique username. This is required to make sure the S3 bucket name is unique for your deployment.Fill the value for the <code>snf_ef_role_arn</code> variable with the <code>Role ARN</code>.</p>
+<p>Finally, fill out the <code>snf_ef_role_principal</code> with a value using this format:</p>
+<pre><code language="language-plaintext" class="language-plaintext">arn:aws:sts::&lt;account-number&gt;:assumed-role/&lt;external_function_role&gt;/snowflake
+</code></pre>
+<p>Your <code>config.dev.yml</code> file should now look something like this:</p>
+<pre><code>unique_id: &lt;username&gt;
+region: us-east-1
+sagemaker_role_arn: arn:aws:iam::&lt;account&gt;:role/SageMakerRoleTest
+training_image_ecr_path: &lt;account&gt;.dkr.ecr.us-west-2.amazonaws.com/snf-recommender-lab
+snf_ef_role_arn: arn:aws:iam::&lt;account&gt;:role/Snowflake_External_Function_Role_Name
+snf_ef_role_principal: arn:aws:sts::&lt;account&gt;:assumed-role/snf-ef-role-test/snowflake
+</code></pre>
+<p>And with that, we can move on to deploying the serverless app.</p>
+<h3 is-upgraded>Deploy the Serverless App with AWS Lambda and API Gateway</h3>
+<p>With the blanks filled out in the <code>config.dev.yml</code> file, let&#39;s turn our attention to deploying the API Gateway and Lambda Functions.</p>
+<p>Navigate into the <code>sls</code> directory inside a terminal and issue the following command to deploy the infrastructure:</p>
+<pre><code>sls deploy
+</code></pre>
+<p>If everything goes smoothly, you should see an output summary listing out the resources created by the Serverless Framework in your AWS account.</p>
+<p>Straightforward, right? Now let&#39;s start incorporating Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect the API Gateway with Snowflake" duration="5">
+        <p>Now that we have our Serverless infrastructure deployed let&#39;s move over to the Snowflake UI and work some SQL magic! 🧙🏼‍♀️</p>
+<p>Log into the Snowflake UI. We need to create API Integrations, so we need to work as an <code>ACCOUNTADMIN</code>:</p>
+<pre><code language="language-sql" class="language-sql">use role ACCOUNTADMIN;
+</code></pre>
+<p>After setting your role, select a database and schema:</p>
+<pre><code language="language-sql" class="language-sql">USE SCHEMA MOVIELENS.PUBLIC;
+</code></pre>
+<p>Now that we&#39;re in the right spot, we need to <code>create</code> the API integration object within Snowflake to point to the external API Gateway resource. You&#39;ll need to go back into <code>config.dev.yml</code> to grab the value you set <code>snf_ef_role_arn</code> to and set it as <code>api_aws_role_arn</code>.  You also need to get the endpoint URL from the Serverless output screen to set as the value for the <code>api_allowed_prefixes</code> field as highlighted in the screenshot below:</p>
+<p class="image-container"><img alt="api_allowed_prefixes" src="img/1b27032a1a8fcfc7.png"></p>
+<p>All together, the SQL command will look like this:</p>
+<pre><code language="language-sql" class="language-sql">create or replace api integration snf_recommender_api_integration
+api_provider = aws_api_gateway
+api_aws_role_arn = &#39;&lt;snf_ef_role_arn&gt;&#39;
+enabled = true
+api_allowed_prefixes = (&#39;&lt;https://api_endpoint_url&gt;&#39;);
+</code></pre>
+<p>By running that, you create the API integration object.</p>
+<p>Now we need to set up trust between Snowflake and the new AWS IAM role we created earlier. Go ahead and run:</p>
+<pre><code language="language-sql" class="language-sql">describe integration snf_recommender_api_integration
+</code></pre>
+<p>We&#39;ll need the values in the next step.</p>
+<p>In a separate tab, open the AWS console and navigate to find the IAM role you created earlier. Under the <code>Trust relationships</code> click on <code>Edit trust relationship</code>.</p>
+<p class="image-container"><img alt="Edit trust" src="img/be83397b6b93d05d.png"></p>
+<p>Replace the JSON document with this snippet:</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;: {
+            &#34;AWS&#34;: &#34;&lt;API_AWS_IAM_USER_ARN&gt;&#34;
+        },
+        &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+        &#34;Condition&#34;: {&#34;StringEquals&#34;: { &#34;sts:ExternalId&#34;: &#34;&lt;API_AWS_EXTERNAL_ID&gt;&#34; }}
+        }
+    ]
+}
+</code></pre>
+<p>And then, replace the values of <code>API_AWS_IAM_USER_ARN</code> and <code>API_AWS_EXTERNAL_ID</code> with the corresponding values shown in the result of the <code>describe integration snf_recommender_api_integration</code> command in the last step. With those replaced, you&#39;re good to go! Just click <code>Update Trust Policy</code> and get ready to work with SageMaker!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the External Functions within Snowflake" duration="3">
+        <p>We&#39;ll create three External Functions: the first for training and bulk prediction, the second for deploying the model, and the third for invoking the model.</p>
+<p>First up is one we&#39;ll use for training. To do so, you&#39;ll need to grab three URLs from the serverless output. First, we&#39;ll use the URL ending in <code>/train</code> for the training model function, then the URL ending in <code>/deploy</code> for the deploying model function, and the URL ending in <code>/invoke</code> for the invoking model function. Other than specifying which of the three, the URLs are the same:</p>
+<p class="image-container"><img alt="Train endpoint" src="img/14033918fc69ca24.png"></p>
+<p><code>Create</code> the <code>train_and_get_recommendations</code> external function, replacing <code><TRAIN_ENDPOINT_URL></code> with that grabbed URL from the serverless output:</p>
+<pre><code language="language-sql" class="language-sql">create or replace external function train_and_get_recommendations(input_table_name varchar, output_table_name varchar)
+    returns variant
+    api_integration = snf_recommender_api_integration
+    as &#39;&lt;TRAIN_ENDPOINT_URL&gt;&#39;;
+</code></pre>
+<p>Now we need to deploy the model. <code>Create</code> the <code>deploy_model</code> external function, replacing <code><DEPLOY_ENDPOINT_URL></code> with that <code>/deploy</code> URL you grabbed from the serverless output:</p>
+<pre><code language="language-sql" class="language-sql">create or replace external function deploy_model(model_name varchar, model_url varchar)
+returns variant
+api_integration = snf_recommender_api_integration
+as &#39;&lt;DEPLOY_ENDPOINT_URL&gt;&#39;;
+</code></pre>
+<p>Finally let&#39;s invoke that model. <code>Create</code> the <code>invoke_model</code> external function, replacing <code><INVOKE_ENDPOINT_URL></code> with, you guessed it, the <code>/invoke</code> URL from the serverleess output:</p>
+<pre><code language="language-sql" class="language-sql">create or replace external function invoke_model(model_name varchar, user_id varchar, item_id varchar)
+returns variant
+api_integration = snf_recommender_api_integration
+as &#39;&lt;INVOKE_ENDPOINT_URL&gt;&#39;;
+</code></pre>
+<p>Great! Now that we&#39;ve created all the functions, we need to grant the ability to use them. To do so, we need to grant usage to the <code>sysadmin</code> role like so:</p>
+<pre><code language="language-sql" class="language-sql">grant usage on function train_and_get_recommendations(varchar, varchar) to role sysadmin;
+grant usage on function deploy_model(varchar, varchar) to role sysadmin;
+grant usage on function invoke_model(varchar, varchar, varchar) to role sysadmin;
+</code></pre>
+<p>And with usage granted, we can now test the functions out!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test the External Functions" duration="15">
+        <p>Now that our Snowflake External Functions are deployed, and the right permissions are in place, it&#39;s time to test the functions and see how we can trigger the training and deployment of models right from Snowflake.</p>
+<p>In the Snowflake UI, switch over to using the <code>sysadmin</code> role:</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+</code></pre>
+<p>Let&#39;s make sure the External Functions are correct and accessible:</p>
+<pre><code language="language-sql" class="language-sql">show external functions;
+</code></pre>
+<p>Let&#39;s create training data sets with <code>ratings_train_data</code> similar to <code>ratings</code> table with sample values and an empty <code>user_movie_recommendations</code> table to store the predictions per user</p>
+<pre><code language="language-sql" class="language-sql">create or replace table ratings_train_data as 
+    (select USERID, MOVIEID, RATING 
+    from ratings limit 10000);
+
+create or replace table user_movie_recommendations 
+(USERID float, 
+TOP_10_RECOMMENDATIONS variant);
+</code></pre>
+<p>Now let&#39;s trigger SaegeMaker training! <code>select</code> the <code>train_and_get_recommendations</code> model to get the top 10 ratings for each user in our target table.</p>
+<p>You&#39;ll need to specify two parameters. First, <code>MOVIELENS.PUBLIC.ratings_train_data</code> is the <em>input</em> table containing the training data. Second, <code>MOVIELENS.PUBLIC.user_movie_recommendations</code>, is the <em>output</em> table where the top 10 predictions will be stored.</p>
+<pre><code language="language-sql" class="language-sql">select train_and_get_recommendations(&#39;MOVIELENS.PUBLIC.ratings_train_data&#39;,&#39;MOVIELENS.PUBLIC.user_movie_recommendations&#39;);
+</code></pre>
+<p>The training will about 5 to 10 minutes to complete. You can check the status of the training by clicking on <code>Training Jobs</code> from the SageMaker console:</p>
+<p class="image-container"><img alt="SageMaker Training Jobs" src="img/146ea863021e17b7.png"></p>
+<p>Remember, this function not only trained a new model using the SVD algorithm, but also made some predictions as well. They&#39;re in that output table we specified when running the function. We can view the top 10 movie recommendations for each user like so:</p>
+<pre><code language="language-sql" class="language-sql">select * from user_movie_recommendations limit 10;
+</code></pre>
+<p>Great! Now let&#39;s look at how to make this magic possible in <em>real-time</em>!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable real-time predictions" duration="20">
+        <p>When a user pulls up details for a movie, how do we get the predicted rating for this user/movie pair? We&#39;ll have to use a <em>real-time</em> prediction endpoint. We can create this endpoint by using the model artifact produced by the training step above.</p>
+<p>From the SageMaker console, click on the training job name to view details. Scroll down to find and copy the value of the model artifact. It&#39;ll look something like this:</p>
+<p class="image-container"><img alt="S3 Model Artifact" src="img/e346533d10d0eabe.png"></p>
+<p>Now, copy the S3 model artifact path into the SQL below and run it to deploy the model as an API, using the <code>deploy_model</code> function you created earlier.</p>
+<pre><code language="language-sql" class="language-sql">select deploy_model(&#39;movielens-model-v1&#39;, &#39;&lt;S3_MODEL_ARTIFACT&gt;&#39;);
+</code></pre>
+<p>Deploying an endpoint will take some time as well, perhaps 15 minutes or so. You can check the <code>Endpoints</code> tab within the SageMaker console to view the endpoint&#39;s status.</p>
+<p>While the endpoint is deploying, let&#39;s create some dummy data to test out the inference API:</p>
+<pre><code language="language-sql" class="language-sql">-- create a table to hold pairs of users and movies where we DO NOT have a rating
+create or replace table no_ratings (USERID float, MOVIEID float);
+
+insert into no_ratings (USERID, MOVIEID) values
+    (&#39;1&#39;, &#39;610&#39;),
+    (&#39;10&#39;, &#39;313&#39;),
+    (&#39;10&#39;, &#39;297&#39;),
+    (&#39;5&#39;, &#39;18&#39;),
+    (&#39;5&#39;, &#39;19&#39;);
+</code></pre>
+<p>The endpoint will be fully deployed when its status is &#34;In Service.&#34; When that happens, we can call the deployed model using the <code>invoke-model</code> function you created earlier. The format for making a real-time prediction follows this SQL:</p>
+<pre><code language="language-sql" class="language-sql">--real-time prediction for an individual movie for a particular user
+select nr.USERID, nr.MOVIEID, m.title, invoke_model(&#39;movielens-model-v1&#39;, nr.USERID, nr.MOVIEID) as rating_prediction 
+from no_ratings nr, movies m
+where nr.movieid = m.movieid;
+</code></pre>
+<p>Amazing! Feel free to test it out with some examples. From here, you have now have the ability to make real-time predictions for user/movie combinations.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps: Automating the ML Pipeline" duration="1">
+        <p>Alright, so what&#39;s next? Well, that&#39;s the end of this guide, but that&#39;s not the end of SageMaker&#39;s potential! Try looking into automating this ML workflow. As new users and movies are added, you can automate the ML training, bulk prediction, and model deployment.</p>
+<p>Not sure where to start? Check out Snowflake&#39;s <a href="https://docs.snowflake.com/en/user-guide/data-pipelines.html" target="_blank">Continuous Data Pipelines</a> to automate <code>Tasks</code>. The tasks in question will be the External Functions you created above. Happy automating!</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>Load datasets into Snowflake</li>
+<li>Prepare Amazon SageMaker for training and model deployment</li>
+<li>Deploy AWS Lambda Functions &amp; API Gateway Using Serverless Framework</li>
+<li>Model Training, Deployment, and Inference Using Snowflake External Functions</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with SnowSQL</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowsql"
+                  title="Getting Started with SnowSQL"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>SnowSQL is the software CLI tool used to interact with Snowflake. Using SnowSQL, you can control all aspects of your Snowflake Data Cloud, including uploading data, querying data, changing data, and deleting data.  This guide will review SnowSQL and use it to create a database, load data, and learn helpful commands to manage your tables and data directly from your CLI.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Quick Video <a href="https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc." target="_blank">Introduction to Snowflake</a></li>
+<li>Snowflake <a href="https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc." target="_blank">Data Loading Basics</a> Video</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to create a Snowflake account</li>
+<li>how to install SnowSQL locally</li>
+<li>how to set up a cloud database and table</li>
+<li>how to create a virtual warehouse</li>
+<li>how to migrate sample data to the cloud</li>
+<li>how to query cloud data</li>
+<li>how to insert additional data</li>
+<li>how to drop database objects and close SnowSQL connection</li>
+</ul>
+<p>Be sure to check the needed computing requirements before beginning. Also, download the sample files to complete this tutorial and note the folder location for later use.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Local <a href="https://docs.snowflake.com/en/user-guide/setup.html" target="_blank">Browser and OS Requirements</a></li>
+<li>Download the <a href="https://docs.snowflake.com/en/user-guide/getting-started-tutorial-prerequisites.html#sample-data-files-for-loading" target="_blank">Sample Data Files</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A connection to cloud host and manage data with SnowSQL.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up SnowSQL" duration="0">
+        <h2 is-upgraded>Create a Snowflake Account</h2>
+<p>Snowflake lets you try out their services for free with a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">trial account</a>.</p>
+<h2 is-upgraded>Access Snowflake&#39;s Web Console</h2>
+<p><code>https://<account-name>.snowflakecomputing.com/console/login</code></p>
+<p>Log in to the web interface on your browser. The URL contains your <a href="https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name" target="_blank">account name</a> and potentially the region.</p>
+<h2 is-upgraded>Increase Your Account Permission</h2>
+<p>The Snowflake web interface has a lot to offer, but for now, we&#39;ll just switch the account role from the default <code>SYSADMIN</code> to <code>ACCOUNTADMIN</code>. This increase in permissions will allow the user account to create objects.</p>
+<p class="image-container"><img alt="account-role-change-image" src="img/d5b235cb982b3156.png"></p>
+<h2 is-upgraded>Download the SnowSQL Installer</h2>
+<p>SnowSQL can be downloaded and installed on Linux, Windows, or Mac. In this example, we&#39;ll download the installer for macOS via the AWS endpoint. If you&#39;re using a different OS or prefer other methods, check out all the ways to get SnowSQL <a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html#" target="_blank">here</a>.</p>
+<pre>curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/​&lt;bootstrap-version&gt;/darwin_x86_4/snowsql-&lt;snowsql-version&gt;-darwin_x86_64.pkg
+</pre>
+<p>Specify <code>​<bootstrap-version></code> and <code><snowsql-version></code>​ number within the cURL command.</p>
+<p>The example below is a cURL command to the AWS endpoint for a macOS to download the bootstrap version 1.2 and SnowSQL version 1.2.9.</p>
+<pre>curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86_64/snowsql-1.2.9-darwin_x86_64.pkg​
+</pre>
+<p class="image-container"><img alt="Snowflake_Download_Installer_image" src="img/abb3e71ca1569a4f.png"></p>
+<h2 is-upgraded>Install SnowSQL Locally</h2>
+<ul>
+<li>Double-click the installer file and walk through the wizard prompts.</li>
+<li>Confirm the install was successful by checking the version <code>$ snowsql -v</code>.</li>
+<li>Reboot your machine and check again if necessary.</li>
+</ul>
+<p>After completing these steps, you&#39;ll be ready to use SnowSQL to make a database in the next section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Database" duration="0">
+        <h2 is-upgraded>Sign in From the Terminal</h2>
+<pre>snowsql -a &lt;account-name&gt; -u &lt;username&gt;
+</pre>
+<p>The <code>-a</code> flag represents the Snowflake account, and the <code>-u</code> represents the username.</p>
+<h2 is-upgraded>Create a Database and Schema</h2>
+<pre>create or replace database sf_tuts;
+</pre>
+<p>The command <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database.html" target="_blank">​create or replace database​</a> makes a new database and auto-creates the schema ‘public.&#39; It&#39;ll also make the new database active for your current session.</p>
+<p>To check which database is in use for your current session, execute:</p>
+<pre><code>select current_database(),
+current_schema();
+</code></pre>
+<h2 is-upgraded>Generate a Table</h2>
+<pre>create or replace table emp_basic (
+  first_name string ,
+  last_name string ,
+  email string ,
+  streetaddress string ,
+  city string ,
+  start_date date
+  );
+</pre>
+<p>Running <a href="https://docs.snowflake.com/en/sql-reference/sql/create-table.html" target="_blank">​create or replace table​</a> will build a new table based on the parameters specified. This example reflects the same columns in the sample CSV employee data files.</p>
+<p class="image-container"><img alt="Snowflake_Create_Table_image" src="img/dda90feea56c46d7.png"></p>
+<h2 is-upgraded>Make a Virtual Warehouse</h2>
+<pre>create or replace warehouse sf_tuts_wh with
+  warehouse_size=&#39;X-SMALL&#39;
+  auto_suspend = 180
+  auto_resume = true
+  initially_suspended=true;
+</pre>
+<p>After creation, this virtual warehouse will be active for your current session and begin running once the computing resources are needed.</p>
+<p class="image-container"><img alt="Snowflake_createWarehouse_image" src="img/930e5dd2da922ec0.png"></p>
+<p>With the database objects ready, you&#39;ll employ SnowSQL to move the sample data onto the <code>emp_basic</code> table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upload Data" duration="0">
+        <p>If you have not already done so, you can download the sample files here:</p>
+<p><a href="https://docs.snowflake.com/en/_downloads/34f4a66f56d00340f8f7a92acaccd977/getting-started.zip" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download Sample Data</paper-button></a></p>
+<h2 is-upgraded>Stage Files With PUT</h2>
+<h3 is-upgraded>Linux</h3>
+<pre>put file:///tmp/employees0*.csv @&lt;database-name&gt;.&lt;schema-name&gt;.%&lt;table-name&gt;;
+</pre>
+<h3 is-upgraded>Windows</h3>
+<pre>put file://c:\temp\employees0*.csv @sf_tuts.public.%emp_basic;
+</pre>
+<ul>
+<li><code>file</code> specifies the <em>local</em> file path of the files to be staged. File paths are OS-specific.</li>
+<li><code>@<database-name>.<schema-name>.%<table-name></code> is the specific database, schema, and table the staged files are headed.</li>
+<li>The <code>@</code> sign before the database and schema name <code>@sf_tuts.public</code> indicates that the files are being uploaded to an internal stage, rather than an external stage. The <code>%</code> sign before the table name <code>%emp_basic</code> indicates that the internal stage being used is the stage for the table. For more details about stages, see Staging Data Files from a Local File System.</li>
+</ul>
+<pre>put file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;
+</pre>
+<p>Here is a PUT call to stage the sample employee CSV files from a macOS <code>file:///tmp/</code> folder onto the <code>emp_basic</code> table within the <code>sf_tuts</code> database.</p>
+<p class="image-container"><img alt="Snowflake_StagePut_image" src="img/ce56069ad9a9bf77.png"></p>
+<h2 is-upgraded>LIST Staged Files</h2>
+<pre><code>list @&lt;database-name&gt;.&lt;schema-name&gt;.%&lt;table-name&gt;;
+</code></pre>
+<p>To check your staged files, run the <code>list</code> command.</p>
+<pre><code>list @sf_tuts.public.%emp_basic;
+</code></pre>
+<p>The example command above is to output the staged files for the <code>emp_basic</code> table. Learn more LIST syntax <a href="https://docs.snowflake.com/en/sql-reference/sql/list.html" target="_blank">​here​</a>.</p>
+<p class="image-container"><img alt="Snowflake_ViewStaged_image" src="img/4ed42bd3b64a7169.png"></p>
+<h2 is-upgraded><a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html" target="_blank">COPY INTO​</a> Your Table</h2>
+<pre><code>copy into emp_basic
+  from @%emp_basic
+  file_format = (type = csv field_optionally_enclosed_by=&#39;&#34;&#39;)
+  pattern = &#39;.*employees0[1-5].csv.gz&#39;
+  on_error = &#39;skip_file&#39;;
+</code></pre>
+<p>After getting the files staged, the data is copied into the <code>emp_basic</code> table. This DML command also auto-resumes the virtual warehouse made earlier.</p>
+<p class="image-container"><img alt="Snowflake_CopyStaged_image" src="img/457c26b14bf0db50.png"></p>
+<p>The output indicates if the data was successfully copied and records any errors.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Data" duration="15">
+        <p>With your data in the cloud, you need to know how to query it. We&#39;ll go over a few calls that will put your data on speed-dial.</p>
+<ul>
+<li>The <code>select</code> command followed by the wildcard <code>*</code> returns all rows and columns in <code><table-name></code>.</li>
+</ul>
+<pre><code>select * from emp_basic;
+</code></pre>
+<p>Here is an example command to <code>select</code> everything on the <code>emp_basic</code> table.</p>
+<p class="image-container"><img alt="Snowflake_SELECT_image" src="img/f34cdf802f91b44b.png"></p>
+<p>Sifting through everything on your table may not be the best use of your time. Getting specific results are simple, with a few functions and some query syntax.</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/constructs/where.html#where" target="_blank">WHERE​</a> is an additional clause you can add to your select query.</li>
+</ul>
+<pre><code>select * from emp_basic where first_name = &#39;Ron&#39;;
+</code></pre>
+<p>This query returns a list of employees by the <code>first_name</code> of ‘Ron&#39; from the <code>emp_basic</code> table.</p>
+<p class="image-container"><img alt="Snowflake_SELECTRon_image" src="img/b295a8589ff63ae6.png"></p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/like.html" target="_blank">LIKE​</a> function supports wildcard <code>%</code> and <code>_</code>.</li>
+</ul>
+<pre><code>select email from emp_basic where email like &#39;%.au&#39;;
+</code></pre>
+<p>The like function checks all emails in the <code>emp_basic</code> table for <code>au</code> and returns a record.</p>
+<p class="image-container"><img alt="Snowflake_SELECTEmailAU_image" src="img/44c619e803c4427f.png"></p>
+<p>Snowflake supports many <a href="https://docs.snowflake.com/en/sql-reference-functions.html" target="_blank">​functions</a>​, <a href="https://docs.snowflake.com/en/sql-reference/operators.html" target="_blank">​operators</a>​, and <a href="https://docs.snowflake.com/en/sql-reference-commands.html" target="_blank">​commands</a>​. However, if you need more specific tasks performed, consider setting up an <a href="https://docs.snowflake.com/en/sql-reference/external-functions-introduction.html" target="_blank">​external function</a>​​.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Manage and Delete Data" duration="6">
+        <p>Often data isn&#39;t static. We&#39;ll review a few common ways to maintain your cloud database.</p>
+<p>If HR updated the CSV file after hiring another employee, downloading, staging, and copying the whole CSV would be tedious. Instead, simply insert the new employee information into the targeted table.</p>
+<h3 is-upgraded>Insert Data</h3>
+<p><a href="https://docs.snowflake.com/en/sql-reference/sql/insert.html" target="_blank">​INSERT​</a> will update a table with additional values.</p>
+<pre><code>insert into emp_basic values
+  (&#39;Clementine&#39;,&#39;Adamou&#39;,&#39;cadamou@sf_tuts.com&#39;,&#39;10510 Sachs Road&#39;,&#39;Klenak&#39;,&#39;2017-9-22&#39;) ,
+  (&#39;Marlowe&#39;,&#39;De Anesy&#39;,&#39;madamouc@sf_tuts.co.uk&#39;,&#39;36768 Northfield Plaza&#39;,&#39;Fangshan&#39;,&#39;2017-1-26&#39;);
+</code></pre>
+<h3 is-upgraded>Drop Objects</h3>
+<p>In the command displayed, <code>insert</code> is used to add two new employees to the <code>emp_basic</code> table.</p>
+<p class="image-container"><img alt="Snowflake_INSERT_image" src="img/be91ef9c2a92e5bd.png"></p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/drop.html" target="_blank">DROP​</a> objects no longer in use.</li>
+</ul>
+<pre><code>drop database if exists sf_tuts;
+
+drop warehouse if exists sf_tuts_wh;
+</code></pre>
+<p>After practicing the basics covered in this tutorial, you&#39;ll no longer need the <code>sf-tuts</code> database and warehouse. To remove them altogether, use the <code>drop</code> command.</p>
+<ul>
+<li>Close Your Connection with <code>!exit</code> or <code>!disconnect</code></li>
+</ul>
+<p>For security reasons, it&#39;s best not to leave your terminal connection open unnecessarily. Once you&#39;re ready to close your SnowSQL connection, simply enter <code>!exit</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <h2 is-upgraded>Use SnowSQL for Your Application</h2>
+<p>You&#39;ve created a Snowflake account, set up a cloud database with compute resources, and migrated data to the cloud with SnowSQL. Nice work! There are many advantages to using the cloud. Now that you know how easy getting started with Snowflake is, it&#39;s time to consider your next steps.</p>
+<p>With your firm grasp of loading data with SnowSQL, start using it to run your application. Continue by <a href="https://docs.snowflake.com/en/developer-apps.html" target="_blank">​developing an application</a>​ with SnowSQL to learn how to connect your data to a Python application. If you already have application data, consider migrating it to the cloud with the same steps we used to complete the <code>emp_basic</code> table. Snowflake&#39;s tools and documentation are extensive and give you the power of cloud computing.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>SnowSQL setup</li>
+<li>Uploading data using SnowSQL</li>
+<li>Querying data using SnowSQL</li>
+<li>Managing and deleting data using SnowSQL</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

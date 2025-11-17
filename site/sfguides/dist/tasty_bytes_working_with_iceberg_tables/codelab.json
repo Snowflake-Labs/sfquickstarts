@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_working_with_iceberg_tables",
+  "duration": 28,
+  "title": "Tasty Bytes - Working with Iceberg Tables",
+  "summary": "This tutorial is a guide built as an extention to the Tasty Bytes series, where we will go over how data from an external Data Lake is made available in Snowflake using External Tables \u0026 Iceberg Tables.",
+  "source": "tasty-bytes-working-with-iceberg-tables/tasty-bytes-working-with-iceberg-tables.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "tasty-bytes",
+    "data-engineering"
+  ],
+  "tags": [
+    "aws",
+    "dataengineering",
+    "gettingstarted",
+    "icebergtables",
+    "s3",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_working_with_iceberg_tables"
+}

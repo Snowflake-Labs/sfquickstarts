@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "schema_lineage_auto_propagation_llm",
+  "duration": 49,
+  "title": "A ETL-LLM Integration Guide: Automate and Ensure Consistent Schema Change Propagation using AI",
+  "summary": "A ETL-LLM Integration Guide: Automate and Ensure Consistent Schema Change Propagation using AI",
+  "source": "a_etl_llm_integration_for_consistent_schema_change_propagation/a_etl_llm_integration_for_consistent_schema_change_propagation.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "dataengineering",
+    "ai",
+    "partner"
+  ],
+  "tags": [
+    "ai",
+    "automation",
+    "datalineage",
+    "largelanguage",
+    "llm",
+    "schemapropagation",
+    "snowflake",
+    "streamlit"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "schema_lineage_auto_propagation_llm"
+}

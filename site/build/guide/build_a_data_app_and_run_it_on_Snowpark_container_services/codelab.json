@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "build_a_data_app_and_run_it_on_Snowpark_container_services",
+  "duration": 35,
+  "title": "Build a Data App and run it on Snowpark Container Services",
+  "summary": "Build a Data App and run it on Snowpark Container Services",
+  "source": "tasty_bytes_zero_to_spcs_app/tasty_bytes_zero_to_spcs_app.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build_a_data_app_and_run_it_on_Snowpark_container_services"
+}

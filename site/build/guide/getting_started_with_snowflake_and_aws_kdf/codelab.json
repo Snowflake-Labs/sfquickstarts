@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_snowflake_and_aws_kdf",
+  "duration": 90,
+  "title": "Getting Started with Snowflake and Amazon Data Firehose (ADF)",
+  "authors": "James Sun",
+  "summary": "This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Data Firehose (ADF).",
+  "source": "getting_started_with_snowflake_and_aws_kdf/getting_started_with__snowflake_and_aws_kdf.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "amazondatafirehose",
+    "gettingstarted",
+    "kinesis",
+    "snowpipestreaming",
+    "snowsql",
+    "streaming",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowflake_and_aws_kdf"
+}

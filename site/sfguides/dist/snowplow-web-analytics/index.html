@@ -1,0 +1,459 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowplow Digital Analytics with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowplow-web-analytics"
+                  title="Snowplow Digital Analytics with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>In this guide, you&#39;ll learn how to set up real-time event tracking and analytics, configure the Snowflake Streaming Loader for immediate data availability, and deploy Snowplow&#39;s Unified Digital dbt package for simplified data modeling and consumption. By the end of this tutorial, you&#39;ll have a fully functioning analytics pipeline, enabling you to make data-driven decisions swiftly and accurately.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A pipeline for behavioral data from the source to the analysis</li>
+<li>A quick analysis of that behavioral data</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to set up Snowplow&#39;s tracking for event data collection</li>
+<li>How to configure the Snowflake Streaming Loader to ingest data in near real-time</li>
+<li>How to deploy Unified Digital dbt package in Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://snowplow.io/" target="_blank">Snowplow Behavioral Data Platform (BDP) subscription</a></li>
+<li>Basic knowledge of SQL and Snowflake</li>
+<li>Access to Snowflake account</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up Tracking" duration="30">
+        <p>With Snowplow, tracking capabilities are virtually limitless, offering a wide range of possibilities.</p>
+<p>Basic tracking functionalities can be easily integrated into your app by following <a href="https://docs.snowplow.io/docs/recipes/recipe-basic-tracking-design/" target="_blank">this guide</a>, while more advanced features can be unlocked by utilizing Snowplow&#39;s full suite of products.</p>
+<h2 is-upgraded>Example Web Tracking Implementation with Data Products and Automatic Code Generation</h2>
+<p>Here&#39;s a summary of the steps to implement a basic web tracking setup using Snowplow&#39;s Data Products and advanced Snowplow features:</p>
+<ol type="1">
+<li><strong>Create a Source Application</strong>: Define your web app&#39;s tracking source and configure the necessary application contexts. <img alt="alt text" src="img/694f68243aeada27.png"></li>
+<li><strong>Set up Base Data Product</strong>: Use the Base Web Data Product template to track standard events like page views and clicks in your app. <img alt="alt text" src="img/199e201bc29e9285.png"></li>
+<li><strong>Initialize the Tracker</strong>: Install <a href="https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/javascript-trackers/web-tracker/quick-start-guide/#quick-start-basic" target="_blank">Snowplow&#39;s browser tracker</a>, configure it to automatically send page views and page pings, and track user interactions.</li>
+<li><strong>Verify Event Data</strong>: Use the <a href="https://docs.snowplow.io/docs/testing-debugging/snowplow-inspector/overview/" target="_blank">Snowplow Inspector browser extension</a> to confirm that page views, clicks, and other tracked events are being recorded. <img alt="alt text" src="img/beba58ac48aa6ce1.png"></li>
+<li><strong>Create Custom Data Structures</strong>: You can define custom data structures (e.g., &#34;new_game&#34; and &#34;start_game&#34;) to track specific website or app interactions and utilize Snowtype to generate code for custom event tracking. More details about that in the full documentation below.</li>
+</ol>
+<p><a href="https://docs.snowplow.io/docs/recipes/recipe-data-products-base-tracking/" target="_blank">For a complete setup guide/recipe, visit Snowplow&#39;s official documentation.</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Snowflake Streaming Loader" duration="15">
+        <p>In this section, you&#39;ll learn how to set up the Snowflake Streaming Loader to ingest Snowplow event data into Snowflake in near real-time. By the end of this step, you&#39;ll have a streaming pipeline that delivers enriched event data with minimal latency.</p>
+<h2 is-upgraded>Introduction to Snowflake&#39;s Snowpipe Streaming</h2>
+<p><strong>Snowpipe Streaming</strong> is Snowflake&#39;s real-time data ingestion service, which allows for the immediate availability of data as it&#39;s ingested. This capability is crucial for businesses that rely on up-to-the-minute data to make timely, informed decisions.</p>
+<h2 is-upgraded>Snowflake Streaming Loader</h2>
+<p>The <a href="https://docs.snowplow.io/docs/pipeline-components-and-applications/loaders-storage-targets/snowflake-streaming-loader/" target="_blank">Snowflake Streaming Loader</a> is an advanced data integration solution that continuously captures and delivers real-time information to Snowflake, enabling organizations to access up-to-the-minute insights and drive informed decision-making.</p>
+<h3 is-upgraded>Benefits of using Snowflake Streaming Loader</h3>
+<ul>
+<li><strong>Low Latency</strong>: Data becomes available in Snowflake within seconds, enabling near real-time analytics.</li>
+<li><strong>Cost-Efficiency</strong>: Eliminates the need for expensive infrastructure like EMR clusters or large compute instances.</li>
+<li><strong>Immediate Availability</strong>: As soon as data is generated, it&#39;s ready for querying.</li>
+</ul>
+<h3 is-upgraded>Step 1: Go to Destinations</h3>
+<p>Go to your Snowplow BDP console, under infra in destinations, and select the Snowflake ( Streaming Option )</p>
+<p class="image-container"><img alt="alt text" src="img/8fbe73e370bbcfe3.png"></p>
+<h3 is-upgraded>Step 2: Set Up the Configuration</h3>
+<p>Complete your details <img alt="alt text" src="img/fa45ae68208ad64d.png"></p>
+<p>and then generate and run the script to set up everything that will be needed in Snowflake</p>
+<p class="image-container"><img alt="alt text" src="img/4b1f0c1cc7bf3645.png"></p>
+<h3 is-upgraded>Step 3: Complete destination set up</h3>
+<p>Click the &#34;Test and complete destination set up&#34; button and reach out to Snowplow Support (support@snowplow.io) to finish the process</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy Unified Digital dbt Package" duration="10">
+        <p>In this section, we&#39;ll explore how to deploy the Unified Digital dbt package in Snowflake to transform raw event data into modeled data and actionable insights. We will use the raw data that we previously ingested in Snowflake using the streaming loader</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to Snowplow BDP.</li>
+<li>A Snowflake account with permissions to create databases, schemas, and roles.</li>
+<li>Admin rights in Snowplow BDP to set up connections and models.</li>
+</ul>
+<h2 is-upgraded>Understanding Unified Digital dbt Package</h2>
+<p>The unified data package is essential for consistent analytics across different data sources and platforms. It standardizes the structure and schema of your data, making it easier to query and derive insights.</p>
+<h3 is-upgraded>Why it&#39;s useful</h3>
+<ul>
+<li><strong>Consistency</strong>: Ensures that all data adheres to the same structure.</li>
+<li><strong>Simplified Consumption</strong>: Makes it easier for analysts and data scientists to work with the data.</li>
+<li><strong>Scalability</strong>: Simplifies the addition of new data sources or event types.</li>
+</ul>
+<h2 is-upgraded>Deployment Steps</h2>
+<p>We&#39;ll use Snowplow BDP to run the standard data models in Snowflake.</p>
+<h3 is-upgraded>Step 1: Create a Warehouse Connection</h3>
+<ol type="1">
+<li><strong>Navigate to Data Models</strong>: Log in to Snowplow BDP Console and click on the <strong>Data Models</strong> tab.</li>
+<li><strong>Set Up New Connection</strong>: <ul>
+<li>Click on <strong>Set up new connection</strong>.</li>
+<li>Fill in the required Snowflake connection details: <ul>
+<li><strong>Hostname</strong></li>
+<li><strong>Database Name</strong></li>
+<li><strong>Warehouse</strong></li>
+<li><strong>User</strong></li>
+<li><strong>Role</strong> (specific to data modeling)</li>
+</ul>
+</li>
+<li><strong>Note</strong>: Use a role with permissions tailored for data modeling activities.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="alt text" src="img/477b1fdf3eac6089.png"></p>
+<aside class="warning"><p>If you&#39;ve already set up a warehouse connection for loading data, you will still need to create a new connection specifically for data modeling. This is required since data models often require different users, roles, and permissions to manage how data is accessed and processed.</p>
+</aside>
+<h3 is-upgraded>Step 2: Create a Data Model</h3>
+<ol type="1">
+<li><strong>Add Data Model</strong>: Click on <strong>Add data model</strong>.</li>
+<li><strong>Select the Unified Digital Model</strong>: <ul>
+<li>Choose <strong>Unified Digital</strong> from the list of standard models. <img alt="alt text" src="img/152ed05cc951b62a.png"></li>
+</ul>
+</li>
+<li><strong>Assign Warehouse Connection</strong>: <ul>
+<li>Link the data model to the warehouse connection you just created.</li>
+</ul>
+</li>
+<li><strong>Specify Model Owners</strong>: <ul>
+<li>Add team members who should receive alerts in case of model run issues. <img alt="alt text" src="img/ca845502400ec0d7.png"></li>
+</ul>
+</li>
+</ol>
+<h3 is-upgraded>Step 3: Adjust Data Models Configuration</h3>
+<p>We can go to the dedicated screen per model and configure the model as we want</p>
+<p class="image-container"><img alt="alt text" src="img/6cd0ef448f9d7577.png"></p>
+<p>Steps:</p>
+<ol type="1">
+<li><strong>Check the Data Models Page</strong>: <ul>
+<li>Navigate to the <strong>Data Models</strong> page.</li>
+</ul>
+</li>
+<li><strong>Schedule the Model</strong>: <ul>
+<li>Set the frequency for the data model to run (e.g., hourly, daily).</li>
+</ul>
+</li>
+<li><strong>Alerts</strong>: <ul>
+<li>Owners will receive email notifications if a model run fails.</li>
+</ul>
+</li>
+<li><strong>Customize Based on Business Needs</strong>:</li>
+</ol>
+<ul>
+<li>Ability to configure variables.</li>
+</ul>
+<h2 is-upgraded>Tips on Customizing Models</h2>
+<ul>
+<li><strong>Adjust Metrics</strong>: Modify the model to include metrics that are specific to your business needs.</li>
+<li><strong>Add Modules</strong>: Snowplow offers additional modules for Consent Reporting, Core Web Vitals, etc.</li>
+<li><strong>User Mapping</strong>: Utilize the User Mapping Module for advanced session stitching.</li>
+</ul>
+<aside class="special"><p><strong>Gains</strong>: Deploying the Unified Digital Model simplifies your data landscape. With standardized tables and fields, your team can focus on generating insights rather than spending time and engineering resources wrangling data. Visit <a href="https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-models/dbt-unified-data-model/" target="_blank">Unified documentation</a> for further customization</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explore Modeled with Snowflake Notebooks" duration="15">
+        <p>In this section, we&#39;ll explore your processed behavioral derived data using Snowflake Notebooks in depth. We&#39;ll focus on the derived tables created by the Unified Digital package, such as <code>derived.snowplow_unified_users</code>, <code>derived.snowplow_unified_sessions</code>, and <code>derived.snowplow_unified_views</code>. This hands-on session will guide you through querying these tables to extract valuable insights into user behavior, session metrics, and content performance.</p>
+<h2 is-upgraded>Exploring Derived Tables in Snowflake</h2>
+<p>Derived tables are the result of transforming raw event data into structured, analytical datasets. They aggregate and organize data to provide meaningful insights without the complexity of raw event logs.</p>
+<ul>
+<li><strong><code>derived.snowplow_unified_users</code></strong>: Aggregated user-level data.</li>
+<li><strong><code>derived.snowplow_unified_sessions</code></strong>: Data summarizing user sessions.</li>
+<li><strong><code>derived.snowplow_unified_views</code></strong>: Information about page or screen views.</li>
+</ul>
+<h3 is-upgraded>Step 1: Accessing the Derived Tables</h3>
+<ol type="1">
+<li><strong>Open Snowflake Notebooks</strong>: Log in to your Snowflake account and navigate to the <strong>Notebooks</strong> section.</li>
+<li><strong>Create a New Notebook</strong>: Click on <strong>Create Notebook</strong> and select the database and schema where your derived tables are stored (e.g., <code>snowplow.derived</code>).</li>
+<li><strong>List Available Tables</strong>:<pre><code language="language-sql" class="language-sql">SHOW TABLES IN SCHEMA snowplow.derived;
+</code></pre>
+This command lists all the derived tables available for analysis.</li>
+</ol>
+<h3 is-upgraded>Step 2: Analyzing User-Level Data</h3>
+<p>Let&#39;s start by exploring the <code>derived.snowplow_unified_users</code> table to gain insights into your user base.</p>
+<p><strong>Query 1: View Sample User Data</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM derived.snowplow_unified_users LIMIT 5;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Get acquainted with the structure and fields of the user data.</li>
+<li><strong>Analysis</strong>: Review the sample data to understand available user attributes.</li>
+</ul>
+<p><strong>Query 2: User Acquisition Over Time</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  DATE_TRUNC(&#39;day&#39;, START_TSTAMP) AS first_session_date,
+  COUNT(*) AS new_users
+FROM
+  derived.snowplow_unified_users
+GROUP BY
+  first_session_date
+ORDER BY
+  first_session_date;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Observe trends in new user sign-ups.</li>
+<li><strong>Visualization</strong>: Create a line chart to visualize user acquisition over time.</li>
+</ul>
+<p><strong>Query 3: Top Engaged Users</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  USER_ID,
+  SESSIONS,
+  ENGAGED_TIME_IN_S
+FROM derived.snowplow_unified_users
+ORDER BY
+  ENGAGED_TIME_IN_S DESC
+LIMIT 10;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Identify users with the highest engagement.</li>
+<li><strong>Analysis</strong>: These users may be valuable for feedback or loyalty programs.</li>
+</ul>
+<h3 is-upgraded>Step 3: Examining Session Data</h3>
+<p>Next, we&#39;ll delve into the <code>derived.snowplow_unified_sessions</code> table to understand user interaction patterns.</p>
+<p><strong>Query 1: Average Session Duration</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  AVG(engaged_time_in_s) AS average_session_duration
+FROM
+  derived.snowplow_unified_sessions;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Determine the typical length of user sessions.</li>
+<li><strong>Analysis</strong>: A longer average session duration may indicate higher user engagement.</li>
+</ul>
+<p><strong>Query 2: Sessions Over the Last 7 Days</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  DATE_TRUNC(&#39;day&#39;, START_TSTAMP) AS session_date,
+  COUNT(*) AS session_count
+FROM
+  derived.snowplow_unified_sessions
+WHERE
+  START_TSTAMP &gt;= DATEADD(&#39;day&#39;, -7, CURRENT_DATE)
+GROUP BY
+  session_date
+ORDER BY
+  session_date;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Analyze daily session activity for the past week.</li>
+<li><strong>Visualization</strong>: Plot a bar chart to highlight trends or spikes in user sessions.</li>
+</ul>
+<p><strong>Query 3: Session Counts by User</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  user_id,
+  COUNT(*) AS session_count
+FROM derived.snowplow_unified_sessions
+GROUP BY
+  user_id
+ORDER BY
+  session_count DESC
+LIMIT 10;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Find users with the most sessions.</li>
+<li><strong>Analysis</strong>: Frequent visitors are key to understanding user loyalty.</li>
+</ul>
+<h3 is-upgraded>Step 4: Investigating Page and Screen Views</h3>
+<p>Now, let&#39;s explore the <code>derived.snowplow_unified_views</code> table to assess content performance.</p>
+<p><strong>Query 1: Most Viewed Pages</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  page_urlpath,
+  COUNT(*) AS view_count
+FROM derived.snowplow_unified_views
+GROUP BY
+  page_urlpath
+ORDER BY
+  view_count DESC
+LIMIT 10;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Identify the most popular pages on your site.</li>
+<li><strong>Analysis</strong>: Use this information to optimize high-traffic pages.</li>
+</ul>
+<p><strong>Query 2: Average Time Spent per Page</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  page_urlpath,
+  AVG(ENGAGED_TIME_IN_S) AS average_time_spent
+FROM derived.snowplow_unified_views
+GROUP BY page_urlpath
+ORDER BY average_time_spent DESC
+LIMIT 10;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Discover which pages retain user attention the longest.</li>
+<li><strong>Analysis</strong>: Pages with higher engagement may serve as models for other content.</li>
+</ul>
+<p><strong>Query 3: Page Views by Device Type</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  DEVICE_CATEGORY,
+  COUNT(*) AS view_count
+FROM derived.snowplow_unified_views
+GROUP BY DEVICE_CATEGORY
+ORDER BY view_count DESC;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Understand the distribution of device types accessing your content.</li>
+<li><strong>Analysis</strong>: Optimize user experience for the most commonly used devices.</li>
+</ul>
+<h3 is-upgraded>Step 5: Understanding Geographic Distribution</h3>
+<p>Analyzing geographic data helps tailor content and marketing strategies to your audience locations.</p>
+<p><strong>Query 1: Sessions by Country</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  FIRST_GEO_COUNTRY,
+  COUNT(*) AS session_count
+FROM derived.snowplow_unified_sessions
+GROUP BY FIRST_GEO_COUNTRY
+ORDER BY session_count DESC;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Identify key markets based on user sessions.</li>
+<li><strong>Visualization</strong>: Create a map visualization to see the geographic spread.</li>
+</ul>
+<p><strong>Query 2: New Users by Region</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  FIRST_GEO_REGION_NAME,
+  COUNT(*) AS new_user_count
+FROM derived.snowplow_unified_users
+GROUP BY FIRST_GEO_REGION_NAME
+ORDER BY new_user_count DESC;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Understand where new users are signing up.</li>
+<li><strong>Analysis</strong>: Assess the effectiveness of regional marketing efforts.</li>
+</ul>
+<h3 is-upgraded>Step 6: Segmenting Users for Deeper Insights</h3>
+<p>User segmentation allows for personalized marketing and improved user experiences.</p>
+<p><strong>Query 1: High-Value User Segment</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  user_id,
+  ENGAGED_TIME_IN_S
+FROM derived.snowplow_unified_users
+WHERE
+  ENGAGED_TIME_IN_S &gt; (
+    SELECT AVG(ENGAGED_TIME_IN_S) FROM derived.snowplow_unified_users
+  )
+ORDER BY  ENGAGED_TIME_IN_S DESC;
+</code></pre>
+<ul>
+<li><strong>Purpose</strong>: Identify users who are more engaged than average.</li>
+<li><strong>Analysis</strong>: Target these users with special offers or exclusive content.</li>
+</ul>
+<h3 is-upgraded>Step 7: Collaborating with Snowflake Notebooks</h3>
+<p>Maximize the value of your analysis by collaborating within your team.</p>
+<ul>
+<li><strong>Sharing Notebooks</strong>: Click the <strong>Share</strong> button to invite colleagues to view or edit your notebook.</li>
+<li><strong>Commenting</strong>: Use inline comments to discuss specific queries or results.</li>
+<li><strong>Version Control</strong>: Keep track of changes to maintain the integrity of your analyses.</li>
+</ul>
+<h2 is-upgraded>Bringing It All Together</h2>
+<p>By systematically exploring the derived tables, you&#39;ve uncovered:</p>
+<ul>
+<li><strong>User Acquisition Trends</strong>: Understanding how and when users join your platform.</li>
+<li><strong>Engagement Metrics</strong>: Identifying your most active users and sessions.</li>
+<li><strong>Content Performance</strong>: Recognizing which pages and content types resonate with your audience.</li>
+<li><strong>Geographical Insights</strong>: Tailoring strategies to regions with the highest impact.</li>
+<li><strong>User Segmentation</strong>: Personalizing experiences for different user groups.</li>
+</ul>
+<h2 is-upgraded>Next Steps and Advanced Analyses</h2>
+<p>With a solid understanding of your data, consider:</p>
+<ul>
+<li><strong>Building Custom Dashboards</strong>: Create tailored views for stakeholders.</li>
+<li><strong>Implementing Machine Learning Models</strong>: Predict user behavior and personalize content.</li>
+<li><strong>Conducting A/B Testing Analyses</strong>: Evaluate the effectiveness of changes to your platform.</li>
+</ul>
+<p>By focusing on the derived tables, you&#39;ve efficiently navigated through high-level insights, enabling strategic decision-making without getting frustrated by raw data complexity. Continue to explore and customize your analyses to align with your business objectives.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Navigated and queried key derived tables (<code>derived.users</code>, <code>derived.snowplow_unified_sessions</code>, <code>derived.snowplow_unified_views</code>).</li>
+<li>Extracted insights into user acquisition, engagement, and retention.</li>
+<li>Assessed content performance and user interaction patterns.</li>
+<li>Leveraged Snowflake Notebooks for collaborative data exploration.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <h2 is-upgraded>Conclusion</h2>
+<p>At the end of this guide, you&#39;ve successfully set up a near real-time data ingestion pipeline using Snowplow and Snowflake and deployed the Unified Digital dbt package for streamlined analytics. This powerful combination allows your business to harness real-time insights and make data-driven decisions efficiently.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Configured the Snowflake Streaming Loader for real-time data ingestion.</li>
+<li>Deployed Unified Data package in Snowflake using Snowplow BDP.</li>
+<li>Customized data models to fit specific business needs.</li>
+<li>Explored the results.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/snowplow/snowplow" target="_blank">Snowplow GitHub Repository</a></li>
+<li><a href="https://docs.snowplow.io/" target="_blank">Snowplow Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview" target="_blank">Snowflake Snowpipe Streaming Documentation</a></li>
+</ul>
+<p>Happy Streaming and Analyzing!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

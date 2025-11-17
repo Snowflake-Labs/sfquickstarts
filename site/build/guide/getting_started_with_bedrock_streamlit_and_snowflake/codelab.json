@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_bedrock_streamlit_and_snowflake",
+  "duration": 55,
+  "title": "Getting Started with Bedrock, Streamlit and Snowflake",
+  "summary": "Getting Started with Bedrock, Streamlit and Snowflake using Snowpark External Access",
+  "source": "getting_started_with_bedrock_streamlit_and_snowflake/getting_started_with_bedrock_streamlit_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "app-development",
+    "bedrock",
+    "aws",
+    "streamlit",
+    "genai",
+    "ai",
+    "ml"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "getting_started_with_bedrock_streamlit_and_snowflake"
+}

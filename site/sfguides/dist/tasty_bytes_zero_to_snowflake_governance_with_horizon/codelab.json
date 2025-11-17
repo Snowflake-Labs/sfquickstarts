@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "tasty_bytes_zero_to_snowflake_governance_with_horizon",
+  "duration": 36,
+  "title": "Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon",
+  "summary": "Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart",
+  "source": "tasty_bytes_zero_to_snowflake_governance_with_horizon/tb_zts_governance_with_horizon.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured"
+  ],
+  "tags": [
+    "datagovernance",
+    "gettingstarted",
+    "tastybytes",
+    "web",
+    "zerotosnowflake"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_zero_to_snowflake_governance_with_horizon"
+}

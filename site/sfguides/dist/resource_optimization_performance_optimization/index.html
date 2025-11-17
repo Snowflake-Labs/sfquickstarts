@@ -1,0 +1,441 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Resource Optimization: Performance</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="resource_optimization_performance_optimization"
+                  title="Resource Optimization: Performance"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>This <a href="https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/" target="_blank">blog post</a> can provide you with a better understanding of Snowflake&#39;s Resource Optimization capabilities.</p>
+<h2 is-upgraded>Performance</h2>
+<p>The queries provided in this guide are intended to help you setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to identify areas in which performance can be improved</li>
+<li>how to analyze workloads with poor performance causing excess consumption</li>
+<li>how to identify warehouses that would benefit from scaling up or out</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>Access to view <a href="https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles" target="_blank">Account Usage Data Share</a></li>
+</ul>
+<h2 is-upgraded>Related Materials</h2>
+<ul>
+<li>Resource Optimization: Setup &amp; Configuration</li>
+<li>Resource Optimization: Usage Monitoring</li>
+<li>Resource Optimization: Billing Metrics</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Tiers" duration="0">
+        <p>Each query within the Resource Optimization Snowflake Quickstarts will have a tier designation just to the right of its name as &#34;(T*)&#34;.  The following tier descriptions should help to better understand those designations.</p>
+<h2 is-upgraded>Tier 1 Queries</h2>
+<p>At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.</p>
+<h2 is-upgraded>Tier 2 Queries</h2>
+<p>Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.</p>
+<h2 is-upgraded>Tier 3 Queries</h2>
+<p>Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake.  While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 &amp; 2.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Ingest with Snowpipe and &#34;Copy&#34; (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>This query returns an aggregated daily summary of all loads for each table in Snowflake showing average file size, total rows, total volume and the ingest method (copy or snowpipe)</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>With this high-level information you can determine if file sizes are too small or too big for optimal ingest. If you can map the volume to credit consumption you can determine which tables are consuming more credits per TB loaded.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT 
+  TO_DATE(LAST_LOAD_TIME) as LOAD_DATE
+  ,STATUS
+  ,TABLE_CATALOG_NAME as DATABASE_NAME
+  ,TABLE_SCHEMA_NAME as SCHEMA_NAME
+  ,TABLE_NAME
+  ,CASE WHEN PIPE_NAME IS NULL THEN &#39;COPY&#39; ELSE &#39;SNOWPIPE&#39; END AS INGEST_METHOD
+  ,SUM(ROW_COUNT) as ROW_COUNT
+  ,SUM(ROW_PARSED) as ROWS_PARSED
+  ,AVG(FILE_SIZE) as AVG_FILE_SIZE_BYTES
+  ,SUM(FILE_SIZE) as TOTAL_FILE_SIZE_BYTES
+  ,SUM(FILE_SIZE)/POWER(1024,1) as TOTAL_FILE_SIZE_KB
+  ,SUM(FILE_SIZE)/POWER(1024,2) as TOTAL_FILE_SIZE_MB
+  ,SUM(FILE_SIZE)/POWER(1024,3) as TOTAL_FILE_SIZE_GB
+  ,SUM(FILE_SIZE)/POWER(1024,4) as TOTAL_FILE_SIZE_TB
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;COPY_HISTORY&#34;
+GROUP BY 1,2,3,4,5,6
+ORDER BY 3,4,5,1,2
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/a240390ca369b7df.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Scale Up vs. Out (Size vs. Multi-cluster) (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Two separate queries that list out the warehouses and times that could benefit from either a MCW setting OR scaling up to a larger size</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Use this list to determine reconfiguration of a warehouse and the times or users that are causing contention on the warehouse</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">--LIST OF WAREHOUSES AND DAYS WHERE MCW COULD HAVE HELPED
+SELECT TO_DATE(START_TIME) as DATE
+,WAREHOUSE_NAME
+,SUM(AVG_RUNNING) AS SUM_RUNNING
+,SUM(AVG_QUEUED_LOAD) AS SUM_QUEUED
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;WAREHOUSE_LOAD_HISTORY&#34;
+WHERE TO_DATE(START_TIME) &gt;= DATEADD(month,-1,CURRENT_TIMESTAMP())
+GROUP BY 1,2
+HAVING SUM(AVG_QUEUED_LOAD) &gt;0
+;
+
+--LIST OF WAREHOUSES AND QUERIES WHERE A LARGER WAREHOUSE WOULD HAVE HELPED WITH REMOTE SPILLING
+SELECT QUERY_ID
+,USER_NAME
+,WAREHOUSE_NAME
+,WAREHOUSE_SIZE
+,BYTES_SCANNED
+,BYTES_SPILLED_TO_REMOTE_STORAGE
+,BYTES_SPILLED_TO_REMOTE_STORAGE / BYTES_SCANNED AS SPILLING_READ_RATIO
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE BYTES_SPILLED_TO_REMOTE_STORAGE &gt; BYTES_SCANNED * 5  -- Each byte read was spilled 5x on average
+ORDER BY SPILLING_READ_RATIO DESC
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/f5c5090c7ff0f651.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouse Cache Usage (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Aggregate across all queries broken out by warehouses showing the percentage of data scanned from the warehouse cache.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Look for warehouses that are used from querying/reporting and have a low percentage. This indicates that the warehouse is suspending too quickly</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT WAREHOUSE_NAME
+,COUNT(*) AS QUERY_COUNT
+,SUM(BYTES_SCANNED) AS BYTES_SCANNED
+,SUM(BYTES_SCANNED*PERCENTAGE_SCANNED_FROM_CACHE) AS BYTES_SCANNED_FROM_CACHE
+,SUM(BYTES_SCANNED*PERCENTAGE_SCANNED_FROM_CACHE) / SUM(BYTES_SCANNED) AS PERCENT_SCANNED_FROM_CACHE
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE START_TIME &gt;= dateadd(month,-1,current_timestamp())
+AND BYTES_SCANNED &gt; 0
+GROUP BY 1
+ORDER BY 5
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/9ea37343adf8b828.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Heavy Scanners (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Ordered list of users that run queries that scan a lot of data.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>This is a potential opportunity to train the user or enable clustering.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select 
+  User_name
+, warehouse_name
+, avg(case when partitions_total &gt; 0 then partitions_scanned / partitions_total else 0 end) avg_pct_scanned
+from   snowflake.account_usage.query_history
+where  start_time::date &gt; dateadd(&#39;days&#39;, -45, current_date)
+group by 1, 2
+order by 3 desc
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Full Table Scans by User (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>These queries are the list of users that run the most queries with near full table scans and then the list of the queries themselves.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>This is a potential opportunity to train the user or enable clustering.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">--who are the users with the most (near) full table scans
+SELECT USER_NAME
+,COUNT(*) as COUNT_OF_QUERIES
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE START_TIME &gt;= dateadd(month,-1,current_timestamp())
+AND PARTITIONS_SCANNED &gt; (PARTITIONS_TOTAL*0.95)
+AND QUERY_TYPE NOT LIKE &#39;CREATE%&#39;
+group by 1
+order by 2 desc;
+
+-- This gives all queries in the last month with nearly a full table scan :) &gt; 95%, ordered by the worst offending
+SELECT * 
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE START_TIME &gt;= dateadd(month,-1,current_timestamp())
+AND PARTITIONS_SCANNED &gt; (PARTITIONS_TOTAL*0.95)
+AND QUERY_TYPE NOT LIKE &#39;CREATE%&#39;
+ORDER BY PARTITIONS_SCANNED DESC
+LIMIT 50  -- Configurable threshold that defines &#34;TOP N=50&#34;
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Top 10 Spillers Remote (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Identifies the top 10 worst offending queries in terms of bytes spilled to remote storage.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>These queries should most likely be run on larger warehouses that have more local storage and memory.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select query_id, substr(query_text, 1, 50) partial_query_text, user_name, warehouse_name, warehouse_size, 
+       BYTES_SPILLED_TO_REMOTE_STORAGE, start_time, end_time, total_elapsed_time/1000 total_elapsed_time
+from   snowflake.account_usage.query_history
+where  BYTES_SPILLED_TO_REMOTE_STORAGE &gt; 0
+and start_time::date &gt; dateadd(&#39;days&#39;, -45, current_date)
+order  by BYTES_SPILLED_TO_REMOTE_STORAGE desc
+limit 10
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="AutoClustering History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Average daily credits consumed by Auto-Clustering grouped by week over the last year.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;AUTOMATIC_CLUSTERING_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Materialized Views History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Average daily credits consumed by Materialized Views grouped by week over the last year.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;MATERIALIZED_VIEW_REFRESH_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Search Optimization History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Average daily credits consumed by Search Optimization grouped by week over the last year.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;SEARCH_OPTIMIZATION_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowpipe History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Average daily credits consumed by Snowpipe grouped by week over the last year.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;PIPE_USAGE_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Replication History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>Tier 3</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Average daily credits consumed by Replication grouped by week over the last year.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Look for anomalies in the daily average over the course of the year. Opportunity to investigate the spikes or changes in consumption.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;REPLICATION_USAGE_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

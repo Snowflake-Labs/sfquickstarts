@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "advanced_guide_to_snowflake_feature_store",
+  "duration": 101,
+  "title": "Advanced Guide to Snowflake Feature Store",
+  "authors": "Simon Field",
+  "summary": "Learn how to get started and use Snowflake Feature Store to manage features and deploy models into production",
+  "source": "advanced_guide_to_snowflake_feature_store/advanced_guide_to_snowflake_feature_store.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "advancedguide",
+    "data-science-\u0026-ml",
+    "dataengineering",
+    "datascience",
+    "machinelearning",
+    "snowpark",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "advanced_guide_to_snowflake_feature_store"
+}

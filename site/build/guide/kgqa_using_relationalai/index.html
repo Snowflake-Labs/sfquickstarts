@@ -1,0 +1,340 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>KGQA: Question Answering on Knowledge Graphs Using RelationalAI and Snowflake Cortex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="kgqa_using_relationalai"
+                  title="KGQA: Question Answering on Knowledge Graphs Using RelationalAI and Snowflake Cortex AI"
+                  environment="web"
+                  feedback-link="https://github.com/RelationalAI/QuestionAnsweringKG/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Knowledge graphs are a useful structure to use to encode information about a particular domain. They allow for explicit inspection of the data encoded and the ability to reason over the relations. However, writing a query against a knowledge graph can be more challenging than other systems given that they generally lack a natural language interface. In order to query over a knowledge graph such as the one created by Wikidata, the user must know the specialized syntax of SPARQL as well as the knowledge graph representation of the entities and relations. For example, the concept of a hospital in wikidata is represented internally as Q16917.</p>
+<p>In this quickstart, we will create a Snowflake service using Snowpark Container Services ( SPCS ), Snowflake&#39;s LLM service provided by their Cortex AI product and RelationalAI, a Knowledge Graph Coprocessor embedded inside of Snowflake, to allow a user to ask the following questions on a subset of Wikidata:</p>
+<ul>
+<li>List movies directed by John Krasinski?</li>
+<li>Name a movie directed by Quentin Tarantino or Martin Scorsese that has De Niro as a cast member</li>
+<li>Which movie&#39;s director was born in the same city as one of the cast members?</li>
+</ul>
+<p><em>This work is a partial reimplementation of the </em><a href="https://arxiv.org/abs/2408.07494" target="_blank"><em>QirK: Question Answering via Intermediate Representation on Knowledge Graphs paper</em></a><em>. The implementation of the paper can be found </em><a href="https://github.com/jlscheerer/kgqa/tree/main" target="_blank"><em>here</em></a><em>.</em></p>
+<h2 is-upgraded>What Is RelationalAI?</h2>
+<p>RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.</p>
+<p>Users can build a knowledge graph using Python and materialize it on top of their Snowflake data, which are shared with the RelationalAI app through Snowflake Streams. Insights can be written to Snowflake tables and shared across the organization.</p>
+<p>In our case, we will utilize RelationalAI&#39;s Native App to construct an executable Knowledge graph over a subset of Wikidata to answer natural language queries.</p>
+<h2 is-upgraded>What You will Learn</h2>
+<ul>
+<li>Loading data from Snowflake into RelationalAI Model</li>
+<li>Interact with Snowpark Container Service using External Functions</li>
+<li>Utilize RelationalAI Python Library to execute queries</li>
+<li>Create a docker image and host it on Snowpark Container Service</li>
+</ul>
+<h2 is-upgraded>What You will Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>An IDE (such as <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>)</li>
+<li>A <a href="https://trial.snowflake.com/" target="_blank">Snowflake account</a> with <code>ACCOUNTADMIN</code> and <code>KGQA_PUBLIC</code> access <ul>
+<li>Role &#34;kgqa_public&#34; in their snowflake account, which has ownership and usage access similar to &#34;accountadmin&#34;. Follows ths steps mentioned <a href="https://docs.snowflake.com/en/user-guide/security-access-control-configure#create-a-role" target="_blank">here</a> to create a new role.</li>
+</ul>
+</li>
+<li>Basic knowledge of using a <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs" target="_blank">Snowflake SQL Worksheet</a> and <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebook</a></li>
+<li><a href="https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges" target="_blank">Snowflake privileges</a> on your user to install a Native Application</li>
+<li>The <a href="https://relational.ai/docs/reference/cli/" target="_blank">RelationalAI CLI</a></li>
+<li>The <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_demo_nb/kgqa_demo.ipynb" target="_blank">RAI KGQA Snowflake Notebook</a> used in this Quickstart</li>
+<li><a href="https://docs.docker.com/desktop/install/mac-install/" target="_blank">Docker Setup</a></li>
+</ul>
+<h2 is-upgraded>What You will Build</h2>
+<ul>
+<li>A Question Answering System on Knowledge Graphs using RelationalAI and Snowflake Cortex AI</li>
+</ul>
+<aside class="special"><p><strong><em>NOTE:</em></strong>  If you haven&#39;t already done so, please <a href="https://relational.ai/docs/native_app/installation" target="_blank">refer to the documentation</a> to install RelationalAI as a Snowflake native app.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture Diagram" duration="0">
+        <p class="image-container"><img alt="KGQA Architecture" style="width: 1400.00px" src="img/bfa72948f9948a2a.png"></p>
+<p>Users may already have  their data in Snowflake. RelationalAI runs within the user&#39;s Snowflake account, creating a graph index over the Snowflake tables.  This allows a user to create a RelationalAI model in python. This model can be interpreted as an executable Knowledge Graph. When a user asks a natural language question, the system generates a RelationalAI Python query that is then executed and retrieves the relevant answers to the user. Our system is hosted on a Snowpark Container, and uses  Snowflake&#39;s Cortex AI.  In summary, our solution leverages data in Snowflake tables, CortexAI to translate natural language to queries, and RelationalAI&#39;s Native App to construct  an executable Knowledge graph that answers  these queries.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example Walkthrough" duration="2">
+        <p class="image-container"><img alt="KGQA Example" style="width: 1400.00px" src="img/3e19f48d629d0947.png"></p>
+<ul>
+<li>The end-to-end pipeline begins with a natural language question set by the end user. For instance, consider the question: &#34;List the movies directed by John Krasinski.&#34; The goal is to answer this question by using the information in the Wikidata Knowledge Graph.</li>
+<li>Our system transforms the question into a structured language called Intermediate Representation ( IR ).  The IR identifies and represents the relevant entities and their relationships. We use Snowflake Cortex AI to generate the Intermediate Representation. IR&#39;s syntax resembles first order logic: the natural language question will be translated to  (m such that John Krasinski is the director of m ) : &#34;m : director(m, ‘John Krasinski&#39;)&#34;. Note, this presumes there exists an entry in our dataset that contains all of the directors by name. We resolve this in the next step.</li>
+<li>IR represents the keywords in the framed question logically. Here the keywords are &#34;director&#34; and &#34;John krasinski&#34;. We use similarity search ( Facebook AI Similarity - FAISS ) to match these keywords to their closest equivalent  entities and relationships in the underlying Wikidata Knowledge Graph. <ul>
+<li>In this example, we retrieve the top two most similar results for each keyword.</li>
+<li>For each match, there is a corresponding ID, which is the Wikidata ID assigned to each property and entity.</li>
+<li>So here : <ul>
+<li>&#34;director&#34; is mapped to [ &#34;director&#34; (P57) and &#34;director of photography&#34; (P344)]</li>
+<li>&#34;John Krasinski&#34; is mapped to [&#34;John Krasinski&#34; (Q313039) and &#34;John Carpenter&#34; (Q95008) ]</li>
+</ul>
+</li>
+<li>As we can see, Similarity Search returns the top 2 potential matches for each keyword. These matches are then checked against the Knowledge Graph, and the match that satisfies all the query criteria and exists in the underlying Knowledge Graph is presented as the probable answer - in this case, &#34;director&#34; and &#34;John Krasinski&#34; which are the desired outputs.</li>
+<li>Note that we began with a natural language question, and the system was able to map it to the corresponding Wikidata IDs on its own.</li>
+</ul>
+</li>
+<li>The natural language question, Intermediate Representation, and similarity search results are then fed as input to Snowflake Cortex AI which outputs the RelationalAI Python query.</li>
+<li>This query is then directly executed on RelationalAI&#39;s Model and the result is returned to the user.  Based on the current Wikidata snapshot, &#34;A Quiet Place&#34; is the expected answer for this question.</li>
+</ul>
+<p>Note that everything runs securely in the user&#39;s  Snowflake account on snowpark container services. Given that at the end we are executing a query on a Knowledge Graph, the answer is guaranteed to exist in our dataset, otherwise nothing will be returned.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Demo Setup" duration="25">
+        <p>Follow the below steps to launch End-to-End Demo Setup.</p>
+<p><strong><em>NOTE:</em></strong> User&#39;s Role permissions <br> Users should have access to role &#34;kgqa_public&#34; in their snowflake account, which has ownership and usage access similar to &#34;accountadmin&#34;. Follows ths steps mentioned <a href="https://docs.snowflake.com/en/user-guide/security-access-control-configure#create-a-role" target="_blank">here</a> to create a new role.</p>
+<h3 is-upgraded>SETTING THE ENVIRONMENT VARIABLES</h3>
+<p><strong>Here, &lt;your_project_repository&gt; is the path to the local directory where &lt;git_repo&gt; has been cloned.</strong></p>
+<pre><code language="language-sh" class="language-sh">export SETUP_PATH=&#34;&lt;your_project_directory&gt;/kgqa_demo/kgqa_demo_setup&#34;
+</code></pre>
+<h3 is-upgraded>STEP 1 : Navigate to the KGQA_SETUP FOLDER</h3>
+<pre><code language="language-sh" class="language-sh">cd $SETUP_PATH
+</code></pre>
+<h3 is-upgraded>STEP 2 : Populate all Snowflake config parameters</h3>
+<ul>
+<li>Update the config parameters in the config file <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json" target="_blank">‘config.json&#39;</a></li>
+</ul>
+<p><strong><em>NOTE:</em></strong> Anything prefixed with ‘temp_&#39; can be customized by the user, along with Snowflake ‘account&#39; and ‘sf_login_email&#39;.</p>
+<p><strong>Everything else should remain unchanged.</strong></p>
+<h3 is-upgraded>STEP 3 : Initializing database in Snowflake - <em>Copy Paste Output to SF Worksheet and Run</em></h3>
+<p><em>Execute the below sf_db_initialization script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ sf_db_initialization
+</code></pre>
+<p>This step will automatically download <a href="https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/claims.csv" target="_blank">triplets</a> and <a href="https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/labels.csv" target="_blank">labels</a> files from AWS S3 Bucket and load the data in Snowflake.</p>
+<p><strong><em>NOTE:</em></strong> To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands.</p>
+<h3 is-upgraded>STEP 4 : Image Repository Creation - <em>Copy Paste Output to SF Worksheet and Run</em></h3>
+<p>An Image Repository in Snowflake is a storage location where you can store and manage container images. These images are like snapshots of applications and their environments, which can be run on Snowflake&#39;s platform.</p>
+<p><em>Execute the below create_image_repo script to produce SQL File to create Image Repository on Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_image_repo
+</code></pre>
+<h3 is-upgraded>STEP 5 : Push Image to Snowflake Image Repository</h3>
+<p><em>Execute the below build_push_docker_image script to push docker image to Snowflake&#39;s Image Repository.</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ build_push_docker_image --option push_only=True
+</code></pre>
+<ul>
+<li>push_only parameter ensures that we don&#39;t re-execute the docker commands to build a new image. We download the existing pre-built image, and push it to our Snowflake Image Repository defined in the previous step.</li>
+</ul>
+<h3 is-upgraded>STEP 6 : Launch a Snowflake service - <em>Copy Paste Output to SF Worksheet and Run</em></h3>
+<p><em>Execute the below create_service script to produce SQL File to create Snowflake Service ( copy-paste on Snowflake SQL Worksheet and RUN)</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_service
+</code></pre>
+<p><strong><em>NOTE:</em></strong> After running the &#34;<em>CREATE SERVICE ..</em>&#34; command in SF Worksheet, wait for the service to get <strong>Status=&#34;READY&#34;</strong> ( takes around 3-4 minutes ) before creating the UDFs and testing them in the below Worksheet.</p>
+<p>Now, we are all set to run the Demo notebook!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Demo Notebook" duration="10">
+        <h2 is-upgraded>STEP 1 : Create API Integration</h2>
+<ul>
+<li>Open a SQL Worksheet on Snowflake and execute the following command on your database and schema as defined in the <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json" target="_blank">config.json</a>.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN; 
+
+CREATE OR REPLACE API INTEGRATION git_api_integration
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = (&#39;https://github.com/RelationalAI&#39;)
+  ENABLED = TRUE;
+</code></pre>
+<h2 is-upgraded>STEP 2 : Create a Git Repository Stage on Snowflake</h2>
+<ul>
+<li>Then, follow the instructions <a href="https://docs.snowflake.com/en/developer-guide/git/git-setting-up#label-integrating-git-repository-api-integration" target="_blank">here</a> to create a git repository stage in Snowflake. <em>NOTE - No secret is needed, since it is a public repository.</em><ul>
+<li>Remote Repository URL - https://github.com/RelationalAI/QuestionAnsweringKG.git</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>STEP 3 : Load the Demo Notebook as Snowflake Notebook</h2>
+<ul>
+<li>Go to <a href="https://app.snowflake.com" target="_blank">https://app.snowflake.com</a> and under Projects-&gt;Notebooks, on the top right corner in Notebook Dropdown, select <em>Create from Repository</em>. <ul>
+<li>For <em>File Location in Repository</em> , navigate to the Git repository stage created in previous step, and select <em><code>kgqa_demo->kgqa_demo.ipynb</code></em>.</li>
+<li>Fill the rest of the details as defined in the <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json" target="_blank">config.json</a>.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>STEP 4 : Load RelationalAI in Snowflake Notebook</h2>
+<ul>
+<li>Load RelationalAI in Snowflake Notebook using <a href="https://relational.ai/docs/native_app/installation#ii-set-up-the-rai-native-app" target="_blank">Installation Guide</a>. <ul>
+<li><em>Place the </em><em><code>relationalai.zip</code></em><em> file, as specified in the instructions, in the same directory as </em><em><code>kgqa_demo.ipynb</code></em><em> within Snowflake.</em></li>
+</ul>
+</li>
+</ul>
+<p>Run the <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo.ipynb" target="_blank">KGQA Demo Notebook</a> in Snowflake to play with our pipeline!</p>
+<p class="image-container"><img alt="KGQA Example" style="width: 1400.00px" src="img/2bada3fe0a6c7578.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Launch the KGQA SF Service" duration="25">
+        <p>Follow the below steps to launch End-to-End pipeline as a Service on Snowflake and interact with it.</p>
+<h3 is-upgraded>SETTING THE ENVIRONMENT VARIABLES</h3>
+<p><strong>Here, &lt;your_project_repository&gt; is the path to the local directory where &lt;git_repo&gt; has been cloned.</strong></p>
+<pre><code language="language-sh" class="language-sh">export SETUP_PATH=&#34;&lt;your_project_directory&gt;/kgqa_demo/kgqa_demo_setup&#34;
+</code></pre>
+<h3 is-upgraded>STEP 1 : Navigate to the KGQA_DOCKER FOLDER</h3>
+<pre><code language="language-sh" class="language-sh">cd &lt;your_project_directory&gt;/kgqa_docker/
+</code></pre>
+<h3 is-upgraded>STEP 2 : Populate all SF config parameters</h3>
+<ul>
+<li>Update the config parameters in the config file <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json" target="_blank">‘config.json&#39;</a></li>
+</ul>
+<p><strong><em>NOTE:</em></strong> Anything prefixed with ‘temp_&#39; can be customized by the user, along with Snowflake ‘account&#39; and ‘sf_login_email&#39;.</p>
+<p><strong>Everything else should remain unchanged.</strong></p>
+<h3 is-upgraded>STEP 3 : Initializing database in Snowflake - <em>Copy Paste Output to SF Worksheet and Run</em></h3>
+<p><em>Execute the below sf_db_initialization script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)</em></p>
+<p><strong><em>NOTE:</em></strong></p>
+<ul>
+<li>To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands. <br></li>
+<li>You may already have your custom data in Snowflake, as outlined in the <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/sf_db_initialization.py" target="_blank">DB Initialization File</a>. The setup requires four tables. For the schema details, refer to the &#34;CREATE OR REPLACE TABLE...&#34; commands in the file.</li>
+</ul>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ sf_db_initialization
+</code></pre>
+<h3 is-upgraded>STEP 4 : Image Repository Creation - <em>Copy Paste Output to SF Worksheet and Run</em></h3>
+<p>An Image Repository in Snowflake is a storage location where you can store and manage container images. These images are like snapshots of applications and their environments, which can be run on Snowflake&#39;s platform.</p>
+<p><em>Execute the below create_image_repo script to produce SQL File to create Image Repository on Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_image_repo
+</code></pre>
+<h3 is-upgraded>STEP 5 : Generate FAISS Index Files</h3>
+<p>The Similarity Search using FAISS relies on index files to find the best matching results. These index files must be included in the container image for the search to function properly.</p>
+<p><em>Execute the below generate_embeddings script to create the index files</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ generate_embeddings --option model=&#34;e5-base-v2&#34;
+</code></pre>
+<h3 is-upgraded>STEP 6 : Push Image to Snowflake Image Repository</h3>
+<p><em>Execute the below build_push_docker_image script to push docker image to Snowflake&#39;s Image Repository.</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ build_push_docker_image
+</code></pre>
+<h3 is-upgraded>STEP 7 : Launch a Snowflake service - <em>Copy Paste Output to SF Worksheet and Run</em></h3>
+<p><em>Execute the below create_service script to produce SQL File to create Snowflake Service ( copy-paste on Snowflake SQL Worksheet and RUN)</em></p>
+<pre><code language="language-sh" class="language-sh">python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_service
+</code></pre>
+<p><strong><em>NOTE:</em></strong> After running the &#34;<em>CREATE SERVICE ..</em>&#34; command in SF Worksheet, wait for the service to get <strong>Status=&#34;READY&#34;</strong> ( takes around 3-4 minutes ) before creating the UDFs and testing them in the below Worksheet.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="1">
+        <p>In case you encounter any of the following issues, please follow the recommended steps:</p>
+<ol type="1">
+<li><strong>Server Overload Error</strong> If the Snowflake server becomes unresponsive and shows a ‘Server overloaded&#39; error:<ul>
+<li>To resolve the issue, run the script generated from <strong>[Demo Setup -&gt; Step 6]</strong> from Line that says <em>&#34;DROP SERVICE IF EXISTS...&#34;</em></li>
+</ul>
+</li>
+<li><strong>Model Unavailable Error</strong> The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability" target="_blank">‘available in the region&#39;</a>, run the script generated <strong>[Demo Setup -&gt; Step 6]</strong>  from Line that says   <em>&#34;– test the UDFs with sample inputs&#34;</em>  with chosen model name, available in your region.<br><br><strong>2.1</strong> IF the text embedding model is changed from e5-base-v2 to something else, follow the <strong>[Launch the KGQA SF Service -&gt; Steps 5 through 7]</strong>. <br> - <em>Since the Dockerfile is present inside </em><strong><em>kgqa_docker</em></strong><em> folder, remember to  Switch to </em><strong><em>kgqa_docker</em></strong><em> folder to follow them.</em></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="0">
+        <p>If you started/resumed the tasks as part of the Data Engineering or Data Resources sections, then it is important that you run the following commands to suspend those tasks in order to avoid unecessary resource utilization. Be sure to update the values below as specified in the <a href="https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json" target="_blank"><code>config</code></a></p>
+<p>SQL Commands to delete Snowflake Objects</p>
+<pre><code language="language-sh" class="language-sh">--delete service
+drop service temp_kgqa_service;
+
+-- delete database
+drop database temp_db;
+
+-- delete compute pool
+drop compute pool temp_cp;
+
+-- delete warehouse
+drop warehouse temp_wh;
+
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Resources" duration="1">
+        <p>Congratulations on completing the our Question and Answering on Knowledge Graphs using RelationalAI and Snowflake guide! In this Quickstart you learned</p>
+<ul>
+<li>How to install the RelationalAI Native App from the Snowflake Marketplace</li>
+<li>How to build a knowledge graph on top of your Snowflake data without having to export your data from Snowflake</li>
+<li>How to run utilize data in your knowledge graph to answer Natural Language Questions</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li>To learn about more about RelationalAI and view full documentation, visit <a href="https://relational.ai" target="_blank">https://relational.ai</a></li>
+<li><a href="https://app.snowflake.com/marketplace" target="_blank">Snowflake Marketplace</a></li>
+<li>More info on <a href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">Snowflake Native Apps</a></li>
+</ul>
+<h2 is-upgraded>APPENDIX</h2>
+<h3 is-upgraded>A : Additional Commands for Docker -</h3>
+<p>–  To see all images</p>
+<pre><code language="language-sh" class="language-sh">docker images 
+</code></pre>
+<p>– To drop an image using image_id ( the <em>docker images</em> command will give the image ID )</p>
+<pre><code language="language-sh" class="language-sh">docker rmi -f &lt;image_id&gt;
+</code></pre>
+<p>– To drop an image using repository name ( the <em>docker images</em> command will give the Repository Name )</p>
+<pre><code language="language-sh" class="language-sh">docker rmi &lt;repo_name&gt;
+</code></pre>
+<p>– Login to the container and run through container terminal</p>
+<pre><code language="language-sh" class="language-sh">docker run --platform linux/amd64 -p 8000:8000 &lt;account_name&gt;.registry.snowflakecomputing.com/&lt;db_name&gt;/&lt;schema_name&gt;/&lt;image_repo_name&gt;/&lt;image_name&gt; 
+</code></pre>
+<p>– Login to the container and Run from inside the container</p>
+<pre><code language="language-sh" class="language-sh">docker run -it &lt;account_name&gt;.registry.snowflakecomputing.com/&lt;db_name&gt;/&lt;schema_name&gt;/&lt;image_repo_name&gt;/&lt;image_name&gt; /bin/bash 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

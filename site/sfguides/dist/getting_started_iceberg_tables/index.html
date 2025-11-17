@@ -1,0 +1,602 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Iceberg Tables</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_iceberg_tables"
+                  title="Getting Started with Iceberg Tables"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This guide is designed to help you understand the capabilities included in Snowflake&#39;s support for Apache Iceberg. Iceberg Tables, now generally available, bring Snowflake&#39;s easy platform management and great performance to data stored externally in the open source Apache Iceberg format.</p>
+<aside class="special"><p>Iceberg Tables are now generally available.</p>
+</aside>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A simple, open data lakehouse with Snowflake, Iceberg, and your cloud of choice</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create a Snowflake-managed Iceberg Table</li>
+<li>How to apply governance policies on an Iceberg Table</li>
+<li>How Snowpark can be used for Iceberg Table pipelines</li>
+<li>How to share an Iceberg Table</li>
+<li>How to access a Snowflake-managed Iceberg Table from Spark and DuckDB</li>
+</ul>
+<h2 is-upgraded>Prerequisites or What You Will Need</h2>
+<ul>
+<li>A Snowflake account. A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial</a> will suffice. <a href="https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition" target="_blank">Standard Edition</a> will work for most of this lab, but if you&#39;d like to try governance features covered in section 4, you will need <a href="https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition" target="_blank">Enterprise</a> or <a href="https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition" target="_blank">Business Critical Edition</a>.</li>
+<li>A storage bucket with the same cloud provider in the same region that hosts your Snowflake account above. Direct credential access required as storage integrations are not supported for External Volumes.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Your Environment" duration="10">
+        <h2 is-upgraded>Install Conda, Spark, DuckDB, Jupyter</h2>
+<p>In this quickstart, you can use Conda to easily create a development environment and download necessary packages. This is only needed if you choose to follow the last section for using Spark to read Snowflake-managed Iceberg Tables. This is not required to create or use Iceberg Tables on Snowflake. Here are instructions for installing Conda:</p>
+<ul>
+<li><a href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html" target="_blank">Mac</a></li>
+<li><a href="https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html" target="_blank">Windows</a></li>
+<li><a href="https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html" target="_blank">Linux</a></li>
+</ul>
+<p>Either download <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/environment.yml" target="_blank">this file</a>, or create a file named environment.yml with the following contents.</p>
+<pre><code language="language-yaml" class="language-yaml">name: iceberg-lab
+channels:
+  - conda-forge
+dependencies:
+  - findspark=2.0.1
+  - jupyter
+  - openjdk=11
+  - pyspark=3.5.5
+  - python-duckdb
+</code></pre>
+<p>To create the environment needed, run the following in your shell.</p>
+<pre><code>conda env create -f environment.yml
+</code></pre>
+<h2 is-upgraded>Setup Snowflake</h2>
+<p>In a Worksheet, create a database, schema, warehouse, role, and user called <code>ICEBERG_LAB</code> in your Snowflake account.</p>
+<pre><code language="language-sql" class="language-sql">CREATE WAREHOUSE iceberg_lab;
+CREATE ROLE iceberg_lab;
+CREATE DATABASE iceberg_lab;
+CREATE SCHEMA iceberg_lab;
+GRANT ALL ON DATABASE iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;
+GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;
+GRANT ALL ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;
+
+CREATE USER iceberg_lab
+    PASSWORD=&#39;&lt;your desired password&gt;&#39;,
+    LOGIN_NAME=&#39;ICEBERG_LAB&#39;,
+    MUST_CHANGE_PASSWORD=FALSE,
+    DISABLED=FALSE,
+    DEFAULT_WAREHOUSE=&#39;ICEBERG_LAB&#39;,
+    DEFAULT_NAMESPACE=&#39;ICEBERG_LAB.ICEBERG_LAB&#39;,
+    DEFAULT_ROLE=&#39;ICEBERG_LAB&#39;;
+
+GRANT ROLE iceberg_lab TO USER iceberg_lab;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE iceberg_lab TO USER IDENTIFIER($USERNAME);
+</code></pre>
+<p>This quickstart guide can be run from Snowflake Worksheets or Notebook. In this example, we will upload an existing notebook (.ipynb) into a Snowflake account. To load the demo notebook into your account, follow these steps:</p>
+<ol type="1">
+<li>In a browser tab for GitHub, download <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/snowflake_notebook.ipynb" target="_blank">this notebook</a> by clicking <strong>Download raw file</strong> from the top-right.</li>
+<li>In a browser tab for Snowflake, navigate to <strong>Project » Notebooks</strong> from the left menu bar.</li>
+<li>Click the dropdown arrow next to <strong>+ Notebook</strong> in the top-right, then click <strong>Import .ipynb file</strong>, and select the .ipynb file you&#39;ve downloaded and click <strong>Open</strong>.</li>
+<li>A <strong>Create Notebook</strong> dialog will show up. Select <code>ICEBERG_LAB</code> database, schema, and warehouse, and click <strong>Create</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Create Notebook" src="img/ac374b2cfbeadb8f.png"><img alt="Setup Notebook" src="img/81bd9ef36ed21d97.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an Iceberg Table" duration="10">
+        <h2 is-upgraded>Create an External Volume</h2>
+<p>Before you create an Iceberg table, you must have an external volume. An external volume is a Snowflake object that stores information about your cloud storage locations and identity and access management (IAM) entities (for example, IAM roles). Snowflake uses an external volume to establish a connection with your cloud storage in order to access Iceberg metadata and Parquet data.</p>
+<p>To create an external volume, complete the instructions for your cloud storage service:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3" target="_blank">Accessing Amazon S3 using external volumes</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-gcs" target="_blank">Accessing Google Cloud Storage using external volumes</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure" target="_blank">Accessing Microsoft Azure Storage using external volumes</a></li>
+</ul>
+<p>Prior to creating the external volume, be sure to use the <code>ACCOUNTADMIN</code> role.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+</code></pre>
+<p>Name the external volume you create <code>iceberg_lab_vol</code>.</p>
+<p>After the external volume is created, use the <code>ACCOUNTADMIN</code> role to grant usage to the <code>ICEBERG_LAB</code> role.</p>
+<pre><code language="language-sql" class="language-sql">GRANT ALL ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE iceberg_lab WITH GRANT OPTION;
+</code></pre>
+<h2 is-upgraded>Create a Snowflake-managed Iceberg Table</h2>
+<p>Snowflake supports multiple Iceberg catalog options including Iceberg REST, Snowflake, AWS Glue. In this quickstart, we use Snowflake as the catalog to allow read and write operations to tables. More information about integrating catalogs can be found <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration" target="_blank">here</a>.</p>
+<p>Create an Iceberg Table referencing the external volume you just created. You can specify <code>BASE_LOCATION</code> to instruct Snowflake where to write table data and metadata, or leave empty to write data and metadata to the root location specified in the external volume definition.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE iceberg_lab;
+USE DATABASE iceberg_lab;
+USE SCHEMA iceberg_lab;
+CREATE OR REPLACE ICEBERG TABLE customer_iceberg (
+    c_custkey INTEGER,
+    c_name STRING,
+    c_address STRING,
+    c_nationkey INTEGER,
+    c_phone STRING,
+    c_acctbal INTEGER,
+    c_mktsegment STRING,
+    c_comment STRING
+)  
+    CATALOG=&#39;SNOWFLAKE&#39;
+    EXTERNAL_VOLUME=&#39;iceberg_lab_vol&#39;
+    BASE_LOCATION=&#39;iceberg_lab/iceberg_lab/customer_iceberg&#39;;
+</code></pre>
+<h2 is-upgraded>Load Data</h2>
+<p>There are <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-load" target="_blank">multiple ways to load new data</a> into Snowflake-managed Iceberg Tables including INSERT, <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-iceberg" target="_blank">streaming</a>, <a href="https://docs.snowflake.com/en/user-guide/kafka-connector-iceberg" target="_blank">Kafka Connector</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table" target="_blank">COPY INTO</a>, and <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto" target="_blank">Snowpipe</a> including options. COPY INTO and Snowpipe provide <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table#label-copy-into-table-usage-notes-iceberg-parquet" target="_blank">options</a> to register compatible Parquet files into Iceberg tables instead of a full scan or transformation.</p>
+<p>For this quickstart, we will INSERT data from the sample tables in your Snowflake account to an Iceberg Table. This will write Parquet files and Iceberg metadata to your external volume.</p>
+<pre><code language="language-sql" class="language-sql">INSERT INTO customer_iceberg
+  SELECT * FROM snowflake_sample_data.tpch_sf1.customer;
+</code></pre>
+<p>If you check your cloud storage bucket, you should now see files that Snowflake has written as part of table creation. While Snowflake writes these files automatically, you can also use a <a href="https://docs.snowflake.com/en/sql-reference/functions/system_get_iceberg_table_information" target="_blank">function</a> to generate table metadata files that capture any data manipulation language (DML) changes that have been made since the last time Iceberg metadata was generated.</p>
+<p class="image-container"><img alt="Storage" src="img/d07521904c9b9c2d.png"></p>
+<h2 is-upgraded>Query and Time Travel</h2>
+<p>Iceberg Tables are treated much like other tables in Snowflake. For example, you can read different table types in a single query. This query is joining an Iceberg Table with a traditional Snowflake Table.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    *
+FROM customer_iceberg c
+INNER JOIN snowflake_sample_data.tpch_sf1.nation n
+    ON c.c_nationkey = n.n_nationkey;
+</code></pre>
+<p>You can also leverage Snowflake&#39;s built-in LLM functions to easily leverage AI in your queries as demonstrated <a href="https://quickstarts.snowflake.com/guide/cortex_ai_sentiment_iceberg/index.html#3" target="_blank">here</a>.</p>
+<p>Benefits of the additional metadata that table formats like Iceberg and Snowflake&#39;s provide are, for example, time travel.</p>
+<p>Let&#39;s first make a simple update to the table. Then, you can see that the row count has increased compared to the previous version of the table.</p>
+<pre><code language="language-sql" class="language-sql">SET query_id = LAST_QUERY_ID();
+INSERT INTO customer_iceberg
+    SELECT
+        *
+    FROM snowflake_sample_data.tpch_sf1.customer
+    LIMIT 5;
+
+
+SELECT
+    count(*) AS after_row_count,
+    before_row_count
+FROM customer_iceberg
+JOIN (
+        SELECT count(*) AS before_row_count
+        FROM customer_iceberg AT(STATEMENT=&gt; $query_id)
+    )
+    ON 1=1
+GROUP BY 2;
+</code></pre>
+<p class="image-container"><img alt="Time Travel" src="img/be250e61a66d3e7b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Governance on Iceberg Tables" duration="7">
+        <p>Governance and access controls work on Iceberg Tables just like internal tables. As described in the overview section, all of these features require Enterprise or Business Critical Edition of Snowflake.</p>
+<h2 is-upgraded>Row-level Security</h2>
+<p>Suppose you need to control row-level access to an Iceberg Table for users having different roles. In this example, let&#39;s have a role that can see the US customers and one that only sees the non-US customers.</p>
+<p>This can be done with a <a href="https://docs.snowflake.com/en/user-guide/security-row-using" target="_blank">row access policy</a> on the Iceberg Table.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+CREATE OR REPLACE ROLE tpch_us;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE tpch_us TO USER IDENTIFIER($USERNAME);
+CREATE OR REPLACE ROLE tpch_intl;
+GRANT ROLE tpch_intl TO USER IDENTIFIER($USERNAME);
+
+USE ROLE iceberg_lab;
+USE DATABASE iceberg_lab;
+USE SCHEMA iceberg_lab;
+
+CREATE ROW ACCESS POLICY rap_nation
+AS (nation_key number) RETURNS BOOLEAN -&gt;
+  (&#39;TPCH_US&#39; = current_role() and nation_key = 24) OR
+  (&#39;TPCH_INTL&#39; = current_role() and nation_key != 24)
+;
+
+ALTER ICEBERG TABLE customer_iceberg
+ADD ROW ACCESS POLICY rap_nation ON (c_nationkey);
+
+GRANT ALL ON DATABASE iceberg_lab TO ROLE tpch_intl;
+GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE tpch_intl;
+GRANT ALL ON ICEBERG TABLE iceberg_lab.iceberg_lab.customer_iceberg TO ROLE tpch_intl;
+GRANT ALL ON DATABASE iceberg_lab TO ROLE tpch_us;
+GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE tpch_us;
+GRANT ALL ON ICEBERG TABLE iceberg_lab.iceberg_lab.customer_iceberg TO ROLE tpch_us;
+GRANT USAGE ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE tpch_intl;
+GRANT USAGE ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE tpch_us;
+GRANT USAGE ON WAREHOUSE iceberg_lab TO ROLE tpch_us;
+GRANT USAGE ON WAREHOUSE iceberg_lab TO ROLE tpch_intl;
+</code></pre>
+<p>There are two separate roles to grant to Snowflake users, which allow them to see a subset of customers, either international or us.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE tpch_intl;
+USE WAREHOUSE iceberg_lab;
+SELECT
+    count(*)
+FROM iceberg_lab.iceberg_lab.customer_iceberg;
+</code></pre>
+<pre><code language="language-sql" class="language-sql">USE ROLE tpch_us;
+USE WAREHOUSE iceberg_lab;
+SELECT
+    count(*)
+FROM iceberg_lab.iceberg_lab.customer_iceberg;
+</code></pre>
+<p class="image-container"><img alt="RAP" src="img/1af47b8988cc04e0.png"></p>
+<h2 is-upgraded>Column-level Security</h2>
+<p>We want the team of analysts to be able to query the customer table but not see their name(c_name), address (c_address), or phone number(c_phone). To do so, we need to grant them access to all the rows but mask those fields.</p>
+<p>We can do that with a <a href="https://docs.snowflake.com/en/user-guide/security-column-ddm-use" target="_blank">masking policy</a>.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+CREATE OR REPLACE ROLE tpch_analyst;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE tpch_analyst TO USER IDENTIFIER($USERNAME);
+
+USE ROLE iceberg_lab;
+ALTER ROW ACCESS POLICY rap_nation
+SET body -&gt;
+  (&#39;TPCH_US&#39; = current_role() and nation_key = 24) or
+  (&#39;TPCH_INTL&#39; = current_role() and nation_key != 24) or
+  (&#39;TPCH_ANALYST&#39; = current_role()) or 
+  (&#39;ICEBERG_LAB&#39; = current_role())
+;
+
+GRANT ALL ON DATABASE iceberg_lab TO ROLE tpch_analyst;
+GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE tpch_analyst;
+GRANT ALL ON TABLE iceberg_lab.iceberg_lab.customer_iceberg TO ROLE tpch_analyst;
+GRANT USAGE ON WAREHOUSE iceberg_lab TO ROLE tpch_analyst;
+GRANT USAGE ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE tpch_analyst;
+USE ROLE iceberg_lab;
+
+CREATE OR REPLACE MASKING POLICY pii_mask AS (val string) RETURNS string -&gt;
+    CASE
+        WHEN &#39;TPCH_ANALYST&#39; = current_role() THEN &#39;*********&#39;
+        ELSE val
+    END;
+
+ALTER ICEBERG TABLE customer_iceberg MODIFY COLUMN c_name SET MASKING POLICY pii_mask;
+ALTER ICEBERG TABLE customer_iceberg MODIFY COLUMN c_address SET MASKING POLICY pii_mask;
+ALTER ICEBERG TABLE customer_iceberg MODIFY COLUMN c_phone SET MASKING POLICY pii_mask;
+
+USE ROLE tpch_analyst;
+SELECT
+    *
+FROM customer_iceberg;
+</code></pre>
+<p class="image-container"><img alt="Masking" src="img/ba78da0bec1976c3.png"></p>
+<p>Other governance features can be applied to Iceberg Tables, including <a href="https://docs.snowflake.com/en/user-guide/object-tagging" target="_blank">object tagging</a>, and <a href="https://docs.snowflake.com/en/user-guide/tag-based-masking-policies" target="_blank">tag-based masking</a>.</p>
+<h2 is-upgraded>Monitor Governance in Snowsight</h2>
+<p>As a data administrator, you can use the built-in Dashboard and Tagged Objects interfaces to monitor and report on the usage of policies and tags with tables, views, and columns. This includes policies and tags applied to Iceberg Tables.</p>
+<p>Using the <code>ACCOUNTADMIN</code> role, or an account role that is granted the <code>GOVERNANCE_VIEWER</code> and <code>OBJECT_VIEWER</code> database roles, click <strong>Data » Governance</strong> to navigate to these interfaces. You can see the policies applied to the Iceberg Table.</p>
+<p class="image-container"><img alt="Governance UI" src="img/c5a07d203a10fc62.png"></p>
+<p>And if you notice certain tables are missing tags or policies, you can modify, create, and apply them directly from the interface.</p>
+<p class="image-container"><img alt="UI Create Tag RAP" src="img/4ce636c942513801.png"></p>
+<p class="image-container"><img alt="UI Create Tag Mask" src="img/d27ce1c861e1dfc7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Transform Iceberg Tables" duration="5">
+        <p>Raw data in Iceberg tables may require further cleaning, transformation, and aggregation for downstream consumption. Snowflake supports multiple options for building and orchestrating pipelines including:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark</a>: Build and run pipelines with Python, including <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameWriter.save_as_table" target="_blank">support for Iceberg</a>.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-intro" target="_blank">Dynamic Tables</a>: An automated way to transform data, including <a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-create-iceberg" target="_blank">support for Iceberg</a>.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-pipelines-intro" target="_blank">Streams &amp; Tasks</a>: Incorporate CDC and custom orchestration on top of Iceberg tables.</li>
+</ul>
+<h2 is-upgraded>Dynamic Tables</h2>
+<p>Creating and orchestrating a transformation pipeline can be as simple as a SQL query of the desired results, target refresh lag, and let Snowflake automatically handle CDC, incremental processing, and when to start refreshes based on target lag.</p>
+<p>Dynamic Tables can be stored in Iceberg format. Create a Dynamic Iceberg Table as shown below.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE iceberg_lab;
+USE DATABASE iceberg_lab;
+USE SCHEMA iceberg_lab;
+
+CREATE OR REPLACE ICEBERG TABLE orders_iceberg 
+    CATALOG = &#39;SNOWFLAKE&#39;
+    EXTERNAL_VOLUME = &#39;iceberg_lab_vol&#39;
+    BASE_LOCATION = &#39;iceberg_lab/iceberg_lab/orders_iceberg&#39;
+    AS
+    SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS;
+
+CREATE OR REPLACE ICEBERG TABLE nation_iceberg 
+    CATALOG = &#39;SNOWFLAKE&#39;
+    EXTERNAL_VOLUME = &#39;iceberg_lab_vol&#39;
+    BASE_LOCATION = &#39;iceberg_lab/iceberg_lab/nation_iceberg&#39;
+    AS
+    SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.NATION;
+
+CREATE OR REPLACE DYNAMIC ICEBERG TABLE nation_orders_iceberg
+    TARGET_LAG = &#39;1 minute&#39;
+    WAREHOUSE = ICEBERG_LAB
+    CATALOG = &#39;SNOWFLAKE&#39;
+    EXTERNAL_VOLUME = &#39;iceberg_lab_vol&#39;
+    BASE_LOCATION = &#39;iceberg_lab/iceberg_lab/nation_orders_iceberg&#39;
+    AS
+    SELECT
+        n.n_regionkey AS regionkey,
+        n.n_nationkey AS nationkey,
+        n.n_name AS nation,
+        c.c_custkey AS custkey,
+        COUNT(o.o_orderkey) AS order_count,
+        SUM(o.o_totalprice) AS total_price
+    FROM ICEBERG_LAB.ICEBERG_LAB.ORDERS_ICEBERG o
+    JOIN ICEBERG_LAB.ICEBERG_LAB.CUSTOMER_ICEBERG c
+        ON o.o_custkey = c.c_custkey
+    JOIN ICEBERG_LAB.ICEBERG_LAB.NATION_ICEBERG n
+        ON c.c_nationkey = n.n_nationkey
+    GROUP BY
+        n.n_regionkey,
+        n.n_nationkey,
+        n.n_name,
+        c.c_custkey
+    ;
+</code></pre>
+<p>To monitor refresh history and examine upstream/downstream dependencies in a graph view, navigate to <strong>Monitoring » Dynamic Tables</strong>, and click on <strong>Keep Session Running</strong>. Then click on <code>NATION_ORDERS_ICEBERG</code> from the list.</p>
+<p class="image-container"><img alt="Dynamic Table" src="img/a1314a5a7a7bcc40.png"></p>
+<h2 is-upgraded>Snowpark</h2>
+<p>Snowpark allows you to interact with Iceberg Tables using <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes" target="_blank">DataFrames</a> that are lazily executed and can be used for data transformation and machine learning use cases. Let&#39;s try this by first navigating back to your Snowflake notebook under <strong>Projects » Notebooks » snowflake_notebook</strong> , and in the list of cells on the right click on <code>py_snowpark</code>.</p>
+<p>Snowflake Notebooks make it easy to switch between running SQL and Python. Run this cell which uses Python to write a DataFrame as an Iceberg table.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import col, rank
+from snowflake.snowpark.window import Window
+
+session = get_active_session()
+
+db = &#34;iceberg_lab&#34;
+schema = &#34;iceberg_lab&#34;
+
+# Load the input table
+df = session.table(&#34;ICEBERG_LAB.ICEBERG_LAB.NATION_ORDERS_ICEBERG&#34;)
+
+# Define a window partitioned by nation, ordered by total_price descending
+nation_window = Window.partition_by(&#34;nation&#34;).order_by(col(&#34;total_price&#34;).desc())
+
+# Rank customers within each nation
+df_ranked = df.with_column(&#34;nation_rank&#34;, rank().over(nation_window))
+
+# Flag top 3 customers per nation as VIPs
+df_vips = df_ranked.with_column(&#34;is_vip&#34;, (col(&#34;nation_rank&#34;) &lt;= 3))
+
+# Show the results
+df_vips = df_vips.select(&#34;nationkey&#34;, &#34;custkey&#34;, &#34;total_price&#34;, &#34;nation_rank&#34;, &#34;is_vip&#34;)
+
+output_table = &#34;customer_vips_iceberg&#34;
+
+iceberg_config = {
+    &#34;external_volume&#34;: &#34;iceberg_lab_vol&#34;,
+    &#34;catalog&#34;: &#34;snowflake&#34;,
+    &#34;base_location&#34;: f&#34;{db}/{schema}/{output_table}&#34;,
+    &#34;storage_serialization_policy&#34;: &#34;COMPATIBLE&#34;,
+}
+
+df_vips.show()
+df_vips.write.mode(&#34;overwrite&#34;).save_as_table(f&#34;{output_table}&#34;, iceberg_config=iceberg_config)
+</code></pre>
+<p class="image-container"><img alt="Snowpark" src="img/bb7a38768eb0e19f.png"></p>
+<p>With this Iceberg table created based on other Iceberg tables, you can view the full lineage by clicking on the <code>ICEBERG_LAB.ICEBERG_LAB.CUSTOMER_VIP_ICEBERG</code> table in the <strong>Databases</strong> tab, then click on the <strong>Lineage</strong> tab.</p>
+<p class="image-container"><img alt="Lineage" src="img/20b25566c207bb65.png"></p>
+<p>For a deeper dive on Snowpark for data engineering pipelines, try <a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html" target="_blank">this quickstart</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sharing Iceberg Tables" duration="10">
+        <p>Iceberg Tables can be securely shared with consumers either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.</p>
+<aside class="warning"><p>Cross-cloud and cross-region sharing of Iceberg Tables is not currently supported. The provider&#39;s external volume, Snowflake account, and consumer&#39;s Snowflake account must all be in the same cloud region.</p>
+</aside>
+<p>With data sharing, including Iceberg Tables:</p>
+<ul>
+<li>There is only one copy of the data that&#39;s stored in the data provider&#39;s cloud storage account.</li>
+<li>The latest snapshot available in the producer account is always live, real-time, and immediately available to consumers.</li>
+<li>Providers can establish revocable, fine-grained access to shares.</li>
+<li>Data sharing is simple and safe, especially compared to older data sharing methods, which were often manual and insecure, such as transferring large .csv files across the internet.</li>
+</ul>
+<p>Suppose you have a partner who wants to analyze the data in your ICEBERG_LAB database on a near real-time basis. This partner also has their own Snowflake account in the same region as our account. Data sharing is an easy, secure solution to allow them to access this information.</p>
+<h2 is-upgraded>Creating a Reader Account</h2>
+<p>For the purposes of this lab, we&#39;ll share data with a provisioned reader account. Return to your SQL worksheet, and grant the ICEBERG_LAB role the ability to create a reader account.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+GRANT CREATE ACCOUNT ON ACCOUNT TO ROLE iceberg_lab;
+USE ROLE ICEBERG_LAB;
+</code></pre>
+<p>Exit your SQL worksheet and navigate to <strong>Private Sharing</strong>, then click the tab <strong>Reader Accounts</strong> near the top of your window, then click <strong>+ New</strong>. Use ICEBERG_LAB_READER as the Account Name, READER_ADMIN as the User Name, and provide a password. Then click <strong>Create Account</strong>. You&#39;ll see the reader account now listed.</p>
+<p class="image-container"><img alt="Create Reader Account" src="img/149236f5627515f6.png"></p>
+<h2 is-upgraded>Create a Secure View</h2>
+<p>Now create a secure view which is what will eventually be shared with the ICEBERG_LAB_READER account.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE iceberg_lab;
+CREATE OR REPLACE SECURE VIEW nation_orders_v AS
+SELECT
+    nation,
+    SUM(order_count) as order_count,
+    SUM(total_price) as total_price
+FROM nation_orders_iceberg
+GROUP BY nation;
+</code></pre>
+<h2 is-upgraded>Create an Outbound Share</h2>
+<p>By default, ACCOUNTADMIN is the only role that can create shares. From your SQL worksheet, grant the ICEBERG_LAB role to create a share, then use this role.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+GRANT CREATE SHARE ON ACCOUNT TO ROLE iceberg_lab;
+USE ROLE iceberg_lab;
+</code></pre>
+<p>Exit the SQL worksheet and navigate to <strong>Data » Private Sharing</strong>, then click on the <strong>Shared by My Account</strong> tab near the top of your window, then click the <strong>Share</strong> button in the top-right corner and select <strong>Create a Direct Share</strong>.</p>
+<p class="image-container"><img alt="Select Share Data" src="img/1c79a5800dfee1fb.png"></p>
+<p>Click <strong>+ Select Data</strong> and navigate to the ICEBERG_LAB database and schema. Select the NATION_ORDERS_V view you created in the schema and click the <strong>Done</strong> button. Edit the default name to a more descriptive value that will help identify the share in the future (e.g. ICEBERG_LAB_NATION_ORDERS_SHARED_DATA). You can also add a comment.</p>
+<p class="image-container"><img alt="Create Share" src="img/86a6a834cf6d87c6.png"></p>
+<h2 is-upgraded>Accessing Shared Data</h2>
+<p>In a separate browser tab, login to the reader account previously created. After logging in, as this is a new account, create a new SQL worksheet.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+CREATE OR REPLACE WAREHOUSE iceberg_lab_reader 
+    WAREHOUSE_SIZE = XSMALL
+    AUTO_SUSPEND = 1
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE;
+</code></pre>
+<p>Now let&#39;s view the shared data. Exit the worksheet, and in the pane on the left, click on on <strong>Data » Private Sharing</strong>. You will see ICEBERG_LAB_NATION_ORDERS_SHARED_DATA listed under Direct Shares. Select <strong>Get Data</strong> and name it READER_ICEBERG_LAB_NATION_ORDERS_SHARED_DATA. Make it available to the PUBLIC role, then click <strong>Get Data</strong>, then click <strong>View Database</strong>.</p>
+<p>You can now query the shared data, which is a view on top of an Iceberg table. Run the queries below in a SQL worksheet to create a warehouse and see which countries had the most orders.</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM reader_iceberg_lab_nation_orders_shared_data.iceberg_lab.nation_orders_v
+ORDER BY order_count DESC;
+</code></pre>
+<p class="image-container"><img alt="Query Share" src="img/2a9114c9816a5139.png"></p>
+<p>As changes are made to the Iceberg Table from the producer&#39;s account, those changes are available nearly instantly in the reader account. No copying or transferring of data required! The single copy of data is stored in your cloud storage.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Read with Other Engines" duration="10">
+        <p>Suppose other teams use use other engines such as Apache Spark or DuckDB to read the Snowflake-managed Iceberg tables. They can directly access data and metadata in object storage, all without using any Snowflake warehouses.</p>
+<h2 is-upgraded>Read with Apache Spark</h2>
+<p>From your terminal, run the following commands to activate the virtual environment you created in the setup, and open Jupyter notebooks.</p>
+<p>Verify that you are running Java 11 from the output:</p>
+<pre><code language="language-sh" class="language-sh">conda activate iceberg-lab
+export PATH=/opt/anaconda3/envs/iceberg-lab/lib/jvm/bin:$PATH
+java --version
+</code></pre>
+<p>Start Jupyter:</p>
+<pre><code language="language-sh" class="language-sh">jupyter notebook
+</code></pre>
+<p>Download the notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/iceberg_lab.ipynb" target="_blank">iceberg_lab.ipynb provided here</a>, then open from Jupyter. Update and run the cells that are applicable to the cloud in which your Snowflake account is located.</p>
+<p class="image-container"><img alt="PySpark" src="img/9523e00094281f71.png"></p>
+<h2 is-upgraded>Read with DuckDB</h2>
+<p>To complete this step you will need to have DuckDB installed. <code>python-duckdb</code> was included in the virtual environment created at the beginning of this quickstart. Otherwise if needed, <a href="https://duckdb.org/#quickinstall" target="_blank">install DuckDB</a>.</p>
+<p>Download the notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/duckdb.ipynb" target="_blank">duckdb.ipynb provided here</a>, then open from Jupyter. Update and run the cells that are applicable to the cloud in which your Snowflake account is located.</p>
+<p>Import DuckDB and Pandas, and create an in-memory DuckDB database.</p>
+<pre><code language="language-python" class="language-python">import duckdb
+import pandas as pd
+
+conn = duckdb.connect()
+</code></pre>
+<p>Get your Iceberg metadata location by running the following query in Snowflake.</p>
+<pre><code language="language-sql" class="language-sql">SELECT PARSE_JSON(SYSTEM$GET_ICEBERG_TABLE_INFORMATION(&#39;CUSTOMER_ICEBERG&#39;))[&#39;metadataLocation&#39;]::varchar;
+</code></pre>
+<p>You will need to have credentials to access the blob storage where the metadata and data are located.</p>
+<p>Example creation of a secret for Amazon S3 access:</p>
+<pre><code language="language-python" class="language-python">aws_access_key_id = &#39;&lt;your AWS access key ID&gt;&#39;
+aws_secret_access_key = &#39;&lt;your AWS secret access key&gt;&#39;
+aws_s3_region = &#39;&lt;your s3 region&gt;&#39;
+
+conn.sql(f&#34;&#34;&#34;
+    CREATE OR REPLACE SECRET s3_credentials (
+        TYPE s3,
+        KEY_ID &#39;{aws_access_key_id}&#39;,
+        SECRET &#39;{aws_secret_access_key}&#39;,
+        REGION &#39;{aws_s3_region}&#39;
+        );
+&#34;&#34;&#34;)
+CREATE SECRET (
+    TYPE GCS,
+    KEY_ID &#39;&lt;YOUR_HMAC_KEY&gt;&#39;,
+    SECRET &#39;&lt;YOUR_HMAC_SECRET&gt;&#39;
+);
+</code></pre>
+<p>Example creation of a secret for Google Cloud Storage access:</p>
+<pre><code language="language-python" class="language-python">gcs_hmac_key_id = &#39;&lt;your HMAC key ID&gt;&#39;
+gcs_hmac_secret = &#39;&lt;your HMAC secret&gt;&#39;
+conn.sql(f&#34;&#34;&#34;
+    CREATE OR REPLACE SECRET gcs_credentials (
+        TYPE gcs,
+        KEY_ID &#39;{gcs_hmac_key_id}&#39;,
+        SECRET &#39;{gcs_hmac_secret}&#39;
+        );
+&#34;&#34;&#34;)
+</code></pre>
+<p>You can now query the table directly from DuckDB.</p>
+<pre><code language="language-sql" class="language-sql">df = conn.sql(f&#34;&#34;&#34;
+    SELECT *
+    FROM iceberg_scan(&#39;{snapshot_path}&#39;);
+&#34;&#34;&#34;).df()
+
+df.head()
+</code></pre>
+<p class="image-container"><img alt="DuckDB" src="img/98b2440e5ba58e31.png"></p>
+<p>Now teams can use data stored in Snowflake using both Snowflake as well as DuckDB (as well as other tools supporing Iceberg).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>To delete all of the objects created in this guide, you can drop the user, role, database, and warehouse.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE iceberg_lab;
+DROP SHARE iceberg_lab_nation_orders_shared_data;
+DROP DATABASE iceberg_lab;
+USE ROLE accountadmin;
+DROP EXTERNAL VOLUME iceberg_lab_vol;
+DROP USER iceberg_lab;
+DROP ROLE iceberg_lab;
+DROP ROLE tpch_us;
+DROP ROLE tpch_intl;
+DROP ROLE tpch_analyst;
+DROP WAREHOUSE iceberg_lab;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You&#39;ve successfully created an open data lakehouse on Snowflake with Iceberg.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create a Snowflake-managed Iceberg Table</li>
+<li>How to apply governance policies on an Iceberg Table</li>
+<li>How Snowpark can be used for Iceberg Table pipelines</li>
+<li>How to share an Iceberg Table</li>
+<li>How to access a Snowflake-managed Iceberg Table from Apache Spark and DuckDB</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" target="_blank">Snowflake Documentation for Iceberg Tables</a></li>
+<li><a href="https://iceberg.apache.org/" target="_blank">Apache Iceberg Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

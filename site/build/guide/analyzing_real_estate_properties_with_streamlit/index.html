@@ -1,0 +1,384 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Analyzing real estate properties using Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="analyzing_real_estate_properties_with_streamlit"
+                  title="Analyzing real estate properties using Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Analyzing residential properties for sale in Brazil (or any country) can be time-consuming. Usually, there are public reports that track real estate prices but no interactive data visualizations to compare assets across cities. That can be solved by creating an <strong>&#34;appreciation of residential properties&#34;</strong> app which combine Python programming, statistics and storytelling techniques to make data analysis more accessible!</p>
+<p>This guide will show you how to create your own residential properties analyzer using Streamlit, Pandas, NumPy, Matplotlib, and Seaborn libraries.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to combine Data Visualization and Storytelling to analyze residential properties via stripplots</li>
+<li>How to create a stripplot for analyzing residential properties annual appreciation (over locations)</li>
+<li>How to create a stripplot for analyzing price by squared meter (over locations)</li>
+<li>How to structure and theme your solution into a Streamlit app</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li>An Python IDE installed, such as <a href="https://code.visualstudio.com/download" target="_blank">VSCode</a></li>
+<li>A <a href="https://github.com/OviedoVR/Brazilian-properties-appreciation/blob/main/data/BR_real_estate_appreciation_Q1_2023.csv" target="_blank">sample dataset</a> (Brazilian Real Estate Properties Appreciation over 50 cities - data from the first quarter of 2023)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An <strong>&#34;appreciation of residential properties&#34;</strong> Streamlit app</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working Principle" duration="4">
+        <p>For this guide, we turn the audience into the center of attention. To do that, we allow it to select a location from our dataset, which is highlighted during the app&#39;s usage. Besides, the app uses a single visual type—the stripplot.</p>
+<p class="image-container"><img src="img/8ec002c5b5065db4.png"></p>
+<p>In our scenario, each white dot represents a city. The lowest values are at the bottom, and the highest are at the top. Once the user selects a location, it is highlighted in green, and that allows comparing it with the other cities. Note that you can also provide context by using statistical measures such as:</p>
+<ul>
+<li><strong>The first quartile (Q1):</strong> represents 25% of the data.</li>
+<li><strong>Median:</strong> the middle value that splits the data in half (can also provide a central tendency sense).</li>
+<li><strong>Third quartile (Q3):</strong> represents 75% of the data.</li>
+</ul>
+<p>These statistical measures allow the user to compare the situation of the chosen location with the national average and data distribution. Summing up, the user can extract insights from the data, such as identifying opportunities when an appreciation rate is above the national average and the price per square meter is below average. Hence, we will create two stripplots: one for analyzing residential properties annual appreciation and another for analyzing the cost per square meter. This is how the solution will look:</p>
+<p class="image-container"><img src="img/f8149f373609a006.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Initial Set-Up" duration="2">
+        <p>In this step, we need to import the required Python modules and set up the Matplotlib layout for storytelling.</p>
+<p>Importing Streamlit, Numpy, and Pandas (for arrays and data manipulation) and Matplotlib and Seaborn (for data visualization):</p>
+<pre><code language="language-python" class="language-python"># Modules:
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+</code></pre>
+<p>Creating a unique design for your Matplotlib figures and defining the color palette:</p>
+<pre><code language="language-python" class="language-python"># Setup for Storytelling (matplotlib):
+plt.rcParams[&#39;font.family&#39;] = &#39;monospace&#39;
+plt.rcParams[&#39;font.size&#39;] = 8
+plt.rcParams[&#39;font.weight&#39;] = &#39;bold&#39;
+plt.rcParams[&#39;figure.facecolor&#39;] = &#39;#464545&#39; 
+plt.rcParams[&#39;axes.facecolor&#39;] = &#39;#464545&#39; 
+plt.rcParams[&#39;axes.titleweight&#39;] = &#39;bold&#39;
+plt.rcParams[&#39;axes.titlecolor&#39;] = &#39;black&#39;
+plt.rcParams[&#39;axes.titlesize&#39;] = 9
+plt.rcParams[&#39;axes.labelcolor&#39;] = &#39;darkgray&#39;
+plt.rcParams[&#39;axes.labelweight&#39;] = &#39;bold&#39;
+plt.rcParams[&#39;axes.edgecolor&#39;] = &#39;darkgray&#39;
+plt.rcParams[&#39;axes.linewidth&#39;] = 0.2
+plt.rcParams[&#39;ytick.color&#39;] = &#39;darkgray&#39;
+plt.rcParams[&#39;xtick.color&#39;] = &#39;darkgray&#39;
+plt.rcParams[&#39;axes.titlecolor&#39;] = &#39;#FFFFFF&#39;
+plt.rcParams[&#39;axes.titlecolor&#39;] = &#39;white&#39;
+plt.rcParams[&#39;axes.edgecolor&#39;] = &#39;darkgray&#39;
+plt.rcParams[&#39;axes.linewidth&#39;] = 0.85
+plt.rcParams[&#39;ytick.major.size&#39;] = 0
+</code></pre>
+<p>Note that we defined font family, font weight, colors for axis and background, deleted ticks on axes, and so forth.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data collection &amp; app structuring" duration="4">
+        <p>To load the data <a href="https://github.com/OviedoVR/Brazilian-properties-appreciation/blob/main/data/BR_real_estate_appreciation_Q1_2023.csv" target="_blank">GitHub</a>, we can use the <code>read_csv</code> method of Pandas:</p>
+<pre><code language="language-python" class="language-python"># loading the data:
+BR_real_estate_appreciation = pd.read_csv(&#39;data/BR_real_estate_appreciation_Q1_2023.csv&#39;)
+# rounding the appreciation column to two decimal places:
+BR_real_estate_appreciation[&#39;Annual_appreciation&#39;] = round(BR_real_estate_appreciation[&#39;Annual_appreciation&#39;], 2) * 100
+</code></pre>
+<p>Next, we need to configure the app&#39;s style, set up a header, and add a usage tutorial in the sidebar. You can also define widgets for selecting your location of interest.</p>
+<pre><code language="language-python" class="language-python"># Page setup:
+st.set_page_config(
+    page_title=&#34;Residential properties (Brazil)&#34;,
+    page_icon=&#34;🏢&#34;,
+    layout=&#34;centered&#34;,
+    initial_sidebar_state=&#34;collapsed&#34;,
+)
+
+# Header:
+st.header(&#39;Appreciation of residential properties in Brazil&#39;)
+
+st.sidebar.markdown(&#39;&#39;&#39; &gt; **How to use this app**
+
+1. To Select a city (**green dot**).
+2. To compare for the selected city against other 50 cities (**white dots**).
+3. To compare the chosen city against **national average** and the data distribution.
+4. To extract insights as &#34;An appreciation above national average + price by square meter below average = possible *opportunity*&#34;.
+&#39;&#39;&#39;)
+
+# Widgets:
+cities = sorted(list(BR_real_estate_appreciation[&#39;Location&#39;].unique()))
+your_city = st.selectbox(
+    &#39;🌎 Select a city&#39;,
+    cities
+)
+
+selected_city = BR_real_estate_appreciation.query(&#39;Location == @your_city&#39;)
+other_cities = BR_real_estate_appreciation.query(&#39;Location != @your_city&#39;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stripplot for Annual Appreciation" duration="10">
+        <p>This step refers to the first stripplot, which compares the selected location&#39;s annual appreciation to other locations. You can highlight the chosen location in the chart and add reference lines, such as the first quartile, median, and third quartile, to see how it performs.</p>
+<pre><code language="language-python" class="language-python"># CHART 1: Annual appreciation (12 months):
+chart_1, ax = plt.subplots(figsize=(3, 4.125))
+# Background:
+sns.stripplot(
+    data= other_cities,
+    y = &#39;Annual_appreciation&#39;,
+    color = &#39;white&#39;,
+    jitter=0.85,
+    size=8,
+    linewidth=1,
+    edgecolor=&#39;gainsboro&#39;,
+    alpha=0.7
+)
+# Highlight:
+sns.stripplot(
+    data= selected_city,
+    y = &#39;Annual_appreciation&#39;,
+    color = &#39;#00FF7F&#39;,
+    jitter=0.15,
+    size=12,
+    linewidth=1,
+    edgecolor=&#39;k&#39;,
+    label=f&#39;{your_city}&#39;
+)
+
+# Showing up position measures:
+avg_annual_val = BR_real_estate_appreciation[&#39;Annual_appreciation&#39;].median()
+q1_annual_val = np.percentile(BR_real_estate_appreciation[&#39;Annual_appreciation&#39;], 25)
+q3_annual_val = np.percentile(BR_real_estate_appreciation[&#39;Annual_appreciation&#39;], 75)
+
+# Plotting lines (reference):
+ax.axhline(y=avg_annual_val, color=&#39;#DA70D6&#39;, linestyle=&#39;--&#39;, lw=0.75)
+ax.axhline(y=q1_annual_val, color=&#39;white&#39;, linestyle=&#39;--&#39;, lw=0.75)
+ax.axhline(y=q3_annual_val, color=&#39;white&#39;, linestyle=&#39;--&#39;, lw=0.75)
+
+# Adding the labels for position measures:
+ax.text(1.15, q1_annual_val, &#39;Q1&#39;, ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;white&#39;, fontsize=8, fontweight=&#39;bold&#39;)
+ax.text(1.3, avg_annual_val, &#39;Median&#39;, ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;#DA70D6&#39;, fontsize=8, fontweight=&#39;bold&#39;)
+ax.text(1.15, q3_annual_val, &#39;Q3&#39;, ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;white&#39;, fontsize=8, fontweight=&#39;bold&#39;)
+
+# to fill the area between the lines:
+ax.fill_betweenx([q1_annual_val, q3_annual_val], -2, 1, alpha=0.2, color=&#39;gray&#39;)
+# to set the x-axis limits to show the full range of the data:
+ax.set_xlim(-1, 1)
+
+# Axes and titles:
+plt.xticks([])
+plt.ylabel(&#39;Average appreciation (%)&#39;)
+plt.title(&#39;Appreciation (%) in the past 12 months&#39;, weight=&#39;bold&#39;, loc=&#39;center&#39;, pad=15, color=&#39;gainsboro&#39;)
+plt.legend(loc=&#39;center&#39;, bbox_to_anchor=(0.5, -0.1), ncol=2, framealpha=0, labelcolor=&#39;#00FF7F&#39;)
+plt.tight_layout()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stripplot for Price by Squared Meter" duration="10">
+        <p>This step refers to the second stripplot, which shows the relationship between location and price per square meter.</p>
+<pre><code language="language-python" class="language-python"># CHART 2: Price (R$) by m²:
+chart_2, ax = plt.subplots(figsize=(3, 3.95))
+# Background:
+sns.stripplot(
+    data= other_cities,
+    y = &#39;BRL_per_squared_meter&#39;,
+    color = &#39;white&#39;,
+    jitter=0.95,
+    size=8,
+    linewidth=1,
+    edgecolor=&#39;gainsboro&#39;,
+    alpha=0.7
+)
+# Highlight:
+sns.stripplot(
+    data= selected_city,
+    y = &#39;BRL_per_squared_meter&#39;,
+    color = &#39;#00FF7F&#39;,
+    jitter=0.15,
+    size=12,
+    linewidth=1,
+    edgecolor=&#39;k&#39;,
+    label=f&#39;{your_city}&#39;
+)
+
+# Showing up position measures:
+avg_price_m2 = BR_real_estate_appreciation[&#39;BRL_per_squared_meter&#39;].median()
+q1_price_m2 = np.percentile(BR_real_estate_appreciation[&#39;BRL_per_squared_meter&#39;], 25)
+q3_price_m2 = np.percentile(BR_real_estate_appreciation[&#39;BRL_per_squared_meter&#39;], 75)
+
+# Plotting lines (reference):
+ax.axhline(y=avg_price_m2, color=&#39;#DA70D6&#39;, linestyle=&#39;--&#39;, lw=0.75)
+ax.axhline(y=q1_price_m2, color=&#39;white&#39;, linestyle=&#39;--&#39;, lw=0.75)
+ax.axhline(y=q3_price_m2, color=&#39;white&#39;, linestyle=&#39;--&#39;, lw=0.75)
+
+# Adding the labels for position measures:
+ax.text(1.15, q1_price_m2, &#39;Q1&#39;, ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;white&#39;, fontsize=8, fontweight=&#39;bold&#39;)
+ax.text(1.35, avg_price_m2, &#39;Median&#39;, ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;#DA70D6&#39;, fontsize=8, fontweight=&#39;bold&#39;)
+ax.text(1.15, q3_price_m2, &#39;Q3&#39;, ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;white&#39;, fontsize=8, fontweight=&#39;bold&#39;)
+
+# to fill the area between the lines:
+ax.fill_betweenx([q1_price_m2, q3_price_m2], -2, 1, alpha=0.2, color=&#39;gray&#39;)
+# to set the x-axis limits to show the full range of the data:
+ax.set_xlim(-1, 1)
+
+# Axes and titles:
+plt.xticks([])
+plt.ylabel(&#39;Price (R\\$)&#39;)
+plt.legend(loc=&#39;center&#39;, bbox_to_anchor=(0.5, -0.1), ncol=2, framealpha=0, labelcolor=&#39;#00FF7F&#39;)
+plt.title(&#39;Average price (R\\$) by $m^2$&#39;, weight=&#39;bold&#39;, loc=&#39;center&#39;, pad=15, color=&#39;gainsboro&#39;)
+plt.tight_layout()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Finalizing the app" duration="3">
+        <p>Here, we can split the charts into two columns and add a legend. To make it more accessible, let&#39;s:</p>
+<ul>
+<li>Display tabular data for the chosen city in addition to the chart.</li>
+<li>Provide information about reference indexes (such as inflation) and authorship.</li>
+</ul>
+<p>Splitting the charts into columns:</p>
+<pre><code language="language-python" class="language-python"># Splitting the charts into two columns:
+left, right = st.columns(2)
+
+# Columns (content):
+with left:
+    st.pyplot(chart_1)
+with right:
+    st.pyplot(chart_2)
+</code></pre>
+<p>Setting up the legend for the charts:</p>
+<pre><code language="language-python" class="language-python"># Informational text:
+st.markdown(&#39;&#39;&#39;
+&lt;span style=&#34;color:white;font-size:10pt&#34;&gt; ⚪ Each point represents a city &lt;/span&gt;
+&lt;span style=&#34;color:#DA70D6;font-size:10pt&#34;&gt; ▫ &lt;b&gt; Average value &lt;/b&gt;&lt;/span&gt;
+&lt;span style=&#34;color:white;font-size:10pt&#34;&gt; ◽ Lowest values (&lt;b&gt; bottom &lt;/b&gt;)
+◽ Highest values (&lt;b&gt; top &lt;/b&gt;) &lt;br&gt;
+◽ **Q1** (first quartile): where 25% of data falls under
+◽ **Q3** (third quartile): where 75% of data falls under
+&lt;/span&gt;
+
+&#39;&#39;&#39;,unsafe_allow_html=True)
+</code></pre>
+<p>Final information to be displayed:</p>
+<pre><code language="language-python" class="language-python"># Showing up the numerical data (as a dataframe):
+st.dataframe(
+    BR_real_estate_appreciation.query(&#39;Location == @your_city&#39;)[[
+      &#39;Location&#39;, &#39;Annual_appreciation&#39;, 
+      &#39;BRL_per_squared_meter&#39;]]
+)
+
+# Adding some reference indexes:
+st.markdown(&#39;&#39;&#39; &gt; **Reference indexes (inflation):**
+
+* IPCA: **6%** (National Broad Consumer Price Index)
+* IGP-M: **4%** (General Market Price Index)
+
+&gt; Data based on public informs that accounts residential properties for 50 Brazilian cities (first quarter of 2023).
+&#39;&#39;&#39;)
+
+# Authorship:
+st.markdown(&#39;---&#39;)
+# here you can add the authorship and useful links (e.g., Linkedin, GitHub, and so forth)
+st.markdown(&#39;---&#39;)
+# --- (End of the App)
+</code></pre>
+<p>Finally, let&#39;s incorporate a dark theme. Note that the custom layout of Matplotlib is consistent with the theme&#39;s color palette.</p>
+<pre><code>[theme]
+primaryColor=&#34;#00FF7F&#34;
+backgroundColor=&#34;#464545&#34;
+secondaryBackgroundColor=&#34;#2b2b29&#34;
+textColor=&#34;#fbfbfb&#34;
+font=&#34;serif&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>Now you know how to use Streamlit, Statistics, Data Vizualization and Storytelling techniques to analyze residential properties across distinct locations. Although this app takes into account Brazilian real estate properties, you can surely apply the same methodology to any country&#39;s data.</p>
+<h2 is-upgraded>What we Covered</h2>
+<ul>
+<li>How to combine Data Visualization and Storytelling to analyze residential properties via stripplots</li>
+<li>How to analyze real estate properties using these stripplots</li>
+<li>How to structure and theme your solution into a Streamlit app</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/OviedoVR/Brazilian-properties-appreciation" target="_blank">GitHub repo</a></li>
+<li><a href="https://matplotlib.org/stable/tutorials/introductory/customizing.html" target="_blank">Customizing Matplotlib with style sheets and rcParams</a></li>
+<li><a href="https://www.amazon.com/Big-Picture-Visualization-Better-Decisions_Faster/dp/126047352X/" target="_blank">Data Visuzation &amp; Storytelling book - The Big Picture: How to Use Data Visualization to Make Better Decisions―Faster (by Steve Wexler)</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "snowflake-confluent-tableflow-iceberg",
+  "duration": 81,
+  "title": "Stream Kafka Data to Snowflake via Confluent Tableflow and Iceberg",
+  "summary": "Build a real-time data pipeline connecting Apache Kafka with Snowflake using Confluent Cloud and Tableflow in Iceberg format",
+  "source": "tableflow-with-snowflake-polaris/tableflow-with-snowflake-polaris.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "confluent",
+    "streaming",
+    "real-time",
+    "tableflow",
+    "kafka",
+    "flink",
+    "polaris",
+    "snowflake"
+  ],
+  "tags": [
+    "confluent",
+    "flink",
+    "gettingstarted",
+    "iceberg",
+    "kafka",
+    "polaris",
+    "snowflake",
+    "tableflow",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowflake-confluent-tableflow-iceberg"
+}

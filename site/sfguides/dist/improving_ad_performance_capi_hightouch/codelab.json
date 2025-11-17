@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "improving_ad_performance_capi_hightouch",
+  "duration": 14,
+  "title": "Improving ad performance with Facebook's Conversion API (CAPI), using Hightouch and Snowflake.",
+  "summary": "Improving ad performance with Facebook’s Conversion API (CAPI), using Hightouch and Snowflake.",
+  "source": "improving_ad_performance_capi_hightouch/improving_ad_performance_capi_hightouch.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "adtech",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "improving_ad_performance_capi_hightouch"
+}

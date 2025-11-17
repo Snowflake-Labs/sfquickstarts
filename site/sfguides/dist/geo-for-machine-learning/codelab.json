@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "geo-for-machine-learning",
+  "duration": 240,
+  "title": "Geospatial Analytics, AI and ML using Snowflake",
+  "summary": "Cortex, Geospatial and Streamlit features for Machine Learning use cases",
+  "source": "geo-for-machine-learning/machine-learning-using-geospatial.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "analytics",
+    "geospatial",
+    "h3",
+    "machinelearning.",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "geo-for-machine-learning"
+}

@@ -1,0 +1,397 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - ゼロからのSnowflake - コラボレーション</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_zero_to_snowflake_collaboration_ja"
+                  title="Tasty Bytes - ゼロからのSnowflake - コラボレーション"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Snowflakeマーケットプレイスを使用したサードパーティデータへの直接アクセス" duration="1">
+        <p class="image-container"><img src="img/f0896bfa5f1ee51b.png"></p>
+<h2 is-upgraded>概要</h2>
+<p>Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。今回はコラボレーションを中心的に取り上げます。このクイックスタートでは、Snowflakeマーケットプライスにある気象データで皆さんのファーストパーティデータをエンリッチする方法をご紹介します。Snowflakeマーケットプレイスでは、サードパーティデータおよびアプリを検索し、試し、購入することができます。このとき、ETL、データパイプライン、統合を設定する必要はありません。</p>
+<h2 is-upgraded>前提条件</h2>
+<ul>
+<li>開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している<a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html" target="_blank"><strong>Tasty Bytesの紹介クイックスタート</strong></a>を完了しておくようにしてください。</li>
+</ul>
+<h2 is-upgraded>学習する内容</h2>
+<ul>
+<li>Snowflakeマーケットプレイスへのアクセス方法</li>
+<li>自分のアカウントでWeather Sourceのリアルタイムデータを取得する方法</li>
+<li>ビューの作成方法</li>
+<li>SQL関数の作成方法</li>
+<li>Snowsightチャートを活用して視覚的インサイトを探る方法</li>
+</ul>
+<h2 is-upgraded>構築するもの</h2>
+<ul>
+<li>ファーストパーティの売上データとサードパーティの気象データの整合</li>
+<li>華氏から摂氏へのシームレスな変換性</li>
+<li>インチからミリメートルへのシームレスな変換性</li>
+<li>Snowflakeマーケットプレイスで追加のインサイトを引き出す方法の理解</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ワークシートの作成とSQLのコピー" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。</p>
+<p>本セクションでは、Snowflakeへのログイン、新しいワークシートの作成、ワークシートの名前の変更、GitHubからのSQLのコピー、このクイックスタートで利用するSQLの貼り付けについて説明します。</p>
+<h2 is-upgraded>ステップ1 - URLでSnowflakeにアクセスする</h2>
+<ul>
+<li>ブラウザウィンドウを開き、SnowflakeアカウントのURLを入力します</li>
+</ul>
+<h2 is-upgraded>ステップ2 - Snowflakeにログインする</h2>
+<ul>
+<li>Snowflakeアカウントにログインします。 <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ3 - ワークシートに移動する</h2>
+<ul>
+<li>左側のナビゲーションバーにある「ワークシート」タブをクリックします。 <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ4 - ワークシートを作成する</h2>
+<ul>
+<li>ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。 <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ5 - ワークシートの名前を変更する</h2>
+<ul>
+<li>自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - コラボレーション」と入力してワークシートの名前を変更します。 <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ6 - GitHubでQuickstart SQLにアクセスする</h2>
+<ul>
+<li>下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQLファイルに移動します。</li>
+</ul>
+<p><a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_collaboration.sql" target="_blank"><paper-button class="colored" raised>tb_zts_collaboration.sql</paper-button></a></p>
+<h2 is-upgraded>ステップ7 - GitHubからSetup SQLをコピーする</h2>
+<ul>
+<li>GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。 <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける</h2>
+<ul>
+<li>Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（<em>Macの場合はCMD + V、Windowsの場合はCTRL + V</em>）。</li>
+</ul>
+<h2 is-upgraded>ステップ9 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ファーストパーティデータにおける売上ゼロ日の調査" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>Tasty Bytesの財務アナリストは、前年比分析を行う中で、さまざまな都市でキッチンカーの売上がゼロとなっている説明のつかない日があることを指摘しました。その一例として挙げられたのが2022年2月のドイツ、ハンブルグのケースです。</p>
+<h2 is-upgraded>ステップ1 - 販売時点データのトレンドをクエリする</h2>
+<p>では早速始めましょう。このステップでは、3つのクエリを実行してロールとウェアハウスのコンテキストを<code>tasty_data_engineer</code>と<code>tasty_de_wh</code>に設定します。コンテキストを設定した状態で、分析<code>orders_v</code>ビューをクエリし、2022年のドイツ、ハンブルグの売上の結果セットを提供します。</p>
+<pre><code>USE ROLE tasty_data_engineer;
+USE WAREHOUSE tasty_de_wh;
+
+SELECT 
+    o.date,
+    SUM(o.price) AS daily_sales
+FROM frostbyte_tasty_bytes.analytics.orders_v o
+WHERE 1=1
+    AND o.country = &#39;Germany&#39;
+    AND o.primary_city = &#39;Hamburg&#39;
+    AND DATE(o.order_ts) BETWEEN &#39;2022-02-10&#39; AND &#39;2022-02-28&#39;
+GROUP BY o.date
+ORDER BY o.date ASC;
+</code></pre>
+<p class="image-container"><img src="img/d830296f366f8d36.png"></p>
+<p>上記のデータに基づくと、2月の数日間、日次売上記録がないというアナリストの指摘は、間違いなく正しいものであるということが分かります。なぜこのようなことが起こったのか、次のセクションでさらに掘り下げてみましょう。</p>
+<h2 is-upgraded>ステップ2 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SnowflakeマーケットプレイスのWeather Sourceデータの活用" duration="2">
+        <h2 is-upgraded>概要</h2>
+<p>前のセクションで見た内容から、ハンブルグでは2月16日から2月21日までの売上がないように見えます。  ファーストパーティデータの中には、これを調査するために利用できるものは他にあまりありませんが、何か大きなことがここで起こっていたはずです。</p>
+<p><a href="https://www.snowflake.com/ja/data-cloud/marketplace/" target="_blank">Snowflakeマーケットプレイス</a>を活用してすぐに調査できるアイデアの1つは、異常気象と、Weather Sourceが提供している無料の公開リストです。</p>
+<h2 is-upgraded>ステップ1 - Weather Source LLC: frostbyte Snowflakeマーケットプレイスのリスティングを取得する</h2>
+<p>Snowflakeマーケットプレイスは、革新的なビジネスソリューションを推進するために必要なデータやアプリケーションを検索、試用、購入できるすばらしい場所です。このステップでは、<a href="https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte" target="_blank">Weather Source LLC: frostbyte</a>リスティングにアクセスし、ハンブルグの売上不振に関する追加の分析に役立てていきます。</p>
+<p>以下の手順とビデオに従って、Snowflakeアカウントからこのリストを取得してください。</p>
+<ul>
+<li>「ホーム」をクリック</li>
+<li>マーケットプレイスをクリック</li>
+<li>frostbyteを検索</li>
+<li>「Weather Source LLC: frostbyte」をクリック</li>
+<li>「Get（取得）」をクリック</li>
+<li>データベースの名称をFROSTBYTE_WEATHERSOURCE（すべて大文字）に変更</li>
+<li>追加ロールへの付与 -&gt; 「PUBLIC（公開）」</li>
+</ul>
+<p class="image-container"><img src="img/a6c47fa64113e1d9.gif"></p>
+<aside class="special"><p> Weather Sourceは、世界の気象および気候データを提供するリーディングプロバイダーであり、同社のOnPoint Product Suiteは、企業がさまざまな業界の広範なユースケースに適用できる有意義で実用的なインサイトを迅速に生成するために必要な気象および気候データを提供しています。</p>
+</aside>
+<h2 is-upgraded>ステップ2 - ファーストパーティデータとサードパーティデータをハーモナイズする</h2>
+<p>共有の<code>frostbyte_weathersource</code>データベースが配置された状態で、このステップのクエリを実行し、2つのWeather Sourceテーブルを、Tasty Bytesのキッチンカーが営業している国と都市に関する国テーブルに結合する<code>harmonized.daily_weather_v</code>ビューを作成してください。</p>
+<pre><code>CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.daily_weather_v
+    AS
+SELECT 
+    hd.*,
+    TO_VARCHAR(hd.date_valid_std, &#39;YYYY-MM&#39;) AS yyyy_mm,
+    pc.city_name AS city,
+    c.country AS country_desc
+FROM frostbyte_weathersource.onpoint_id.history_day hd
+JOIN frostbyte_weathersource.onpoint_id.postal_codes pc
+    ON pc.postal_code = hd.postal_code
+    AND pc.country = hd.country
+JOIN frostbyte_tasty_bytes.raw_pos.country c
+    ON c.iso_country = hd.country
+    AND c.city = hd.city_name;
+</code></pre>
+<p class="image-container"><img src="img/4cc87e757f05648b.png"></p>
+<p>上のビューの定義にもあるように、私たちは<code>onpoint_id</code>スキーマ内の2つの<code>frostbyte_weathersource</code>テーブルを結合し、<code>frostbyte_tasty_bytes</code>データベースと<code>raw_pos</code>スキーマの<code>country</code>テーブルと整合させようとしています。</p>
+<p>このような操作は、一般的に整合レイヤー、あるいはシルバーゾーンと呼ばれるレイヤーで行われます。</p>
+<h2 is-upgraded>ステップ3 - 毎日の気温を可視化する</h2>
+<p>整合スキーマの<code>daily_weather_v</code>ビューが得られたところで、次のクエリを実行して、2022年2月のハンブルグの毎日の平均気温を見てみましょう。</p>
+<p>ここでは、<a href="https://docs.snowflake.com/ja/sql-reference/functions/avg" target="_blank">AVG</a>、<a href="https://docs.snowflake.com/ja/sql-reference/functions/year" target="_blank">YEAR</a>、<a href="https://docs.snowflake.com/ja/sql-reference/functions/year" target="_blank">MONTH</a>という関数を利用します。</p>
+<pre><code>SELECT 
+    dw.country_desc,
+    dw.city_name,
+    dw.date_valid_std,
+    AVG(dw.avg_temperature_air_2m_f) AS avg_temperature_air_2m_f
+FROM frostbyte_tasty_bytes.harmonized.daily_weather_v dw
+WHERE 1=1
+    AND dw.country_desc = &#39;Germany&#39;
+    AND dw.city_name = &#39;Hamburg&#39;
+    AND YEAR(date_valid_std) = &#39;2022&#39;
+    AND MONTH(date_valid_std) = &#39;2&#39;
+GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
+ORDER BY dw.date_valid_std DESC;
+</code></pre>
+<p class="image-container"><img src="img/ef6bda03828737cb.png"></p>
+<p>傾向をさらに詳しく調査するために、Snowsight Chartingを使って平均気温の経時的変化を折れ線グラフにしてみましょう。</p>
+<p class="image-container"><img src="img/5cb540438eae1086.png"></p>
+<p>これまでの内容から、私たちのキッチンカーで売上ゼロの日がある明らかな理由として際立っているものはまだありません。次のステップでは、他に説明のつきそうなものがまだあるか見てみることにしましょう。</p>
+<h2 is-upgraded>ステップ4 - 風データを取り込む</h2>
+<p>前のステップで見たように、1日の平均気温はハンブルグでの売上ゼロの日の原因ではないようです、ありがたいことに、Weather Sourceは私たちが詳しく調査できるその他の気象メトリックも提供しています。</p>
+<p>次のクエリを実行し、整合ビューを活用して風のメトリックを取り込んでください。このクエリでは、<a href="https://docs.snowflake.com/ja/sql-reference/functions/max" target="_blank">MAX</a>関数を使用していきます。</p>
+<pre><code>SELECT 
+    dw.country_desc,
+    dw.city_name,
+    dw.date_valid_std,
+    MAX(dw.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.harmonized.daily_weather_v dw
+WHERE 1=1
+    AND dw.country_desc IN (&#39;Germany&#39;)
+    AND dw.city_name = &#39;Hamburg&#39;
+    AND YEAR(date_valid_std) = &#39;2022&#39;
+    AND MONTH(date_valid_std) = &#39;2&#39;
+GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
+ORDER BY dw.date_valid_std DESC;
+</code></pre>
+<p class="image-container"><img src="img/783f389ffc907ea.png"></p>
+<p>このようなデータも、簡易的なSnowsightチャートで表示した方が傾向が分かりやすいかもしれません。以下のスクリーンショットの矢印に従って、結果からチャートへ移動してください。</p>
+<p class="image-container"><img src="img/5436ca7b175faa4c.png"></p>
+<p><strong>なんと！</strong> 売上ゼロの日の風はハリケーン並みでした。キッチンカーのその日の売上がゼロだったのは、これがもっともらしい理由のようです。しかし、この分析は整合ビューで実行したものであるため、この先は、アナリスト自身がこれらのインサイトにアクセスできるよう、分析ビューでアクセスできるようにしていくことにしましょう。</p>
+<h2 is-upgraded>ステップ5 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="データインサイトの民主化" duration="3">
+        <h2 is-upgraded>概要</h2>
+<p>私たちは、財務アナリストが指摘した売上ゼロの日について、おそらくハリケーン級の強風が原因になっているだろうと判断することができました。</p>
+<p>次は、Tasty Bytesの全従業員がアクセスできる分析ビューを展開することにより、このような調査を組織内の誰でも利用できるようにしていきましょう。</p>
+<h2 is-upgraded>ステップ1：SQL関数を作成する</h2>
+<p>グローバル企業として、まずは華氏を摂氏に、インチをミリメートルに変換する2つのSQL関数を作成することから始めましょう。</p>
+<p>このステップでは2つのクエリを1つずつ実行し、<code>fahrenheit_to_celsius</code>関数と<code>inch_to_millimeter</code>関数を作成してください。ここでは<a href="https://docs.snowflake.com/ja/sql-reference/sql/create-function" target="_blank">CREATE FUNCTION</a>コマンドを利用します。</p>
+<pre><code>CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(temp_f NUMBER(35,4))
+RETURNS NUMBER(35,4)
+AS
+$$
+    (temp_f - 32) * (5/9)
+$$;
+</code></pre>
+<p class="image-container"><img src="img/9147315f1941c514.png"></p>
+<pre><code>CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
+RETURNS NUMBER(35,4)
+    AS
+$$
+    inch * 25.4
+$$;
+</code></pre>
+<p class="image-container"><img src="img/fc80cc92fcc7055c.png"></p>
+<aside class="special"><p> UDFの作成時には、サポートされている言語のいずれかでコードが記述されたハンドラーを指定します。ハンドラーの言語に応じて、ハンドラーのソースコードをCREATE FUNCTION文にインラインで含めるか、ハンドラーがプリコンパイルされている、あるいはステージにソースコードがあるCREATE FUNCTIONからハンドラーのロケーションを参照します。</p>
+</aside>
+<h2 is-upgraded>ステップ2 - ビュー用のSQLを作成する</h2>
+<p>分析ビューを展開する前に、ビューで使用するSQLを作成して日次売上と気象を組み合わせ、さらに、SQL変換関数も活用しましょう。</p>
+<p>次のクエリを実行し、ドイツのハンブルグをフィルタリングしてください。まだ登場していない<a href="https://docs.snowflake.com/ja/sql-reference/functions/zeroifnull" target="_blank">ZEROIFNULL</a>、<a href="https://docs.snowflake.com/ja/sql-reference/functions/round" target="_blank">ROUND</a>、<a href="https://docs.snowflake.com/ja/sql-reference/functions/to_date" target="_blank">DATE</a>といった関数も活用してください。</p>
+<pre><code>SELECT 
+    fd.date_valid_std AS date,
+    fd.city_name,
+    fd.country_desc,
+    ZEROIFNULL(SUM(odv.price)) AS daily_sales,
+    ROUND(AVG(fd.avg_temperature_air_2m_f),2) AS avg_temperature_fahrenheit,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(fd.avg_temperature_air_2m_f)),2) AS avg_temperature_celsius,
+    ROUND(AVG(fd.tot_precipitation_in),2) AS avg_precipitation_inches,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.inch_to_millimeter(fd.tot_precipitation_in)),2) AS avg_precipitation_millimeters,
+    MAX(fd.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.harmonized.daily_weather_v fd
+LEFT JOIN frostbyte_tasty_bytes.harmonized.orders_v odv
+    ON fd.date_valid_std = DATE(odv.order_ts)
+    AND fd.city_name = odv.primary_city
+    AND fd.country_desc = odv.country
+WHERE 1=1
+    AND fd.country_desc = &#39;Germany&#39;
+    AND fd.city = &#39;Hamburg&#39;
+    AND fd.yyyy_mm = &#39;2022-02&#39;
+GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
+ORDER BY fd.date_valid_std ASC;
+</code></pre>
+<p class="image-container"><img src="img/cfb40c162a71cf9d.png"></p>
+<p>ここではすばらしい結果が得られました。これで、次のステップでこのSQLをビュー内でまとめることができるようになります。</p>
+<h2 is-upgraded>ステップ3 - 分析ビューを展開する</h2>
+<p>先ほど考察したものと同じクエリを使用します。WHERE句のフィルターを削除し、<a href="https://docs.snowflake.com/ja/sql-reference/sql/comment" target="_blank">COMMENT</a>を追加して、これを<code>daily_city_metrics_v</code>ビューとして<code>analytics</code>スキーマに昇格させる必要があります。</p>
+<p>これを行うために、ここでこのセクションの最後のクエリを実行してください。</p>
+<pre><code>CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.daily_city_metrics_v
+COMMENT = &#39;Daily Weather Source Metrics and Orders Data for our Cities&#39;
+    AS
+SELECT 
+    fd.date_valid_std AS date,
+    fd.city_name,
+    fd.country_desc,
+    ZEROIFNULL(SUM(odv.price)) AS daily_sales,
+    ROUND(AVG(fd.avg_temperature_air_2m_f),2) AS avg_temperature_fahrenheit,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(fd.avg_temperature_air_2m_f)),2) AS avg_temperature_celsius,
+    ROUND(AVG(fd.tot_precipitation_in),2) AS avg_precipitation_inches,
+    ROUND(AVG(frostbyte_tasty_bytes.analytics.inch_to_millimeter(fd.tot_precipitation_in)),2) AS avg_precipitation_millimeters,
+    MAX(fd.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.harmonized.daily_weather_v fd
+LEFT JOIN frostbyte_tasty_bytes.harmonized.orders_v odv
+    ON fd.date_valid_std = DATE(odv.order_ts)
+    AND fd.city_name = odv.primary_city
+    AND fd.country_desc = odv.country
+WHERE 1=1
+GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
+</code></pre>
+<p class="image-container"><img src="img/72a9080058b32f6b.png"></p>
+<p>これで、この種のインサイトをTasty Bytesの組織に対して民主化することができました。次のセクションではこれらをすべてまとめ、私たちの作業を検証してみましょう。</p>
+<h2 is-upgraded>ステップ4 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="売上とマーケットプレイスの気象データからのインサイトの抽出" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>キッチンカーが営業している全都市の売上と気象データを利用できるようになったところで、次は、私たちが財務アナリストのインサイトを得るまでの時間を短縮した方法に目を向けてみましょう。</p>
+<h2 is-upgraded>ステップ1 - 分析を簡素化する</h2>
+<p>以前は、ハンブルグでの売上に関する問題を調査するために、POSとWeather Sourceのデータを手動で結合する必要がありましたが、<code>analytics.daily_city_metrics_v</code>ビューを使用することでこのプロセスが大幅に簡素化されました。</p>
+<p>クエリを開始し、単一のビューからシンプルなSELECT構文を作成することにより、この分析がどれだけ簡単になったかを確認してください。</p>
+<pre><code>SELECT 
+    dcm.date,
+    dcm.city_name,
+    dcm.country_desc,
+    dcm.daily_sales,
+    dcm.avg_temperature_fahrenheit,
+    dcm.avg_temperature_celsius,
+    dcm.avg_precipitation_inches,
+    dcm.avg_precipitation_millimeters,
+    dcm.max_wind_speed_100m_mph
+FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
+WHERE 1=1
+    AND dcm.country_desc = &#39;Germany&#39;
+    AND dcm.city_name = &#39;Hamburg&#39;
+    AND dcm.date BETWEEN &#39;2022-02-01&#39; AND &#39;2022-02-26&#39;
+ORDER BY date DESC;
+</code></pre>
+<p class="image-container"><img src="img/7ce0a36aee9f75e9.png"></p>
+<p><strong>できました！</strong> もし、財務アナリストが最初に調査に乗り出したときにこれが利用できていれば、データチームに問い合わせるまでもなく、すぐにインサイトを得ることができたでしょう。</p>
+<p>このクイックスタートを完了することにより、私たちの作業によって実世界のビジネス価値をいかに早く引き出すことができるか、また、Snowflakeマーケットプレイスを使用することで、追加のデータインサイトをいかに簡単に活用できるようになるかが分かりました。</p>
+<h2 is-upgraded>ステップ2 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめと次のステップ" duration="1">
+        <h2 is-upgraded>まとめ</h2>
+<p>すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタートが無事完了しました。</p>
+<p>これにより、次のことができるようになりました。</p>
+<ul>
+<li>Snowflakeマーケットプレイスにアクセスする</li>
+<li>自分のアカウントでWeather Sourceのリアルタイムデータを取得する</li>
+<li>ビューを作成する</li>
+<li>SQL関数を作成する</li>
+<li>Snowsightチャートを活用して視覚的インサイトを探る</li>
+</ul>
+<p>このクイックスタートを再実行したい場合は、関連するワークシートの下部にあるリセットスクリプトを利用してください。</p>
+<h2 is-upgraded>次のステップ</h2>
+<p>引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html#3" target="_blank">Powered by Tasty Bytes - クイックスタート目次</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

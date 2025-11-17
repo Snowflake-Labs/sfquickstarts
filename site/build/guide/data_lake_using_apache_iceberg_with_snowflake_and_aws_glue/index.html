@@ -1,0 +1,647 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_lake_using_apache_iceberg_with_snowflake_and_aws_glue"
+                  title="Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p><a href="https://iceberg.apache.org/" target="_blank">Apache Iceberg</a> is an open table format for huge analytical datasets that enables high performance analytics on open data formats with ACID compliance. Snowflake and AWS both support Iceberg format that enables customers to drastically improve data interoperability, speed of implmentation and peformance for integrated data lakes.</p>
+<p>This guide will take you through the steps of converting existing parquet data to Iceberg and using it to build open analytic environments using Snowflake and <a href="https://aws.amazon.com/glue/" target="_blank">AWS Glue</a>.</p>
+<p class="image-container"><img alt="Workflow" src="img/da307a8802191d9c.png"></p>
+<p>For this guide we will use a Financial Services use case where Insurance data is analyzed. The Quotes data is collected from systems and stored as parquet on S3, while Customer and Policy data is already available as internal Snowflake tables. We will try and identify customers who are likely to churn or potential fraud with a high number of recent quote requests.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake, basic SQL, Snowsight UI and Snowflake Objects</li>
+<li>Familiarity with AWS Services (S3, Glue, CloudFormation, IAM) and the Management Console</li>
+<li>Basic knowledge of Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an Iceberg table in the <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html" target="_blank">Glue Data Catalog</a> and convert parquet data on S3 in place(no rewrite) to Iceberg format</li>
+<li>How to configure a <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume#configure-an-external-volume-for-amazon-s3" target="_blank">Snowflake External Volume</a> with S3</li>
+<li>How to configure a <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration#configure-a-catalog-integration-for-aws-glue" target="_blank">Snowflake External Catalog</a> with the Glue Data Catalog</li>
+<li>How to create Snowflake <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-snowflake-as-the-catalog" target="_blank">Managed</a> and <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-aws-glue-as-the-catalog" target="_blank">Unmanaged</a> Iceberg Tables</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Enterprise Account</a> with <code>ACCOUNTADMIN</code> access in US WEST (OREGON REGION)</li>
+<li>An <a href="https://aws.amazon.com/free/" target="_blank">AWS Account</a> with <code>Administartor Access</code></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Glue Database with Iceberg table on S3</li>
+<li>Integrations between Snowflake and AWS for External Volume and External Catalog</li>
+<li>Snowflake Managed and Unmanaged Iceberg tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure the AWS Account" duration="4">
+        <p>In this step we will use CloudFormation to configure objects in the AWS account needed for the quickstart, we will also cover basics of the AWS console and how to leverage browser tabs to multi task with various AWS services.</p>
+<ul>
+<li>Start by logging into your AWS Console.</li>
+<li>Once logged in to the AWS Console look for the AWS Region in the top right hand corner and select the <strong>US West (Oregon) us-west-2</strong> region.</li>
+</ul>
+<p class="image-container"><img alt="AWSRegion" src="img/b7c0ddad1ae3477c.png"></p>
+<p>We will now run a CloudFormation Template to configure a S3 bucket and Role with specific Policies in the AWS account.</p>
+<ul>
+<li>In the top left menu bar enter <strong>Cloudformation</strong> in the Search bar, then select the CloudFormation service from the dropdown list.</li>
+</ul>
+<p class="image-container"><img alt="AWSCloudformation" src="img/9eee800ec38e032d.png"></p>
+<ul>
+<li>Once in the CLoudFormation screen <strong>verify</strong> the AWS Region that it is the <strong>US West (Oregon) us-west-2</strong> region.</li>
+</ul>
+<p class="image-container"><img alt="AWSRegion" src="img/b7c0ddad1ae3477c.png"></p>
+<ul>
+<li>It is recommended to duplicate the browser tab 3 times to make it simple to use multiple AWS services in the same browser session.</li>
+<li>You can now create a CloudFormtion Stack. You can click the <strong>Create stack</strong> button, or if it is not visible click on the <strong>3 Horizontal bars</strong> top left corner and then select <strong>Stacks</strong> to see the <strong>Create stack</strong> button.</li>
+<li>Once you are in the Create stack screen select the following options:</li>
+<li><ul>
+<li>Prepare template &gt; Choose an existing template</li>
+</ul>
+</li>
+<li><ul>
+<li>Template source &gt; Amazon S3 URL</li>
+</ul>
+</li>
+<li>Then copy the CloudFormation Template URL below into the Amazon S3 URL box.</li>
+</ul>
+<p><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.3.yaml" target="_blank">https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.3.yaml</a></p>
+<p class="image-container"><img alt="CreateStack" src="img/e09220d9e5252870.png"></p>
+<ul>
+<li>Click <strong>Next</strong></li>
+<li>On the next screen <strong>Specify stack details</strong> enter a name for the stack in <strong>Stack name</strong>, in this case you can use <code>glue-snowflake</code> then click <strong>Next</strong></li>
+<li>The following screen <strong>Configure stack options</strong> simply click <strong>Next</strong></li>
+<li>On the last screen <strong>Review and create</strong> scroll down to the bottom and <strong>select the check box</strong> next to <code>I acknowledge that AWS CloudFormation might create IAM resources.</code> and then click <strong>Submit</strong> to create the stack.</li>
+</ul>
+<p>It will take a few seconds to create the resources in your AWS account. In the Events screen you can click the refresh button to see updates.</p>
+<ul>
+<li>Once complete click on the <strong>Outputs</strong> Tab in the center top. This will display the Role name and S3 bucket name that was created. These will be used later to configure the integrations with Snowflake.</li>
+</ul>
+<p class="image-container"><img alt="CFoutput" src="img/5f244a2f2a7f0588.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use AWS Glue to create the Iceberg table" duration="6">
+        <p>In this step we will use AWS Glue to create an icebrg table and convert parquet data to iceberg format. Glue Studio will be used.</p>
+<ul>
+<li>In one of the browser tabs with the AWS console type <strong>S3</strong> in the search bar and select <strong>S3</strong>. This will allow you to quickly see what data and folders are created in S3. <strong>Verify</strong> the AWS Region in the S3 screen.</li>
+</ul>
+<h2 is-upgraded>Create Glue Database</h2>
+<ul>
+<li>In the next browser tab type <strong>Glue</strong> and then select <strong>AWS Glue</strong>.</li>
+<li>Once in the AWS Glue screen <strong>verify</strong> the AWS Region that it is the <strong>US West (Oregon) us-west-2</strong> region.</li>
+</ul>
+<p class="image-container"><img alt="AWSRegion" src="img/b7c0ddad1ae3477c.png"></p>
+<ul>
+<li>In the left navigation pane, under <strong>Data Catalog</strong>, click <strong>Databases</strong> .</li>
+<li>Click <strong>Add database</strong> in the window on the right hand side pane.</li>
+</ul>
+<p class="image-container"><img alt="AddDatabase" src="img/7beaf677828ee74d.png"></p>
+<ul>
+<li>On Create a database tab, provide a name for the new database as <code>iceberg</code>, add Description(optional) as <code>Database to store iceberg table</code> and click <strong>Create database</strong>.</li>
+</ul>
+<p class="image-container"><img alt="CreateDatabase" src="img/e0a9e31ac1affa7e.png"></p>
+<h2 is-upgraded>Create Glue Table</h2>
+<ul>
+<li>On the left hand menu in the Glue console click on <strong>Data Catalog &gt; Databases &gt; Tables</strong></li>
+<li>Then click on <strong>Add table</strong></li>
+</ul>
+<p class="image-container"><img alt="AddTable" src="img/44e47a55b667a36d.png"></p>
+<ul>
+<li>Set table properties as follows and click <strong>Next</strong></li>
+<li><ul>
+<li>Name: <strong>quotes</strong></li>
+</ul>
+</li>
+<li><ul>
+<li>Database: <strong>iceberg</strong></li>
+</ul>
+</li>
+<li><ul>
+<li>Table format: <strong>Apache Iceberg table</strong></li>
+</ul>
+</li>
+<li><ul>
+<li>Data location : <strong>s3://glue-snowflake-lab-xxxx/iceberg/quotes/</strong> .The bucket has been pre-provisioned for you. Replace the <strong>glue-snowflake-lab-xxxx</strong> with the one corresponding to your account and append <strong>iceberg/quotes/</strong></li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="TableProp" src="img/8faa8c031b3fc1d7.png"></p>
+<ul>
+<li>Choose or define schema by selecting <strong>Edit schema as JSON</strong></li>
+</ul>
+<p class="image-container"><img alt="Schema" src="img/a708dd00c8a060af.png"></p>
+<ul>
+<li><strong>Download</strong><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/quotes_schema.json" target="_blank">quotes_schema.json</a> . <strong>Remove</strong> the ‘[ ]&#39; on the screen, <strong>paste</strong> the contents of the <strong>quotes_schema.json</strong> file there, and <strong>Click Save</strong>.</li>
+</ul>
+<p class="image-container"><img alt="delete" src="img/811ae5d7a7cab78d.png"></p>
+<p class="image-container"><img alt="SaveSchema" src="img/f4ef45ecec531029.png"></p>
+<ul>
+<li>After adding the schema, it will look like the screenshot below. Click <strong>Next</strong>.</li>
+</ul>
+<p class="image-container"><img alt="SchemaNext" src="img/cd5c18cd9dd0982e.png"></p>
+<ul>
+<li>Review and Create the table by clicking on <strong>Create</strong> on Step 3.</li>
+</ul>
+<h2 is-upgraded>Create Glue ETL Job</h2>
+<p>In this section, we will show you have to create an ETL job in Glue Studio visual interface.</p>
+<ul>
+<li>To begin, click on <strong>Visual ETL</strong> link on the left menu pane under ETL jobs and click on the Visual ETL button.</li>
+</ul>
+<p class="image-container"><img alt="ETLJob" src="img/8e95204dcdcf1125.png"></p>
+<ul>
+<li>Rename the job from Untitled job to <strong>Quotes - Raw to Iceberg</strong></li>
+<li>Navigate to the <strong>Job details</strong> tab, select the <strong>IAM Role</strong> that the cloudformation template created for you.</li>
+</ul>
+<p class="image-container"><img alt="ETLJobConfig" src="img/dec6693f08f840ea.png"></p>
+<ul>
+<li>Save your progress using the <strong>Save</strong> button on the top right corner. A green banner will confirm that the job progress have been saved.</li>
+<li>Click on the <strong>Visual</strong> tab and then expand the <strong>+</strong> button, and add a source node S3.</li>
+</ul>
+<p class="image-container"><img alt="ETLSource" src="img/415b619d10de4880.png"></p>
+<ul>
+<li><ul>
+<li>This should add S3 source node to the canvas.</li>
+</ul>
+</li>
+<li><ul>
+<li>Click on the S3 node to configure it as the screenshot below</li>
+</ul>
+</li>
+<li><ul>
+<li><ul>
+<li>Name : <strong>Quotes - Raw</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ul>
+<li><ul>
+<li>S3 URL: Set S3 Source URL to <code>s3://aws-data-analytics-workshops/aws_glue/glue-snowflake/raw-data/quotes/</code> . This is a public bucket where our raw quotes file resides.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><ul>
+<li><ul>
+<li>Data format: <strong>Parquet</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="QuotesRaw" src="img/c43142d71ce1a1cd.png"></p>
+<ul>
+<li>Keeping the <strong>Quotes-Raw</strong> node selected, expand the <strong>+</strong> button, and add a simple <strong>Transform - Change Schema</strong></li>
+</ul>
+<p class="image-container"><img alt="Transform" src="img/604a7b8b7ab5940e.png"></p>
+<ul>
+<li><ul>
+<li>This should add Change Schema Transform to the canvas with its Node parent as Quotes-Parquet S3 node.</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="ChangeSchema" src="img/b00ffbf8b2ae5833.png"></p>
+<p><code>Leave everything as is, don't change anything here. This is just to show you that you have an option to change schema with the help of this transform.</code></p>
+<ul>
+<li>Let us now store the Quotes-parquet to Amazon S3 in Iceberg format. For that, with <strong>Change Schema</strong> selected, search and locate <strong>Amazon S3</strong> in the <strong>Targets</strong> tab. Add it to the canvas.</li>
+</ul>
+<p class="image-container"><img alt="Target" src="img/5c9826595ec8315f.png"></p>
+<ul>
+<li>With <strong>Amazon S3 target node</strong> selected</li>
+<li><ul>
+<li>Rename <strong>Amazon S3</strong> to <strong>Quotes - Iceberg</strong></li>
+</ul>
+</li>
+<li><ul>
+<li>Set <strong>Format</strong> to <strong>Apache Iceberg</strong></li>
+</ul>
+</li>
+<li><ul>
+<li>Set <strong>Compression Type</strong> to <strong>Snappy</strong></li>
+</ul>
+</li>
+<li><ul>
+<li>Set <strong>S3 Target Location</strong> to <strong>s3://glue-snowflake-lab-xxxx/iceberg/quotes/</strong> . The bucket has been pre-provisioned for you. You can use the Browse S3 button to locate the S3 bucket and folders. Replace the <strong>glue-snowflake-lab-xxxx</strong> with the one corresponding to your account.</li>
+</ul>
+</li>
+<li><ul>
+<li>Under <strong>Data Catalog update options</strong> select <strong>Create a table in the Data Catalog and on subsequent runs, keep existing schema and add new partitions</strong></li>
+</ul>
+</li>
+<li><ul>
+<li>Select <strong>iceberg</strong> as the database</li>
+</ul>
+</li>
+<li><ul>
+<li>Set table name to <strong>quotes</strong></li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="TargetOptions" src="img/ef6de21a64e41fc.png"></p>
+<ul>
+<li>Save the job using the <strong>Save</strong> button on the top right corner. A green banner confirms that the job has been saved.</li>
+</ul>
+<p class="image-container"><img alt="SavedJob" src="img/5e5d13c302c3091.png"></p>
+<p>We can now run the Glue job to convert raw parquet files and save it as an Iceberg table.</p>
+<ul>
+<li>Click the <strong>Run</strong> button on the top right and navigate to the <strong>Runs</strong> tab</li>
+</ul>
+<p class="image-container"><img alt="RunETL" src="img/531f6f86e60f6e97.png"></p>
+<ul>
+<li>You can monitor the job run status on this page. Once the job completes, the status turns to <strong>Succeeded</strong></li>
+</ul>
+<p class="image-container"><img alt="RETLComplete" src="img/882046e5e76054b8.png"></p>
+<p>You have succesfully created an Iceberg table in your AWS account from paruqet files using Glue Studio.</p>
+<p>As a bonus step you can open the browser tab with the S3 console and see the new folders and files where the data and metadata/manifest files are stored.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake account and configure the AWS integrations" duration="7">
+        <p>In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create Snowflake objects such as a databaase, warehouse and role that are used the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the the Glue Catalog.</p>
+<h2 is-upgraded>Configure your Snowflake account</h2>
+<ul>
+<li>First we will download 2 SQL files to your local system, which will be used to run the lab.</li>
+<li>First is the <strong>Setup SQL script</strong></li>
+</ul>
+<p><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/hol_ice_setup_v1.2.sql" target="_blank"><paper-button class="colored" raised>Setup SQL</paper-button></a></p>
+<ul>
+<li>Next is the <strong>Workflow SQL</strong></li>
+</ul>
+<p><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/hol_ice_workflow_v1.3.sql" target="_blank"><paper-button class="colored" raised>Workflow SQL</paper-button></a></p>
+<ul>
+<li>Open a browser tab and log into your Snowflake account as a user with <code>ACCOUNTADMIN</code> priviliges.</li>
+<li>On the left hand menu select <strong>Projects</strong> and then <strong>Worksheet</strong> in that section. Click on the <strong>Blue + button</strong> in the top right corner to create a new worksheet and select <strong>SQL Worksheet</strong>.</li>
+</ul>
+<p class="image-container"><img alt="newsheet" src="img/c0bcf2a21fa0ab25.png"></p>
+<ul>
+<li>The worksheet screen will appear with a new tab with a timestamp on it, when you hover the mouse over the tab 3 dots will appear, click on it and select <strong>Import SQL from File</strong></li>
+</ul>
+<p class="image-container"><img alt="sheetSQL" src="img/3fd83d8e5722a817.png"></p>
+<ul>
+<li>Now select the <strong>hol_ice_setup_vxx.sql</strong> file that you downloaded earlier, and click <strong>Open</strong>.</li>
+<li>This script is used to create a Snowflake Role, Database, Warehouse and the tables used for the Quickstart. We will execute the script in sections, by highlighting a section and then pressing the blue <strong>Run button</strong> in the top corner.</li>
+</ul>
+<p class="image-container"><img alt="run" src="img/e04d2055cb6403d5.png"></p>
+<ul>
+<li>Select the following SQL statements with the mouse cursor and then click play</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE SECURITYADMIN;
+
+CREATE OR REPLACE ROLE HOL_ICE_RL COMMENT=&#39;Iceberg Role&#39;;
+GRANT ROLE HOL_ICE_RL TO ROLE SYSADMIN;
+</code></pre>
+<ul>
+<li>Once completed repeat for the following SQL statements</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE HOL_ICE_RL;
+GRANT CREATE EXTERNAL VOLUME ON ACCOUNT TO ROLE HOL_ICE_RL;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE HOL_ICE_RL;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE HOL_ICE_RL;
+</code></pre>
+<ul>
+<li>Then for the next section</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE HOL_ICE_RL;
+
+CREATE OR REPLACE DATABASE HOL_ICE_DB;
+
+CREATE OR REPLACE WAREHOUSE HOL_ICE_WH
+  WITH WAREHOUSE_SIZE = &#39;XSMALL&#39;
+  INITIALLY_SUSPENDED = TRUE;
+</code></pre>
+<ul>
+<li><strong>You can now select the rest of the SQL statements and execute them to create the tables and load data.</strong> This is line 44 to 110 on the worksheet.</li>
+</ul>
+<h2 is-upgraded>Configure the Snowflake External Volume integration with S3 and Catalog integration with Glue</h2>
+<ul>
+<li>On the top tabs next to the existing worksheet click on the + button to create a new worksheet. Again select <strong>SQL Worksheet</strong></li>
+</ul>
+<p class="image-container"><img alt="addsheet" src="img/278ddb02f41d9d8.png"></p>
+<ul>
+<li>Following the same steps as before load the SQL script file into the worksheet. This time however select the <strong>hol_ice_workflow_vxx.sql</strong> file that you downloaded earlier, and click <strong>Open</strong>.</li>
+<li>Run lines 16 - 20 to set the context for the worksheet.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE HOL_ICE_RL;
+
+USE HOL_ICE_DB.PUBLIC;
+
+USE WAREHOUSE HOL_ICE_WH;
+</code></pre>
+<p>We will now create an <code>External Volume</code> and configure it to work with your Snowflake account.</p>
+<ul>
+<li>First in the <strong>STORAGE_BASE_URL</strong> make sure to change the <code>enter your S3 bucket name</code> by going back to your CloudFormation Output window to copy in your S3 bucket name in.</li>
+<li>Then in the STORAGE_AWS_ROLE_ARN change the <code>enter your AWS account ID</code> by going back to the AWS console and copying the AWS account ID. You do this by clicking on the AWS account name in the top right corner adn then the copy button next to the account ID.</li>
+</ul>
+<p class="image-container"><img alt="accountID" src="img/e92acda3ddbd37a0.png"></p>
+<ul>
+<li>Lastly copy the AWS role that was created from the CloudFormation Output window into the <code>your AWS Role that was created</code></li>
+<li>Now execute the SQL statement, that will look something like this.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE EXTERNAL VOLUME HOL_ICE_EXT_VOL
+   STORAGE_LOCATIONS =
+      (
+         (
+            NAME = &#39;my-s3-ice-ext-vol&#39;
+            STORAGE_PROVIDER = &#39;S3&#39;
+            STORAGE_BASE_URL = &#39;s3://glue-snowflake-lab-6546xxxxxxx/iceberg/&#39;
+            STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::6546xxxxxxx:role/glue-snowflake-GluesnowflakedevdayLabRole-xxxxxxxxxxx&#39;
+
+         )
+      );
+</code></pre>
+<p><strong>We will now setup the trust relationship with your AWS account role</strong></p>
+<ul>
+<li>Run the describe external command to get the Snowflake values of the object.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">DESC EXTERNAL VOLUME HOL_ICE_EXT_VOL;
+</code></pre>
+<p>The <strong>STORAGE_LOCATIONS</strong>  output row will have a property value in JSON that looks like this</p>
+<pre><code language="language-json" class="language-json">{&#34;NAME&#34;:&#34;my-s3-ice-ext-vol&#34;,
+&#34;STORAGE_PROVIDER&#34;:&#34;S3&#34;,
+&#34;STORAGE_BASE_URL&#34;:&#34;s3://glue-snowflake-devday-lab-6546xxxxxxxx/iceberg/&#34;,
+&#34;STORAGE_ALLOWED_LOCATIONS&#34;:[&#34;s3://glue-snowflake-lab-6546xxxxxxxx/iceberg/*&#34;],
+&#34;STORAGE_AWS_ROLE_ARN&#34;:&#34;arn:aws:iam::65465xxxxxxx:role/glue-snowflake-GluesnowflakedevdayLabRole-crOqCT36mDB4&#34;,
+&#34;STORAGE_AWS_IAM_USER_ARN&#34;:&#34;arn:aws:iam::90541xxxxxxxxxx:user/vvyk0000-s&#34;,
+&#34;STORAGE_AWS_EXTERNAL_ID&#34;:&#34;YJB50193_SFCRole=2_f1IsD5b8/DAFxxxxxxxxxxxx&#34;,
+&#34;ENCRYPTION_TYPE&#34;:&#34;NONE&#34;,
+&#34;ENCRYPTION_KMS_KEY_ID&#34;:&#34;&#34;}
+</code></pre>
+<ul>
+<li>Go back to the CloudFormation browser tab and create a duplicate browser tab for the AWS Console. In the new tab Search for <strong>IAM</strong> and click on that option. This will open the IAM service.</li>
+<li>On the left hand menu click on <strong>Roles</strong> and then find the Role that was created. Click on that Role.</li>
+<li>In the middle of the screen you will see a number of tabs, click on the <strong>Trust Relationship</strong> tab.</li>
+<li>Click on <strong>Edit trust policy</strong>. This will then display a JSON editor screen.</li>
+</ul>
+<p class="image-container"><img alt="TrustPolicy" src="img/a0fc27850e4336e.png"></p>
+<p>Select everything in the JSON policy and replace with the JSON below.</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+      {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;: {
+            &#34;Service&#34;: &#34;glue.amazonaws.com&#34;
+        },
+        &#34;Action&#34;: &#34;sts:AssumeRole&#34;
+      },
+      {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;: {
+          &#34;AWS&#34;: &#34;&lt;snowflake storage arn&gt;&#34;
+        },
+        &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+        &#34;Condition&#34;: {
+          &#34;StringEquals&#34;: {
+            &#34;sts:ExternalId&#34;: &#34;&lt;snowflake external id ext volume&gt;&#34;
+          }
+        }
+      },
+      {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;: {
+          &#34;AWS&#34;: &#34;&lt;snowflake glue arn&gt;&#34;
+        },
+        &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+        &#34;Condition&#34;: {
+          &#34;StringEquals&#34;: {
+            &#34;sts:ExternalId&#34;: &#34;&lt;snowflake external id glue catalog&gt;&#34;
+          }
+        }
+      }
+    ]
+  }
+</code></pre>
+<p><code>Take your time and be careful when pasting the values into the JSON policy in the next few steps.</code></p>
+<ul>
+<li>From the Snowflake output copy the value from <strong>STORAGE_AWS_IAM_USER_ARN</strong> and paste it into the IAM policy by replacing <code>snowflake storage arn</code> with that value.</li>
+<li>Next copy the Snowflake <strong>STORAGE_AWS_EXTERNAL_ID</strong> and paste it into IAM policy by replacing the <code>snowflake external id ext volume</code></li>
+</ul>
+<p>Next we will create the integration with the <code>Glue Data Catalog</code>, which works in a very similar manner.</p>
+<ul>
+<li>Go back to the Snowflake worksheet and look at lines 62 to 68. You will again have to repalce some values with those of your AWS account.</li>
+<li>In the <strong>GLUE_AWS_ROLE_ARN</strong> replace <code>enter your AWS account ID</code> with your AWS account ID (you can simply copy and paste the values from the earlier external volume command). Also replace the <code>your AWS Role that was created</code> with the AWS role that was created</li>
+<li>In the <strong>GLUE_CATALOG_ID</strong> replace the <code>enter your AWS account ID</code> with your AWS account ID</li>
+</ul>
+<p>It will look something like this</p>
+<pre><code language="language-sql" class="language-sql">CREATE or REPLACE CATALOG INTEGRATION HOL_ICE_GLUE_CAT_INT
+  CATALOG_SOURCE=GLUE
+  CATALOG_NAMESPACE=&#39;iceberg&#39;
+  TABLE_FORMAT=ICEBERG
+  GLUE_AWS_ROLE_ARN=&#39;arn:aws:iam::6546xxxxxxxx:role/glue-snowflake-GluesnowflakedevdayLabRole-xxxxxxxxxxxx&#39;
+  GLUE_CATALOG_ID=&#39;6546xxxxxxxxx&#39;
+  ENABLED=TRUE; 
+</code></pre>
+<ul>
+<li>Run the above SQL statement to create the Catalog integration once you filled in your account values</li>
+<li>Now run the describe catalog integration, line 70</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">DESC CATALOG INTEGRATION HOL_ICE_GLUE_CAT_INT;
+</code></pre>
+<p>The Results will have the 2 property values needed to finalize the IAM Trust Policy in AWS. <strong>GLUE_AWS_IAM_USER_ARN</strong> and <strong>GLUE_AWS_EXTERNAL_ID</strong></p>
+<p>In the IAM Trust Policy update the following</p>
+<ul>
+<li><code>snowflake glue arn</code> with the value from the Snowflake output <strong>GLUE_AWS_IAM_USER_ARN</strong></li>
+<li><code>snowflake external id glue catalog</code> with the value from the Snowflake output <strong>GLUE_AWS_EXTERNAL_ID</strong></li>
+</ul>
+<p>Your IAM Trust policy will look something like this</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+      {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;: {
+            &#34;Service&#34;: &#34;glue.amazonaws.com&#34;
+        },
+        &#34;Action&#34;: &#34;sts:AssumeRole&#34;
+      },
+      {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;: {
+          &#34;AWS&#34;: &#34;arn:aws:iam::90541xxxxxx:user/vvyk0000-s&#34;
+        },
+        &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+        &#34;Condition&#34;: {
+          &#34;StringEquals&#34;: {
+            &#34;sts:ExternalId&#34;: &#34;YJB50193_SFCRole=2_f1IsD5b8/DAFYPxxxxxxxxxxxx&#34;
+          }
+        }
+      },
+      {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;: {
+          &#34;AWS&#34;: &#34;arn:aws:iam::90541xxxxxxx:user/vvyk0000-s&#34;
+        },
+        &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+        &#34;Condition&#34;: {
+          &#34;StringEquals&#34;: {
+            &#34;sts:ExternalId&#34;: &#34;YJB50193_SFCRole=2_cTvotHxxxxxxxxxxxxxxxx&#34;
+          }
+        }
+      }
+    ]
+  }
+</code></pre>
+<ul>
+<li>Click the <strong>Update policy</strong> button and your trust relationship will be configured.</li>
+</ul>
+<p><strong>This now completes the integration to both S3 and the Glue Catalog</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with Iceberg tables in Snowflake" duration="4">
+        <p>In this step we will use the integrations with S3 adn Glue to create an Iceberg table object refering the Quotes Iceberg table. THat will be used for analysis with the internal Customer and Policy tables. We will then create an aggregate table written in Iceberg format on S3 and use Snowflake to query it.</p>
+<p>We can now create an Iceberg table by referencing the Glue catalog. We simply execute the command below. Line 80 to 83.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE ICEBERG TABLE QUOTES_ICE
+  EXTERNAL_VOLUME=&#39;HOL_ICE_EXT_VOL&#39;
+  CATALOG=&#39;HOL_ICE_GLUE_CAT_INT&#39;
+  CATALOG_TABLE_NAME=&#39;QUOTES&#39;;
+</code></pre>
+<p>Let&#39;s read the Quotes data in Iceberg format from S3</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM QUOTES_ICE LIMIT 10;
+</code></pre>
+<p>We can now do some analysis by combining the Iceberg table (Quotes data) withe inetrnal Snowflake Customer table data.</p>
+<pre><code language="language-sql" class="language-sql">SELECT C.FULLNAME, C.POSTCODE, C.CUSTID, C.IPID, C.PRODUCTNAME, C.QUOTECOUNT,
+Q.POLICYNO, Q.QUOTEDATE, Q.QUOTE_PRODUCT, Q.ORIGINALPREMIUM, Q.TOTALPREMIUMPAYABLE 
+FROM CUSTOMER C, QUOTES_ICE Q
+WHERE C.FULLNAME = Q.FULLNAME
+AND C.POSTCODE = Q.POSTCODE
+AND C.QUOTECOUNT &gt; 5
+ORDER BY C.QUOTECOUNT DESC;
+</code></pre>
+<p>We can now also create an aggreagte data set by combining the Quotes data in Iceberg with Customer and Policy data in internal Snowfake tables.</p>
+<pre><code language="language-sql" class="language-sql">WITH CUSTQUOTE AS
+(SELECT C.FULLNAME, C.POSTCODE, C.CUSTID, C.IPID, C.PRODUCTNAME, C.QUOTECOUNT,
+Q.POLICYNO, Q.QUOTEDATE, Q.QUOTE_PRODUCT, Q.ORIGINALPREMIUM, Q.TOTALPREMIUMPAYABLE 
+FROM CUSTOMER C, QUOTES_ICE Q
+WHERE C.FULLNAME = Q.FULLNAME
+AND C.POSTCODE = Q.POSTCODE
+AND C.QUOTECOUNT &gt; 5)
+SELECT CQ.FULLNAME, CQ.POSTCODE, CQ.CUSTID, CQ.IPID, CQ.PRODUCTNAME,
+CQ.QUOTECOUNT, CQ.POLICYNO, CQ.QUOTEDATE, CQ.QUOTE_PRODUCT,
+CQ.ORIGINALPREMIUM, CQ.TOTALPREMIUMPAYABLE, 
+P.CREATEDDATE, P.BRAND, P.BRANCHCODE, P.POLICY_STATUS_DESC,
+P.TYPEOFCOVER_DESC, P.INSURER_NAME, P.INCEPTIONDATE, P.RENEWALDATE
+FROM CUSTQUOTE CQ, POLICIES P
+WHERE CQ.CUSTID = P.CUSTID;
+</code></pre>
+<p>This aggregate data can also be written in Iceberg format back to S3 for consumption by other services and engines.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE ICEBERG TABLE QUOTE_ANALYSIS_ICE  
+  CATALOG=&#39;SNOWFLAKE&#39;
+  EXTERNAL_VOLUME=&#39;HOL_ICE_EXT_VOL&#39;
+  BASE_LOCATION=&#39;quoteanalysisiceberg&#39;
+  AS 
+  WITH CUSTQUOTE AS
+(SELECT C.FULLNAME, C.POSTCODE, C.CUSTID, C.IPID, C.PRODUCTNAME, C.QUOTECOUNT,
+Q.POLICYNO, Q.QUOTEDATE, Q.QUOTE_PRODUCT, Q.ORIGINALPREMIUM, Q.TOTALPREMIUMPAYABLE 
+FROM CUSTOMER C, QUOTES_ICE Q
+WHERE C.FULLNAME = Q.FULLNAME
+AND C.POSTCODE = Q.POSTCODE
+AND C.QUOTECOUNT &gt; 5)
+SELECT CQ.FULLNAME, CQ.POSTCODE, CQ.CUSTID, CQ.IPID, CQ.PRODUCTNAME,
+CQ.QUOTECOUNT, CQ.POLICYNO, CQ.QUOTEDATE, CQ.QUOTE_PRODUCT,
+CQ.ORIGINALPREMIUM, CQ.TOTALPREMIUMPAYABLE, 
+P.CREATEDDATE, P.BRAND, P.BRANCHCODE, P.POLICY_STATUS_DESC,
+P.TYPEOFCOVER_DESC, P.INSURER_NAME, P.INCEPTIONDATE, P.RENEWALDATE
+FROM CUSTQUOTE CQ, POLICIES P
+WHERE CQ.CUSTID = P.CUSTID;
+</code></pre>
+<p>Lastly we can also use Snowflake to query the aggregate data in Iceberg. Let&#39;s see which customer with more the 5 quotes have Policy that is Renewed and also a premium higher than 100.</p>
+<pre><code language="language-sql" class="language-sql">SELECT DISTINCT(CUSTID), FULLNAME, POSTCODE,IPID, PRODUCTNAME, QUOTECOUNT,
+POLICYNO, QUOTEDATE, QUOTE_PRODUCT, ORIGINALPREMIUM, TOTALPREMIUMPAYABLE,
+CREATEDDATE, BRAND, BRANCHCODE, POLICY_STATUS_DESC, TYPEOFCOVER_DESC,
+INSURER_NAME, INCEPTIONDATE, RENEWALDATE
+FROM QUOTE_ANALYSIS_ICE
+WHERE TOTALPREMIUMPAYABLE &gt;100
+AND POLICY_STATUS_DESC = &#39;Renewed&#39; 
+ORDER BY CREATEDDATE DESC;
+</code></pre>
+<p>This completes the creation of iceberg tables in Snowflake using an External Catalog, the Glue Data Catalog. You also used the iceberg table with internal tables to perform analysis on isurance customers, quotes and policies. For the last part a Snowflake managed iceberg table was written to S3 with agrregated data enabling different engines to query it, we use Snowflake as the query engine for a quick analysis on policy renewals.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>You&#39;ve succesfully converted parquet data to Iceberg format use AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analzye the Iceberg data.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>how Snowflake integrates with S3 and the Glue Data Catalog to modernize Data Lakes wiht Iceberg</li>
+<li>converting parquet files to Iceberg tables using AWS Glue</li>
+<li>configuring the Snowflake integrations with S3 and Glue Data Catalog</li>
+<li>creating Snowflake Icebrg tables with External Catalog as well as Snowflake Catalog</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" target="_blank">Snowflake Iceberg documentation</a></li>
+<li><a href="https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-iceberg.html" target="_blank">AWS Glue Iceberg Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

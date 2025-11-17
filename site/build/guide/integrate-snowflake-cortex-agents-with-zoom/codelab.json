@@ -1,0 +1,21 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "integrate-snowflake-cortex-agents-with-zoom",
+  "duration": 45,
+  "title": "Getting Started with Cortex Agents and Zoom",
+  "summary": "This guide outlines the process for integrating Snowflake Cortex Agents with Zoom Team Chat.",
+  "source": "integrate_cortex_agents_with_zoom/integrate_cortex_agents_with_zoom.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": null,
+  "tags": [
+    "web"
+  ],
+  "url": "integrate-snowflake-cortex-agents-with-zoom"
+}

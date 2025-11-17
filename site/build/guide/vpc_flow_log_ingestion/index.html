@@ -1,0 +1,353 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AWS VPC Flow Logs Ingestion</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="vpc_flow_log_ingestion"
+                  title="AWS VPC Flow Logs Ingestion"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. Flow logs can help you with a number of tasks, such as:</p>
+<ul>
+<li>Monitoring the traffic that is reaching your instance</li>
+<li>Determining the direction of the traffic to and from the network interfaces</li>
+<li>Analyzing properties such as IP addresses, ports, protocol and total packets sent without the overhead of taking packet captures</li>
+</ul>
+<p>Flow log data is collected outside of the path of your network traffic, and therefore does not affect network throughput or latency. You can create or delete flow logs without any risk of impact to network performance.</p>
+<p>This quickstart is a guide for ingestion AWS VPC Flowlogs into Snowflake. It demonstrates configuration of VPC flowlogs on AWS, ingestion using an external stage with Snowpipe and sample queries for CSPM and threat detection.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>AWS user with permission to create and manage IAM policies and roles</li>
+<li>Snowflake user with permission to create tables, stages and storage integrations as well as setup snowpipe.</li>
+<li>An S3 Bucket</li>
+</ul>
+<h2 is-upgraded>Architecture</h2>
+<p class="image-container"><img alt="A diagram depicting the journey of VPC Flow Logs from an Amazon VPC to a snowflake database. The diagram is split between sections, AWS Cloud and Snowflake Cloud. The diagram begins on the AWS Cloud side at Amazon VPC, an arrow leads to VPC Flow Logs, then to S3 External Stage, then to an SQS Queue with the description “Event Notification”. An arrow leads from the SQS queue to the Snowflake Cloud section of the diagram to an icon named Snowpipe. After Snowpipe the arrow leads back to S3 External stage with a description of “triggers”. Finally the path terminates on the Snowflake Cloud side at an icon named “Snowflake DB” with a description of “copy into”." src="img/6669c8644f00feac.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable VPC Flow Logs and Push to S3" duration="5">
+        <p><em>See </em><a href="https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3.html#flow-logs-s3-create-flow-log" target="_blank"><em>here</em></a><em> for more detailed instructions or for more granular VPC flow use cases.</em></p>
+<p>From the VPC page in the AWS console, select the VPC you wish to enable flow logs on. Select the &#34;Flow Logs&#34; tab and press &#34;Create flow log&#34;</p>
+<p class="image-container"><img alt="A screenshot of the Amazon VPC console with a VPC selected and the Flow Logs tab open" src="img/650b9db02b04f2f0.png"></p>
+<p>Configure VPC flow logs as desired. Ensure the following settings:</p>
+<ul>
+<li><strong>Destination:</strong> Send to an Amazon S3 Bucket</li>
+<li><strong>S3 Bucket ARN:</strong>  S3 Bucket ARN and prefix of existing bucket ( or press the &#34;create s3 bucket&#34; link to create a new one)</li>
+<li><strong>Log Record Format:</strong> The later parts of this tutorial assume the default log format, a full list of available fields can be found here: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html#flow-logs-fields</li>
+<li><strong>Log file format:</strong> Parquet</li>
+</ul>
+<p class="image-container"><img alt="A screenshot of the VPC configuration wizard with the above configuration" src="img/68c745db23bcfaf3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a storage integration in Snowflake" duration="3">
+        <p><em>Replace &lt;RoleName&gt; with the desired name of the role you&#39;d like snowflake to use ( this role will be created in the next step).  Replace &lt;BUCKET_NAME&gt;/path/to/logs/ with the path to your VPC flow logs as set in the previous step</em></p>
+<pre><code language="language-sql" class="language-sql">create STORAGE INTEGRATION s3_int_vpc_flow
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = S3
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::&lt;AWS_ACCOUNT_NUMBER&gt;:role/&lt;RoleName&gt;&#39;
+  STORAGE_ALLOWED_LOCATIONS = (&#39;s3://&lt;BUCKET_NAME&gt;/&lt;PREFIX&gt;/&#39;);
+
+DESC INTEGRATION s3_int_vpc_flow;
+</code></pre>
+<p>Take note of <strong>STORAGE_AWS_IAM_USER_ARN</strong> and <strong>STORAGE_AWS_EXTERNAL_ID</strong></p>
+<p class="image-container"><img alt="A screenshot showing the result of describing an integration. STORAGE_AWS_IAM_USER_ARN property is in the format of an aws ARN set to arn:aws:iam::123456789012:user/abc10000-a and the STORAGE_AWS_EXTERNAL_ID is in the format of ABC12345_SFCRole=1 ABCDEFGHIJKLMNOPORSTUVWXYZab= " src="img/1320242e65c2a1b1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create role and policy in AWS" duration="5">
+        <p><em>The following assumes a user with the ability to create and manage IAM logged into the AWS console or using the CLI.  A full explanation can be found in </em><a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config.html" target="_blank"><em>this documentation</em></a></p>
+<p>Open up Cloudshell in the AWS console by pressing the <img alt="aws cloudshell icon" src="img/f258742e8a725628.png"> icon on the right side of the top navigation bar or run the following commands in your terminal once configured to use the AWS CLI.</p>
+<p>Export the following variables, replacing the values with your own</p>
+<pre><code language="language-bash" class="language-bash">export BUCKET_NAME=&#39;&lt;BUCKET_NAME&gt;&#39;
+export PREFIX=&#39;&lt;PREFIX&gt;&#39; # no leading or trailing slashes
+export ROLE_NAME=&#39;&lt;ROLE_NAME&gt;&#39;
+export STORAGE_AWS_IAM_USER_ARN=&#39;&lt;STORAGE_AWS_IAM_USER_ARN&gt;&#39;
+export STORAGE_AWS_EXTERNAL_ID=&#39;&lt;STORAGE_AWS_EXTERNAL_ID&gt;&#39;
+</code></pre>
+<p>Create a role for Snowflake to assume</p>
+<pre><code language="language-bash" class="language-bash">aws iam create-role \
+    --role-name &#34;${ROLE_NAME}&#34; \
+    --assume-role-policy-document \
+&#39;{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+                &#34;AWS&#34;: &#34;&#39;${STORAGE_AWS_IAM_USER_ARN}&#39;&#34;
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+                    &#34;sts:ExternalId&#34;: &#34;&#39;${STORAGE_AWS_EXTERNAL_ID}&#39;&#34;
+                }
+            }
+        }
+    ]
+}&#39;
+</code></pre>
+<p>Create an inline-policy to allow snowflake to add and remove files from S3</p>
+<pre><code language="language-bash" class="language-bash">aws iam put-role-policy \
+    --role-name &#34;${ROLE_NAME}&#34; \
+    --policy-name &#34;${ROLE_NAME}-inlinepolicy&#34; \
+    --policy-document \
+&#39;{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+              &#34;s3:PutObject&#34;,
+              &#34;s3:GetObject&#34;,
+              &#34;s3:GetObjectVersion&#34;,
+              &#34;s3:DeleteObject&#34;,
+              &#34;s3:DeleteObjectVersion&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&#39;${BUCKET_NAME}&#39;/&#39;${PREFIX}&#39;/*&#34;
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:ListBucket&#34;,
+                &#34;s3:GetBucketLocation&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&#39;${BUCKET_NAME}&#39;&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringLike&#34;: {
+                    &#34;s3:prefix&#34;: [
+                        &#34;&#39;${PREFIX}&#39;/*&#34;
+                    ]
+                }
+            }
+        }
+    ]
+}&#39;
+</code></pre>
+<p>You will now be able to see your role, policy and trust relationship in the console</p>
+<p class="image-container"><img alt="Screenshot of snowflake source displayed in AWS IAM" src="img/c2a37dee6eabe74c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Snowflake to receive data" duration="6">
+        <p>This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 5 minutes of inactivity. For production workloads a larger warehouse will likely be required.</p>
+<pre><code language="language-sql" class="language-sql">create warehouse security_quickstart with 
+  WAREHOUSE_SIZE = MEDIUM 
+  AUTO_SUSPEND = 300;
+</code></pre>
+<p>Create External Stage using the storage integration. Make sure you include the trailing slash if using a prefix.</p>
+<pre><code language="language-sql" class="language-sql">create stage vpc_flow_stage
+  url = &#39;s3://&lt;BUCKET_NAME&gt;/&lt;PREFIX&gt;/&#39;
+  storage_integration = s3_int_vpc_flow
+;
+</code></pre>
+<p>Check if snowflake can list S3 files</p>
+<pre><code language="language-sql" class="language-sql">list @vpc_flow_stage;
+</code></pre>
+<p class="image-container"><img alt="Screenshot of listing files in external stage" src="img/51c983989f51cb01.png"></p>
+<pre><code language="language-sql" class="language-sql">create table public.vpc_flow(
+  record VARIANT
+);
+</code></pre>
+<p>Test Injection from External Stage</p>
+<pre><code language="language-sql" class="language-sql">copy into public.vpc_flow
+  from @vpc_flow_stage
+  file_format = (type = parquet);
+</code></pre>
+<p class="image-container"><img alt="Screenshot showing result of above copy into command, for all files the status column shows &amp;ldquo;LOADED&amp;rdquo;" src="img/3ee1412438b22603.png"></p>
+<p>Select data</p>
+<pre><code language="language-sql" class="language-sql">select * from public.vpc_flow limit 10;
+</code></pre>
+<p class="image-container"><img alt="Screenshot showing vpc flowlogs in snowflake" src="img/942364ad7bb4b4f8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowpipe for continuous loading" duration="5">
+        <p>The following instructions depend on a Snowflake account running on AWS. Accounts running on other cloud providers may invoke snowpipe from a rest endpoint. <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html</a></p>
+<p>Configure the Snowflake snowpipe</p>
+<pre><code language="language-sql" class="language-sql">create pipe public.vpc_flow_pipe auto_ingest=true as
+  copy into public.vpc_flow
+  from @public.vpc_flow_stage
+  file_format = (type = parquet)
+;
+</code></pre>
+<p>Show pipe to retrieve SQS queue ARN</p>
+<pre><code language="language-sql" class="language-sql">show pipes;
+</code></pre>
+<p class="image-container"><img alt="Screenshot showing output of show pipes command" src="img/d4d814e394b51b96.png"></p>
+<p>Setup S3 bucket with following <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications.html" target="_blank">AWS instructions</a>.</p>
+<p>Target Bucket -&gt; Open property -&gt; Select &#34;Create Event notification&#34;</p>
+<p class="image-container"><img alt="Screenshot of empty event notfications dashboard in AWS" src="img/1926bf63b5f88341.png"></p>
+<p>Fill out below items</p>
+<ul>
+<li>Name: Name of the event notification (e.g. Auto-ingest Snowflake).</li>
+<li>Prefix(Optional) :  if you receive notifications only when files are added to a specific folder (for example, logs/).</li>
+<li>Events: Select the ObjectCreate (All) option.</li>
+<li>Send to: Select &#34;SQS Queue&#34; from the dropdown list.</li>
+<li>SQS: Select &#34;Add SQS queue ARN&#34; from the dropdown list.</li>
+<li>SQS queue ARN: Paste the SQS queue name from the SHOW PIPES output.</li>
+</ul>
+<p class="image-container"><img alt="Screenshot of create event notification form in AWS console" src="img/e16234bd9066f8dd.png"></p>
+<p class="image-container"><img alt="Screenshot of destination configuration in create event notification form in AWS console" src="img/f05b6ebac3ef6b65.png"></p>
+<p>Event notification has been created <img alt="Screenshot of event notfications dashboard with created notification in AWS" src="img/9f7b7df7dd73457.png"></p>
+<p>Refresh Snowpipe to retrieve unloaded file and run select if unloaded data should be loaded</p>
+<pre><code language="language-sql" class="language-sql">alter pipe vpc_flow_pipe refresh;
+select * from public.vpc_flow;
+</code></pre>
+<p>You can confirm also if snowpipe worked properly</p>
+<pre><code language="language-sql" class="language-sql">select *
+  from table(snowflake.information_schema.pipe_usage_history(
+    date_range_start=&gt;dateadd(&#39;day&#39;,-14,current_date()),
+    date_range_end=&gt;current_date(),
+    pipe_name=&gt;&#39;public.vpc_flow_pipe));
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a view to better query data" duration="3">
+        <p>Create a view</p>
+<pre><code language="language-sql" class="language-sql">create view vpc_flow_view as
+select 
+    record:account_id::varchar(16) as account_id,
+    record:action::varchar(16) as action,
+    record:bytes::integer as bytes,
+    record:dstaddr::varchar(128) as dstaddr,
+    record:dstport::integer as dstport,
+    record:end::TIMESTAMP as &#34;END&#34;,
+    record:interface_id::varchar(32) as interface_id,
+    record:log_status::varchar(8) as log_status,
+    record:packets::integer as packets,
+    record:protocol::integer as protocol,
+    record:srcaddr::varchar(128) as srcaddr,
+    record:srcport::integer as srcport,
+    record:start::TIMESTAMP as &#34;START&#34;,
+    record:version::varchar(8) as version
+from public.vpc_flow;
+
+</code></pre>
+<p>Preview the data</p>
+<pre><code language="language-sql" class="language-sql">select * from vpc_flow_view limit 10;
+</code></pre>
+<p class="image-container"><img alt="Screenshot of view for vpc flow logs" src="img/ec170b1d5d98d50a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query the data" duration="2">
+        <p>Create a workbook to query the new view. If desired, use the following to help get you started:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FUNCTION ipv4_is_internal(ip varchar)
+  RETURNS Boolean
+  AS
+  $$
+    (parse_ip(ip,&#39;INET&#39;):ipv4 between (167772160) AND (184549375)) OR 
+    (parse_ip(ip,&#39;INET&#39;):ipv4 between (2886729728) AND (2887778303))OR 
+    (parse_ip(ip,&#39;INET&#39;):ipv4 between (3232235520) AND (3232301055))
+  $$
+  ;
+  
+-- Administrative traffic from public internet in past 30 days
+
+(select distinct srcaddr as internal_addr,dstaddr as external_addr, srcport as port from vpc_flow_view where &#34;START&#34; &gt; dateadd(day, -30, current_date()) and action = &#39;ACCEPT&#39; and srcport in (22,3389) and ipv4_is_internal(internal_addr)) 
+union all 
+(select distinct dstaddr as internal_addr,srcaddr as external_addr, dstport as port from vpc_flow_view where &#34;START&#34; &gt; dateadd(day, -30, current_date()) and action = &#39;ACCEPT&#39; and dstport in (22,3389) and ipv4_is_internal(internal_addr));
+
+
+-- Biggest talkers by destination in past 30 days
+select dstaddr,sum(bytes) as total_bytes from vpc_flow_view where &#34;START&#34; &gt; dateadd(day, -30, current_date()) and action = &#39;ACCEPT&#39; group by dstaddr order by total_bytes desc limit 10;
+
+-- Biggest talkers by source in past 30 days
+select srcaddr,sum(bytes) as total_bytes from vpc_flow_view where &#34;START&#34; &gt; dateadd(day, -30, current_date()) and action = &#39;ACCEPT&#39; group by srcaddr order by total_bytes desc limit 10;
+
+-- Biggest talkers by ENI in past 30 days
+select interface_id,sum(bytes) as total_bytes from vpc_flow_view where &#34;START&#34; &gt; dateadd(day, -30, current_date()) and action = &#39;ACCEPT&#39; group by interface_id order by total_bytes desc limit 10;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; next steps" duration="0">
+        <p>Having completed this quickstart you have successfully:</p>
+<ul>
+<li>Enabled VPC flow logs</li>
+<li>Created and configured an external stage using S3</li>
+<li>Ingested VPC flow logs into snowflake</li>
+<li>Created and configured a pipeline to automatically load data</li>
+<li>Created a view to better explore and query VPC flow logs</li>
+<li>Explored sample queries to get insights out of your flow logs</li>
+</ul>
+<h2 is-upgraded>Additional References</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config.html" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-s3-config.html</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe</a></li>
+<li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html" target="_blank">https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

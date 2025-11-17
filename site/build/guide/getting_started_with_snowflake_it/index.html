@@ -1,0 +1,809 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Guida introduttiva a Snowflake - Da zero a Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowflake_it"
+                  title="Guida introduttiva a Snowflake - Da zero a Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Panoramica" duration="2">
+        <p>Ti diamo il benvenuto in Snowflake! Questa guida introduttiva, concepita per amministratori e architetti di database e data warehouse, aiuta a orientarsi nell&#39;interfaccia di Snowflake e presenta alcune delle nostre funzionalità fondamentali. <a href="https://trial.snowflake.com" target="_blank">Registrati per una prova gratuita di 30 giorni di Snowflake</a> per seguire gli esercizi di questo workshop. Una volta apprese le nozioni di base, sarai in grado di iniziare a elaborare i tuoi dati e affrontare con sicurezza le funzionalità più avanzate di Snowflake.</p>
+<h2 is-upgraded>Hands-On Lab virtuale gratuito</h2>
+<p>Questa guida a Snowflake è disponibile come Hands-On Lab virtuale gratuito tenuto da un istruttore. <a href="https://www.snowflake.com/virtual-hands-on-lab/" target="_blank">Iscriviti oggi stesso al Virtual Hands-On Lab</a>.</p>
+<h2 is-upgraded>Prerequisiti:</h2>
+<ul>
+<li>Utilizzo dell&#39;<a href="https://trial.snowflake.com" target="_blank">ambiente Snowflake in prova gratuita per 30 giorni</a></li>
+<li>Conoscenza di base di SQL, dei concetti di database e degli oggetti</li>
+<li>Familiarità con i file CSV delimitati da virgole e con i dati semi-strutturati JSON</li>
+</ul>
+<h2 is-upgraded>Cosa imparerai:</h2>
+<ul>
+<li>Come creare stage, database, tabelle, viste e virtual warehouse.</li>
+<li>Come caricare dati strutturati e semi-strutturati.</li>
+<li>Come eseguire query analitiche sui dati in Snowflake, compresi i join tra tabelle.</li>
+<li>Come clonare oggetti.</li>
+<li>Come annullare gli errori dell&#39;utente utilizzando Time Travel.</li>
+<li>Come creare ruoli e utenti e concedere privilegi.</li>
+<li>Come condividere dati con altri account in modo facile e sicuro.</li>
+<li>Come utilizzare i data set disponibili nel Marketplace Snowflake.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparare l&#39;ambiente del workshop" duration="2">
+        <p>Se non l&#39;hai ancora fatto, registrati per una <a href="https://signup.snowflake.com/developers" target="_blank">prova gratuita di 30 giorni di Snowflake</a>. Le sezioni successive di questo workshop presuppongono che tu stia utilizzando un nuovo account Snowflake creato al momento della registrazione per la prova gratuita.</p>
+<p>L&#39;edizione di Snowflake (Standard, Enterprise, Business Critical, ecc.), il cloud provider (AWS, Azure, GCP) e la regione (US-East, EU, ecc.) che utilizzi per questo workshop sono irrilevanti. Tuttavia, ti consigliamo di selezionare la regione fisicamente più vicina a te e di scegliere Enterprise, il nostro prodotto più diffuso, come edizione di Snowflake.</p>
+<p>Al termine della registrazione, riceverai un&#39;email con un link per l&#39;attivazione e un URL per accedere al tuo account Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="L&#39;interfaccia utente di Snowflakee la storia del workshop" duration="8">
+        <aside class="warning"><p><strong>Informazioni sulle schermate, il codice di esempio e l&#39;ambiente</strong> Gli esempi e i risultati presentati nelle schermate possono differire leggermente da ciò che vedrai quando avrai completato gli esercizi.</p>
+</aside>
+<h2 is-upgraded>Effettuare l&#39;accesso all&#39;interfaccia utente di Snowflake</h2>
+<p>Apri una finestra del browser e inserisci l&#39;URL dell&#39;ambiente Snowflake di prova che ti è stato inviato con l&#39;email di registrazione.</p>
+<p>Dovrebbe comparire la seguente finestra di login​. Immetti il nome utente e la password che hai specificato durante la registrazione:</p>
+<p class="image-container"><img alt="schermata di login" src="img/94b9a152c373c99e.png"></p>
+<h2 is-upgraded>Componenti dell&#39;interfaccia utente di Snowflake</h2>
+<p>Facciamo la conoscenza di Snowflake! Questa sezione illustra i componenti di base dell&#39;interfaccia utente. Procederemo dall&#39;alto in basso lungo lato sinistro.</p>
+<p class="image-container"><img alt="barra di navigazione di snowflake" src="img/ce13b4af78a66c6b.png"></p>
+<h3 is-upgraded>Worksheets</h3>
+<p class="image-container"><img alt="scheda worksheets principale" src="img/ba0e07fe7e6ab958.png"></p>
+<p>La scheda ​<strong>Worksheets​</strong> fornisce un&#39;interfaccia per inviare query SQL, eseguire operazioni DDL e DML e visualizzare i risultati una volta completate le query o le operazioni. Per creare un nuovo foglio di lavoro si preme <strong>+ Worksheet</strong> in alto a destra.</p>
+<p class="image-container"><img alt="dettagli della scheda worksheets" src="img/8fdb16c05fd8c436.png"></p>
+<p>L&#39;angolo superiore sinistro contiene:</p>
+<ul>
+<li>Icona <strong>Home</strong>: puoi utilizzarla per tornare alla console principale e chiudere il foglio di lavoro.</li>
+<li>Menu a discesa <strong>Nome_foglio_di_lavoro</strong>: Il nome predefinito corrisponde alla data e ora di creazione del foglio di lavoro. Fai clic sul nome del foglio di lavoro per modificarlo. Il menu a discesa visualizza anche altre azioni che puoi eseguire per il foglio di lavoro.</li>
+<li>Pulsante <strong>Manage filters</strong>: i filtri personalizzati sono parole chiave speciali che producono una sotto-query o un elenco di valori.</li>
+</ul>
+<p>L&#39;angolo superiore destro contiene:</p>
+<ul>
+<li>Casella <strong>Context</strong>: indica a Snowflake quale ruolo e quale warehouse utilizzare durante questa sessione. Può essere modificata dall&#39;interfaccia utente o tramite comandi SQL.</li>
+<li>Pulsante <strong>Share</strong>: apre il menu di condivisione per condividere con altri utenti o copiare il link a questo foglio di lavoro.</li>
+<li>Pulsante <strong>Play/Run</strong>: esegue l&#39;istruzione SQL in cui si trova attualmente il cursore o più istruzioni selezionate.</li>
+</ul>
+<p>Il riquadro centrale contiene:</p>
+<ul>
+<li>Menu a discesa in alto per impostare il contesto del database/schema/oggetto per il foglio di lavoro.</li>
+<li>Area di lavoro generale in cui immettere ed eseguire query e altre istruzioni SQL.</li>
+</ul>
+<p>Il riquadro centrale sinistro contiene:</p>
+<ul>
+<li>Scheda <strong>Worksheets</strong>: usa questa scheda per selezionare e passare rapidamente da un foglio di lavoro all&#39;altro</li>
+<li>Scheda <strong>Databases</strong>: usa questa scheda per visualizzare tutti gli oggetti di database disponibili per il ruolo corrente</li>
+<li><strong>Barra di ricerca</strong>: browser degli oggetti di database che consente di esplorare tutti i database, gli schemi, le tabelle e le viste accessibili per il ruolo attualmente in uso nel foglio di lavoro.</li>
+</ul>
+<p>Il riquadro inferiore visualizza i risultati delle query e delle altre operazioni. Include inoltre quattro opzioni (<strong>Object</strong>, <strong>Query</strong>, <strong>Result</strong>, <strong>Chart</strong>) che aprono/chiudono i rispettivi riquadri dell&#39;interfaccia utente. <strong>Chart</strong> apre un riquadro di visualizzazione per i risultati restituiti. Torneremo su questo argomento più avanti.</p>
+<p>I vari riquadri di questa pagina possono essere ridimensionati spostandone i cursori. Se ti serve più spazio nel foglio di lavoro, comprimi il browser degli oggetti di database nel riquadro sinistro. Questo riquadro è chiuso in molte delle schermate illustrate in questa guida.</p>
+<aside class="warning"><p><strong>Fogli di lavoro o interfaccia utente</strong> Per risparmiare tempo, la maggior parte degli esercizi di questo workshop viene eseguita utilizzando codice SQL pronto all&#39;uso in questo foglio di lavoro. Queste operazioni possono essere eseguite anche tramite l&#39;interfaccia utente, ma richiederebbero numerosi spostamenti tra le diverse schede dell&#39;interfaccia.</p>
+</aside>
+<h3 is-upgraded>Dashboards</h3>
+<p class="image-container"><img alt="scheda dashboards" src="img/21d6de710923c81b.png"></p>
+<p>La scheda <strong>Dashboards</strong> consente di creare visualizzazioni flessibili di uno o più grafici, sotto forma di riquadri che possono essere disposti vari modi. Riquadri e widget vengono prodotti eseguendo query SQL che restituiscono i risultati in un foglio di lavoro. Le dashboard possono essere utilizzate in dimensioni diverse con una configurazione minima.</p>
+<h3 is-upgraded>Databases</h3>
+<p class="image-container"><img alt="scheda databases" src="img/1efb94fd8e624f9.png"></p>
+<p>La scheda <strong>Databases</strong>​, sotto <strong>Data</strong>, mostra informazioni sui database che hai creato o a cui puoi accedere. Puoi creare, clonare, eliminare o trasferire la proprietà dei database, oltre a caricare dati nell&#39;interfaccia utente. Nota che nel tuo ambiente esiste già un database. Tuttavia, non lo utilizzeremo in questo workshop.</p>
+<h3 is-upgraded>Private Shared Data</h3>
+<p class="image-container"><img alt="scheda shared data" src="img/ac79b50634875aeb.png"></p>
+<p>Sempre sotto <strong>Data</strong>, la scheda <strong>Private Shared Data</strong> consente di configurare la condivisione dei dati per condividere in modo facile e sicuro tabelle Snowflake tra account Snowflake separati o con utenti esterni, senza bisogno di creare una copia dei dati. Tratteremo la condivisione dei dati nella Sezione 10.</p>
+<h3 is-upgraded>Marketplace</h3>
+<p class="image-container"><img alt="scheda marketplace" src="img/2ebba15c6973ed6d.png"></p>
+<p>La scheda <strong>Marketplace</strong> consente a qualsiasi cliente Snowflake di sfogliare e utilizzare data set messi a disposizione dai provider. I dati condivisi sono di due tipi: pubblici e personalizzati. I dati pubblici sono data set gratuiti che possono essere sottoposti immediatamente a query. Nel caso dei dati personalizzati, è necessario contattare il provider dei dati perché ne approvi la condivisione.</p>
+<h3 is-upgraded>Query History</h3>
+<p class="image-container"><img alt="scheda history" src="img/78319bfb37054a7a.png"></p>
+<p>Sotto <strong>Activity</strong> sono disponibili le due schede <strong>Query History</strong> e <strong>Copy History</strong>:</p>
+<ul>
+<li><strong>Query History</strong> visualizza le query precedenti e una serie di filtri che possono essere utilizzati per restringere i risultati (utente, warehouse, stato, tag della query, ecc.). Puoi visualizzare i dettagli di tutte le query eseguite negli ultimi 14 giorni dal tuo account Snowflake. Fai clic su un&#39;ID query per selezionarla e visualizzare ulteriori informazioni.</li>
+<li><strong>Copy History</strong> mostra lo stato dei comandi di copia eseguiti per caricare dati in Snowflake.</li>
+</ul>
+<h3 is-upgraded>Warehouses</h3>
+<p class="image-container"><img alt="scheda warehouses" src="img/e8ae082b9907f027.png"></p>
+<p>Sotto <strong>Admin</strong>, la scheda <strong>​Warehouses​</strong> consente di configurare e gestire risorse di calcolo dette virtual warehouse per caricare o interrogare i dati in Snowflake. Nel tuo ambiente esiste già un warehouse chiamato COMPUTE_WH.</p>
+<h3 is-upgraded>Resource Monitors</h3>
+<p class="image-container"><img alt="scheda resource monitors" src="img/bf1224962773e6c8.png"></p>
+<p>Sotto <strong>Admin</strong>, la scheda <strong>Resource Monitors</strong> mostra tutti i monitor delle risorse che sono stati creati per controllare il numero di crediti consumati dai virtual warehouse. Per ogni monitor delle risorse, mostra la quota di credito, il tipo di monitoraggio, la pianificazione e le azioni eseguite quando il virtual warehouse raggiunge il suo limite di credito.</p>
+<h3 is-upgraded>Roles</h3>
+<p class="image-container"><img alt="scheda roles" src="img/4dda97b955d14138.png"></p>
+<p>Sotto <strong>Admin</strong>, la sottoscheda <strong>Roles</strong> della scheda <strong>Users and Roles</strong> mostra un elenco di ruoli con le relative gerarchie. I ruoli possono essere creati, riorganizzati e concessi agli utenti in questa scheda. I ruoli possono essere visualizzati anche sotto forma di tabella/elenco selezionando la sottoscheda <strong>Table</strong>.</p>
+<h3 is-upgraded>Users</h3>
+<p class="image-container"><img alt="scheda users" src="img/46fa56f76ccba504.png"></p>
+<p>Sempre sotto <strong>Admin</strong>, la sottoscheda <strong>Users</strong> della scheda <strong>Users and Roles</strong> mostra un elenco degli utenti nell&#39;account, dei ruoli predefiniti e del proprietario degli utenti. Per un nuovo account non viene visualizzato alcun ruolo, poiché non sono ancora stati creati ruoli aggiuntivi. Le autorizzazioni concesse attraverso il tuo ruolo corrente determinano le informazioni visualizzate in questa scheda. Per vedere tutte le informazioni disponibili nella scheda, passa al ruolo ACCOUNTADMIN.</p>
+<p class="image-container"><img alt="menu a discesa user preferences" src="img/f9ca5cc23fcd83cb.png"></p>
+<p>Facendo clic sul tuo nome utente in alto a destra nell&#39;interfaccia puoi modificare la password, i ruoli e le preferenze. Snowflake dispone di vari ruoli definiti dal sistema. In questo momento hai il ruolo predefinito di <code>SYSADMIN</code>, che manterrai per la maggior parte del workshop.</p>
+<aside class="warning"><p><strong>SYSADMIN</strong> Il ruolo <code>SYSADMIN</code> (o amministratore di sistema) ha i privilegi necessari per creare warehouse, database e altri oggetti in un account. In un ambiente reale, utilizzeresti ruoli diversi per le attività di questo workshop e assegneresti ruoli ai tuoi utenti. Parleremo ancora dei ruoli e del modello di controllo degli accessi di Snowflake nella Sezione 9; inoltre puoi trovare ulteriori informazioni nella <a href="https://docs.snowflake.com/user-guide/security-access-control-overview" target="_blank">documentazione di Snowflake</a>.</p>
+</aside>
+<h2 is-upgraded>La storia</h2>
+<p>Questo workshop si basa sul team di analisi di Citi Bike, un sistema di bike sharing realmente esistente di New York, negli Stati Uniti. Il team vuole eseguire analisi sui dati provenienti dai sistemi transazionali interni dell&#39;azienda per comprendere meglio i suoi utenti e come servirli nel modo migliore.</p>
+<p>Per prima cosa caricheremo in Snowflake i dati <code>.csv</code> strutturati provenienti dalle transazioni degli utenti. Poi lavoreremo con dati meteorologici JSON semi-strutturati open source per stabilire se esiste una correlazione tra il numero di spostamenti in bici e le condizioni meteorologiche.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparare l&#39;ambiente per il caricamento dei dati" duration="14">
+        <p>Per iniziare, prepariamoci a caricare in Snowflake i dati strutturati delle transazioni degli utenti di Citi Bike.</p>
+<p>Questa sezione illustra nei dettagli i passaggi necessari per:</p>
+<ul>
+<li>Creare un database e una tabella.</li>
+<li>Creare uno stage esterno.</li>
+<li>Creare un formato di file per i dati.</li>
+</ul>
+<aside class="warning"><p><strong>Inserire dati in Snowflake</strong> Vi sono molti modi per inserire dati in Snowflake da molte origini, tra cui il comando COPY, l&#39;ingestion automatica di Snowpipe, connettori esterni e soluzioni ETL/ELT di terze parti. Per maggiori informazioni sull&#39;inserimento di dati in Snowflake, consulta la <a href="https://docs.snowflake.com/guides-overview-loading-data" target="_blank">documentazione di Snowflake</a>. In questo workshop useremo il comando COPY e lo storage AWS S3 per caricare i dati manualmente. In una situazione reale, solitamente si utilizza un processo automatizzato o una soluzione ETL.</p>
+</aside>
+<p>Useremo i dati del bike sharing forniti da Citi Bike NYC. I dati sono stati esportati e preparati per l&#39;uso in un bucket Amazon AWS S3 nella regione US-EAST e comprendono informazioni sulla durata degli spostamenti, il tipo di utente, il sesso, l&#39;età e così via. Su AWS S3, questi dati rappresentano 61,5 milioni di righe, 377 oggetti e 1,9 GB compressi.</p>
+<p>Ecco un frammento di uno dei file di dati CSV di Citi Bike:</p>
+<p class="image-container"><img alt="frammento di dati" src="img/a58c8af550412709.png"></p>
+<p>È in formato delimitato da virgole con un&#39;unica riga di intestazione e con tutti i valori stringa racchiusi tra virgolette doppie, comprese le intestazioni dei campi nella riga di intestazione. Questo sarà rilevante più avanti in questa sezione, quando configureremo la tabella Snowflake in cui memorizzare questi dati.</p>
+<h2 is-upgraded>Creare un database e una tabella</h2>
+<p>Per prima cosa creiamo un database chiamato <code>CITIBIKE</code> da utilizzare per caricare i dati strutturati.</p>
+<p>Assicurati di utilizzare il ruolo sysadmin selezionando il tuo nome in alto a sinistra e poi <strong>Switch Role</strong> &gt; <strong>SYSADMIN</strong>.</p>
+<p>Vai alla scheda <strong>Databases</strong>. Fai clic su <strong>Create</strong>, assegna al database il nome <code>CITIBIKE</code> e poi fai clic su <strong>CREATE</strong>.</p>
+<p class="image-container"><img alt="creazione di un foglio di lavoro" src="img/617e691cd998d830.png"></p>
+<p>Ora vai alla scheda <strong>Worksheets</strong>. Dovresti vedere il foglio di lavoro che abbiamo creato nel passaggio 3.</p>
+<p class="image-container"><img alt="nuovo foglio di lavoro" src="img/12afc32e8196d6b0.png"></p>
+<p>Dobbiamo impostare il contesto in modo appropriato all&#39;interno del foglio di lavoro. Nell&#39;angolo superiore destro del foglio di lavoro, fai clic sulla casella a sinistra del pulsante <strong>Share</strong> per visualizzare il menu contestuale, che consente di controllare gli elementi che puoi vedere ed eseguire da ogni foglio di lavoro. Qui stiamo utilizzando l&#39;interfaccia utente per impostare il contesto. Più avanti nel workshop utilizzeremo comandi SQL all&#39;interno del foglio di lavoro per fare la stessa cosa.</p>
+<p>Seleziona le seguenti impostazioni del contesto:</p>
+<p>Ruolo: <code>SYSADMIN</code> Warehouse: <code>COMPUTE_WH</code></p>
+<p class="image-container"><img alt="impostazioni del ruolo e del warehouse del contesto" src="img/e1133050d123b025.png"></p>
+<p>Quindi, nel menu a discesa del database, seleziona le seguenti impostazioni del contesto:</p>
+<p>Database: <code>CITIBIKE</code> Schema = <code>PUBLIC</code></p>
+<p class="image-container"><img alt="impostazioni del database del contesto" src="img/ba26c112cae47b4f.png"></p>
+<aside class="warning"><p><strong>Le operazioni DDL (Data Definition Language) sono gratuite!</strong> Tutte le operazioni DDL che abbiamo eseguito finora non richiedono risorse di calcolo, quindi possiamo creare tutti gli oggetti gratuitamente.</p>
+</aside>
+<p>Per lavorare più facilmente nel foglio di calcolo, rinominiamolo. Nell&#39;angolo superiore sinistro, fai doppio clic sul nome del foglio di lavoro, che corrisponde alla data e all&#39;ora in cui è stato creato, e modificalo in <code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>.</p>
+<p>Ora creiamo una tabella chiamata <code>TRIPS</code> da utilizzare per caricare i dati delimitati da virgole. Invece di utilizzare l&#39;interfaccia utente, useremo il foglio di lavoro per eseguire il DDL che crea la tabella. Copia questo testo SQL nel foglio di lavoro:</p>
+<pre><code language="language-SQL" class="language-SQL">create or replace table trips
+(tripduration integer,
+starttime timestamp,
+stoptime timestamp,
+start_station_id integer,
+start_station_name string,
+start_station_latitude float,
+start_station_longitude float,
+end_station_id integer,
+end_station_name string,
+end_station_latitude float,
+end_station_longitude float,
+bikeid integer,
+membership_type string,
+usertype string,
+birth_year integer,
+gender integer);
+</code></pre>
+<aside class="warning"><p><strong>Molte opzioni per eseguire i comandi.</strong> I comandi SQL possono essere eseguiti utilizzando l&#39;interfaccia utente, la scheda <strong>Worksheets</strong>, lo strumento della riga di comando SnowSQL, il tuo editor SQL preferito tramite ODBC/JDBC oppure altri connettori Snowflake (Python, Spark ecc.). Come già detto, per risparmiare tempo svolgeremo la maggior parte delle operazioni di questo workshop eseguendo codice SQL pronto per l&#39;uso nel foglio di lavoro, invece di utilizzare l&#39;interfaccia utente.</p>
+</aside>
+<p>Per eseguire la query, colloca il cursore in qualsiasi punto del testo SQL e fai clic sul pulsante blu <strong>Play/Run</strong> nell&#39;angolo superiore destro del foglio di lavoro. Oppure usa i tasti di scelta rapida [Ctrl]/[Cmd]+[Invio].</p>
+<p>Verifica che sia stata creata la tabella TRIPS. Nella parte inferiore del foglio di lavoro dovrebbe essere visualizzata una sezione Results con il messaggio &#34;Table TRIPS successfully created&#34;.</p>
+<p class="image-container"><img alt="messaggio di conferma TRIPS" src="img/dbed54bac4e63585.png"></p>
+<p>Vai alla scheda <strong>Databases</strong> facendo clic sull&#39;icona <strong>HOME</strong> nell&#39;angolo superiore sinistro del foglio di lavoro. Quindi fai clic su <strong>Data</strong> &gt; <strong>Databases</strong>. Nell&#39;elenco dei database, fai clic su <code>CITIBIKE</code> &gt; <code>PUBLIC</code> &gt; <strong>TABLES</strong> per vedere la tabella <code>TRIPS</code> appena creata. Se sulla sinistra non vedi i database, espandi il browser, perché potrebbero essere nascosti.</p>
+<p class="image-container"><img alt="tabella TRIPS" src="img/3b9b222029a49f7a.png"></p>
+<p>Fai clic su <code>TRIPS</code> e sulla scheda <strong>Columns</strong> per vedere la struttura della tabella appena creata.</p>
+<p class="image-container"><img alt="struttura della tabella TRIPS" src="img/5201e54b3b7772f4.png"></p>
+<h2 is-upgraded>Creare uno stage esterno</h2>
+<p>Stiamo lavorando con dati strutturati delimitati da virgole che sono già stati preparati per l&#39;uso in un bucket S3 pubblico esterno. Prima di poterli utilizzare, dobbiamo creare uno stage che specifichi la posizione del bucket esterno.</p>
+<aside class="special"><p>Per questo workshop utilizziamo un bucket AWS-East. Per evitare costi di uscita/trasferimento dati in futuro, seleziona una posizione per lo stage nello stesso cloud provider e nella stessa regione del tuo account Snowflake.</p>
+</aside>
+<p>Nella scheda <strong>Databases</strong>, fai clic sul database <code>CITIBIKE</code> e sullo schema <code>PUBLIC</code>. Fai clic sul pulsante <strong>Create</strong> e poi su <strong>Stage</strong> &gt; <strong>Amazon S3</strong>.</p>
+<p class="image-container"><img alt="creazione stage" src="img/a0b3421ffacddeec.png"></p>
+<p>Nella finestra di dialogo &#34;Create Securable Object&#34; che viene visualizzata, sostituisci i seguenti valori nell&#39;istruzione SQL:</p>
+<p><code><stage_name></code>: <code>citibike_trips</code></p>
+<p><code><url></code>: <code>s3://snowflake-workshop-lab/citibike-trips-csv/</code></p>
+<p><strong>Nota:</strong> assicurati di includere la barra (<code>/</code>) alla fine dell&#39;URL; in caso contrario si verificheranno errori al momento di caricare i dati dal bucket. Assicurati inoltre di rimuovere l&#39;istruzione ‘credentials = (...)&#39;, che non è necessaria. Puoi anche impostarla come commento usando ‘–&#39;, come illustrato nell&#39;immagine seguente. Il comando &#34;create stage&#34; dovrebbe essere uguale a quello illustrato, ma potrebbe non includere la terza riga.</p>
+<aside class="special"><p>Il bucket S3 per questo workshop è pubblico, quindi puoi lasciare vuote le opzioni relative alle credenziali nell&#39;istruzione. In una situazione reale, il bucket utilizzato per uno stage esterno probabilmente richiederebbe informazioni sulle chiavi.</p>
+</aside>
+<p class="image-container"><img alt="impostazioni creazione stage" src="img/91fa215e0a17b483.png"></p>
+<p>Ora esaminiamo il contenuto dello stage <code>citibike_trips</code>. Torna alla scheda <strong>Worksheets</strong> e apri il foglio di lavoro ‘CITIBIKE_ZERO_TO_SNOWFLAKE&#39; che abbiamo creato, aggiungi la seguente istruzione SQL sotto il codice precedente, come illustrato, quindi esegui:</p>
+<pre><code language="language-SQL" class="language-SQL">list @citibike_trips;
+</code></pre>
+<p>Nel riquadro dei risultati in basso dovrebbe comparire l&#39;elenco dei file contenuti nello stage:</p>
+<p class="image-container"><img alt="risultato del foglio di lavoro" src="img/e60ace83025630e9.png"></p>
+<h2 is-upgraded>Creare un formato di file</h2>
+<p>Prima di caricare i dati in Snowflake, dobbiamo creare un formato di file corrispondente alla struttura dei dati.</p>
+<p>Nel foglio di lavoro, aggiungi nuovamente il seguente comando dopo il testo già presente ed eseguilo per creare il formato di file:</p>
+<pre><code language="language-SQL" class="language-SQL">--create file format
+
+create or replace file format csv type=&#39;csv&#39; 
+  compression = &#39;auto&#39; field_delimiter = &#39;,&#39; record_delimiter = &#39;\n&#39; 
+  skip_header = 0 field_optionally_enclosed_by = &#39;\ 042&#39; trim_space = false
+  error_on_column_count_mismatch = false escape = &#39;none&#39; escape_unenclosed_field = &#39;\134&#39;
+  date_format = &#39;auto&#39; timestamp_format = &#39;auto&#39; null_if = (&#39;&#39;) 
+  comment = &#39;file format for ingesting data for zero to snowflake&#39;; 
+</code></pre>
+<p class="image-container"><img alt="creazione di un formato di file" src="img/3c52420ff7677f1.png"></p>
+<p>Verifica che il formato sia stato creato con le impostazioni corrette eseguendo il seguente comando:</p>
+<pre><code language="language-SQL" class="language-SQL">--verify file format is created
+
+show file formats in database citibike; 
+</code></pre>
+<p>Il formato di file appena creato dovrebbe essere elencato nel riquadro dei risultati:</p>
+<p class="image-container"><img alt="impostazioni creazione formato di file" src="img/e277ae2e58729906.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Caricare i dati" duration="10">
+        <p>In questa sezione utilizzeremo un virtual warehouse e il comando COPY per avviare il caricamento in blocco di dati strutturati nella tabella Snowflake che abbiamo creato nella sezione precedente.</p>
+<h2 is-upgraded>Ridimensionare e utilizzare un warehouse per il caricamento dei dati</h2>
+<p>Per caricare i dati sono necessarie risorse di calcolo. I nodi di calcolo di Snowflake sono detti virtual warehouse e possono essere dimensionati dinamicamente in base al workload, a seconda che si tratti di caricare dati, eseguire una query o svolgere un&#39;operazione DML. Ogni workload può avere il proprio warehouse per evitare contese di risorse.</p>
+<p>Vai alla scheda <strong>Warehouses</strong> (sotto <strong>Admin</strong>). Qui puoi vedere tutti i tuoi warehouse esistenti e analizzarne i trend di utilizzo.</p>
+<p>Nota l&#39;opzione <strong>+ Warehouse</strong> nell&#39;angolo superiore sinistro. Qui puoi aggiungere rapidamente un nuovo warehouse. Tuttavia, vogliamo utilizzare il warehouse COMPUTE_WH già esistente, incluso nell&#39;ambiente di prova di 30 giorni.</p>
+<p>Fai clic sulla riga del warehouse <code>COMPUTE_WH</code>. Quindi fai clic sui tre puntini (<strong>...</strong>) nel testo che compare nell&#39;angolo superiore destro per vedere le azioni che puoi eseguire sul warehouse. Utilizzeremo questo warehouse per caricare i dati da AWS S3.</p>
+<p class="image-container"><img alt="configurazione del warehouse di calcolo" src="img/5fcf1309cb972674.png"></p>
+<p>Fai clic su <strong>Edit</strong> per esaminare le opzioni di questo warehouse e scoprire alcune delle funzionalità uniche di Snowflake.</p>
+<aside class="special"><p>Se questo account non utilizza Snowflake Enterprise Edition (o versione superiore), non vedrai le opzioni <strong>Mode</strong> o <strong>Clusters</strong> illustrate nella schermata qui sotto. La funzionalità dei warehouse multi-cluster non viene utilizzata in questo workshop, ma ne parleremo poiché si tratta di una funzionalità chiave di Snowflake.</p>
+</aside>
+<p class="image-container"><img alt="impostazioni di configurazione del warehouse" src="img/94c5ebc4ce00220c.png"></p>
+<ul>
+<li>Il menu a discesa <strong>Size</strong> consente di selezionare la capacità del warehouse. Per le operazioni di caricamento di grandi quantità di dati o per query con esigenze di calcolo più impegnative, è consigliato un warehouse di dimensioni maggiori. Le dimensioni si traducono in risorse di calcolo sottostanti fornite dal cloud provider (AWS, Azure o GCP) su cui risiede in hosting il tuo account Snowflake. Determinano inoltre il numero di crediti consumati dal warehouse per ogni ora intera di attività. Dimensioni maggiori comportano una quantità maggiore di risorse di calcolo del cloud provider allocate al warehouse e un numero maggiore di crediti consumati. Ad esempio, l&#39;impostazione <code>4X-Large</code> consuma 128 crediti per ogni ora intera. Queste dimensioni possono essere aumentate o ridotte in qualsiasi momento con un semplice clic.</li>
+<li>Se utilizzi Snowflake Enterprise Edition (o versione superiore), è disponibile l&#39;opzione <strong>Query Acceleration</strong>. Quando è abilitata per un warehouse, può migliorarne le prestazioni complessive riducendo l&#39;impatto delle query anomale, ossia le query che utilizzano più risorse del normale. Lascia questa opzione disabilitata</li>
+<li>Se utilizzi Snowflake Enterprise Edition (o versione superiore) e l&#39;opzione <strong>Multi-cluster Warehouse</strong> è abilitata, vedrai alcune opzioni aggiuntive. Qui puoi configurare un warehouse per l&#39;uso di più cluster di risorse di calcolo, fino a un massimo di 10. Ad esempio, se a un warehouse multi-cluster <code>4X-Large</code> viene assegnata una dimensione massima dei cluster di 10, può scalare orizzontalmente fino a 10 volte le risorse di calcolo che lo alimentano... e può farlo in pochi secondi! Tuttavia, tieni presente che questo aumenterà il numero di crediti consumati dal warehouse fino a 1280 se tutti i 10 cluster sono attivi per un&#39;ora intera (128 crediti/ora x 10 cluster). La configurazione multi-cluster è ideale per gli scenari di concorrenza, ad esempio quando molti business analyst eseguono simultaneamente query diverse utilizzando lo stesso warehouse. In questo caso d&#39;uso, le diverse query vengono allocate su più cluster per garantire che vengano eseguite rapidamente.</li>
+<li>Le opzioni sotto <strong>Advanced Warehouse Options</strong> consentono di sospendere automaticamente il warehouse quando non è in uso per evitare di consumare inutilmente crediti. Un&#39;altra opzione consente di riavviare automaticamente un warehouse sospeso, in modo che si riattivi automaticamente quando riceve un nuovo workload. Questa funzionalità rende possibile l&#39;efficiente modello di fatturazione &#34;pay-per-use&#34; di Snowflake, che consente di scalare le risorse quando servono e ridurle o disattivarle automaticamente quando non sono più necessarie, eliminando quasi completamente le risorse inattive. Inoltre, è disponibile un&#39;opzione per cambiare il tipo di warehouse da standard a ottimizzato per Snowpark. I warehouse ottimizzati per Snowpark forniscono una quantità di memoria per nodo 16 volte superiore e sono consigliati per i workload con requisiti di memoria elevati, come i casi d&#39;uso di addestramento ML che utilizzano una stored procedure su un unico nodo virtual warehouse. Lascia questa opzione impostata su Standard</li>
+</ul>
+<aside class="warning"><p><strong>Capacità di calcolo di Snowflake e di altri data warehouse</strong> Molte delle funzionalità di virtual warehouse e di calcolo di cui abbiamo appena parlato, come la capacità di creare, scalare orizzontalmente e verticalmente e sospendere o riavviare automaticamente i virtual warehouse, sono facili da utilizzare in Snowflake e richiedono solo pochi secondi. Per i data warehouse on-premise, utilizzare queste funzionalità è molto più difficile, se non impossibile, poiché richiedono notevoli risorse hardware fisiche, over-provisioning dell&#39;hardware per i picchi dei workload e notevole lavoro di configurazione, oltre a presentare sfide di altro tipo. Anche altri cloud data warehouse non sono in grado di scalare orizzontalmente e verticalmente come Snowflake o richiedono molto più tempo e lavoro per la configurazione.</p>
+</aside>
+<p><strong>Attenzione alla spesa!</strong> Nel corso di questo workshop, fai attenzione a non eseguire le seguenti azioni senza un buon motivo, per evitare di consumare troppo rapidamente i tuoi 400 $ di crediti gratuiti:</p>
+<ul>
+<li>Non disabilitare la sospensione automatica. Se la sospensione automatica è disabilitata, i tuoi warehouse rimangono attivi e continuano a consumare crediti anche quando non sono in uso.</li>
+<li>Non utilizzare una taglia del warehouse troppo grande per il tuo workload. Più il warehouse è grande, più crediti consuma.</li>
+</ul>
+<p>Utilizzeremo questo virtual warehouse per caricare in Snowflake i dati strutturati contenuti nei file CSV (archiviati nel bucket AWS S3). Tuttavia, prima modificheremo la taglia del warehouse per aumentare le risorse di calcolo utilizzate. Al termine del caricamento dei dati, prendi nota del tempo impiegato; in un passaggio successivo di questa sezione ripeteremo la stessa operazione di caricamento con un warehouse ancora più grande e osserveremo la riduzione del tempo di caricamento.</p>
+<p>Modifica la taglia (<strong>Size</strong>) di questo data warehouse da <code>X-Small</code> a <code>Small</code>. quindi fai clic sul pulsante <strong>Save Warehouse</strong>:</p>
+<p class="image-container"><img alt="configurazione dell’impostazione small" src="img/8c4fb3ecad091198.png"></p>
+<h2 is-upgraded>Caricare i dati</h2>
+<p>Ora possiamo eseguire un comando COPY per caricare i dati nella tabella <code>TRIPS</code> che abbiamo creato in precedenza.</p>
+<p>Torna al foglio di lavoro <code>CITIBIKE_ZERO_TO_SNOWFLAKE</code> nella scheda <strong>Worksheets</strong>. Assicurati che il contesto del foglio di lavoro sia impostato correttamente:</p>
+<p>Ruolo: <code>SYSADMIN</code> Warehouse: <code>COMPUTE_WH</code> Database: <code>CITIBIKE</code> Schema = <code>PUBLIC</code></p>
+<p class="image-container"><img alt="contesto del foglio di lavoro" src="img/a22dcc20c3929d09.png"></p>
+<p>Esegui le seguenti istruzioni nel foglio di lavoro per caricare i dati dallo stage nella tabella. Questo può richiedere fino a 30 secondi.</p>
+<pre><code language="language-SQL" class="language-SQL">copy into trips from @citibike_trips file_format=csv PATTERN = &#39;.*csv.*&#39; ;
+</code></pre>
+<p>Nel riquadro dei risultati dovrebbe comparire lo stato di ogni file caricato. Una volta completato il caricamento, nel riquadro <strong>Query Details</strong> in basso a destra puoi scorrere tra i diversi stati, le statistiche degli errori e le visualizzazioni per l&#39;ultima istruzione eseguita:</p>
+<p class="image-container"><img alt="risultati - stato del caricamento" src="img/6bcc9ac924e135ed.png"></p>
+<p>Ora vai alla scheda <strong>Query History</strong> facendo clic sull&#39;icona <strong>Home</strong> e poi su <strong>Activity</strong> &gt; <strong>Query History</strong>. Seleziona la query in cima all&#39;elenco, che dovrebbe essere l&#39;istruzione COPY INTO che è stata eseguita per ultima. Seleziona la scheda <strong>Query Profile</strong> e osserva i passaggi dell&#39;esecuzione della query, i dettagli della query, i nodi più costosi e le statistiche aggiuntive.</p>
+<p class="image-container"><img alt="cronologia e durata" src="img/ba7874d9fe5cb2b7.png"></p>
+<p>Ora carichiamo nuovamente la tabella <code>TRIPS</code> con un warehouse più grande per vedere l&#39;impatto delle risorse di calcolo aggiuntive sul tempo di caricamento.</p>
+<p>Torna al foglio di lavoro e usa il comando TRUNCATE TABLE per cancellare tutti i dati e i metadati dalla tabella:</p>
+<pre><code language="language-SQL" class="language-SQL">truncate table trips;
+</code></pre>
+<p>Verifica che la tabella sia vuota eseguendo il comando:</p>
+<pre><code language="language-SQL" class="language-SQL">--verify table is clear
+select * from trips limit 10;
+</code></pre>
+<p>Il risultato dovrebbe essere &#34;Query produced no results&#34;.</p>
+<p>Modifica la taglia del warehouse in <code>large</code> utilizzando la seguente istruzione ALTER WAREHOUSE:</p>
+<pre><code language="language-SQL" class="language-SQL">--change warehouse size from small to large (4x)
+alter warehouse compute_wh set warehouse_size=&#39;large&#39;;
+</code></pre>
+<p>Verifica la modifica utilizzando la seguente istruzione SHOW WAREHOUSES:</p>
+<pre><code language="language-SQL" class="language-SQL">--load data with large warehouse
+show warehouses;
+</code></pre>
+<p class="image-container"><img alt="ridimensionare il contesto in large nell’UI - passaggio 1" src="img/808e94b8dc375648.png"></p>
+<p>La taglia può essere modificata anche dall&#39;interfaccia utente, facendo clic sulla casella del contesto del foglio di lavoro e poi sull&#39;icona <strong>Configure</strong> (3 righe) sul lato destro della casella del contesto e modificando <code>Small</code> in <code>Large</code> nel menu a discesa <strong>Size</strong>:</p>
+<p class="image-container"><img alt="ridimensionare il contesto in large nell’UI - passaggio 1" src="img/a22dcc20c3929d09.png"><img alt="ridimensionare il contesto in large nell’UI - passaggio 2" src="img/e92369b011ce703f.png"></p>
+<p>Esegui la stessa istruzione COPY INTO utilizzata in precedenza per caricare nuovamente gli stessi dati:</p>
+<pre><code language="language-SQL" class="language-SQL">copy into trips from @citibike_trips
+file_format=CSV;
+</code></pre>
+<p class="image-container"><img alt="confronto tra i tempi di caricamento" src="img/2e1eaaced0a95340.png"></p>
+<p>Una volta completato il caricamento, torna alla pagina <strong>Queries</strong> (icona <strong>Home</strong> &gt; <strong>Activity</strong> &gt; <strong>Query History</strong>). Confronta i tempi di esecuzione dei due comandi COPY INTO. Il caricamento con il warehouse <code>Large</code> è stato notevolmente più veloce.</p>
+<h2 is-upgraded>Creare un nuovo warehouse per l&#39;analisi dei dati</h2>
+<p>Tornando alla storia del workshop, poniamo che il team di Citi Bike voglia eliminare le contese di risorse tra i suoi workload di caricamento dei dati/ETL e gli utenti finali che eseguono le analisi utilizzando strumenti di BI per interrogare Snowflake. Come già accennato, in Snowflake è facile risolvere il problema assegnando warehouse diversi di dimensioni appropriate ai diversi workload. Poiché Citi Bike ha già un warehouse per il caricamento dei dati, creiamo un nuovo warehouse per gli utenti finali che eseguono le analisi. Utilizzeremo questo warehouse per eseguire analisi nella sezione successiva.</p>
+<p>Vai alla scheda <strong>Admin</strong> &gt; <strong>Warehouses</strong>, fai clic su <strong>+ Warehouse</strong>, assegna al nuovo warehouse il nome ANALYTICS_WH e imposta la taglia su <code>Large</code>.</p>
+<p>Se utilizzi Snowflake Enterprise Edition (o versione superiore) e l&#39;opzione <strong>Multi-cluster Warehouse</strong> è abilitata, vedrai alcune impostazioni aggiuntive:</p>
+<ul>
+<li>Assicurati che <strong>Max Clusters</strong> sia impostato su <code>1</code>.</li>
+<li>Lascia inalterate tutte le altre opzioni predefinite.</li>
+</ul>
+<p class="image-container"><img alt="impostazioni del warehouse" src="img/970f2ab7dc954538.png"></p>
+<p>Fai clic sul pulsante <strong>Create Warehouse</strong> per creare il warehouse.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lavorare con le query, la cache dei risultati e la clonazione" duration="8">
+        <p>Negli esercizi precedenti abbiamo caricato dati in due tabelle utilizzando il comando per il caricamento in blocco COPY e il virtual warehouse <code>COMPUTE_WH</code>. Ora assumeremo il ruolo degli utenti di Citi Bike che eseguono le analisi e hanno bisogno di interrogare i dati in quelle tabelle utilizzando il foglio di lavoro e il secondo warehouse <code>ANALYTICS_WH</code>.</p>
+<aside class="warning"><p><strong>Ruoli e query in situazioni reali</strong> In un&#39;azienda reale, gli utenti che eseguono le analisi probabilmente avranno un ruolo diverso da SYSADMIN. Per semplificare le cose in questo workshop, continueremo a utilizzare il ruolo SYSADMIN in questa sezione. Inoltre, le query vengono tipicamente eseguite utilizzando un prodotto di business intelligence come Tableau, Looker, PowerBI, ecc. Per analisi più avanzate, strumenti di data science come Datarobot, Dataiku, AWS Sagemaker e molti altri possono inviare query a Snowflake. Qualsiasi tecnologia che utilizza JDBC/ODBC, Spark, Python o un&#39;altra delle interfacce di programmazione supportate può eseguire analisi sui dati contenuti in Snowflake. Per semplificare le cose in questo workshop, tutte le query verranno eseguite tramite il foglio di lavoro Snowflake.</p>
+</aside>
+<h2 is-upgraded>Eseguire alcune query</h2>
+<p>Vai al foglio di lavoro <strong>CITIBIKE_ZERO_TO_SNOWFLAKE</strong> e cambia warehouse per utilizzare il nuovo warehouse che hai creato nella sezione precedente. Il contesto del foglio di lavoro dovrebbe essere:</p>
+<p>Ruolo: <code>SYSADMIN</code> Warehouse: <code>ANALYTICS_WH (L)</code> Database: <code>CITIBIKE</code> Schema = <code>PUBLIC</code></p>
+<p class="image-container"><img alt="risultati della query con dati campione" src="img/9635d6afa094fff2.png"></p>
+<p>Esegui la seguente query per vedere un campione dei dati della tabella <code>trips</code>:</p>
+<pre><code language="language-SQL" class="language-SQL">select * from trips limit 20;
+</code></pre>
+<p class="image-container"><img alt="risultati della query con dati campione" src="img/af740efabf9cd961.png"></p>
+<p>Ora vediamo alcune statistiche orarie di base sull&#39;utilizzo di Citi Bike. Esegui la seguente query nel foglio di lavoro. Per ogni ora, mostra il numero di spostamenti, la loro durata media e la loro distanza media.</p>
+<pre><code language="language-SQL" class="language-SQL">select date_trunc(&#39;hour&#39;, starttime) as &#34;date&#34;,
+count(*) as &#34;num trips&#34;,
+avg(tripduration)/60 as &#34;avg duration (mins)&#34;,
+avg(haversine(start_station_latitude, start_station_longitude, end_station_latitude, end_station_longitude)) as &#34;avg distance (km)&#34;
+from trips
+group by 1 order by 1;
+</code></pre>
+<p class="image-container"><img alt="risultati della query oraria" src="img/57b57e5d9b3f0d00.png"></p>
+<h2 is-upgraded>Utilizzare la cache dei risultati</h2>
+<p>Snowflake dispone di una cache dei risultati che memorizza i risultati di ogni query eseguita nelle ultime 24 ore. Questi sono disponibili in tutti i warehouse, quindi i risultati delle query restituiti a un utente sono a disposizione di qualsiasi altro utente del sistema che esegue la stessa query, purché i dati sottostanti non siano cambiati. Non solo queste query ripetute restituiscono risultati molto rapidamente, ma in più non utilizzano crediti per il calcolo.</p>
+<p>Vediamo la cache dei risultati in azione eseguendo nuovamente la stessa query.</p>
+<pre><code language="language-SQL" class="language-SQL">select date_trunc(&#39;hour&#39;, starttime) as &#34;date&#34;,
+count(*) as &#34;num trips&#34;,
+avg(tripduration)/60 as &#34;avg duration (mins)&#34;,
+avg(haversine(start_station_latitude, start_station_longitude, end_station_latitude, end_station_longitude)) as &#34;avg distance (km)&#34;
+from trips
+group by 1 order by 1;
+</code></pre>
+<p>Nel riquadro <strong>Query Details</strong> sulla destra, nota che la seconda query è stata eseguita molto più rapidamente, poiché i risultati erano memorizzati nella cache.</p>
+<p class="image-container"><img alt="durata della query memorizzata nella cache" src="img/f4f345c789dd5be5.png"></p>
+<h2 is-upgraded>Eseguire un&#39;altra query</h2>
+<p>Ora eseguiamo la seguente query per vedere in quali mesi si verifica il maggiore utilizzo:</p>
+<pre><code language="language-SQL" class="language-SQL">select
+monthname(starttime) as &#34;month&#34;,
+count(*) as &#34;num trips&#34;
+from trips
+group by 1 order by 2 desc;
+</code></pre>
+<p class="image-container"><img alt="risultati della query sui mesi" src="img/770de9bb669575ab.png"></p>
+<h2 is-upgraded>Clonare una tabella</h2>
+<p>Snowflake consente di creare in pochi secondi cloni, detti anche cloni &#34;zero-copy&#34;, di tabelle, schemi e database. Quando viene creato un clone, Snowflake crea uno snapshot dei dati presenti nell&#39;oggetto sorgente e li rende disponibili nell&#39;oggetto clonato. L&#39;oggetto clonato è scrivibile e indipendente dalla sorgente del clone. Di conseguenza, le modifiche apportate all&#39;oggetto sorgente non sono incluse nell&#39;oggetto clone e viceversa.</p>
+<p>Un caso d&#39;uso comune per Zero-Copy Cloning è clonare un ambiente di produzione perché i team di sviluppo e test possano utilizzarlo per eseguire test ed esperimenti senza incidere sull&#39;ambiente di produzione, eliminando la necessità di configurare e gestire due ambienti separati.</p>
+<aside class="warning"><p><strong>Zero-Copy Cloning</strong> Un enorme vantaggio della clonazione zero-copy è che i dati sottostanti non vengono copiati. Cambiano solo i metadati e i riferimenti ai dati sottostanti. Di conseguenza evitando la copia dei dati, i requisiti di storage non raddoppiano quando i dati vengono clonati. La maggior parte dei data warehouse non è in grado di farlo, ma con Snowflake è semplicissimo!</p>
+</aside>
+<p>Esegui il seguente comando nel foglio di lavoro per creare un clone della tabella <code>trips</code> per lo sviluppo (dev):</p>
+<pre><code language="language-SQL" class="language-SQL">create table trips_dev clone trips;
+</code></pre>
+<p>Fai clic sui tre puntini (<strong>...</strong>) nel riquadro a sinistra e seleziona <strong>Refresh</strong>. Espandi la struttura degli oggetti sotto il database <code>CITIBIKE</code> e verifica che sia presente una nuova tabella chiamata <code>trips_dev</code>. Ora il tuo team di sviluppo può fare ciò che vuole con questa tabella, anche aggiornarla o eliminarla, senza incidere in alcun modo sulla tabella <code>trips</code> o su qualsiasi altro oggetto.</p>
+<p class="image-container"><img alt="tabella trips_dev" src="img/adae9f4ec4cec092.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lavorare con dati semi-strutturati, viste e join" duration="16">
+        <aside class="special"><p>Questa sezione richiede il caricamento di dati aggiuntivi e quindi offre una revisione dell&#39;argomento, oltre a introdurre il caricamento dei dati semi-strutturati.</p>
+</aside>
+<p>Per tornare all&#39;esempio del workshop, il team di analisi di Citi Bike vuole stabilire l&#39;impatto delle condizioni meteorologiche sul numero di spostamenti. Per farlo, in questa sezione svolgeremo le seguenti operazioni:</p>
+<ul>
+<li>Caricare dati meteorologici in formato JSON semi-strutturato archiviati in un bucket S3 pubblico.</li>
+<li>Creare una vista e interrogare i dati JSON utilizzando la notazione punto di SQL.</li>
+<li>Eseguire una query che unisce i dati JSON ai dati <code>TRIPS</code> caricati in precedenza.</li>
+<li>Analizzare i dati delle condizioni meteorologiche e del numero di spostamenti per stabilire una correlazione.</li>
+</ul>
+<p>I dati JSON sono informazioni meteorologiche fornite da <em>MeteoStat</em> riferite alle condizioni storiche nella città di New York City dal 05-07-2016 al 25-06-2019. Sono anche predisposti in uno stage su AWS S3, dove i dati rappresentano 75.000 righe, 36 oggetti e 1,1 MB compressi. In un editor di testo, i dati JSON grezzi contenuti nei file GZ appaiono come segue:</p>
+<p class="image-container"><img alt="campione di dati JSON grezzi" src="img/c025f1200b524e26.png"></p>
+<aside class="warning"><p><strong>DATI SEMI-STRUTTURATI</strong> Snowflake consente di caricare e interrogare facilmente i dati semi-strutturati come JSON, Parquet o Avro senza trasformazioni. Questa è una caratteristica chiave di Snowflake, poiché oggi sempre più dati importanti per le aziende sono semi-strutturati e molti data warehouse tradizionali non sono in grado di caricare e interrogare facilmente tali dati. Snowflake rende tutto facile.</p>
+</aside>
+<h2 is-upgraded>Creare un nuovo database e una nuova tabella per i dati</h2>
+<p>Per prima cosa, nel foglio di lavoro, creiamo un database chiamato <code>WEATHER</code> che utilizzeremo per memorizzare i dati JSON semi-strutturati.</p>
+<pre><code language="language-SQL" class="language-SQL">create database weather;
+</code></pre>
+<p>Esegui i seguenti comandi USE per impostare correttamente il contesto del foglio di lavoro:</p>
+<pre><code language="language-SQL" class="language-SQL">use role sysadmin;
+
+use warehouse compute_wh;
+
+use database weather;
+
+use schema public; 
+</code></pre>
+<aside class="special"><p><strong>Eseguire più comandi</strong> Ricorda che devi eseguire ciascun comando separatamente. Tuttavia puoi eseguirli insieme in sequenza selezionando tutti i comandi e poi facendo clic sul pulsante <strong>Play/Run</strong> (o utilizzando i tasti di scelta rapida).</p>
+</aside>
+<p>Ora creiamo una tabella chiamata <code>JSON_WEATHER_DATA</code> da utilizzare per caricare i dati JSON. Nel foglio di lavoro, esegui questo comando CREATE TABLE:</p>
+<pre><code language="language-SQL" class="language-SQL">create table json_weather_data (v variant);
+</code></pre>
+<p>Nota che Snowflake dispone di un tipo di colonna speciale chiamato <code>VARIANT</code> che consente di memorizzare l&#39;intero oggetto come un&#39;unica riga e, quando richiesto, interrogare direttamente l&#39;oggetto.</p>
+<aside class="warning"><p><strong>Un grande aiuto per i dati semi-strutturati</strong> Il tipo di dati VARIANT consente a Snowflake di acquisire dati semi-strutturati senza bisogno di predefinire lo schema.</p>
+</aside>
+<p>Nel riquadro dei risultati nella parte inferiore del foglio di lavoro, verifica che sia stata creata la tabella <code>JSON_WEATHER_DATA</code>:</p>
+<p class="image-container"><img alt="messaggio di successo" src="img/d8810aacbaa1cbcf.png"></p>
+<h2 is-upgraded>Creare un altro stage esterno</h2>
+<p>Nel foglio di lavoro <code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>, utilizza il seguente comando per creare uno stage che fa riferimento al bucket in cui sono archiviati i dati JSON semi-strutturati su AWS S3:</p>
+<pre><code language="language-SQL" class="language-SQL">create stage nyc_weather
+url = &#39;s3://snowflake-workshop-lab/zero-weather-nyc&#39;;
+</code></pre>
+<p>Ora esaminiamo il contenuto dello stage <code>nyc_weather</code>. Esegui questo comando LIST per visualizzare l&#39;elenco dei file:</p>
+<pre><code language="language-SQL" class="language-SQL">list @nyc_weather;
+</code></pre>
+<p>Nel riquadro dei risultati dovrebbe comparire un elenco di file <code>.gz</code> provenienti da S3:</p>
+<p class="image-container"><img alt="output dei risultati" src="img/f94b7130857937b0.png"></p>
+<h2 is-upgraded>Caricare e verificare i dati semi-strutturati</h2>
+<p>In questa sezione utilizzeremo un warehouse per caricare i dati dal bucket S3 nella tabella <code>JSON_WEATHER_DATA</code> che abbiamo creato in precedenza.</p>
+<p>Nel foglio di lavoro <code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>, esegui questo comando COPY per caricare i dati.</p>
+<p>Nota che puoi specificare un oggetto <code>FILE FORMAT</code> in linea nel comando. Nella sezione precedente, quando abbiamo caricato dati strutturati in formato CSV, abbiamo dovuto definire un formato di file per supportare la struttura CSV. Poiché i dati JSON che dobbiamo utilizzare sono ben formati, possiamo semplicemente specificare il tipo JSON e utilizzare tutte le impostazioni predefinite:</p>
+<pre><code language="language-SQL" class="language-SQL">copy into json_weather_data
+from @nyc_weather 
+    file_format = (type = json strip_outer_array = true);
+</code></pre>
+<p>Verifica che ogni file abbia lo stato <code>LOADED</code>:</p>
+<p class="image-container"><img alt="risultato della query" src="img/56840eb3550a91e2.png"></p>
+<p>Ora diamo un&#39;occhiata ai dati caricati:</p>
+<pre><code language="language-SQL" class="language-SQL">select * from json_weather_data limit 10;
+</code></pre>
+<p>Fai clic su qualsiasi riga per visualizzare i dati JSON formattati nel riquadro a destra:</p>
+<p class="image-container"><img alt="frammento di dati JSON" src="img/396dcc5f249ba6ff.png"></p>
+<p>Per chiudere la visualizzazione nel riquadro e vedere nuovamente i dettagli della query, fai clic sul pulsante <strong>X</strong> (Chiudi) che compare spostando il mouse nell&#39;angolo superiore destro del riquadro.</p>
+<h2 is-upgraded>Creare una vista e interrogare i dati semi-strutturati</h2>
+<p>Ora vediamo come Snowflake ci consente di creare una vista e di interrogare direttamente i dati JSON utilizzando SQL.</p>
+<aside class="warning"><p><strong>Viste e viste materializzate</strong> Una vista consente di accedere al risultato di una query come se fosse una tabella. Le viste possono essere utili per presentare i dati agli utenti finali in modo più ordinato, limitare ciò che gli utenti finali possono vedere in una tabella sorgente e scrivere codice SQL più modulare. Snowflake supporta anche le viste materializzate, in cui i risultati delle query vengono memorizzati come se fossero una tabella. Questo consente un accesso più rapido, ma richiede spazio di archiviazione. È possibile creare e interrogare le viste materializzate se si utilizza Snowflake Enterprise Edition (o versione superiore).</p>
+</aside>
+<p>Esegui il seguente comando per creare una vista in colonne dei dati meteorologici semi-strutturati JSON, che gli analisti potranno comprendere e interrogare più facilmente. Il valore <code>72502</code> per <code>station_id</code> corrisponde all&#39;Aeroporto di Newark, la stazione più vicina che dispone delle condizioni meteorologiche per l&#39;intero periodo.</p>
+<pre><code language="language-SQL" class="language-SQL">// create a view that will put structure onto the semi-structured data
+create or replace view json_weather_data_view as
+select
+    v:obsTime::timestamp as observation_time,
+    v:station::string as station_id,
+    v:name::string as city_name,
+    v:country::string as country,
+    v:latitude::float as city_lat,
+    v:longitude::float as city_lon,
+    v:weatherCondition::string as weather_conditions,
+    v:coco::int as weather_conditions_code,
+    v:temp::float as temp,
+    v:prcp::float as rain,
+    v:tsun::float as tsun,
+    v:wdir::float as wind_dir,
+    v:wspd::float as wind_speed,
+    v:dwpt::float as dew_point,
+    v:rhum::float as relative_humidity,
+    v:pres::float as pressure
+from
+    json_weather_data
+where
+    station_id = &#39;72502&#39;;
+</code></pre>
+<p>In questo comando viene utilizzata la notazione punto di SQL <code>v:temp</code> per estrarre valori ai livelli inferiori della gerarchia degli oggetti JSON. Questo ci consente di trattare ciascun campo come se fosse una colonna in una tabella relazionale.</p>
+<p>La nuova vista dovrebbe comparire nel browser degli oggetti a sinistra con il nome <code>JSON_WEATHER_DATA</code> sotto <code>WEATHER</code> &gt; <code>PUBLIC</code> &gt; <strong>Views</strong>. Per vederla potrebbe essere necessario espandere o aggiornare il browser degli oggetti.</p>
+<p class="image-container"><img alt="JSON_WEATHER_DATA _VIEW nel menu a discesa" src="img/19a8eb22f6f8c146.png"></p>
+<p>Verifica la vista con la seguente query:</p>
+<pre><code language="language-SQL" class="language-SQL">select * from json_weather_data_view
+where date_trunc(&#39;month&#39;,observation_time) = &#39;2018-01-01&#39;
+limit 20;
+</code></pre>
+<p>Nota che i risultati sono esattamente simili a una normale sorgente di dati strutturati. Il tuo set di risultati potrebbe avere valori diversi per <code>observation_time</code>:</p>
+<p class="image-container"><img alt="risultati della query con vista" src="img/1f418f127b4bf730.png"></p>
+<h2 is-upgraded>Utilizzare un&#39;operazione di join per stabilire una correlazione tra data set</h2>
+<p>Ora uniremo dati meteorologici JSON con i dati <code>CITIBIKE.PUBLIC.TRIPS</code> per rispondere alla nostra domanda originale, ossia l&#39;impatto delle condizioni meteorologiche sul numero di spostamenti.</p>
+<p>Esegui la seguente query per mettere in join <code>WEATHER</code> a <code>TRIPS</code> e contare il numero di spostamenti associati a determinate condizioni meteorologiche:</p>
+<aside class="special"><p>Poiché ci troviamo ancora nel foglio di lavoro, il database <code>WEATHER</code> è ancora in uso. Di conseguenza, devi specificare completamente il riferimento alla tabella <code>TRIPS</code> fornendo il nome del database e dello schema.</p>
+</aside>
+<pre><code language="language-SQL" class="language-SQL">select weather_conditions as conditions
+,count(*) as num_trips
+from citibike.public.trips
+left outer join json_weather_data_view
+on date_trunc(&#39;hour&#39;, observation_time) = date_trunc(&#39;hour&#39;, starttime)
+where conditions is not null
+group by 1 order by 2 desc;
+</code></pre>
+<p class="image-container"><img alt="risultati delle condizioni meteorologiche" src="img/a155931384ef1a63.png"></p>
+<p>L&#39;obiettivo iniziale era stabilire se esistesse una correlazione tra il numero di spostamenti in bicicletta e le condizioni meteorologiche analizzando sia i dati sugli spostamenti che quelli sul meteo. I risultati riportati sopra ci forniscono una risposta chiara. Come prevedibile, il numero di spostamenti è significativamente maggiore quando è bel tempo!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Utilizzare Time Travel" duration="6">
+        <p>La potente funzionalità Time Travel di Snowflake consente di accedere ai dati storici e agli oggetti che li contengono in qualsiasi momento entro un determinato periodo di tempo. La finestra temporale predefinita è di 24 ore e può essere aumentata fino a 90 giorni se si utilizza Snowflake Enterprise Edition. La maggior parte dei data warehouse non è in grado di offrire questa funzionalità, ma naturalmente... Snowflake rende tutto più facile!</p>
+<p>Alcune applicazioni utili includono:</p>
+<ul>
+<li>Ripristinare oggetti relativi ai dati come tabelle, schemi e database che sono stati eliminati.</li>
+<li>Duplicare ed eseguire copie di backup dei dati in momenti chiave del passato.</li>
+<li>Analizzare l&#39;utilizzo e la manipolazione dei dati durante periodi di tempo specificati.</li>
+</ul>
+<h2 is-upgraded>Fare il drop e l&#39;undrop di una tabella</h2>
+<p>Per prima cosa, vediamo come possiamo ripristinare oggetti di dati che sono stati eliminati accidentalmente o intenzionalmente.</p>
+<p>Nel foglio di lavoro <code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>, esegui il seguente comando DROP per rimuovere la tabella <code>JSON_WEATHER_DATA</code>:</p>
+<pre><code language="language-SQL" class="language-SQL">drop table json_weather_data;
+</code></pre>
+<p>Esegui una query sulla tabella:</p>
+<pre><code language="language-SQL" class="language-SQL">select * from json_weather_data limit 10;
+</code></pre>
+<p>Nel riquadro dei risultati in basso dovrebbe comparire un errore, perché la tabella sottostante è stata rimossa:</p>
+<p class="image-container"><img alt="errore di tabella rimossa" src="img/b3e5cb9802b07b8d.png"></p>
+<p>Ora ripristina la tabella:</p>
+<pre><code language="language-SQL" class="language-SQL">undrop table json_weather_data;
+</code></pre>
+<p>La tabella json_weather_data dovrebbe essere ripristinata. Per verificarlo, esegui la seguente query:</p>
+<pre><code language="language-SQL" class="language-SQL">--verify table is undropped
+
+select * from json_weather_data limit 10; 
+</code></pre>
+<p class="image-container"><img alt="risultato della tabella ripristinata" src="img/1c83f7a8b9f40112.png"></p>
+<h2 is-upgraded>Eseguire il rollback di una tabella</h2>
+<p>Eseguiamo il rollback della tabella <code>TRIPS</code> nel database <code>CITIBIKE</code> a uno stato precedente per correggere un errore DML accidentale che sostituisce tutti i nomi delle stazioni nella tabella con la parola &#34;oops&#34;.</p>
+<p>Per prima cosa, esegui le seguenti istruzioni SQL per impostare il contesto corretto nel foglio di lavoro:</p>
+<pre><code language="language-SQL" class="language-SQL">use role sysadmin;
+
+use warehouse compute_wh;
+
+use database citibike;
+
+use schema public; 
+</code></pre>
+<p>Esegui il seguente comando per sostituire tutti i nomi delle stazioni nella tabella con la parola &#34;oops&#34;:</p>
+<pre><code language="language-SQL" class="language-SQL">update trips set start_station_name = &#39;oops&#39;;
+</code></pre>
+<p>Ora esegui una query che restituisce le prime 20 stazioni per numero di spostamenti. Nota che il risultato per i nomi delle stazioni contiene una sola riga:</p>
+<pre><code language="language-SQL" class="language-SQL">select
+start_station_name as &#34;station&#34;,
+count(*) as &#34;rides&#34;
+from trips
+group by 1
+order by 2 desc
+limit 20;
+</code></pre>
+<p class="image-container"><img alt="risultato con una riga" src="img/7c217a81e0eaaf86.png"></p>
+<p>Normalmente dovremmo metterci le mani nei capelli e sperare di avere un backup da qualche parte.</p>
+<p>In Snowflake, possiamo semplicemente eseguire un comando per trovare l&#39;ID query dell&#39;ultimo comando UPDATE e memorizzarlo in una variabile chiamata <code>$QUERY_ID</code>.</p>
+<pre><code language="language-SQL" class="language-SQL">set query_id =
+(select query_id from table(information_schema.query_history_by_session (result_limit=&gt;5))
+where query_text like &#39;update%&#39; order by start_time desc limit 1);
+</code></pre>
+<p>Utilizza Time Travel per ricreare la tabella con i nomi delle stazioni corretti:</p>
+<pre><code language="language-SQL" class="language-SQL">create or replace table trips as
+(select * from trips before (statement =&gt; $query_id));
+</code></pre>
+<p>Esegui di nuovo la query precedente per verificare che i nomi delle stazioni siano stati ripristinati:</p>
+<pre><code language="language-SQL" class="language-SQL">select
+start_station_name as &#34;station&#34;,
+count(*) as &#34;rides&#34;
+from trips
+group by 1
+order by 2 desc
+limit 20;
+</code></pre>
+<p class="image-container"><img alt="risultato con i nomi ripristinati" src="img/9f28f362225b2ee1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lavorare con i ruoli, ACCOUNTADMIN e l&#39;utilizzo dell&#39;account" duration="8">
+        <p>In questa sezione esploreremo alcuni aspetti del modello di sicurezza per il controllo degli accessi di Snowflake, come la creazione di un ruolo e l&#39;assegnazione di specifiche autorizzazioni. Esamineremo anche altri usi del ruolo ACCOUNTADMIN (amministratore dell&#39;account) che abbiamo presentato brevemente in una delle sezioni precedenti.</p>
+<p>Per continuare con la nostra storia, supponiamo che un nuovo DBA sia entrato a far parte del team di Citi Bike e di volergli assegnare un nuovo ruolo con meno privilegi del ruolo SYSADMIN predefinito del sistema.</p>
+<aside class="warning"><p><strong>Controllo degli accessi basato sui ruoli</strong> Snowflake offre un controllo degli accessi molto potente e granulare che definisce gli oggetti e le funzionalità a cui può accedere un utente e il livello di accesso di cui dispone. Per maggiori dettagli, consulta la <a href="https://docs.snowflake.com/user-guide/security-access-control-overview" target="_blank">documentazione di Snowflake</a>.</p>
+</aside>
+<h2 is-upgraded>Creare un nuovo ruolo e aggiungere un utente</h2>
+<p>Nel foglio di lavoro <code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>, passa al ruolo ACCOUNTADMIN per creare un nuovo ruolo. ACCOUNTADMIN combina i ruoli definiti dal sistema SYSADMIN e SECURITYADMIN. È il ruolo di livello più alto nell&#39;account e deve essere concesso solo a un numero limitato di utenti.</p>
+<p>Nel foglio di lavoro <code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>, esegui questo comando:</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+</code></pre>
+<p>Nota che in alto a destra nel foglio di lavoro il contesto è cambiato in ACCOUNTADMIN:</p>
+<p class="image-container"><img alt="contesto ACCOUNTADMIN" src="img/1ce33af499221e4e.png"></p>
+<p>Prima di utilizzarlo per il controllo degli accessi, è necessario assegnare a un ruolo almeno un utente. Creiamo quindi un nuovo ruolo chiamato <code>JUNIOR_DBA</code> e assegniamolo all&#39;utente Snowflake. Per completare questa attività devi conoscere il tuo nome utente, che è il nome che hai utilizzato per effettuare l&#39;accesso all&#39;interfaccia utente.</p>
+<p>Usa i seguenti comandi per creare il ruolo e assegnarlo a te. Prima di eseguire il comando GRANT ROLE, sostituisci <code>YOUR_USERNAME_GOES_HERE</code> con il tuo nome utente:</p>
+<pre><code language="language-SQL" class="language-SQL">create role junior_dba;
+
+grant role junior_dba to user YOUR_USERNAME_GOES_HERE; 
+</code></pre>
+<aside class="special"><p>Se provassi a eseguire questa operazione con un ruolo come SYSADMIN, non riusciresti per mancanza di privilegi. Di default (e intenzionalmente), il ruolo SYSADMIN non può creare nuovi ruoli o utenti.</p>
+</aside>
+<p>Modifica il contesto del foglio di lavoro per passare al nuovo ruolo <code>JUNIOR_DBA</code>:</p>
+<pre><code language="language-SQL" class="language-SQL">use role junior_dba;
+</code></pre>
+<p>In alto a destra nel foglio di lavoro, nota che il contesto è cambiato per riflettere il ruolo <code>JUNIOR_DBA</code>.</p>
+<p class="image-container"><img alt="contesto JUNIOR_DBA" src="img/575ebcf012a2eb20.png"></p>
+<p>Inoltre il warehouse non è selezionato, perché il ruolo appena creato non dispone di privilegi di utilizzo per alcun warehouse. Per correggere questo problema, torniamo al ruolo ADMIN e concediamo i privilegi di utilizzo per il warehouse <code>COMPUTE_WH</code>.</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+
+grant usage on warehouse compute_wh to role junior_dba; 
+</code></pre>
+<p>Torna al ruolo <code>JUNIOR_DBA</code>. Ora dovresti essere in grado di utilizzare <code>COMPUTE_WH</code>.</p>
+<pre><code language="language-SQL" class="language-SQL">use role junior_dba;
+
+use warehouse compute_wh; 
+</code></pre>
+<p>Infine, puoi notare che nel riquadro del browser degli oggetti di database sulla sinistra non compaiono più i database <code>CITIBIKE</code> e <code>WEATHER</code>. Il motivo è che il ruolo <code>JUNIOR_DBA</code> non dispone dei relativi privilegi di accesso.</p>
+<p>Torna al ruolo ACCOUNTADMIN e concedi a <code>JUNIOR_DBA</code> il privilegio USAGE necessario per visualizzare e utilizzare i database <code>CITIBIKE</code> e <code>WEATHER</code>:</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+
+grant usage on database citibike to role junior_dba;
+
+grant usage on database weather to role junior_dba; 
+</code></pre>
+<p>Passa al ruolo <code>JUNIOR_DBA</code>:</p>
+<pre><code language="language-SQL" class="language-SQL">use role junior_dba;
+</code></pre>
+<p>Nota che ora i database <code>CITIBIKE</code> e <code>WEATHER</code> compaiono nel riquadro del browser degli oggetti di database sulla sinistra. Se non compaiono, prova a fare clic su <strong>...</strong> nel riquadro e poi fare clic su <strong>Refresh</strong>.</p>
+<p class="image-container"><img alt="riquadro browser degli oggetti con database" src="img/ca8ad7b1ccd3299e.png"></p>
+<h2 is-upgraded>Visualizzare l&#39;interfaccia utente dell&#39;amministratore dell&#39;account</h2>
+<p>Impostiamo nuovamente il nostro ruolo di controllo degli accessi su <code>ACCOUNTADMIN</code> per vedere altre aree dell&#39;interfaccia utente accessibili solo con questo ruolo. Tuttavia, per eseguire questa attività, utilizza l&#39;interfaccia utente invece del foglio di lavoro.</p>
+<p>Per prima cosa fai clic sull&#39;icona <strong>Home</strong> nell&#39;angolo superiore sinistro del foglio di lavoro. Quindi, nell&#39;angolo superiore sinistro dell&#39;interfaccia utente, fai clic sul tuo nome per visualizzare il menu delle preferenze utente. Nel menu, vai a <strong>Switch Role</strong> e seleziona ACCOUNTADMIN.</p>
+<p class="image-container"><img alt="cambiare ruolo tramite UI" src="img/214666277b661dea.png"></p>
+<aside class="warning"><p><strong>Ruoli nelle preferenze utente e nel foglio di lavoro</strong> Perché abbiamo utilizzato il menu delle preferenze per cambiare ruolo invece del foglio di lavoro? La sessione UI e ciascun foglio di lavoro hanno ruoli separati. Il ruolo della sessione UI controlla gli elementi che puoi visualizzare e utilizzare nell&#39;interfaccia utente, mentre il ruolo del foglio di lavoro controlla solo gli oggetti e le azioni a cui puoi accedere all&#39;interno del ruolo.</p>
+</aside>
+<p>Nota come, una volta impostata la sessione UI sul ruolo ACCOUNTADMIN, sotto <strong>Admin</strong> compaiono nuove schede.</p>
+<h3 is-upgraded>Usage</h3>
+<p class="image-container"><img alt="utilizzo account" src="img/8d884fa261e50a8a.png"></p>
+<p>La scheda <strong>Usage</strong> visualizza le seguenti informazioni, ciascuna con la propria pagina:</p>
+<ul>
+<li><strong>Organization</strong>: utilizzo dei crediti in tutti gli account della tua organizzazione.</li>
+<li><strong>Consumption</strong>: crediti consumati dai virtual warehouse nell&#39;account corrente.</li>
+<li><strong>Storage</strong>: quantità media di dati archiviati in tutti i database, gli stage interni e Snowflake Fail-Safe nell&#39;account corrente per il mese appena trascorso.</li>
+<li><strong>Transfers</strong>: quantità media di dati trasferiti fuori dalla regione (per l&#39;account corrente) verso altre regioni per il mese appena trascorso.</li>
+</ul>
+<p>I filtri nell&#39;angolo superiore destro di ogni pagina consentono di suddividere le visualizzazioni di utilizzo/consumo/ecc. in base a varie misure.</p>
+<h3 is-upgraded>Security</h3>
+<p class="image-container"><img alt="utilizzo account" src="img/7120e6f745df5b1a.png"></p>
+<p>La scheda <strong>Security</strong> contiene le policy di rete create per l&#39;account Snowflake. È possibile creare nuove policy di rete selezionando &#34;+ Network Policy&#34; in alto a destra nella pagina.</p>
+<h3 is-upgraded>Billing</h3>
+<p class="image-container"><img alt="utilizzo account" src="img/f0aa505b50d2f777.png"></p>
+<p>La scheda <strong>Billing</strong> contiene il metodo di pagamento per l&#39;account:</p>
+<ul>
+<li>Se sei un cliente Snowflake con un contratto, la scheda mostra il nome associato ai dati del tuo contratto.</li>
+<li>Se sei un cliente Snowflake on demand, la scheda mostra la carta di credito utilizzata per pagare mensilmente, se è stata inserita. Se non è stata registrata una carta di credito, puoi aggiungerla per continuare a utilizzare Snowflake al termine del periodo di prova.</li>
+</ul>
+<p>Per la prossima sezione, mantieni il ruolo ACCOUNTADMIN per la sessione UI.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Condividere i dati in modo sicuro e utilizzare il Marketplace" duration="12">
+        <p>Snowflake consente l&#39;accesso ai dati con account diversi tramite le funzionalità di Secure Data Sharing. Le condivisioni vengono create dai provider di dati e importate dai data consumer tramite il proprio account Snowflake o un reader account Snowflake attivato. Il data consumer può essere un&#39;entità esterna o un&#39;altra business unit interna, che deve avere il proprio account Snowflake univoco.</p>
+<p>Con Secure Data Sharing:</p>
+<ul>
+<li>Esiste una sola copia dei dati, che risiede nell&#39;account del provider di dati.</li>
+<li>I dati condivisi sono sempre aggiornati, in tempo reale e immediatamente disponibili per i data consumer.</li>
+<li>I provider possono stabilire criteri di accesso dettagliati e revocabili alle condivisioni.</li>
+<li>La condivisione dei dati è semplice e sicura, soprattutto in confronto ai vecchi metodi di condivisione, che spesso erano manuali e poco sicuri, come il trasferimento di file <code>.csv</code> di grandi dimensioni tramite internet.</li>
+</ul>
+<aside class="special"><p><strong>Condivisione dei dati tra regioni e cloud diversi</strong> Per condividere dati tra regioni o piattaforme cloud diverse, devi configurare la replica. Questo non rientra nell&#39;ambito di questo workshop, ma puoi trovare ulteriori informazioni in <a href="https://www.snowflake.com/trending/what-is-data-replication" target="_blank">questo articolo Snowflake</a>.</p>
+</aside>
+<p>Snowflake utilizza Secure Data Sharing per fornire dati sull&#39;utilizzo dell&#39;account e data set campione a tutti gli account Snowflake. In questo contesto, Snowflake funge da provider di dati per i dati e tutti gli altri account.</p>
+<p>Secure Data Sharing è anche alla base del Marketplace Snowflake, che è a disposizione di tutti i clienti di Snowflake e consente di trovare e accedere a set di dati di terze parti offerti da numerosi provider di dati e fornitori SaaS. Di nuovo, in questo modello di condivisione i dati non escono mai dall&#39;account del provider e i data set possono essere utilizzati senza alcuna trasformazione.</p>
+<h2 is-upgraded>Visualizzare le condivisioni esistenti</h2>
+<p>Dalla home page, vai a <strong>Data</strong> &gt; <strong>Databases</strong>. Nell&#39;elenco di database, osserva la colonna <strong>SOURCE</strong>. Dovresti vedere due database con l&#39;indicazione <code>Local</code> in questa colonna. Questi sono i due database che abbiamo creato in precedenza in questo workshop. Per l&#39;altro database, <code>SNOWFLAKE</code>, in questa colonna compare <code>Share</code>, a indicare che è condiviso da un provider.</p>
+<p class="image-container"><img alt="freccia sull’icona del database" src="img/9cca7e7a65947747.png"></p>
+<h2 is-upgraded>Creare una condivisione in uscita</h2>
+<p>Torniamo alla storia di Citi Bike e supponiamo di essere l&#39;amministratore dell&#39;account Snowflake di Citi Bike. Abbiamo un partner di fiducia che desidera analizzare i dati contenuti nel nostro database <code>TRIPS</code> in tempo quasi reale. Anche questo partner ha un account Snowflake nella stessa regione del nostro account. Utilizziamo quindi Secure Data Sharing per consentirgli di accedere a queste informazioni.</p>
+<p>Vai a <strong>Data</strong> &gt; <strong>Private Sharing</strong> e quindi, nella parte alta della scheda, fai clic su <strong>Shared by My Account</strong>. Fai clic sul pulsante <strong>Share</strong> nell&#39;angolo superiore destro e seleziona <strong>Create a Direct Share</strong>:</p>
+<p class="image-container"><img alt="pulsante condivisioni in uscita" src="img/cd89c2f5d7184298.png"></p>
+<p>Fai clic su <strong>+ Select Data</strong> e vai al database <code>CITIBIKE</code> e allo schema <code>PUBLIC</code>. Seleziona le due tabelle che abbiamo creato in questo schema e fai clic sul pulsante <strong>Done</strong>:</p>
+<p class="image-container"><img alt="campi della condivisione" src="img/11826cb562ca6ac2.png"></p>
+<p>Il nome predefinito della condivisione è un nome generico seguito da un valore numerico casuale. Sostituisci il nome predefinito con un valore più descrittivo che ci consentirà di identificare più facilmente la condivisione in futuro (ad es. <code>ZERO_TO_SNOWFLAKE_SHARED_DATA</code>. Puoi anche aggiungere un commento.</p>
+<p>In una situazione reale, a questo punto l&#39;amministratore dell&#39;account di Citi Bike aggiungerebbe uno o più account consumer alla condivisione, ma per questo workshop ci fermeremo qui.</p>
+<p>Fai clic sul pulsante <strong>Create Share</strong> nella parte inferiore della finestra di dialogo:</p>
+<p class="image-container"><img alt="messaggio di successo" src="img/9a779766bb0908b6.png"></p>
+<p>La finestra di dialogo si chiude e la pagina mostra la condivisione sicura che hai creato:</p>
+<p class="image-container"><img alt="condivisione TRIPS_SHARE" src="img/1054c2298f427b81.png"></p>
+<p>Puoi aggiungere data consumer, aggiungere/modificare la descrizione e modificare gli oggetti nella condivisione in qualsiasi momento. In questa pagina, fai clic sul pulsante <strong>&lt;</strong> accanto al nome della condivisione per tornare alla pagina <strong>Share with Other Accounts</strong>:</p>
+<p class="image-container"><img alt="condivisione TRIPS_SHARE" src="img/7ef3b0f4e0abcfed.png"></p>
+<p>Abbiamo dimostrato che bastano pochi secondi per concedere ad altri account l&#39;accesso ai dati nel tuo account Snowflake in modo sicuro senza bisogno di copiare o trasferire i dati!</p>
+<p>Snowflake offre vari metodi per condividere i dati in modo sicuro senza compromettere la confidenzialità. Oltre alle tabelle puoi condividere viste protette, UDF (User Defined Function) protette e altri oggetti protetti. Per maggiori informazioni sull&#39;utilizzo di questi metodi per condividere i dati impedendo l&#39;accesso a informazioni sensibili, consulta la <a href="https://docs.snowflake.com/en/user-guide/data-sharing-secure-views.html" target="_blank">documentazione di Snowflake</a>.</p>
+<h2 is-upgraded>Marketplace Snowflake</h2>
+<p>Assicurati di utilizzare il ruolo ACCOUNTADMIN e vai al <strong>Marketplace</strong>:</p>
+<p class="image-container"><img alt="scheda marketplace" src="img/f68187f997fbab13.png"></p>
+<h3 is-upgraded>Trovare un prodotto nel marketplace</h3>
+<p>La casella di ricerca sul lato superiore consente di cercare un prodotto in catalogo. L&#39;elenco a discesa a destra della casella di ricerca consente di filtrare i risultati per provider, esigenze aziendali e categorie.</p>
+<p>Digita <code>COVID</code> nella casella di ricerca, scorri i risultati e seleziona <strong>COVID-19 Epidemiological Data</strong> (fornito da Starschema).</p>
+<p class="image-container"><img alt="scheda health" src="img/65eaa2ae94859dda.png"></p>
+<p>Nella pagina di <strong>COVID-19 Epidemiological Data</strong> puoi scoprire di più sul data set e vedere alcune query che ne esemplificano l&#39;uso. Al termine, fai clic sul pulsante <strong>Get</strong> per rendere disponibili queste informazioni nel tuo account Snowflake:</p>
+<p class="image-container"><img alt="recuperare campi dati" src="img/bef8d41daf4d9db5.png"></p>
+<p>Verifica le informazioni nella finestra di dialogo e fai nuovamente clic su <strong>Get</strong>:</p>
+<p class="image-container"><img alt="recuperare campi dati" src="img/972d3855489076f5.png"></p>
+<p>Ora puoi fare clic su <strong>Done</strong> o scegliere di eseguire le query di esempio fornite da Starschema:</p>
+<p class="image-container"><img alt="recuperare campi dati" src="img/d145f0c4d17fd68f.png"></p>
+<p>Se scegli <strong>Open</strong>, si apre un nuovo foglio di lavoro in una nuova scheda/finestra del browser:</p>
+<ol type="1">
+<li>Imposta il contesto</li>
+<li>Seleziona la query che vuoi eseguire (o colloca il cursore nel testo della query).</li>
+<li>Fai clic sul pulsante <strong>Run/Play</strong> (o usa i tasti di scelta rapida).</li>
+<li>Puoi vedere i dati dei risultati nel riquadro in basso.</li>
+<li>Dopo avere eseguito le query di esempio, fai clic sull&#39;icona <strong>Home</strong> nell&#39;angolo superiore sinistro.</li>
+</ol>
+<p class="image-container"><img alt="recuperare campi dati" src="img/9cde374afcc7c1c8.png"></p>
+<p>A questo punto:</p>
+<ol type="1">
+<li>Fai clic su <strong>Data</strong> &gt; <strong>Databases</strong></li>
+<li>Fai clic sul database <code>COVID19_BY_STARSCHEMA_DM</code>.</li>
+<li>Puoi vedere i dettagli sugli schemi, le tabelle e le viste disponibili per l&#39;esecuzione di query.</li>
+</ol>
+<p class="image-container"><img alt="database covid-19" src="img/64d8b592cac65f81.png"></p>
+<p>Ecco fatto! Hai completato la registrazione per il data set COVID-19 di Starschema, che viene aggiornato quotidianamente con dati globali sul COVID. Nota che non abbiamo dovuto creare database, tabelle, viste o un processo ETL. Abbiamo semplicemente cercato e ottenuto accesso a dati condivisi dal Marketplace Snowflake.</p>
+<p>aside positive Per maggiori informazioni su come utilizzare la nuova interfaccia del foglio di lavoro, consulta la <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight" target="_blank">documentazione di Snowsight</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ripristinare l&#39;ambiente Snowflake" duration="2">
+        <p>Se desideri ripristinare il tuo ambiente eliminando tutti gli oggetti creati nel corso di questo workshop, esegui queste istruzioni SQL in un foglio di lavoro.</p>
+<p>Per prima cosa, assicurati di utilizzare il ruolo ACCOUNTADMIN nel foglio di lavoro:</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+</code></pre>
+<p>Quindi esegui i seguenti comandi SQL per fare il drop di tutti gli oggetti che abbiamo creato durante il workshop:</p>
+<pre><code language="language-SQL" class="language-SQL">drop share if exists zero_to_snowflake_shared_data; 
+-- If necessary, replace &#34;zero_to_snowflake-shared_data&#34; with the name you used for the share
+
+drop database if exists citibike;
+
+drop database if exists weather;
+
+drop warehouse if exists analytics_wh;
+
+drop role if exists junior_dba; 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusione e fasi successive" duration="2">
+        <p>Congratulazioni per avere completato questo workshop introduttivo! Hai appreso le nozioni fondamentali di Snowflake e puoi iniziare ad applicarle ai tuoi dati. Potrai tornare a consultare questa guida se avrai bisogno di un ripasso.</p>
+<p>Ti invitiamo a continuare la tua prova gratuita caricando i tuoi dati di esempio o di produzione e utilizzando alcune delle funzionalità più avanzate di Snowflake non trattate in questo workshop.</p>
+<h2 is-upgraded>Risorse aggiuntive:</h2>
+<ul>
+<li>Scopri di più sulla documentazione di <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight" target="_blank">Snowsight</a>.</li>
+<li>Leggi il documento <a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">Definitive Guide to Maximizing Your Free Trial</a>.</li>
+<li>Partecipa a un <a href="https://www.snowflake.com/about/events/" target="_blank">evento Snowflake online o in presenza</a> e scopri di più sulle nostre funzionalità e sui nostri clienti.</li>
+<li>Entra a far parte della <a href="https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake" target="_blank">community Snowflake</a>.</li>
+<li>Iscriviti alla <a href="https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University" target="_blank">Snowflake University</a>.</li>
+<li>Contatta il nostro <a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">team di vendita</a> per maggiori informazioni.</li>
+</ul>
+<h2 is-upgraded>Cosa abbiamo visto:</h2>
+<ul>
+<li>Come creare stage, database, tabelle, viste e virtual warehouse.</li>
+<li>Come caricare dati strutturati e semi-strutturati.</li>
+<li>Come eseguire query analitiche sui dati in Snowflake, compresi i join tra tabelle.</li>
+<li>Come clonare oggetti.</li>
+<li>Come annullare gli errori dell&#39;utente utilizzando Time Travel.</li>
+<li>Come creare ruoli e utenti e concedere privilegi.</li>
+<li>Come condividere dati con altri account in modo facile e sicuro.</li>
+<li>Come utilizzare i data set disponibili nel Marketplace Snowflake.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_snowflake_devops",
+  "duration": 71,
+  "title": "Getting Started with Snowflake DevOps",
+  "summary": "Getting Started with Snowflake DevOps",
+  "source": "getting_started_with_devops_in_snowflake/getting_started_with_devops_in_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "devops",
+    "getting-started",
+    "data-engineering"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "getting_started_with_snowflake_devops"
+}

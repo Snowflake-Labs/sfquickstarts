@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "auto_ingest_twitter_data",
+  "duration": 43,
+  "title": "Auto-Ingest Twitter Data into Snowflake",
+  "summary": "Auto-Ingest Twitter Data into Snowflake",
+  "source": "auto_ingest_twitter_data/auto-ingest-twitter-data.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-engineering",
+    "app-development",
+    "solution-examples",
+    "marketing"
+  ],
+  "tags": [
+    "autoingest",
+    "cloudstorage",
+    "snowpipe",
+    "twitter"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "auto_ingest_twitter_data"
+}

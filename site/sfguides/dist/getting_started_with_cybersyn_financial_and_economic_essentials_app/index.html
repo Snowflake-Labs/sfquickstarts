@@ -1,0 +1,216 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Quickstart Guide: Cybersyn Financial &amp; Economic Essentials App</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_cybersyn_financial_and_economic_essentials_app"
+                  title="Quickstart Guide: Cybersyn Financial &amp; Economic Essentials App"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img alt="logo-image" src="img/d7e46d209bc586bc.png"></p>
+<p>In this guide, we will review how to access and use Cybersyn&#39;s Financial &amp; Economic Essentials App.</p>
+<h2 is-upgraded>What is a Snowflake Native App?</h2>
+<p><a href="https://www.snowflake.com/native-apps/" target="_blank">Snowflake Native Apps</a> are deployed by third party companies, like Cybersyn, through Snowflake Marketplace. Instead of customers having to copy data to apps, this technology enables data to be deployed and distributed directly through an app that lives inside an end users&#39; existing Snowflake account.</p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit is a pure Python <a href="https://github.com/streamlit/streamlit" target="_blank">open source</a> application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about <a href="https://streamlit.io/" target="_blank">Streamlit</a>.</p>
+<h2 is-upgraded>What you&#39;ll get?</h2>
+<p>A Streamlit application built natively in Snowflake that is connected directly to a database. This application allows users to quickly demonstrate usage examples for the data and then copy them to query on the underlying data themselves.</p>
+<p>This data specifically focuses on the US banking system and respective financials and performance. The application includes data covering bank financials, locations, corporate structures, and more as well as key economic indicators such as employment (and unemployment) numbers, inflation metrics, and central bank interest rates.</p>
+<p>The dataset combines data from following sources to give a holistic view of the current state of the US financial industry:</p>
+<ul>
+<li>Federal Deposit Insurance Corporation (FDIC)</li>
+<li>Federal Reserve Economic Data (FRED)</li>
+<li>Federal Financial Institutions Examination Council (FFIEC)</li>
+<li>Bureau of Labor Statistics (BLS)</li>
+<li>Consumer Financial Protection Bureau (CFPB)</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll Learn?</h2>
+<p>How to ‘Get&#39; a public, free Native App from Snowflake Marketplace</p>
+<p>How to interact with Cybersyn&#39;s Financial &amp; Economic Essentials App in Snowflake</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake account</a></p>
+<ul>
+<li>To ensure you can mount data from the Marketplace, login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges is required for this step). Keep this tab open during the session. <ul>
+<li>Click on the Billing on the left side panel</li>
+<li>Click on Terms and Billing</li>
+<li>Read and accept terms to continue</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the Application in Snowflake Marketplace" duration="4">
+        <p>After logging into your Snowflake account, access the <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KIU" target="_blank">Cybersyn Financial &amp; Economic Essentials App in the Marketplace</a>.</p>
+<ul>
+<li>Click the Get button on the top right box on the listing</li>
+<li>Read and accept terms by clicking Get again <ul>
+<li>Note: This data listing is available for free, at no additional charge.</li>
+</ul>
+</li>
+<li>The application is now available in your Snowflake instance, as the Financial &amp; Economic Essentials App under Apps on the left hand side panel.</li>
+<li>The database is also now available in your Snowflake instance, as the Financial &amp; Economic Essentials App database under Data on the left hand side pane. This includes all of the underlying data tables that you can query on directly</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Walk-through of the App Functionality" duration="3">
+        <p>Access the Financial &amp; Economic Essentials App in the Apps section in your Snowflake account.</p>
+<p class="image-container"><img alt="overviewgif" src="img/61234a7fb16f342.gif"></p>
+<p>Cybersyn has developed this Streamlit application on our database for users to get example use cases and demo the underlying data tables.</p>
+<p>Each chart display includes the underlying raw data and a SQL query to copy and paste into your own Snowflake Worksheets.</p>
+<h2 is-upgraded>Layout &amp; Walkthrough</h2>
+<p>The includes a side panel navigation bar where you can flip through the following tabs:</p>
+<ul>
+<li>Overview: Overview of the data included in the application with a case study with example charts showcasing data from the recent regional banking crisis from earlier in 2023 when Silicon Valley Bank shut down.</li>
+<li>FRED Time Series: Chart of data sourced from FRED, a database of economic indicators published by the St Louis Federal Reserve from multiple government sources. Data includes consumer price index (CPI) inflation and monthly retail sales; as well as, financial-institution-specific data such as the flow of deposits for small and large banks, total bank liabilities, the outstanding balance of commercial real estate loans, and more.</li>
+<li>CFPB Time Series: Data sourced from the Consumer Financial Protection Bureau (CFPB), on financial complaints in the US. Two charts: (1) by Company and (2) by Product.</li>
+<li>FDIC Time Series: Chart of the data sourced from FDIC about locations of active and inactive banks, charter types, regulator information, and bank level total assets, FDIC insured deposits, return on equity, and more.</li>
+<li>FFIEC Time Series: Chart of the data sourced from FFIEC on bank brand openings and closings.</li>
+</ul>
+<h2 is-upgraded>Summary of the Overview Charts</h2>
+<h3 is-upgraded>Chart 1: Deposits by Size of Bank</h3>
+<p class="image-container"><img alt="screenshot1" src="img/759dba58f0913426.png"></p>
+<ul>
+<li>This chart allows the user to see the US bank deposits broken down by Top 25 Banks and All Others since January 1999.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h3 is-upgraded>Chart 2: Share of Total Commercial Bank Deposits, Small Banks (Non-Top 25)</h3>
+<p class="image-container"><img alt="screenshot2" src="img/cbd720ca30749d0f.png"></p>
+<ul>
+<li>This chart shows the share of deposits help by the banks that are not in the top 25 US banks by total deposits.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h3 is-upgraded>Chart 3: Deposit Flows by Size of Bank, WoW</h3>
+<p class="image-container"><img alt="screenshot3" src="img/6fc5166b8029944d.png"></p>
+<ul>
+<li>This chart shows the WoW deposit inflows and (outflows) for banks.</li>
+<li>The chart can be filtered by date and the user can add in ‘Top 25 Banks&#39; and ‘All Other Banks&#39; to see the two breakdowns.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h3 is-upgraded>Chart 4: Monthly Change in Bank Branches Since COVID-19</h3>
+<p class="image-container"><img alt="screenshot4" src="img/5bb635d1c1105410.png"></p>
+<ul>
+<li>This chart shows the monthly and cumulative change of bank branch openings and closures since January 2018.</li>
+<li>Data is sourced from <a href="https://www.ffiec.gov/npw/FinancialReport/DataDownload" target="_blank">FFIEC</a>.</li>
+</ul>
+<h3 is-upgraded>Chart 5: As of Dec ‘23: Banks w/ $10B Assets with Lowest FDIC Insured Deposits</h3>
+<p class="image-container"><img alt="screenshot5" src="img/8f5858d754aa8e23.png"></p>
+<ul>
+<li>This chart shows the banks with lowest FDIC insured deposits as of December 2022.</li>
+<li>Data is sourced from <a href="https://banks.data.fdic.gov/docs/" target="_blank">FDIC</a>.</li>
+</ul>
+<h3 is-upgraded>Chart 6: Bank Failures by Quarter</h3>
+<p class="image-container"><img alt="screenshot6" src="img/7de4c7c8f14d072d.png"></p>
+<ul>
+<li>This chart shows the number of bank failures by quarter.</li>
+<li>Data is sourced from <a href="https://www.ffiec.gov/npw/FinancialReport/DataDownload" target="_blank">FFIEC</a>.</li>
+</ul>
+<h3 is-upgraded>Chart 7: Banking Industry Net Interest Income vs. Fed Funds Rate</h3>
+<p class="image-container"><img alt="screenshot7" src="img/751aac9f51d1f2e1.png"></p>
+<ul>
+<li>This chart shows net interest income by the bar charts against the left axis and the Fed Funds Rate in the line graph against the right axis since March 1985.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h3 is-upgraded>Chart 8: Interest Expense / Interest Income Ratio vs Fed Funds Rate</h3>
+<p class="image-container"><img alt="screenshot8" src="img/9aee2ed7a5fd4100.png"></p>
+<ul>
+<li>This chart shows the ratio of Interest Expense to Interest Income and compares it to the Fed Funds Rate since March 1985.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="How to use the app to query the data" duration="3">
+        <p>Cybersyn has developed this Streamlit application on our database for users to get example use cases and demo the underlying data tables. Users can filter a chart then get the SQL query for the underlying database to easily access the raw data in their Snowflake Account.</p>
+<p class="image-container"><img alt="overview_gif" src="img/231ae1bab6a2bff.gif"></p>
+<h2 is-upgraded>Step 1: Filter the data in the App</h2>
+<p><strong>Example</strong>: FRED Time Series Tab</p>
+<ul>
+<li>Filter for <ul>
+<li><strong>Measure</strong>: &#34;Retail Sales: Jewelry Stores&#34;</li>
+<li><strong>Seasonally Adjusted</strong>: &#34;True&#34;</li>
+<li><strong>Units</strong>: &#34;USD&#34;</li>
+<li><strong>Years</strong>: 2005 to 2023</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 2: Copy the SQL Query</h2>
+<p><strong>Example</strong>: FRED Time Series Tab</p>
+<ul>
+<li>On the chart, click &#34;SQL Query&#34;</li>
+<li>Click on the Copy button <img alt="copushape" src="img/6f63c045637f7373.png"> to copy the SQL code</li>
+</ul>
+<h2 is-upgraded>Step 3: Run the SQL Query</h2>
+<p><strong>Example</strong>: On Comparisons by Year tab</p>
+<ul>
+<li>Click on the Open in worksheet button <img alt="copushape" src="img/45d49a55c5dedf52.png"></li>
+<li>Paste the SQL code into your worksheet</li>
+<li>Click the blue play button in the top right corner</li>
+<li>Now you have a query that you can modify and edit in a Snowflake Worksheet</li>
+</ul>
+<h2 is-upgraded><strong>Success! You have learned how to use the Cybersyn Financial &amp; Economic Essentials App!</strong></h2>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "building_a_custom_model_for_anomaly_detection",
+  "duration": 0,
+  "title": "Build a Custom Model to Detect Anomalies on the Production Floor",
+  "summary": "Build a Custom Model to Detect Anomalies on the Production Floor",
+  "source": "build_a_custom_model_for_anomaly_detection/build_a_custom_model_for_anomaly_detection.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "building_a_custom_model_for_anomaly_detection"
+}

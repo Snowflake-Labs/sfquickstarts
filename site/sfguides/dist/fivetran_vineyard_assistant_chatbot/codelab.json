@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "fivetran_vineyard_assistant_chatbot",
+  "duration": 25,
+  "title": "Build a RAG-based, GenAI chatbot using Structured Data with Snowflake and Fivetran",
+  "summary": "Build a RAG-based GenAI Streamlit application with Fivetran and Snowflake using structured data.",
+  "source": "fivetran_vineyard_assistant_chatbot/fivetran_vineyard_assistant_chatbot.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "cortex"
+  ],
+  "tags": [
+    "chat",
+    "fivetran",
+    "genai",
+    "rag",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "fivetran_vineyard_assistant_chatbot"
+}

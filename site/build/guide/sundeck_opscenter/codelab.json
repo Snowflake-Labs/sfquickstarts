@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "sundeck_opscenter",
+  "duration": 28,
+  "title": "Getting Started with Sundeck OpsCenter",
+  "summary": "This Guide shows you how to quickly get started with Sundeck OpsCenter on Snowflake, a free Native App which providing a range of tools to better understand, manage, and alert on Snowflake activity and spend.",
+  "source": "sundeck_opscenter/sundeck_opscenter.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "costmanagement",
+    "gettingstarted",
+    "querymonitoring",
+    "web",
+    "workloadanalytics"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "sundeck_opscenter"
+}

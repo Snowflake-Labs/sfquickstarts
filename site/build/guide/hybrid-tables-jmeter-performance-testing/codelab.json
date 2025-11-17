@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "hybrid-tables-jmeter-performance-testing",
+  "duration": 18,
+  "title": "Hybrid Table Performance Testing with JMeter",
+  "summary": "Execute a simple performance test to evaluate hybrid tables.",
+  "source": "hybrid-tables-jmeter-performance-testing/hybrid-tables-jmeter-performance-testing.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "unistore",
+    "hybridtables"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "hybridtables",
+    "unistore",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "hybrid-tables-jmeter-performance-testing"
+}

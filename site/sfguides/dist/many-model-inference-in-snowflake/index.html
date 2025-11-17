@@ -1,0 +1,165 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Many Model Inference in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="many-model-inference-in-snowflake"
+                  title="Many Model Inference in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Many datasets can be easily partitioned into multiple independent subsets. For example, a dataset containing sales data for a chain of stores can be partitioned by store number. A separate model can then be trained for each partition. Training and inference operations on the partitions can be parallelized, reducing the wall-clock time for these operations. Furthermore, since individual stores likely differ somewhat in how their features affect their sales, this approach can actually lead to more accurate inference at the store level.</p>
+<p>In this quickstart, you will use the <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a> to implement <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/partitioned-custom-models" target="_blank">partitioned</a> inference using custom models. When using the model, the registry partitions the dataset and predicts the partitions in parallel using all the nodes and cores in your warehouse. Finally, it combines the results into a single dataset. This differs from the <a href="https://quickstarts.snowflake.com/guide/partitioned-ml-model/index.html?index=..%2F..index#0" target="_blank">Getting Started with Partitioned Models in Snowflake Model Registry</a> quickstart by implementing a &#34;stateful&#34; model that runs training independently of inference. This allows you to pretrain a list of models, then log them as a single model in Snowflake which loads fitted models during inference.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a Snowflake account with Accountadmin.</li>
+<li>Access to run Notebooks in Snowflake</li>
+<li>Foundational knowledge of Data Science workflows</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to use Snowflake Model Registry to implement paritioned model inference</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A &#34;stateful&#34; partitioned custom model</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Your Account" duration="2">
+        <p>Complete the following steps to setup your account:</p>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and the following SQL in the worksheet</li>
+<li>Adjust &lt;YOUR_USER&gt; to your user</li>
+<li>Run all commands to create Snowflake objects</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE MANY_MODELS_USER;
+GRANT ROLE MANY_MODELS_USER to USER &lt;YOUR_USER&gt;;
+
+-- create our virtual warehouse. We&#39;ll use snowpark optimized to ensure we have enough memory
+CREATE OR REPLACE WAREHOUSE MANY_MODELS_WH WITH
+  WAREHOUSE_SIZE = &#39;MEDIUM&#39;
+  WAREHOUSE_TYPE = &#39;SNOWPARK-OPTIMIZED&#39;;
+
+GRANT ALL ON WAREHOUSE MANY_MODELS_WH TO ROLE MANY_MODELS_USER;
+
+-- Next create a new database and schema,
+CREATE OR REPLACE DATABASE MANY_MODELS_DATABASE;
+CREATE OR REPLACE SCHEMA MANY_MODELS_SCHEMA;
+
+GRANT OWNERSHIP ON DATABASE MANY_MODELS_DATABASE TO ROLE MANY_MODELS_USER COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE MANY_MODELS_DATABASE  TO ROLE MANY_MODELS_USER COPY CURRENT GRANTS;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Notebooks" duration="30">
+        <h2 is-upgraded>Setup Notebook</h2>
+<ul>
+<li>Download the setup notebook from this <a href="https://github.com/Snowflake-Labs/sfguide-many-model-inference-in-snowflake/blob/main/notebooks/0_start_here.ipynb" target="_blank">link</a></li>
+<li>Change role to MANY_MODELS_USER</li>
+<li>Navigate to Projects &gt; Notebooks in Snowsight</li>
+<li>Click Import .ipynb from the + Notebook dropdown</li>
+<li>Create a new notebok with the following settings <ul>
+<li>Notebook Location: MANY_MODELS_DATABASE, MANY_MODELS_SCHEMA</li>
+<li>Warehouse: MANY_MODELS_WH</li>
+</ul>
+</li>
+<li>Click Packages in the top right, add <code>snowflake-ml-python</code> and <code>cloudpickle==2.2.1</code></li>
+<li>Run all of the cells</li>
+</ul>
+<h2 is-upgraded>Demo Notebook</h2>
+<ul>
+<li>Download the demo notebook from this <a href="https://github.com/Snowflake-Labs/sfguide-many-model-inference-in-snowflake/blob/main/notebooks/1_many_model_inference.ipynb" target="_blank">link</a></li>
+<li>Run the same steps above to import the notebook, then run it</li>
+</ul>
+<p class="image-container"><img alt="notebook" src="img/c55544f89df18a69.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Partitioning datasets for machine learning enables efficient parallel processing and improved accuracy by tailoring models to specific subsets of data, such as store-specific sales trends. With Snowflake&#39;s Model Registry, you can seamlessly implement partitioned inference using stateful models. This approach allows you to train models independently for each partition, log them as a single model, and leverage Snowflake&#39;s compute resources to perform parallelized inference across all partitions.</p>
+<p>By adopting this workflow, you reduce wall-clock time for training and inference, enhance scalability, and improve prediction accuracy at the partition level. Take advantage of Snowflake&#39;s capabilities to streamline your machine learning pipeline—start exploring partitioned modeling with Snowflake&#39;s <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Model Registry documentation</a> and <a href="https://quickstarts.snowflake.com/guide/partitioned-ml-model/index.html?index=..%2F..index#0" target="_blank">quickstart guides</a> today!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to implemente a &#34;stateful&#34; custom partitioned model in Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/partitioned-custom-models" target="_blank">Partitioned Model Documentation</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/partitioned-ml-model/index.html?index=..%2F..index#0" target="_blank">Getting Started with Partitioned Models in Snowflake Model Registry Quickstart</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

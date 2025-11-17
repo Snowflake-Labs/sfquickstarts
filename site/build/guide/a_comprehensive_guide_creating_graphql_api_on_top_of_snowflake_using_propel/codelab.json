@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "a_comprehensive_guide_creating_graphql_api_on_top_of_snowflake_using_propel",
+  "duration": 0,
+  "title": "A Comprehensive Guide: Creating GraphQL API on Top of Snowflake Using Propel",
+  "summary": "This guide teaches how to create a GraphQL API using Propel on Snowflake, focusing on setup, configuration, and development of a high-performance API.",
+  "source": "a_comprehensive_guide_creating_graphql_api_on_top_of_snowflake_using_propel/a_comprehensive_guide_creating_graphql_api_on_top_of_snowflake_using_propel.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "platform",
+    "apps\u0026collab:externalcollaboration"
+  ],
+  "tags": [
+    "apps\u0026collab:externalcollaboration",
+    "gettingstarted",
+    "platform",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "a_comprehensive_guide_creating_graphql_api_on_top_of_snowflake_using_propel"
+}

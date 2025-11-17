@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_snowpipe_streaming_aws_msk",
+  "duration": 125,
+  "title": "Getting Started with Snowpipe Streaming and Amazon MSK",
+  "authors": "James Sun",
+  "summary": "This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK).",
+  "source": "getting_started_with_snowpipe_streaming_aws_msk/getting_started_with_snowpipe_streaming_aws_msk.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "amazonmsk",
+    "gettingstarted",
+    "kafka",
+    "snowpipestreaming",
+    "snowsql",
+    "streaming",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpipe_streaming_aws_msk"
+}

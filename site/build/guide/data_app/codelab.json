@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "data_app",
+  "duration": 53,
+  "title": "Building a Data Application",
+  "authors": "Brad Culberson",
+  "summary": "Building a Single-Page Data Application on Snowflake",
+  "source": "data_app/data_app.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "app-development"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_app"
+}

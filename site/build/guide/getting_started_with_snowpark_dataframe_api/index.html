@@ -1,0 +1,249 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowpark and the Dataframe API</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpark_dataframe_api"
+                  title="Getting Started with Snowpark and the Dataframe API"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p class="image-container"><img src="img/1bc8a0a5d72000e0.jpg"></p>
+<p>This project will demonstrate how to get started with Jupyter Notebooks on <a href="https://docs.snowflake.com/en/developer-guide/snowpark/index.html" target="_blank">Snowpark</a>, a new product feature announced by Snowflake for <a href="https://www.snowflake.com/blog/welcome-to-snowpark-new-data-programmability-for-the-data-cloud/" target="_blank">public preview</a> during the 2021 Snowflake Summit. With this tutorial you will learn how to tackle real world business problems as straightforward as ELT processing but also as diverse as math with rational numbers with unbounded precision, sentiment analysis and machine learning.</p>
+<p>Snowpark not only works with Jupyter Notebooks but with a variety of IDEs. Instructions on how to set up your favorite development environment can be found in the Snowpark documentation under <a href="https://docs.snowflake.com/en/developer-guide/snowpark/setup.html" target="_blank">Setting Up Your Development Environment for Snowpark</a>.</p>
+<h2 is-upgraded>Snowpark</h2>
+<p>Snowpark is a new developer framework of Snowflake. It brings deeply integrated, DataFrame-style programming to the languages developers like to use, and functions to help you expand more data use cases easily, all executed inside of Snowflake. Snowpark support starts with Scala API, Java UDFs, and External Functions.</p>
+<p>With Snowpark, developers can program using a familiar construct like the DataFrame, and bring in complex transformation logic through UDFs, and then execute directly against Snowflake&#39;s processing engine, leveraging all of its performance and scalability characteristics in the Data Cloud.</p>
+<p>Snowpark provides several benefits over how developers have designed and coded data driven solutions in the past:</p>
+<ol type="1">
+<li>Simplifies architecture and data pipelines by bringing different data users to the same data platform, and process against the same data without moving it around.</li>
+<li>Accelerates data pipeline workloads by executing with performance, reliability, and scalability with Snowflake&#39;s elastic performance engine.</li>
+<li>Eliminates maintenance and overhead with managed services and near-zero maintenance.</li>
+<li>Creates a single governance framework and a single set of policies to maintain by using a single platform.</li>
+<li>Provides a highly secure environment with administrators having full control over which libraries are allowed to execute inside the Java/Scala runtimes for Snowpark.</li>
+</ol>
+<p>The following tutorial highlights these benefits and lets you experience Snowpark in your environment.</p>
+<h2 is-upgraded>Prerequisites:</h2>
+<p>This <a href="https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter" target="_blank">repo</a> is structured in multiple parts. Each part has a notebook with specific focus areas. All notebooks in this series require a Jupyter Notebook environment with a Scala kernel.</p>
+<p>All notebooks will be fully self contained, meaning that all you need for processing and analyzing datasets is a Snowflake account.  If you do not have a Snowflake account, you can sign up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial</a>. It doesn&#39;t even require a credit card.</p>
+<ul>
+<li>Use of the <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial environment</a></li>
+<li>All notebooks in this series require a Jupyter Notebook environment with a Scala kernel. <ul>
+<li>If you do not already have access to that type of environment, Follow the instructions below to either run Jupyter locally or in the AWS cloud.</li>
+</ul>
+</li>
+<li>Instructions on how to set up your favorite development environment can be found in the Snowpark documentation under <a href="https://docs.snowflake.com/en/developer-guide/snowpark/setup.html" target="_blank">Setting Up Your Development Environment for Snowpark</a>.</li>
+</ul>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/notebook/part1/part1.ipynb" target="_blank">Part 1</a>The first notebook in this series provides a quick-start guide and an introduction to the Snowpark DataFrame API. The notebook explains the steps for setting up the environment (REPL), and how to resolve dependencies to Snowpark. After a simple &#34;Hello World&#34; example you will learn about the Snowflake DataFrame API, projections, filters, and joins.</li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/notebook/part2/part2.ipynb" target="_blank">Part 2</a>The second notebook in the series builds on the quick-start of the first part. Using the TPCH dataset in the sample database, it shows how to use aggregations and pivot functions in the Snowpark DataFrame API. Then it introduces UDFs and how to build a stand-alone UDF: a UDF that only uses standard primitives. From there, we will learn how to use third party Scala libraries to perform much more complex tasks like math for numbers with unbounded (unlimited number of significant digits) precision and how to perform sentiment analysis on an arbitrary string.</li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/notebook/part3/part3.ipynb" target="_blank">Part 3</a>The third notebook combines what you learned in part 1 and 2. It implements an end-to-end ML use case including data ingestion, ETL/ELT transformations, model training, model scoring, and result visualization.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparing your lab environment" duration="10">
+        <h2 is-upgraded>Option 1:  Running Jupyter locally</h2>
+<p>The following instructions show how to build a Notebook server using a Docker container.</p>
+<ol type="1">
+<li>Download and install <a href="https://docs.docker.com/get-docker/" target="_blank">Docker</a>.</li>
+<li>Make sure your docker desktop application is up and running.</li>
+<li>Make sure you have at least 4GB of memory allocated to Docker: <img alt="Docker Memory" src="img/ede6c59877fc7fc3.png"></li>
+<li>Open your favorite terminal or command line tool / shell.</li>
+<li>Clone the GitHub Lab <a href="https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter" target="_blank">repo</a>: cd ~ mkdir DockerImages<pre><code> cd DockerImages
+ git clone https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter.git
+</code></pre>
+</li>
+<li>Build the Docker container (this may take a minute or two, depending on your network connection speed)<pre><code> cd ~/DockerImages/sfguide_snowpark_on_jupyter/docker
+ docker build -t snowparklab .
+</code></pre>
+</li>
+<li>Starting your Local Jupyter environmentType the following commands to start the Docker container and mount the snowparklab directory to the container. The command below assumes that you have cloned the git repo to ~/DockerImages/sfguide_snowpark_on_jupyter. Adjust the path if necessary.<pre><code> cd ~/DockerImages/sfguide_snowpark_on_jupyter
+ docker run -it --rm -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v &#34;$(pwd)&#34;:/home/jovyan/snowparklab --name snowparklab snowparklab
+</code></pre>
+The output should be similar to the following<pre><code> To access the server, open this file in a browser:
+     file:///home/jovyan/.local/share/jupyter/runtime/jpserver-15-open.html
+ Or copy and paste one of these URLs:
+     http://162e383e431c:8888/lab?token=bdaead06c9944057a86f9d8a823cebad4ce66799d855be5d
+     http://127.0.0.1:8888/lab?token=bdaead06c9944057a86f9d8a823cebad4ce66799d855be5d
+</code></pre>
+</li>
+<li>Start a browser session (Safari, Chrome, ...). Paste the line with the local host address (127.0.0.1) printed in <strong>your shell window</strong> into the browser status bar and update the port (8888) to <strong>your port</strong> in case you have changed the port in the step above.</li>
+</ol>
+<aside class="special"><p>Once you have completed this step, you can move on to the Setup Credentials Section.</p>
+</aside>
+<aside class="warning"><p>Stopping your Docker lab environment</p>
+</aside>
+<pre><code>Type the following command into a new shell window when you want to stop the tutorial. All changes/work will be saved on your local machine. 
+
+    docker stop snowparklab
+</code></pre>
+<h2 is-upgraded>Option 2:  Running Jupyter in the AWS cloud</h2>
+<p>In case you can&#39;t install docker on your local machine you could run the tutorial in AWS on an <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/nbi.html" target="_blank">AWS Notebook Instance</a>.</p>
+<ol type="1">
+<li>Create a Notebook instance<img alt="Create Notebook" src="img/1ea4086bdae22e9f.png"></li>
+<li>Create a Lifecycle Policy.<img alt="Create Policy" src="img/a7b9801067a1a988.png">Open the <a href="https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter/blob/main/docker/onstart" target="_blank">lifecycle script</a> and paste its content into the editor window.Creating the Notebook takes about 8 minutes.</li>
+<li>Upload the tutorial folder (github repo zipfile)</li>
+<li>Unzip folderOpen the Launcher, start a termial window and run the command below (substitue  with your filename.<pre><code> unzip SageMaker/&lt;filename&gt; -d SageMaker/
+</code></pre>
+</li>
+</ol>
+<aside class="special"><p>After you have set up either your docker or your cloud based notebook environment you can proceed to the next section.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Credentials" duration="10">
+        <p>First, we have to set up the Jupyter environment for our notebook. The full instructions for setting up the environment are in the Snowpark documentation <a href="https://docs.snowflake.com/en/developer-guide/snowpark/quickstart-jupyter.html#configuring-the-jupyter-notebook-for-snowpark" target="_blank">Configure Jupyter</a>.</p>
+<h3 is-upgraded>Setup your credentials file</h3>
+<p>To create a Snowflake session, we need to authenticate to the Snowflake instance. Though it might be tempting to just override the authentication variables with hard coded values in your Jupyter notebook code, it&#39;s not considered best practice to do so. If you share your version of the notebook, you might disclose your credentials by mistake to the recipient. Even worse, if you upload your notebook to a public code repository, you might advertise your credentials to the whole world. To prevent that, you should keep your credentials in an external file (like we are doing here).</p>
+<p>Then, update your credentials in that file and they will be saved on your local machine. Even better would be to switch from user/password authentication to <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html#key-pair-authentication-key-pair-rotation" target="_blank">private key authentication</a>.</p>
+<aside class="special"><p>Put your key pair files into the same directory or update the location in your credentials file.</p>
+</aside>
+<ul>
+<li>Open your Jupyter environment in your web browser</li>
+<li>Navigate to the folder:  /snowparklab/creds</li>
+<li>Duplicate the file <strong>template_credentials.txt</strong></li>
+</ul>
+<p class="image-container"><img alt="Duplicate Credentials" src="img/44151728926a18f4.png"></p>
+<ul>
+<li>Rename the duplicated file to <strong>credentials.txt</strong> (right click menu)</li>
+<li>Double click the <strong>credential.txt</strong> file to open and edit it in the Jupyter environment</li>
+<li>Update the file to your Snowflake environment connection parameters</li>
+</ul>
+<aside class="special"><p>You can comment out parameters by putting a # at the beginning of the line.</p>
+</aside>
+<p class="image-container"><img alt="Update Credentials" src="img/cbb4d7ed92b5822b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 1:  Introduction to the Snowpark DataFrame API" duration="10">
+        <p>This is the first notebook of a series to show how to use Snowpark on Snowflake. This notebook provides a quick-start guide and an introduction to the Snowpark DataFrame API. The notebook explains the steps for setting up the environment (REPL), and how to resolve dependencies to Snowpark. After a simple &#34;Hello World&#34; example you will learn about the Snowflake DataFrame API, projections, filters, and joins.</p>
+<h2 is-upgraded>Open the Part 1 notebook</h2>
+<p>Open your Jupyter environment. Navigate to the folder snowparklab/notebook/part1 and Double click on the part1.ipynb to open it</p>
+<p class="image-container"><img alt="Find Part 1" src="img/ef98b8905c5d5bfa.png"></p>
+<p class="image-container"><img alt="Open Part 1 Notebook" src="img/faf78cad163dec25.png"></p>
+<h2 is-upgraded>Now read through and run each step in the notebook.</h2>
+<p class="image-container"><img alt="Import Credentials" src="img/79b514721f52c6b2.png"></p>
+<aside class="special"><p><strong>Return here once you have finished the first notebook.</strong></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 2:  Aggregations, Pivots, and UDF&#39;s" duration="15">
+        <p>This is the second notebook in the series. It builds on the quick-start of the first part. Using the TPCH dataset in the sample database, we will learn how to use aggregations and pivot functions in the Snowpark DataFrame API. Then, it introduces user definde functions (UDFs) and how to build a stand-alone UDF: a UDF that only uses standard primitives. From there, we will learn how to use third party Scala libraries to perform much more complex tasks like math for numbers with unbounded (unlimited number of significant digits) precision and how to perform sentiment analysis on an arbitrary string.</p>
+<p>In this session, the focus will be on:</p>
+<ul>
+<li>Advanced API features and visualization</li>
+<li>User-defined functions</li>
+</ul>
+<h2 is-upgraded>Open the Part 2 notebook</h2>
+<p>Open your Jupyter environment. Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.ipynb to open it</p>
+<p class="image-container"><img alt="Find Part 2" src="img/22a1497f9d964465.png"></p>
+<p class="image-container"><img alt="Open Part 2 Notebook" src="img/8a33ff9fd3e1e233.png"></p>
+<h2 is-upgraded>Now read through and run each step in the notebook.</h2>
+<p class="image-container"><img alt="Run Cells" src="img/f6b688125d63e9bc.png"></p>
+<aside class="special"><p><strong>Return here once you have finished the second notebook.</strong></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 3:  Data Ingestion, transformation, and model training" duration="15">
+        <p>The third notebook builds on what you learned in part 1 and 2. It implements an end-to-end ML use-case including data ingestion, ETL/ELT transformations, model training, model scoring, and result visualization.</p>
+<h2 is-upgraded>Open the Part 3 notebook</h2>
+<p>Open your Jupyter environment. Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.ipynb to open it</p>
+<p class="image-container"><img alt="Find Part 3" src="img/d04f02997f1e50ad.png"></p>
+<p class="image-container"><img alt="Open Part 3 Notebook" src="img/12f00502d9d0f037.png"></p>
+<h2 is-upgraded>Now read through and run each step in the notebook.</h2>
+<p class="image-container"><img alt="Run Cells" src="img/10f76aae31b3cb1e.png"></p>
+<aside class="special"><p><strong>Return here once you have finished the third notebook so you can read the conclusion &amp; Next steps, and complete the guide.</strong></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="2">
+        <p>Snowpark is a brand new developer experience that brings scalable data processing to the Data Cloud. In Part1 of this series, we learned how to set up a Jupyter Notebook and configure it to use Snowpark to connect to the Data Cloud. Next, we built a simple Hello World! program to test connectivity using embedded SQL. Then we enhanced that program by introducing the Snowpark Dataframe API. Lastly we explored the power of the Snowpark Dataframe API using filter, projection, and join transformations.</p>
+<p>We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab.</p>
+<h2 is-upgraded>Additional Resources:</h2>
+<ul>
+<li>Read the <a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">Definitive Guide to Maximizing Your Free Trial</a> document</li>
+<li>Attend a <a href="https://www.snowflake.com/about/events/" target="_blank">Snowflake virtual or in-person event</a> to learn more about our capabilities and customers</li>
+<li><a href="https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake" target="_blank">Join the Snowflake community</a></li>
+<li><a href="https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University" target="_blank">Sign up for Snowflake University</a></li>
+<li><a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">Contact our Sales Team</a> to learn more</li>
+</ul>
+<h2 is-upgraded>What we&#39;ve covered:</h2>
+<ul>
+<li>Quick Start: Set up the environment</li>
+<li>Hello World: First steps</li>
+<li>Snowflake DataFrame API: Query the Snowflake Sample Datasets via Snowflake DataFrames</li>
+<li>Aggregations, Pivots, and UDF&#39;s using the Snowpark API</li>
+<li>Data Ingestion, transformation, and model training</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

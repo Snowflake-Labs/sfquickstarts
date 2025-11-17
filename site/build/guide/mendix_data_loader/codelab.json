@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "mendix_data_loader",
+  "duration": 35,
+  "title": "An Introduction to the Mendix Data Loader",
+  "summary": "Guide on how to use the Mendix Data Loader to ingest data from Mendix applications via a published OData service.",
+  "source": "an_introduction_to_the_mendix_data_loader/an_introduction_to_the_mendix_data_loader.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "connectors",
+    "partner-integrations"
+  ],
+  "tags": [
+    "connectors",
+    "dataengineering",
+    "datascience",
+    "externalconnectivity",
+    "gettingstarted",
+    "mendix",
+    "nativeapps",
+    "twitter",
+    "web"
+  ],
+  "url": "mendix_data_loader"
+}

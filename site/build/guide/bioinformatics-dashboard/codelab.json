@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "bioinformatics-dashboard",
+  "duration": 57,
+  "title": "Build a Bioinformatics Solubility Dashboard in Snowflake",
+  "summary": "Learn how to build a bioinformatics solubility dashboard in Snowflake using Python, Pandas, and Streamlit to analyze molecular properties important for drug discovery.",
+  "source": "bioinformatics-dashboard/bioinformatics-dashboard.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "streamlit",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "bioinformatics",
+    "datavisualization",
+    "drugdiscovery",
+    "pandas",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "bioinformatics-dashboard"
+}

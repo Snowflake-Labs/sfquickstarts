@@ -1,0 +1,363 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>DevOps: Database Change Management with schemachange and Jenkins</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="devops_dcm_schemachange_jenkins"
+                  title="DevOps: Database Change Management with schemachange and Jenkins"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img style="width: 600.00px" src="img/1683321c75493728.png"></p>
+<p>This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with Jenkins. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and Jenkins.</p>
+<p>DevOps is concerned with automating the development, release and maintenance of software applications. As such, DevOps is very broad and covers the entire Software Development Life Cycle (SDLC). The landscape of software tools used to manage the entire SDLC is complex since there are many different required capabilities/tools, including:</p>
+<ul>
+<li>Requirements management</li>
+<li>Project management (Waterfall, Agile/Scrum)</li>
+<li>Source code management (Version Control)</li>
+<li>Build management (CI/CD)</li>
+<li>Test management (CI/CD)</li>
+<li>Release management (CI/CD)</li>
+</ul>
+<p>This guide will focus primarily on automated release management for Snowflake by leveraging the open-source Jenkins tool. Additionally, in order to manage the database objects/changes in Snowflake I will use the schemachange Database Change Management (DCM) tool.</p>
+<p>Let&#39;s begin with a brief overview of GitHub and Jenkins.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>This guide assumes that you have a basic working knowledge of Git repositories.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>A brief overview of Jenkins</li>
+<li>A brief idea and overview of schemachange</li>
+<li>How does schemachange help in database change management</li>
+<li>How does Jenkins help to create a pipeline for schemachange</li>
+<li>How do we incorporate containers to easily run Jenkins and schemachange</li>
+<li>How do we have Jenkins serve as a &#34;front-end&#34; for on-demand requests</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ol type="1">
+<li>Snowflake</li>
+<li><strong>A Snowflake Account.</strong></li>
+<li><strong>A Snowflake Database named DEMO_DB.</strong></li>
+<li><strong>A Snowflake User created with appropriate permissions.</strong> This user will need permission to create objects in the DEMO_DB database.</li>
+<li>GitHub</li>
+<li><strong>A GitHub Account.</strong> If you don&#39;t already have a GitHub account you can create one for free. Visit the <a href="https://github.com/join" target="_blank">Join GitHub</a> page to get started.</li>
+<li><strong>A GitHub Repository.</strong> If you don&#39;t already have a repository created, or would like to create a new one, then <a href="https://github.com/new" target="_blank">Create a new respository</a>. For the type, select <code>Public</code> (although you could use either). And you can skip adding the README, .gitignore and license for now.</li>
+<li>Integrated Development Environment (IDE)</li>
+<li><strong>Your favorite IDE with Git integration.</strong> If you don&#39;t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>.</li>
+<li><strong>Your project repository cloned to your computer.</strong> For connection details about your Git repository, open the Repository and copy the <code>HTTPS</code> link provided near the top of the page. If you have at least one file in your repository then click on the green <code>Code</code> icon near the top of the page and copy the <code>HTTPS</code> link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.</li>
+<li>Docker</li>
+<li><strong>Docker Desktop on your laptop.</strong>  We will be running Jenkins as a container. Please install Docker Desktop on your desired OS by following the <a href="https://docs.docker.com/desktop/" target="_blank">Docker setup instructions</a>.</li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A simple, working Jenkins pipeline service for Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Jenkins Overview" duration="2">
+        <p class="image-container"><img style="width: 250.00px" src="img/48a96bf6d6bde912.png"></p>
+<h2 is-upgraded>Jenkins</h2>
+<p>&#34;Jenkins is a self-contained, open source automation server which can be used to automate all sorts of tasks related to building, testing, and delivering or deploying software&#34; (from Jenkins&#39; <a href="https://www.jenkins.io/doc/" target="_blank">Documentation</a>).</p>
+<p>Unlike other complete SDLC tools, Jenkins does not include built-in support for version control repositories or project management. Instead Jenkins is focused on CI/CD pipelines. In Jenkins terminology a CI/CD pipeline is referred to as a &#34;Pipeline&#34;.</p>
+<p>A Jenkins Pipeline &#34;orchestrates long-running activities that can span multiple build agents. Suitable for building pipelines (formerly known as workflows) and/or organizing complex activities that do not easily fit in free-style job type&#34; (from the &#34;New item&#34; page in Jenkins).</p>
+<aside class="warning"><p><strong>Note</strong> - For this guide we will use GitHub for our Git repo.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="schemachange Overview" duration="2">
+        <p class="image-container"><img style="width: 250.00px" src="img/6682199f36619ddc.png"></p>
+<p>Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It&#39;s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you&#39;re interested in more details, please see my blog post <a href="https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/" target="_blank">Embracing Agile Software Delivery and DevOps with Snowflake</a>.</p>
+<p>schemachange is a lightweight Python-based tool to manage all your Snowflake objects. It follows an imperative-style approach to database change management (DCM) and was inspired by <a href="https://flywaydb.org/" target="_blank">the Flyway database migration tool</a>. When schemachange is combined with a version control tool and a CI/CD tool, database changes can be approved and deployed through a pipeline using modern software delivery practices.</p>
+<p>For more information about schemachange please see <a href="https://github.com/Snowflake-Labs/schemachange" target="_blank">the schemachange project page</a>.</p>
+<aside class="warning"><p><strong>Note</strong> - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your First Database Migration" duration="4">
+        <p>Open up your cloned repository in your favorite IDE and create a folder named <code>migrations</code>. In that new folder create a script named <code>V1.1.1__initial_objects.sql</code> (make sure there are two underscores after the version number) with the following contents:</p>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA DEMO;
+CREATE TABLE HELLO_WORLD
+(
+   FIRST_NAME VARCHAR
+  ,LAST_NAME VARCHAR
+);
+</code></pre>
+<p>Then commit the new script and push the changes to your GitHub repository. Assuming you started from an empty repository, your repository should look like this:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/8397ef7607c905e3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying Jenkins" duration="12">
+        <h2 is-upgraded>Building and Running a Docker Image</h2>
+<p>In order to deploy Jenkins we&#39;re going to create a Docker custom Docker image and then run it locally. So first, create a Docker file named <code>Dockerfile</code> in the root of your GitHub repository with the following contents and commit it to your repo:</p>
+<pre><code>FROM jenkins/jenkins:lts
+
+# Install required applications
+USER root
+RUN apt-get update
+RUN apt-get install -y docker.io
+
+# Drop back to the regular jenkins user
+USER jenkins
+</code></pre>
+<p>Next, to create the custom Docker image run the following command from a shell:</p>
+<pre><code>docker build -t jenkins .
+</code></pre>
+<p>After the Docker image has been created we can then create and run a container based on that image. This will start up a Jenkins container locally:</p>
+<pre><code>docker run -p 8080:8080 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --name jenkins \
+  jenkins
+</code></pre>
+<aside class="special"><p><strong>Tip</strong> - Please note that the initial admin password for your Jenkins installation will be printed out in the Docker output. So please copy it for use later in this step.</p>
+</aside>
+<p>The last thing we need to do, once the Jenkins container is running, is to give Jenkins access to the Docker engine by running this command:</p>
+<pre><code>docker exec -it -u root jenkins bash -c &#39;chmod 666 /var/run/docker.sock&#39;
+</code></pre>
+<h2 is-upgraded>Configuring Jenkins</h2>
+<p>To access the Jenkins UI, open <code>localhost:8080</code> in a new tab in your web browser of choice. The first getting started screen titled &#34;Unlock Jenkins&#34; will ask you to enter the admin passowrd. This is password mentioned above that you copied and saved. Enter the password and click <code>Next</code>.</p>
+<p>Next you will see the &#34;Customize Jenkins&#34; set up screen. Click on the <code>Install suggested plugins</code> button as shown below and wait for all the suggested plugins to be installed.</p>
+<p class="image-container"><img style="width: 900.00px" src="img/5a307256e50db4f4.png"></p>
+<p>After all the plugins have been installed you will be taken to the &#34;Create First Admin User&#34; page. Enter <code>admin</code> for the &#34;Username&#34; (and &#34;Full name&#34;), enter a password which will be used the Jenkins admin user, and enter a valid email address. Confirm that your screen looks like the image below (with the exception that you entered an email address) and then click on the <code>Save and Continue</code> button.</p>
+<p class="image-container"><img style="width: 900.00px" src="img/b05dbf75a0d12c2e.png"></p>
+<p>On the final getting started set up screen, leave the &#34;Instance Configuration&#34; Jenkins URL as <code>http://localhost:8080</code>. Then click on the <code>Save and Finish</code> button and then on the <code>Start using Jenkins</code> button.</p>
+<p>You should now be at the main Jenkins Dashobard page and ready to start using Jenkins. If you find yourself at a login page (like below) then enter the admin user credentials and click <code>Sign in</code>.</p>
+<p class="image-container"><img style="width: 900.00px" src="img/57008c81f47adfff.png"></p>
+<p>That last thing we need to do in order to set up Jenkins for this guide is to install the Docker Pipeline plugin in Jenkins. This plugin allows Jenkins Pipeline Projects to build and test using Docker images.</p>
+<p>Click on <code>Manage Jenkins</code> in the left navigation bar and then on the <code>Manage Plugins</code> under &#34;System Configuration&#34;.</p>
+<p class="image-container"><img style="width: 900.00px" src="img/7da69881711c23d8.png"></p>
+<p>From the Plugin Manager click on the &#34;Available&#34; tab and enter <code>docker pipeline</code> in the search box. You should see one result called &#34;Docker Pipeline&#34;. Check the box under this &#34;Install&#34; column next to this plugin and then click on the <code>Install without restart</code> button:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/94dded0cd53fc33f.png"></p>
+<p>On the next results page you should see a bunch of green checkmarks each with a &#34;Success&#34; status. Click on the <code>Go back to the top page</code> link to return to the main Jenkins Dashboard page. And with that Jenkins is set up and ready to use!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Jenkins Pipeline" duration="15">
+        <h2 is-upgraded>Creating the Jenkinsfile</h2>
+<p>In this step we will create our first Jenkins Pipeline. A Jenkins Pipeline &#34;orchestrates long-running activities that can span multiple build agents. Suitable for building pipelines (formerly known as workflows) and/or organizing complex activities that do not easily fit in free-style job type&#34; (from the &#34;New item&#34; page in Jenkins).</p>
+<p>Jenkins Pipelines are best defined through a proprietary file format known as a <code>Jenkinsfile</code>. A <code>Jenkinsfile</code> is a text file that contains the definition of a Jenkins Pipeline and is checked into source control.</p>
+<aside class="special"><p><strong>Tip</strong> - For more details on the <code>Jenkinsfile</code> format please see the <a href="https://www.jenkins.io/doc/book/pipeline/jenkinsfile/" target="_blank">Using a Jenkinsfile</a> documentation.</p>
+</aside>
+<p>So with that, let&#39;s create our first Jenkins Pipeline. To do so we will simply create a Jenkinsfile and commit it to our repository. Toggle back to you IDE and create a Jenkinsfile named <code>Jenkinsfile</code> in the root of your GitHub repository with the following contents and commit it to your repo:</p>
+<pre><code>pipeline {
+    agent { 
+        docker { 
+            image &#34;python:3.8&#34;
+            args &#39;--user 0:0&#39;
+        } 
+
+    }
+    stages {
+        stage(&#39;Run schemachange&#39;) {
+            steps {
+                sh &#34;pip install schemachange --upgrade&#34;
+                sh &#34;schemachange -f migrations -a ${SF_ACCOUNT} -u ${SF_USERNAME} -r ${SF_ROLE} -w ${SF_WAREHOUSE} -d ${SF_DATABASE} -c ${SF_DATABASE}.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table&#34;
+            }
+        }
+    }
+}
+</code></pre>
+<p>After commiting your Jenkinsfile, your repo should look like this:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/ded68305a2dbee0b.png"></p>
+<p>Before we move on, copy your (HTTPS) repository url and save it for later. You can find it under the green <code>Code</code> button as indicated in the image below:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/7485eba0a7fb083.png"></p>
+<h2 is-upgraded>Creating the Jenkins Pipeline</h2>
+<p>Now that we&#39;ve created the pipeline definition in our Jenkinsfile and have it committed to our repo we&#39;re ready to create the actual Pipeline in Jenkins (which will be based off our Jenkinsfile). From the main Jenkins Dashboard page click on <code>New Item</code> in the left navigation bar. For the item name enter <code>snowflake-devops-demo</code> and click on the <code>Pipeline</code> item type to select it. Once you&#39;ve done that, click on the blue <code>OK</code> button as shown here:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/70319401fe222380.png"></p>
+<p>You now have a new Job created in Jenkins. The first thing we need to do is tell the newly created Job where the Jenkinsfile definition is at. You should still be on the job configuration page. Click on the <code>Pipeline</code> tab (or scroll down to the &#34;Pipeline&#34; section manually) and change the &#34;Definition&#34; to <code>Pipeline script from SCM</code>.  Under the <code>SCM</code> section, select <code>Git</code> and then paste the GitHub repository url that you saved above into the <code>Repository URL</code> field. Click on the <code>Advanced</code> button (which will reveal some additional parameters) and then enter these values for the below parameters:</p>
+<ol type="1">
+<li>Name: <code>origin</code></li>
+<li>Refspec: <code>+refs/pull/*:refs/remotes/origin/pr/*</code></li>
+<li>Branches to build: leave blank</li>
+<li>Repository browser: <code>(Auto)</code></li>
+<li>Additional Behaviours: <code>Wipe out repository & force clone</code></li>
+<li>Script Path: <code>Jenkinsfile</code></li>
+<li>Uncheck &#34;Lightweight checkout&#34;</li>
+</ol>
+<p>Make sure you don&#39;t miss step #5, you have to click on the &#34;Add&#34; button under &#34;Additional Behaviours&#34; and then select &#34;Wipe out repository &amp; force clone&#34;. This is an important step as it ensures that your Jenkins pipeline will always be working with the latest version of your repository.</p>
+<p>If all is good, it should look like this screenshot:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/aff0bc2e68bfd37.png"></p>
+<p>Click on the blue <code>Save</code> button to save these changes.</p>
+<aside class="special"><p><strong>Tip</strong> - If you are using a private GitHub repository, then you would need to input your credentials to your GitHub repository. If not you can just leave the credentials as blank.</p>
+</aside>
+<h2 is-upgraded>Adding Pipeline Parameters</h2>
+<p>Pipeline parameters allow Jenkins to securely store values/variables which will be used in your CI/CD pipelines. In addition to creating variables that you can access in your Jenkins Pipeline, Jenkins will also automatically create OS-level environment variables for each parameter. In this step we will create parameters for each of the arguments used by schemachange.</p>
+<p>If you don&#39;t still have it open, open up your <code>snowflake-devops-demo</code> job and click on <code>Configure</code> in the left navigation bar.  Under the &#34;General&#34; settings click the <code>This project is parameterised</code> option. For each parameter listed below click on the <code>Add Parameter</code> button and enter the name given below along with the appropriate value. The parameter entry screen (for each parameter) will look like this:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/e5ce4acb2103d5eb.png"></p>
+<p>And here are the values to use for each parameter (please adjust as appropriate):</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Parameter type</p>
+</td><td colspan="1" rowspan="1"><p>Parameter name</p>
+</td><td colspan="1" rowspan="1"><p>Parameter value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>String Parameter</p>
+</td><td colspan="1" rowspan="1"><p>SF_ACCOUNT</p>
+</td><td colspan="1" rowspan="1"><p>xy12345.east-us-2.azure</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>String Parameter</p>
+</td><td colspan="1" rowspan="1"><p>SF_USERNAME</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_USER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Password Parameter</p>
+</td><td colspan="1" rowspan="1"><p>SNOWFLAKE_PASSWORD</p>
+</td><td colspan="1" rowspan="1"><p>*****</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>String Parameter</p>
+</td><td colspan="1" rowspan="1"><p>SF_ROLE</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_ROLE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>String Parameter</p>
+</td><td colspan="1" rowspan="1"><p>SF_WAREHOUSE</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_WH</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>String Parameter</p>
+</td><td colspan="1" rowspan="1"><p>SF_DATABASE</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_DB</p>
+</td></tr>
+</table>
+<p>Please note the slight difference in naming convention with the password parameter (it starts with &#34;SNOWFLAKE_&#34; instead of &#34;SF_&#34; like the others), that is intentional. schemachange expects to find the password in an OS-level environment variable named <code>SNOWFLAKE_PASSWORD</code>.</p>
+<p>When you&#39;re finished don&#39;t forget to click on the blue <code>Save</code> button to save these changes.</p>
+<aside class="special"><p><strong>Tip</strong> - While this simple getting started guide stores the parameters and passwords in Jenkins directly, please consider using an external vault like one of the following in a production scenario: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault. Each of these vaults (and others) are supported by Jenkins with a related plugin.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Manually Run the Pipeline" duration="5">
+        <p>In this step we will manually run the new Jenkins Pipeline for the first time. This will deploy the first database migration script we created in step 4.</p>
+<p>From the Job overview page, click on the <code>Build with Parameters</code> option in the left naviagation bar, as seen in the image below:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/f10fb07e32e2bd57.png"></p>
+<p>Verify that all the parameter values look correct and click on the blue <code>Build</code> button to start the Pipeline. If all goes well, you should see a successful output that indicates the build was successful:</p>
+<p class="image-container"><img style="width: 900.00px" src="img/c81ac0689fc806f8.png"></p>
+<p>To view the log output from the execution you can either hover over the stage shown in the screenshot above and click on the <code>Logs</code> icon. Or for more details on the build you can open the specific build number and then click on the <code>Console Output</code> in the left navigation bar.</p>
+<aside class="warning"><p><strong>Note</strong> - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn&#39;t reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Confirm Changes Deployed to Snowflake" duration="4">
+        <p>Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.</p>
+<h2 is-upgraded>Database Objects</h2>
+<p>You should now see a few new objects in your <code>DEMO_DB</code> database:</p>
+<ul>
+<li>A new schema <code>DEMO</code> and table <code>HELLO_WORLD</code> (created by the first migration script from step 4)</li>
+<li>A new schema <code>SCHEMACHANGE</code> and table <code>CHAGE_HISTORY</code> (created by schemachange to track deployed changes)</li>
+</ul>
+<p>Take a look at the contents of the <code>CHANGE_HISTORY</code> table to see where/how schemachange keeps track of state. See the <a href="https://github.com/Snowflake-Labs/schemachange" target="_blank">schemachange README</a> for more details.</p>
+<h2 is-upgraded>Query History</h2>
+<p>From your Snowflake account click on the <code>History</code> tab at the top of the window. From there review the queries that were executed by schemachange. In particular, look at the <code>Query Tag</code> column to see which queries were issued by schemachange. It even tracks which migration script was responsible for which queries.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your Second Database Migration" duration="5">
+        <p>In this script you will create your second database migration and have the Jenkins Pipeline deploy it to your Snowflake account!</p>
+<p>Open up your cloned repository in your favorite IDE and create a script named <code>V1.1.2__updated_objects.sql</code> (make sure there are two underscores after the version number) in the same <code>migrations</code> folder with the following contents:</p>
+<pre><code language="language-sql" class="language-sql">USE SCHEMA DEMO;
+ALTER TABLE HELLO_WORLD ADD COLUMN AGE NUMBER;
+</code></pre>
+<p>Then commit the new script and push the changes to your GitHub repository. Your migrations folder should look like this as shown below.</p>
+<p class="image-container"><img style="width: 900.00px" src="img/31f3f3207e3d39ca.png"></p>
+<p>Because we haven&#39;t enabled any continuous integration triggers for our Pipeline we need to manually run the Pipeline for now. In Jenkins go back to the Pipeline overview page and click on the <code>Build with Parameters</code> option in the left navigation bar. Verify that all the parameter values look correct and click on the blue <code>Build</code> button to start the Pipeline.</p>
+<p>To view the log output from the execution you can either hover over the stage shown in the screenshot above and click on the <code>Logs</code> icon. Or for more details on the build you can open the specific build number and then click on the <code>Console Output</code> in the left navigation bar.</p>
+<p>You can also confirm that the changes have been deployed to your Snowflake account by following the general instructions in Step 8 again (except this time you&#39;re looking for a new column in the <code>HELLO_WORLD</code> table).</p>
+<aside class="warning"><p><strong>Note</strong> - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn&#39;t reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="4">
+        <p>So now that you&#39;ve got your first Snowflake CI/CD pipeline set up with Jenkins, what&#39;s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.</p>
+<h3 is-upgraded>Pipeline Stages</h3>
+<p>In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. With Jenkins, you can create different pipelines for the corresponding branches as referenced in <a href="https://www.jenkins.io/doc/book/pipeline/multibranch/" target="_blank">Jenkins Branches and Pull Requests</a>.</p>
+<h3 is-upgraded>Branching Strategy</h3>
+<p>Branching strategies can be complex, but there are a few popular ones out there that can help get you started. To begin with I would recommend keeping it simple with <a href="https://guides.github.com/introduction/flow/" target="_blank">GitHub flow</a> (and see also <a href="http://scottchacon.com/2011/08/31/github-flow.html" target="_blank">an explanation of GitHub flow by Scott Chacon in 2011</a>). Another simple framework to consider is <a href="https://about.gitlab.com/blog/2014/09/29/gitlab-flow/" target="_blank">GitLab flow</a>.</p>
+<h3 is-upgraded>Testing Strategy</h3>
+<p>Testing is an important part of any software development process, and is absolutely critical when it comes to automated software delivery. But testing for databases and data pipelines is complicated and there are many approaches, frameworks, and tools out there. In my opinion, the simplest way to get started testing data pipelines is with <a href="https://www.getdbt.com/" target="_blank">dbt</a> and the <a href="https://docs.getdbt.com/docs/building-a-dbt-project/tests/" target="_blank">dbt Test features</a>. Another popular Python-based testing tool to consider is <a href="https://greatexpectations.io/" target="_blank">Great Expectations</a>.</p>
+<p>With that you should now have a working CI/CD pipeline in Jenkins and some helpful ideas for next steps on your DevOps journey with Snowflake. Good luck!</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>A brief history and overview of Jenkins</li>
+<li>A brief history and overview of schemachange</li>
+<li>How database change management tools like schemachange work</li>
+<li>How a simple release pipeline works</li>
+<li>How to create CI/CD pipelines in Jenkins</li>
+<li>Ideas for more advanced CI/CD pipelines with stages</li>
+<li>How to get started with branching strategies</li>
+<li>How to get started with testing strategies</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/schemachange" target="_blank">schemachange</a></li>
+<li><a href="https://www.jenkins.io/doc/book/pipeline/" target="_blank">Jenkins Pipelines</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

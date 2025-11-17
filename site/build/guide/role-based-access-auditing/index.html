@@ -1,0 +1,390 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Role-Based Access Audit Dashboards in Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="role-based-access-auditing"
+                  title="Build Role-Based Access Audit Dashboards in Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Learn how to create interactive dashboards for auditing user roles and privileges in Snowflake using Streamlit. This guide walks you through building a utility notebook that helps to ensure adherence to security policies through visual analysis of user roles and privilege assignments.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to query and analyze user role assignments</li>
+<li>How to examine role grant distributions</li>
+<li>How to create interactive visualizations with Streamlit and Altair</li>
+<li>How to build a role-based access audit dashboard</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>Two interactive dashboards on:</p>
+<ul>
+<li>User role analysis with heat map visualization</li>
+<li>Role grant analysis with bar charts</li>
+</ul>
+<p>Here are some common features for these two dashboards:</p>
+<ul>
+<li>Dynamic filtering capabilities</li>
+<li>Real-time metric updates</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic understanding of SQL and Python</li>
+<li>Familiarity with data visualization concepts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Role_Based_Access_Auditing_with_Streamlit/Role_Based_Access_Auditing_with_Streamlit.ipynb" target="_blank">Role_Based_Access_Auditing_with_Streamlit.ipynb</a> to download the Notebook from GitHub.</p>
+<h2 is-upgraded>Environment Setup</h2>
+<p>Snowflake Notebooks comes pre-installed with common Python libraries for data science and machine learning, including NumPy, Pandas, Altair, and more! If you need additional packages, simply click on the Packages dropdown in the top right to add them to your notebook.</p>
+<p>Required libraries:</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+import altair as alt
+import streamlit as st
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement User Role Analysis" duration="15">
+        <h2 is-upgraded>Query User Data</h2>
+<p>In this first use case, let&#39;s retrieve user details and role assignments using the following SQL query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    u.name,
+    u.disabled,
+    u.last_success_login,
+    u.created_on as user_created_on,
+    g.role as granted_role,
+    g.granted_by,
+    g.created_on as grant_created_on
+FROM 
+    SNOWFLAKE.ACCOUNT_USAGE.USERS u
+LEFT JOIN 
+    SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS g
+    ON u.name = g.grantee_name
+WHERE 
+    g.deleted_on IS NULL
+ORDER BY 
+    u.name, g.role;
+</code></pre>
+<p>This returns the following output:</p>
+<p class="image-container"><img alt="image" src="img/eb76bdd1ab5654dd.PNG"></p>
+<p>Next, we&#39;ll convert the above SQL query output to a Pandas DataFrame (we&#39;ll also name this Python cell <code>df_user_role</code>, which we&#39;ll make a reference to shortly).</p>
+<pre><code>sql_user_role.to_pandas()
+</code></pre>
+<p>Next, we&#39;ll prepare the above DataFrame (<code>df_user_role</code>) for subsequent data visualization.</p>
+<pre><code># Create user activity matrix
+user_activity = (
+    # Group by user and role, count occurrences
+    df_user_role.groupby([&#39;NAME&#39;, &#39;GRANTED_ROLE&#39;]) 
+    .size()
+    .reset_index()
+    .pivot(index=&#39;NAME&#39;, columns=&#39;GRANTED_ROLE&#39;, values=0) 
+    .fillna(0)
+)
+
+# Convert to long format for heatmap
+user_activity_long = user_activity.reset_index().melt(
+    id_vars=[&#39;NAME&#39;],
+    var_name=&#39;ROLE&#39;,
+    value_name=&#39;HAS_ROLE&#39;
+)
+
+# Add user status information
+user_status = df_user_role[[&#39;NAME&#39;, &#39;DISABLED&#39;, &#39;LAST_SUCCESS_LOGIN&#39;]].drop_duplicates()
+user_activity_long = user_activity_long.merge(
+    user_status,
+    on=&#39;NAME&#39;,  # Changed from left_on/right_on to simple on
+    how=&#39;left&#39;
+)
+</code></pre>
+<h2 is-upgraded>Create the User Role Dashboard</h2>
+<p>Finally, we&#39;ll use Streamlit to create a simple dashboard for user analysis. Note that we&#39;ll bring in the processed Pandas DataFrame (<code>user_activity_long</code>) from above into this app.</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+import altair as alt
+import streamlit as st
+
+st.title(&#34;User Analysis Dashboard&#34;)
+
+# Streamlit filters
+col1, col2 = st.columns(2)
+with col1:
+    selected_users = st.multiselect(
+        &#39;Select Users&#39;,
+        options=sorted(user_activity_long[&#39;NAME&#39;].unique()),
+        default=sorted(user_activity_long[&#39;NAME&#39;].unique())
+    )
+with col2:
+    selected_roles = st.multiselect(
+        &#39;Select Roles&#39;,
+        options=sorted(user_activity_long[&#39;ROLE&#39;].unique()),
+        default=sorted(user_activity_long[&#39;ROLE&#39;].unique())
+    )
+
+# Filter data based on selections
+filtered_data = user_activity_long[
+    user_activity_long[&#39;NAME&#39;].isin(selected_users) &amp; 
+    user_activity_long[&#39;ROLE&#39;].isin(selected_roles)
+]
+
+# Display summary metrics
+with st.expander(&#34;View Summary Metrics&#34;, expanded=True):
+    metric_col1, metric_col2, metric_col3 = st.columns(3)
+    with metric_col1:
+        st.metric(&#34;Selected Users&#34;, len(selected_users))
+    with metric_col2:
+        st.metric(&#34;Selected Roles&#34;, len(selected_roles))
+    with metric_col3:
+        st.metric(&#34;Total Assignments&#34;, len(filtered_data[filtered_data[&#39;HAS_ROLE&#39;] &gt; 0]))
+
+# Create styled heatmap
+heatmap = alt.Chart(filtered_data).mark_rect(
+    stroke=&#39;black&#39;,
+    strokeWidth=1
+).encode(
+    x=alt.X(&#39;ROLE:N&#39;, 
+            title=&#39;Roles&#39;,
+            axis=alt.Axis(
+                labels=True,
+                tickMinStep=1,
+                labelOverlap=False,
+                labelPadding=10
+            )),
+    y=alt.Y(&#39;NAME:N&#39;, 
+            title=&#39;Users&#39;,
+            axis=alt.Axis(
+                labels=True,
+                labelLimit=200,
+                tickMinStep=1,
+                labelOverlap=False,
+                labelPadding=10
+            )),
+    color=alt.Color(&#39;HAS_ROLE:Q&#39;, 
+                   title=&#39;Has Role&#39;,
+                   scale=alt.Scale(scheme=&#39;blues&#39;)),
+    tooltip=[
+        alt.Tooltip(&#39;NAME:N&#39;, title=&#39;User&#39;),
+        alt.Tooltip(&#39;ROLE:N&#39;, title=&#39;Role&#39;),
+        alt.Tooltip(&#39;HAS_ROLE:Q&#39;, title=&#39;Has Role&#39;),
+        alt.Tooltip(&#39;DISABLED:N&#39;, title=&#39;Is Disabled&#39;),
+        alt.Tooltip(&#39;LAST_SUCCESS_LOGIN:T&#39;, title=&#39;Last Login&#39;)
+    ]
+).properties(
+    title=&#39;User Role Assignment Matrix&#39;
+).configure_view(
+    stroke=None,
+    continuousHeight=400
+).configure_axis(
+    labelFontSize=10
+)
+
+# Display the chart
+st.altair_chart(heatmap, use_container_width=True)
+
+with st.expander(&#34;View DataFrame&#34;):
+    st.dataframe(filtered_data)
+</code></pre>
+<p>This code snippet generates the following Streamlit powered dashboard. Note how we can filter the data by adjusting the <code>st.selectbox()</code> drop-down widgets, which in turn is used to generate the displayed heatmap:</p>
+<p class="image-container"><img alt="image" src="img/4a05d62eb234e230.PNG"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement Role Grant Analysis" duration="15">
+        <h2 is-upgraded>Analyze Role Grants</h2>
+<p>In this second use case, we&#39;ll now craft a SQL query to show all active privileges granted to roles, including what type of privilege was granted, what object it was granted on, the specific object name, who granted it and when it was created.</p>
+<pre><code>SELECT 
+    grantee_name,
+    privilege,
+    granted_on,
+    name as object_name,
+    granted_by,
+    created_on
+FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES
+WHERE deleted_on IS NULL;
+</code></pre>
+<p class="image-container"><img alt="image" src="img/740b0431253385d2.PNG"></p>
+<p>Next, we&#39;ll convert the data to a Pandas Dataframe assigned to <code>df_role_grants</code>, which is also the cell name:.</p>
+<pre><code>sql_role_grants.to_pandas()
+</code></pre>
+<h2 is-upgraded>Build Grant Analysis Dashboard</h2>
+<p>Finally, we&#39;ll use Streamlit to create a simple dashboard for role grant analysis.</p>
+<p>Go ahead and adjust the select box widgets for <strong>privileges</strong> and <strong>object types</strong>.</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+import altair as alt
+
+st.title(&#34;Role Grant Dashboard&#34;)
+
+# Create selectboxes for filtering
+col1, col2 = st.columns(2)
+with col1:
+    selected_privilege = st.multiselect(
+        &#39;Select Privileges&#39;,
+        options=sorted(df_role_grants[&#39;PRIVILEGE&#39;].unique()),
+        default=sorted(df_role_grants[&#39;PRIVILEGE&#39;].unique())[:10]
+    )
+
+with col2:
+    selected_granted_on = st.multiselect(
+        &#39;Select Object Types&#39;,
+        options=sorted(df_role_grants[&#39;GRANTED_ON&#39;].unique()),
+        default=sorted(df_role_grants[&#39;GRANTED_ON&#39;].unique())
+    )
+
+# Filter data
+filtered_df = df_role_grants[
+    df_role_grants[&#39;PRIVILEGE&#39;].isin(selected_privilege) &amp;
+    df_role_grants[&#39;GRANTED_ON&#39;].isin(selected_granted_on)
+]
+
+# Show summary metrics
+with st.expander(&#34;View Summary Metrics&#34;, expanded=True):
+    metric_col1, metric_col2 = st.columns(2)
+    
+    with metric_col1:
+        st.metric(&#34;Total Role Grants&#34;, len(filtered_df))
+    
+    with metric_col2:
+        st.metric(&#34;Unique Users&#34;, filtered_df[&#39;GRANTEE_NAME&#39;].nunique())
+
+# Create Top N user chart
+top_N_chart = alt.Chart(filtered_df).mark_bar(
+    stroke=&#39;black&#39;,
+    strokeWidth=1
+).encode(
+    x=alt.X(&#39;count():Q&#39;, 
+            title=&#39;Number of Role Grants&#39;,
+            axis=alt.Axis(
+                labels=True,
+                tickMinStep=1,
+                labelOverlap=False
+            )),
+    y=alt.Y(&#39;GRANTEE_NAME:N&#39;, 
+            title=&#39;Users&#39;,
+            sort=&#39;-x&#39;,
+            axis=alt.Axis(
+                labels=True,
+                labelLimit=200,
+                tickMinStep=1,
+                labelOverlap=False,
+                labelPadding=10
+            )),
+    color=alt.Color(&#39;PRIVILEGE:N&#39;, 
+                   title=&#39;Privilege Type&#39;),
+    tooltip=[
+        alt.Tooltip(&#39;GRANTEE_NAME:N&#39;, title=&#39;Users&#39;),
+        alt.Tooltip(&#39;count():Q&#39;, title=&#39;Total Grants&#39;),
+        alt.Tooltip(&#39;PRIVILEGE:N&#39;, title=&#39;Privilege Type&#39;),
+        alt.Tooltip(&#39;GRANTED_ON:N&#39;, title=&#39;Granted On&#39;)
+    ]
+).transform_window(
+    rank=&#39;rank(count())&#39;,
+    sort=[alt.SortField(&#39;count()&#39;, order=&#39;descending&#39;)]
+).transform_filter(
+    alt.datum.rank &lt;= 20
+).properties(
+    title=&#39;Top N Users by Number of Role Grants&#39;
+).configure_view(
+    stroke=None,
+    continuousHeight=400
+).configure_axis(
+    labelFontSize=10
+)
+
+# Display chart
+st.altair_chart(top_N_chart, use_container_width=True)
+</code></pre>
+<p>This should generate the following Streamlit app:</p>
+<p class="image-container"><img alt="image" src="img/fd9d3ac3e8e2d0bf.PNG"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built interactive role-based access audit dashboards using Snowflake and Streamlit. These tools enable you to visually analyze user roles and privileges, helping maintain robust security policies in your Snowflake environment.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Created an interactive user role analysis dashboard</li>
+<li>Built a comprehensive role grant visualization system</li>
+<li>Implemented dynamic filtering capabilities</li>
+<li>Generated real-time security metrics</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage" target="_blank">Account Usage</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage/users" target="_blank">Users View</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage/grants_to_users" target="_blank">Grants to Users</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-use-with-snowflake" target="_blank">Snowflake Notebooks Guide</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+<li><a href="https://altair-viz.github.io/user_guide/data.html" target="_blank">Altair Documentation</a></li>
+</ul>
+<p>Happy coding!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

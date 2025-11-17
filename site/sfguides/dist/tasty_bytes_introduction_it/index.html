@@ -1,0 +1,272 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Introduzione a Tasty Bytes</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_introduction_it"
+                  title="Introduzione a Tasty Bytes"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Introduzione a Tasty Bytes" duration="1">
+        <p class="image-container"><img src="img/b790a31ef683ee8b.png"></p>
+<h2 is-upgraded>Panoramica</h2>
+<p>In questo quickstart Introduzione a Tasty Bytes per prima cosa farai la conoscenza del marchio fittizio di food truck Tasty Bytes, creato dal team frostbyte di Snowflake.</p>
+<p>Dopo avere conosciuto l&#39;organizzazione Tasty Bytes, completeremo la configurazione del suo modello dati di base, dei ruoli e dei warehouse specifici per i workload e di tutti i controlli degli accessi basati sui ruoli (RBAC) necessari.</p>
+<p>Al termine di questo quickstart avrai implementato l&#39;ambiente base necessario per eseguire i quickstart contenuti nella sezione <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_it/index.html#3" target="_blank">Quickstart Powered by Tasty Bytes</a>.</p>
+<h2 is-upgraded>Che cos&#39;è Tasty Bytes?</h2>
+<p class="image-container"><img src="img/a51f501137dea3c5.png"></p>
+<h2 is-upgraded>Prerequisiti</h2>
+<ul>
+<li>Un <a href="https://docs.snowflake.com/en/user-guide/setup#browser-requirements" target="_blank">browser</a> supportato da Snowflake</li>
+<li>Un account Snowflake Enterprise o Business Critical <ul>
+<li>Se non hai un account Snowflake, <a href="https://signup.snowflake.com/" target="_blank"><strong>richiedi la tua prova gratuita di 30 giorni</strong></a>. Al momento della registrazione, assicurati di selezionare <strong>Enterprise</strong> Edition. Puoi scegliere qualsiasi <a href="https://docs.snowflake.com/en/user-guide/intro-regions" target="_blank">cloud o regione di Snowflake</a>.</li>
+<li>Al termine della registrazione, riceverai un&#39;email con un link per l&#39;attivazione e l&#39;URL del tuo account Snowflake.</li>
+<li><img style="width: 300.00px" src="img/1e925e111069cf28.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Cosa imparerai</h2>
+<ul>
+<li>Come creare un foglio di lavoro Snowflake</li>
+<li>Come eseguire tutte le query in un foglio di lavoro Snowflake in modo sincrono</li>
+<li>Come esplorare database, schemi, tabelle, ruoli e warehouse tramite SQL in un foglio di lavoro Snowflake</li>
+</ul>
+<h2 is-upgraded>Cosa realizzerai</h2>
+<ul>
+<li>L&#39;ambiente base di Tasty Bytes che ti consentirà di eseguire i quickstart Powered by Tasty Bytes. <ul>
+<li>Un database Snowflake</li>
+<li>Schemi di dati grezzi, armonizzati e analitici completi di tabelle e viste</li>
+<li>Ruoli e warehouse di Snowflake specifici per i workload</li>
+<li>Controllo degli accessi basato sui ruoli (RBAC)</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configurare Tasty Bytes" duration="6">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Per questo quickstart utilizzerai l&#39;interfaccia web di Snowflake nota come Snowsight. Se questa è la prima volta che utilizzi Snowsight, ti consigliamo caldamente di dare un&#39;occhiata alla <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight" target="_blank">documentazione di Snowsight</a> per una spiegazione a livello generale.</p>
+<h2 is-upgraded>Passaggio 1 - Accedere a Snowflake tramite URL</h2>
+<ul>
+<li>Apri una finestra del browser e inserisci l&#39;URL del tuo account Snowflake. Se non hai già un account Snowflake, torna alla sezione precedente e registrati per provare Snowflake gratuitamente.</li>
+</ul>
+<h2 is-upgraded>Passaggio 2 - Effettuare l&#39;accesso a Snowflake</h2>
+<ul>
+<li>Accedi al tuo account Snowflake. <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 3 - Accedere ai fogli di lavoro</h2>
+<ul>
+<li>Fai clic sulla scheda Worksheets nella barra di navigazione sulla sinistra. <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 4 - Creare un foglio di lavoro</h2>
+<ul>
+<li>Nella scheda Worksheets, fai clic sul pulsante &#34;+&#34; nell&#39;angolo superiore destro di Snowsight e scegli &#34;SQL Worksheet&#34; <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 5 - Rinominare un foglio di lavoro</h2>
+<ul>
+<li>Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo &#34;Tasty Bytes - Setup&#34;. <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 6 - Accedere al file di configurazione SQL su GitHub</h2>
+<ul>
+<li>Fai clic sul pulsante qui sotto, che ti porterà al file di configurazione SQL di Tasty Bytes archiviato su GitHub.</li>
+</ul>
+<p><a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_introduction.sql" target="_blank"><paper-button class="colored" raised>tb_introduction.sql</paper-button></a></p>
+<h2 is-upgraded>Passaggio 7 - Copiare la configurazione SQL da GitHub</h2>
+<ul>
+<li>In GitHub, vai sul lato destro e fai clic su &#34;Copy raw contents&#34;. Tutto il codice SQL necessario verrà copiato nei tuoi Appunti. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 8 - Incollare la configurazione SQL da GitHub nel tuo foglio di lavoro Snowflake</h2>
+<ul>
+<li>Torna a Snowsight e al foglio di lavoro che hai appena creato e incolla (<em>CMD + V per Mac o CTRL + V per Windows</em>) il codice che abbiamo appena copiato da GitHub.</li>
+</ul>
+<h2 is-upgraded>Passaggio 9 - Eseguire in modo sincrono tutto il codice SQL di configurazione</h2>
+<ul>
+<li>Fai clic nel foglio di lavoro &#34;Tasty Bytes - Setup&#34; appena creato, seleziona tutto (<em>CMD + A per Mac o CTRL + A per Windows</em>) e fai clic su &#34;► Run&#34; <ul>
+<li><img src="img/451b2deff6f2950a.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 10 - Completare la configurazione</h2>
+<ul>
+<li>Dopo avere fatto clic su &#34;► Run&#34; inizierà l&#39;esecuzione delle query. Queste query verranno eseguite una dopo l&#39;altra e l&#39;intero foglio di lavoro richiederà circa 5 minuti. Al termine comparirà il seguente messaggio: <code>frostbyte_tasty_bytes setup is now complete</code> . <ul>
+<li><img src="img/896d65f32bfae4ba.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 11 - Fai clic su Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Esplorare l&#39;ambiente base di Tasty Bytes" duration="2">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Dopo avere completato correttamente la configurazione di Tasty Bytes, possiamo esplorare il database, i ruoli e i warehouse che abbiamo creato.</p>
+<aside class="warning"><p><strong>Nota:</strong> all&#39;interno del foglio di lavoro <em>Tasty Bytes - Setup</em> che hai creato nella sezione precedente, scorri fino in fondo e copia, incolla ed esegui il codice SQL incluso in ciascuno dei seguenti passaggi.</p>
+</aside>
+<h2 is-upgraded>Passaggio 1 - Esplorare il database Tasty Bytes</h2>
+<p>Questa query restituisce il database che abbiamo creato tramite <a href="https://docs.snowflake.com/en/sql-reference/sql/show-databases.html" target="_blank">SHOW DATABASES</a>.</p>
+<pre><code>USE ROLE sysadmin;
+SHOW DATABASES LIKE &#39;frostbyte_tasty_bytes&#39;;
+</code></pre>
+<p class="image-container"><img src="img/91a8de41aada1ac6.png">  </p>
+<h2 is-upgraded>Passaggio 2 - Esplorare gli schemi nel database Tasty Bytes</h2>
+<p>Questa query restituisce gli schemi all&#39;interno del database che abbiamo creato tramite <a href="https://docs.snowflake.com/en/sql-reference/sql/show-schemas" target="_blank">SHOW SCHEMAS</a>.</p>
+<pre><code>SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
+</code></pre>
+<p class="image-container"><img src="img/75491dcf311d5611.png">  </p>
+<h2 is-upgraded>Passaggio 3 - Esplorare le tabelle nello schema RAW_POS all&#39;interno del database Tasty Bytes</h2>
+<p>Questa query restituisce le tabelle all&#39;interno dello schema <code>raw_pos</code> tramite <a href="https://docs.snowflake.com/en/sql-reference/sql/show-tables" target="_blank">SHOW TABLES</a></p>
+<pre><code>SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
+</code></pre>
+<p class="image-container"><img src="img/11a6d9991e20d84f.png">  </p>
+<h2 is-upgraded>Passaggio 4 - Esplorare i ruoli di Tasty Bytes</h2>
+<p>Questa query restituisce i ruoli che abbiamo creato tramite <a href="https://docs.snowflake.com/en/sql-reference/sql/show-roles" target="_blank">SHOW ROLES</a>.</p>
+<pre><code>SHOW ROLES LIKE &#39;tasty%&#39;;
+</code></pre>
+<p class="image-container"><img src="img/ea9571b6ae65de6e.png">  </p>
+<h2 is-upgraded>Passaggio 5 - Esplorare i warehouse Tasty Bytes</h2>
+<p>Questa query restituisce i warehouse che abbiamo creato tramite <a href="https://docs.snowflake.com/en/sql-reference/sql/show-warehouses" target="_blank">SHOW WAREHOUSES</a>.</p>
+<pre><code>SHOW WAREHOUSES LIKE &#39;tasty%&#39;;
+</code></pre>
+<p class="image-container"><img src="img/670a3584a18724d2.png">  </p>
+<h2 is-upgraded>Passaggio 6 - Combinare tutti gli elementi</h2>
+<p>Le prossime tre query:</p>
+<ol type="1">
+<li>Assumono il ruolo <code>tasty_data_engineer</code> tramite <a href="https://docs.snowflake.com/en/sql-reference/sql/use-role.html" target="_blank">USE ROLE</a></li>
+<li>Utilizzano il warehouse <code>tasty_de_wh</code> tramite <a href="https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html" target="_blank">USE WAREHOUSE</a></li>
+<li>Interrogano la tabella <code>raw_pos.menu</code> per trovare quali voci di menu sono vendute nei food truck con il marchio Plant Palace.</li>
+</ol>
+<pre><code>USE ROLE tasty_data_engineer;
+USE WAREHOUSE tasty_de_wh;
+
+SELECT
+    m.menu_type_id,
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_name
+FROM frostbyte_tasty_bytes.raw_pos.menu m
+WHERE m.truck_brand_name = &#39;Plant Palace&#39;;
+</code></pre>
+<p class="image-container"><img src="img/2aba27e059c43d58.png">  </p>
+<p>Fantastico! In pochi minuti abbiamo configurato un ambiente demo Tasty Bytes completo di dati, ruoli e warehouse nel nostro account Snowflake. Ora diamo un&#39;occhiata a tutti gli altri quickstart Tasty Bytes a nostra disposizione.</p>
+<h2 is-upgraded>Passaggio 7 - Fai clic su Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Quickstart Powered by Tasty Bytes" duration="1">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Congratulazioni! Hai completato la configurazione dell&#39;ambiente base di Tasty Bytes.</p>
+<p>Il sommario riportato di seguito descrive tutti i quickstart Tasty Bytes disponibili che utilizzano l&#39;ambiente base che hai appena creato.</p>
+<p class="image-container"><img src="img/a84d9cfd645f2656.png"></p>
+<h2 is-upgraded>Da zero a Snowflake</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/" target="_blank">Governance finanziaria</a></h3>
+<ul>
+<li>Scopri i Virtual Warehouse di Snowflake con le loro configurabilità, i monitor delle risorse e i parametri di timeout a livello di account e di warehouse.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_transformation_it/" target="_blank">Trasformazione</a></h3>
+<ul>
+<li>Scopri le funzionalità di cache dei set di risultati, Zero-Copy Cloning, manipolazione delle tabelle, Time Travel e swap, drop e undrop delle tabelle di Snowflake.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_it/" target="_blank">Dati semi-strutturati</a></h3>
+<ul>
+<li>Scopri il tipo di dati VARIANT di Snowflake, l&#39;elaborazione dei dati semi-strutturati tramite notazione punto e appiattimento laterale, la creazione di viste e i grafici Snowsight.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/" target="_blank">Governance dei dati</a></h3>
+<ul>
+<li>Scopri i ruoli definiti dal sistema di Snowflake, crea e concedi privilegi a un ruolo personalizzato e implementa Dynamic Data Masking basato sui tag e Row Access Policies.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_collaboration_it/" target="_blank">Collaborazione</a></h3>
+<ul>
+<li>Scopri il Marketplace Snowflake utilizzando dati aggiornati gratuiti e immediatamente disponibili forniti da Weather Source per svolgere analisi data-driven armonizzando le fonti di dati interne ed esterne.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/" target="_blank">Analisi geospaziale</a></h3>
+<ul>
+<li>Scopri il supporto per l&#39;analisi geospaziale di Snowflake, iniziando dall&#39;acquisizione di dati aggiornati gratuiti e immediatamente disponibili da SafeGraph per poi creare punti geografici (ST_POINT), calcolare distanze (ST_DISTANCE), raccogliere coordinate (ST_COLLECT), disegnare un poligono di delimitazione minimo (ST_ENVELOPE), calcolare aree (ST_AREA) e trovare i punti centrali (ST_CENTROID).</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Approfondimenti sui workload (<em>disponibili a breve</em>)</h2>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

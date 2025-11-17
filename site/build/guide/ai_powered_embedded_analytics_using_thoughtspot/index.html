@@ -1,0 +1,274 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AI Powered Embedded Analytics using ThoughtSpot</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="ai_powered_embedded_analytics_using_thoughtspot"
+                  title="AI Powered Embedded Analytics using ThoughtSpot"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>When combined with Snowflake&#39;s robust and efficient data cloud solution, ThoughtSpot can help you turn your data into actionable insights. Our AI-Powered Analytics platform is designed for everyone—whether you&#39;re code first or code free. Instead of relying on data teams to crank out clunky dashboards and outdated reports, business users can use a familiar natural language search interface and augmented analytics to discover insights, create and share Liveboards, and make real-time decisions. This frees analysts and data teams to work on more impactful projects, like data pipeline optimizations or complex analysis. By choosing ThoughtSpot and Snowflake, you&#39;re investing in a modern data infrastructure built to scale, grow, and innovate with your business.</p>
+<p class="image-container"><img alt="Product Architecture" src="img/6b3ed7038bdb6bd8.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake and React.</li>
+<li>ThoughtSpot Free Trial.</li>
+<li>A Snowflake Account to connect ThoughtSpot</li>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li>Your favorite IDE like <a href="https://code.visualstudio.com/download" target="_blank">VSCode</a></li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to connect your free ThoughtSpot <a href="https://www.thoughtspot.com/trial" target="_blank">trial</a> instance to Snowflake</li>
+<li>How to use Natural Language Search</li>
+<li>How to search data using search tokens</li>
+<li>How to create <a href="https://docs.thoughtspot.com/cloud/latest/liveboards" target="_blank">Liveboards</a> which are interactive dashboards</li>
+<li>How to use <a href="https://docs.thoughtspot.com/cloud/latest/ask-sage" target="_blank">Ask Sage</a> to interact with your data conversationally</li>
+<li>How to use <a href="https://docs.thoughtspot.com/cloud/latest/spotiq" target="_blank">SpotIQ</a> and AI driven analytics feature for trend analysis and anomaly detection</li>
+<li>And finally how to build a very simple yet powerful embedded application</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A simple yet highly customizable embedded ThoughtSpot Application</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get Started" duration="10">
+        <p>To get started, we are going to need a few cloud environments, one for Snowflake and another for ThoughtSpot. Thankfully, both platforms offer free trials you can sign up for online. This tutorial will use sample datasets in each environment. If you already have an existing Snowflake or ThoughtSpot instance, it is recommended to create a new free trial instance.</p>
+<ul>
+<li>To sign up for a ThoughtSpot free trial, follow these steps: <ul>
+<li>Go to the <a href="https://www.thoughtspot.com" target="_blank">ThoughtSpot Website</a></li>
+<li>Click on the &#34;Free Trial&#34; or &#34;Try for Free&#34; button.</li>
+<li>Select Snowflake from the drop down list under &#34;Select Cloud Data Platform&#34; and fill out the required information in the sign-up form.</li>
+<li>Follow the instructions sent to your email to complete the setup.</li>
+<li>This will give you access to ThoughtSpot&#39;s features for a limited time.</li>
+<li><em>Optionally you could use </em><a href="https://docs.thoughtspot.com/software/latest/connections-snowflake-partner" target="_blank"><em>Snowflake Partner Connect</em></a><em> and get a ThoughtSpot free trial</em></li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="Snowflake Partner Connect" src="img/dbc87ba44f74efb8.png"></p>
+<ul>
+<li>Sign up for a Snowflake Free Trial: <ul>
+<li>Jump over to the <a href="https://signup.snowflake.com/" target="_blank">Snowflake Free Trial signup page</a>, enter the details required, and tap continue. Follow the steps required and check your email for an Activation link. Keep the credentials handy as you will need them to connect.</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect to Snowflake" duration="2">
+        <h2 is-upgraded>Snowflake Connection</h2>
+<p>Now that we have our cloud environments setup, it is time to create the connection from ThoughtSpot to Snowflake. If you haven&#39;t done so already, go ahead and log into your ThoughtSpot account. From the top menu, select <strong>Data</strong>, then <strong>Connections</strong> from the left hand menu, tap <strong>Snowflake</strong>, give your connection the name <code>TutorialSnowStore</code>, and tap continue.</p>
+<p class="image-container"><img alt="ThoughtSpot to Snowflake" src="img/29d9308282da572e.gif"></p>
+<p>After tapping <strong>Continue</strong>, you will be prompted to enter Snowflake connection details. These are the details you collected earlier from the Snowflake Free Trial. Copy these into the form, paying careful attention to case. Connection details are case sensitive and need to appear exactly as they appear in Snowflake.</p>
+<ul>
+<li>Click on the link below for a step by step guide to connecting ThoughtSpot to your Snowflake instance <ul>
+<li><a href="https://docs.thoughtspot.com/cloud/latest/connections-snowflake-add" target="_blank">Connect ThoughtSpot to Snowflake</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Worksheet in ThoughtSpot" duration="10">
+        <p>Worksheet is a flat table representation exposed to business users, the goal is for business users to express questions on top of this worksheet without having to worry about the data schema hidden behind this simplistic definition. ThoughtSpot uses Worksheets, which are logical views of data, to model complex datasets. The Worksheets simplify access to data for end-users and application services by incorporating these key features, and more:</p>
+<ul>
+<li>Table joins supplement the primary data with information from various other data sources.</li>
+<li>Changing data types ensures that you can handle mismatches gracefully, For example, conversions of date/time type formats, and processing of   numeric codes (such as event IDs) correctly.</li>
+<li>Derived fields support flexible expressions and formulas.</li>
+<li>Renamed fields make charts and tables easily accessible.</li>
+<li>Selecting fields allows you to focus only on the fields that are necessary to the business use case.</li>
+<li>Hiding fields lets you change the visibility of data by obscuring and securing sensitive information without affecting the calculations that depend on it.</li>
+</ul>
+<h2 is-upgraded>Steps to Create a Worksheet</h2>
+<p class="image-container"><img alt="Create a Worksheet" src="img/d344323757659acb.png"></p>
+<ul>
+<li>Select Data, on the top navigation bar.</li>
+<li>Select the <strong>+ Create</strong> new button in the side navigation bar.</li>
+<li>Select <strong>Worksheet</strong>.</li>
+</ul>
+<h2 is-upgraded>Add Sources and Columns to a Worksheet</h2>
+<p class="image-container"><img alt="Add Sources" src="img/8914ec3b1e5de3f7.png"></p>
+<p>After creating a Worksheet, you need to add the sources that contain the data. A source is another name for a table. The sources you choose are typically related to one another by foreign keys.</p>
+<p>To add sources to your Worksheet, follow these steps. The Worksheet creation UI also guides you through the process.</p>
+<ul>
+<li>Select the <strong>+</strong> icon next to Sources.</li>
+<li>Select the checkbox next to each of the sources you want to include in the Worksheet. You can search for specific Views or tables. You can also select every data source that has a specific tag, like <strong>Retail</strong>.</li>
+</ul>
+<p><em>Note that the list of sources only shows the data sources on which you have view or edit privileges.</em></p>
+<ul>
+<li>Choose the Worksheet join rule. Either apply joins progressively or apply all joins. Applying joins progressively speeds up performance.</li>
+<li>Select <strong>CLOSE</strong> to save your changes.</li>
+<li>Expand the table names under <strong>Sources</strong> and select the columns to add to the Worksheet, by doing any of the following:<ul>
+<li>To add all of the columns from a table, click the table name and select <strong>+ Add Columns</strong>.</li>
+<li>To add a single column, double-click its name.</li>
+<li>To add multiple columns, <code>Control</code> + click each column you want to add and select + Add Columns.</li>
+</ul>
+</li>
+</ul>
+<p><em>Note that after you add a column, non-related tables (those without a primary/foreign key relationship) become hidden. If you are working with two tables that should be related, but are not, you can add a relationship between them.</em></p>
+<ul>
+<li>Select the more options icon, and select Save.</li>
+<li>In the Save Worksheet window, enter a name and description for your Worksheet and select SAVE.</li>
+</ul>
+<p class="image-container"><img alt="Worksheet" src="img/41aac6ec035d582d.gif"></p>
+<h2 is-upgraded>Here&#39;s more on creating a <a href="https://docs.thoughtspot.com/cloud/latest/worksheets" target="_blank">Worksheet</a></h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build your own embedded application" duration="10">
+        <h2 is-upgraded>ThoughtSpot Embed with Snowflake</h2>
+<p>This section demonstrates how to embed ThoughtSpot analytics into a web application using React, TypeScript, and Vite. It integrates with Snowflake as the data source.</p>
+<h2 is-upgraded>Overview</h2>
+<p>This application serves as a template for embedding ThoughtSpot into web applications. It utilizes modern web development tools and practices. We encourage you to customize it to fit your needs.</p>
+<h2 is-upgraded>Features</h2>
+<ul>
+<li>Embed ThoughtSpot Analytics</li>
+<li>Built with React and TypeScript</li>
+<li>Fast development with Vite</li>
+<li>Integration with Snowflake</li>
+</ul>
+<h2 is-upgraded>Get Started</h2>
+<p>These instructions will help you set up and run the project on your local machine for development and testing purposes.</p>
+<ul>
+<li>Install <a href="https://github.com/nvm-sh/nvm#installing-and-updating" target="_blank">Node Version Mangager (nvm)</a><ul>
+<li>Not sure if you have it installed? Run <code>nvm</code> or <code>nvm -v</code> at the command line and hit enter. If you hit a &#34;command not found&#34; error, you likely do not have it installed.</li>
+</ul>
+</li>
+<li>Install Node (required to run the site locally) using nvm: <code>nvm install latest</code><ul>
+<li>If you have Homebrew installed and don&#39;t want to use nvm, run: <code>brew install node</code></li>
+</ul>
+</li>
+<li>Now that you have Node.js and npm installed on your machine ensure you have access to ThoughtSpot and Snowflake accounts</li>
+</ul>
+<h2 is-upgraded>Installation</h2>
+<ol type="1">
+<li>Clone the repository: open a terminal window in VS Code or your favorite IDE and type in the following below</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">   git clone https://github.com/thoughtspot/snowflake-quickstart-tse
+
+</code></pre>
+<ol type="1" start="2">
+<li>Navigate to the project directory:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">cd ts-embed-snowflake
+
+</code></pre>
+<ol type="1" start="3">
+<li>Install the dependencies:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">npm install
+
+</code></pre>
+<h2 is-upgraded>Run the Application</h2>
+<ol type="1">
+<li>To start the development server, run:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">npm run dev
+
+</code></pre>
+<p>Open your browser and go to <a href="http://localhost:5173/" target="_blank">your newly created application</a> to see it in action.</p>
+<ol type="1">
+<li>Click on the Liveboard. A sample retail liveboard will appear.</li>
+</ol>
+<p class="image-container"><img alt="Liveboard" src="img/d053bf85cdd0fda.png"></p>
+<ul>
+<li>Visualize the Data with LiveboardsFor many users, viewing data in charts is the most efficient way of analysing data. The trouble with most charting solutions is that the results is very static.Consider a traditional dashboard to view daily sales. Charts on these dashboards are effectively pre-defined queries. With ThoughtSpot however, charts and dashboards are fully dynamic; they are alive. You can modify the filters with natural language, tap and drill in to view deeper insights, and more.For this tutorial, we are going to create a Liveboard, a dynamic dashboard, to represent product sales by store.  Let&#39;s get started.From the top navigation, select <strong>Liveboards</strong>, then tap the <strong>+Liveboard</strong> button in the top right, and name your Liveboard <code>Snow - Store Sales</code>. Click <strong>Create</strong>. Your Liveboard is now available alongside any other Liveboards you may have in your environment. Go ahead and tap on <code>Snow - Store Sales</code> to open it.</li>
+</ul>
+<p class="image-container"><img alt="Liveboard1" src="img/9a6446989355da65.gif"></p>
+<ol type="1" start="2">
+<li>Use Natural Language Search with <a href="https://docs.thoughtspot.com/cloud/latest/sage-search" target="_blank">Sage</a>Ask a question like &#34;what are my best performing brands last week&#34; in the Search bar</li>
+</ol>
+<p class="image-container"><img alt="Sage" src="img/866b8b6a75c6ece.gif"></p>
+<ol type="1" start="3">
+<li>Or simply use our <a href="https://docs.thoughtspot.com/cloud/latest/search-data" target="_blank">token based search</a></li>
+</ol>
+<p class="image-container"><img alt="SearchData" src="img/419cd767033ba35e.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <h2 is-upgraded>What you learned today</h2>
+<p>Congratulations! You&#39;ve successfully learned how to</p>
+<ul>
+<li>Use Natural Language Search (NLS) to answer any questions of your data in Snowflake</li>
+<li>Create interactive dashboards aka Liveboards</li>
+<li>Eembed ThoughtSpot and Liveboards you created to build your own AI-powered analytics application.</li>
+</ul>
+<p>Feel free to customize the application to suit your needs.</p>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://github.com/thoughtspot/snowflake-quickstart-tse" target="_blank">Source Code on Github</a></li>
+<li><a href="https://developers.thoughtspot.com/codespot" target="_blank">ThoughtSpot Codespot - code samples, visualizations and more</a></li>
+<li><a href="https://try-everywhere.thoughtspot.cloud/v2/#/everywhere" target="_blank">Developer Playground</a></li>
+<li><a href="https://quickstarts.snowflake.com/" target="_blank">Getting Started with Snowflake Quickstarts</a></li>
+<li><a href="https://signup.snowflake.com/" target="_blank">Sign up for a Snowflake Free Trial</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

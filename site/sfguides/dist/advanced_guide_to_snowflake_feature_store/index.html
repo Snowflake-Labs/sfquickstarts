@@ -1,0 +1,426 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Advanced Guide to Snowflake Feature Store</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="advanced_guide_to_snowflake_feature_store"
+                  title="Advanced Guide to Snowflake Feature Store"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This advanced guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature Store and Model Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline with Snowflake ML to maintain customer segments.</p>
+<p>The primary focus in this guide is the Snowflake Feature Stores functionality and how it integrates within the broader ecosystem within Snowflake ML.</p>
+<p>Here is a summary of what you will be able to learn in each step by following this Guide:</p>
+<ul>
+<li><strong>Setup Environment</strong>: Use stages and tables to ingest and organize raw data from S3 into Snowflake tables.  Setup a scheduled process to simulate incremental data-ingest into Snowflake tables.</li>
+<li><strong>Feature Engineering</strong>: Leverage Snowparks Python DataFrames to perform data cleansing, transformations such as group by, aggregate, pivot, and join to create features for machine learning.</li>
+<li><strong>Feature Store</strong>: Use Snowflakes Feature Store to register and maintain feature-engineering pipelines and understand how to monitor them once operational.</li>
+<li><strong>Machine Learning</strong>: Perform feature transformation and run ML Training in Snowflake using Snowpark ML. Register the trained ML model for inference from the Snowflake Model Registry</li>
+<li><strong>Operationalise a Model</strong>: Implementing a production inference data-pipeline to maintain customer segments as underlying customer behaviors change in source data.</li>
+</ul>
+<p>The diagram below provides an overview of what we will be building in this Guide. <img alt="Snowpark" src="img/690ad2565c3fa1f4.png"></p>
+<aside class="warning"><p><strong>Note</strong>:  Snowflake Feature Store uses Snowflake Enterprise Edition features and therefore requires Enterprise Edition or higher.</p>
+</aside>
+<p>In case you are new to some of the technologies mentioned above, here&#39;s a quick summary with links to documentation.</p>
+<h2 is-upgraded>What is Snowpark?</h2>
+<p>Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake.</p>
+<p><strong>Client Side Libraries</strong> - Snowpark libraries can be downloaded, installed and used from any client-side notebook or IDE and are used for code development and deployment. Libraries include the [Snowpark ML API)[https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview#installing-snowpark-ml], which provides Python APIs for machine learning workflows in Snowflake.</p>
+<p><strong>Code Execution Environments</strong> - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.</p>
+<p>Learn more about Snowpark <a href="https://www.snowflake.com/snowpark/" target="_blank">here</a>.</p>
+<h2 is-upgraded>What is Snowflake ML?</h2>
+<p><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview" target="_blank">Snowflake ML</a> is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use <a href="https://docs.snowflake.com/en/guides-overview-ml-functions" target="_blank">ML Functions</a> to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.</p>
+<p>Capabilities for custom ML include:</p>
+<ul>
+<li>Snowflake Notebooks for a familiar, easy-to-use notebook interface that blends Python, SQL, and Markdown</li>
+<li>Container Runtimes for distributed CPU and GPU processing out of the box from Snowflake Notebooks</li>
+<li>Snowpark ML Modeling for feature engineering and model training with familiar Python frameworks</li>
+<li>Snowflake Feature Store for continuous, automated refreshes on batch or streaming data</li>
+<li>Snowflake Model Registry to manage models and their metadata</li>
+<li>ML Lineage to trace end-to-end feature and model lineage (currently in private preview)</li>
+</ul>
+<p>To get started with Snowflake ML, developers can use the Python APIs from the <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">Snowpark ML library</a> to interact with all development and operations features across the ML workflow.</p>
+<p class="image-container"><img alt="snowpark_ml" src="img/44b49769e516cb23.png"></p>
+<p>This guide will focus on</p>
+<ul>
+<li><a href="https://docs.snowflake.com/LIMITEDACCESS/snowflake-feature-store#generating-datasets-for-training" target="_blank">Snowflake Feature Store</a>, which enables the creation of feature-engineering pipelines, and efficient, time-accurate retrieval of features for model training and inference. Snowflake Feature Store enables data engineers, data scientists and ML engineers to centralize the curation, maintenance and sharing of features that can be used in machine-learning models.You can create multiple Feature-Stores within a Snowflake account, for example organized by environment or business unit.  Features are automatically maintained using Snowflake Dynamic Tables to ensure that the feature-engineering pipeline keeps features updated to the required level of freshness. When retrieving features for training or inference, feature-store ensures that the feature values are retrieved at the required point-in-time using Snowflake AsOf joins.<img alt="Snowpark" src="img/d5b74cd3cf584534.png"></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling" target="_blank">Snowpark ML Modeling</a>, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature pre-processing and model training without the need to move data out of Snowflake.</li>
+</ul>
+<p class="image-container"><img alt="Snowpark" src="img/8de45cc3c02b6206.png"></p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry" target="_blank">Snowflake Model Registry</a>, which provides scalable and secure model management of ML models in Snowflake, regardless of origin. Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake&#39;s scale and security features.</li>
+</ul>
+<p class="image-container"><img alt="Snowpark" src="img/6ca5e7c20359db87.png"></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to perform data and feature engineering tasks using Snowpark DataFrames and APIs</li>
+<li>How to create a Snowflake Feature Store, and the key objects within it like Entities and Feature Views</li>
+<li>How to train ML model using Snowpark ML in Snowflake using features and training data derived from Snowflake Feature Store</li>
+<li>How to register ML model and use it for inference from Snowflake Model Registry.</li>
+<li>How to operationalize an end-to-end feature-engineering and ML model to perform micro-batch inference.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed</li>
+<li><a href="https://www.python.org/downloads/" target="_blank">Python 3.11</a> installed <ul>
+<li>Note that you will be creating a Python environment with 3.11 in the <strong>Get Started</strong> step</li>
+</ul>
+</li>
+<li>A Snowflake account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>.</li>
+<li>A Snowflake account login with the ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to use a different role that has the ability to create database, schema, tables, dynamic tables, tags,  stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you have been granted the permissions to create the afore mentioned objects.</li>
+</ul>
+<p><strong>IMPORTANT</strong>: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started" target="_blank">here</a>.</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An end-to-end Machine Learning use-case including data-retrieval, feature-engineering and management, model-training and storage and operationalization as a scheduled inference process.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Python" duration="8">
+        <h2 is-upgraded>Get Started</h2>
+<p>This section covers cloning of the GitHub repository and setting up your Snowpark for Python environment.</p>
+<h2 is-upgraded>Clone GitHub Repository</h2>
+<p>The very first step is to clone the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store" target="_blank">GitHub repository</a>. This repository contains all the code you will need to successfully complete this Guide.</p>
+<p>Using HTTPS:</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store.git
+</code></pre>
+<p>OR, using SSH:</p>
+<pre><code language="language-shell" class="language-shell">git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store.git
+</code></pre>
+<h2 is-upgraded>Snowpark for Python</h2>
+<p>To complete the Guide we will need a Python environment installed with the prerequisite packages.</p>
+<h3 is-upgraded>Local Python Environment Installation</h3>
+<p><strong>Step 1:</strong> Download and install the miniconda installer from <a href="https://conda.io/miniconda.html" target="_blank">https://conda.io/miniconda.html</a>. <em>(OR, you may use any other Python environment with Python 3.10, for example, </em><a href="https://virtualenv.pypa.io/en/latest/" target="_blank"><em>virtualenv</em></a><em>)</em>.</p>
+<p><strong>Step 2:</strong> Open a new terminal window and execute the following commands in the same terminal window.</p>
+<p><strong>Step 3:</strong> Create Python 3.10 conda environment called <strong>snowpark-de-ml</strong> with initial required packages by running the following command in the same terminal window</p>
+<pre><code language="language-python" class="language-python">conda create -n py-snowpark_df_ml_fs python=3.10 numpy pandas pyarrow jupyterlab tabulate --override-channels -c https://repo.anaconda.com/pkgs/snowflake
+</code></pre>
+<p>Note: if you are installing onto a Apple Mac with Apple silicon you will need to use the following instead</p>
+<pre><code language="language-python" class="language-python">CONDA_SUBDIR=osx-64 conda create -n py-snowpark_df_ml_fs python=3.10 numpy pandas pyarrow jupyterlab tabulate --override-channels -c https://repo.anaconda.com/pkgs/snowflake
+</code></pre>
+<p><strong>Step 4:</strong> Activate conda environment <strong>snowpark-de-ml</strong> by running the following command in the same terminal window</p>
+<pre><code language="language-python" class="language-python">conda activate py-snowpark_df_ml_fs
+</code></pre>
+<p>Note: if you are installing onto a Apple Mac with Apple silicon you will need to use the following command after you have activated the Conda environment.</p>
+<pre><code language="language-python" class="language-python">conda config --env --set subdir osx-64
+</code></pre>
+<p><strong>Step 5:</strong> Install Snowpark Python, Snowpark ML, and other libraries in conda environment <strong>py-snowpark_df_ml_fs</strong> from <a href="https://repo.anaconda.com/pkgs/snowflake/" target="_blank">Snowflake Anaconda channel</a> by running the following command in the same terminal window</p>
+<pre><code language="language-python" class="language-python">conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python=1.16.0 snowflake-ml-python=1.5.1 notebook
+pip install snowflake
+</code></pre>
+<p><strong>Step 6:</strong> Create a Jupyter Kernel to represent the environment that we have just created using</p>
+<pre><code language="language-python" class="language-python">ipython kernel install --user --name=py-snowpark_df_ml_fs
+</code></pre>
+<p><strong>Step 7:</strong> Make sure you are in the top level directory for this Guide, and start Jupyter to test the it is setup correctly</p>
+<pre><code language="language-python" class="language-python">jupyter lab
+</code></pre>
+<p>Follow the instructions output by Jupyter in the console to open jupyter lab in your browser, if it has not automatically open a tab in your browser.</p>
+<p><strong>Step 8:</strong> You will need a Snowflake login and to setup a connection for use within the provided Jupyter Notebooks.</p>
+<p>There are several options for creating a Snowpark connection.  You can use the method described here in <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview#connecting-to-snowflake" target="_blank">snowpark connection</a>.  You will need to create an entry in your <a href="https://docs.snowflake.com/en/user-guide/snowsql-config" target="_blank">SnowSQL configuration file</a>.</p>
+<p>Alternatively, you can update <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/connection.json" target="_blank">connection.json</a> with your Snowflake account details and credentials.</p>
+<p>Here&#39;s a sample <strong><em>connection.json</em></strong> based on the object names mentioned in <strong>Setup Database Environment</strong> step.</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;account&#34;   : &#34;&lt;your_account_identifier_goes_here&gt;&#34;,
+  &#34;user&#34;      : &#34;&lt;your_username_goes_here&gt;&#34;,
+  &#34;password&#34;  : &#34;&lt;your_password_goes_here&gt;&#34;,
+  &#34;role&#34;      : &#34;FS_QS_ROLE&#34;,
+  &#34;warehouse&#34; : &#34;TPCXAI_SF0001_WH&#34;,
+  &#34;database&#34;  : &#34;TPCXAI_SF0001_QUICKSTART_INC&#34;,
+  &#34;schema&#34;    : &#34;TRAINING&#34;
+}
+</code></pre>
+<p>You can then read the parameters into Python with</p>
+<pre><code language="language-python" class="language-python">connection_parameters = json.load(open(&#39;connection.json&#39;))
+</code></pre>
+<p>And connect to the database using:</p>
+<pre><code language="language-python" class="language-python">session = Session.builder.configs(connection_parameters).create()
+</code></pre>
+<aside class="warning"><p><strong>Note</strong>: For the <strong>account</strong> parameter above, specify your <strong>account identifier</strong> and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html" target="_blank">refer to the documentation</a>.</p>
+</aside>
+<aside class="warning"><p> _<em>Note</em>: Initially, before you have executed the Setup Notebook below, you will need to use pre-existing objects (database, schema, warehouse) you have access to in your account. Once we have setup the Database environment with the Notebook below you can update <code>connection.json</code> with the objects created.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Database Environment" duration="20">
+        <p>We will now need to setup the Database to mimic development and production databases environments, where new data is being regularly ingested to maintain the latest data from source systems.  Snowflakes Feature Store automates the maintenance of the feature-engineering pipelines from source tables in Snowflake which we want to observe in this Guide.</p>
+<p>We are using the dataset from <a href="https://www.tpc.org/tpcx-ai/default5.asp" target="_blank">TPCX-AI</a> and it&#39;s usecases for this Guide example.  We will use Usecase 1, which performs a customer segmentation using customer Orders, Line-Items and Order-Returns tables.  We will also load the Customer data should you wish to further enrich the use-case with additional customer data.</p>
+<p>For each table TPCX-AI provides three parts to the data:</p>
+<ul>
+<li><strong>TRAINING</strong> (<em>Development</em>)</li>
+<li><strong>SCORING</strong> (<em>Test</em>)</li>
+<li><strong>SERVING</strong> (<em>Production</em>)</li>
+</ul>
+<p>We can think of Training as representing our Development environment where we maintain a sample of historical data that is used for development purposes.  The Scoring environment represents a Test environment where we store data not used in Development to validate our code is working. In Machine Learning this data is used to validate that the features and models we have developed, will generalise well to typical data not observed during the development (training) process.  Finally Serving represents the Production environment where we have new ‘live&#39; data arriving from source systems. It is on this new data that we want to operationalize our machine-learning pipeline to perform predictions/inference on new data, taking actions as a result.</p>
+<p>We will create a Snowflake Database (<strong>TPCXAI_SF0001_QUICKSTART</strong>) to hold three schemas (<strong>TRAINING</strong>, <strong>SCORING</strong>, <strong>SERVING</strong>) representing the environments and different data subsets for each table.  This database will contain static source data loaded from Parquet files.  From this we will create another Database (<strong>TPCXAI_SF0001_QUICKSTART_INC</strong>) with the same schemas, and objects, that will incrementally ingest data from <strong>TPCXAI_SF0001_QUICKSTART</strong> to mimic a ‘Live&#39; environment.  We also have the <strong>CONFIG</strong> schema that holds the Stages, File-Formats, Tasks, Streams etc, that populate and maintain the data in from source and between the two database.</p>
+<p>To simplify the overall creation and setup of these databases and the required objects within them we provide a Jupyter Notebook (<a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step01_TPCXAI_UC01_Setup.ipynb" target="_blank">Step01_TPCXAI_UC01_Setup.ipynb</a>)</p>
+<p>The Notebook uses the SnowSQL configuration method of creating the database connection.  If you prefer you can use the <code>connections.json</code> method by adjusting this file :</p>
+<ul>
+<li><code>connections.json</code> : Containing the connection credentials for the Account that you are using. Customise as appropriate to your account.</li>
+</ul>
+<p>You will need to adjust the Notebook to load the file into python:</p>
+<pre><code language="language-python" class="language-python">connection_parameters = json.loads(&#39;connections.json)
+</code></pre>
+<p>Within your Jupyter session you should see the Notebook file (<code>Step01_TPCXAI_UC01_Setup.ipynb</code>) in the file-browswer.  Open the Notebook, select (top-right) the Conda Environment/Jupyter Kernel (<code>py-snowpark_df_ml_fs</code>) that we created earlier for the Notebook.</p>
+<p>You will need to do the same for the other Notebooks used in this Guide</p>
+<p>Step through the Notebook running the cells to setup the Database environment.</p>
+<aside class="warning"><p><strong>Note:</strong> Pay particular attention to the third code cell, and make any adjustments needed for your account/environment and user. See below:</p>
+</aside>
+<p class="image-container"><img alt="Snowpark" src="img/275a1cde701ef873.png"></p>
+<aside class="warning"><p><strong>Note:</strong> If you are lacking specific elevated privileges needed for some of the operations, you may encounter issues executing some of the steps.  You will need to work with an Account administrator to resolve these.</p>
+</aside>
+<p>Once you have successfully executed the Notebook, you can check in Snowsight that your environment has been created.  The Database viewer should look something like this:</p>
+<p class="image-container"><img alt="Snowpark" src="img/c64a80a52994090b.png"></p>
+<p>You will find a similar hierarchy under the TPCXAI_SF0001_QUICKSTART_INC</p>
+<p>We can see that a number of Streams &amp; Tasks have been created that are running frequently to incrementally add new data into your <strong>TPCXAI_SF0001_QUICKSTART_INC</strong> database tables.  We can check that these are running by looking at Snowsight Task History under Monitoring on the left-hand side.  Once it has been running for a while it should something like this.</p>
+<aside class="warning"><p><strong>Note:</strong> If you have only just created the Tasks you will see less execution history.</p>
+</aside>
+<p class="image-container"><img alt="Snowpark" src="img/22e0bbffaf2fde97.png"></p>
+<p>You can drill into the Task details from the Data viewer.  For example:</p>
+<p class="image-container"><img alt="Snowpark" src="img/b8f1f53b92985566.png"></p>
+<p>You can see that the Tasks are set to execute every minute if new data is available.  Feel free to reduce the frequency should you want to, although you will then need to wait longer to observe changes in FeatureViews when you create them in the Guide.</p>
+<aside class="warning"><p><strong>Note:</strong> If you are going to leave these running for any length of time, assuming you are completing the Guide over a few days. You should also <code>SUSPEND</code> the Tasks to minimise costs.  You can <code>RESUME</code> them when you want to restart, and they will pick up where they left off, loading any additional data for the interim period.  You can do this via the Elipsis in the top-right corner, or programmatically with SQL if you prefer.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Engineering &amp; Model Training" duration="30">
+        <h2 is-upgraded>Key Snowfake Feature Store API Concepts</h2>
+<p>In the Snowflake Feature Store, as typical of other Feature Store solutions:</p>
+<ul>
+<li><strong>Entities</strong> - define the business-entity and the level that we want to gather data and develop ML models at. (e.g. store or/and product key etc).</li>
+<li><strong>Features</strong> are defined and grouped within <strong>FeatureViews</strong>.  In Snowflake Feature Store features are columns, or column-expressions defined via the Snowpark for Python dataframe api, or via SQL directly.</li>
+<li><strong>FeatureViews</strong> are associated (defined) for one or more <strong>Entities</strong>. A <strong>FeatureView</strong> can be defined with 1:n Entities, but typically only one. Several (many) <strong>FeatureViews</strong> may contain Features for the same Entity. FeatureViews tend to get defined based on the data-source they are derived from, the data&#39;s refresh or calculation frequency.  A <strong>FeatureView</strong> us defined via a Snowpark Dataframe (or SQL expression) enabling a complex pipeline to be used.</li>
+<li>The <strong>Entity</strong> (key columns) are used to join <strong>FeatureViews</strong> together when needed to gather features from multiple <strong>FeatureViews</strong> within a single training or inference dataset, or derive new <strong>FeatureViews</strong>.</li>
+<li>A <strong>FeatureSlice</strong> provides a way of creating a subset of the Features from a single <strong>FeatureViews</strong> when needed.  It can be used within the API, pretty much anywhere the <strong>FeatureViews</strong> can be used.</li>
+<li><strong>FeatureViews</strong> and <strong>FeatureSlices</strong> can be merged (via merge_features) to gather features together and create a new <strong>FeatureView</strong>. For example, all the features for a given <strong>Entity</strong> could be gathered via the merge into a single.</li>
+</ul>
+<p>You can  learn more about Snowflake Feature Store in this <a href="https://docs.snowflake.com/developer-guide/snowpark-ml/feature-store/overview" target="_blank">section</a> of the documentation.</p>
+<h2 is-upgraded>Setting up the Feature Store</h2>
+<p>With our database established, we are now ready to get started on Feature Engineering and Model Training.  Open the Jupyter Notebook (<a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step02_TPCXAI_UC01_Feng_and_Train.ipynb" target="_blank">Step02_TPCXAI_UC01_Feng_and_Train.ipynb</a>) to get started.  Adjust the Notebook connection method if needed for your environment.</p>
+<p>You can step through the Notebook to create Feature Engineering Pipeline, Feature-Store &amp; Model-Registry, interact with the Feature Store and train a model using Snowpark ML.  We will describe some of the key steps in the Notebook below.</p>
+<aside class="warning"><p><strong>Note:</strong> You can now adjust your <strong><em>connection.json</em></strong> file, to reflect the database, schema and warehouse that you have created in the prior Step.</p>
+</aside>
+<aside class="warning"><p><strong>Note:</strong> As before , pay particular attention to the third code cell, and make any adjustments needed for your account/environment and user. See below:</p>
+</aside>
+<p class="image-container"><img alt="Snowpark" src="img/275a1cde701ef873.png"></p>
+<p>We use a couple of helper functions <code>create_FeatureStore</code> and <code>create_ModelRegistry</code> imported from <code>useful_fns.py</code> to create our Feature-Store and Model-Registry.  These functions check for the prior creation of these, and create them if they are not already created.  If they are already created they create a python class-instance referencing them.</p>
+<p>Creating the Feature Store creates a schema (with the provided name <code>_TRAINING_FEATURE_STORE</code> ) in our (<strong>TPCXAI_SF0001_QUICKSTART_INC</strong>) database. This schema contains all the objects created through your interactions with the Python Feature Store API.  Database objects are tagged with Feature Store related tags to denote that they are part of the Feature Store.  These tags are used by Snowsight to discover and present Feature Store objects.  The two main other types of database objects that you will see being created are Dynamic Tables and Views.  We will describe these in more detail later in this section.</p>
+<p>The diagram below depicts the Feature Store information-architecture and how objects in the Python API relate to Database objects.</p>
+<p class="image-container"><img alt="Snowpark" src="img/bdc3599a8a89292c.png"></p>
+<h2 is-upgraded>Entity creation</h2>
+<p>Now we have our Feature Store created we can create the Entity that we will be using for this use case.  We are building a customer segmentation process, so we will primarily be deriving features at the Customer level.</p>
+<pre><code language="language-python" class="language-python">customer_entity = Entity(name=&#34;CUSTOMER&#34;, join_keys=[&#34;O_CUSTOMER_SK&#34;],desc=&#34;Primary Key for CUSTOMER&#34;)
+fs.register_entity(customer_entity)
+</code></pre>
+<p>The code above defines an instance of the Feature Store entity.  The <code>register_entity</code> method creates the object in the database. Entities are created as database tags.  Other Feature Store objects that are created that relate to this Entity are tagged with this tag as we will see shortly.</p>
+<p>We can <code>list_entities()</code> which returns a Snowpark dataframe that can be <code>.show()</code> or filtered as needed.  We can also provide SQL wild-card expressions within <code>list_entities()</code> for filtering by name elements.</p>
+<h2 is-upgraded>Feature Engineering Pipeline</h2>
+<p>Feature engineering pipelines are defined using Snowpark dataframes (or SQL expressions).  In the <code>feature_engineering_fns.py</code> file We have created two feature engineering functions to create our pipeline :</p>
+<ul>
+<li><strong>uc01_load_data</strong>(order_data: DataFrame, lineitem_data: DataFrame, order_returns_data: DataFrame) -&gt; DataFrame</li>
+<li><strong>uc01_pre_process</strong>(data: DataFrame) -&gt; DataFrame</li>
+</ul>
+<p><code>uc01_load_data</code>, takes the source tables, as dataframe objects, and joins them together, performing some data-cleansing by replacing NA&#39;s with default values. It returns a dataframe as it&#39;s output.</p>
+<p><code>uc01_pre_process</code>, takes the dataframe output from <code>uc01_load_data</code>  and performs aggregation on it to derive some features that will be used in our segmentation model.  It returns a dataframe as output, which we will use to provide the feature-pipeline definition within our FeatureView.</p>
+<p>In this way we can build up a complex pipeline step-by-step and use it to derive a FeatureView, that will be maintained as a pipeline in Snowflake.</p>
+<h2 is-upgraded>FeatureView Creation</h2>
+<p>We will use the dataframe that we defined in the prior step for the FeatureView we are creating. The FeatureView will create a Dynamic Table in our Feature Store schema.  We could use the dataframe directly within the definition of the FeatureView.  The SQL query generated from Snowpark through the dataframe definition, is machine generated and not necessarily easy for a human to parse, when used and viewed within the Dynamic Table.  Therefore optionally we can parse the SQL and format it to something more human readable.  We use the <code>sqlglot</code> Python package to do this.  We created a simple function that takes the raw SQL generated from Snowpark, parses it and returns a formatted SQL statement. Depending on your preference, you can choose to convert sub-selects to common-table-expressions.</p>
+<p>The image below shows the FeatureView creation process, and calls out a few key elements of the FeatureView definition.</p>
+<p class="image-container"><img alt="Snowpark" src="img/e14c78a1a7b6bb38.png"></p>
+<p>Similarly to the Entity creation,  this is a two step process, first creating the python instance, and then registering the instance to create an object in the database.  We provide the feature view name, version, description, and individual descriptions for each feature. We can create new versions of a Feature as it evolves, for example if the definition of some of the Features within change. Once created a version is immutable, unless a forced replacement is needed and invoked via <code>overwrite = True</code>.</p>
+<p>We add the Entity (<code>CUSTOMER</code>) that we created earlier. This allows the relationship, and join keys, available in the Feature View to be defined.  We will see how this is used when we want to retrieve Features from the feature store.</p>
+<p>If we provide <code>refresh_freq</code> [optional argument] the database object that is created from the Feature View definition is a Dynamic Table, otherwise a View is created.  In the case of a Dynamic Table, the table is initially populated with data, and from that point forward incrementally maintained when new data lands in the source tables. As we have created incrementing data sources, we can observe this incremental processing being applied to the table, using Snowsight&#39;s Dynamic Table observation features.  See the image below.</p>
+<p class="image-container"><img alt="Snowpark" src="img/b290ed88eda30a26.png"></p>
+<p>The Snowsight UI also contains a new section supporting Feature Store discovery and observability. can be used to search, discover and review available Features for a given machine-learning task, enabling re-use of features across multiple models, and expediting the time required to implement machine-learning projects. The below image shows the Snowsight UI Feature Store section, Entity level view.  We can see the FeatureView that we have created, under the Customer Entity.  We can also see other Entities, and FeatureViews that have been created for other use-cases within this Feature Store.</p>
+<p class="image-container"><img alt="Snowpark" src="img/f6763e0477c63401.png"></p>
+<p>The feature-store provides lineage of data from source tables, through feature-engineering to model and model-inference enabling users to understand the broader impact in data-quality issues in source data, answering questions like:</p>
+<ul>
+<li>what features and models are derived from this source/table.</li>
+<li>what data-engineering and transformations are applied to derive this feature.</li>
+</ul>
+<h2 is-upgraded>Feature Retrieval</h2>
+<p>Now we have a Feature View with data being maintained within it, we can use it to retrieve data for model-training, and model-inference.  The Feature Store enables feature-values to be retrieved for a given set of Entity-keys, relative to a reference point-in-time.  Under the covers the Feature Store uses the new SQL AsOf join functionality in Snowflake to efficiently retrieve the requested features across the FeatureViews.  The Entity-Keys and Timestamps are provided as a dataframe, which we call a Spine.  The Spine can be defined using Snowpark Dataframe funcionality, or via a SQL expression.</p>
+<p>For example, we can create the spine with the following:</p>
+<pre><code language="language-python" class="language-python">spine_sdf =  fv_uc01_preprocess.feature_df.group_by(&#39;O_CUSTOMER_SK&#39;).agg( F.max(&#39;LATEST_ORDER_DATE&#39;).as_(&#39;ASOF_DATE&#39;)
+</code></pre>
+<p>We can then use the Spine to create a Dataset.  Datasets are a new type of data-object in Snowflake that allows immutable datasets that are optimised for Machine Learning to be persisted and read directly into common machine learning frameworks like scikit-learn, Tensorflow and Pytorch.  We create the Dataset with the following:</p>
+<pre><code language="language-python" class="language-python">training_dataset = fs.generate_dataset( name = &#39;UC01_TRAINING&#39;,
+                                        spine_df = spine_sdf, features = [fv_uc01_preprocess], 
+                                        spine_timestamp_col = &#39;ASOF_DATE&#39;
+                                        )  
+</code></pre>
+<p>The Dataset can also be converted into other object types if needed.  For example, we can create a Snowpark Dataframe or a Pandas dataframe from the Dataset with the following code.</p>
+<pre><code language="language-python" class="language-python"># Snowpark Dataframe
+training_dataset_sdf = training_dataset.read.to_snowpark_dataframe()
+# Pandas Dataframe
+training_dataset_pdf = training_dataset.read.to_pandas()
+</code></pre>
+<h2 is-upgraded>Fit a Snowpark-ML Kmeans Model</h2>
+<p>We use the training Dataset we created in the previous step to fit a Snowpark-ML Kmeans model. You can read more about Snowpark ML Model Development in this <a href="https://docs.snowflake.com/developer-guide/snowpark-ml/modeling" target="_blank">section</a> of the documentation. To do so we define our model fitting pipeline as a function that includes some feature pre-processing to scale our input variables using min-max scaling.  These transformations need to be applied at model time, as they capture the global state (e.g. minimum and maximum values for columns) of our training sample.</p>
+<p>We fit the model and log it to the Model Registry that we created earlier. You can read more about Snowflake ML Model Registry in this <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">section</a> of the documentation. As with the Snowflake Feature Store, models in the registry are versioned. When we fit our model with Snowpark ML, using the Feature Store and register the model in the Registry, Snowflake captures the full lineage from source tables through to the model. We can interogate the lineage information to understand what models might be impacted by a data-quality problem in our source tables for example.</p>
+<p>Model fitting and optimisation is typically a highly iterative process where different subsets of features, over varying data samples are used in combination with different sets of model hyper-parameters.  With feature store and model lineage and Model Registry all the the information related to each fitting run is captured, so that we have full Model Reproducibility and Discovery should we need. During this process we would normally check our model against a test dataset, to generate test-scores for the model.   Many more sophisticated  validation techniques exist, but are beyond the scope of this Guide.</p>
+<ul>
+<li>Within-Cluster Sum of Squares</li>
+<li>Silhouette Score</li>
+<li>Gap Statistics</li>
+<li>Cross-Validation</li>
+</ul>
+<p>In the Notebook we have simply plotted the clusters to review visually.</p>
+<p class="image-container"><img alt="snowpark_ml" src="img/21d89808fc8b48f1.png"></p>
+<p>This ends the model-development phase.  From this point on, we assume that the simple model we created is good enough for production and operationalization.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Operationalization in Production" duration="30">
+        <p>We will use a new Notebook (<a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step03_TPCXAI_UC01_Operations.ipynb" target="_blank">Step03_TPCXAI_UC01_Operations.ipynb</a>) for the Model Operationalisation stage.  This may be created by a different person/role in the organisation. For example a data or ML engineer.  Open the Notebook and adjust the Notebook connection method if needed for your environment.</p>
+<p>This notebook shows how you can easily replicate the training feature-engineering pipeline, created during model development, in the SERVING (<em>Production</em>) schema. We then create an inference function and deploy a new FeatureView that schedules ongoing inference from new data flowing through our Feature Engineering pipeline from our source data.  We can monitor the production pipeline (Dynamic Tables) using the same tools that we have already seen in the Feature Engineering and Model Training phase.</p>
+<h2 is-upgraded>Recreate the Feature-Engineering pipeline</h2>
+<p>We created FeatureViews in our <code>_TRAINING_FEATURE_STORE</code> (Development) schema.  We will create another Feature Store (<code>_SERVING_FEATURE_STORE</code>) for the Production environment. This will hold new FeatureViews created with the same definition, but running over Production data.  We can easily modify the tables that are referenced in production, versus development, by changing the Schema in the dataframe definition. We assume that the database tables are defined identically between development and production.</p>
+<p>For this Guide we have chosen to share the Model-Registry across all environments as we will use the model we trained in Development, in Production for inference.  Alternatively, we could also create a new seperate Model Registry for production and Copy models between environments, or retrain the Model in production with appropriate checks and balances to ensure the new model over production data is still good for operationalisation.</p>
+<p>When we register our model in the Model Registry it packages it as a Python function which enables direct access from <a href="https://docs.snowflake.com/developer-guide/snowpark-ml/model-registry/overview#calling-model-methods" target="_blank">Python</a> or from <a href="https://docs.snowflake.com/sql-reference/commands-model#label-snowpark-model-registry-model-methods" target="_blank">SQL</a>.  This allows the creation of an inference Feature View that uses the model directly for prediction from our Feature Engineering pipeline,</p>
+<h2 is-upgraded>Create an Inference Feature view</h2>
+<p>We define our model inference function, which we pass our feature values and model into.</p>
+<pre><code language="language-python" class="language-python">def uc01_serve(featurevector, km4_purchases) -&gt; DataFrame:
+    return km4_purchases.run(featurevector, function_name=&#34;predict&#34;)
+</code></pre>
+<p>We define a dataframe that reads all the records from our feature engineering pipeline. When used within the FeatureView, the Dynamic Table that gets created, will incrementally process change data once the initial Dynamic Table has been created.</p>
+<pre><code language="language-python" class="language-python">inference_input_sdf = fs.read_feature_view(fv_uc01_preprocess)
+</code></pre>
+<p>We then create a FeatureView that will compute Inference on incremental data in the feature engineering pipeline, keeping an up to date set of customer segments through time.</p>
+<pre><code language="language-python" class="language-python">## Create &amp; Register Inference-FeatureView to run scheduled Inference
+inf_fvname = &#34;FV_UC01_INFERENCE_RESULT&#34;
+inf_fv_version = &#34;V_1&#34;
+
+inference_features_desc = { &#34;FREQUENCY&#34;:&#34;Average yearly order frequency&#34;,
+                              &#34;RETURN_RATIO&#34;:&#34;Average of, Per Order Returns Ratio.  Per order returns ratio : total returns value / total order value&#34;, 
+                              &#34;RETURN_RATIO_MMS&#34;:f&#34;Min/Max Scaled version of RETURN_RATIO using Model Registry ({tpcxai_database}_MODEL_REGISTRY) Model ({mv.model_name}) Model-Version({mv.version_name}) Model Comment ({mv.comment})&#34;,
+                              &#34;FREQUENCY_MMS&#34;:f&#34;Min/Max Scaled version of FREQUENCY using Model Registry ({tpcxai_database}_MODEL_REGISTRY) Model ({mv.model_name}) Model-Version({mv.version_name})  Model Comment ({mv.comment}&#34;,
+                              &#34;CLUSTER&#34;:f&#34;Kmeans Cluster for Customer Clustering Model (UC01) using Model Registry ({tpcxai_database}_MODEL_REGISTRY) Model ({mv.model_name}) Model-Version({mv.version_name})  Model Comment ({mv.comment}&#34;}
+
+try:
+   fv_uc01_inference_result = fs.get_feature_view(name= inf_fvname, version= inf_fv_version)
+except:
+   fv_uc01_inference_result = FeatureView(
+         name= inf_fvname, 
+         entities=[customer_entity], 
+         feature_df=inference_result_sdf,
+         refresh_freq=&#34;60 minute&#34;,  # &lt;- specifying optional refresh_freq creates FeatureView as Dynamic Table, else created as View.         
+         desc=&#34;Inference Result from kmeans model for Use Case 01&#34;).attach_feature_desc(inference_features_desc)
+   
+   fv_uc01_inference_result = fs.register_feature_view(
+         feature_view=fv_uc01_inference_result, 
+         version= inf_fv_version, 
+         block=True
+   )
+   print(f&#34;Inference Feature View : fv_uc01_inference_result_{inf_fv_version} created&#34;)   
+else:
+   print(f&#34;Inference Feature View : fv_uc01_inference_result_{inf_fv_version} already created&#34;)
+finally:
+   fs_serving_fviews = fs.list_feature_views().filter(F.col(&#34;NAME&#34;) == inf_fvname ).sort(F.col(&#34;VERSION&#34;).desc())
+   fs_serving_fviews.show() 
+</code></pre>
+<p>In the FeatureView definition we have embellished our feature comments with the model name and model-version to make it directly available in the database object definition, but this information can also be derived through the feature and model registry lineage api.</p>
+<p>Once we have created the FeatureView we can retrieve inferences from it.</p>
+<pre><code language="language-python" class="language-python">fv_uc01_inference_result.feature_df.sort(F.col(&#34;LATEST_ORDER_DATE&#34;).desc()).show(100)
+</code></pre>
+<p>We can monitor how CUSTOMERS behaviour (segment) changes over time and take targetted action as a result.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="5">
+        <p>Once you have completed this Guide and no longer need the databases and objects created by it you will want to clean up.  We provide a Notebook that does this. <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step04_TPCXAI_UC01_Cleanup.ipynb" target="_blank">Step04_TPCXAI_UC01_Cleanup.ipynb</a></p>
+<p>If you want to keep the data, but shut down the Tasks and Dynamic Tables to minimise compute cost, you will need to go to each Task and Dynamic Table to <code>SUSPEND</code> them.  This can be done in the Snowsight UI, or you can use the applicable SQL commands to achieve the same.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="3">
+        <p>Congratulations! You&#39;ve successfully performed Feature Engineering using Snowpark, made use of Snowflake Feature Store to publish and maintain features in a development and production environment. You&#39;ve learnt how you can deploy a model from the Snowflake Model Registry and combine it with a feature-engineering pipeline in Feature Store to operationalise an incremental inference process in Snowflake ML.</p>
+<p>We would love your feedback on this Guide! Please submit your feedback using this <a href="https://forms.gle/JeZWYwkCMk3gty7D7" target="_blank">Feedback Form</a>.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs</li>
+<li>How to use open-source Python libraries from curated Snowflake Anaconda channel</li>
+<li>How to create Snowflake Tasks to automate data pipelines</li>
+<li>How to train ML model using Snowpark ML in Snowflake</li>
+<li>How to register ML model and use it for inference from Snowflake Model Registry</li>
+<li>How to create Streamlit application that uses the ML Model for inference based on user input</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html" target="_blank">Intro to Machine Learning with Snowpark ML</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html" target="_blank">Advanced: Snowpark for Python Data Engineering Guide</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html" target="_blank">Advanced: Snowpark for Python Machine Learning Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark for Python Developer Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html" target="_blank">Snowpark for Python API Reference</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowpark-ml/feature-store/overview" target="_blank">Snowflake Feature Store</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowpark-ml/modeling" target="_blank">Snowpark ML Modelling</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

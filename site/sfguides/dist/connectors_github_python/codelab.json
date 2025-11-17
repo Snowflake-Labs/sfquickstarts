@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "connectors_github_python",
+  "duration": 35,
+  "title": "Build a Pull-based Native Connector in Python",
+  "summary": "Overview of building Snowflake native connectors using Python, Snowpark and Native Apps. Example connector connects to GitHub issues API.",
+  "source": "connectors_github_python/github_python_connector.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "connectors",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "connectors",
+    "externalconnectivity",
+    "nativeapps",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "connectors_github_python"
+}

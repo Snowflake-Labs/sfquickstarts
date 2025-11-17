@@ -1,0 +1,525 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Follow along with our tutorials and step-by-step walkthroughs to get you up and running with the Snowflake Data Cloud">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Japanese">
+  <meta name="application-name" content="Japanese">
+  <link rel="canonical" href="https://quickstarts.snowflake.com/ja/" />
+  <link rel="preconnect" href="https://www.google-analytics.com" />
+
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-41491190-9', 'auto');
+    ga('send', 'pageview');
+    
+  </script>
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  <title>Japanese</title>
+
+  <link rel="stylesheet" href="/styles/main.css">
+
+  
+    <link rel="stylesheet" href="/ja/style.css">
+
+  <link rel="import" href="/elements/elements.html">
+
+  <style is="custom-style">
+    :root {
+      --paper-tabs-selection-bar-color: currentcolor;
+      --paper-input-container-underline: {
+        display: none;
+      };
+      --paper-input-container-underline-focus: {
+        display: none;
+      };
+    }
+
+    .dropdown-filter {
+      --paper-input-container: {
+        padding: 8px;
+      }
+    }
+  </style>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#455a64">
+  <meta name="apple-mobile-web-app-title" content="Japanese">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="194x194" href="/images/favicons/favicon-194x194.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/favicons/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicons/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="/images/favicons/safari-pinned-tab.svg" color="#455a64">
+  <meta name="msapplication-TileColor" content="#455a64">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#455a64">
+
+  <meta name="og:type" property="og:type" content="website" />
+  <meta name="og:title" property="og:title" content="Japanese" />
+  <meta name="og:description" property="og:description" content="Follow along with our tutorials and step-by-step walkthroughs to get you up and running with the Snowflake Data Cloud" />
+  <meta name="og:url" property="og:url" content="https://quickstarts.snowflake.com/ja/" />
+  <meta name="og:site_name" property="og:site_name" content="Snowflake Quickstarts" />
+  <meta name="og:determiner" property="og:determiner" content="" />
+  <meta name="og:locale" property="og:locale" content="en_US" />
+  <meta name="og:image" property="og:image" content="/images/og-image.png" />
+  <meta name="og:image:url" property="og:image:url" content="/images/og-image.png" />
+  <meta name="og:image:type" property="og:image:type" content="image/png" />
+  <meta name="og:image:width" property="og:image:width" content="1200" />
+  <meta name="og:image:height" property="og:image:height" content="1200" />
+  <meta name="og:image:alt" property="og:image:alt" content="Snowflake Quickstarts" />
+
+  <meta name="twitter:card" property="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" property="twitter:title" content="Japanese" />
+  <meta name="twitter:description" property="twitter:description" content="Follow along with our tutorials and step-by-step walkthroughs to get you up and running with the Snowflake Data Cloud" />
+  <meta name="twitter:image" property="twitter:image" content="/images/og-image.png" />
+  <meta name="twitter:url" property="twitter:url" content="https://quickstarts.snowflake.com/ja/" />
+</head>
+
+<body id="app" is="body-bind" class="loading fullbleed view">
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <paper-header-panel id="main" mode="standard" main>
+    
+    <div id="mainToolbar" class="paper-header">
+      <div class="site-width layout horizontal">
+        <a href="/">
+          <img src="/images/snowflake-logo-blue.svg" class="logo-devs" alt="Snowflake Logo">
+        </a>
+        <div id="searchbar">
+          <paper-input-container no-label-float>
+            <paper-icon-button prefix icon="search"></paper-icon-button>
+            <label>Search</label>
+            <input is="iron-input" bind-value="{{searchVal}}" on-keydown="onSearchKeyDown">
+          </paper-input-container>
+        </div>
+      </div>
+    </div>
+    
+
+    
+    <!-- <header id="banner" down>
+      <div class="site-width">
+        <div class="banner-description">
+            <img id="logo" src="/images/og-image.png" alt="Event logo">
+            <div class="banner-meta">
+              <h3>Japanese</h3>
+              <p>Follow along with our tutorials and step-by-step walkthroughs to get you up and running with the Snowflake Data Cloud</p>
+              
+            </div>
+          </div>
+      </div>
+    </header> -->
+
+    <header id="banner" down$="[[_toBoolean(selectedFilter)]]">
+      <div class="site-width">
+        <h2 class="banner-title">GETTING STARTED WITH Snowflake</h2>
+        <div class="banner-description"
+             data-filter-selected$="[[_toBoolean(selectedFilter)]]">
+          <p class="banner-info">
+            Snowflakeデータクラウドの利用開始に役立つチュートリアルをご用意しました。ぜひ、ご活用ください。            <br>
+            <a href="https://github.com/Snowflake-Labs/devlabs" target="_blank">Snowflake Quickstarts on GitHub</a> 
+            <a href="https://www.snowflake.com/virtual-hands-on-lab/?topic=data-applications" target="_blank">Virtual Hands-on Labs</a>
+            <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">無料トライアル</a>
+          </p>
+          </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="filters" class="site-width layout horizontal center justified">
+        <div id="sortby">
+          <paper-tabs selected="0" noink on-iron-activate="sortBy">
+            <paper-tab>A-Z</paper-tab>
+            <paper-tab>Recent</paper-tab>
+            <paper-tab>Duration</paper-tab>
+          </paper-tabs>
+        </div>
+        <paper-dropdown-menu
+          label="Filter by category"
+          class="dropdown-filter"
+          no-label-float
+          noink no-animations
+        >
+          <paper-listbox
+            id="categorylist"
+            slot="dropdown-content"
+            class="dropdown-content"
+            on-iron-activate="onCategoryActivate"
+            attr-for-selected="filter"
+          >
+              <paper-item filter="data-engineering">data-engineering</paper-item>
+                <paper-item filter="featured">featured</paper-item>
+                <paper-item filter="tasty-bytes">tasty-bytes</paper-item>
+                
+          </paper-listbox>
+        </paper-dropdown-menu></div>
+
+      <card-sorter id="cards" class="site-width">
+        
+          
+            
+            <a href="/guide/data_engineering_with_apache_airflow_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-data-engineering"
+               data-category="data-engineering,architecture-patterns,partner-integrations"
+               data-title="Apache Airflow、Snowflake、dbtによるデータエンジニアリング"
+               data-duration="36"
+               data-updated="2025-07-30T23:28:11-04:00"
+               data-tags="airflow,dataengineering,dbt,gettingstarted,ja,snowpark,web"
+               data-pin="">
+              <div class="description">Apache Airflow、Snowflake、dbtによるデータエンジニアリング</div>
+              <div class="card-duration">
+                <span>36 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon data-engineering-icon"></div>
+                <paper-button class="default-bg data-engineering-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/data_apps_summit_lab_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-featured"
+               data-category="featured,app-development"
+               data-title="Snowflakeマーケットプレイス、Snowpark、Streamlitによるデータアプリケーションの構築"
+               data-duration="42"
+               data-updated="2025-07-30T23:28:10-04:00"
+               data-tags="dataengineering,datascience,gettingstarted,ja,twitter,web,日本語"
+               data-pin="">
+              <div class="description">Snowflakeマーケットプレイス、Snowpark、Streamlitによるデータアプリケーションの構築</div>
+              <div class="card-duration">
+                <span>42 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon featured-icon"></div>
+                <paper-button class="default-bg featured-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/data_engineering_pipelines_with_snowpark_python_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-featured"
+               data-category="featured,data-engineering"
+               data-title="Snowpark Pythonによるデータエンジニアリングパイプライン"
+               data-duration="130"
+               data-updated="2025-07-30T23:28:11-04:00"
+               data-tags="dataengineering,ja,python,snowpark,web"
+               data-pin="">
+              <div class="description">Snowpark Pythonによるデータエンジニアリングパイプライン</div>
+              <div class="card-duration">
+                <span>130 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon featured-icon"></div>
+                <paper-button class="default-bg featured-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/getting_started_with_dataengineering_ml_using_snowpark_python_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-featured"
+               data-category="featured,getting-started,data-science-&amp;-ml,data-engineering,app-development"
+               data-title="Snowpark for Pythonを使用したデータエンジニアリングとMLの入門"
+               data-duration="81"
+               data-updated="2025-07-30T23:28:14-04:00"
+               data-tags="dataengineering,gettingstarted,ja,machinelearning,scikit-learn,snowparkpython,streamlit,web"
+               data-pin="">
+              <div class="description">Snowpark for Pythonを使用したデータエンジニアリングとMLの入門</div>
+              <div class="card-duration">
+                <span>81 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon featured-icon"></div>
+                <paper-button class="default-bg featured-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/getting_started_with_snowflake_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-featured"
+               data-category="featured,getting-started"
+               data-title="Snowflake入門 - ゼロからはじめるSnowflake"
+               data-duration="90"
+               data-updated="2025-07-30T23:28:14-04:00"
+               data-tags="dataengineering,datascience,gettingstarted,ja,web,はじめに,データエンジニアリング,データサイエンス"
+               data-pin="">
+              <div class="description">Snowflake入門 - ゼロからはじめるSnowflake</div>
+              <div class="card-duration">
+                <span>90 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon featured-icon"></div>
+                <paper-button class="default-bg featured-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/getting_started_with_snowpark_in_snowflake_python_worksheets_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-featured"
+               data-category="featured,getting-started,data-engineering,app-development"
+               data-title="Snowflake PythonワークシートによるSnowpark入門"
+               data-duration="33"
+               data-updated="2025-07-30T23:28:15-04:00"
+               data-tags="dataengineering,gettingstarted,ja,pythonworksheets,snowparkpython,web"
+               data-pin="">
+              <div class="description">Snowflake PythonワークシートによるSnowpark入門</div>
+              <div class="card-duration">
+                <span>33 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon featured-icon"></div>
+                <paper-button class="default-bg featured-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-tasty-bytes"
+               data-category="tasty-bytes,getting-started,app-development"
+               data-title="Tasty Bytes - SQL APIによるReact Nativeデータアプリケーションの開発"
+               data-duration="22"
+               data-updated="2025-07-30T23:28:12-04:00"
+               data-tags="api,dataapplications,dataengineering,gettingstarted,ja,web"
+               data-pin="">
+              <div class="description">Tasty Bytes - SQL APIによるReact Nativeデータアプリケーションの開発</div>
+              <div class="card-duration">
+                <span>22 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon tasty-bytes-icon"></div>
+                <paper-button class="default-bg tasty-bytes-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-tasty-bytes"
+               data-category="tasty-bytes,getting-started,app-development,data-science-&amp;-ml"
+               data-title="Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合"
+               data-duration="32"
+               data-updated="2025-07-30T23:28:16-04:00"
+               data-tags="api,dataapplications,dataengineering,datascience,gettingstarted,ja,machinelearning,snowpark,web"
+               data-pin="">
+              <div class="description">Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合</div>
+              <div class="card-duration">
+                <span>32 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon tasty-bytes-icon"></div>
+                <paper-button class="default-bg tasty-bytes-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/tasty_bytes_introduction_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-tasty-bytes"
+               data-category="tasty-bytes,getting-started,featured"
+               data-title="Tasty Bytesの紹介"
+               data-duration="10"
+               data-updated="2025-07-30T23:28:18-04:00"
+               data-tags="gettingstarted,ja,tastybytes,web,zerotosnowflake"
+               data-pin="">
+              <div class="description">Tasty Bytesの紹介</div>
+              <div class="card-duration">
+                <span>10 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon tasty-bytes-icon"></div>
+                <paper-button class="default-bg tasty-bytes-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/tasty_bytes_snowpark_101_for_data_science_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-tasty-bytes"
+               data-category="tasty-bytes,getting-started,featured,data-science-&amp;-ml"
+               data-title="Tasty Bytes - データサイエンスのためのSnowpark入門"
+               data-duration="41"
+               data-updated="2025-07-30T23:28:19-04:00"
+               data-tags="dataengineering,datascience,gettingstarted,ja,machinelearning,snowpark,streamlit,web"
+               data-pin="">
+              <div class="description">Tasty Bytes - データサイエンスのためのSnowpark入門</div>
+              <div class="card-duration">
+                <span>41 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon tasty-bytes-icon"></div>
+                <paper-button class="default-bg tasty-bytes-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/tasty_bytes_zero_to_snowflake_collaboration_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-tasty-bytes"
+               data-category="tasty-bytes,getting-started,featured"
+               data-title="Tasty Bytes - ゼロからのSnowflake - コラボレーション"
+               data-duration="10"
+               data-updated="2025-07-30T23:28:19-04:00"
+               data-tags="gettingstarted,ja,tastybytes,web,zerotosnowflake"
+               data-pin="">
+              <div class="description">Tasty Bytes - ゼロからのSnowflake - コラボレーション</div>
+              <div class="card-duration">
+                <span>10 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon tasty-bytes-icon"></div>
+                <paper-button class="default-bg tasty-bytes-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-tasty-bytes"
+               data-category="tasty-bytes,getting-started,featured"
+               data-title="Tasty Bytes - ゼロからのSnowflake - 半構造化データ"
+               data-duration="10"
+               data-updated="2025-07-30T23:28:19-04:00"
+               data-tags="dataengineering,datawarehouse,gettingstarted,ja,web"
+               data-pin="">
+              <div class="description">Tasty Bytes - ゼロからのSnowflake - 半構造化データ</div>
+              <div class="card-duration">
+                <span>10 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon tasty-bytes-icon"></div>
+                <paper-button class="default-bg tasty-bytes-bg">Start</paper-button>
+              </div>
+            </a>
+          
+          
+            
+            <a href="/guide/tasty_bytes_zero_to_snowflake_transformation_ja/index.html?index=..%2F..ja" on-tap="navigate"
+               class="codelab-card category-default category-tasty-bytes"
+               data-category="tasty-bytes,getting-started,featured"
+               data-title="Tasty Bytes - ゼロからのSnowflake - 変換"
+               data-duration="10"
+               data-updated="2025-07-30T23:28:19-04:00"
+               data-tags="dataengineering,datawarehouse,gettingstarted,ja,web"
+               data-pin="">
+              <div class="description">Tasty Bytes - ゼロからのSnowflake - 変換</div>
+              <div class="card-duration">
+                <span>10 min </span>
+                <span>Updated Jul 31, 2025</span>
+              </div>
+              <div class="card-footer">
+                <div class="category-icon tasty-bytes-icon"></div>
+                <paper-button class="default-bg tasty-bytes-bg">Start</paper-button>
+              </div>
+            </a>
+          
+      </card-sorter>
+
+      <div id="loading-placeholder" class="site-width">
+        Loading guides, please wait...
+      </div>
+    </main>
+
+    <footer id="footer">
+      <div class="footer-wrapper site-width">
+        <div class="link-list">
+          <img class="" alt="Snowflake Inc." src="https://developers.snowflake.com/wp-content/themes/developers/assets/img/logo-white.svg">
+          </div>
+        <div class="link-list">
+          <label>Platform</label>
+          <ul>
+            <li><a href="https://www.snowflake.com/cloud-data-platform/">Cloud Data Platform</a></li>
+            <li><a href="https://www.snowflake.com/product/architecture/">Architecture</a></li>
+            <li><a href="https://www.snowflake.com/pricing/">Pricing</a></li>
+            <li><a href="https://www.snowflake.com/data-marketplace/">Snowflake Marketplace</a></li>
+          </ul>
+        </div>
+        <div class="link-list">
+          <label>Connect</label>
+          <ul>
+            <li><a href="https://community.snowflake.com/s/">Community</a></li>
+            <li><a href="https://developers.snowflake.com/">Developers</a></li>
+            <li><a href="https://medium.com/snowflake">Blog</a></li>
+          </ul>
+        </div>
+        <div class="link-list">
+          <label>Resources</label>
+          <ul>
+            <li><a href="https://resources.snowflake.com/">Resource Library</a></li>
+            <li><a href="https://www.snowflake.com/about/webinars/">Webinars</a></li>
+            <li><a href="https://docs.snowflake.com/">Documentation</a></li>
+            <li><a href="https://www.snowflake.com/legal/">Legal</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <div class="footerbar">
+      <div class="site-width layout horizontal center justified">
+        <span>
+          <a href="https://www.snowflake.com/terms-of-service/">Terms</a>
+          &nbsp; | &nbsp;
+          <a href="https://www.snowflake.com/privacy-policy/">Privacy</a>
+        </span>
+      </div>
+    </div>
+
+  </paper-header-panel>
+
+  <script src="/scripts/main.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

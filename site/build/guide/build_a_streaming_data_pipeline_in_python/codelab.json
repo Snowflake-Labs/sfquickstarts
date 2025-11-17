@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_a_streaming_data_pipeline_in_python",
+  "duration": 16,
+  "title": "Build a Streaming Data Pipeine in Python",
+  "summary": "A guide to using Rowset API, Dynamic Tables, and Streamlit to build a streaming data pipeline in Python",
+  "source": "build_a_streaming_data_pipeline_in_python/build_a_streaming_data_pipeline_in_python.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "data-engineering",
+    "app-development",
+    "streamlit"
+  ],
+  "tags": [
+    "dataapplications",
+    "dataengineering",
+    "python",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build_a_streaming_data_pipeline_in_python"
+}

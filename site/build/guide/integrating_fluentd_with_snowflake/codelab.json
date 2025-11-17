@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "integrating_fluentd_with_snowflake",
+  "duration": 71,
+  "title": "Using Fluentd to Send Log Files to Snowflake for Security and Observability Analytics",
+  "summary": "Walkthrough of using Fluentd to send system event logs to Snowflake as a part of a SIEM or log analysis workload",
+  "source": "integrating_fluentd_with_snowflake/integrating_fluentd_with_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "observability",
+    "cybersecurity"
+  ],
+  "tags": [
+    "datagovernance",
+    "siem",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "integrating_fluentd_with_snowflake"
+}

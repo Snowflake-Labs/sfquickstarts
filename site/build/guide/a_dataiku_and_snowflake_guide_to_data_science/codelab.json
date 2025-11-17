@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "a_dataiku_and_snowflake_guide_to_data_science",
+  "duration": 132,
+  "title": "A Dataiku and Snowflake Introduction to Data Science",
+  "summary": "This is an introduction to Dataiku and Snowflake",
+  "source": "a_dataiku_and_snowflake_guide_to_data_science/a_dataiku_and_snowflake_guide_to_data_science.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "dataengineering",
+    "ai",
+    "partner"
+  ],
+  "tags": [
+    "ai",
+    "dataengineering",
+    "dataiku",
+    "partner",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "a_dataiku_and_snowflake_guide_to_data_science"
+}

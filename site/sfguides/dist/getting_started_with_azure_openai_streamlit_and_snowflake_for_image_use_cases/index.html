@@ -1,0 +1,353 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Azure OpenAI, Streamlit and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_azure_openai_streamlit_and_snowflake_for_image_use_cases"
+                  title="Getting Started with Azure OpenAI, Streamlit and Snowflake"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Azure OpenAI that will generate a recommendation for clothing items given an image of a person.</p>
+<p>In summary this is what you will do:</p>
+<ul>
+<li>Set up environments in both Snowflake and Azure.</li>
+<li>Create a function that leverages Snowpark External Access to make a call to Open AI.</li>
+<li>Create a Streamlit app that leverages the above function to generate responses using data from Snowflake and prompts.</li>
+</ul>
+<h2 is-upgraded>What is Generative AI?</h2>
+<p>Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.</p>
+<h2 is-upgraded>What is Azure OpenAI?</h2>
+<p>Azure OpenAI is a cloud-based service provided by Microsoft that integrates OpenAI&#39;s powerful language models, including GPT-4, into the Azure platform, enabling developers and businesses to build and deploy AI applications with advanced natural language processing capabilities. This collaboration offers high scalability, enterprise-grade security, and compliance features, making it suitable for a wide range of applications, from chatbots to complex data analysis. Users can access Azure&#39;s robust infrastructure and tools to train, fine-tune, and manage AI models efficiently. Azure OpenAI simplifies the process of implementing AI solutions while providing the flexibility to customize them according to specific organizational needs.</p>
+<h2 is-upgraded>What is Snowflake?</h2>
+<p>Snowflake is a cloud-based data warehousing solution that allows businesses to store and analyze large volumes of data efficiently. It separates storage and compute functionalities, enabling users to scale resources independently and pay only for what they use. Snowflake supports a wide range of data workloads, including data warehousing, data lakes, and data engineering, and offers robust data sharing capabilities across different cloud platforms.</p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.</p>
+<h2 is-upgraded>Pre-requisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account with Access to <a href="https://streamlit.io/" target="_blank">Streamlit</a> in your Snowflake account.</li>
+<li><a href="https://azure.microsoft.com" target="_blank">Azure Account</a> with Azure OpenAI or a stand alone OpenAI service.</li>
+<li>Familiarity with the Python programming language.</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>We will build an efficient architecture all within Snowflake that will access product urls and images in Snowflake and pass that data to a an OpenAI model to generate a recommendation . The architecture will look like this</p>
+<p class="image-container"><img src="img/b17ccc0fc01a0ffb.png"></p>
+<h2 is-upgraded>Use Case</h2>
+<p>This use case will leverage sample urls along with sample images that will be passed to the OpenAI model in order to provide recommendations from the urls using the image data as context along with the prompt.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Azure / Open AI Environment" duration="10">
+        <p>For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to login and navigate to api-keys in your openai account and create a new secret key as it looks below. Make note of the model name and keyas you will need this to generate a response.</p>
+<p class="image-container"><img src="img/a6a69734e2d2802.png"></p>
+<p>If you have access to image models in Azure you can follow the instructions <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/gpt-v-quickstart?tabs=image%2Ccommand-line&pivots=programming-language-studio" target="_blank">here</a> to deploy an image model in Azure. (at the time of publishing this quickstart we will be using a gpt4 turbo image model). Make note of the deployment name for the image model that you deployed.</p>
+<p>Head back to the Azure portal and find the Azure Open AI service then click on &#34;Keys and Endpoint&#34; make note of the key and Endpoint as you will need this to generate a response.</p>
+<p class="image-container"><img src="img/b0f370bef7f3ceef.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment" duration="10">
+        <p>Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with links to items at a retail website that we will use to pass to OpenAI to provide recommendations. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.</p>
+<p>Users are encouraged to alter the code to add additional urls to other items if they would like.</p>
+<pre><code language="language-sql" class="language-sql">--create database and warehouse
+use role accountadmin;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+CREATE OR REPLACE DATABASE RETAIL_HOL;
+
+--create table with links to items
+CREATE OR REPLACE TABLE clothing_link (
+  link_id INT,
+  links VARCHAR(512)
+);
+
+INSERT INTO clothing_link (link_id, links)
+VALUES 
+  (1, &#39;https://www.macys.com/shop/product/xscape-womens-floral-print-rosette-halter-gown?ID=17659240&#39;),
+  (2, &#39;https://www.macys.com/shop/product/calvin-klein-womens-3-4-sleeve-sheath-dress?ID=17294804&#39;),
+  (3, &#39;https://www.macys.com/shop/product/calvin-klein-womens-tulip-sleeve-midi-dress?ID=16193818&#39;),
+  (4, &#39;https://www.macys.com/shop/product/gloria-vanderbilt-womens-amanda-button-front-shirt?ID=11831590&#39;),
+  (5, &#39;https://www.macys.com/shop/product/tommy-hilfiger-womens-solid-short-sleeve-polo-top?ID=11649535&#39;),
+  (6, &#39;https://www.macys.com/shop/product/gloria-vanderbilt-womens-shape-effect-straight-leg-shorts?ID=17613003&#39;),
+  (7, &#39;https://www.macys.com/shop/product/steve-madden-womens-harlow-notched-collar-blazer?ID=17690729&#39;),
+  (8, &#39;https://www.macys.com/shop/product/womens-black-white-smocked-waist-geo-pants?ID=18038135&#39;),
+  (9, &#39;https://www.macys.com/shop/product/levis-womens-high-rise-wide-leg-ripped-jeans?ID=17389986&#39;),
+  (10, &#39;https://www.macys.com/shop/product/the-north-face-womens-heavyweight-crewneck-sweatshirt?ID=16631001&#39;),
+  (11, &#39;https://www.macys.com/shop/product/dress-the-population-womens-sweetheart-midi-dress?ID=17669569&#39;),
+  (12, &#39;https://www.macys.com/shop/product/tommy-hilfiger-mens-regular-fit-flex-poplin-shirt?ID=17527033&#39;),
+  (13, &#39;https://www.macys.com/shop/product/nike-mens-air-max-2013-casual-sneakers-from-finish-line?ID=17121035&#39;),
+  (14, &#39;https://www.macys.com/shop/product/tommy-hilfiger-mens-modern-fit-th-flex-stretch-chambray-suit-separate-jacket?ID=16771141&#39;),
+  (15, &#39;https://www.macys.com/shop/product/hugo-by-hugo-boss-mens-regular-fit-logo-graphic-t-shirt-created-for-macys?ID=17547940&#39;),
+  (16, &#39;https://www.macys.com/shop/product/cotton-on-mens-cabana-short-sleeve-shirts?ID=17850314&#39;),
+  (17, &#39;https://www.macys.com/shop/product/nike-mens-calm-slide-sandals-from-finish-line?ID=15469912&#39;),
+  (18, &#39;https://www.macys.com/shop/product/the-north-face-mens-thermoball-eco-snow-triclimate-jacket?ID=15433277&#39;),
+  (19, &#39;https://www.macys.com/shop/product/weatherproof-vintage-mens-stonewash-crew-logo-stonewash-sweater?ID=17508384&#39;),
+  (20, &#39;https://www.macys.com/shop/product/nike-mens-air-monarch-iv-training-sneakers-from-finish-line?ID=16391426&#39;),
+  (21, &#39;https://www.macys.com/shop/product/nike-mens-air-monarch-iv-training-sneakers-from-finish-line?ID=16391426&#39;);
+
+
+select * from clothing_link;
+</code></pre>
+<p>Let&#39;s create a stage in the RETAIL_HOL database that we just created and load images. Click on ‘Databases&#39; on the left panel and select the ‘PUBLIC&#39; schema then the blue ‘CREATE&#39; button on the top left and create a ‘Snowflake Managed&#39; stage.</p>
+<p class="image-container"><img src="img/1639dd33f76712a3.png"></p>
+<p>Name the stage ‘IMAGE_STAGE&#39;, select ‘Server Side Encryption&#39; and enable the directory table. You can also use a SQL script to create the stage which is generated for you from the UI.</p>
+<p>Let&#39;s now download several pictures and upload them to the stage that we just created. Right click on each of the below images and save them to your local machine. Users are also encouraged to use any other images they may have.</p>
+<p class="image-container"><img src="img/897358b89d541954.jpeg"><img src="img/1e1453740a5ecbe0.jpeg"><img src="img/3e29ea29ea32d3e0.jpeg"><img src="img/d74278854cfe936f.jpeg"></p>
+<p>Once the images are downloaded locally head back to the Snowflake UI, click on the stage that we just created from the Databases menu and select ‘+ Files&#39; in the top right. From here we can upload the images either by dragging them in or browsing to upload.</p>
+<p class="image-container"><img src="img/8675e2bebeafe938.png"></p>
+<p>Once you have moved or selected the images click upload to upload the images to the Snowflake stage.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowpark External Access to call OpenAI" duration="10">
+        <p>Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access OpenAI via a function called CHATGPT_IMAGE() that leverages a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to OpenAI (or any other external service).</p>
+<p>You will have to replace the value of the endpoint and the token for the OpenAI service that you are using. Additionally, you may need to replace the name of the model near the bottom of the code that maps to the model/deployment name that you are using.</p>
+<pre><code language="language-sql" class="language-sql">use role ACCOUNTADMIN;
+use database RETAIL_HOL;
+use warehouse HOL_WH;
+
+CREATE OR REPLACE NETWORK RULE CHATGPT_NETWORK_RULE
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = (&#39;&lt;endpoint&gt;&#39;); --will be &#39;api.openai.com&#39; if using openai
+
+CREATE OR REPLACE SECRET CHATGPT_API_KEY
+    TYPE = GENERIC_STRING
+    SECRET_STRING=&#39;&lt;openai token&gt;&#39;;      
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENAI_INTEGRATION
+    ALLOWED_NETWORK_RULES = (CHATGPT_NETWORK_RULE)
+    ALLOWED_AUTHENTICATION_SECRETS = (CHATGPT_API_KEY)
+    ENABLED=TRUE;
+
+CREATE OR REPLACE FUNCTION CHATGPT_IMAGE(instructions STRING, list STRING, user_context STRING)
+returns string
+language python
+runtime_version=3.8
+handler = &#39;ask_chatGPT&#39;
+external_access_integrations=(OPENAI_INTEGRATION)
+packages = (&#39;openai&#39;)
+SECRETS = (&#39;cred&#39; = chatgpt_api_key )
+as
+$$
+import _snowflake
+from openai import OpenAI
+client = OpenAI(
+    api_key=_snowflake.get_generic_secret_string(&#34;cred&#34;) )
+def ask_chatGPT(instructions, list, user_context):
+    response = client.chat.completions.create(
+    model=&#34;gpt-4-vision-preview&#34;,
+    messages=[{&#34;role&#34;: &#34;system&#34;, &#34;content&#34;: f&#34;&lt;SYSTEM&gt;Follow these:{instructions}&lt;END_SYSTEM&gt;\n&lt;CONTEXT_LIST&gt;Use this list to select from {list}&lt;END_CONTEXT_LIST&gt;\n&lt;USER_CONTEXT&gt;Use this image for your response:{user_context}&lt;END_USER_CONTEXT&gt;&#34;}])
+    return response.choices[0].message.content
+$$;
+</code></pre>
+<p>If you are using Azure OpenAI rather than a stand alone OpenAI service you will use the code below.</p>
+<pre><code language="language-sql" class="language-sql">use role ACCOUNTADMIN;
+use database RETAIL_HOL;
+use warehouse HOL_WH;
+
+CREATE OR REPLACE NETWORK RULE CHATGPT_NETWORK_RULE
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = (&#39;{your-resource-name}.openai.azure.com&#39;); -- Update your Azure resource name from Step 2
+
+CREATE OR REPLACE SECRET CHATGPT_API_KEY
+    TYPE = GENERIC_STRING
+    SECRET_STRING=&#39;YOUR_API_KEY&#39;; -- Update your Azure API Key from Step 2
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENAI_INTEGRATION
+    ALLOWED_NETWORK_RULES = (CHATGPT_NETWORK_RULE)
+    ALLOWED_AUTHENTICATION_SECRETS = (CHATGPT_API_KEY)
+    ENABLED=TRUE;
+
+CREATE OR REPLACE FUNCTION CHATGPT_IMAGE(instructions STRING, list STRING, user_context STRING)
+returns string
+language python
+runtime_version=3.8
+handler = &#39;ask_chatGPT&#39;
+external_access_integrations=(OPENAI_INTEGRATION)
+packages = (&#39;openai&#39;)
+SECRETS = (&#39;cred&#39; = chatgpt_api_key )
+as
+$$
+import _snowflake
+import json
+from openai import AzureOpenAI
+client = AzureOpenAI(
+    api_key=_snowflake.get_generic_secret_string(&#34;cred&#34;),
+    api_version=&#39;2023-12-01-preview&#39;,
+    # Update Resource and Model to the base_url below
+    base_url=&#34;https://{your-resource-name}.openai.azure.com/openai/deployments/{model}/extensions&#34;
+    )
+def ask_chatGPT(instructions, list_, user_context):
+    response = client.chat.completions.create(
+    model=&#39;{model}&#39;, # Update your model/deployment name from Step 2
+    messages = [
+        {
+            &#34;role&#34;: &#34;system&#34;,
+            &#34;content&#34;: json.dumps({
+                &#34;SYSTEM&#34;: f&#34;Follow these: {instructions}&#34;,
+                &#34;CONTEXT_LIST&#34;: f&#34;Use this list to select from {list_}&#34;,
+                &#34;USER_CONTEXT&#34;: f&#34;Use this image for your response: {user_context}&#34;
+            })
+        }
+    ],
+    max_tokens=2000 )
+    return response.choices[0].message.content
+$$;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Streamlit App - With data in Snowflake" duration="10">
+        <p>Now that we have our OpenAI function, let&#39;s build our App.</p>
+<p>Go back to the main account view by clicking ‘&lt;- Worksheets&#39; and then select ‘Streamlit&#39;.</p>
+<p>Make sure that you&#39;re still using the ‘ACCOUNTADMIN&#39; role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RETAIL_HOL database where the link table and the image stage are located. You can name the app whatever you would like, something like &#34;Wardrobe Recommender&#34; is appropriate.</p>
+<p>Once the app is created paste the below code into the app code and click ‘Run&#39; in order to create the Streamlit App!</p>
+<pre><code language="language-python" class="language-python"># Import python packages
+import streamlit as st
+import base64
+import pandas as pd
+from snowflake.snowpark.context import get_active_session
+	
+# Keeping pandas from truncating long strings
+pd.set_option(&#39;display.max_colwidth&#39;, 1000)
+
+# Get the current credentials
+session = get_active_session()
+
+# access underlying snowflake tables
+# let participants define this?-----------
+clothing_link_df = session.table(&#34;clothing_link&#34;).to_pandas()
+clothing_links = clothing_link_df[&#39;LINKS&#39;]
+
+# Write directly to the app
+st.title(&#34;Wardrobe Recommender&#34;)
+
+# Add some cosmetic headers
+st.caption(&#34;Using Azure OpenAI with Snowflake to recommend wardrobes&#34;)
+
+default_prompt = &#39;Please review the provided image and recommend the top three links from the provided list that this person would most likely want to wear. Display the complete url for the link in your response as it is provided in the request.&#39;
+with st.expander(&#34;Adjust system prompt&#34;):
+    system = st.text_area(&#34;System instructions&#34;, value=default_prompt).replace(&#34;&#39;&#34;,&#34;&#34;)
+st.markdown(&#39;------&#39;) 
+
+# widget for image filter
+selected_image = st.selectbox(
+    &#39;Select an image&#39;,
+     session.sql(&#34;SELECT RELATIVE_PATH FROM DIRECTORY(@image_stage)&#34;))
+
+image_string = session.sql(f&#34;&#34;&#34;select GET_PRESIGNED_URL(@image_stage, &#39;{selected_image}&#39;)&#34;&#34;&#34;).collect()[0][0]
+st.image(image_string)
+
+# Use the job description to write the job to a table and run the function against it:
+if(st.button(&#39;Ask ChatGPT&#39;)):
+    result = session.sql(f&#34;&#34;&#34;SELECT chatgpt_image(&#39;{system}&#39;,&#39;{clothing_links}&#39;,&#39;{image_string}&#39;)&#34;&#34;&#34;).collect()
+    st.header(&#39;Answer&#39;)
+    st.write(result[0][0].replace(&#39;&#34;&#39;,&#39;&#39;)) 
+</code></pre>
+<p>Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate new recommendations.</p>
+<p class="image-container"><img src="img/2e1180f3d9509be0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test Prompt Engineering (OPTIONAL)" duration="5">
+        <p>Prompt engineering for a language model involves crafting your questions or prompts in a way that maximizes the effectiveness and accuracy of the responses you receive. Here are some simple guidelines to help you with prompt engineering:</p>
+<p><strong>Be Clear and Specific:</strong> The more specific your prompt, the better. Clearly define what you&#39;re asking for. If you need information on a specific topic, mention it explicitly.</p>
+<p><strong>Provide Context:</strong> If your question builds on particular knowledge or a specific scenario, provide that context. This helps the model understand the frame of reference and respond more accurately.</p>
+<p><strong>Use Direct Questions:</strong> Phrase your prompts as direct questions if you&#39;re looking for specific answers. This approach tends to yield more focused responses.</p>
+<p><strong>Break Down Complex Queries:</strong> If you have a complex question, break it down into smaller, more manageable parts. This can help in getting more detailed and precise answers.</p>
+<p><strong>Specify the Desired Format:</strong> If you need the information in a particular format (like a list, a summary, a detailed explanation), mention this in your prompt.</p>
+<p><strong>Avoid Ambiguity:</strong> Try to avoid ambiguous language. The clearer you are, the less room there is for misinterpretation.</p>
+<p><strong>Sequential Prompts for Follow-ups:</strong> If you&#39;re not satisfied with an answer or need more information, use follow-up prompts that build on the previous ones. This helps in maintaining the context and getting more refined answers.</p>
+<p><strong>Experiment and Iterate:</strong> Don&#39;t hesitate to rephrase or adjust your prompts based on the responses you get. Sometimes a slight change in wording can make a big difference.</p>
+<p><strong>Consider the Model&#39;s Limitations:</strong> Remember that the model may not have the latest information, and it cannot browse the internet or access personal data unless explicitly provided in the prompt.</p>
+<p><strong>Ethical Use:</strong> Always use the model ethically. Avoid prompts that are harmful, biased, or violate privacy or legal guidelines.</p>
+<p>Let&#39;s look at how we can experiment and iterate on the prompt that we provided to the LLM function in Streamlit. Go back to the previous step and test out different prompt strategies to see if you can improve the accuracy of the response.</p>
+<p>Consider the above concepts and also consider this pointed <a href="https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md" target="_blank">guide to prompting</a></p>
+<p>(it is required that you try the prompt in principal #6 🙂)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion  And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built your first Streamlit App with OpenAI. After setting up our Azure and Snowflake and environments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up a Snowflake and Azure / OpenAI environment to integrate the two platforms.</li>
+<li>How to build a Snowpark External Access integration to call OpenAI.</li>
+<li>How to build a Streamlit app that calls OpenAI leveraging tabular and image data from Snowflake.</li>
+<li>How to build your first Generative AI App with image data in Snowflake!</li>
+</ul>
+<h2 is-upgraded>Related resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=fALb8SosA_U" target="_blank">RBAC with External Services</a></li>
+<li><a href="https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md" target="_blank">Prompting</a></li>
+<li><a href="https://streamlit.io/" target="_blank">Streamlit</a></li>
+<li><a href="https://azure.microsoft.com/en-us/products/ai-services/openai-service" target="_blank">Azure OpenAI</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

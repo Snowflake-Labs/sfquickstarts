@@ -1,0 +1,334 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Customer Review Analytics Dashboard with Snowflake Cortex and Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="avalanche-customer-review-data-analytics"
+                  title="Build a Customer Review Analytics Dashboard with Snowflake Cortex and Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this tutorial, you&#39;ll learn how to process and analyze customer review data using an LLM-powered data processing workflow with Snowflake Cortex followed by building a dashboard. Briefly, you&#39;ll work with the Avalanche dataset, which contains customer reviews for a hypothetical winter sports gear company, and transform unstructured text data into actionable insights through sentiment analysis and data visualization.</p>
+<p>By the end of this guide, you&#39;ll have built a complete analytics pipeline that extracts customer review data from DOCX files, processes it using Snowflake&#39;s Cortex functions for language translation and sentiment analysis, and visualizes the results using Streamlit.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to extract and parse content from DOCX files stored in Snowflake</li>
+<li>How to reshape unstructured data into a structured format via document parsing with Snowflake Cortex</li>
+<li>How to apply Snowflake Cortex for text translation, summarization, and sentiment analysis</li>
+<li>How to create interactive visualizations with Streamlit and Altair</li>
+<li>How to interpret sentiment analysis results for business insights</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A customer review analytics dashboard that processes unstructured text data and visualizes sentiment trends across products and time periods.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic knowledge of SQL and Python</li>
+<li>Familiarity with data analysis concepts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <h2 is-upgraded>Download the Notebook</h2>
+<p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb" target="_blank">Avalanche-Customer-Review-Analytics.ipynb</a> to download the Notebook from GitHub.</p>
+<p>Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as <code>numpy</code>, <code>pandas</code>, <code>matplotlib</code>, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.</p>
+<h2 is-upgraded>Create the database and schema</h2>
+<p>Secondly, let&#39;s create the Avalanche database and schema by running the following in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS avalanche_db;
+CREATE SCHEMA IF NOT EXISTS avalanche_schema;
+</code></pre>
+<h2 is-upgraded>Create the stage to store the Avalanche Data</h2>
+<p>Thirdly, create the stage:</p>
+<pre><code language="language-sql" class="language-sql">CREATE STAGE IF NOT EXISTS avalanche_db.avalanche_schema.customer_reviews
+  ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;)
+  DIRECTORY = (ENABLE = true);
+</code></pre>
+<p>You should see a confirmation message after a stage has been created succesfully: <img alt="image" src="img/b36c0307aa9c321b.png"></p>
+<h2 is-upgraded>Upload data to stage</h2>
+<p>Fourthly, download the Avalanche customer review data, which is comprised of customer reviews for a hypothetical winter sports gear company. The customer review data is in DOCX format and can is available as <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/customer_reviews_docx.zip" target="_blank">customer_reviews_docx.zip</a>.</p>
+<p>And upload the 100 DOCX files to the stage. Particularly, from Snowsight click on the &#34;Data&#34; icon from the menu bar located in the left panel. Next, click on &#34;Databases&#34; and in the next panel navigate through the database hierarchy as follows:</p>
+<p>AVALANCHE_DB &gt; AVALANCHE_SCHEMA &gt; Stages &gt; CUSTOMER_REVIEWS</p>
+<p>Then, in the top-right hand corner click on the blue &#34;+ Files&#34; button. Followed by browsing to and selecting the 100 DOCX files of the customer review data that we had unzipped from the `customer_reviews_docx.zip file.</p>
+<p>You&#39;ll see a modal pop-up where you can upload the 100 DOCX files:</p>
+<p class="image-container"><img alt="image" src="img/242b2b46ffd6041e.png"></p>
+<p>Afterwards, you&#39;ll see the files listed in the main panel. Also make note of the previously mentioned hierarchical list of the database, schema and stage that we navigated through:</p>
+<p class="image-container"><img alt="image" src="img/df78ae3e14077c6b.png"></p>
+<h2 is-upgraded>List contents of a stage</h2>
+<p>Finally, we can verify that the files have been uploaded successfully to the stage by opening up a SQL worksheet, from the left menu sidebar go to Projects &gt; Worksheets &gt; + (Create SQL Worksheet)</p>
+<p>Next, enter the following in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql"> `ls @avalanche_db.avalanche_schema.customer_reviews`
+</code></pre>
+<p>This should yield the following results output:</p>
+<p class="image-container"><img alt="image" src="img/ec1a8c30edef61ae.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Retrieving Customer Review Data" duration="10">
+        <h2 is-upgraded>Extracting Data from DOCX Files</h2>
+<p>Our first step is to query and parse the content from DOCX files stored in the Snowflake stage. We&#39;ll use the <code>SNOWFLAKE.CORTEX.PARSE_DOCUMENT</code> function to extract the content from these files.</p>
+<pre><code language="language-sql" class="language-sql">-- Parse content from DOCX files
+WITH files AS (
+  SELECT 
+    REPLACE(REGEXP_SUBSTR(file_url, &#39;[^/]+$&#39;), &#39;%2e&#39;, &#39;.&#39;) as filename
+  FROM DIRECTORY(&#39;@avalanche_db.avalanche_schema.customer_reviews&#39;)
+  WHERE filename LIKE &#39;%.docx&#39;
+)
+SELECT 
+  filename,
+  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
+    @avalanche_db.avalanche_schema.customer_reviews,
+    filename,
+    {&#39;mode&#39;: &#39;layout&#39;}
+  ):content AS layout
+FROM files;
+</code></pre>
+<p>This query does the following:</p>
+<ol type="1">
+<li>Creates a CTE (Common Table Expression) named <code>files</code> that extracts the filenames from the file URLs</li>
+<li>Filters for only DOCX files</li>
+<li>Uses the <code>PARSE_DOCUMENT</code> function to extract the content from each file in &#34;layout&#34; mode</li>
+<li>Returns the filename and the extracted content as a result set</li>
+</ol>
+<p>The <code>PARSE_DOCUMENT</code> function is particularly useful for extracting text from various document formats, including DOCX, PDF, and others. The &#34;layout&#34; mode preserves the document&#39;s structure, making it easier to extract specific sections.</p>
+<p>Running the above query should yield the following table output:</p>
+<p class="image-container"><img alt="image" src="img/1a6d32b50891db38.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Reshaping the Data" duration="15">
+        <h2 is-upgraded>Structuring the Extracted Content</h2>
+<p>Now that we have the raw content from the DOCX files, we need to reshape it into a more structured format. We&#39;ll use regular expressions to extract specific information such as product name, date, and the customer review text.</p>
+<pre><code language="language-sql" class="language-sql">-- Extract PRODUCT name, DATE, and CUSTOMER_REVIEW from the LAYOUT column
+SELECT 
+  filename,
+  REGEXP_SUBSTR(layout, &#39;Product: (.*?) Date:&#39;, 1, 1, &#39;e&#39;) as product,
+  REGEXP_SUBSTR(layout, &#39;Date: (202[0-9]-[0-9]{2}-[0-9]{2})&#39;, 1, 1, &#39;e&#39;) as date,
+  REGEXP_SUBSTR(layout, &#39;## Customer Review\n([\\s\\S]*?)$&#39;, 1, 1, &#39;es&#39;) as customer_review
+FROM previous_query_result;
+</code></pre>
+<p>This query uses <code>REGEXP_SUBSTR</code> to extract:</p>
+<ul>
+<li>The product name (between &#34;Product: &#34; and &#34; Date:&#34;)</li>
+<li>The date (in the format YYYY-MM-DD)</li>
+<li>The customer review text (everything after &#34;## Customer Review&#34;)</li>
+</ul>
+<p>The regular expression patterns are designed to match the specific structure of the documents, extracting only the relevant information. This transformation converts unstructured text into a structured format that&#39;s easier to analyze.</p>
+<p>The result table should look like the following:</p>
+<p class="image-container"><img alt="image" src="img/8699ec4fd50695f0.png"></p>
+<h2 is-upgraded>Applying AI on the Data with Cortex</h2>
+<p>With our data now in a structured format, we can apply Snowflake&#39;s Cortex LLM functions to perform advanced text analysis. We&#39;ll use three key functions:</p>
+<ol type="1">
+<li><code>TRANSLATE</code>: To convert any non-English reviews to English</li>
+<li><code>SUMMARIZE</code>: To create concise summaries of the reviews</li>
+<li><code>SENTIMENT</code>: To analyze the sentiment of each review</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Perform translation, summarization and sentiment analysis on customer review
+SELECT 
+    product,
+    date,
+    SNOWFLAKE.CORTEX.TRANSLATE(customer_review, &#39;&#39;, &#39;en&#39;) as translated_review,
+    SNOWFLAKE.CORTEX.SUMMARIZE(translated_review) as summary,
+    SNOWFLAKE.CORTEX.SENTIMENT(translated_review) as sentiment_score
+FROM previous_query_result
+ORDER BY date;
+</code></pre>
+<p>This query:</p>
+<ul>
+<li>Takes the structured data from our previous step</li>
+<li>Translates any non-English reviews to English (the empty string as the second parameter tells the function to auto-detect the source language)</li>
+<li>Creates a summary of each translated review</li>
+<li>Calculates a sentiment score for each review</li>
+<li>Orders the results by date</li>
+</ul>
+<p>The sentiment score is a numerical value that indicates the overall sentiment of the review, with positive values indicating positive sentiment and negative values indicating negative sentiment.</p>
+<p>Results from the query is shown below:</p>
+<p class="image-container"><img alt="image" src="img/cf15ec735a3ab2d8.png"></p>
+<h2 is-upgraded>Converting SQL Results to a Pandas DataFrame</h2>
+<p>To prepare for visualization, we&#39;ll convert the SQL results to a Pandas DataFrame:</p>
+<pre><code language="language-python" class="language-python">df = sql_result.to_pandas()
+</code></pre>
+<p>This conversion allows us to use Python&#39;s data visualization libraries to create interactive charts and graphs.</p>
+<p class="image-container"><img alt="image" src="img/fc4ea6e05f7300f8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Visualizations" duration="20">
+        <h2 is-upgraded>Build Interactive Charts with Streamlit and Altair</h2>
+<p>Now that we have our processed data in a Pandas DataFrame, we can create visualizations to gain insights into the sentiment of customer reviews. We&#39;ll use Streamlit for the interactive dashboard and Altair for the charts.</p>
+<h2 is-upgraded>Calculate Daily Sentiment Scores</h2>
+<p>First, let&#39;s create a bar chart showing sentiment scores by date:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+import altair as alt
+import pandas as pd
+
+# Ensure SENTIMENT_SCORE is numeric
+df[&#39;SENTIMENT_SCORE&#39;] = pd.to_numeric(df[&#39;SENTIMENT_SCORE&#39;])
+
+# Create the base chart with bars
+chart = alt.Chart(df).mark_bar(size=15).encode(
+    x=alt.X(&#39;DATE:T&#39;,
+            axis=alt.Axis(
+                format=&#39;%Y-%m-%d&#39;,  # YYYY-MM-DD format
+                labelAngle=90)  # Rotate labels 90 degrees
+            ),
+    y=alt.Y(&#39;SENTIMENT_SCORE:Q&#39;),
+    color=alt.condition(
+        alt.datum.SENTIMENT_SCORE &gt;= 0,
+        alt.value(&#39;#2ecc71&#39;),  # green for positive
+        alt.value(&#39;#e74c3c&#39;)   # red for negative
+    ),
+    tooltip=[&#39;PRODUCT:N&#39;, &#39;DATE:T&#39;] # Add tooltip
+).properties(
+    height=500
+)
+
+# Display the chart
+st.altair_chart(chart, use_container_width=True)
+</code></pre>
+<p>This chart:</p>
+<ul>
+<li>Shows sentiment scores over time</li>
+<li>Uses green for positive sentiment and red for negative sentiment</li>
+<li>Includes tooltips that show the product name and date when hovering over a bar</li>
+<li>Rotates date labels for better readability</li>
+</ul>
+<p class="image-container"><img alt="image" src="img/3fd823dd45da7afd.png"></p>
+<h2 is-upgraded>Calculate Product Sentiment Scores</h2>
+<p>Next, let&#39;s create a bar chart showing average sentiment scores by product:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+import altair as alt
+import pandas as pd
+
+# Create the base chart with aggregation by PRODUCT
+bars = alt.Chart(df).mark_bar(size=15).encode(
+    y=alt.Y(&#39;PRODUCT:N&#39;, 
+            axis=alt.Axis(
+                labelAngle=0,  # Horizontal labels
+                labelOverlap=False,  # Prevent label overlap
+                labelPadding=10  # Add some padding
+            )
+    ),
+    x=alt.X(&#39;mean(SENTIMENT_SCORE):Q&#39;,  # Aggregate mean sentiment score
+            title=&#39;MEAN SENTIMENT_SCORE&#39;),
+    color=alt.condition(
+        alt.datum.mean_SENTIMENT_SCORE &gt;= 0,
+        alt.value(&#39;#2ecc71&#39;),  # green for positive
+        alt.value(&#39;#e74c3c&#39;)   # red for negative
+    ),
+    tooltip=[&#39;PRODUCT:N&#39;, &#39;mean(SENTIMENT_SCORE):Q&#39;]
+).properties(
+    height=400
+)
+
+# Display the chart
+st.altair_chart(bars, use_container_width=True)
+</code></pre>
+<p>This chart:</p>
+<ul>
+<li>Shows average sentiment scores for each product</li>
+<li>Uses the same color scheme as the previous chart</li>
+<li>Includes tooltips that show the product name and average sentiment score</li>
+</ul>
+<p class="image-container"><img alt="image" src="img/a6e4dfa1bab0a6e4.png"></p>
+<h2 is-upgraded>Add Download Button</h2>
+<p>Finally, let&#39;s add a download button so users can export the processed data:</p>
+<pre><code language="language-python" class="language-python"># Download button for the CSV file
+st.subheader(&#39;Processed Customer Reviews Data&#39;)
+st.download_button(
+    label=&#34;Download CSV&#34;,
+    data=df[[&#39;PRODUCT&#39;, &#39;DATE&#39;, &#39;SUMMARY&#39;, &#39;SENTIMENT_SCORE&#39;]].to_csv(index=False).encode(&#39;utf-8&#39;),
+    mime=&#34;text/csv&#34;
+)
+</code></pre>
+<p>This button allows users to download a CSV file containing the product name, date, summary, and sentiment score for each review.</p>
+<p class="image-container"><img alt="image" src="img/cc6cee341e5785cd.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an end-to-end workflow for creation of a customer review analytics dashboard that processes unstructured text data and finally visualizes sentiment trends. This pipeline demonstrates how to leverage Snowflake&#39;s data processing capabilities and Cortex LLM functions to process and extract valuable insights from customer feedback.</p>
+<p>By analyzing sentiment across products and time periods, businesses can identify trends, address customer concerns, and improve their products and services. The interactive visualizations make it easy to spot patterns and outliers, enabling data-driven decision-making.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Extracted and parsed content from DOCX files stored in Snowflake</li>
+<li>Reshaped unstructured data into a structured format using SQL and regular expressions</li>
+<li>Applied Snowflake Cortex LLM functions for text translation, summarization, and sentiment analysis</li>
+<li>Created interactive visualizations with Streamlit and Altair</li>
+<li>Built a complete analytics pipeline for customer review data</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document" target="_blank">PARSE_DOCUMENT</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowflake Cortex</a></li>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+<li><a href="https://altair-viz.github.io/" target="_blank">Altair Documentation</a></li>
+</ul>
+<p>Happy coding!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

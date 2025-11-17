@@ -1,0 +1,440 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Viewing Location Data on an Interactive Map</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="viewing-location-data-on-an-interactive-map"
+                  title="Viewing Location Data on an Interactive Map"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>Honeycomb Maps is a Snowflake Native App that enables logistics and mobility companies to build interactive map dashboards directly using their data in Snowflake. As a native app, Honeycomb runs inside your Snowflake account, keeping your data secure by eliminating the need to extract or duplicate it.</p>
+<p>Honeycomb Maps provides a no-code interface for creating interactive, shareable, and data-driven maps directly within Snowflake. This ensures that your geospatial data never leaves your Snowflake environment, allowing for cutting-edge interactive maps while maintaining all of Snowflake&#39;s security, governance, and scalability benefits.</p>
+<p class="image-container"><img alt="Honeycomb Maps Overview" src="img/ecd4875b92169ff9.png"></p>
+<p>In this quickstart guide, you&#39;ll learn how to use Honeycomb Maps to create an interactive visualization of geospatial data. You&#39;ll create a map showing pizza restaurants in New York City, add additional layers to visualize density, and create interactive components to filter the data.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account. Sign up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">30-day free trial</a> account, if required.</li>
+<li>Permissions to install apps from Snowflake Marketplace (An ACCOUNTADMIN role will work)</li>
+<li>Access to Snowflake&#39;s US_REAL_ESTATE sample database (available for free from Snowflake Marketplace) or your own geospatial data</li>
+<li>Basic familiarity with SQL queries</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to install the Honeycomb Maps app from the Snowflake Marketplace</li>
+<li>How to create a data source connection to your Snowflake data</li>
+<li>How to visualize point data on an interactive map</li>
+<li>How to add a density heatmap layer using H3 cells</li>
+<li>How to add interactive filters and metrics to the map</li>
+<li>How to save and share your map</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An interactive map dashboard showing pizza restaurants in New York City with:</p>
+<ul>
+<li>Points representing individual restaurants</li>
+<li>A density heatmap using H3 cells</li>
+<li>Interactive area filters to explore specific areas</li>
+<li>Components showing real-time aggregated metrics</li>
+</ul>
+<p>Let&#39;s get started with creating our first Honeycomb map!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install Honeycomb Maps" duration="5">
+        <p>The first step is to install the Honeycomb Maps application from the Snowflake Marketplace.</p>
+<h2 is-upgraded>Navigate to the Snowflake Marketplace</h2>
+<ol type="1">
+<li>Log in to your Snowflake account</li>
+<li>Click on <strong>Marketplace</strong> in the left navigation menu</li>
+<li>Search for &#34;Honeycomb&#34; in the search bar</li>
+<li>Click on the <strong>Honeycomb Data Explorer</strong> or <strong>Honeycomb Maps</strong> tile</li>
+</ol>
+<p class="image-container"><img alt="Marketplace Navigation" src="img/cb967b647d489b17.png"></p>
+<h2 is-upgraded>Install the Application</h2>
+<ol type="1">
+<li>On the Honeycomb Data Explorer listing page, click the blue <strong>Get</strong> button.</li>
+<li>A pop-up window will appear with additional details. You can use the default warehouse and default options.</li>
+<li>Click <strong>Get</strong> to start the installation.</li>
+<li>After a few seconds, the app will appear in the ‘Apps&#39; window.</li>
+</ol>
+<h2 is-upgraded>Finish installation</h2>
+<ol type="1">
+<li>For the Honeycomb Maps app to function, you will need to grant it a series of permissions. The UI will show the permissions required. Click ‘Grant&#39; to grant these permissions to the application.</li>
+<li>Click ‘Activate&#39;.</li>
+<li>The app will take 10-15 minutes to fully activate.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get POI Data" duration="0">
+        <h2 is-upgraded>Get the Data from Marketplace</h2>
+<p><img alt="Snowflake Real Estate Data Listing" src="img/610d74338065d208.png"> Snowflake provides a free dataset of POI (Point of Interest) data across the United States. This dataset can be added your account through the Snowflake Marketplace. Here is a link to the listing: <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate" target="_blank">https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate</a>.</p>
+<ol type="1">
+<li>Open Snowflake Marketplace and find the ‘US Real Estate&#39; dataset provided by Snowflake</li>
+<li>Click on ‘Get&#39; and follow the instructions to add this data to your account</li>
+<li>Once the data has been added, make sure that you can query the data successfully. Open up a new worksheet in Snowsight (Projects -&gt; Worksheets -&gt; ‘+&#39;) and run the following query:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- verify whether we can query the Snowflake POI data
+SELECT
+    poi.poi_name,
+    addr.latitude,
+    addr.longitude
+FROM us_real_estate.cybersyn.point_of_interest_index AS poi
+JOIN us_real_estate.cybersyn.point_of_interest_addresses_relationships AS map
+    ON (poi.poi_id = map.poi_id)
+JOIN us_real_estate.cybersyn.us_addresses AS addr
+    ON (map.address_id = addr.address_id)
+WHERE addr.city = &#39;New York&#39;
+  AND addr.state = &#39;NY&#39;
+  AND poi.category_main = &#39;Pizza Restaurant&#39;;
+LIMIT 10;
+</code></pre>
+<ol type="1" start="4">
+<li>The query above should run successfully and return 10 rows of data. If it does not, make sure that the role you are using has access to the ‘US_REAL_ESTATE&#39; database that was created when you added the data from Marketplace.</li>
+</ol>
+<p class="image-container"><img alt="POI data Snowsight query" src="img/29e78f33022a7407.png"></p>
+<ol type="1" start="5">
+<li>For Honeycomb Maps to access this data, you need to grant the application the necessary privileges:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Grant privileges on sample database to the Honeycomb application
+GRANT IMPORTED PRIVILEGES ON DATABASE US_REAL_ESTATE TO APPLICATION HONEYCOMB_DATA_EXPLORER;
+</code></pre>
+<p>Execute this SQL command in a Snowflake worksheet to grant the Honeycomb app access to the sample data we&#39;ll be using. If you&#39;re using your own database, replace &#34;US_REAL_ESTATE&#34; with your database name.</p>
+<h2 is-upgraded>Launch the Application</h2>
+<ol type="1">
+<li>Navigate to <strong>Apps</strong> in the left navigation menu</li>
+<li>Find and click on <strong>Honeycomb Data Explorer</strong></li>
+<li>The application will open in a new browser tab. For security reasons, you may need to log into Snowflake again.</li>
+</ol>
+<p>You have now successfully installed Honeycomb Maps and are ready to create your first interactive map!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your First Map" duration="10">
+        <p>Now that you have Honeycomb Maps installed, let&#39;s create your first map visualization.</p>
+<h2 is-upgraded>Start a New Project</h2>
+<ol type="1">
+<li>On the Honeycomb Maps start page, click on <strong>Start with a blank map</strong></li>
+</ol>
+<p class="image-container"><img alt="Snowflake Start Screen" src="img/a30f096af5b8cccc.png"></p>
+<ol type="1" start="2">
+<li>You&#39;ll see a blank map canvas. The next step will be to add data onto the map.</li>
+</ol>
+<p class="image-container"><img alt="Blank Map Canvas" src="img/2cf51ae9b85098c1.png"></p>
+<h2 is-upgraded>Connect to Your Data</h2>
+<p>Next, we&#39;ll connect to Snowflake data to visualize pizza restaurants in New York:</p>
+<ol type="1">
+<li>Click on <strong>Edit Map</strong> in the bottom-right corner to open the configuration sidebar.</li>
+<li>Click on <strong>Data Sources</strong> in the side panel</li>
+<li>Click on <strong>Add Data Source</strong></li>
+<li>Select <strong>Snowflake</strong> as the data source type</li>
+<li>Under <strong>Rows to Fetch</strong>, click on <strong>Use Custom SQL</strong><img alt="Open SQL Editor" src="img/630ec362a3cfe97c.png"></li>
+<li>Click on <strong>Open SQL Editor</strong></li>
+</ol>
+<h2 is-upgraded>Write Your Query</h2>
+<p>In the SQL editor, enter the following query to fetch pizza restaurant locations:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    poi.poi_name,
+    poi.category_main,
+    poi.category_alternate,
+    addr.latitude,
+    addr.longitude,
+    addr.city,
+    addr.state,
+    addr.zip
+FROM US_REAL_ESTATE.cybersyn.point_of_interest_index AS poi
+JOIN US_REAL_ESTATE.cybersyn.point_of_interest_addresses_relationships AS map
+    ON (poi.poi_id = map.poi_id)
+JOIN US_REAL_ESTATE.cybersyn.us_addresses AS addr
+    ON (map.address_id = addr.address_id)
+WHERE addr.city = &#39;New York&#39;
+  AND addr.state = &#39;NY&#39;
+  AND poi.category_main = &#39;Pizza Restaurant&#39;;
+</code></pre>
+<p>This query joins several tables to find all pizza restaurants in New York City, retrieving their names, categories, and geographic coordinates.</p>
+<ol type="1" start="7">
+<li>Click <strong>Run</strong> to test the query</li>
+<li>Verify that it returns the pizza restaurant data. Note: If you see an error, make sure that you have granted Honeycomb access to the database that you are trying to query (see the previous step). <img alt="Successful Query" src="img/5c962f1f9e7b2b7f.png"></li>
+<li>Click <strong>Save and Close</strong></li>
+</ol>
+<p>A point layer will be automatically added to your map, showing the location of each pizza restaurant.</p>
+<p class="image-container"><img alt="Initial Point Layer" src="img/aebfb97253121f27.png"></p>
+<ol type="1" start="10">
+<li>You can scroll to zoom into New York City</li>
+</ol>
+<h2 is-upgraded>Customize Point Styling</h2>
+<p>Let&#39;s improve the appearance of our points:</p>
+<ol type="1">
+<li>Click on <strong>Map Layers</strong> in the sidebar</li>
+<li>Click on the automatically created <strong>Point Layer</strong></li>
+<li>Change the label to &#34;Pizza Locations&#34;</li>
+<li>Adjust the point color by clicking on ‘Colors&#39; and then the color selector</li>
+</ol>
+<h2 is-upgraded>Enable Tooltips</h2>
+<p>Tooltips allow users to see information about each restaurant when hovering over points:</p>
+<ol type="1">
+<li>With your Point Layer selected, click on <strong>Tooltip Settings</strong></li>
+<li>Toggle <strong>Enable Tooltips</strong> to On</li>
+<li>Select <strong>POI_NAME</strong> as a field to show in the tooltip</li>
+<li>You can now hover over points on the map to see restaurant names</li>
+</ol>
+<p class="image-container"><img alt="Tooltip Configuration" src="img/7fb7636d56dffe81.png"></p>
+<p>Your map now displays all pizza restaurants with customized styling and tooltips!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Title and Legend" duration="10">
+        <p>Now let&#39;s enhance our map by adding a label and legend to the map</p>
+<h2 is-upgraded>Add a Title</h2>
+<ol type="1">
+<li>Click on <strong>Components</strong> in the sidebar</li>
+<li>Click on <strong>Add Component</strong></li>
+<li>Keep the first component as a <strong>Title Card</strong> on the left-hand side</li>
+<li>Enter &#34;Pizza Restaurants in New York City&#34; as the title</li>
+<li>Add &#34;Data from Snowflake&#34; as a subtitle</li>
+</ol>
+<h2 is-upgraded>Add a Legend</h2>
+<ol type="1" start="6">
+<li>Click <strong>Add Component</strong> again</li>
+<li>Change the component type to <strong>Legend</strong></li>
+<li>Under &#34;Component Location,&#34; select &#34;right side&#34; to move the legend to the right side of the map</li>
+</ol>
+<p class="image-container"><img alt="Title and Legend" src="img/e5e364b8a5f2c6b4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add a Density Layer" duration="0">
+        <p>Now, let&#39;s add a layer to show the density of pizza restaurants using hexagonal H3 cells:</p>
+<ol type="1">
+<li>Click on <strong>Map Layers</strong> in the sidebar</li>
+<li>Click on <strong>Add Map Layer</strong></li>
+<li>Label this layer &#34;Pizza Density&#34;</li>
+<li>Make sure the layer type is set to <strong>Honeycomb Layer</strong></li>
+<li>Expand the <strong>H3 Data</strong> section</li>
+<li>Set <strong>Resolution Mode</strong> to <strong>Fixed resolution</strong></li>
+<li>Set H3 resolution to 8 (this controls the size of the hexagons)</li>
+<li>Under <strong>Measure Field</strong>, select &#34;honeycomb_generated_id&#34;</li>
+<li>Set <strong>Aggregation Type</strong> to &#34;count&#34;</li>
+</ol>
+<p>This creates a hexagon grid where each cell is colored based on the number of pizza restaurants it contains.</p>
+<ol type="1" start="10">
+<li>Enable tooltips for this layer to show the exact count in each cell</li>
+</ol>
+<p class="image-container"><img alt="Density Layer" src="img/7f9b7b8441db1c6a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Interactive Components" duration="0">
+        <h2 is-upgraded>Add a Metric Component</h2>
+<p>Let&#39;s add a component that shows the total number of pizza restaurants:</p>
+<ol type="1">
+<li>Click on <strong>Components</strong> in the sidebar</li>
+<li>Click on <strong>Add Component</strong></li>
+<li>Change the component type to <strong>Big Number</strong></li>
+<li>Set &#34;Total Restaurants&#34; as the title</li>
+<li>Select the single data source under <strong>Data Source</strong></li>
+<li>Under <strong>Measure Field</strong>, select &#34;honeycomb_generated_id&#34;</li>
+<li>Set <strong>Aggregation Type</strong> to &#34;Count&#34;</li>
+</ol>
+<p>Your component now shows the total number of pizza restaurants on the map. It should be close to 2,484 if you are using the Snowflake POI data.</p>
+<p>Let&#39;s add an interactive polygon filter that lets users examine the number of restaurants in specific areas.</p>
+<h2 is-upgraded>Add a Polygon Filter</h2>
+<ol type="1">
+<li>Click on <strong>Components</strong> in the sidebar</li>
+<li>Click on <strong>Add Component</strong></li>
+<li>For <strong>Component Type</strong>, select <strong>Polygon Filter</strong></li>
+<li>Set &#34;Area Filter&#34; as the title</li>
+<li>Under <strong>Polygon Input Methods</strong>, keep &#34;Allow Drawing on Map&#34; selected</li>
+<li>Under <strong>Elements to Filter</strong>, select all checkboxes (Pizza Locations, Pizza Density, and Total Restaurants)</li>
+</ol>
+<p class="image-container"><img alt="Polygon Filter Configuration" src="img/c309f7675b32e43d.png"></p>
+<h2 is-upgraded>Use the Polygon Filter</h2>
+<p>Now you can use the filter to analyze specific areas:</p>
+<ol type="1">
+<li>Click on <strong>Draw Area</strong> to start drawing</li>
+<li>Click on the map to add points outlining your area of interest (such as the Upper East Side)</li>
+<li>Click on the first point to close the shape and finish drawing</li>
+<li>The map now only shows restaurants within your defined area</li>
+<li>The Total Restaurants metric automatically updates to show the count for the selected area</li>
+<li>You can drag corners of the area to adjust the boundaries or click <strong>Reset</strong> to start over</li>
+</ol>
+<p class="image-container"><img alt="Using Polygon Filter" src="img/9ac9c9fb4cc0daa0.png"></p>
+<p>This interactive filter is especially useful for analyzing density and distribution in specific neighborhoods or regions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Save and Share Your Map" duration="5">
+        <p>Once you&#39;re satisfied with your map, let&#39;s save it and learn how to share it with others.</p>
+<h2 is-upgraded>Configure Map Settings</h2>
+<ol type="1">
+<li>Click on <strong>Settings</strong> in the sidebar</li>
+<li>Adjust the map view to show all of New York City</li>
+<li>Click <strong>Set to Current View</strong> to save this as the default view</li>
+<li>Decide whether to save active filters with the map by toggling <strong>Save Active Filters</strong></li>
+</ol>
+<p class="image-container"><img alt="Map Settings" src="img/e0e40a28960aba4b.png"></p>
+<h2 is-upgraded>Save Your Map</h2>
+<ol type="1">
+<li>Click on <strong>Save/Load Map</strong> at the top of the sidebar</li>
+<li>Enter &#34;NYC Pizza Overview&#34; as the name for your map</li>
+<li>Click <strong>Save</strong></li>
+</ol>
+<p>Your map is now saved to Snowflake and will be accessible to others who have access to the Honeycomb tool in your organization.</p>
+<h2 is-upgraded>Share Your Map</h2>
+<p>You can share your map with colleagues in two ways:</p>
+<ol type="1">
+<li><strong>Editable Link</strong>:<ul>
+<li>This allows recipients to customize the map and save their changes</li>
+<li>Good for collaborative analysis</li>
+</ul>
+</li>
+<li><strong>Read-only Link</strong>:<ul>
+<li>This removes the ‘Edit Map&#39; sidebar, limiting viewers to only interacting with the map</li>
+<li>Ideal for presenting finalized insights</li>
+<li>Users can still utilize filter components that have been added to the map</li>
+</ul>
+</li>
+</ol>
+<p>To share either link type:</p>
+<ol type="1">
+<li>Click on <strong>Share</strong> in the top navigation bar</li>
+<li>Choose either <strong>Copy Editable Link</strong> or <strong>Copy Read-only Link</strong></li>
+<li>Share the link with your colleagues via email or your preferred communication tool. For security reasons, they will need to sign into Snowflake to view the map.</li>
+</ol>
+<p class="image-container"><img alt="Share Options" src="img/7b3fa0ecf172dff4.png"></p>
+<p>Congratulations! You&#39;ve successfully created, customized, and shared an interactive map visualization using Honeycomb Maps.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps and Advanced Features" duration="5">
+        <p class="image-container"><img alt="Advanced Maps" src="img/814d9afa8a4ba131.png"></p>
+<p>Now that you&#39;ve created your first map with Honeycomb Maps, here are some advanced features to explore:</p>
+<h2 is-upgraded>Additional Layer Types</h2>
+<p>Beyond points and hexagons, Honeycomb Maps supports:</p>
+<ul>
+<li><strong>Line Layers</strong>: Visualize routes, paths, or connections between locations</li>
+<li><strong>Area Layers</strong>: Display administrative boundaries like zip codes or census tracts, or operational areas</li>
+<li><strong>Arc Layers</strong>: Show connections between two points</li>
+</ul>
+<h2 is-upgraded>Multiple Data Sources</h2>
+<p>Combine multiple datasets on a single map:</p>
+<ol type="1">
+<li>Add additional data sources using the <strong>Data Sources</strong> panel</li>
+<li>Create new layers that reference different data sources</li>
+<li>Honeycomb can be used as a ‘single source of truth map&#39; showing location data from Snowflake</li>
+</ol>
+<h2 is-upgraded>Powerful Filters</h2>
+<p>In this demo we only showed a basic polygon filter, however, Honeycomb supports more advanced filtering options.</p>
+<ul>
+<li>Non-spatial data fields can be filtered with sliders, drop-down lists, checkboxes, and more</li>
+<li>The polygon filter can accept areas uploaded from GeoJSON files, or areas from a Snowflake table</li>
+</ul>
+<h2 is-upgraded>Always up-to-date-data</h2>
+<ul>
+<li>When a map loads, it will always pull fresh data from Snowflake tables by running the query defined in ‘Data Sources&#39;</li>
+<li>For the best performance, keep these queries fast or consider using materialized views</li>
+</ul>
+<h2 is-upgraded>Enforced SSO</h2>
+<ul>
+<li>Honeycomb comes with SSO integrated with Snowflake out-of-the-box. This makes it easy for others to securely access the maps you create, and limits the risk of accidentally making sensitive data public</li>
+</ul>
+<p>Explore these advanced features to create even more powerful geographic visualizations and gain deeper insights from your location data!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully created an interactive map visualization using Honeycomb Maps. You&#39;ve learned how to:</p>
+<ul>
+<li>Install the Honeycomb Maps Snowflake Native App</li>
+<li>Connect to and visualize your Snowflake data on a map</li>
+<li>Add multiple visualization layers including points and density hexagons</li>
+<li>Create interactive components like tooltips and filters</li>
+<li>Save and share your map with others</li>
+</ul>
+<p class="image-container"><img alt="Honeycomb Maps Overview" src="img/ecd4875b92169ff9.png"></p>
+<h2 is-upgraded>Learn More</h2>
+<p>To continue your journey with Honeycomb Maps:</p>
+<ul>
+<li>Visit the official <a href="https://docs.honeycombmaps.com" target="_blank">Honeycomb Maps documentation</a> for comprehensive guides and tutorials</li>
+<li>Learn more about Honeycomb Maps capabilities on the <a href="https://www.honeycombmaps.com/product/snowflake" target="_blank">product page</a></li>
+<li>Apply these techniques to your own geospatial data</li>
+<li>Reach out to the Honeycomb team at hello@honeycombmaps.com for questions and assistance</li>
+</ul>
+<p>With Honeycomb Maps, you now have a powerful tool to visualize and analyze location data directly within your Snowflake environment, allowing you to gain insights while maintaining Snowflake&#39;s security, governance, and scalability. Honeycomb Maps enables you to:</p>
+<ul>
+<li>Create beautiful, interactive maps with your Snowflake data</li>
+<li>Share insights with stakeholders through intuitive visualizations</li>
+<li>Reduce data warehouse load by handling map interactions on the client-side</li>
+<li>Avoid data movement with the Snowflake Native App architecture</li>
+<li>Leverage Snowflake&#39;s security and governance model</li>
+</ul>
+<p><strong>Happy mapping!</strong></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

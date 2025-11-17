@@ -1,0 +1,232 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with ML Observability in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-ml-observability-in-snowflake"
+                  title="Getting Started with ML Observability in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Snowflake ML provides organizations with an integrated set of capabilities for end-to-end ML development and operations in a single platform on top of governed data. For many large enterprises, extracting tangible value from Machine Learning (ML) initiatives remains a significant challenge. Despite substantial investments, the journey from developing models to realizing their benefits often encounters numerous roadblocks. MLOps is a core function of ML engineering and focuses on streamlining the process of taking machine learning models to production, and then maintaining and monitoring them effectively. Unlike traditional software, machine learning models can change their behavior over time due to various factors, including input drift, outdated assumptions from model training, issues in data pipelines, and standard challenges like hardware/software environments and traffic. These factors can lead to a decline in model performance and unexpected behavior which needs to be monitored very closely.</p>
+<p class="image-container"><img src="img/b747046dce10b511.png"></p>
+<p>In this Quickstart guide we will be exploring ML Observability in Snowflake that enables one to detect model behavior changes over time due to input drift, stale training assumptions, and data pipeline issues, as well as the usual factors, including changes to the underlying hardware and software and the fluid nature of traffic. ML Observability allows you to track the quality of production models that has been deployed via the Snowflake Model Registry across multiple dimensions, such as performance, drift, and volume.</p>
+<p>For demonstration purposes, let&#39;s consider a multinational financial services firm aiming to understand and mitigate customer churn. Losing customers not only impacts revenue but also incurs additional costs to acquire new ones. Therefore, having an accurate model to predict churn and monitoring it regularly is crucial. The financial firm leverages Snowflake ML for its end to end ML pipeline and have achieved continuous monitoring for data quality, model quality, bias drift and feature attribution drift data quality, model quality, bias drift and feature attribution drift with ML Observability.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account (including free trials)  with access to a role that has the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.</li>
+<li>Git installed.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to build a comprehensive and scalable production-ready MLOps pipeline that manages the entire ML workflow in Snowflake ML.</li>
+<li>How to implement model performance tracking across multiple dimensions, such as performance, drift, and volume via the Snowflake Model Registry.</li>
+<li>How to carry monitoring of customer churn classification model</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account (including free trials)</li>
+<li>Access to the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.</li>
+<li>Git installed.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>How to build a comprehensive and scalable production-ready MLOps pipeline that manages the entire ML workflow in Snowflake.</li>
+<li><ul>
+<li><strong>loads data and prepare data</strong></li>
+<li><strong>performs feature transformations on the data using Snowflake ML APIs</strong></li>
+<li><strong>train an XGBoost ML model with Snowflake ML APIs</strong></li>
+<li><strong>create a built-in model monitor to detect model and feature drift over time</strong></li>
+<li><strong>implement model performance tracking across multiple dimensions, such as performance, drift, and volume via the Snowflake Model Registry</strong></li>
+<li><strong>monitor performance drift and retrain model using new data trends</strong></li>
+<li><strong>Analyze Performance metrics, statistics metrics and drift metrics and configure alerts</strong></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="2">
+        <p>This section will walk you through creating various objects</p>
+<h3 is-upgraded>High-Level Workflow</h3>
+<p>We will leverage Snowflake Notebooks to carry the Data loading, Feature Engineering, Model Training, Model Inference and the Model Monitoring setup.</p>
+<p><strong>Step 1</strong>. Navigate to Worksheets in Snowsight. Create a database and warehouse that is needed for the Notebook execution. The commands are given below :</p>
+<pre><code>USE ROLE SYSADMIN;
+create database customer_db;
+
+CREATE OR REPLACE WAREHOUSE ml_wh WITH 
+WAREHOUSE_TYPE = standard WAREHOUSE_SIZE = Medium
+AUTO_SUSPEND = 5 AUTO_RESUME = True;
+
+</code></pre>
+<p><strong>Step 2</strong>. Clone <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-ml-observability-in-snowflake" target="_blank">GitHub</a> repository.</p>
+<p>Open and download the following <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-ml-observability-in-snowflake/tree/main/notebook" target="_blank">notebook</a> from the cloned repository. Import the notebook into the Snowflake Snowsight under Projects -&gt; Notebooks section. Note that the snowflake-ml-python is a required package and remember to add it in the package selector.</p>
+<p><strong>Step 3</strong>. Notebook Walkthrough. You can choose to run cell by cell or Run All.</p>
+<ul>
+<li>First import essential packages are imported, including snowpark,snowflake ml,snowflake ml modeling and the snowflake ml registry.</li>
+<li>We will employ synthetic data to predict customer churn for this hypothetical financial customer churn use case. This data includes features related to both customer demographics and transaction information, which a financial firm might use to make predictions about whether a customer will churn.</li>
+<li>Leverage the generated synthetic data to create new features using the snowflake.ml.modeling.preprocessing functions from the Snowpark ML Preprocessing API. All feature transformations using Snowpark ML are distributed operations in the same way with Snowpark DataFrame operations.</li>
+<li>Train an XGBoost classifier model using the Snowpark ML Modeling API.</li>
+<li>Log the trained model to Snowflake Model Registry.</li>
+<li>After logging the model by calling the registry&#39;s log_model method, inference can be carried out using the model operations.</li>
+<li>For the purpose of ongoing inference a function that leverages the trained model from the Snowflake model registry and the preprocessing pipeline is used. <strong>Step 4</strong>. Model Monitor Even a well-trained model may degrade over time due to data drift—shifts in data distributions caused by changes in customer behavior, seasonality, or external factors.</li>
+</ul>
+<p>To track this, we create a Model Monitor in Snowflake</p>
+<p class="image-container"><img src="img/a7166621dafa3cc8.png"></p>
+<ul>
+<li>Create a model monitor using the CREATE MODEL MONITOR command wither using the python class or the SQL command. The model monitor must be created in the same schema as the model version that needs to be monitored.</li>
+<li>The monitor object attaches to the specific model version with a source table name</li>
+</ul>
+<pre><code>CREATE OR REPLACE MODEL MONITOR QS_CHURN_MODEL_MONITOR
+WITH
+    MODEL=QS_CustomerChurn_classifier
+    VERSION=demo
+    FUNCTION=predict
+    SOURCE=CUSTOMER_CHURN
+    BASELINE=CUSTOMERS
+    TIMESTAMP_COLUMN=TRANSACTIONTIMESTAMP
+    PREDICTION_CLASS_COLUMNS=(PREDICTED_CHURN)  
+    ACTUAL_CLASS_COLUMNS=(EXITED)
+    ID_COLUMNS=(CUSTOMERID)
+    WAREHOUSE=ML_WH
+    REFRESH_INTERVAL=&#39;1 min&#39;
+    AGGREGATION_WINDOW=&#39;1 day&#39;;
+</code></pre>
+<p><strong>Step 5</strong>. Retraining the Model</p>
+<p>When drift exceeds a predefined threshold, retraining is required to improve accuracy. The model performance can be viewed in the Snowsight dashbaord.</p>
+<ul>
+<li>Log the new version of the trained model under the same model name and different model version. Create a new model monitor  .</li>
+</ul>
+<p><strong>Step 6</strong>. Continuous Monitoring &amp; Improvement</p>
+<p>Once the retrained model is live, we continue monitoring prediction accuracy, precision, and recall.</p>
+<p><strong>Step 7</strong>. Alert Notificiation An alert is setup to ensure that when a monitored metric (such as model drift) exceeds a certain threshold, a notification is inserted into a TEST_NOTIFICATION table.</p>
+<p>An alert function is created that runs every 60 minutes and checks if data drift has occurred using the MODEL_MONITOR_DRIFT_METRIC function.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring Model Performance in Snowsight" duration="0">
+        <p>Lets view the monitoring dashboards in Snowsight.</p>
+<ul>
+<li>Navigate to the ML Monitoring dashboard in Snowsight.</li>
+<li>In the Snowsight navigation menu, select AI &amp; ML and then Models.</li>
+<li>This will list all models in the Snowflake Model Registry across databases and schemas that the current role can access.</li>
+<li>To view details for a specific model, select its row in the Models list. This will open the model&#39;s details page, where you can find key information, such as the model&#39;s description, tags, versions, and monitors.</li>
+</ul>
+<p>In the Monitors section of the details page, a list of model monitors can be found, including the model versions they are linked to, their status, and creation dates.</p>
+<h3 is-upgraded>Metrics Monitoring</h3>
+<p class="image-container"><img src="img/3007bcaa28cf4a1b.png"></p>
+<p>Prediction Count - Count of non-null values for prediction column.</p>
+<p>Actual Count - Count of non-null values for label column.</p>
+<p class="image-container"><img src="img/62198ad540d2b551.png"></p>
+<p>Precision - ratio of true positive predictions to the total predicted positives, indicating the accuracy of positive predictions.</p>
+<p>Classification accuracy- ratio of correctly predicted instances to the total instances in the dataset.</p>
+<p>Recall - ratio of true positive predictions to the total actual positives, measuring the ability to capture all relevant instances.</p>
+<p>The F1 Score - the harmonic mean of precision and recall, providing a balance between the two metrics.</p>
+<p>Difference of mean - compares the average values between two datasets.</p>
+<p class="image-container"><img src="img/cf62709fe3580fa.png"></p>
+<p>There are other metrics that can be tracked as per the model type.</p>
+<p>In addition to the above metrics that can be visually observed in the dashboard, the following Model monitoring functions allow users to evaluate model performance, detect drift, and count records over time. These system table functions execute SQL queries against nested monitor tables to provide insights into model behavior.</p>
+<p><strong>Drift Metrics</strong>. Drift metrics help identify whether the data distribution of a feature has changed over time compared to a baseline. This is crucial in detecting data drift, which can degrade model performance.</p>
+<pre><code>SELECT * FROM TABLE(MODEL_MONITOR_DRIFT_METRIC(
+&lt;model_monitor_name&gt;, &lt;drift_metric_name&gt;, &lt;column_name&gt;, &lt;granularity&gt;, &lt;start_time&gt;, &lt;end_time&gt;)
+)
+</code></pre>
+<p><strong>Performance Metrics</strong>.</p>
+<p>Performance metrics assess how well a model is predicting outcomes. These metrics vary based on whether the model is a regression or binary classification model.</p>
+<pre><code>SELECT * FROM TABLE(MODEL_MONITOR_PERFORMANCE_METRIC(
+&lt;model_monitor_name&gt;, &lt;metric_name&gt;, &lt;granularity&gt;, &lt;start_time&gt;, &lt;end_time&gt;)
+)
+</code></pre>
+<p><strong>Statistical Metrics</strong>.</p>
+<p>Count metrics provide statistical insights about dataset records, such as total count and missing values.</p>
+<pre><code>SELECT * FROM TABLE(MODEL_MONITOR_STAT_METRIC(
+&lt;model_monitor_name&gt;, &lt;metric_name&gt;, &lt;column_name&gt;, &lt;granularity&gt;, &lt;start_time&gt;, &lt;end_time&gt;)
+)
+</code></pre>
+<p>These metrics combined with the alert function helps maintain model reliability, allowing for proactive issue detection and better model governance.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>In this guide, we explored how financial firms can build end-to-end, production-ready customer churn prediction models using Snowflake ML. With Snowflake&#39;s new features supporting MLOps, organizations can now monitor, optimize, and manage models at scale in production. This approach ensures models are deployed in a controlled, reliable manner and continue to evolve, delivering sustained value over time. Ultimately, Snowflake empowers organizations to move confidently from development to production, unlocking the full potential of their machine learning models and driving impactful, large-scale results.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li><ul>
+<li>Implement an end-to-end ML lifecycle in Snowflake—from training an initial model to monitoring drift, retraining, and continuously improving its predictions.</li>
+</ul>
+</li>
+<li>How to build a comprehensive and scalable production-ready MLOps pipeline that manages the entire ML workflow in Snowflake.</li>
+<li>How to implement model performance tracking across multiple dimensions, such as performance, drift, and volume  via the Snowflake Model Registry.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview" target="_blank">Snowpark ML</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-observability" target="_blank">Snowpark Model Observability</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0" target="_blank">Getting Started with Snowflake ML</a></h3>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

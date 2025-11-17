@@ -1,0 +1,239 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Auto-Ingest Twitter Data into Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="auto_ingest_twitter_data"
+                  title="Auto-Ingest Twitter Data into Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this guide, we&#39;ll be walking you through how to auto-ingest streaming and event-driven data from Twitter into Snowflake using Snowpipe. While this guide is Twitter-specific, the lessons found within can be applied to any streaming or event-driven data source. All source code for this guide can be found on <a href="https://github.com/Snowflake-Labs/sfguide-twitter-auto-ingest" target="_blank">GitHub</a>. Let&#39;s get going!</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with command-line navigation</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>A Text Editor (such as <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>)</li>
+<li><a href="https://git-scm.com/downloads" target="_blank">git</a></li>
+<li><a href="https://developer.twitter.com/" target="_blank">Twitter Developer</a> account (free)</li>
+<li><a href="https://aws.amazon.com/" target="_blank">AWS</a> account (12-month free tier)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe</li>
+<li>Semi-structured data: Querying semi-structured data (JSON) without needing transformations</li>
+<li>Secure Views: Create a Secure View to allow data analysts to query the data</li>
+<li>Snowpipe: Overview and configuration</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A python application that listens and saves live tweets; those tweets are uploaded into Snowflake using AWS S3 as a file stage.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Architecture" duration="5">
+        <p>It&#39;s important to understand how the data flows within this application. This application consists of four main parts:</p>
+<ol type="1">
+<li><strong>A Python application</strong>: this is running locally and listens for live tweets using the Twitter REST API.</li>
+<li><strong>An AWS S3 staging environment</strong>: this is used to store the live tweets from the Python application</li>
+<li><strong>Snowpipe</strong>: this listens for new objects created in AWS S3 and ingests the data into a user-configured table in Snowflake</li>
+<li><strong>Snowflake</strong>: we use Snowflake to directly query and transform the raw, semi-structured JSON data.</li>
+</ol>
+<h2 is-upgraded>Architecture Diagram</h2>
+<p class="image-container"><img alt="Twitter Auto Ingest Architecture Diagram" src="img/c51a01027fc0b988.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Download the repository" duration="5">
+        <p>The demo can be found as a repository on Snowflake&#39;s GitHub. After installing git, you can clone the repository using your terminal. Open a terminal and run the following line to clone the repository to your local system. It&#39;ll download the repository in your home folder by default, so you may want to navigate to another folder if that&#39;s where you want the demo to be located.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-twitter-auto-ingest
+</code></pre>
+<p>Great! You now have the demo on your computer. You&#39;ll need to be in the repository to be able to modify it. Navigate to the repository using the following command:</p>
+<pre><code language="language-bash" class="language-bash">cd sfguide-twitter-auto-ingest
+</code></pre>
+<p>Now that you&#39;re in the correct folder let&#39;s begin adding the correct information for you.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install Dependencies and Environment" duration="5">
+        <p>###Python dependencies</p>
+<p>After downloading the repository, we need to install our python dependencies. Run the following commands:</p>
+<pre><code language="language-bash" class="language-bash">pip install boto3
+pip install awscli
+pip install tweepy
+pip install datetime
+</code></pre>
+<aside class="warning"><p>Note: if you get any <code>pip's dependency resolver</code> errors, be sure to follow the instructions in the error message and install the additional packages.</p>
+</aside>
+<h2 is-upgraded>AWS configuration</h2>
+<ul>
+<li>The AWS access keys can be found on the <a href="https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html" target="_blank">AWS Account and Access Keys</a> page.</li>
+<li>The Twitter API and Access credentials can be found on the <a href="https://developer.twitter.com/en/portal/dashboard" target="_blank">Twitter Developer Portal</a>.</li>
+</ul>
+<p>Now lets configure our AWS environment using the AWS information we have previously acquired. Run the commands:</p>
+<pre><code language="language-bash" class="language-bash">aws configure set aws_access_key_id $AWS_Access_Key_ID
+aws configure set aws_secret_access_key $AWS_Secret_Access_Key
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add your AWS and Twitter keys" duration="10">
+        <p>There are two files you&#39;ll need to edit to specify your own credentials. The first file is <code>twitter_local.py</code>. Open the file with a text editor. The lines you need to edit start at line 30:</p>
+<pre><code language="language-python" class="language-python">##############
+# KEYS
+##############
+#get your Twitter API Key and Secret https://developer.twitter.com/en/apply-for-access
+consumer_key = &#34;*************************&#34;
+consumer_secret = &#34;**************************************************&#34;
+# get your Twitter Access Token and Secret https://developer.twitter.com/en/apply-for-access
+access_token = &#34;**************************************************&#34;
+access_token_secret = &#34;*********************************************&#34;
+#AWS bucket name
+bucket = &#34;my-twitter-bucket&#34;
+# specify your own default twitter keyword here. 
+keyword = &#34;#covid&#34;
+</code></pre>
+<p>You need to replace all the asterisk-filled strings with your own credentials. You can grab these from two places:</p>
+<ul>
+<li>The AWS access keys can be found on the <a href="https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html" target="_blank">AWS Account and Access Keys</a> page.</li>
+<li>The Twitter API and Access credentials can be found on the <a href="https://developer.twitter.com/en/portal/dashboard" target="_blank">Twitter Developer Portal</a>.</li>
+</ul>
+<aside class="warning"><p>Note that if you misplace your Twitter API and Access tokens, you&#39;ll need to regenerate them. It&#39;s straightforward to do, but your previous tokens will be revoked.</p>
+</aside>
+<p>The second file you need to modify is <code>0_setup_twitter_snowpipe.sql</code>. Open the file and navigate to the section beginning on line 18. You&#39;ll need to replace the x-filled strings on lines 24 and 25 with your AWS credentials.</p>
+<p>The other line you need to modify is line 23, which specifies the URL that directs to your AWS S3 bucket; this is where you want the data to be stored.</p>
+<pre><code language="language-sql" class="language-sql">/*********************************************************************************
+Create external S3 stage pointing to the S3 buckets storing the tweets
+*********************************************************************************/
+
+CREATE or replace STAGE twitter_db.public.tweets
+URL = &#39;s3://my-twitter-bucket/&#39;
+CREDENTIALS = (AWS_KEY_ID = &#39;xxxxxxxxxxxxxxxxxxxx&#39;
+AWS_SECRET_KEY = &#39;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&#39;)
+file_format=(type=&#39;JSON&#39;)
+COMMENT = &#39;Tweets stored in S3&#39;;
+</code></pre>
+<p>Make sure to save both files. With both of them modified, you have now successfully added your AWS and Twitter credentials.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the application" duration="5">
+        <p>To run the application we run the following command:</p>
+<pre><code language="language-bash" class="language-bash">python ./twitter_local.py 
+</code></pre>
+<p>Running this command will provide an output that takes this form:</p>
+<pre><code language="language-bash" class="language-bash">..................................................100 tweets retrieved
+==&gt; writing 100 records to tweets_20210129193748.json
+==&gt; uploading to #success/2021/1/29/19/37/tweets_20210129193748.json
+==&gt; uploaded to #success/2021/1/29/19/37/tweets_20210129193748.json
+..................................................200 tweets retrieved
+</code></pre>
+<p>These are all the tweets being pulled. Now that we can pull the tweets in let&#39;s get it ingested with Snowpipe.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Snowpipe in Snowflake" duration="5">
+        <p>First, you&#39;ll need to login to your Snowflake account. Then, load the <code>0_setup_twitter_snowpipe.sql</code> script. You can load a script into a Snowflake Worksheet via the three dots on the top right of the worksheet.</p>
+<p>Within the SQL command interface, execute the script one statement at a time. If everything goes smoothly, you&#39;ll see information related to the pipe you created under &#34;Results.&#34; Find the value under <code>notification_channel</code> and copy it, you&#39;ll need it in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Event Notifications" duration="5">
+        <p>Event notifications for your S3 bucket notify Snowpipe when new data is available to load. There are a variety of ways to configure event notifications in AWS S3. We have a section dedicated to the options <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html" target="_blank">here</a>.</p>
+<p>For this example, we&#39;ll be using SQS queues to deliver event notifications. First head over the S3 console. Click into the relevant bucket, then tab over to &#34;Properties&#34;. Complete the fields as follows:</p>
+<ul>
+<li>Event Name: Name of the event notification (e.g. Auto-ingest Snowflake).</li>
+<li>Event types: Select &#34;All object create events&#34; option.</li>
+<li>Destination: Select SQS Queue, then &#34;Enter SQS queue ARN&#34;, and past the SQS queue name from your SHOW PIPES output. Now Snowpipe with auto-ingest is operational!</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stop your application" duration="1">
+        <p>The setup is now complete! You&#39;re good to go, but it&#39;s important to be cognizant of Twitter API rate limits. In order to not exceed Twitter API rate limits, you&#39;ll want to stop your python application.</p>
+<p>To stop the python application type <code>CTRL + C</code> in the terminal your python application is running in.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Snowflake offers a lot of options for what you can do with this data once you&#39;ve added it with Snowpipe. Check out our <a href="https://guides.snowflake.com/guide/getting_started_with_python/" target="_blank">Getting Started with Python</a> guide to see how you can use Python to empower your interactions with your data. And of course, be sure to check out the full <a href="https://docs.snowflake.com/en/index.html" target="_blank">documentation</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Data Loading: Load Twitter streaming data in an event-driven, real-time fashion into Snowflake with Snowpipe</li>
+<li>Semi-structured data: Querying semi-structured data (JSON) without needing transformations</li>
+<li>Secure Views: Create a Secure View to allow data analysts to query the data</li>
+<li>Snowpipe: Overview and configuration</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

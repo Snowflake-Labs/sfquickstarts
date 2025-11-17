@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "resource_optimization_usage_monitoring",
+  "duration": 0,
+  "title": "Resource Optimization: Usage Monitoring",
+  "authors": "Matt Meredith",
+  "summary": "This guide can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption.",
+  "source": "resource_optimization_usage_monitoring/resource_optimization_usage_monitoring.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "resource-optimization"
+  ],
+  "tags": [
+    "consumption",
+    "costoptimization",
+    "monitoring",
+    "resourceoptimization",
+    "usage",
+    "usagemonitoring",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "resource_optimization_usage_monitoring"
+}

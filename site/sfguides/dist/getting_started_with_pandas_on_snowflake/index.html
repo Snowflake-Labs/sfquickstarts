@@ -1,0 +1,192 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with pandas on Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_pandas_on_snowflake"
+                  title="Getting Started with pandas on Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Through this quickstart guide, you will explore how to get started with <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas" target="_blank">pandas on Snowflake</a> for scalable data processing, analysis, and transformation using familiar pandas API and semantics.</p>
+<h2 is-upgraded>What is pandas on Snowflake?</h2>
+<p>pandas on Snowflake lets you run your pandas code in a distributed manner scalably and securely directly on your data in Snowflake. Just by changing the import statement and a few lines of code, you can get the same pandas-native experience you know and love with the scalability and security benefits of Snowflake. With pandas on Snowflake this API, you can work with much larger datasets and avoid the time and expense of porting your pandas pipelines to other big data frameworks or provisioning large and expensive machines. It runs workloads natively in Snowflake through transpilation to SQL, enabling it to take advantage of parallelization and the data governance and security benefits of Snowflake.</p>
+<h2 is-upgraded>Why use pandas on Snowflake?</h2>
+<p>pandas is the go-to data processing library for millions worldwide, including countless Snowflake users. However, pandas was never built to handle data at the scale organizations are operating today. Running pandas code requires transferring and loading all of the data into a single in-memory process. It becomes unwieldy on moderate-to-large data sets and breaks down completely on data sets that grow beyond what a single node can handle. With pandas on Snowflake, you can run the same pandas code, but with all the pandas processing pushed down to run in a distributed fashion in Snowflake. Your data never leaves Snowflake, and your pandas workflows can process much more efficiently using the Snowflake elastic engine. This brings the power of Snowflake to pandas developers everywhere.</p>
+<p class="image-container"><img alt="pandas_benefits" src="img/b93a309981c2fd1d.png"></p>
+<p>pandas on Snowflake is delivered through the Snowpark pandas API, which you will learn how to use as part of this quickstart. This quickstart will focus on getting started with Snowpark pandas API, and enable you to perform common pandas operations on large volumes of data using the power of Snowflake.</p>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>How to install and configure the Snowpark pandas library</li>
+<li>How to use Snowpark pandas to transform and analyze large datasets using the power of Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<p>We will be using <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> as part of this tutorial. You will need:</p>
+<ul>
+<li>A Snowflake account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A notebook leveraging pandas on Snowflake: <ul>
+<li>to load and clean up data</li>
+<li>to perform common pandas operations and transformations at scale</li>
+<li>to visualize data</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up the Snowflake environment" duration="2">
+        <ol type="1">
+<li>Download the Git repo <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas" target="_blank">here</a>.</li>
+<li>Install the <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/cybersyn-inc-financial-economic-essentials" target="_blank">Cybersyn Finance and Economics dataset</a> from <a href="https://www.snowflake.com/en/data-cloud/marketplace/" target="_blank">Snowflake Marketplace</a>.</li>
+<li>Run the following SQL commands in a SQL worksheet to create the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html" target="_blank">warehouse</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database.html" target="_blank">database</a> and <a href="https://docs.snowflake.com/en/sql-reference/sql/create-schema.html" target="_blank">schema</a>.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+
+-- Roles
+SET MY_USER = CURRENT_USER();
+CREATE OR REPLACE ROLE PANDAS_ROLE;
+GRANT ROLE PANDAS_ROLE TO ROLE SYSADMIN;
+GRANT ROLE PANDAS_ROLE TO USER IDENTIFIER($MY_USER);
+
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE PANDAS_ROLE;
+
+-- Databases
+CREATE OR REPLACE DATABASE PANDAS_DB;
+GRANT OWNERSHIP ON DATABASE PANDAS_DB TO ROLE PANDAS_ROLE;
+
+-- Warehouses
+CREATE OR REPLACE WAREHOUSE PANDAS_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, AUTO_RESUME= TRUE;
+GRANT OWNERSHIP ON WAREHOUSE PANDAS_WH TO ROLE PANDAS_ROLE;
+
+
+-- ----------------------------------------------------------------------------
+-- Step #3: Create the database level objects
+-- ----------------------------------------------------------------------------
+USE ROLE PANDAS_ROLE;
+USE WAREHOUSE PANDAS_WH;
+USE DATABASE PANDAS_DB;
+
+-- Schemas
+CREATE OR REPLACE SCHEMA PUBLIC;
+
+-- Create a table from the secure shared view
+CREATE OR REPLACE TABLE STOCK_PRICE_TIMESERIES AS SELECT * FROM FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES;
+</code></pre>
+<p>These can also be found in the <strong>setup.sql</strong> file.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Snowflake Notebook" duration="10">
+        <h2 is-upgraded>Navigate To Snowflake Notebooks</h2>
+<ol type="1">
+<li>Navigate to the Notebooks section by clicking <strong>Projects</strong> and then <strong>Notebooks<br></strong><img alt="Navigate to Notebooks" src="img/665466c6401b64db.png"></li>
+<li>Click on the *<em>down arrow</em> next to <strong>+ Notebook<br></strong><img alt="New notebook drop down" src="img/bf689d454571002d.png"></li>
+<li>Select <strong>Import .ipynb file</strong>. <img alt="New notebook from menu" src="img/c2af89124ced6055.png"></li>
+</ol>
+<h2 is-upgraded>Import .ipynb File</h2>
+<ol type="1">
+<li>Download this <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb" target="_blank">ipynb file</a> to your machine.</li>
+<li>Navigate to where you have downloaded the ipynb file and select <strong>0_start_here.ipynb</strong> and click <strong>Open</strong></li>
+<li>Give the notebook a name.</li>
+<li>Select the database <code>PANDAS_DB</code> and schema <code>PUBLIC</code> to store the notebook</li>
+<li>Select the warehouse <code>PANDAS_WH</code> for the notebook to run on.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get started with pandas on Snowflake" duration="20">
+        <p>Once you have created a notebook based on the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb" target="_blank">ipynb file</a></p>
+<h2 is-upgraded>Add Required Python Libraries</h2>
+<p>pandas on Snowflake is available as part of the Snowpark Python package (version 1.17 and above). Snowpark Python comes pre-installed with the Snowflake Notebooks environment.</p>
+<p>Additionally, you will need to add the <code>modin</code> package in the <code>Packages</code> dropdown.</p>
+<ol type="1">
+<li>In the Notebook click on <strong>Packages</strong></li>
+<li>Search for <strong>modin</strong> and select <strong>modin</strong> in the list<br><img alt="Modin search result" src="img/75e676b7a0a8f88d.png"></li>
+</ol>
+<h2 is-upgraded>Run code in Notebook</h2>
+<p>Within this notebook, we will import the Snowpark pandas API, connect to Snowflake, and perform common pandas operations on a financial time series dataset.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how pandas on Snowflake allows pandas developers to easily get started processing and analyzing data at tremendous scale using familiar programming constructs and APIs.</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>How to install and configure the Snowpark pandas library</li>
+<li>How to use pandas on Snowflake to transform and analyze large datasets using the power of Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>For more information, check out the resources below:</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowpark/python/pandas-on-snowflake" target="_blank">Documentation: pandas on Snowflake Developer Guide</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_pandas/" target="_blank">Quickstart: Data Engineering Pipeline with pandas on Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

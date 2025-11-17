@@ -1,0 +1,371 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Event Tables and Alerts</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="alert_on_events"
+                  title="Getting Started with Event Tables and Alerts"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>This guide will show you a real-world example of using event tables and alerts.</p>
+<p>Often customers will have a data pipeline that is processing data and ask how to handle bad data. In this guide, we will process JSON data coming in from an untrusted source. This data pipeline will parse the records it can in Python. In the case of bad JSON and invalid records, it will dead letter queue (DLQ) those records by skipping processing and logging those in an event tables. An alert will be added to monitor for bad records and email when found.</p>
+<p>The rest of this Snowflake guide walks you through building that data pipeline, logging to event tables, and alerting on bad data.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL and Python</li>
+</ul>
+<h2 is-upgraded>What you will Learn</h2>
+<ul>
+<li>How to log to event tables</li>
+<li>How to create and schedule tasks and alerts</li>
+</ul>
+<h2 is-upgraded>What you Need</h2>
+<ul>
+<li>A Snowflake Account</li>
+</ul>
+<h2 is-upgraded>What you will Build</h2>
+<ul>
+<li>A task that does data transformation with email alerting on bad data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Database Setup" duration="3">
+        <p>For this guide, we will assume some external system is dropping in json into a table we can read. We are expected to then parse that json and write it into a structured table.</p>
+<p>Create the database named ALERT_ON_EVENTS_GUIDE and the table named INGESTED_DATA we will use for the exercise.</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE ALERT_ON_EVENTS_GUIDE;
+USE SCHEMA PUBLIC;
+</code></pre>
+<p>In order to test the schematization to structured data and the error handling, insert some records as expected and some which are invalid. This insert includes 2 bad records, one has invalid json and the other has an invalid date.</p>
+<pre><code language="language-sql" class="language-sql">CREATE TABLE INGESTED_DATA (RECORD_CONTENT VARCHAR(8000));
+INSERT OVERWRITE INTO INGESTED_DATA 
+VALUES 
+(&#39;{&#34;address&#34;:{&#34;city&#34;:&#34;Stevensfort&#34;,&#34;postalcode&#34;:&#34;20033&#34;,&#34;state&#34;:&#34;DC&#34;,&#34;street_address&#34;:&#34;7782 Joshua Light Apt. 700&#34;},&#34;days&#34;:7,&#34;email&#34;:null,&#34;emergency_contact&#34;:{&#34;name&#34;:&#34;Kenneth Johnson&#34;,&#34;phone&#34;:&#34;4898198640&#34;},&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Sheri Willis&#34;,&#34;phone&#34;:null,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.336008&#34;,&#34;resort&#34;:&#34;Keystone&#34;,&#34;rfid&#34;:&#34;0x900c64ee735e0cfb79d6ebe9&#34;,&#34;txid&#34;:&#34;7879eed0-6b7d-4666-9aa4-b621c8700cb0&#34;}&#39;),
+(&#39;{&#34;address&#34;:null,&#34;days&#34;:6,&#34;email&#34;:null,&#34;emergency_contact&#34;:{&#34;name&#34;:&#34;Richard Baker&#34;,&#34;phone&#34;:&#34;+1-066-728-0674x58901&#34;},&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Justin Kline&#34;,&#34;phone&#34;:&#34;427.341.0127x88491&#34;,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.337206&#34;,&#34;resort&#34;:&#34;Mt. Brighton&#34;,&#34;rfid&#34;:&#34;0xa89366883c123def28bb5bc2&#34;,&#34;txid&#34;:&#34;7360fb86-d8e5-49f2-84e7-6523a16436d4&#34;}&#39;),
+(&#39;{&#34;address&#34;:{&#34;city&#34;:&#34;South Brian&#34;,&#34;postalcode&#34;:&#34;91326&#34;,&#34;state&#34;:&#34;CA&#34;,&#34;street_address&#34;:&#34;29292 Robert Vista&#34;},&#34;days&#34;:3,&#34;email&#34;:&#34;anorton@example.com&#34;,&#34;emergency_contact&#34;:{&#34;name&#34;:&#34;Brandon Bell&#34;,&#34;phone&#34;:&#34;(301)980-2816&#34;},&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Shawn Odom&#34;,&#34;phone&#34;:null,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.338081&#34;,&#34;resort&#34;:&#34;Vail&#34;,&#34;rfid&#34;:&#34;0xef842c51f91d222650f2607b&#34;,&#34;txid&#34;:&#34;2c9dc120-7b3e-40a2-b98e-752ef5b846c1&#34;}&#39;),
+(&#39;{&#34;address&#34;:{&#34;city&#34;:&#34;Lake Kelliside&#34;,&#34;postalcode&#34;:&#34;89778&#34;,&#34;state&#34;:&#34;NV&#34;,&#34;street_address&#34;:&#34;3538 Stephen Radial Suite 641&#34;},&#34;days&#34;:5,&#34;email&#34;:null,&#34;emergency_contact&#34;:null,&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Laura Jackson&#34;,&#34;phone&#34;:&#34;(192)056-6335x9992&#34;,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.338656&#34;,&#34;resort&#34;:&#34;Beaver Creek&#34;,&#34;rfid&#34;:&#34;0x9c87ef9b5ede02fceb94eba6&#34;,&#34;txid&#34;:&#34;e42b560a-5bb9-44be-880a-70f567c14e32&#34;}&#39;),
+(&#39;{&#34;address&#34;:{&#34;city&#34;:&#34;South Michellechester&#34;,&#34;postalcode&#34;:&#34;82973&#34;,&#34;state&#34;:&#34;WY&#34;,&#34;street_address&#34;:&#34;7260 David Course Suite 940&#34;},&#34;days&#34;:2,&#34;email&#34;:null,&#34;emergency_contact&#34;:null,&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Richard Scott&#34;,&#34;phone&#34;:&#34;(377)858-9835x5216&#34;,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.339163&#34;,&#34;resort&#34;:&#34;Hotham&#34;,&#34;rfid&#34;:&#34;0x7cfb5f086e84415cf64e9d2b&#34;,&#34;txid&#34;:&#34;6e9750be-e2cf-4e32-bc53-798e96337485&#34;}&#39;),
+(&#39;{&#34;address&#34;:null,&#34;days&#34;:6,&#34;email&#34;:null,&#34;emergency_contact&#34;:{&#34;name&#34;:&#34;Brent Gomez&#34;,&#34;phone&#34;:&#34;264-763-2415x20510&#34;},&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Eric Strong&#34;,&#34;phone&#34;:&#34;+1-475-801-2535x7782&#34;,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.339882&#34;,&#34;resort&#34;:&#34;Wilmot&#34;,&#34;rfid&#34;:&#34;0x4516ff404053dd288171c1b&#34;,&#34;txid&#34;:&#34;af31d533-aa1d-4848-a11e-63d04ef3dfab&#34;}&#39;),
+(&#39;{&#34;address&#34;:{&#34;city&#34;:&#34;Williamsmouth&#34;,&#34;postalcode&#34;:&#34;98151&#34;,&#34;state&#34;:&#34;WA&#34;,&#34;street_address&#34;:&#34;699 Samuel Trail Suite 056&#34;},&#34;days&#34;:3,&#34;email&#34;:&#34;bobby00@example.net&#34;,&#34;emergency_contact&#34;:{&#34;name&#34;:&#34;Jordan Sanchez&#34;,&#34;phone&#34;:&#34;001-156-388-8421x98000&#34;},&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Alexander Miller&#34;,&#34;phone&#34;:null,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.340469&#34;,&#34;resort&#34;:&#34;Mad River&#34;,&#34;rfid&#34;:&#34;0xfc1c56ce8c455d6d033fe1c3&#34;,&#34;txid&#34;:&#34;9f9452e2-6bee-4fa8-99ae-989bf2fb1c9a&#34;}&#39;),
+(&#39;{&#34;address&#34;:{&#34;city&#34;:&#34;Lake Jasonburgh&#34;,&#34;postalcode&#34;:&#34;36522&#34;,&#34;state&#34;:&#34;AL&#34;,&#34;street_address&#34;:&#34;357 Woods Orchard Apt. 959&#34;},&#34;days&#34;:7,&#34;email&#34;:&#34;devon97@example.org&#34;,&#34;emergency_contact&#34;:{&#34;name&#34;:&#34;Michelle Mclean&#34;,&#34;phone&#34;:&#34;+1-435-562-5415x97948&#34;},&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Adam Moran&#34;,&#34;phone&#34;:&#34;179.550.3610&#34;,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.341006&#34;,&#34;resort&#34;:&#34;Vail&#34;,&#34;rfid&#34;:&#34;0x9842c7f98423fa6ea5952d21&#34;,&#34;txid&#34;:&#34;d76e6e16-d229-49e7-a77c-41bf576293a3&#34;}&#39;),
+(&#39;{&#34;address&#34;:{&#34;city&#34;:&#34;New Keith&#34;,&#34;postalcode&#34;:&#34;27821&#34;,&#34;state&#34;:&#34;NC&#34;,&#34;street_address&#34;:&#34;70002 Gregory Cliffs&#34;},&#34;days&#34;:4,&#34;email&#34;:&#34;james21@example.com&#34;,&#34;emergency_contact&#34;:null,&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Sherri Campbell&#34;,&#34;phone&#34;:&#34;001-253-932-0292&#34;,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.341508&#34;,&#34;resort&#34;:&#34;Wildcat&#34;,&#34;rfid&#34;:&#34;0xcbd00a5fb3e9b13e3eaede54&#34;,&#34;txid&#34;:&#34;d916c199-8adf-4954-b73e-3aa87d69a498&#34;}&#39;),
+(&#39;{&#34;address&#34;:null,&#34;days&#34;:3,&#34;email&#34;:null,&#34;emergency_contact&#34;:null,&#34;expiration_time&#34;:&#34;2023-06-01&#34;,&#34;name&#34;:&#34;Jose Vasquez&#34;,&#34;phone&#34;:&#34;001-094-284-1277&#34;,&#34;purchase_time&#34;:&#34;2023-05-03T00:39:03.342005&#34;,&#34;resort&#34;:&#34;Roundtop&#34;,&#34;rfid&#34;:&#34;0xc5b3a84179fc30bd890d90a8&#34;,&#34;txid&#34;:&#34;2e74fd7e-cffe-4a05-b81b-5a5fe1c8f86b&#34;}&#39;),
+(&#39;{\&#34;txid\&#34;:\&#34;74553eec-32a7-42f6-8955-22c315b6cce3\&#34;,\&#34;rfid\&#34;:\&#34;0xf5cf736859282ae92873bab8\&#34;,&#39;),
+(&#39;{\&#34;txid\&#34;:\&#34;74553eec-32a7-42f6-8955-22c315b6cce3\&#34;,\&#34;rfid\&#34;:\&#34;0xf5cf736859282ae92873bab8\&#34;,\&#34;resort\&#34;:\&#34;Wilmot\&#34;,\&#34;purchase_time\&#34;:\&#34;2023-02-29T04:55:21.397493\&#34;,\&#34;expiration_time\&#34;:\&#34;2023-06-01\&#34;,\&#34;days\&#34;:7,\&#34;name\&#34;:\&#34;Thomas Perry\&#34;,\&#34;address\&#34;:null,\&#34;phone\&#34;:\&#34;909-865-2364x00638\&#34;,\&#34;email\&#34;:null,\&#34;emergency_contact\&#34;:{\&#34;name\&#34;:\&#34;Amber Sanchez\&#34;,\&#34;phone\&#34;:\&#34;993.904.9224x55225\&#34;}}\n&#39;);
+</code></pre>
+<p>Create a table which will be used to store the valid, structured data:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE LIFT_TICKETS (
+TXID varchar(255), RFID varchar(255), RESORT varchar(255), 
+PURCHASE_TIME datetime, EXPIRATION_TIME date, DAYS number, NAME varchar(255), 
+ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Schematization" duration="5">
+        <p>In order to separate the good and bad records, a python user defined table function will be used to parse and return records. This example will use an exception handler for bad json and some date checks to look for invalid records. We will schematize and store the valid data.</p>
+<p>Create the udtf returning only the valid rows:</p>
+<pre><code language="language-python" class="language-python">CREATE OR REPLACE FUNCTION TRY_PARSE_TICKET(data string)
+returns table (txid varchar, rfid varchar, resort varchar, purchase_time timestamp, expiration_time timestamp, days int, name varchar, address variant, phone varchar, email varchar, emergency_contact variant)
+language python
+runtime_version=3.8
+handler=&#39;Parser&#39;
+as $$
+import json
+from datetime import datetime
+
+class Parser:
+    def __init__(self):
+        pass
+
+    def process(self, data):
+        try:
+            d = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            return
+        try:
+            purchase_time = datetime.strptime(d[&#39;purchase_time&#39;], &#34;%Y-%m-%dT%H:%M:%S.%f&#34;)
+            expiration_time = datetime.strptime(d[&#39;expiration_time&#39;], &#34;%Y-%m-%d&#34;)
+        except ValueError:
+            return
+
+        yield (d[&#39;txid&#39;], d[&#39;rfid&#39;], d[&#39;resort&#39;], purchase_time, expiration_time, d[&#39;days&#39;], d[&#39;name&#39;], d[&#39;address&#39;], d[&#39;phone&#39;], d[&#39;email&#39;], d[&#39;emergency_contact&#39;])
+
+    def end_partition(self):
+        pass
+$$;
+</code></pre>
+<p>This funtion returns only the valid data in the table. Test that it is working as intended from the source table.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM INGESTED_DATA;
+SELECT t.* FROM INGESTED_DATA, TABLE(TRY_PARSE_TICKET(RECORD_CONTENT)) as t;
+</code></pre>
+<p>It is desired to merge this schematized data into the destination table LIFT_TICKETS based on the RFID.</p>
+<p>Create a stored procedure to perform the merge tickets from the INGESTED_DATA into LIFT_TICKETS using TRY_PARSE_TICKET and then truncate INGESTED_DATA when complete. The key to perform the merge on is the TXID. This is done in a transaction so this would be a good pattern even for continuous data ingest.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE PROCEDURE TRANSFORM_TICKETS()
+RETURNS VARCHAR
+AS
+BEGIN
+    BEGIN TRANSACTION;
+    MERGE INTO LIFT_TICKETS USING (
+    SELECT t.* FROM INGESTED_DATA, TABLE(TRY_PARSE_TICKET(RECORD_CONTENT)) as t
+    ) AS 
+    DATA_IN ON DATA_IN.TXID = LIFT_TICKETS.TXID
+    WHEN MATCHED THEN UPDATE SET 
+        LIFT_TICKETS.RFID = DATA_IN.RFID, 
+        LIFT_TICKETS.RESORT = DATA_IN.RESORT, 
+        LIFT_TICKETS.PURCHASE_TIME = DATA_IN.PURCHASE_TIME, 
+        LIFT_TICKETS.EXPIRATION_TIME = DATA_IN.EXPIRATION_TIME, 
+        LIFT_TICKETS.DAYS = DATA_IN.DAYS, 
+        LIFT_TICKETS.NAME = DATA_IN.NAME,
+        LIFT_TICKETS.ADDRESS = DATA_IN.ADDRESS, 
+        LIFT_TICKETS.PHONE = DATA_IN.PHONE, 
+        LIFT_TICKETS.EMAIL = DATA_IN.EMAIL, 
+        LIFT_TICKETS.EMERGENCY_CONTACT = DATA_IN.EMERGENCY_CONTACT
+    WHEN NOT MATCHED THEN INSERT (TXID,RFID,RESORT,PURCHASE_TIME,EXPIRATION_TIME,DAYS,NAME,ADDRESS,PHONE,EMAIL,EMERGENCY_CONTACT) 
+    VALUES (DATA_IN.TXID,DATA_IN.RFID,DATA_IN.RESORT,DATA_IN.PURCHASE_TIME,DATA_IN.EXPIRATION_TIME,DATA_IN.DAYS,DATA_IN.NAME,DATA_IN.ADDRESS,DATA_IN.PHONE,DATA_IN.EMAIL,DATA_IN.EMERGENCY_CONTACT);
+    TRUNCATE TABLE INGESTED_DATA;
+    COMMIT;
+    RETURN &#39;ok&#39;;
+END;
+</code></pre>
+<p>Run the stored procedure and verify the results are as expected (10 rows in LIFT_TICKETS and 0 rows in INGESTED_DATA).</p>
+<pre><code language="language-sql" class="language-sql">CALL TRANSFORM_TICKETS();
+SELECT COUNT(*) FROM LIFT_TICKETS;
+SELECT COUNT(*) FROM INGESTED_DATA;
+</code></pre>
+<p>After this is working as intended, we have verified the happy path of success. Lets automate this to run when needed in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Automating the Task" duration="2">
+        <p>Create the warehouse and task to run the schematization as needed. For this use case, it&#39;s desired these tickets are ingested within 10 minutes of creation so we will schedule it as such. Set the warehouse to auto suspend after 30 seconds as this is the only workload on that warehouse.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE transformer AUTO_SUSPEND = 30;
+
+CREATE OR REPLACE TASK TRANSFORM_TICKETS 
+    WAREHOUSE=transformer
+    SCHEDULE = &#39;10 minute&#39;
+    ALLOW_OVERLAPPING_EXECUTION = FALSE
+AS
+    CALL TRANSFORM_TICKETS();
+</code></pre>
+<p>Every time a task is created or modified, it must be resumed. Resume the task so it will run.</p>
+<pre><code language="language-sql" class="language-sql">ALTER TASK TRANSFORM_TICKETS RESUME;
+</code></pre>
+<p>Verify the task is scheduled.</p>
+<pre><code language="language-sql" class="language-sql">SHOW TASKS;
+</code></pre>
+<p>You can suspend this now as we do not need it for the rest of the guide, we will be calling the stored procedure manually for testing.</p>
+<pre><code language="language-sql" class="language-sql">ALTER TASK TRANSFORM_TICKETS SUSPEND;
+</code></pre>
+<p>History of the task can be seen in INFORMATION_SCHEMA.</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+  FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY())
+  order by SCHEDULED_TIME DESC;
+</code></pre>
+<p>Now that we have created this task, data from that is being dropped into the INGESTED_DATA will automatically be schematized into the LIFT_TICKETS table.</p>
+<p>We also want to log the bad records and alert when they occur. We will do that in the following steps.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Logging to Event Tables" duration="5">
+        <p><a href="https://docs.snowflake.com/developer-guide/logging-tracing/logging" target="_blank">Event Tables</a> are a good way to log these bad records as it&#39;s efficient to store these single records and it will allow us to tune the amount of logging and alerting we would like to do.</p>
+<p>Create the event table for your account. Note this will overwrite the current events table if it has been set. If you share the account with others, use the event table that is already set in upcoming sql commands instead of MY_EVENTS.</p>
+<pre><code language="language-sql" class="language-sql">SHOW PARAMETERS LIKE &#39;event_table&#39; IN ACCOUNT;
+CREATE OR REPLACE EVENT TABLE ALERT_ON_EVENTS_GUIDE.PUBLIC.MY_EVENTS;
+ALTER ACCOUNT SET EVENT_TABLE = ALERT_ON_EVENTS_GUIDE.PUBLIC.MY_EVENTS;
+</code></pre>
+<p>Now that an event table is set on the account, modify the TRY_PARSE_TICKET to log the bad records. To do so, you can use the built in Python logging library. These will be set to warnings to make sure it&#39;s clear these are not healthy/normal events.</p>
+<pre><code language="language-python" class="language-python">CREATE OR REPLACE FUNCTION TRY_PARSE_TICKET(data string)
+returns table (txid varchar, rfid varchar, resort varchar, purchase_time timestamp, expiration_time timestamp, days int, name varchar, address variant, phone varchar, email varchar, emergency_contact variant)
+language python
+runtime_version=3.8
+handler=&#39;Parser&#39;
+as $$
+import json
+import logging
+from datetime import datetime
+
+class Parser:
+    def __init__(self):
+        pass
+
+    def process(self, data):
+        try:
+            d = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            logging.warning(f&#34;Bad JSON data: {data} in try_parse_ticket&#34;)
+            return
+        try:
+            purchase_time = datetime.strptime(d[&#39;purchase_time&#39;], &#34;%Y-%m-%dT%H:%M:%S.%f&#34;)
+            expiration_time = datetime.strptime(d[&#39;expiration_time&#39;], &#34;%Y-%m-%d&#34;)
+        except ValueError:
+            logging.warning(f&#34;Bad DATE value in data: {data} in try_parse_ticket&#34;)
+            return
+
+        yield (d[&#39;txid&#39;], d[&#39;rfid&#39;], d[&#39;resort&#39;], purchase_time, expiration_time, d[&#39;days&#39;], d[&#39;name&#39;], d[&#39;address&#39;], d[&#39;phone&#39;], d[&#39;email&#39;], d[&#39;emergency_contact&#39;])
+
+    def end_partition(self):
+        pass
+$$;
+</code></pre>
+<p>Set the log level to warning on the database so these events will be stored.</p>
+<pre><code language="language-sql" class="language-sql">ALTER DATABASE ALERT_ON_EVENTS_GUIDE SET LOG_LEVEL = WARN;
+</code></pre>
+<p>Insert bad data and schematize to test the warnings are visible in the event table.</p>
+<pre><code language="language-sql" class="language-sql">INSERT OVERWRITE INTO INGESTED_DATA 
+VALUES
+(&#39;{\&#34;txid\&#34;:\&#34;74553eec-32a7-42f6-8955-22c315b6cce3\&#34;,\&#34;rfid\&#34;:\&#34;0xf5cf736859282ae92873bab8\&#34;,&#39;),
+(&#39;{\&#34;txid\&#34;:\&#34;74553eec-32a7-42f6-8955-22c315b6cce3\&#34;,\&#34;rfid\&#34;:\&#34;0xf5cf736859282ae92873bab8\&#34;,\&#34;resort\&#34;:\&#34;Wilmot\&#34;,\&#34;purchase_time\&#34;:\&#34;2023-02-29T04:55:21.397493\&#34;,\&#34;expiration_time\&#34;:\&#34;2023-06-01\&#34;,\&#34;days\&#34;:7,\&#34;name\&#34;:\&#34;Thomas Perry\&#34;,\&#34;address\&#34;:null,\&#34;phone\&#34;:\&#34;909-865-2364x00638\&#34;,\&#34;email\&#34;:null,\&#34;emergency_contact\&#34;:{\&#34;name\&#34;:\&#34;Amber Sanchez\&#34;,\&#34;phone\&#34;:\&#34;993.904.9224x55225\&#34;}}\n&#39;);
+
+CALL TRANSFORM_TICKETS();
+</code></pre>
+<p>This data is sent asynchronously to reduce performance overhead of logging, so it will not be immediately available. After a few minutes, verify the event data will be in the events table.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM ALERT_ON_EVENTS_GUIDE.PUBLIC.MY_EVENTS;
+</code></pre>
+<p>The bad data is available in the events table in the VALUE field. Also look at the other data available. We will use the RESOURCE_ATTRIBUTES in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating an Alert" duration="5">
+        <p>In order to notify the team responsible for this process, we can add use an alert and notification integration.</p>
+<p>Create an email notification integration, with your email address:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE NOTIFICATION INTEGRATION MY_ALERTS
+    TYPE=EMAIL
+    ENABLED=TRUE
+    ALLOWED_RECIPIENTS=(&#39;&lt;your email address&gt;&#39;);
+</code></pre>
+<p>Create an alert (with your email address) when the warnings of interest were seen in the event table. In order to cover both the delay in the alert running after the transformation as well as the latency from the event being published, the query can look for any warnings in the last hour.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE ALERT BAD_TICKETS_IN_INGEST
+  WAREHOUSE = transformer
+  SCHEDULE = &#39;10 minute&#39;
+  IF( EXISTS (
+    SELECT * from ALERT_ON_EVENTS_GUIDE.PUBLIC.MY_EVENTS WHERE TIMESTAMP
+        BETWEEN DATEADD(hour, -1, TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE(&#39;UTC&#39;, current_timestamp())))
+        AND TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE(&#39;UTC&#39;, current_timestamp()))
+        AND STARTSWITH(RESOURCE_ATTRIBUTES[&#39;snow.executable.name&#39;], &#39;TRY_PARSE_TICKET(&#39;) 
+        AND RECORD[&#39;severity_text&#39;] = &#39;WARN&#39;
+  ))
+  THEN
+    CALL SYSTEM$SEND_EMAIL(&#39;MY_ALERTS&#39;, &#39;&lt;your email address&gt;&#39;, &#39;WARN: TRY_PARSE_TICKET&#39;, &#39;Some lift tickets had bad data during the last ingest. Check MY_EVENTS table for more details.&#39;);
+</code></pre>
+<p>Resume the ALERT so it will run, this is needed on creation and updates.</p>
+<pre><code language="language-sql" class="language-sql">ALTER ALERT BAD_TICKETS_IN_INGEST RESUME;
+</code></pre>
+<p>Verify it is started.</p>
+<pre><code language="language-sql" class="language-sql">SHOW ALERTS;
+</code></pre>
+<p>Drop in some bad records and run the stored procedure to test the email notification.</p>
+<pre><code language="language-sql" class="language-sql">INSERT OVERWRITE INTO INGESTED_DATA 
+VALUES
+(&#39;{\&#34;txid\&#34;:\&#34;74553eec-32a7-42f6-8955-22c315b6cce3\&#34;,\&#34;rfid\&#34;:\&#34;0xf5cf736859282ae92873bab8\&#34;,&#39;),
+(&#39;{\&#34;txid\&#34;:\&#34;74553eec-32a7-42f6-8955-22c315b6cce3\&#34;,\&#34;rfid\&#34;:\&#34;0xf5cf736859282ae92873bab8\&#34;,\&#34;resort\&#34;:\&#34;Wilmot\&#34;,\&#34;purchase_time\&#34;:\&#34;2023-02-29T04:55:21.397493\&#34;,\&#34;expiration_time\&#34;:\&#34;2023-06-01\&#34;,\&#34;days\&#34;:7,\&#34;name\&#34;:\&#34;Thomas Perry\&#34;,\&#34;address\&#34;:null,\&#34;phone\&#34;:\&#34;909-865-2364x00638\&#34;,\&#34;email\&#34;:null,\&#34;emergency_contact\&#34;:{\&#34;name\&#34;:\&#34;Amber Sanchez\&#34;,\&#34;phone\&#34;:\&#34;993.904.9224x55225\&#34;}}\n&#39;);
+
+CALL TRANSFORM_TICKETS();
+</code></pre>
+<p>Verify the warnings are written to the events table and you received the email.</p>
+<pre><code>SELECT * FROM ALERT_ON_EVENTS_GUIDE.PUBLIC.MY_EVENTS;
+</code></pre>
+<p>History of the alerts can be seen in INFORMATION_SCHEMA.</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM
+  TABLE(INFORMATION_SCHEMA.ALERT_HISTORY(
+    SCHEDULED_TIME_RANGE_START
+      =&gt;dateadd(&#39;hour&#39;,-1,current_timestamp())))
+ORDER BY SCHEDULED_TIME DESC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="0">
+        <p>In order to cleanup, drop the objects that are no longer needed.</p>
+<pre><code language="language-sql" class="language-sql">DROP DATABASE ALERT_ON_EVENTS_GUIDE;
+DROP WAREHOUSE TRANSFORMER;
+DROP INTEGRATION MY_ALERTS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="2">
+        <p>Now you know how to use event tables to add more observability into your workloads. You can also create alerts and notify based on any query you can write in your account.</p>
+<p>Do you regularly check on the health of some of your workloads that are running on Snowflake? If so, it&#39;s worth considering automating this so you can be notified earlier and automate that repeatable work.</p>
+<h2 is-upgraded>What we Covered</h2>
+<ul>
+<li>How to schematize JSON data in a task</li>
+<li>How to add logging to have observability into that process</li>
+<li>How to create alerts and notifications</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/guides-overview-alerts" target="_blank">Alerts and Notification</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-notification-integration" target="_blank">Create Notification Integration</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up" target="_blank">Setting up an Event Table</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs" target="_blank">Creating UDTFs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

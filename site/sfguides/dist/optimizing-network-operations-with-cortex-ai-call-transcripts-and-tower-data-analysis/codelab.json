@@ -1,0 +1,36 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis",
+  "duration": 19,
+  "title": "Optimizing Network Operations with Snowflake Cortex AI",
+  "summary": "Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis",
+  "source": "optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "streamlit",
+    "data-science-\u0026-ai",
+    "app-development",
+    "genai",
+    "cortex",
+    "cortexanalyst"
+  ],
+  "tags": [
+    "cortex",
+    "cortexanalyst",
+    "dataapps",
+    "genai",
+    "gettingstarted",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis"
+}

@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "end_to_end_machine_learning_with_dataiku",
+  "duration": 116,
+  "title": "End to End Machine learning with Snowflake and Dataiku",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "end_to_end_machine_learning_with_dataiku/end_to_end_machine_learning_with_dataiku.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "end_to_end_machine_learning_with_dataiku"
+}

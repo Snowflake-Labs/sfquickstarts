@@ -1,0 +1,562 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="hightouch_cdp"
+                  title="Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Too often, marketers have limited access to their data. They must submit ad-hoc requests to data teams, rely on analysts to provide customer insights, and sporadically collect and upload manual customer list CSVs into their marketing and advertising platforms.</p>
+<p>In this Quickstart, Snowflake and Hightouch will walk you through how to equip your business teams with powerful self-serve tools that transform Snowflake into a marketing engine that drives growth for your business.</p>
+<p>Using Hightouch, data teams from leading enterprises enable their marketing teams to independently improve campaign conversion, deliver captivating personalized customer experiences, and accelerate their marketing efforts - all with the power of the Marketing Data Cloud.</p>
+<p>Hightouch offers teams the ability to implement a Composable Customer Data Platform. The product has all the features needed to transform Snowflake into a marketing-friendly platform that drives growth.</p>
+<p class="image-container"><img alt="Hightouch Overview" src="img/a9f317db6a84b731.png"></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>This Quickstart is for both business teams and data teams but will focus on how data teams can set up visual UIs for their business teams to use. You&#39;ll be hands-on with a semantic layer, audience builder, and analytics suite, with the end goal of taking home a demo that should excite both your data and marketing teams.</p>
+<p>At the end of this Quickstart, you will successfully:</p>
+<ul>
+<li>Turn Snowflake into a Composable CDP that your marketing team can self-serve.</li>
+<li>Set up a self-serve audience builder that is fully customized to match your custom schema within Snowflake.</li>
+<li>Create a split test to measure the impact of a marketing campaign on key business metrics.</li>
+<li>Analyze the results of your split test with a suite of no-code analytics tools that pull insight directly from Snowflake.</li>
+</ul>
+<p>Note: To complete this quickstart, you must have access to the advanced features of Hightouch. If completing outside of Snowflake hands-on labs, please reach out to the Hightouch team to get access.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake Account</li>
+</ul>
+<p>You will need a Snowflake Account with ACCOUTADMIN access to install Hightouch via Partner Connect. If you don&#39;t have the correct permissions, you&#39;ll need to start a trial account, which the next section details.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pre-work: Create Hightouch Workspace" duration="2">
+        <p><strong><em>Important: You will need to set up a new workspace in Hightouch specifically for this lab. If you already have a Hightouch account, please create a new Workspace through Partner Connect as described in this section.</em></strong></p>
+<h2 is-upgraded>Log in to Snowflake</h2>
+<p>If you already have a Snowflake account, you can use your credentials to log in.  If you do not already have an account, you can visit <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">https://signup.snowflake.com/</a> to sign up for a 30-day free trial.  You will want to make sure that the account you use in Snowflake has the permissions to create a new database, schema, and warehouse to be used by Hightouch.</p>
+<h2 is-upgraded>Set-up Hightouch through Partner Connect</h2>
+<p>You can set up a database, schema, and warehouse for use with Hightouch by setting up Hightouch through Partner Connect in Snowsight.  See the <a href="https://hightouch.com/blog/hightouch-snowflake-partner-connect" target="_blank">detailed instructions</a> on the Hightouch Blog for more details.</p>
+<ol type="1">
+<li>Click the <strong>Partner Connect</strong> tab under <strong>Data Products</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Partner Connect" src="img/982734085654c2dd.png"></p>
+<ol type="1" start="2">
+<li>Search for Hightouch (or scroll to the <strong>Data Integration</strong> section), and select it.</li>
+</ol>
+<p class="image-container"><img alt="Select Hightouch" src="img/f9f509b29d85efae.png"></p>
+<ol type="1" start="3">
+<li>View the Database, Warehouse, User, and Role that will be created for the integration, and click <strong>Launch</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Click Launch" src="img/13fe609775e2a1fd.png"></p>
+<ol type="1" start="4">
+<li>When the creation is complete, you will see a pop-up telling you that the creation has finished.  Click <strong>Activate</strong> to be taken to Hightouch to log in.</li>
+</ol>
+<p class="image-container"><img alt="Click Activate" src="img/b50215b9319f2331.png"></p>
+<ol type="1" start="5">
+<li>Create a new Workspace starting as &#34;SNOWHOL-firstname-lastname&#34;. <strong>Failure to follow this step will delay your start of the in-person lab.</strong> If you are not running this quickstart as a part of a lab, ignore the naming convention for this step and reach out to Hightouch after creating your workspace.</li>
+</ol>
+<p class="image-container"><img alt="New Workspace" src="img/d81645b47f1e131.png"></p>
+<ol type="1" start="6">
+<li>Log in to Hightouch using your Hightouch credentials, and you will have a Data Source from Snowflake created in Hightouch.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pre-work: Load Sample Data" duration="3">
+        <ol type="1">
+<li>Copy the following SQL:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">// Set context with appropriate privileges 
+USE ROLE PC_HIGHTOUCH_ROLE;
+USE DATABASE PC_HIGHTOUCH_DB;
+USE SCHEMA PUBLIC;
+// Create tables for demo
+CREATE TABLE IF NOT EXISTS events (
+    user_id VARCHAR(16777216),
+    product_id VARCHAR(16777216),
+    event_type VARCHAR(16777216),
+    timestamp DATE,
+    quantity INT,
+    price NUMBER(38,2),
+    category VARCHAR(16777216)
+);
+CREATE TABLE IF NOT EXISTS users (
+    id VARCHAR,
+    first_name VARCHAR(16777216),
+    last_name VARCHAR(16777216),
+    email VARCHAR(16777216),
+    gender VARCHAR(16777216),
+    birthday DATE,
+    city VARCHAR(16777216),
+    state VARCHAR(16777216),
+    phone VARCHAR(16777216)
+);
+
+// Create file format 
+CREATE OR REPLACE FILE FORMAT mycsvformat
+   TYPE = &#39;CSV&#39;
+   FIELD_DELIMITER = &#39;,&#39;
+   SKIP_HEADER = 1;
+
+// Create external stage
+CREATE OR REPLACE STAGE my_csv_stage 
+  FILE_FORMAT = mycsvformat
+  URL = &#39;s3://ht-snow-quickstart-hol&#39;;
+
+// Run COPY INTO commands to load .csvs into Snowflake
+COPY INTO events
+FROM @my_csv_stage/snowflake_hol_events.csv
+FILE_FORMAT = (TYPE = CSV)
+ON_ERROR = &#39;continue&#39;;
+
+COPY INTO users
+FROM @my_csv_stage/snowflake_hol_users.csv
+FILE_FORMAT = (TYPE = CSV)
+ON_ERROR = &#39;continue&#39;;
+
+// Option to test tables
+select * from events;
+select * from users;
+</code></pre>
+<ol type="1" start="2">
+<li>Within Snowflake&#39;s Snowsight UI, select Create Worksheet</li>
+<li>Paste the SQL into the new worksheet</li>
+<li>Run the entire worksheet to setup the tables required for the HOL. You can select all and hit &#34;run&#34; on the top right. Alternative, the keyboard shortcut is ctrl+enter (Windows) or command+return (Mac).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Destination Creation" duration="5">
+        <p><a href="https://hightouch.com/docs/getting-started/concepts#destinations" target="_blank">Destinations</a> are the tools and services you want to send your data to. You need to connect your destination to Hightouch before you can set up any syncs to destinations. For the purpose of this live Hands-on-Lab, your workspace will come pre-configured with destinations. Please SKIP this Adding a Destination section.</p>
+<h2 is-upgraded>Adding a Destination</h2>
+<ol type="1">
+<li>Click within the integrations tab on the side nav, then click destinations.</li>
+<li>Click <strong>Add destination</strong></li>
+</ol>
+<p class="image-container"><img alt="Add Destination" src="img/d1f16dcb4ef24f00.png"></p>
+<ol type="1" start="3">
+<li>Select the destination you want to add - in this case, <strong>Facebook Custom Audiences</strong> and click Continue.</li>
+<li>Authorize connecting to your destination or enter the relevant credentials and inputs. These differ depending on the destination. In this case, you will click &#34;Use System user token.&#34;</li>
+<li>Click Continue. Before continuing, Hightouch validates that you have the necessary access and permissions. If the test fails, you need to confirm and re-enter your credentials.</li>
+<li>Give your destination a Destination name. This name is how your destination appears in the Hightouch workspace. It helps to include details about the destination&#39;s business purposes and owners, particularly if you plan on connecting multiple instances of the destination, for example, a development and prod version. In this case, use <strong>Facebook Audiences Dev</strong></li>
+<li>Click Finish.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Customer Studio - Schema Creation" duration="1">
+        <p>Schemas define the data Hightouch should read from in Snowflake. Think about this as setting up your semantic layer with a visual ERD in Hightouch. Once you&#39;ve set up your schema, which is a one-time setup*, you and your marketing team can build thousands of audiences with just a small set of initial models and events.</p>
+<p>By following along with the setup in this section, you&#39;ll learn how to create a simple schema like this that ties users to Purchase, Add to Carts, and Product View events.</p>
+<p class="image-container"><img alt="Parent Model - Schema Creation" src="img/a9abac3701404530.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Customer Studio - Creating a Parent Model" duration="10">
+        <p>In this example, the parent model would be the dataset of all customers. The example data set will include the following columns:</p>
+<ul>
+<li><strong>user_id:</strong> a unique identifier for the customer—the primary key for this table and used as a foreign key for other tables</li>
+<li><strong>first_name:</strong> the user&#39;s first name</li>
+<li><strong>last_name:</strong> the user&#39;s last name</li>
+<li><strong>city:</strong> the city where they live, valuable for precision geographic targeting</li>
+<li><strong>state:</strong> the city where they live, valuable for broad geographic targeting</li>
+<li><strong>email:</strong> the user&#39;s email address, valuable for matching CRM profiles</li>
+<li><strong>phone:</strong> the user&#39;s phone number, valuable for matching paid media profiles</li>
+</ul>
+<ol type="1">
+<li>Navigate to the Schema tab under Customer Studio</li>
+<li>Ensure that your Data Source is correct (ex. Clone of Snowflake)</li>
+<li>Select &#34;Create Parent Model&#34;</li>
+</ol>
+<p class="image-container"><img alt="Parent Model - Create Model" src="img/be9b02b3f8d80a4f.png"></p>
+<ol type="1" start="4">
+<li>Hightouch has a few modeling methods. For this parent model, select <strong>Table Selector</strong> and then select the <strong>PUBLIC.USERS</strong> table</li>
+<li>Preview results to ensure you can see the underlying data</li>
+<li>Click Continue</li>
+</ol>
+<p class="image-container"><img alt="Parent Model - Click Continue" src="img/5be1eb5fec291b2a.png"></p>
+<ol type="1" start="7">
+<li>Enter a name for your parent model. In this case, we will use &#34;Users.&#34;</li>
+<li>Optionally, enter a description.</li>
+<li>Select a <a href="https://hightouch.com/docs/getting-started/concepts#unique-primary-key-requirement" target="_blank">primary key</a>. This should be a column with <a href="https://hightouch.com/docs/models/creating-models#unique-primary-key-requirement" target="_blank">unique values</a>. In this case, we will use <strong>ID</strong> to represent our user identifier</li>
+<li>Select columns for the model&#39;s primary label and secondary label. Hightouch displays these column values when <a href="https://hightouch.com/docs/customer-studio/insights#customer-explorer" target="_blank">previewing audiences</a>.</li>
+<li>Click Create parent model.</li>
+</ol>
+<p class="image-container"><img alt="Parent Model - Click Create" src="img/9785b9bd7b12488f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Customer Studio - Creating Event Models" duration="20">
+        <p>Great, now your parent model <strong>Users</strong> have been created. Your team can now begin building audiences off of this data. That said, they&#39;ll likely want to utilize more than just user data, so we will go ahead and add event models to create audiences using customer behavioral events.</p>
+<p class="image-container"><img alt="Event Model - Parent Model" src="img/fd77c3cabac311f5.png"></p>
+<h2 is-upgraded>Create First Event Model</h2>
+<p>An events model might include Product Viewed events with columns for:</p>
+<ul>
+<li><strong>user_id</strong>: a reference to the user who viewed the product</li>
+<li><strong>page_path</strong>: the URL path for the product detail page</li>
+<li><strong>timestamp</strong>: when the user viewed the product</li>
+</ul>
+<ol type="1">
+<li>To create an event model, hover over the parent model (Users) and click the + icon</li>
+<li>Select &#34;Create a related event&#34;</li>
+</ol>
+<p class="image-container"><img alt="Event Model - Create Event" src="img/7b1c4186ce30633.png"></p>
+<ol type="1" start="3">
+<li>Rather than using the table selector this time, we will use SQL to define the model. Click the table selector dropdown and change it to SQL query</li>
+</ol>
+<p class="image-container"><img alt="Event Model - SQL Model" src="img/fa201f3dd41110ac.png"></p>
+<ol type="1" start="4">
+<li>Input the SQL query that defines your desired event. In this case, we will use the following query:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * from PUBLIC.EVENTS WHERE event_type = &#39;product_viewed&#39;
+</code></pre>
+<ol type="1" start="5">
+<li>Click <strong>Preview</strong> to inspect the underlying data, then click <strong>Continue</strong></li>
+</ol>
+<p class="image-container"><img alt="Event Model - Preview" src="img/630e655a0b3558cc.png"></p>
+<ol type="1" start="6">
+<li>Enter a name for your event model, in this case, <strong>Viewed Product</strong>, then optionally, enter a model description.</li>
+<li>Select the relationship&#39;s cardinality (how this joins to the parent model). You can select from 1:1, 1:many, or many:1. In most cases, parent models have a 1:many relationship with events. Select <strong>1:many</strong></li>
+<li>To relate rows from the events model to rows in the parent model, select the relevant foreign key columns from the parent and event models. In this case, we will use <strong>ID</strong> from our parent model and <strong>USER_ID</strong> from the event mode</li>
+<li>If there are multiple columns that the parent and related model must match on, enable <a href="https://hightouch.com/docs/customer-studio/schema#multiple-join-keys" target="_blank">Multiple join keys</a> and make additional selections. In this example, we will only match with one key.</li>
+<li>Click Create event</li>
+</ol>
+<p class="image-container"><img alt="Event Model - Click Create" src="img/7d5a885d13c432.png"></p>
+<h2 is-upgraded>Create Additional Event Models</h2>
+<p>Great! With your first event model created, the Product Viewed event can now be used to build audiences. We will now go ahead and repeat this process to add two more additional events.</p>
+<p class="image-container"><img alt="Related Model - Starting Point" src="img/6bd967868dce167e.png"></p>
+<ol type="1">
+<li>Once again, hover over the <strong>Users</strong> model and click +</li>
+<li>Select <strong>Create a related event</strong></li>
+</ol>
+<p class="image-container"><img alt="Related Model - Create Related" src="img/1c1335a42b295d0a.png"></p>
+<ol type="1" start="3">
+<li>Again, we will use a SQL query to define our event model. Select SQL query from the modeling dropdown</li>
+<li>Enter the SQL query that defines the Add to Cart event:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * from PUBLIC.EVENTS WHERE event_type = &#39;add_to_cart&#39;
+</code></pre>
+<ol type="1" start="5">
+<li>Preview the model and click <strong>Continue</strong></li>
+</ol>
+<p class="image-container"><img alt="Related Model - Click Continue" src="img/7e1bcbcf53fb1e73.png"></p>
+<ol type="1" start="6">
+<li>Add your model name, <strong>&#34;Added to cart&#34;</strong> and optionally, enter a description.</li>
+<li>Select the relationship&#39;s cardinality as <strong>1:many</strong></li>
+<li>To relate rows from the events model to rows in the parent model, select <strong>ID</strong> from the Users parent model and <strong>USER_ID</strong> from the event model</li>
+<li>Click <strong>Create Event</strong></li>
+</ol>
+<p class="image-container"><img alt="Related Model - Create Event" src="img/cb75f6943c836d0.png"></p>
+<ol type="1" start="10">
+<li>Great, the new event model has been added! Now, we will go ahead and add the final event model for Purchases. Again, hover over the parent model and click the +</li>
+</ol>
+<p class="image-container"><img alt="Related Model - Click Plus" src="img/f0574a8e1661bc18.png"></p>
+<ol type="1" start="11">
+<li>Change the modeling method to SQL editor and enter the SQL query:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * from PUBLIC.EVENTS WHERE event_type = &#39;purchase&#39;
+</code></pre>
+<ol type="1" start="12">
+<li>Preview the data and click <strong>Continue</strong></li>
+</ol>
+<p class="image-container"><img alt="Related Model - Preview Data" src="img/d15ff7c11e0b238e.png"></p>
+<ol type="1" start="13">
+<li>Enter &#34;Purchased&#34; as your model name and optionally, enter a description</li>
+<li>Select the relationship&#39;s cardinality as <strong>1:many</strong></li>
+<li>To relate rows from the events model to rows in the parent model, select <strong>ID</strong> from the Users parent model and <strong>USER_ID</strong> from the event model</li>
+<li>Click <strong>Create Event</strong></li>
+</ol>
+<p class="image-container"><img alt="Related Model - Final Create" src="img/a1e8d7f50b2a6130.png"></p>
+<p>Great! Your Schema has been fully configured. Your team can now use any information from your users table and any events from your Purchased, Added to Cart, and Viewed Product event models when creating audiences in Customer Studio.</p>
+<p class="image-container"><img alt="Final Schema - Part One" src="img/9151df6bbec53a4f.png"></p>
+<p>As a last step, you can click into your models to configure the columns with additional settings like previews (to ensure the fields show as suggestions in the audience builder) and redactions (to hide unwanted fields).</p>
+<p>For this quickstart, navigate to each event model, click <strong>columns</strong>, click the <strong>settings gear</strong>, and turn all <strong>column suggestions on</strong>.</p>
+<p class="image-container"><img alt="Final Schema - Part Two" src="img/a7fe758dbe0910d0.png"></p>
+<p><strong>Note: </strong><em>The schema builder can be as large as desired and can additionally support related models to bring in data from related objects like accounts, households, vehicles, pets, etc. However, for this Quickstart, we will not use any related models.</em></p>
+<p class="image-container"><img alt="Final Schema - Part Three" src="img/308078542ca63e58.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Customer Studio - Audiences and Syncs" duration="20">
+        <p>With your Schema defined, any Hightouch user can now use Customer Studio to explore, build, and sync audiences across marketing tools and advertising channels. Hightouch&#39;s powerful no-code audience builder gives marketers everything they need to operate independently on the data in Snowflake - all while giving data teams peace of mind through enterprise-grade governance controls.</p>
+<h2 is-upgraded>Building an Audience</h2>
+<ol type="1">
+<li>To create your first audience, navigate to the Audiences tab under Customer Studio, then click <strong>Add Audience</strong></li>
+</ol>
+<p class="image-container"><img alt="Build Audience - Add Audience" src="img/fc555dcf5c4ea4f5.png"></p>
+<ol type="1" start="2">
+<li>Select the <a href="https://hightouch.com/docs/customer-studio/schema#parent-models" target="_blank">parent model</a> to build audiences from - in this case, we will use our Users parent model</li>
+<li>Click &#34;Add filter&#34; and then scroll through to see your available segmentation fields. You&#39;ll notice you can filter on Properties, Relations, Events, Audiences, or Custom Traits. Search for the Purchased event through the dropdown or by clicking the events filter</li>
+</ol>
+<p class="image-container"><img alt="Build Audience - Search Event" src="img/d54e90bbfe003533.png"></p>
+<ol type="1" start="4">
+<li>Select Purchased</li>
+</ol>
+<p class="image-container"><img alt="Build Audience - Select Purchased" src="img/91cc0616565c875.png"></p>
+<ol type="1" start="5">
+<li>Add a Time Window of within 365 days to only include customers who have purchased in the last year</li>
+<li>Add additional logic on the specific purchase event by clicking &#34;+where property is...&#34; and select Category equals Shoes</li>
+<li>With your audience defined, click the <strong>Show Insights</strong> tab on the top right to see the Audience size and explore users within the audience</li>
+<li>To get a better understanding of your audience makeup, click the <strong>Breakdown</strong> tab and then click &#34;+add breakdown&#34;</li>
+</ol>
+<p class="image-container"><img alt="Build Audience - Add Breakdown" src="img/fe1a1e76deb03662.png"></p>
+<ol type="1" start="9">
+<li>Click through the various visual types by toggling &#34;SHOW AS&#34; to bar charts, pie charts, and tables. You can also toggle settings to show all data, switch axes, and show a percentage. In this case, use a pie chart to explore how the audience is distributed.</li>
+</ol>
+<p class="image-container"><img alt="Build Audience - Show As" src="img/660b894d32bf2ca1.png"></p>
+<ol type="1" start="10">
+<li>Once you feel comfortable with your audience, click &#34;Continue&#34; and name the audience  &#34;Purchased Shoes p365d [Your First Initial and Company Name]&#34;. <em>Note: adding the name at the end is simply for this lab to ensure that your audience name is unique in the demo destinations.</em></li>
+<li>You can additionally add a description or create folders for organization; however, in this case, we will simply click &#34;finish.&#34;</li>
+</ol>
+<h2 is-upgraded>Create a sync</h2>
+<p>With our audience now created, we can now sync it out to any destination. To do so, we will need to create a sync.</p>
+<ol type="1">
+<li>Click &#34;Add Sync&#34; in the top right corner of the audience page.</li>
+</ol>
+<p class="image-container"><img alt="Build Audience - Add Sync" src="img/edb7619fb6e6f9c4.png"></p>
+<ol type="1" start="2">
+<li>Click the destination you want to sync the audience to - we will use our Facebook Custom Audiences Dev destination.</li>
+<li>Configure the audience settings. Note: This process is NOT required each time you create an audience, thanks to Sync Templates that you can easily create for each destination. We will create this in the next section.</li>
+<li>Ensure that &#34;Create a new Facebook audience&#34; is selected, and then leave the audience name blank. The Hightouch audience name will be used when uploading to Facebook.</li>
+<li>Next, we need to define the columns from our Snowflake table that we would like to sync to Facebook Custom Audiences ID fields.</li>
+</ol>
+<ul>
+<li>To do so, click &#34;Add Mapping&#34; and select &#34;Email&#34; from the dropdown.</li>
+<li>Next, click the associated Facebook field - in this case, Email.</li>
+<li>Proceed by mapping phone, first_name, last_name, city, and state. Remember, the more fields that you add, the higher the match rate - increasing the probability of Facebook matching users to your audience.</li>
+</ul>
+<p class="image-container"><img alt="Sync Creation - Map Fields" src="img/a4adf55ec74ca8e0.png"></p>
+<ol type="1" start="6">
+<li>Under the field hashing setting, choose &#34;YES&#34; to allow Hightouch to hash values since the data is not hashed yet.</li>
+<li>Leave the Shared Audience section blank.</li>
+<li>Choose to Remove the Facebook Custom Audiences record from the specified audience - this ensures that as users fall out of our audience criteria, they are removed from the Facebook audience.</li>
+<li>Click &#34;Continue.&#34;</li>
+<li>Optionally, enter a description for the sync. In this case, you can leave it blank.</li>
+<li>Finally, select the schedule on which you would like this sync to run. Hightouch offers a number of different sync scheduling options to meet your various needs. In this case, we will select the schedule type of &#34;Interval&#34; and then choose an interval of &#34;Every 1 Hour(s).&#34;</li>
+</ol>
+<p class="image-container"><img alt="Sync Creation - Choose Interval" src="img/88f877c83ea2961b.png"></p>
+<ol type="1" start="12">
+<li>Click &#34;Finish.&#34; Your sync will now Run for the first time. All records that fit the audience criteria will be sent to the Facebook destination along with the specific fields we mapped in the earlier steps.</li>
+<li>With the audience sync in place, you can additionally QA the sync, set up alerting, monitor activity, set up sync logs (writing the audience back to Snowflake), and edit any settings for future syncs. In this case, we will simply continue.</li>
+</ol>
+<h2 is-upgraded>Create a Sync Template</h2>
+<p>As you can imagine, while the flexibility is great for configuring each setting of your sync, managing many audiences can become tedious. Hightouch&#39;s sync templates allow marketers to set up syncs with just one click.</p>
+<p>Sync templates let you define sync configuration settings once for a particular destination. You create the sync template and then use it to add syncs for each audience requiring the same configuration settings and schedule.</p>
+<ol type="1">
+<li>Navigate back to &#34;Schema&#34; within the Customer Studio tab.</li>
+<li>Click &#34;Settings&#34; and go to the Sync Templates tab.</li>
+</ol>
+<p class="image-container"><img alt="Sync Templates - Add Template" src="img/5671380707b05d35.png"></p>
+<ol type="1" start="3">
+<li>Click &#34;Add Sync Template&#34; to launch the template creation flow.</li>
+<li>Select your existing User parent model.</li>
+<li>Select your existing Facebook destination.</li>
+<li>Configure your sync as you would typically: create your specific field mappings (see below) and make sure to toggle on &#34;Remove the Facebook Custom Audiences record from the specified audience.&#34;</li>
+</ol>
+<p class="image-container"><img alt="Sync Template - Configure Sync" src="img/2928a535f1ccfd15.png"></p>
+<ol type="1" start="7">
+<li>Click &#34;Continue&#34; and select an hourly interval as your sync schedule.</li>
+<li>Optionally enter a template name - in this case, you can leave as-is.</li>
+<li>Click &#34;Finish&#34;, and that&#39;s it! Your marketing team can now use this sync template for any future audience syncs.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Customer Studio - Splits" duration="10">
+        <h2 is-upgraded>Experiment with Splits</h2>
+<p>As a marketer gearing up for your next campaign, you&#39;re likely thinking about critical questions like &#34;Which channel should I leverage?&#34; or &#34;What copy or offer will resonate best?&#34; The key to unlocking these answers lies in continuous testing and iteration.</p>
+<p>Hightouch&#39;s Splits feature powers rapid A/B and multivariate testing. With Splits, Hightouch segments your audience(s) into randomized groups across your channels and writes the segments back to Snowflake to streamline experimentation and analysis.</p>
+<p>You can specify:</p>
+<ul>
+<li>The number of splits you want to use.</li>
+<li>The percentage of the total audience membership that each split should have; for example, split A gets 40%, and split B gets 60%.</li>
+<li>The destination to send each split to; for example, split A goes to Facebook, Split B goes to Google, and split C is a holdout that doesn&#39;t get sent to any destination.</li>
+</ul>
+<p>Using Splits, you can run experiments such as:</p>
+<ul>
+<li>Holdout Tests: Send one split to a marketing destination (email, Google, Facebook, etc.) and have the other split act as a control and receive no messaging. These tests use the holdout group feature and can prove if there was an actual lift from marketing efforts.</li>
+<li>Channel Tests: Send splits to different channels to determine the most effective one.</li>
+<li>Offer/Creative Tests: Deploy different messaging on each split to see what resonates the best.</li>
+</ul>
+<ol type="1">
+<li>To create a split, we will first create another audience by clicking into Audiences in the Customer Studio tab and then clicking <strong>Add Audience</strong>.</li>
+<li>Select your Users parent model.</li>
+<li>Create a cart abandon audience.</li>
+</ol>
+<ul>
+<li>Click &#34;Add Filter&#34; and select the event Added to Cart.</li>
+<li>Add a time window to only include users who added to cart in prev 30 days.</li>
+<li>Click &#34;Then Performed&#34; and Toggle &#34;Then Performed&#34; to &#34;Then did not Perform.&#34;</li>
+<li>Select &#34;Purchased&#34; as the field within Then did not Perform.</li>
+<li>Add a time window of 7 days of Added to Cart.</li>
+</ul>
+<p class="image-container"><img alt="Splits - Cart Abandon" src="img/71d9e1220840f78.png"></p>
+<ol type="1" start="4">
+<li>With your logic defined, you can Click &#34;Show Insights&#34; and use the Overlap tab to see the overlap of this new audience with your Purchaser audience by selecting it from the dropdown.</li>
+</ol>
+<p class="image-container"><img alt="Splits - Show Insights" src="img/9655c31ebc4f46b4.png"></p>
+<ol type="1" start="5">
+<li>Once you check the overlap, click &#34;Continue.&#34;</li>
+<li>Name the audience &#34;Cart Abandoners p30d [Your First Initial and Company Name]&#34; and optionally add a description.</li>
+<li>Click &#34;Finish.&#34;</li>
+<li>With the audience now created, click the &#34;Splits&#34; tab within the Cart Abandoners audience.</li>
+<li>Toggle to Enable Split Groups.</li>
+</ol>
+<p class="image-container"><img alt="Splits - Split Groups" src="img/aef234b857ff8ea4.png"></p>
+<ol type="1" start="10">
+<li>You can now choose how many splits you would like Hightouch to randomly create within your audience, the weighting that each split should be, and the destinations that each split should be sent to - users in holdout groups will only be synced into a Snowflake table so that you have a control group to analyze lift against. For now, leave the splits as-is at 80/20 between the treatment and control. Click save changes.</li>
+<li>Click the &#34;+ Add sync&#34; within the Splits window to create a sync for the split group.</li>
+<li>Select the Facebook sync template you created in the previous section and click &#34;Add Syncs.&#34;</li>
+</ol>
+<p class="image-container"><img alt="Splits - Add Syncs" src="img/7217a5e15c6a26d6.png"></p>
+<ol type="1" start="13">
+<li>With the sync created, the Treatment group is now sent to Facebook as an audience, while the Holdout is ONLY sent to Snowflake for analysis.</li>
+</ol>
+<p class="image-container"><img alt="Splits - Treatment" src="img/a2b5991f556901d3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Optional) Campaign Intelligence" duration="10">
+        <h2 is-upgraded>Analyze data with Campaign Intelligence</h2>
+<p>No matter how great your ideas are, marketing success hinges on your ability to try new things, understand what&#39;s working, and iterate quickly. Unfortunately, understanding what&#39;s working is a massive challenge today for most teams. They struggle to analyze performance across channels and data silos, are often stuck with basic metrics, and have to rely on technical teams for deeper insights.</p>
+<p><a href="https://hightouch.com/blog/announcing-campaign-intelligence#getting-started" target="_blank">Campaign Intelligence</a> tackles these challenges head-on. It gives marketers an easy, self-service platform for marketing analytics on top of their complete campaign and customer data in Snowflake. Combined with the rest of Hightouch, marketers can now build audiences, orchestrate cross-channel experiments, and measure campaign ROI–all within one platform.</p>
+<h3 is-upgraded>Create a Performance Analysis</h3>
+<ol type="1">
+<li>Click into &#34;Charts&#34; under the Intelligence tab.</li>
+</ol>
+<p class="image-container"><img alt="Campaign Intelligence - Charts" src="img/cf50c7cbf34a0841.png"></p>
+<ol type="1" start="2">
+<li>Select &#34;Purchased&#34; as your Metric.</li>
+<li>Change the group by to &#34;Category&#34;.</li>
+<li>Change your date range to &#34;Custom&#34;, and select 5/1/2024 - 6/1/2024.</li>
+</ol>
+<p class="image-container"><img alt="Campaign Intelligence - Date Range" src="img/62092748d7e5078e.png"></p>
+<p>You can now explore how certain events or metrics trend over time across audiences or are grouped by specific attributes.</p>
+<h3 is-upgraded>Create a Funnel Analysis</h3>
+<ol type="1">
+<li>Toggle the chart type from &#34;Performance&#34; to &#34;Funnel&#34;.</li>
+</ol>
+<ul>
+<li>Note*: Make sure your date range is still set to &#34;Custom&#34;, and select 5/1/2024 - 6/1/2024.</li>
+</ul>
+<ol type="1" start="2">
+<li>Under Steps, set up your specific funnel.</li>
+</ol>
+<ul>
+<li>Click the &#34;+&#34; next to Steps.</li>
+<li>Select &#34;Viewed Product&#34; as the first step.</li>
+<li>Select &#34;Added to Cart&#34; as the second step.</li>
+<li>Select &#34;Purchased&#34; as the third step.</li>
+</ul>
+<ol type="1" start="3">
+<li>Under Conversion criteria, change the attribution window to &#34;30 days.&#34;</li>
+</ol>
+<p class="image-container"><img alt="Funnel Analysis - Attribution Window" src="img/75778b53744f226f.png"></p>
+<ol type="1" start="4">
+<li>You can now identify metrics like the % of dropoff between funnel steps. <em>Additionally, limiting the analysis to specific audiences or grouping by certain columns from your parent model will allow you to dig deeper to identify trends and better understand user behavior.</em> Hover over the drop-off area (light green) in the &#34;Added to Cart&#34; step. You can now see the % of users who viewed a product but did NOT add to cart.</li>
+</ol>
+<p class="image-container"><img alt="Funnel Analysis - Added to Cart" src="img/52b6e42cfbf5f293.png"></p>
+<ol type="1" start="5">
+<li>Click in the light green area to display the Create Audience modal.</li>
+<li>Click &#34;Create Audience&#34; to automatically set up an audience with the criteria specific to this cohort of users to allow you to quickly target these users with relevant messaging on advertising and marketing channels.</li>
+</ol>
+<p class="image-container"><img alt="Funnel Analysis - Create Audience" src="img/68a795e6d5e460da.png"></p>
+<ol type="1" start="7">
+<li>Click &#34;Continue.&#34;</li>
+<li>Name the audience &#34;Funnel Dropoff - ATC [Your First Initial and Company Name]&#34; and click Save.</li>
+<li>Click &#34;Create Sync&#34; in the top right corner on the audience page and select your Facebook Sync Template.</li>
+</ol>
+<p class="image-container"><img alt="Funnel Analysis - Create Sync" src="img/e4f6291127a518eb.png"></p>
+<ol type="1" start="10">
+<li>Click &#34;Add Syncs,&#34; and your audience will be sent to Facebook. Users who abandoned your site before adding to the cart can now be retargeted on Facebook to drive more users to complete the next step of your purchase funnel.</li>
+</ol>
+<p>As you can imagine, the Intelligence, Audiences, and Splits features all come together to enable marketing teams with an iterative optimization loop - enabling marketers to independently launch campaigns, experiment on them, analyze performance, and then apply those insights to further optimize existing and future campaigns.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations! You have successfully learned how to transform your Data Cloud into a Self-Serve Marketing Engine.</p>
+<h3 is-upgraded>What you learned</h3>
+<ul>
+<li>How to turn Snowflake into a Composable CDP that your marketing team can self-serve.</li>
+<li>How to set up a self-serve audience builder that is fully customized to match your custom schema within Snowflake.</li>
+<li>How to create a split test to measure the impact of a marketing campaign on key business metrics.</li>
+<li>How to analyze the results of campaigns with a suite of no-code analytics tools that pull insight directly from Snowflake.</li>
+</ul>
+<h3 is-upgraded>Related Resources</h3>
+<p>Want to learn more about Hightouch and the Composable CDP? Check out the following resources:</p>
+<ul>
+<li><a href="https://www.snowflake.com/en/why-snowflake/customers/all-customers/case-study/warner-music-group/" target="_blank">Warner Music Group Case Study</a></li>
+<li><a href="https://hightouch.com/resources/snowflake-one-pager" target="_blank">Snowflake-Hightouch Solutions One-Pager</a></li>
+<li><a href="https://hightouch.com/resources/composable-cdp-ebook" target="_blank">The Complete Guide to the Composable CDP</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

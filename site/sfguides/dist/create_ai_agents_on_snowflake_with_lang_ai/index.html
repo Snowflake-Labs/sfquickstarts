@@ -1,0 +1,214 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Create AI Agents on Snowflake with Lang.ai</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="create_ai_agents_on_snowflake_with_lang_ai"
+                  title="Create AI Agents on Snowflake with Lang.ai"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Lang.ai&#39;s Snowflake AI Agents empower data teams to create custom agents that derive actionable priorities from customer interactions, driving retention and growth.</p>
+<p>This quickstart is a guide to installing and running your first Lang AI Agent for data analysis in your own Snowflake infrastructure.</p>
+<p class="image-container"><img alt="Snowflake and Lang logos" src="img/ffcef0dceb40089f.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>No prerequisites are required for this guide.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Installing and setting up the Lang.ai Native Application</li>
+<li>Creating and running your first AI Agent</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account with <em>ACCOUNTADMIN</em> access to install the Lang.ai Native Application and give access to the data you want to analyze.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake AI Agent for data analysis</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a sample database" duration="5">
+        <p>In this step we will be creating a sample database and a sample view. We will be using this data in the following steps to create our first AI Agent.</p>
+<p>Sign in to your Snowflake account and create a new SQL Worksheet.</p>
+<p class="image-container"><img alt="Creating a new SQL Worksheet" src="img/a027af3014cb0697.png"></p>
+<p>To start, copy the <a href="https://raw.githubusercontent.com/lang-ai/snowflake-app-samples/main/retention-agent-demo/setup.sql" target="_blank"><paper-button class="colored" raised>SQL Script</paper-button></a> and paste it into the SQL Worksheet, then click on the <strong>Run All</strong> button to execute the script.</p>
+<p class="image-container"><img alt="Running the script" src="img/1847b01d73fe11a2.png"></p>
+<p>This script will:</p>
+<ul>
+<li>Create a table called <em>zoom_cancellations</em> and populate it with demo data</li>
+<li>Create a table called <em>zoom_users</em> and populate it with demo data</li>
+</ul>
+<p>After the script has successfully executed, you will see a LANG_AI_DEMO database with the following tables:</p>
+<p class="image-container"><img alt="Database created" src="img/2ea6fb617e303f43.png"></p>
+<p>The tables created by the script already include the required fields to create AI Agents:</p>
+<aside class="special"><ul>
+<li><strong>id:</strong> The id of the document (ticket, survey, etc.)</li>
+<li><strong>text:</strong> The unstructured text to be analyzed</li>
+<li><strong>creation_date:</strong> The date of creation of the unstructured text</li>
+</ul>
+</aside>
+<p>The last column <em>Customer_Spend</em> is not mandatory, but it is included as we will configure the agent to use it to group the insights by the customer monthly spending.</p>
+<p>You may include additional columns that may be used by the AI Agent to aggregate the insights generated.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installing the application" duration="5">
+        <aside class="special"><p> NOTE: This guide shows the steps needed to install the app via the user interface. If you prefer to install it using SQL scripts, please follow this <a href="https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script" target="_blank">guide</a>.</p>
+</aside>
+<p>Log in to Snowsight as an ACCOUNTADMIN and follow these steps to install the Lang.ai Native App:</p>
+<h2 is-upgraded>1. Install the application</h2>
+<p>Go to the Snowflake Marketplace and install the Lang.ai Native Application: <a href="https://app.snowflake.com/marketplace/listing/GZTSZ1TJ3IU/lang-ai-snowflake-ai-agents" target="_blank">Snowflake AI Agents</a>.</p>
+<p>Once installed, click on the name of the application to open the app.</p>
+<h2 is-upgraded>2. Grant privileges</h2>
+<p>Click Grant to grant the application the necessary privileges:</p>
+<h3 is-upgraded>Account-level Privileges</h3>
+<p class="image-container"><img alt="Grant Account Level Privileges" src="img/bd774b1137566b9d.png"></p>
+<ul>
+<li>The <strong>BIND SERVICE ENDPOINT</strong> privilege enables the services in the app to connect to each other.</li>
+<li>The <strong>CREATE WAREHOUSE</strong> and <strong>CREATE COMPUTE POOL</strong> are required by the Lang.ai Native App to create and manage resources for performing service operations. Learn more <a href="https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script" target="_blank">here</a>.</li>
+</ul>
+<h2 is-upgraded>3. Launch the app</h2>
+<p>Click <em>Activate</em> to activate the application.</p>
+<p>Navigate back to the <em>Data Products &gt; Apps</em> page and wait for the spinner in the INSTALLED column to stop running. When it&#39;s done you&#39;ll see &#34;1 minute ago&#34; in that column. Then click <em>Launch App</em> to start the application.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating Your First AI Agent" duration="5">
+        <p>Learn to run your first AI Agent on top of Snowflake data.</p>
+<h2 is-upgraded>Add your company information</h2>
+<p>Add basic information about your organization to help the AI Agent understand your business context. For this quickstart guide, we&#39;ll use Zoom as an example company.</p>
+<p class="image-container"><img alt="Add company information" src="img/12e78f0b0c2ebf8.png"></p>
+<h2 is-upgraded>Select Your AI Agent</h2>
+<p>Select a predefined agent or create a custom one to meet your needs. For this quickstart guide using Zoom&#39;s synthetic data, we&#39;ll analyze survey responses to understand cancellation reasons. You&#39;ll see a preview of potential insights the AI Agent might discover, like pricing concerns or platform usability issues.</p>
+<p class="image-container"><img alt="Select Your AI Agent" src="img/f758b6d5ced84c6d.png"></p>
+<h2 is-upgraded>Connect Your Snowflake Data</h2>
+<p>For this quickstart using Zoom&#39;s synthetic data, we&#39;ll analyze cancellation data by following two steps:</p>
+<p class="image-container"><img alt="Connect Your Snowflake Data" src="img/ddd189f9611694a5.png"></p>
+<p><strong>Step 1: Paste your SQL Query</strong> Select the data you want the AI Agent to analyze. For this demo, paste this query to combine cancellation reasons with user data:</p>
+<pre><code language="language-sql" class="language-sql">SELECT m.ID, m.CANCELLATION_REASON as TEXT, m.DATE as CREATION_DATE, u.PLAN_TYPE as PLAN_TYPE
+FROM lang_ai_demo.public.zoom_cancellations m
+JOIN lang_ai_demo.public.zoom_users u WHERE u.ID = m.USER_ID;
+</code></pre>
+<p>Required fields:</p>
+<ul>
+<li>TEXT: The cancellation feedback</li>
+<li>CREATION_DATE: When the cancellation happened</li>
+<li>ID: Unique identifier for each record</li>
+</ul>
+<p><strong>Step 2: Grant Table Access</strong></p>
+<p>A Snowflake admin needs to run these commands to give Lang.ai secure access to your data:</p>
+<pre><code language="language-sql" class="language-sql">-- Customize the app name &#34;LANGAI_APP&#34; to your own if different
+GRANT USAGE ON DATABASE lang_ai_demo TO APPLICATION LANGAI_APP;
+GRANT USAGE ON SCHEMA lang_ai_demo.public TO APPLICATION LANGAI_APP;
+GRANT SELECT ON TABLE lang_ai_demo.public.zoom_cancellations TO APPLICATION LANGAI_APP;
+GRANT SELECT ON TABLE lang_ai_demo.public.zoom_users TO APPLICATION LANGAI_APP;
+</code></pre>
+<p>For this demo, we&#39;re connecting to the following tables:</p>
+<ul>
+<li>ZOOM_CANCELLATIONS table</li>
+<li>ZOOM_USERS table</li>
+</ul>
+<p>Use the &#34;Check Permissions&#34; button to verify access or &#34;Share with Snowflake admin&#34; to send these commands to your admin.</p>
+<p>Once access is granted, click on Next to continue.</p>
+<p>Learn how to set up table access and permissions in this 2-minute video <a href="https://help.lang.ai/en/articles/9914672-granting-table-access-to-your-ai-agent" target="_blank">here</a>.</p>
+<h2 is-upgraded>Run Your AI Agent for the First Time</h2>
+<p>Review your agent&#39;s configuration before launch. For this quickstart using Zoom&#39;s synthetic data, we&#39;ll analyze 1,131 cancellation documents from February to August 2024.</p>
+<p>Click &#34;Create Agent&#34; to start the analysis. The AI Agent will process your data and discover patterns in cancellation reasons across different user segments.</p>
+<p class="image-container"><img alt="Run Your AI Agent" src="img/e904410d605ffd3e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Reviewing the Insights of Your AI Agent" duration="5">
+        <aside class="special"><p> Automate insight delivery to Slack! For instructions on setting up the Slack integration, please check this <a href="https://help.lang.ai/en/articles/9950927-connecting-the-slack-integration" target="_blank">guide</a>.</p>
+</aside>
+<h2 is-upgraded>Navigate Your Agent Insights</h2>
+<p>Once the agent has finished processing, click on the table to see the generated insights. In the insights view, you can navigate through the data by sorting and searching.</p>
+<p class="image-container"><img alt="Navigate Your Agent Insights" src="img/9a2cbb4925ec0f1f.png"></p>
+<h2 is-upgraded>Review the Data Associated with the Insights</h2>
+<p>To view the unstructured text that was analyzed to generate an insight, simply click on the specific insight.</p>
+<p>Additionally, you have the option to download the data from your active filters by clicking on <strong>Download CSV</strong>.</p>
+<p class="image-container"><img alt="Review Data Associated with Insights" src="img/5f36f92c0f19e4a2.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>By following this guide, you have successfully set up an AI Agent running on Snowflake to automate your data analysis tasks.</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://app.snowflake.com/marketplace/listing/GZTSZ1TJ3IU/lang-ai-snowflake-ai-agents" target="_blank">Marketplace Listing</a></li>
+<li><a href="https://help.lang.ai/en/collections/9808378-build-your-first-ai-agent" target="_blank">Lang.ai Help Center</a></li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up the Lang.ai Snowflake Native App</li>
+<li>How to create and configure an AI Agent in Lang.ai</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

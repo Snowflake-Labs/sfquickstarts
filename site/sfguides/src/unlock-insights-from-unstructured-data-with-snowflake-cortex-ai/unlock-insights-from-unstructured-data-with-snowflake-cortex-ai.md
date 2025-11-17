@@ -1,10 +1,10 @@
 summary: Unlock Insights from Unstructured Data with Snowflake Cortex AI
-id: unlock_insights_from_unstructured_data_with_snowflake_cortex_ai
-categories: data-engineering,ai,app-development
+id: unlock-insights-from-unstructured-data-with-snowflake-cortex-ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake Cortex, Generative AI, Streamlit, Snowflake, Data Applications, Multimodal AI
 author: Sean Morris, Stephen Dickson
 [environment_name]: ai209
 
@@ -12,7 +12,6 @@ author: Sean Morris, Stephen Dickson
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This guide demonstrates how to create a Streamlit application running inside Snowflake that unlocks insights from unstructured data using **Snowflake Cortex AI**.  
 It shows how to translate, summarize, classify text, generate emails, and even analyze images — all without deploying external infrastructure.
@@ -38,7 +37,6 @@ A fully functioning **Streamlit app** inside Snowflake that:
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 ### Login to Snowsight
 
@@ -97,7 +95,6 @@ USE SCHEMA IDENTIFIER($var_schema_name);
 <!-- ------------------------ -->
 ## Build Streamlit Application
 
-Duration: 5
 
 Let's create a Streamlit application for interactive image analysis:
 
@@ -132,7 +129,6 @@ The application provides:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations! You’ve successfully built an end-to-end image analysis application using Snowflake Cortex AI models. This app showcases how to unlock value from unstructured data — including text and images - all within the Snowflake environment.
 

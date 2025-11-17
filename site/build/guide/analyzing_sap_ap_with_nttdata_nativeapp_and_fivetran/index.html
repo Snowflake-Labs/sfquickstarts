@@ -1,0 +1,402 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Analyzing SAP Accounts Payables with NTT DATA&#39;s Snowflake Native App and Fivetran</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran"
+                  title="Analyzing SAP Accounts Payables with NTT DATA&#39;s Snowflake Native App and Fivetran"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <ul>
+<li>Accounts Payable (AP) is a term used in accounting to refer to the amount of money that a company owes to its creditors for goods or services purchased on credit. Effective accounts payable management can help reduce costs, improve financial reporting and enable organizations to make informed decisions about cash flow, vendor relationships and overall financial strategy.</li>
+<li>However, managing large volumes of accounts payable data can be challenging, particularly for companies with multiple locations or a large number of vendors. Ensuring that data is accurate and up-to-date can be difficult, particularly when dealing with manual processes or paper-based documentation, which can often result in duplicate payments to the same vendors.</li>
+<li>Duplicate Payments can be identified and investigated via Accounts Payable Audits. An accounts payable audit is an independent assessment of financial data from an organization&#39;s accounts payable records. It examines how AP transactions are being recorded and if it represents an accurate view of your business operations</li>
+</ul>
+<h2 is-upgraded>Lab Scenario</h2>
+<ul>
+<li>You are playing the role of a data engineer and an analyst.</li>
+<li>You are tasked with identifying duplicate payments in Accounts Payable data.</li>
+<li>That data resides in your organization&#39;s SAP ERP system. You, however, can&#39;t speak SAPanese.</li>
+<li>Luckily, your organization uses Snowflake as the core data platform.</li>
+</ul>
+<p>In this lab, you will use Fivetran to ingest mock SAP data into Snowflake, and use Snowflake Marketplace to install an app that will let you quickly identify duplicate payments! Lets get started.</p>
+<h2 is-upgraded>What You&#39;ll Need For the Lab</h2>
+<ul>
+<li><a href="https://trial.snowflake.com/" target="_blank">A trial Snowflake account</a> with ACCOUNTADMIN access (we suggest you create a new trial Snowflake account to be able to follow this workshop without any hiccups)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use Fivetran to ingest (mocked up) SAP Accounts Payable data into Snowflake using Fivetran</li>
+<li>How to leverage Snowflake Marketplace to install NTT Data&#39;s Native App</li>
+<li>How to use the app to quickly identify duplicates in AP data ingested</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Launching Fivetran from Snowflake Partner Connect" duration="5">
+        <p>Login to your Snowflake trial account.</p>
+<p>If this is your 1st time logging into Snowflake, you can get a detailed UI walkthrough <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight" target="_blank">here</a>.</p>
+<ol type="1">
+<li>Navigate to Admin → Partner Connect, then click on the &#34;Fivetran&#34; tile. If you dont see the Admin button on the left panel, make sure you are assuming the ACCOUNTADMIN role on top left:</li>
+</ol>
+<p class="image-container"><img alt="Partner Connect" src="img/580d0b8fb37c54d6.png"></p>
+<ol type="1" start="2">
+<li>You should see a window pop up that says Connect to Fivetran. Click the blue Connect at the bottom right:</li>
+</ol>
+<p class="image-container"><img alt="Connect to Fivetran" src="img/8e330b721975887d.png"></p>
+<ol type="1" start="3">
+<li>Once the partner account has been created, Click the blue Activate button:</li>
+</ol>
+<p class="image-container"><img alt="Connect to Fivetran" src="img/d8dc1505ba3006c4.png"></p>
+<ol type="1" start="4">
+<li>Congrats! Just like that, you have launched a trial Fivetran account through Snowflake, pre-configured to talk to your Snowflake account as a target.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Fivetran to a Source and load to Snowflake" duration="15">
+        <p>Fivetran supports syncing data from file systems, applications, event systems, and databases. For SAP Sources, we support connecting to many different SAP sources. Our newest source is our <a href="https://fivetran.com/docs/databases/sap-erp/sap-erp-hana" target="_blank">SAP HANA ERP Source</a>. This fully managed SaaS connector is the simplest, fastest way to get started extracting SAP data.</p>
+<p>As we do not have access to an SAP HANA instance, for this lab we have replicated the SAP tables and some mock data to a PostgreSQL instance. We will use Fivetran&#39;s PostgreSQL connector for this lab and load it to your Snowflake account.</p>
+<ol type="1">
+<li>Go to Fivetran and click on &#34;Connectors&#34; in the left gray navigation pane and then click the blue &#34;Add Connector&#34; button in the upper right corner:</li>
+</ol>
+<p class="image-container"><img alt="Add Connector" src="img/6ef109072a4104d1.png"></p>
+<ol type="1" start="2">
+<li>As this trial with Fivetran was created via the Snowflake Partner Connect, your destination will default SnowflakePC:</li>
+</ol>
+<p class="image-container"><img alt="DestinationSnowflake" src="img/e40aa21d4579f6f1.png"></p>
+<ol type="1" start="3">
+<li>Let&#39;s check how many connectors Fivetran has available &#34;out of the box&#34;. Click on &#34;All Sources&#34; underneath your Selected Destination:</li>
+</ol>
+<p class="image-container"><img alt="BrowseAllSources" src="img/f9317d7100fbd624.png"></p>
+<ol type="1" start="4">
+<li>To get an idea of the range of connectors that Fivetran has for various sources, type oracle into the search box and you will be presented with a range of Oracle source connectors:</li>
+</ol>
+<p class="image-container"><img alt="OracleConnectors" src="img/652007337211789e.png"></p>
+<ol type="1" start="5">
+<li>Do the same thing for SAP as a source. Type sap into the search box and take a quick look at the SAP connectors that are available:</li>
+</ol>
+<p class="image-container"><img alt="SAPConnectors" src="img/472477f5abfa46f0.png"></p>
+<ol type="1" start="6">
+<li>Getting back to today&#39;s lab, type postgres into the search box and hover over the Postgres connector that is named &#34;Google Cloud PostgreSQL&#34;, and click the &#34;Setup&#34; blue button at the right side of the selection:</li>
+</ol>
+<p class="image-container"><img alt="PostgresConnectors" src="img/d78a87963ef54050.png"></p>
+<ol type="1" start="7">
+<li>As with all Fivetran connectors you are presented with a detailed setup guide in the right gray navigation pane. You can name the Destination Schema (it does not have to be created ahead of time in the destination), and for this lab, let&#39;s use lastname_firstname_sap_ntt like this: kelly_tony_sap_ntt:</li>
+</ol>
+<p class="image-container"><img alt="PostgresForm" src="img/32a405164368fd22.png"></p>
+<ol type="1" start="8">
+<li>To quickly connect the Google Cloud PostgreSQL source database system to Snowflake, here&#39;s the rest of the information that you&#39;ll need to provide - be sure and use the credentials for the column corresponding to the first letter of your last name so that everyone is not accessing the same source Google Cloud PostgreSQL database - go ahead and copy and paste these fields individually into the connector setup form in Fivetran:<ul>
+<li><strong>Destination schema prefix:</strong> lastname_firstname_sap_ntt</li>
+<li><strong>Host IP Address: Select from the box below:</strong><h2 is-upgraded>Host IP Addresses to use</h2>
+<table>
+<tr><td colspan="2" rowspan="1"><p> Use the credentials for the column corresponding to the first letter of your last name </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Last Name begins with</p>
+</td><td colspan="1" rowspan="1"><p>Host IP Address</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>A-C</p>
+</td><td colspan="1" rowspan="1"><p>34.94.122.157</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>D-F</p>
+</td><td colspan="1" rowspan="1"><p>34.94.151.28</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>G-I</p>
+</td><td colspan="1" rowspan="1"><p>34.94.33.194</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>J-L</p>
+</td><td colspan="1" rowspan="1"><p>34.102.51.15</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>M-O</p>
+</td><td colspan="1" rowspan="1"><p>35.236.3.13</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>P-R</p>
+</td><td colspan="1" rowspan="1"><p>34.94.1.83</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>S-U</p>
+</td><td colspan="1" rowspan="1"><p>34.94.165.240</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>V-Y</p>
+</td><td colspan="1" rowspan="1"><p>34.94.107.163</p>
+</td></tr>
+</table>
+</li>
+<li><strong>Port:</strong> 5432</li>
+<li><strong>User:</strong> fivetran</li>
+<li><strong>Password:</strong> 2PcnxqFrHh64WKbfsYDU</li>
+<li><strong>Database:</strong> sap_accounts_payable</li>
+<li><strong>Connection Method:</strong> Connect directly</li>
+<li><strong>Update Method:</strong> Detect Changes via XMIN</li>
+</ul>
+<strong>NOTE:</strong> The eight PostgreSQL instances above will be available until the end of the day the lab is run. Seven of the eight instances will be shut down after the lab. If you wish to access the lab at any time during the remainder of the 14 day Fivetran trial, please use the first instance only (34.94.122.157). This instance will not be available after the 14 day Fivetran trial expires.</li>
+<li>Click the <strong>&#34;Save &amp; Test&#34;</strong> blue button after you have completed the form:</li>
+</ol>
+<p class="image-container"><img alt="SaveForm" src="img/4ec96949d1036320.png"></p>
+<ol type="1" start="10">
+<li>Fivetran will begin running connection tests to the Google Cloud PostgreSQL source database:</li>
+</ol>
+<p class="image-container"><img alt="ConnectorTests" src="img/1b723c33b0b629ab.png"></p>
+<ol type="1" start="11">
+<li>You&#39;ll be presented with a request to <strong>&#34;Confirm TLS Certificate&#34;</strong> - here&#39;s why:Fivetran uses Transport Layer Security (TLS) to secure data in motion. It allows for both encryption and authentication of the connections that Fivetran makes to the PostgreSQL data source.Some additional detail:Security: Fivetran follows industry standard practices to encrypt data in transit (TLS) and at rest (AES256) and provides robust security, privacy, and governance from source to destination, and is in compliance with GDPR HIPAA, ISO, PCI, and SOC 2.<ul>
+<li>AES256 encryption throughout the entire data replication pipeline, using industry best practices including a wallet and unique encryption certificates</li>
+<li>Support for OS-level and LDAP authentication, as well as custom plugin-based authentication</li>
+<li>2-Step verification support with unique certificates, avoiding a so-called man-in-the-middle attack</li>
+<li>Pre-defined authorizations with full rights to make modifications, execute-only privileges, and read-only access</li>
+<li>Auditing/logging of all operations that may affect data replication</li>
+</ul>
+<strong>Click the top layer certificate</strong> and then click the blue <strong>&#34;Confirm&#34;</strong> button:</li>
+</ol>
+<p class="image-container"><img alt="ConfirmCertificate" src="img/e9139d7fe7b4d04a.png"></p>
+<ol type="1" start="12">
+<li>Fivetran then finishes running the connection tests and once you see the green box stating that &#34;All connection tests have passed&#34; click <strong>&#34;Continue&#34;:</strong></li>
+</ol>
+<p class="image-container"><img alt="FinishTests" src="img/96848ce58f32a206.png"></p>
+<ol type="1" start="13">
+<li>Fivetran will then connect to and fetch the database source schema, tables, and columns that you have access to in the PostgreSQL database:</li>
+</ol>
+<p class="image-container"><img alt="SchemaFetch" src="img/bf6b2d10fc89ee69.png"></p>
+<ol type="1" start="14">
+<li>You will then see that you can &#34;Select Data to Sync&#34;. For this SAP database, we have a schema available to us named <strong>sap_accounts_payable_sapabap1</strong>. We are going to sync all 12 tables for this lab.If we had multiple schemas and wanted to block those from moving into Snowflake, we could do that here. Similarly, we could do the same with any tables in any schemas.Fivetran&#39;s data-blocking feature allows you to exclude selected source schemas, tables, or columns from being loaded to your destination.</li>
+</ol>
+<p class="image-container"><img alt="SelectTables" src="img/af524e24c6515e27.png"></p>
+<ol type="1" start="15">
+<li>Click the checkbox to the left of the &#34;12 tables&#34; to select all tables for syncing</li>
+</ol>
+<ul>
+<li>Expand the vbrp table by clicking the checkbox next to the table name.</li>
+<li>Next, hover over the abfor column and you&#39;ll notice that an &#34;Unhashed&#34; button pops up for that column.</li>
+<li>Click that button and you&#39;ll see an option for additional data privacy:</li>
+</ul>
+<p class="image-container"><img alt="Unhashed" src="img/14a4e6292f13cfc2.png"></p>
+<ul>
+<li>By using column hashing, Fivetran allows you to anonymize data in your destination. Hashing is useful to enforce data privacy for any PII data when that data still needs to be used and joined across data sets in the downstream data workflow.</li>
+<li><strong>For today&#39;s lab do NOT hash any columns.</strong></li>
+<li>Click <strong>&#34;Save &amp; Continue&#34;</strong> to confirm your data sync selections.</li>
+</ul>
+<p class="image-container"><img alt="SaveDataToSync" src="img/8c036f776b5f1432.png"></p>
+<ol type="1" start="16">
+<li>Fivetran then needs to know how you want to handle incremental changes to the PostgreSQL source data since the schema may change in the future. For the lab, keep the <strong>&#34;Allow all&#34;</strong> selected (allows all new schemas, tables, and columns to sync) and just click on the <strong>&#34;Continue&#34;</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="HandleSchema" src="img/34cdd8fe6cb6d3e7.png"></p>
+<ol type="1" start="17">
+<li>You are now ready to start syncing your PostgreSQL data to Snowflake! Click on the <strong>&#34;Start/Resume Initial Sync&#34;</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="StartInitialSync" src="img/c4879dd698f3932.png"></p>
+<ol type="1" start="18">
+<li>You&#39;ll see the green <strong>&#34;Active&#34;</strong> indicator and you&#39;ll be notified that this is the &#34;First time syncing data for this connector&#34;. This is your initial sync or historical sync for that dataset.</li>
+</ol>
+<p class="image-container"><img alt="ActiveDashboard" src="img/97c191f9a2c3d257.png"></p>
+<p>Let&#39;s leave the connector syncing the initial historical sync - we&#39;ll check back in here in a few minutes. For now, let&#39;s move on to Section 4.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Navigate the Fivetran UI for the PostgreSQL source connector" duration="10">
+        <p>In this section, we will further explore the information that is available in the Fivetran UI associated with the connector that you just created.</p>
+<ol type="1">
+<li>Click on <strong>&#34;Logs&#34;</strong> to see what Fivetran is doing in the background as a pure SaaS service to build, test, deploy, automate, and maintain the PostgreSQL to Snowflake connector.</li>
+</ol>
+<p class="image-container"><img alt="ViewLogs" src="img/96091cfbff721d73.png"></p>
+<ol type="1" start="2">
+<li>Click on <strong>&#34;Schema&#34;</strong> to see the schemas, tables, and columns that were selected from the PostgreSQL source. You have the option to select or deselect tables and columns here and block them in future syncs. Just like when we first set up this connector, if you hover over a column you&#39;ll see that you can hash individual columns if additional data privacy is required. I can also update the table sync setting mode here if desired. Fivetran&#39;s default is &#34;soft delete&#34; and you have the option for &#34;history mode&#34; as well. <strong>Do NOT change anything on the schema page for this lab.</strong></li>
+</ol>
+<p class="image-container"><img alt="ViewSchema" src="img/9cf606d59eb1de18.png"></p>
+<ol type="1" start="3">
+<li>Click on <strong>&#34;Usage&#34;</strong> and you&#39;ll see the Usage Details for your PostgreSQL to Snowflake connector. Once we complete the initial sync and perform incremental syncs for 7 days, then usage stats will be available.On this tab, you can:<ul>
+<li>View paid and free MAR: The Incremental MAR bar chart displays your paid and free MAR for each day of the selected month so that you can see trends in your consumption.</li>
+<li>Track daily MAR for the connector and its tables: Hover over each bar to see your overall daily MAR and the daily MAR for your top three tables.</li>
+<li>View past usage data: By default, the Usage tab shows data from the current month. To see past usage data, use the drop-down menu at the top of the Usage tab to select the month you&#39;d like to view.</li>
+<li>Track MAR consumption per table.</li>
+<li>Analyze the percent change in MAR from the previous month.</li>
+</ul>
+</li>
+</ol>
+<p><strong>NOTE:</strong> We calculate the percent change by comparing this month&#39;s MAR to date to the MAR from the equivalent period last month (for example, we compare May 1-10 to April 1-10).</p>
+<p class="image-container"><img alt="ViewUsage" src="img/efe27bf325595c89.png"></p>
+<ol type="1" start="4">
+<li>Click on <strong>&#34;Setup&#34;</strong> and you&#39;ll see the Connection Details along with the default settings for your PostgreSQL connector. Notice that the Incremental Sync Frequency drop-down box allows you to select an incremental sync (CDC) frequency from 5 minutes to 24 hours - Fivetran sets up CDC automatically for each connector. Fivetran&#39;s default incremental sync frequency for this connector is 6 hours so your next sync will run in 6 hours and Fivetran will sync any changes that have taken place in your PostgreSQL database.</li>
+</ol>
+<ul>
+<li><strong>Note:</strong> Fivetran&#39;s high-volume agent database and SAP connectors start at 1-minute sync frequency and Fivetran&#39;s Local Data Processing (LDP) service is a continuous (immediate) sync frequency.</li>
+</ul>
+<p>Now that you have seen the Fivetran UI / dashboard for this connector, let&#39;s check back to see how the initial historical sync is progressing. Click back to the status dashboard, change the view to &#34;1 hour&#34; then hover over the green graph to view statistics on the volume of data and time to sync:</p>
+<p class="image-container"><img alt="ViewStatistics" src="img/d401ec9b03b71c0d.png"></p>
+<p>Next, let&#39;s switch to Snowflake to preview the data that has synced. First, select &#34;Databases&#34; on the menu on the left and then expand your database name and the tables:</p>
+<p class="image-container"><img alt="ViewDatabases" src="img/b6bf63c3e917bea0.png"></p>
+<p>After expanding the list of tables, select the BSAD table and then click &#34;Data Preview&#34; to view the data in the table:</p>
+<p class="image-container"><img alt="ViewBSAD" src="img/396df95c81ac3a1e.png"></p>
+<p>As mentioned, during this section we used a replicated SAP data set from a PostgreSQL database. If you would like to try our new <strong>SAP HANA ERP Connector</strong>, please search for SAP and use this connector:</p>
+<p class="image-container"><img alt="SAPConnectors" src="img/472477f5abfa46f0.png"></p>
+<p><a href="https://www.youtube.com/watch?v=Mcptag-mx-8" target="_blank">Follow this link</a> if you would like to view a quick recording of this SAP connector in action.</p>
+<p>This concludes the Fivetran data ingestion portion of the Quickstart Lab. When you are ready, click on the <strong>&#34;Next&#34;</strong> button to move on to <strong>Section 5 - Install NTT Data&#39;s Native App from Snowflake Marketplace</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install NTT Data&#39;s Native App from Snowflake Marketplace" duration="15">
+        <ol type="1">
+<li>Back in your Snowflake account, as an ACCOUNTADMIN role, click on the <strong>Marketplace</strong> tab to view the list of native apps available on snowflake marketplace.</li>
+</ol>
+<p class="image-container"><img alt="NTTMarketplace" src="img/2b7d81bf9f57447c.png"></p>
+<ol type="1" start="2">
+<li>Here search for <strong>&#34;Account Payable Analytics&#34;</strong> from the search bar and you should be able to see the &#34;Account Payable Analytics&#34; APP by NTT DATA:</li>
+</ol>
+<p class="image-container"><img alt="NTTAPSearch" src="img/b1ddba19375b8c71.png"></p>
+<ol type="1" start="3">
+<li>You will be presented with the app&#39;s details. Read through the APP information and Click on <strong>‘Get&#39;:</strong></li>
+</ol>
+<p class="image-container"><img alt="NTTGetApp" src="img/3bda6c8f95b0e684.png"></p>
+<ol type="1" start="4">
+<li>Provide an Application Name (the default name being &#34;Account_Payable_Analytics&#34;), and a warehouse. Click on the blue <strong>‘Get&#39;</strong> button:</li>
+</ol>
+<p class="image-container"><img alt="NTTGetAppConfirm" src="img/c389313ec05bb74b.png"></p>
+<p class="image-container"><img alt="NTTGetAppEmail" src="img/79f3c8c3413a1a68.png"></p>
+<ol type="1" start="5">
+<li>Once installed an email will be sent to your registered email id. <strong>Do not launch the APP yet</strong>. The APP needs a few permissions before we can start using it.</li>
+<li>Copy-Paste the below SQL commands into an SQL worksheet. Replace:<ul>
+<li>&lt;APP_NAME&gt; with the Application Name you provided in Step #4 above (the default name being &#34;Account_Payable_Analytics&#34;)</li>
+<li>&lt;AP_Database&gt; with the database name where AP data got loaded. In this lab, we ingested the data via fivetran into the PC_FIVETRAN_DB database</li>
+<li>&lt;AP_Schema&gt; with the schema name where the AP data got loaded. Depending on the destination prefix you assigned in Fivetran (Section 3::Step 7), the schema name will vary for you.</li>
+<li>Execute all statements (select all, ctrl/cmd+enter)</li>
+</ul>
+</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">GRANT IMPORTED PRIVILEGES ON DATABASE snowflake TO APPLICATION &lt;APP_NAME&gt;;
+GRANT APPLICATION ROLE SAP_APP to ROLE ACCOUNTADMIN;
+GRANT EXECUTE TASK ON ACCOUNT TO APPLICATION  &lt;APP_NAME&gt;;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO APPLICATION &lt;APP_NAME&gt;; 
+GRANT USAGE ON DATABASE &lt;AP_Database&gt; TO APPLICATION &lt;APP_NAME&gt;;
+GRANT USAGE ON SCHEMA &lt;AP_Database&gt;.&lt;AP_Schema&gt; TO APPLICATION &lt;APP_NAME&gt;;
+GRANT SELECT ON ALL TABLES IN SCHEMA &lt;AP_Database&gt;.&lt;AP_Schema&gt; TO APPLICATION &lt;APP_NAME&gt;;
+GRANT SELECT ON ALL VIEWS IN SCHEMA &lt;AP_Database&gt;.&lt;AP_Schema&gt; TO APPLICATION &lt;APP_NAME&gt;;
+</code></pre>
+<ol type="1" start="7">
+<li>Once installed, launch the app by going in the <strong>Apps</strong> tab on the left panel, then clicking on the app name:</li>
+</ol>
+<p class="image-container"><img alt="NTTClickApp" src="img/426ed84e725375b9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use the NTT DATA app to identify AP Duplicates" duration="10">
+        <ol type="1">
+<li>When you launch the APP for the very first time, you should see a message like below.The APP runs a task in the background to fetch database and table details from the Snowflake views for faster processing</li>
+</ol>
+<p class="image-container"><img alt="NTTAppRunning" src="img/94e1d725fc3c312d.png"></p>
+<ol type="1" start="2">
+<li>When you refresh the page after a couple of seconds, you will be presented with a page as below. Here you select the <strong>‘Audit Start Date&#39;</strong> as the start of the Audit Period. Audit period is the date for how far back in time should you be looking at the data to find the potential duplicate payment records. Typically these are 3 years, but you can choose a value to suit your use case.</li>
+<li>Next you choose the database and its corresponding schema where the SAP Accounts Payable data is located. Chose the database (PC_FIVETRAN_DB)  and schema we created above and hit &#34;Fetch Tables&#34;:</li>
+</ol>
+<p class="image-container"><img alt="NTTAuditStart" src="img/2d7e584462a87b24.png"></p>
+<ol type="1" start="4">
+<li>This will automatically populate all the tables based on their description as below. Depending on your environment, you may be using different table names. You can choose the corresponding tables from the drop down, based on the description. Please note that the table column names and data types should match what has been published in the readme file. If not, you can create views on top of the data to match the expected column names and data types:</li>
+</ol>
+<p class="image-container"><img alt="NTTChooseTables" src="img/20a71fb17c2d3531.png"></p>
+<ol type="1" start="5">
+<li>Once the table names are selected, hit the <strong>‘Submit&#39;</strong> button. This sends the data for processing. You should see a confirmation message as follows:</li>
+</ol>
+<p class="image-container"><img alt="NTTPotentialDups" src="img/e44898c06837806b.png"></p>
+<ol type="1" start="6">
+<li>Once the processing is complete, you should see a confirmation message as follows:</li>
+</ol>
+<p class="image-container"><img alt="NTTConfMsg" src="img/6ad312f343f68890.png"></p>
+<ol type="1" start="7">
+<li>Click on the ‘Potential Duplicates&#39; Tab to view the duplicate claims and related metrics.</li>
+<li>Here you will first see the metrics related to total number of potential duplicate claims, the potential amount which can be recovered once these claims are processed and both of these metrics as a percentage of total number of records processed as follows:</li>
+</ol>
+<p class="image-container"><img alt="NTTMetrics" src="img/5338a14d40c69bf6.png"></p>
+<ol type="1" start="9">
+<li>We also see a quick distribution of Vendors by their total claim amounts. This helps audit teams to identify vendors who have a higher percentage of potential claims streamline the process for these vendors to avoid potential duplicates in future:</li>
+</ol>
+<p class="image-container"><img alt="NTTGraph" src="img/4220067ce8532bf6.png"></p>
+<ol type="1" start="10">
+<li>We can also see distribution of claims by Invoice date which can help Audit teams identify the possible cause of these erroneous transactions based on the date range:</li>
+</ol>
+<p class="image-container"><img alt="NTTLineGraph" src="img/66d91ec74814ebd5.png"></p>
+<ol type="1" start="11">
+<li>Finally we see the actual potential claim details by Claim types here:</li>
+</ol>
+<p class="image-container"><img alt="NTTClaims" src="img/57ed343691608f9a.png"></p>
+<ol type="1" start="12">
+<li>The audit teams can work with these potential claim details for further recovery processing</li>
+<li>All the catalog details can be refreshed at the frequency of your choosing to ensure optimal performance. Use <a href="https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules" target="_blank">CRON</a> conventions for scheduling:</li>
+</ol>
+<p class="image-container"><img alt="NTTCron" src="img/63ba0a4382542116.png"></p>
+<ol type="1" start="14">
+<li>It&#39;s recommended that you suspend the refresh task if you do not intend to keep changing your source database and schemas to save on snowflake credits.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Next Steps" duration="4">
+        <p>The app showcases only a couple of permutations and combinations of ways to identify duplicate payments. There are at least a dozen more and we can help include them in the app depending on the P2P cycle that your organization runs.</p>
+<p>Reach out to snowflakemarketplace@nttdata.com if you would like all the permutation and combinations implemented for your organization.</p>
+<p>If you have any questions about any Fivetran connectors, please check out the Fivetran website - <a href="https://www.fivetran.com/partners/technology/snowflake" target="_blank">website</a>.</p>
+<h2 is-upgraded>Additional resources</h2>
+<ul>
+<li><a href="https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart" target="_blank">Snowflake Native App Developer Toolkit</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Coherent Spark Connector - use business logic from Excel spreadsheets in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="coherent_spark_connector"
+                  title="Coherent Spark Connector - use business logic from Excel spreadsheets in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>The Coherent Spark Connector transforms business logic designed in Microsoft Excel spreadsheets into reusable SQL functions that call our Spark APIs from Snowflake Data Cloud. Joint customers can save significant time on development and testing, and hence roll out their products to the market quickly while the original dataset remains in the Snowflake environment. The entire workflow comes with enterprise-grade security and scalability. Please see the FAQs in Step 6 for additional information.</p>
+<h2 is-upgraded>Benefits</h2>
+<ul>
+<li><strong>Transform Excel logic into Snowflake functions</strong> - Create SQL functions from your Excel spreadsheets within minutes so you can use consumer data on the Snowflake Data Cloud with Spark&#39;s APIs.</li>
+<li><strong>Effective governance</strong> - Data remains in the Snowflake environment except when being processed by Spark. This process takes place via secure API and is fully auditable.</li>
+<li><strong>Get value faster</strong> - Boost logic execution efficiency by leveraging batch process with Snowflake data.</li>
+<li><strong>Easy set up with sample queries -</strong> Procedures are integrated into the application, which is accessible via private sharing or the public marketplace. No coding is required. Consumers can securely install and run directly in their Snowflake instance with just a few clicks. Sample queries are provided with the native connector for guidance.</li>
+<li><strong>Auto-sync to keep logic up to date</strong> - The automatic synchronization ensures the SQL functions work with the latest Spark models.</li>
+<li><strong>Receive application updates instantly</strong> - The development team rolls out regular updates to improve the application&#39;s quality.   Consumers who maintained an instance of the native application in their Snowflake platform will receive the update instantly without any work required.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake and basic SQL queries</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>By the end of this guide, you&#39;ll learn:</p>
+<ul>
+<li>how to install Spark Connector in your Snowflake environment.</li>
+<li>how to grant the needed permissions.</li>
+<li>how to synchronize your Spark services with Snowflake.</li>
+<li>how to use Spark services in Snowflake.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Access to a <a href="https://coherent.global" target="_blank">Coherent Spark</a> tenant, with at least one service uploaded. If you are not already a Coherent customer, please <a href="https://www.coherent.global/contact-us" target="_blank">contact us</a>!</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A working installation of Spark Connector</li>
+<li>Database functions in Snowflake for each Spark Service in the folder you synchronize with</li>
+</ul>
+<h2 is-upgraded>Additional Technical Information</h2>
+<h3 is-upgraded>Naming convention</h3>
+<p>Make sure model names and Xparameter names meet the Snowflake identifier requirements, otherwise, the synchronization process might fail.</p>
+<p>A name:</p>
+<ul>
+<li>can contain up to 128 characters.</li>
+<li>must begin with a letter (A-Z, a-z) or an underscore (<code>_</code>).</li>
+<li>contains only letters, underscores (<code>_</code>), decimal digits (0-9), and dollar signs (<code>$</code>).</li>
+<li>can&#39;t be a reserved word in Snowflake such as WHERE or VIEW.  For a complete list of reserved words, refer to the <a href="https://docs.snowflake.com/en/sql-reference/reserved-keywords" target="_blank">Snowflake documentation</a>.</li>
+<li>can&#39;t be the same as another Snowflake object of the same type.</li>
+</ul>
+<h3 is-upgraded>Supported/Unsupported Xservices</h3>
+<p>This table defines the active Xservices which are supported or not supported in the Snowflake native connector.</p>
+<p>Spark model(s) using any Xservices defined below as &#34;Not supported&#34;, might fail to be imported as Snowflake UDFs in the synchronization process, or the imported Snowflake UDFs might fail to return correct results.</p>
+<p>This connector aims to support all Xservices available in Spark and this table will be updated regularly when there are new releases.  It&#39;s always recommended to update the Snowflake native connector to the latest version.</p>
+<p>Certain legacy Xservices are not included in this table and they will not be supported in the Snowflake connector unless further notice.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Xservices</p>
+</td><td colspan="1" rowspan="1"><p>Supported</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xinput</code></p>
+</td><td colspan="1" rowspan="1"><p>YES</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xoutput</code></p>
+</td><td colspan="1" rowspan="1"><p>YES</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xparameter</code></p>
+</td><td colspan="1" rowspan="1"><p>YES</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>subservices</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xcall</code> (Insert <code>requestbody</code>)</p>
+</td><td colspan="1" rowspan="1"><p>YES</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xcall</code> (Insert <code>requestdata</code>)</p>
+</td><td colspan="1" rowspan="1"><p>YES</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xCSVinput</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xCSVoutput</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ximage</code> / <code>ximageoriginal</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xjinput</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xjoutput</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xreport</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xrichoutput</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xsolve</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>xvalidate</code></p>
+</td><td colspan="1" rowspan="1"><p>NO</p>
+</td></tr>
+</table>
+<p><em>Table last updated: 3rd June 2023.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Download the connector from Private Sharing or Public Marketplace" duration="1">
+        <h2 is-upgraded>Download from Private Sharing</h2>
+<ol type="1">
+<li>Sign into the Snowflake platform.</li>
+<li>Go to &#34;Apps&#34; on the left panel and &#34;Spark Connector&#39; should appear under &#34;Shared with you&#34; if the Snowflake account is given access to the private application.  Click the application widget to visit the full information page.</li>
+<li>Click &#34;Get&#34; to open the installation pop up.</li>
+<li>Select your preferred installation options (database name, account role for access) and then click &#34;Get&#34; again.  Spark Connector will be installed in the consumer platform.</li>
+<li>Once Spark Connector is successfully installed, click &#34;Open&#34; to begin.</li>
+</ol>
+<p class="image-container"><img alt="install from apps menu" src="img/3ac808d0bd2aca13.png"></p>
+<h2 is-upgraded>Download from Public Marketplace</h2>
+<ol type="1">
+<li>Go to <a href="https://app.snowflake.com/marketplace/listing/GZSTZVB9C1I/coherent-spark-connector-uatus" target="_blank">our Marketplace listing</a> or search for &#34;Spark Connector&#34; in the Marketplace.</li>
+<li>Click &#34;Get&#34; to open the installation pop up.</li>
+<li>Select your preferred installation options (database name, account role for access) and then click &#34;Get&#34; again.  Spark Connector will be installed in the consumer platform.</li>
+<li>Once Spark Connector is successfully installed, click &#34;Open&#34; to begin.</li>
+</ol>
+<p class="image-container"><img alt="coherent spark connector marketplace listing" src="img/cab7313445783a24.png"></p>
+<h2 is-upgraded>Review the installed application in the consumer platform</h2>
+<ul>
+<li>Clicking &#34;Get&#34; will bring users into the SQL query layout, with the database/application list on the left panel.  Spark Connector is displayed in the database list, but it has a distinct icon that sets it apart from other databases or legacy native applications (V1).</li>
+<li>Snowflake will create a new worksheet with sample queries to help the user to operate with the Spark Connector.</li>
+</ul>
+<p class="image-container"><img alt="review installed app" src="img/de1bc2a47c7d5b6b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Grant privileges to application/user access to allow service synchronization" duration="1">
+        <h2 is-upgraded>1. Specify the active application for the session.</h2>
+<p>Replace the parameters in the curly brackets <code>{ }</code> in the SQL queries, then execute in the Snowflake environment.</p>
+<ul>
+<li><code>{APP_NAME}</code>: Application name (&#34;SPARK_CONNECTOR&#34; by default).</li>
+</ul>
+<pre><code>USE {APP_NAME};
+</code></pre>
+<h2 is-upgraded>2. Create API Integration for external functions.</h2>
+<p>Create and configure API integration based on the specific Snowflake native application you are operating.</p>
+<h3 is-upgraded><code>{AWS_ARN}</code>: Amazon resource name of a cloud platform role.</h3>
+<h3 is-upgraded><code><SPARK_PROXY></code>: Spark HTTPS proxy service endpoint.</h3>
+<p><strong>Spark Connector (UATUS)</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Parameters</p>
+</td><td colspan="1" rowspan="1"><p>Configuration for Spark Connector (UATUS)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code><AWS_ARN></code></p>
+</td><td colspan="1" rowspan="1"><p>arn:aws:iam::533606394992:role/Snowflake-WASM-Server-Invoker</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code><SPARK_PROXY></code></p>
+</td><td colspan="1" rowspan="1"><p>https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com</p>
+</td></tr>
+</table>
+<p><strong>Spark Connector (PRODUS)</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Parameters</p>
+</td><td colspan="1" rowspan="1"><p>Configuration for Spark Connector (PRODUS)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code><AWS_ARN></code></p>
+</td><td colspan="1" rowspan="1"><p>(<em>Coming soon...</em>)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code><SPARK_PROXY></code></p>
+</td><td colspan="1" rowspan="1"><p>(<em>Coming soon...</em>)</p>
+</td></tr>
+</table>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE API INTEGRATION SPARK_INTEG
+API_PROVIDER = AWS_API_GATEWAY
+API_AWS_ROLE_ARN = &#39;{AWS_ARN}&#39;
+API_ALLOWED_PREFIXES = (&#39;{SPARK_PROXY}&#39;)
+ENABLED = TRUE;
+</code></pre>
+<h2 is-upgraded>3. Grant privileges to application/user access to allow service synchronization.</h2>
+<pre><code language="language-sql" class="language-sql">GRANT USAGE ON WAREHOUSE {WAREHOUSE_NAME} TO APPLICATION {APP_NAME};
+GRANT USAGE ON INTEGRATION SPARK_INTEG TO APPLICATION {APP_NAME};
+</code></pre>
+<h2 is-upgraded>4. Initialize external functions in the application.</h2>
+<pre><code language="language-sql" class="language-sql">CALL SPARK_PUBLIC.EXECUTE_EXTERNAL_FUNCTIONS(&#39;SPARK_INTEG&#39;);
+</code></pre>
+<h2 is-upgraded>5. Identify the Spark folder to be synchronized.</h2>
+<aside class="warning"><p>Connect to one folder only. Calling SETUP on another folder will erase the UDFs created from the old folder.</p>
+</aside>
+<p><code>{SPARK_FOLDER}</code>: The Spark folder (URL) that hosts the services.</p>
+<p><code>{SPARK_KEY}</code>: Enter the synthetic key, and then clarify key type as ‘SYNTHETICKEY&#39; in the third parameter.</p>
+<pre><code language="language-sql" class="language-sql">CALL SPARK_PUBLIC.SETUP(&#39;{SPARK_FOLDER}&#39;, &#39;{SPARK_KEY}&#39;, &#39;SYNTHETICKEY&#39;, CURRENT_WAREHOUSE());
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Synchronize folders and services" duration="1">
+        <h2 is-upgraded>Synchronize the folder regularly to maintain the updated services.</h2>
+<aside class="special"><p>This command can be triggered multiple times to make sure Snowflake functions process data via the latest Spark models. Otherwise, the automatic synchronization mechanism built into this connector will update the Snowflake functions to the latest Spark service every 3 minutes.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">CALL SPARK_PUBLIC.SYNC();
+</code></pre>
+<h2 is-upgraded>Synchronize multiple versions of a single Spark service.</h2>
+<aside class="warning"><p>The automatic synchronization mechanism mentioned before doesn&#39;t keep track of all versions available in Spark. The following command needs to be triggered manually to make sure all available versions are imported into the Snowflake environment.</p>
+</aside>
+<p><code>{SERVICE_NAME}</code>: The service name as presented in the Spark platform.</p>
+<pre><code language="language-sql" class="language-sql">CALL SPARK_PUBLIC.SYNC(&#39;{SERVICE_NAME}&#39;);
+</code></pre>
+<p class="image-container"><img alt="Spark user interface on the left showing three versions of a service. Snowflake interface on the right showing two SQL functions for each version in Spark" src="img/d6186743f2037303.png"></p>
+<p>For each version of each service in a synchronized folder, you will see two database functions, one called <code>{SERVICE_NAME}</code> and one called <code>{SERVICE_NAME}_VARIANT</code>. You&#39;ll learn how to use these in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use the functions in the Snowflake environment" duration="1">
+        <p>The two database functions operate in different modes:</p>
+<h2 is-upgraded><code>{SERVICE_NAME}(Parameters)</code>: Returns results in a tabular format.</h2>
+<h3 is-upgraded>Query a single set of parameters</h3>
+<pre><code language="language-sql" class="language-sql">SELECT Delta, Gamma, Rho, Theta, Vega FROM TABLE
+(SPARK.BLACKSCHOLES(90::float,0.5::float,0.9::float,56::float,0.5::float));
+</code></pre>
+<p class="image-container"><img alt="results from a single query" src="img/8f315a779f0a57a2.png"></p>
+<h3 is-upgraded>Process a table of data.</h3>
+<pre><code language="language-sql" class="language-sql">SELECT input.id,input.excercisePrice, input.risklessRate, input.stdDevi, input.stockPrice, input.timeToExpiry,output.* 
+FROM {TABLE_NAME} input 
+JOIN TABLE(SPARK.BLACKSCHOLES(
+    input.excercisePrice, 
+    input.risklessRate, 
+    input.stdDevi, 
+    input.stockPrice, 
+    input.timeToExpiry)) output
+</code></pre>
+<p class="image-container"><img alt="Snowflake query returns table of results" src="img/19a99c35ef8d56e0.png"></p>
+<h2 is-upgraded><code>{SERVICE_NAME}_VARIANT(Parameters)</code>: Returns results in raw JSON format.</h2>
+<pre><code language="language-sql" class="language-sql">SELECT SPARK.BLACKSCHOLES_VARIANT(90, 0.5, 0.9, 56, 0.5);
+</code></pre>
+<p class="image-container"><img alt="Snowflake query returns JSON array of results" src="img/bfaa2c603c688caa.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations, you&#39;re now all set up to call your Spark services from your Snowflake environment! This means you can take business logic written in Excel, upload it to Spark, and immediately use it on all of your data in Snowflake via API, no coding needed!</p>
+<p>You can find out more about Coherent Spark on our <a href="https://coherent.global" target="_blank">homepage</a> or read up about other features in our <a href="https://coherent.gitbook.io/spark/T1wG85lxdoEsRrNQJvPj/integrations/snowflake-connector" target="_blank">documentation</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Installing Spark Connector</li>
+<li>Adding permissions</li>
+<li>Synchronizing your services</li>
+<li>Using Spark services in Snowflake</li>
+</ul>
+<h2 is-upgraded>FAQs</h2>
+<h2 is-upgraded>1. Can I execute Spark functions against the data from another database?</h2>
+<p>Functions imported in the Spark synchronization process are ready for cross-database access.  Snowflake users can execute Spark functions against the data from another database in the same cloud warehouse when the query contains the full naming conversion, for example: <code>database.schema.function-name</code> / <code>database.schema.procedure-name)</code>.</p>
+<pre><code language="language-sql" class="language-sql">SELECT SPARK_CONNECTOR.SPARK.BLACKSCHOLES_VARIANT(90, 0.5, 0.9, 56, 0.5);
+</code></pre>
+<h2 is-upgraded>2. How is my Snowflake data kept safe when using the synchronized Spark functions?</h2>
+<p>The Spark connector relies on the Spark API endpoint, which means that data from Snowflake will be taken into the Spark server for processing. All UDFs generated from the Spark connector setup process follow Snowflake&#39;s advice on ensuring the entire data transition is implemented in the secured environment. The UDF owner must grant callers appropriate privilege(s) on the UDF access and usage. Snowflake users need to provide subscription information (API key) when calling the Spark proxy service. For more information, please refer to <a href="https://docs.snowflake.com/en/sql-reference/external-functions-security" target="_blank">Snowflake&#39;s documentation on external function security.</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

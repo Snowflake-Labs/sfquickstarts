@@ -1,0 +1,867 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Data Application with Hybrid Tables</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_a_data_application_with_hybrid_tables"
+                  title="Build a Data Application with Hybrid Tables"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This quickstart will take you through building a data application that runs on Snowflake Hybrid Tables. <a href="https://docs.snowflake.com/en/user-guide/tables-hybrid?_fsi=siV2rnOG" target="_blank">Hybrid Tables</a> is a Snowflake table type that has been designed for transactional and operational work together with analytical workloads. Hybrid Tables typically offers lower latency and higher throughput on row level and point reads and writes, making them a good choice for a backing source for an application that requires faster operations on individual rows and point lookup, especially when compared to standard Snowflake tables that are optimized for analytical operations.</p>
+<p>This quickstart walks through setting up Snowflake and a table structure for Hybrid tables, connecting it to an application whcih can read, update and manipulate the data directly. The application is a Task manager, or simply a Todo list, for multiple tenants, where each user has their individual lists of tasks that can be completed.</p>
+<p>The application is built in Python and uses Flask as a web server framework and the Snowflake Python Connector to connect to Snowflake and the data. While the code is presented in Python, the concept and approach could be repurposed for just about any language.</p>
+<p>As a primer, you may want to go through the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables" target="_blank">Getting Started with Hybrid Tables</a> quickstart to familirize yourself with the concepts of Hybrid Tables. This guide will mainly cover how to build with the Hybrid Tables as a backing source.</p>
+<p class="image-container"><img alt="Main screen" src="img/391a330f979260f9.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake Snowsight interface</li>
+<li>Familiar with SQL and DDL</li>
+<li>Basic understanding of Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Setting up Snowflake Hybrid Tables</li>
+<li>Connecting to Hybrid Tables</li>
+<li>How to build for transactional reads and writes</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed, or similar IDE</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">Python 3.8+</a> Installed</li>
+<li>A Snowflake Account with Hybrid Tables enabled (see <a href="https://docs.snowflake.com/en/user-guide/tables-hybrid" target="_blank">docs.snowflake.com/en/user-guide/tables-hybrid</a>)</li>
+<li><a href="https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/" target="_blank">Python Virtual Environment</a> - or -</li>
+<li><a href="https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment" target="_blank">Conda environment for Python</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A basic Task manager application that connect direclty to Snowflake Hybrid Tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="5">
+        <p>We start by seting up the environment in our Snowflake account. While this can be done using other interfaces, like SnowSQL or SnowCLI, we will here use Snowsight to show the setup.</p>
+<h2 is-upgraded>Create a database, schema and roles</h2>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+-- Create role HYBRID_TASK_APP_ROLE
+CREATE OR REPLACE ROLE HYBRID_TASK_APP_ROLE;
+GRANT ROLE HYBRID_TASK_APP_ROLE TO ROLE ACCOUNTADMIN ;
+
+-- Create HYBRID_QUICKSTART_WH warehouse
+CREATE OR REPLACE WAREHOUSE HYBRID_TASK_APP_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, AUTO_RESUME= TRUE;
+GRANT OWNERSHIP ON WAREHOUSE HYBRID_TASK_APP_WH TO ROLE HYBRID_TASK_APP_ROLE;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE HYBRID_TASK_APP_ROLE;
+
+-- Use role and create HYBRID_QUICKSTART_DB database and schema.
+CREATE OR REPLACE DATABASE HYBRID_TASK_APP_DB;
+GRANT OWNERSHIP ON DATABASE HYBRID_TASK_APP_DB TO ROLE HYBRID_TASK_APP_ROLE;
+CREATE OR REPLACE SCHEMA DATA;
+GRANT OWNERSHIP ON SCHEMA HYBRID_TASK_APP_DB.DATA TO ROLE HYBRID_TASK_APP_ROLE;
+
+-- Use role
+USE ROLE HYBRID_TASK_APP_ROLE;
+
+-- Set step context use HYBRID_DB_USER_(USER_NUMBER) database and DATA schema
+USE DATABASE HYBRID_TASK_APP_DB;
+USE SCHEMA DATA;
+</code></pre>
+<p>We can now create the table structure for the application. The data structure is fairly simple, with some related tables. Remember that for Hybrid Tables we can define and enforce primary and foreign keys for relationships.</p>
+<p class="image-container"><img alt="Tables Schema" src="img/c04d11ee5ec70ed0.png"></p>
+<p>We can create these tables with common table creation syntax, with the additional <code>HYBRID</code> keyword for the tables. Also note the primary key and foreign key declarations.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE HYBRID TABLE &#34;USER&#34; (
+    id INT AUTOINCREMENT,
+    login VARCHAR NOT NULL,
+    name VARCHAR,    
+    hpassword VARCHAR NOT NULL,
+    primary key (id)
+);
+
+CREATE OR REPLACE SEQUENCE TASK_ID_SEQ;
+
+CREATE OR REPLACE HYBRID TABLE &#34;TASK&#34; (
+    id INT DEFAULT TASK_ID_SEQ.nextval,
+	item VARCHAR(16777216),
+    complete BOOLEAN DEFAULT FALSE,
+    date_due TIMESTAMP DEFAULT NULL,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    date_modified TIMESTAMP DEFAULT NULL,
+    date_completed TIMESTAMP DEFAULT NULL,
+    owner_id INT,
+	primary key (id) rely,
+    foreign key (owner_id) references &#34;USER&#34;(id),
+    index idx001_owner_id(owner_id),
+    index idx002_complete(complete)
+);
+
+CREATE OR REPLACE HYBRID TABLE TASK_LABEL (
+    task_id INT NOT NULL,
+    label VARCHAR,
+    primary key (task_id, label),
+    foreign key (task_id) references &#34;TASK&#34;(id) ,
+    index idx001_label(label)
+);
+</code></pre>
+<p>Finally, let&#39;s create some views that will help us display the task data:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW TASK_DETAIL AS
+SELECT
+      t.id
+    , t.item
+    , t.complete
+    , t.date_due
+    , DATEDIFF(&#39;day&#39;, current_date(), date_trunc(&#39;day&#39;, t.date_due)) as days_due
+    , iff(t.complete, &#39;completed&#39;, iff(date_trunc(&#39;day&#39;, t.date_due) = current_date(), &#39;today&#39;, iff(date_trunc(&#39;day&#39;, t.date_due) &lt; current_date, &#39;overdue&#39;, &#39;upcoming&#39;))) status
+    , t.owner_id
+FROM TASK t 
+;
+</code></pre>
+<p>This view calculates the temporal status of tasks in terms of days until due date, the status of overdue, due today or upcoming. This makes it easier to query on this data on recurring operations in the application.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW LABEL_DETAIL AS
+SELECT
+      owner_id
+    , row_number() over(PARTITION BY owner_id ORDER BY COUNT(*) DESC) as index
+    , count(*) as count
+    , lower(l.label) as label
+    , count(*) / sum(count(*)) over(PARTITION BY owner_id) as percent
+FROM TASK t
+INNER JOIN TASK_LABEL l ON l.task_id = t.id
+WHERE t.complete = FALSE
+GROUP BY ALL
+ORDER BY 3 DESC
+;
+</code></pre>
+<p>This is more of an analytical query that aggregates the total of tasks distributed by the labels. This is used to show some statistics in the application, how many tasks for each label etc. This query is much more analytical than transactional in nature.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW STATUS_DETAIL AS
+SELECT
+      owner_id
+    , row_number() over(PARTITION BY owner_id ORDER BY COUNT(*) DESC) as index
+    , t.status
+    , count(*) as count
+     , count(*) / sum(count(*)) over(PARTITION BY owner_id) as percent
+FROM TASK_DETAIL t
+WHERE t.complete = FALSE
+GROUP BY ALL
+ORDER BY 3 DESC
+</code></pre>
+<p>Similar to the previous view, this aggregates data for all tasks across the different status (<em>overdue</em>, <em>due today</em>, <em>upcoming</em>). Also this is a type of query we would normally see in an analytical environement.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW LABEL_STATUS_DETAIL AS
+SELECT
+      owner_id
+    , label
+    , row_number() over(PARTITION BY owner_id, label ORDER BY COUNT(*) DESC) as index
+    , t.status
+    , count(*) as count
+FROM TASK_DETAIL t
+INNER JOIN TASK_LABEL l ON l.task_id = t.id
+WHERE t.complete = FALSE
+GROUP BY ALL
+ORDER BY 4 DESC;
+</code></pre>
+<p>Finally this is a view similar to tha above but aggregates data across status and a specific label.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create sample data" duration="5">
+        <p>We can now create some sample data for our application to use. We do this so that we can see how Hybrid Tables will work for us when the application is being used and there is actually data to be processed.</p>
+<p>We create some users first. The application contains a rudimentary login and user handling, but the purpose is not to show how to build that part in this guide, we will instead focus on the operational data for Tasks.</p>
+<pre><code language="language-sql" class="language-sql">INSERT INTO &#34;USER&#34; (login, name, hpassword) VALUES (&#39;first_user&#39;,&#39;First Demo User&#39;,&#39;hybrid@123&#39;);
+INSERT INTO &#34;USER&#34; (login, name, hpassword) VALUES (&#39;second_user&#39;,&#39;Second Demo User&#39;,&#39;hybrid@123&#39;);
+INSERT INTO &#34;USER&#34; (login, name, hpassword) VALUES (&#39;third_user&#39;,&#39;Third Demo User&#39;,&#39;hybrid@123&#39;);
+</code></pre>
+<p>To create some task data that looks at least a little realistic, we can use a common framework for random generated data - (Faker)[https://faker.readthedocs.io/en/master/]. Faker is a available as a Python package on the <a href="https://repo.anaconda.com/pkgs/snowflake/" target="_blank">Snowflake Anaconda channel</a>, so we can very easily include it in a customer UDF.</p>
+<pre><code language="language-sql" class="language-sql">create or replace function create_fake_task(seed int, labels string, userids string)
+returns VARIANT
+language python
+runtime_version = &#39;3.10&#39;
+handler = &#39;create&#39;
+packages = (&#39;faker&#39;)
+as
+$$
+
+from faker import Faker
+import random
+import datetime
+from datetime import timedelta
+from collections import OrderedDict
+
+fake = Faker()
+
+def create(row_number=-1, label_elements=&#39;default_label&#39;, userids=&#39;&#39;):
+
+    random.seed(row_number)
+
+    today = datetime.datetime.today()
+    item = fake.sentence(nb_words=6, variable_nb_words=True)
+    date_created = fake.date_time_between(start_date=&#39;-1y&#39;)
+    date_due = date_created + timedelta(random.randint(1,60))
+    date_modified = date_created + timedelta(random.randint(1,100))
+    date_completed = date_created + timedelta(random.randint(1, 100))
+    completed = (date_completed &lt;= today)
+    if not completed:
+        date_completed = None
+    if (date_modified &gt; today):
+        date_modified = today    
+
+    label_elements_weighted = [(_[0], int(_[1])) for _ in [f&#39;{_}:1&#39;.split(&#39;:&#39;) for _ in label_elements.split(&#39;,&#39;)]]
+    labels = fake.random_elements(elements=OrderedDict(label_elements_weighted), unique=True, length=random.randint(1, min(4, len(label_elements_weighted))))
+    owner_id = fake.random_element(elements=(userids.split(&#39;,&#39;)))
+
+    return {
+        &#34;item&#34;: item,
+        &#34;completed&#34;: completed,
+        &#34;date_due&#34;: date_due,
+        &#34;date_created&#34;: date_created,
+        &#34;date_modified&#34;: date_modified,
+        &#34;date_completed&#34;: date_completed,
+        &#34;labels&#34;: labels,
+        &#34;owner_id&#34;: owner_id
+    }
+
+$$;
+</code></pre>
+<p>We can now use this UDF to generate a larger number of data point. We generate the data into a separate table that we can later drop (note that Hybrid tables does not support TRANSIENT tables at the moment). This staement generates 1,500 new rows, and takes about 10s to run on an X-Small warehouse.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE HYBRID TABLE sample_tasks (
+    id INT DEFAULT TASK_ID_SEQ.nextval,
+	item VARCHAR(16777216),
+    complete BOOLEAN DEFAULT FALSE,
+    date_due TIMESTAMP DEFAULT NULL,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    date_modified TIMESTAMP DEFAULT NULL,
+    date_completed TIMESTAMP DEFAULT NULL,
+    owner_id INT,
+    labels VARIANT,
+	primary key (id)
+)
+AS
+SELECT
+      id
+    , data:&#34;item&#34;::varchar as item
+    , data:&#34;completed&#34;::boolean as complete
+    , data:&#34;date_due&#34;::timestamp as date_due
+    , data:&#34;date_created&#34;::timestamp as date_created
+    , data:&#34;date_modified&#34;::timestamp as date_modified
+    , data:&#34;date_completed&#34;::timestamp as date_completed
+    , data:&#34;owner_id&#34;::int as owner_id
+    , data:&#34;labels&#34;::variant as labels
+FROM
+(
+    SELECT
+        id
+        , create_fake_task(id, &#39;work:8,personal:6,urgent:1,hobbies:4,family:5&#39;, (SELECT LISTAGG(id,&#39;,&#39;) FROM &#34;USER&#34;)) as data
+    FROM
+    (
+        SELECT 
+            TASK_ID_SEQ.nextval as id
+        FROM TABLE(GENERATOR(ROWCOUNT =&gt; 1500)) v 
+    )
+)
+ORDER BY 1;
+</code></pre>
+<p>We can now insert all those rows into the actual table. The reason why we are doing this is that we want to insert labels for each generated row into the other table here, <code>TASK_LABEL</code>, so we are using the <code>TASK_ID_SEQ</code> sequence to get ids for each row that we can relate back to. This usage of the sequence will be important later when we insert new tasks with related labels in the same transaction.</p>
+<pre><code language="language-sql" class="language-sql">INSERT INTO &#34;TASK&#34; (
+      id
+    , item
+    , complete
+    , date_due
+    , date_created
+    , date_modified
+    , date_completed
+    , owner_id ) 
+  SELECT 
+      id
+    , item
+    , complete
+    , date_due
+    , date_created
+    , date_modified
+    , date_completed
+    , owner_id 
+  FROM sample_tasks;
+
+INSERT INTO TASK_LABEL (
+      task_id
+    , label )
+SELECT 
+    t.id as task_id
+  , l.VALUE::VARCHAR as label
+FROM sample_tasks t,
+LATERAL FLATTEN (input=&gt;labels) l;
+</code></pre>
+<p>We can now run a quick query to look at the result of the inserted data:</p>
+<pre><code language="language-sql" class="language-sql">SELECT count(*), label
+FROM task_label
+GROUP BY ALL
+ORDER BY 1 DESC
+;
+</code></pre>
+<p>This should result in something like this (the actual numbers will differ since it is randomly generated)</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>COUNT(*)</p>
+</td><td colspan="1" rowspan="1"><p>LABEL</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>843</p>
+</td><td colspan="1" rowspan="1"><p>work</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>766</p>
+</td><td colspan="1" rowspan="1"><p>personal</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>687</p>
+</td><td colspan="1" rowspan="1"><p>family</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>628</p>
+</td><td colspan="1" rowspan="1"><p>hobbies</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>180</p>
+</td><td colspan="1" rowspan="1"><p>urgent</p>
+</td></tr>
+</table>
+<p>We can also test the helper views we created as well:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM TASK_DETAIL WHERE owner_id = 102 AND COMPLETE=FALSE;
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>ID</p>
+</td><td colspan="1" rowspan="1"><p>ITEM</p>
+</td><td colspan="1" rowspan="1"><p>COMPLETE</p>
+</td><td colspan="1" rowspan="1"><p>DATE_DUE</p>
+</td><td colspan="1" rowspan="1"><p>DAYS_DUE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>11</p>
+</td><td colspan="1" rowspan="1"><p>Together poor cultural career citizen.</p>
+</td><td colspan="1" rowspan="1"><p>FALSE</p>
+</td><td colspan="1" rowspan="1"><p>2024-01-19 19:34:15.000</p>
+</td><td colspan="1" rowspan="1"><p>-56</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>72</p>
+</td><td colspan="1" rowspan="1"><p>Security she service often American purpose.</p>
+</td><td colspan="1" rowspan="1"><p>FALSE</p>
+</td><td colspan="1" rowspan="1"><p>2024-01-22 12:54:36.000</p>
+</td><td colspan="1" rowspan="1"><p>-53</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>81</p>
+</td><td colspan="1" rowspan="1"><p>Despite remember rich vote mean.</p>
+</td><td colspan="1" rowspan="1"><p>FALSE</p>
+</td><td colspan="1" rowspan="1"><p>2024-03-27 07:25:40.000</p>
+</td><td colspan="1" rowspan="1"><p>12</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>...</p>
+</td><td colspan="1" rowspan="1"><p>...</p>
+</td><td colspan="1" rowspan="1"><p>...</p>
+</td><td colspan="1" rowspan="1"><p>...</p>
+</td><td colspan="1" rowspan="1"><p>...</p>
+</td></tr>
+</table>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM STATUS_DETAIL WHERE owner_id = 1;
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>OWNER_ID</p>
+</td><td colspan="1" rowspan="1"><p>INDEX</p>
+</td><td colspan="1" rowspan="1"><p>STATUS</p>
+</td><td colspan="1" rowspan="1"><p>COUNT</p>
+</td><td colspan="1" rowspan="1"><p>PERCENT</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>upcoming</p>
+</td><td colspan="1" rowspan="1"><p>21</p>
+</td><td colspan="1" rowspan="1"><p>0.300000</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>today</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>0.014286</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>overdue</p>
+</td><td colspan="1" rowspan="1"><p>48</p>
+</td><td colspan="1" rowspan="1"><p>0.685714</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Clean up the sample data generator</h2>
+<p>We can now drop the sample data table and the UDF</p>
+<pre><code language="language-sql" class="language-sql">DROP TABLE SAMPLE_TASKS;
+DROP FUNCTION create_fake_task(int, string, string);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building the application" duration="5">
+        <p>We are now ready to build out the application and connect to the data. Start by cloning the repo with the code for the Python Flask application.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-build-data-application-with-hybrid-tables hybrid-table-data-app
+</code></pre>
+<h2 is-upgraded>Set up the environment</h2>
+<p>For the application to run locally, we can create a virtual environment to run it in. You could use either option that works on your environment, but at the end of it you should have a Python 3.10 environment where you can install the required Python packages.</p>
+<h3 is-upgraded>Option 1 - using Conda environments</h3>
+<pre><code language="language-bash" class="language-bash">conda create --name ht-app-venv python=3.10
+
+conda activate ht-app-venv
+</code></pre>
+<h3 is-upgraded>Option 2 - using PIP Virtual Environments</h3>
+<pre><code language="language-bash" class="language-bash">python -m venv venv
+
+source venv/bin/activate
+</code></pre>
+<p>Install the required packages with Pip now:</p>
+<pre><code language="language-bash" class="language-bash">pip install -r src/requirements.txt
+</code></pre>
+<h3 is-upgraded>Add environment variables</h3>
+<p>Now create a <code>.env</code> file to hold the sensitive credentials to your Snowflake account.</p>
+<pre><code language="language-bash" class="language-bash">cd src/
+cp .env.template .env
+</code></pre>
+<p>In the new <code>.env</code> file update the values for <code>SNOWFLAKE_ACCOUNT</code>, <code>SNOWFLAKE_USER</code> and <code>SNOWFLAKE_PASSWORD</code>.</p>
+<pre><code language="language-bash" class="language-bash">APP_SECRET=a_secret_string_used_for_session_data_in_the_flask_app
+
+SNOWFLAKE_ACCOUNT=&lt;SNOWFLAKE ACCOUNT IDENTIFIER&gt;
+SNOWFLAKE_USER=&lt;SNOWFLAKE USER NAME&gt;
+SNOWFLAKE_PASSWORD=&lt;SNOWFLAKE USER PASSWORD&gt;
+SNOWFLAKE_ROLE=HYBRID_TASK_APP_ROLE
+SNOWFLAKE_WAREHOUSE=HYBRID_TASK_APP_WH
+SNOWFLAKE_DATABASE=HYBRID_TASK_APP_DB
+SNOWFLAKE_SCHEMA=DATA
+</code></pre>
+<h2 is-upgraded>Run the application</h2>
+<p>Start the Flask application using:</p>
+<pre><code language="language-bash" class="language-bash">flask --app app run
+</code></pre>
+<pre><code language="language-bash" class="language-bash"> * Serving Flask app &#39;app&#39;
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+</code></pre>
+<p>Access the application on the local address <a href="http://127.0.0.1:5000" target="_blank">http://127.0.0.1:5000</a>. <img alt="Login screen" src="img/eae24f1c9ab90732.png"></p>
+<p>You can now login using one of the users created earlier, e.g. <code>first_user</code> with password <code>hybrid@123</code>.</p>
+<aside class="warning"><p>Note that the user and password management shown in this application is not something you would use in real application, it is simply put in place here to provide a mechanism to change between users in the application. The passwords are for instance stored in plain text in the database and also sent unencrypted or secured between browser and server. This part of the solution is simply to provide a means of switching between different users, and owners of different lists of Tasks in the application</p>
+</aside>
+<p class="image-container"><img alt="Main screen" src="img/391a330f979260f9.png"></p>
+<p>We now see a view over a number of tasks for the selected user. They are sorted out across their due date.</p>
+<p>You can click a task to edit it&#39;s description, change labels and the due date. All of this runs directly on the Hybrid Tables data, as a transactional process.</p>
+<h2 is-upgraded>Application code</h2>
+<p>The application is build around the <code>app.py</code> main file, which contains a number of routes for the application. Open the file and look at the <code>home()</code> method that correlates to the <code>/</code> route for the application (i.e. what is displayed when the user accesses the application directly).</p>
+<pre><code language="language-python" class="language-python">@app.route(&#34;/label/&lt;label&gt;&#34;, strict_slashes=False)
+@app.route(&#34;/&#34;, defaults={&#39;label&#39;: None}, strict_slashes=False)
+def home(label:str):
+    user_id = session[&#39;user_id&#39;]
+
+    tasks_overview = controller.load_items_overview(user_id, label)
+    tasks_overview_by_status = controller.get_tasks_by_status(tasks_overview)
+    tasks_ids = Controller.get_task_ids_for_overview(tasks_overview_by_status)
+    labels = controller.load_task_labels(tasks_ids)
+
+    task_stats = controller.load_items_stats(user_id, label)
+    label_stats = get_label_stats(user_id)
+    users = get_users()
+    for user in users:
+        user.active = user.id == user_id
+
+    viewmodel = HomeViewModel(
+        users,
+        user_id,
+        task_stats[&#34;overdue&#34;].count, 
+        task_stats[&#34;today&#34;].count, 
+        task_stats[&#34;upcoming&#34;].count, 
+        [Controller.map_labels(_, labels, label_stats) for _ in tasks_overview_by_status[0]],
+        [Controller.map_labels(_, labels, label_stats) for _ in tasks_overview_by_status[1]],
+        [Controller.map_labels(_, labels, label_stats) for _ in tasks_overview_by_status[2]],
+        label_stats,
+        label)
+    
+    return render_template(&#34;main.html&#34;, model=viewmodel)
+</code></pre>
+<p>In the application the <code>Controller</code> class that is responsible for connecting to the data and serving it to the front. In the code above we can see how the controller gets called with a number of requests to get data. The file <code>Controlller.py</code> contains the code for reading and writing data to and from the database. For instance, the method <code>load_items(...)</code> used by the &#34;/&#34; route executes simple SQL statements and returns that mapped to objects:</p>
+<pre><code language="language-python" class="language-python">class Controller:
+
+    ...
+
+    def load_items(self, user_id:int, label:str=None) -&gt; List[Task]:
+
+        if label:
+            sql = &#34;&#34;&#34;
+                    SELECT id, item, date_due, days_due, status
+                    FROM HYBRID_TASK_APP_DB.DATA.TASK_DETAIL t
+                    INNER JOIN HYBRID_TASK_APP_DB.DATA.TASK_LABEL l ON t.id = l.task_id
+                    WHERE owner_id = ?
+                    AND l.label = LOWER(?)
+                    AND t.complete = FALSE;
+                    &#34;&#34;&#34;
+            data_items = self.session.sql(sql, [user_id, label]).collect()
+        else:
+            sql = &#34;&#34;&#34;
+                    SELECT id, item, date_due, days_due, status
+                    FROM HYBRID_TASK_APP_DB.DATA.TASK_DETAIL t
+                    WHERE owner_id = ?
+                    AND t.complete = FALSE;
+                    &#34;&#34;&#34;
+            data_items = self.session.sql(sql, [user_id]).collect()
+
+        items_all = [Task.loadRow(_) for _ in data_items]
+
+        return items_all
+</code></pre>
+<aside class="special"><p>The application does not use any Object Relationship Mapper frameworks (like SQL Alchemy), it simply defines and manages the data retrieval and mapping to model classes directly, but it would be fully possible to add for instance SQL Alchemy here to take care of mapping data to objects.</p>
+</aside>
+<p>We see that the application code here calls the controller to get the overview of items to display on the first page (<code>getItemsOverview(...)</code>) and a number of other calls to get labels, users and status for all the items.</p>
+<p>You can also try clicking one of the Task, or adding a new Task and then seeing how it is updated in the lists.</p>
+<p>Notice how we are updating both the Task description and the associated labels in a single form. This means that we are writing data to both of the two tables <code>TASK</code> and <code>TASK_LABEL</code>, and for this to work the foreign key between <code>TASK</code> and <code>TASK_LABEL</code> needs to be maintained.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connecting to the data" duration="10">
+        <p>We will now look at how this application connects to the data, both for reads and writes.</p>
+<p>Open the <code>snowflake_connection.py</code> file, it contains the code for creating a connection to Snowflake.</p>
+<pre><code language="language-python" class="language-python">def getConnection() -&gt; snowflake.connector.SnowflakeConnection:
+    creds = {
+            &#39;account&#39;: os.getenv(&#39;SNOWFLAKE_ACCOUNT&#39;),
+            &#39;user&#39;: os.getenv(&#39;SNOWFLAKE_USER&#39;),
+            &#39;password&#39;: os.getenv(&#39;SNOWFLAKE_PASSWORD&#39;),
+            &#39;warehouse&#39;: os.getenv(&#39;SNOWFLAKE_WAREHOUSE&#39;),
+            &#39;database&#39;: os.getenv(&#39;SNOWFLAKE_DATABASE&#39;),
+            &#39;schema&#39;: os.getenv(&#39;SNOWFLAKE_SCHEMA&#39;),
+            &#39;role&#39;: os.getenv(&#39;SNOWFLAKE_ROLE&#39;),
+            &#39;client_session_keep_alive&#39;: True
+        }
+    
+    snowflake.connector.paramstyle=&#39;qmark&#39;
+    connection = snowflake.connector.connect(**creds)
+
+    return connection
+
+def getSession() -&gt; Session:
+    return Session.builder.configs({&#34;connection&#34;: getConnection() }).create()
+</code></pre>
+<p>The parameteters, like the account name, user name and password are picked up from the <code>.env</code> file here and used to connect.</p>
+<aside class="special"><p>This file actually contains more code that is not used specifically here, but it could be used when creating a connection when running the same aplication on Snowopark Container Service - i.e. hosting this application directly on Snowflake. It also shows how a SQL Alchemy connection URI can be constructued, although also not used in this guide.</p>
+</aside>
+<p>This connection code is then used in <code>app.py</code> to set up the <code>Controller</code> object with a connection:</p>
+<pre><code language="language-python" class="language-python">def get_connection()-&gt;Session:
+    print(f&#39;Recreating connection&#39;)
+    conn = snowflake_connection.getSession()
+    cwd = os.getcwd()
+    conn.query_tag = f&#39;{cwd}/app.py&#39;
+    print(f&#39;Connected to {conn.get_current_account()} as ROLE {conn.get_current_role()}&#39;)
+    return conn
+
+def get_controller()-&gt;Controller:
+    print(f&#39;Recreating controller&#39;)
+    ctrl = Controller(connection)
+    return ctrl
+
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = os.getenv(&#39;APP_SECRET&#39;)
+    return app
+
+app = create_app()
+
+with app.app_context():
+    cache = Cache(config={&#39;CACHE_TYPE&#39;: &#39;SimpleCache&#39;})
+    cache.init_app(app)
+
+connection:Session = get_connection()
+controller:Controller = get_controller()
+</code></pre>
+<p>This allows our code in the routes to use the Controller, which in turn uses the Session object, to connect to the data.</p>
+<p>We will now look at how the application queries the Hybrid tables when the pages loads. Ensure that the application is running:</p>
+<pre><code language="language-bash" class="language-bash">flask --app app run
+</code></pre>
+<p>Open the running application (http://127.0.0.1:5000/) in a browser.</p>
+<p>Then open up a worksheet in Snowsight. We are now going to look at how the queries we are running are performing. The view <a href="https://docs.snowflake.com/sql-reference/account-usage/aggregate_query_history" target="_blank">AGGREGATE_QUERY_HISTORY</a> gives us measured latency for the queries we are running. Note that for Hybrid Tables, you will not nececarilly see all queries (or any) in the <strong>Query History</strong>, instead similar data is aggregated on a one minute interval and available in this view.</p>
+<pre><code language="language-sql" class="language-sql">SET start_time = (SELECT current_timestamp());
+
+SELECT
+      query_text
+    , QUERY_TYPE
+    , interval_start_time as interval_start_time
+    , total_elapsed_time:&#34;avg&#34;::number as avg
+    , total_elapsed_time:&#34;min&#34;::number as min
+    , total_elapsed_time:&#34;p90&#34;::number as p90
+    , total_elapsed_time:&#34;p99&#34;::number as p99
+    , total_elapsed_time:&#34;max&#34;::number as max
+FROM snowflake.account_usage.aggregate_query_history qh
+WHERE DATABASE_NAME = &#39;HYBRID_TASK_APP_DB&#39;
+  AND SCHEMA_NAME = &#39;DATA&#39;
+  AND QUERY_TYPE IN (&#39;SELECT&#39;,&#39;UPDATE&#39;,&#39;INSERT&#39;,&#39;DELETE&#39;)
+  AND interval_start_time &gt;= $start_time;
+ORDER BY interval_start_time DESC
+LIMIT 50
+;
+</code></pre>
+<p>If we run this query now it will not show any results, since we are filtering on intervals later than the current timestamp we saved in the <code>$start_time</code> variable. When we rerun the query later, don&#39;t update this, we want to capture evrything from this point onwards. This should give you an empty result set, until we run any new queries. <img alt="Aggregated Query History Empty" src="img/d85e5067b751548d.png"></p>
+<p>Now go back to the application and reload the page. This should trigger a number of queries being executed against the tables. Click around on the different labels, reload the page a couple of times and click some different tasks.</p>
+<p>The Aggregated Query History view will take a few minutes to populate with measured data, so don&#39;t expect to have data there directly. Here is a sample result of that view: <img alt="Aggregated Query History Populated" src="img/4dd72068ca97b948.png"></p>
+<p>We can see in the result some of the type of queries that are giving us that low latency that we are looking for, fast point operations or simple aggregations on well known indexed paths for the data. Just as we expected these are coming in at &lt; 100 ms latencies.</p>
+<pre><code language="language-sql" class="language-sql">SELECT task_id, LISTAGG(label,&#39;,&#39;) as labels 
+FROM HYBRID_TASK_APP_DB.DATA.TASK_LABEL 
+WHERE task_id = ? GROUP BY task_id;
+
+SELECT id, owner_id, item, date_due 
+FROM HYBRID_TASK_APP_DB.DATA.TASK WHERE id = ?;
+
+SELECT task_id, LISTAGG(label,&#39;,&#39;) as labels 
+FROM HYBRID_TASK_APP_DB.DATA.TASK_LABEL
+ WHERE task_id IN (?,?,?,?,?,?,?,?,?,?,?) GROUP BY task_id;
+
+SELECT task_id, LISTAGG(label,&#39;,&#39;) as labels 
+FROM HYBRID_TASK_APP_DB.DATA.TASK_LABEL 
+WHERE task_id = ? GROUP BY task_id;
+
+SELECT id, owner_id, item, date_due 
+FROM HYBRID_TASK_APP_DB.DATA.TASK WHERE id = ?;
+</code></pre>
+<p>We also have a number of queries that are taking longer, and that is expected. These are scans of data not on indexes or keys. They still perform well enough for our application&#39;s purpose.</p>
+<pre><code language="language-sql" class="language-sql">SELECT id, login, name 
+FROM HYBRID_TASK_APP_DB.DATA.USER;
+
+SELECT id, item, date_due, days_due, status 
+FROM HYBRID_TASK_APP_DB.DATA.TASK_DETAIL t 
+WHERE owner_id = ? AND status &lt;&gt; &#39;completed&#39;;
+
+SELECT index, count, label, percent 
+FROM HYBRID_TASK_APP_DB.DATA.LABEL_DETAIL WHERE owner_id = ?;
+
+SELECT id, item, date_due, days_due, status 
+FROM HYBRID_TASK_APP_DB.DATA.TASK_DETAIL t 
+INNER JOIN HYBRID_TASK_APP_DB.DATA.TASK_LABEL l ON t.id = l.task_id 
+WHERE owner_id = ? AND l.label = LOWER(?) AND status &lt;&gt; &#39;completed&#39;;
+</code></pre>
+<p>For instance, this query retreives the top 5 Tasks broken down by the status for the due date. This is a form of analytical query that goes across both the <code>TASK</code> and <code>TASK_LABEL</code> tables, and ranks the items in order of how urgent they are. It is natural that this query processes more data than a direct row level operation.</p>
+<pre><code language="language-sql" class="language-sql">SELECT t.id, t.item, t.date_due, t.days_due, t.status, t.owner_id, t.index
+FROM (
+    SELECT t.id, t.item , t.date_due, t.days_due, t.status, owner_id
+        , row_number() over(PARTITION BY t.status, t.owner_id ORDER BY t.days_due ASC) as index
+    FROM HYBRID_TASK_APP_DB.DATA.TASK_DETAIL t
+    INNER JOIN HYBRID_TASK_APP_DB.DATA.TASK_LABEL l ON t.id = l.task_id
+    WHERE OWNER_ID = ?
+    AND l.label = LOWER(?)
+    AND t.complete = FALSE
+) t
+WHERE index &lt;= 5 
+ORDER BY index ASC;
+;
+</code></pre>
+<p>This query aggregates the number of <code>TASK</code> items across the the different status categories that are calculated per task.</p>
+<pre><code language="language-sql" class="language-sql">SELECT status, count FROM LABEL_STATUS_DETAIL WHERE owner_id = ? AND LABEL = ?;
+</code></pre>
+<p>It uses the helper view <code>LABEL_STATUS_DETAIL</code> that we defined earlier. Looking at that definition, we can see that this is a <code>COUNT</code> aggregation across all <code>TASK</code> rows:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW LABEL_STATUS_DETAIL AS
+SELECT
+      owner_id
+    , label
+    , row_number() over(PARTITION BY owner_id, label ORDER BY COUNT(*) DESC) as index
+    , t.status
+    , count(*) as count
+FROM TASK_DETAIL t
+INNER JOIN TASK_LABEL l ON l.task_id = t.id
+WHERE t.complete = FALSE
+GROUP BY ALL
+ORDER BY 4 DESC;
+</code></pre>
+<p>Finally this query returns the break down of Tasks across the available labels. This is also aggregating data across both the <code>TASK</code> and <code>TASK_LABEL</code> tables and does the aggregation on demand.</p>
+<pre><code language="language-sql" class="language-sql">SELECT index, count, label, percent FROM HYBRID_TASK_APP_DB.DATA.LABEL_DETAIL WHERE owner_id = ?;
+</code></pre>
+<p>Again, this is a <code>COUNT</code> aggregation across labels related to tasks, using the another helper view <code>LABEL_DETAIL</code> we created:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW LABEL_DETAIL AS
+SELECT
+      owner_id
+    , row_number() over(PARTITION BY owner_id ORDER BY COUNT(*) DESC) as index
+    , count(*) as count
+    , lower(l.label) as label
+    , count(*) / sum(count(*)) over(PARTITION BY owner_id) as percent
+FROM TASK t
+INNER JOIN TASK_LABEL l ON l.task_id = t.id
+GROUP BY ALL
+ORDER BY 3 DESC;
+</code></pre>
+<p>Now open the <code>model.py</code> file for the application and look at functions <code>getUsers(self)</code>, <code>getItemsOverview(self, all_labels:List[Label], label:str=None)</code>, <code>getStatus(self, label:str=None)</code> and <code>getLabels(self)</code>. They show how these queries are executed from the application. Notice the usage of <a href="https://docs.snowflake.com/en/sql-reference/bind-variables" target="_blank">bound variables</a> for the queries, rather than using python string formating or similar to build the SQL statements.</p>
+<p>In <code>model.py</code> we can see the sql executed</p>
+<pre><code language="language-python" class="language-python">    def getLabels(self) -&gt; List[Label]:
+        sql = SQL.getLabelsByOwner(self.user_id)
+        data_items = self.session.sql(sql[0], params=sql[1]).collect()
+        self.labels = [Label.loadRow(_) for _ in data_items]
+        return self.labels
+</code></pre>
+<p>and in <code>SQL.py</code> we find the related SQL statements:</p>
+<pre><code language="language-python" class="language-python">    def getLabelsByOwner(owner_id:str) -&gt; tuple:
+        sql = f&#39;&#39;&#39;
+                SELECT
+                    row_number() over(ORDER BY COUNT(*) DESC) as index
+                    , count(*) as count
+                    , lower(l.label) as label
+                    , count(*) / sum(count(*)) over() as percent
+                FROM task t
+                INNER JOIN task_label l ON l.task_id = t.id
+                WHERE t.owner_id = ?
+                GROUP BY ALL
+                ORDER BY 2 DESC
+                ;
+            &#39;&#39;&#39;
+        return (sql, [owner_id])
+</code></pre>
+<h2 is-upgraded>Writing data to Hybrid Tables</h2>
+<p>Writing data to the database as Tasks are updated or created in the application is similar, but we need to consider transactions as we will be updating two table in each update (Tasks and Labels).</p>
+<h3 is-upgraded>Updating multi table data</h3>
+<p>Go back to the application and click one of the Tasks in the view that will bring up the Edit dialog for the task. <img alt="Edit Task view" src="img/cd26a2e4ae39adf8.png"></p>
+<p>Change some of the lables (by clicking them) so that there are some removed and some new added. Also change the description of the task and then click the save button.</p>
+<p>Open the file <code>Controller.py</code> and find the method <code>update_task</code>:</p>
+<pre><code language="language-python" class="language-python">def update_task(self, task_id:int, item:str, date_due:datetime.datetime, updated_labels:List[str], existing_labels:List[str]) -&gt; None:
+        self.session.sql(f&#34;BEGIN TRANSACTION;&#34;).collect()        
+        items = self.session.sql(f&#34;UPDATE HYBRID_TASK_APP_DB.DATA.TASK SET item=?, date_due=? WHERE id = ?;&#34;, params=[item, date_due, task_id]).collect()
+        for label in [_.strip().lower() for _ in updated_labels if _ not in existing_labels]:
+            self.session.sql(f&#34;INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));&#34;, params=[task_id, label]).collect()    
+        for label in [_.strip().lower() for _ in existing_labels if _ not in updated_labels]:
+            self.session.sql(f&#34;DELETE FROM HYBRID_TASK_APP_DB.DATA.TASK_LABEL WHERE TASK_ID = ? AND LABEL = ?;&#34;, params=[task_id, label]).collect()    
+        self.session.sql(f&#34;COMMIT;&#34;).collect()
+</code></pre>
+<p>We can see that there are a number of queries wrapped executed here, in order, these statements are (depending on how many labels you added and removed):</p>
+<pre><code language="language-sql" class="language-sql">BEGIN TRANSACTION;
+UPDATE HYBRID_TASK_APP_DB.DATA.TASK SET item=?, date_due=? WHERE id = ?;
+INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));
+INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));
+DELETE FROM HYBRID_TASK_APP_DB.DATA.TASK_LABEL WHERE TASK_ID = ? AND LABEL = ?;
+DELETE FROM HYBRID_TASK_APP_DB.DATA.TASK_LABEL WHERE TASK_ID = ? AND LABEL = ?;
+COMMIT;
+</code></pre>
+<p>What this does is that the <code>UPDATE</code> to the <code>TASK</code> table and the <code>INSERT</code> and <code>DELETE</code> statements for <code>TASK_LABEL</code> are committed as a single transaction, or if it fails, rolled back as a unit.</p>
+<h3 is-upgraded>Inserting multi table data</h3>
+<p>For creating new Tasks the operations are similar, but we also need to consider the <code>ID</code> of newly created items, because we need that to insert the <code>TASK_LABEL</code> items that are related to the <code>ID</code> in the <code>TASK</code> table.</p>
+<p>Consider how the <code>TASK</code> table was created:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE SEQUENCE TASK_ID_SEQ;
+
+CREATE OR REPLACE HYBRID TABLE &#34;TASK&#34; (
+    id INT DEFAULT TASK_ID_SEQ.nextval,
+	  item VARCHAR(16777216),
+    complete BOOLEAN DEFAULT FALSE,
+    date_due TIMESTAMP DEFAULT NULL,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    date_modified TIMESTAMP DEFAULT NULL,
+    date_completed TIMESTAMP DEFAULT NULL,
+    owner_id INT,
+	  primary key (id) rely,
+    foreign key (owner_id) references &#34;USER&#34;(id),
+    index idx001_owner_id(owner_id),
+    index idx002_complete(complete)
+);
+</code></pre>
+<p>Instead of using a <code>AUTOINCREMENT</code> for the <code>id</code> primary key column, we create a separate <a href="https://docs.snowflake.com/en/user-guide/querying-sequences" target="_blank">SEQUENCY</a> to provide the default value. This means that we can also access the next value in that Sequence as a separate statement and remember that id and use it for the insert into the related table <code>TASK_LABEL</code>.</p>
+<aside class="warning"><p>While <code>AUTOINCREMENT</code> allows Snowflake to generate a unique and new identifier for newly created items, there is no way to retreive that identifier without running the risk of getting the wrong identifier in a scenario where multiple concurrent users are writing data to the application.</p>
+</aside>
+<p>Go back to the application, and click the big (+) button in the <strong>Tasks Today</strong> column, that will bring you to the view for creating a new Task. In the view, add a description for the task and click a few of the labels to add them to it, then click the save button.</p>
+<p>In the code in <code>Controller.py</code> we see how the value from <code>TASK_ID_SEQ.nextval</code> is used as <code>task_id</code> and inserted as the <code>id</code> for the new Task and then also as the <code>task_id</code> for labels being inserted.</p>
+<pre><code language="language-python" class="language-python">    def create_task(self, user_id:int, item:str, date_due:datetime.datetime, updated_labels:List[str]) -&gt; int:        
+        self.session.sql(f&#34;BEGIN TRANSACTION;&#34;).collect()
+        task_id = self.session.sql(f&#34;SELECT HYBRID_TASK_APP_DB.DATA.TASK_ID_SEQ.nextval id&#34;).collect()[0].ID
+        self.session.sql(f&#34;INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK (ID, ITEM, DATE_DUE, OWNER_ID) VALUES (?, ?, ?, ?);&#34;, params=[task_id, item, (&#34;TIMESTAMP_NTZ&#34;, date_due), user_id]).collect()
+        for label in updated_labels:
+            self.session.sql(f&#34;INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));&#34;, params=[id, label]).collect()            
+        self.session.sql(f&#34;COMMIT;&#34;).collect()
+        return task_id
+</code></pre>
+<p>The queries executed for this, would be something like the following:</p>
+<pre><code language="language-sql" class="language-sql">BEGIN TRANSACTION;
+(SELECT TASK_ID_SEQ.nextval id);
+INSERT INTO TASK (ID, ITEM, DATE_DUE, OWNER_ID) VALUES (?, ?, ?, ?);
+INSERT INTO TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));
+INSERT INTO TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));
+COMMIT;
+</code></pre>
+<p>In Snowsight, you can also find the latest inserted task and related labels by querying the tables:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM TASK ORDER BY date_created DESC LIMIT 1;
+SELECT task_id, LISTAGG(label, &#39;,&#39;) as labels FROM TASK_LABEL 
+WHERE task_id IN (SELECT id FROM TASK ORDER BY date_created DESC LIMIT 1) GROUP BY ALL;
+</code></pre>
+<p>With that, we have gone through both reading data, mixing analytical type of queries with direct transactional point lookup queries, as well as working with transactionally scoped writes to multiple tables.</p>
+<p>You can continue exploring the application and examine the performance of the various operations on the data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean-up" duration="1">
+        <p>We can now remove all the resources created for this quickstart.</p>
+<p>Ensure that you are stopping the running application, press <code>ctrl+c</code> in the terminal.</p>
+<p>In the Snowflake Snowsight interface, drop the database, warehouse and roles created:</p>
+<pre><code language="language-sql" class="language-sql">DROP WAREHOUSE HYBRID_TASK_APP_WH;
+DROP DATABASE HYBRID_TASK_APP_DB;
+USE ROLE ACCOUNTADMIN;
+DROP ROLE HYBRID_TASK_APP_ROLE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations on completing this end-to-end guide on building a data application running directly on Snowflake Hybrid Tables. You should now have the tools to work with Hybrid Tables for other types of applications that are working with operational or transactional data, which is expecially useful when you want to combine that with analytical data and operations also living on the Snowflake platform. Withouth having to manage connections to multiple databases and database technologies, your applications are becoming both easier to write and to maintain.</p>
+<p>If you want to learn more about Snowflake Hybrid Tables, checkout the official documentation here: <a href="https://docs.snowflake.com/en/user-guide/tables-hybrid?_fsi=siV2rnOG" target="_blank">Snowflake Docs: Hybrid tables</a>. You can also go through the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables" target="_blank">Getting Started with Hybrid Tables</a> quickstart that covers additional capabilities of Hybrid Tables.</p>
+<p class="image-container"><img alt="Complete the quickstart" src="img/344b2cfd1444197a.png"></p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Setting up a transactional data structure using Hybrid Tables</li>
+<li>Connecting to data in as Snowflake account using Python</li>
+<li>Reading and writing operational data in Hybrid Tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

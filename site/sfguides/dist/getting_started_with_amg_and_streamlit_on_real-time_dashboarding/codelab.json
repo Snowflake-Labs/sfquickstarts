@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_amg_and_streamlit_on_real-time_dashboarding",
+  "duration": 46,
+  "title": "Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding",
+  "authors": "James Sun",
+  "summary": "This guide will walk you through how to build real-time dashboards with AMG and Streamlit to track data ingested by Snowpipe Streaming",
+  "source": "getting_started_with_amg_and_streamlit_on_real-time_dashboarding/getting_started_with_amg_and_streamlit_on_real-time_dashboarding.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "amazonamg",
+    "applicationloadbalancer",
+    "container",
+    "ecs",
+    "gettingstarted",
+    "grafana",
+    "streaming",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_amg_and_streamlit_on_real-time_dashboarding"
+}

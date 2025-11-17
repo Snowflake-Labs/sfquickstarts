@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "operationalizing_ai_with_snowflake_and_datarobot",
+  "duration": 71,
+  "title": "Operationalizing AI with Snowflake and DataRobot",
+  "summary": "This is a sample Snowflake Guide!!",
+  "source": "operationalizing_ai_with_snowflake_and_datarobot/operationalizing_ai_with_snowflake_and_datarobot.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "ai",
+    "automatedml",
+    "datarobot",
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "operationalizing_ai_with_snowflake_and_datarobot"
+}

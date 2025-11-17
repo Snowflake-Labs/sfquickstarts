@@ -1,0 +1,265 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes 소개</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_introduction_kr"
+                  title="Tasty Bytes 소개"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Tasty Bytes 소개" duration="1">
+        <p class="image-container"><img src="img/b790a31ef683ee8b.png"></p>
+<h2 is-upgraded>개요</h2>
+<p>이 Tasty Bytes 소개 Quickstart에서는 우선 Snowflake의 frostbyte 팀이 생성한 Tasty Bytes라는 가상의 푸드 트럭 브랜드에 대해 알아보겠습니다.</p>
+<p>Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 모델, 워크로드 전용 역할 및 웨어하우스, 모든 필수 역할 기반 액세스 제어(RBAC) 설정 프로세스를 완료하겠습니다.</p>
+<p>이 Quickstart를 완료한 시점에는 <a href="/guide/tasty_bytes_introduction_kr/index.html#3" target="_blank">Tasty Bytes 사용 - Quickstart</a> 섹션에서 확인할 수 있는 Quickstart를 실행하는 데 필요한 상태일 것입니다.</p>
+<h2 is-upgraded>Tasty Bytes란 무엇일까요?</h2>
+<p class="image-container"><img src="img/a51f501137dea3c5.png"></p>
+<h2 is-upgraded>사전 필요 조건 및 지식</h2>
+<ul>
+<li>지원되는 Snowflake <a href="https://docs.snowflake.com/ko/user-guide/setup#browser-requirements" target="_blank">브라우저</a></li>
+<li>엔터프라이즈 또는 비즈니스 크리티컬 Snowflake 계정 <ul>
+<li>Snowflake 계정이 없다면 <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank"><strong>30일 무료 평가판 계정을 위해 등록하십시오</strong></a>. 등록할 때 <strong>엔터프라이즈</strong> 에디션을 선택하셔야 합니다. 아무 <a href="https://docs.snowflake.com/ko/user-guide/intro-regions" target="_blank">Snowflake 클라우드 또는 리전</a>을 선택하셔도 됩니다.</li>
+<li>등록한 후 활성화 링크와 Snowflake 계정 URL이 포함된 이메일이 전송됩니다.</li>
+<li><img style="width: 300.00px" src="img/1e925e111069cf28.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>알아볼 내용</h2>
+<ul>
+<li>Snowflake 워크시트 생성하기</li>
+<li>Snowflake 워크시트 내에서 동시에 모든 쿼리 실행하기</li>
+<li>Snowflake 워크시트에서 SQL을 통해 데이터베이스, 스키마, 테이블, 역할 및 웨어하우스 탐색하기</li>
+</ul>
+<h2 is-upgraded>구축할 것</h2>
+<ul>
+<li>Tasty Bytes 사용 - Quickstart를 실행할 수 있도록 하는 Tasty Bytes 기초 <ul>
+<li>Snowflake 데이터베이스</li>
+<li>테이블 및 뷰가 포함된 가공 전, 조정 및 분석 스키마</li>
+<li>워크로드 전용 Snowflake 역할 및 웨어하우스</li>
+<li>역할 기반 액세스 제어(RBAC)</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tasty Bytes 설정" duration="6">
+        <h2 is-upgraded>개요</h2>
+<p>이 Quickstart에서는 Snowsight로 알려진 Snowflake 웹 인터페이스를 사용하겠습니다. Snowsight를 처음 활용하는 것이라면 개괄적인 검토를 위해 <a href="https://docs.snowflake.com/ko/user-guide/ui-snowsight" target="_blank">Snowsight 설명서</a>를 확인하는 것이 좋습니다.</p>
+<h2 is-upgraded>1단계 - URL을 통해 Snowflake에 액세스</h2>
+<ul>
+<li>브라우저 창을 열고 Snowflake 계정 URL을 입력합니다. 아직 Snowflake 계정이 없다면 무료 Snowflake 평가판 계정을 위해 등록하기 위해 이전 섹션으로 되돌아가십시오.</li>
+</ul>
+<h2 is-upgraded>2단계 - Snowflake에 로그인</h2>
+<ul>
+<li>Snowflake 계정에 로그인합니다. <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>3단계 - Worksheets로 이동</h2>
+<ul>
+<li>왼쪽 탐색 메뉴에 있는 Worksheets 탭을 클릭합니다. <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>4단계 - 워크시트 생성</h2>
+<ul>
+<li>Worksheets 내에서 Snowsight 오른쪽 상단 모서리에 있는 ‘+&#39; 버튼을 클릭하고 ‘SQL Worksheet&#39;를 선택합니다. <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>5단계 - 워크시트 이름 바꾸기</h2>
+<ul>
+<li>자동으로 생성된 Timestamp 이름을 클릭하고 ‘Tasty Bytes - Setup&#39;을 입력하여 워크시트의 이름을 바꿉니다. <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>6단계 - GitHub에서 호스팅된 설정 SQL에 액세스</h2>
+<ul>
+<li>GitHub에서 호스팅된 Tasty Bytes SQL 설정 파일과 연결된 아래 버튼을 클릭합니다.</li>
+</ul>
+<p><a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_introduction.sql" target="_blank"><paper-button class="colored" raised>tb_introduction.sql</paper-button></a></p>
+<h2 is-upgraded>7단계 - GitHub에서 설정 SQL 복사</h2>
+<ul>
+<li>GitHub 내에서 오른쪽으로 이동하여 ‘Copy raw contents&#39;를 클릭합니다. 이렇게 하면 모든 필수 SQL이 클립보드로 복사됩니다. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>8단계 - 설정 SQL을 GitHub에서 Snowflake 워크시트로 붙여넣기</h2>
+<ul>
+<li>Snowsight 및 새롭게 생성한 워크시트로 되돌아가 방금 GitHub에서 복사한 것을 붙여넣습니다(<em>Mac 바로 가기 키 CMD + V, Windows 바로 가기 키 CTRL + V</em>).</li>
+</ul>
+<h2 is-upgraded>9단계 - 모든 설정 SQL 동시 실행</h2>
+<ul>
+<li>새롭게 생성한 Tasty Bytes - Setup 워크시트 내부를 클릭하고 모두 선택(Mac 바로 가기 키 <em>CMD + A, Windows 바로 가기 키 CTRL + A</em>)한 후 ‘► Run&#39;을 클릭합니다. <ul>
+<li><img src="img/451b2deff6f2950a.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>10단계 - 설정 완료</h2>
+<ul>
+<li>‘► Run&#39;을 클릭한 후 쿼리가 실행되기 시작합니다. 이러한 쿼리는 순차적으로 실행되며 전체 워크시트를 실행하는 데 약 5분이 소요됩니다. 완료된 후 <code>frostbyte_tasty_bytes setup is now complete</code>라는 메시지가 나타납니다. <ul>
+<li><img src="img/896d65f32bfae4ba.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>11단계 - 다음 클릭 –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tasty Bytes 기초 탐색" duration="2">
+        <h2 is-upgraded>개요</h2>
+<p>Tasty Bytes 설정이 성공적으로 완료되면 이제 생성한 데이터베이스, 역할 및 웨어하우스를 탐색할 수 있습니다.</p>
+<aside class="warning"><p><strong>참고:</strong> 이전 섹션에서 생성한 <em>Tasty Bytes - Setup</em> 워크시트 내에서 하단까지 스크롤하여 아래에 있는 각 단계에 포함된 SQL을 복사하고, 붙여넣고, 실행하십시오.</p>
+</aside>
+<h2 is-upgraded>1단계 - Tasty Bytes 데이터베이스 탐색</h2>
+<p>이 쿼리는 <a href="https://docs.snowflake.com/ko/sql-reference/sql/show-databases.html" target="_blank">SHOW DATABASES</a>를 통해 생성한 데이터베이스를 반환합니다.</p>
+<pre><code>SHOW DATABASES LIKE &#39;frostbyte_tasty_bytes&#39;;
+</code></pre>
+<p><img src="img/91a8de41aada1ac6.png">  ### 2단계 - Tasty Bytes 데이터베이스 내 스키마 탐색 </p>
+<p>이 쿼리는 <a href="https://docs.snowflake.com/ko/sql-reference/sql/show-schemas" target="_blank">SHOW SCHEMAS</a>를 통해 생성한 데이터베이스 내 스키마를 반환합니다.</p>
+<pre><code>SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
+</code></pre>
+<p><img src="img/75491dcf311d5611.png">  ### 3단계 - Tasty Bytes 데이터베이스의 RAW_POS 스키마 내 테이블 탐색 </p>
+<p>이 쿼리는 <a href="https://docs.snowflake.com/ko/sql-reference/sql/show-tables" target="_blank">SHOW TABLES</a>를 통해 <code>raw_pos</code> 스키마 내 테이블을 반환합니다.</p>
+<pre><code>SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
+</code></pre>
+<p><img src="img/11a6d9991e20d84f.png">  ### 4단계 - Tasty Bytes 역할 탐색 </p>
+<p>이 쿼리는 <a href="https://docs.snowflake.com/ko/sql-reference/sql/show-roles" target="_blank">SHOW ROLES</a>를 통해 생성한 역할을 반환합니다.</p>
+<pre><code>SHOW ROLES LIKE &#39;tasty%&#39;;
+</code></pre>
+<p><img src="img/ea9571b6ae65de6e.png">  ### 5단계 - Tasty Bytes 웨어하우스 탐색 </p>
+<p>이 쿼리는 <a href="https://docs.snowflake.com/ko/sql-reference/sql/show-warehouses" target="_blank">SHOW WAREHOUSES</a>를 통해 생성한 웨어하우스를 반환합니다.</p>
+<pre><code>SHOW WAREHOUSES LIKE &#39;tasty%&#39;;
+</code></pre>
+<p><img src="img/670a3584a18724d2.png">  ### 6단계 - 결합 </p>
+<p>다음 3개의 쿼리는 다음 작업을 수행합니다.</p>
+<ol type="1">
+<li><a href="https://docs.snowflake.com/ko/sql-reference/sql/use-role.html" target="_blank">USE ROLE</a>을 통해 <code>tasty_data_engineer</code> 역할 사용</li>
+<li><a href="https://docs.snowflake.com/ko/sql-reference/sql/use-warehouse.html" target="_blank">USE WAREHOUSE</a>를 통해 <code>tasty_de_wh</code> 웨어하우스 활용</li>
+<li>Plant Palace라는 브랜드의 푸드 트럭에서 판매하는 메뉴 항목을 찾기 위해 <code>raw_pos.menu</code> 테이블 쿼리</li>
+</ol>
+<pre><code>USE ROLE tasty_data_engineer;
+USE WAREHOUSE tasty_de_wh;
+
+SELECT
+    m.menu_type_id,
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_name
+FROM frostbyte_tasty_bytes.raw_pos.menu m
+WHERE m.truck_brand_name = &#39;Plant Palace&#39;;
+</code></pre>
+<p><img src="img/2aba27e059c43d58.png">  훌륭합니다! 몇 분 만에 이제 Tasty Bytes 데모 환경이 준비되었으며 Snowflake 계정에서 데모, 역할 및 웨어하우스가 설정되었습니다. 이제 활용할 수 있도록 제공되는 다른 모든 Tasty Bytes Quickstart를 살펴보겠습니다. </p>
+<h2 is-upgraded>7단계 - 다음 클릭 –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tasty Bytes 사용 - Quickstart" duration="1">
+        <h2 is-upgraded>개요</h2>
+<p>축하합니다! 이제 Tasty Bytes 기초 설정을 완료하셨습니다!</p>
+<p>아래 목차는 방금 구축한 기초를 활용하는 사용 가능한 모든 Tasty Bytes Quickstart를 알려줍니다.</p>
+<p class="image-container"><img src="img/a84d9cfd645f2656.png"></p>
+<h2 is-upgraded>제로부터 Snowflake까지</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/" target="_blank">금융 거버넌스</a></h3>
+<ul>
+<li>Snowflake 가상 웨어하우스 및 구성 가능성, 리소스 모니터 그리고 계정 및 웨어하우스 수준 시간 초과 매개변수를 알아보십시오.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_transformation_kr/" target="_blank">변환</a></h3>
+<ul>
+<li>제로 카피 클론, 결과 세트 캐시, 테이블 조작, Time Travel 및 테이블 수준 교체 그리고 드롭 및 드롭 취소 기능을 알아보십시오.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_kr/" target="_blank">반정형 데이터</a></h3>
+<ul>
+<li>Snowflake VARIANT 데이터 유형, 점표기법 및 래터럴 평면화를 통한 반정형 데이터 처리, 뷰 생성 그리고 Snowsight 그래프 생성을 알아보십시오.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/" target="_blank">데이터 거버넌스</a></h3>
+<ul>
+<li>Snowflake 시스템 정의 역할, 사용자 정의 역할 생성 및 허가 적용 그리고 태그 기반 동적 데이터 마스킹 및 행 액세스 정책 배포를 알아보십시오.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_collaboration_kr/" target="_blank">협업</a></h3>
+<ul>
+<li>자사 및 서드 파티 소스를 조정하여 데이터 기반 분석을 수행하기 위해 Weathersource에서 제공하는 즉각적으로 사용 가능한 무료 라이브 데이터를 활용하여 Snowflake 마켓플레이스를 알아보십시오.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/" target="_blank">지리 공간</a></h3>
+<ul>
+<li>SafeGraph에서 제공하는 즉각적으로 사용 가능한 무료 라이브 데이터를 습득하는 것부터 시작하여 지리 공간 지점을 만들고(ST_POINT), 거리를 계산하고(ST_DISTANCE), 좌표를 수집하고(ST_COLLECT), 최소 바운딩 폴리곤을 그리고(ST_ENVELOPE), 면적을 계산하고(ST_AREA), 중심점을 찾아(ST_CENTROID) Snowflake 지리 공간 지원을 알아보십시오.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>워크로드 심층적으로 알아보기(<em>곧 제공 예정</em>)</h2>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

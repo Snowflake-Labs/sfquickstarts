@@ -1,0 +1,153 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Intro to Data Engineering using Python in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="intro_to_data_engineering_python"
+                  title="Intro to Data Engineering using Python in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Through this quickstart, you will learn how to build your first data engineering pipeline using <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake notebooks</a>.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to install and configure the Snowpark pandas library</li>
+<li>How to use Snowpark pandas to transform and analyze datasets using the power of Snowflake</li>
+<li>How to use Snowpark Python to transform and aggregate data</li>
+</ul>
+<h2 is-upgraded>What is pandas on Snowflake?</h2>
+<p>pandas on Snowflake lets you run your pandas code in a distributed manner scalably and securely directly on your data in Snowflake. Just by changing the import statement and a few lines of code, you can get the same pandas-native experience you know and love with the scalability and security benefits of Snowflake.</p>
+<h2 is-upgraded>Why use pandas on Snowflake?</h2>
+<p>pandas is the go-to data processing library for millions worldwide, including countless Snowflake users. However, pandas was never built to handle data at the scale organizations are operating today. Running pandas code requires transferring and loading all of the data into a single in-memory process. It becomes unwieldy on moderate-to-large data sets and breaks down completely on data sets that grow beyond what a single node can handle. With pandas on Snowflake, you can run the same pandas code, but with all the pandas processing pushed down to run in a distributed fashion in Snowflake. Your data never leaves Snowflake, and your pandas workflows can process much more efficiently using the Snowflake elastic engine. This brings the power of Snowflake to pandas developers everywhere.</p>
+<h2 is-upgraded>What is Snowpark?</h2>
+<p>Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Snowpark can be used to build data pipelines, ML models, apps, and other data processing tasks.</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Build a Python data pipeline with Snowflake Notebooks</li>
+<li>Aggregate and transform data to create new features with pandas on Snowflake</li>
+<li>Transform and analyze data using Snowpark Python</li>
+<li>Create a Serverless Task to schedule the transformation</li>
+</ul>
+<h2 is-upgraded>Pre-requisites</h2>
+<ul>
+<li>A Snowflake account. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/" target="_blank">free trial account</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p>This section covers the Snowflake objects creation and other setup needed to run this quickstart successfully.</p>
+<ul>
+<li>Login to your Snowflake free trial account.</li>
+<li>Navigate to Data on the left pane. Click on Databases. Create a database and call it <code>AVALANCHE_DB</code>.</li>
+<li>Click on <code>avalanche_db</code>, select <code>create schema</code> and call it <code>AVALANCHE_SCHEMA</code>.</li>
+<li>Select Admin on the left pane and click on warehouses. Create a new warehouse. Name it <code>DE_M</code>. Select type as standard and size as M.</li>
+<li>On a new browser tab, navigate to this <a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/intro_to_de_python" target="_blank">git repo</a> and download the <code>DE_100.ipynb</code> file.</li>
+<li>On the left pane, select Projects -&gt; Notebooks. Click on the down arrow and select <code>Import ipynb file</code> to load a notebook. Call it <code>AVALANCHE_ANALYTICS_NB</code>. Select <code>AVALANCHE_DB</code> for database and <code>AVALANCHE_SCHEMA</code> for schema, Query warehouse as <code>DE_M</code> and create notebook.</li>
+<li>After the notebook is created, at the top right, click on packages. Search and install modin. Pick the package version as 0.30.1 instead of latest.</li>
+<li>On a new browser tab, navigate to this <a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/intro_to_de_python" target="_blank">git repo</a> and download the <code>order-history.csv</code> and <code>shipping-logs.csv</code> files to your local.</li>
+<li>Switch back to the Snowflake UI, On the left panel right below the name of the notebook, there is a <code>+</code> sign. Click on <code>+</code> to load the <code>order-history.csv</code> and <code>shipping-logs.csv</code> files to your notebook workspace.</li>
+</ul>
+<p>With this, we are ready to run our first data engineering pipeline in Snowflake using Python.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Engineering using Python" duration="10">
+        <p>During this step you will learn how to use pandas on Snowflake to:</p>
+<ul>
+<li>Create a pandas dataframe from a local csv data file</li>
+<li>Clean up and transform data to create new features</li>
+<li>Join dataframes</li>
+</ul>
+<p>You will also learn how to use Snowpark Python to:</p>
+<ul>
+<li>Create a Snowflake table from a csv file stored in AWS S3 bucket</li>
+<li>Load the Snowflake table as a Snowpark dataframe</li>
+<li>Aggregate data to derive insights</li>
+<li>Save the result into a Snowflake table</li>
+</ul>
+<p>In addition to the ingestion and transformation steps above, you will learn how to:</p>
+<ul>
+<li>Create a serverless task to schedule the pipeline</li>
+</ul>
+<p>Follow along and run each of the cells in the <a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/intro_to_de_python/DE_100_VHOL.ipynb" target="_blank">Notebook</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Resources" duration="2">
+        <p>Congratulations, you have successfully completed this quickstart!</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>How to install and configure the Snowpark pandas library</li>
+<li>How to use Snowpark pandas to transform and analyze datasets using the power of Snowflake</li>
+<li>How to use Snowpark Python to transform and aggregate data</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/developer-guide/snowpark/python/pandas-on-snowflake" target="_blank">Pandas on Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Dataframe API</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/intro_to_de_python" target="_blank">Source code on GitHub</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_rag_chatbot_using_cortex_and_streamlit",
+  "duration": 28,
+  "title": "Tasty Bytes - RAG Chatbot Using Cortex and Streamlit",
+  "summary": "In this guide, we build a Cortex LLM powered chatbot to help Tasty Bytes support agents find answers to customer questions faster.",
+  "source": "tasty_bytes_rag_chatbot_using_cortex_and_streamlit/tasty_bytes_rag_chatbot_using_cortex_and_streamlit.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "tasty-bytes",
+    "cortex"
+  ],
+  "tags": [
+    "gettingstarted",
+    "snowflakecortex",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_rag_chatbot_using_cortex_and_streamlit"
+}

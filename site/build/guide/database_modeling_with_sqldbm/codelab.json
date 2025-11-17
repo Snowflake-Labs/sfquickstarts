@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "database_modeling_with_sqldbm",
+  "duration": 46,
+  "title": "Cloud-native Database Modeling with SqlDBM",
+  "authors": "Serge Gershkovich",
+  "summary": "Begin modeling your Snowflake database online with SqlDBM",
+  "source": "database_modeling_with_sqldbm/database_modeling_with_SqlDBM.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "cicd",
+    "dataengineering",
+    "datamodeling",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "database_modeling_with_sqldbm"
+}

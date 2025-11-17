@@ -1,0 +1,449 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started With Snowflake SQL API</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_snowflake_sql_api"
+                  title="Getting Started With Snowflake SQL API"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Welcome! The Snowflake SQL API is a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer" target="_blank">REST API</a> that you can use to access and update data in a Snowflake database. You can use this API to execute <a href="https://docs.snowflake.com/en/sql-reference/constructs.html" target="_blank">standard queries</a> and most <a href="https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html" target="_blank">DDL</a> and <a href="https://docs.snowflake.com/en/sql-reference/sql-dml.html" target="_blank">DML</a> statements.</p>
+<p>This getting started guide will walk you through executing a SQL statement with the API and retrieving the results.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A familiarity with <a href="https://www.youtube.com/watch?v=fEtoYweBNQ4" target="_blank">Snowflake</a></li>
+<li>A familiarity with SQL</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Perform simple queries</li>
+<li>Manage your deployment (e.g., provision users and roles, create tables, etc.)</li>
+<li>Submit one SQL statement for execution per API call.</li>
+<li>Check the status of the execution of a statement.</li>
+<li>Cancel the execution of a statement.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account with an accessible warehouse, database, schema, and role</li>
+<li>SnowSQL 1.2.17 or higher</li>
+<li>Working <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication" target="_blank">Key-Pair authentication</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An execution of a statement using the Snowflake SQL API</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introducing the API" duration="3">
+        <p>Head to the SQL API by navigating to your version of the following URL, replacing  <code>*account_locator*</code> with the account locator for your own Snowflake account:</p>
+<pre><code>https://*account_locator*.snowflakecomputing.com/api/v2
+</code></pre>
+<aside class="warning"><p>Note that the account locator might include additional segments for your region and cloud provider. See <a href="https://docs.snowflake.com/en/user-guide/intro-regions.html#label-region-ids" target="_blank">Specifying Region Information in Your Account Hostname</a> for details.</p>
+</aside>
+<p>Now let&#39;s break down the parts of the API before we begin using it. The API consists of the <code>/api/v2/statements/</code> resource and provides the following endpoints:</p>
+<ul>
+<li><code>/api/v2/statements</code>: You&#39;ll use this endpoint to <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements" target="_blank">submit a SQL statement for execution</a>.</li>
+<li><code>/api/v2/statements/*statementHandle*</code>: You&#39;ll use this endpoint to <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#get-api-v2-statements-statementhandle" target="_blank">check the status of the execution of a statement</a>.</li>
+<li><code>/api/v2/statements/*statementHandle*/cancel</code>: You&#39;ll use this endpoint to <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements-statementhandle-cancel" target="_blank">cancel the execution of a statement</a>.</li>
+</ul>
+<p>In the steps to come, you shall use all these endpoints to familiarize yourself with the API.</p>
+<aside class="special"><p>You can use development tools and libraries for REST APIs (e.g., Postman) to send requests and handle responses.</p>
+</aside>
+<h2 is-upgraded>Limitations of the SQL API</h2>
+<p>It&#39;s important to be aware of the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#limitations-of-the-sql-api" target="_blank">limitations that the SQL API</a> currently has.  In particular noting that <code>GET</code> and <code>PUT</code> are not supported.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Assigning a Unique Request ID for Resubmitting Requests" duration="1">
+        <p>In some cases, it might not be clear if Snowflake executed the SQL statement in an API request (e.g., due to a network error or a timeout). You might choose to resubmit the same request to Snowflake again in case Snowflake did not execute the statement.</p>
+<p>If Snowflake already executed the statement in the initial request and you resubmit the request again, the statement is executed twice. For some types of requests, repeatedly executing the same statement can have unintended consequences (e.g., inserting duplicate data into a table).</p>
+<p>To prevent Snowflake from executing the same statement twice when you resubmit a request, you can use a request ID to distinguish your request from other requests. Suppose you specify the same request ID in the initial request and in the resubmitted request. In that case, Snowflake does not execute the statement again if the statement has already executed successfully.</p>
+<p>To specify a request ID, generate a <a href="https://en.wikipedia.org/wiki/Universally_unique_identifier" target="_blank">universally unique identifier (UUID)</a> and include this identifier in the <code>requestId</code> query parameter:</p>
+<pre><code>POST /api/v2/statements?requestId=&lt;UUID&gt; HTTP/1.1
+</code></pre>
+<p>If Snowflake fails to process a request, you can submit the same request again with the same request ID. Using the same request ID indicates to the server that you are submitting the same request again.</p>
+<p>Now let&#39;s move on to additional information you need to include in requests: authentication parameters.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Authenticating to the Server" duration="3">
+        <p>When you send a request, the request must include authentication information. There are two options for providing authentication: OAuth and JWT key pair authentication. You can use whichever one you have previously implemented or whichever one you are most comfortable with. This example will be detailing authentication with <a href="https://jwt.io/" target="_blank">JWT</a>.</p>
+<p>If you haven&#39;t done so already, make sure you have <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication" target="_blank">key pair authentication</a> working with Snowflake already.</p>
+<p>You can test to make sure you can successfully connect to Snowflake Key Pairs using the following command:</p>
+<pre><code>$ snowsql -a &lt;account&gt; -u &lt;user&gt; --private-key-path &lt;path to private key&gt;
+</code></pre>
+<aside class="warning"><p>If you&#39;d rather authenticate with OAuth, please visit our documentation on authenticating with <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#using-oauth" target="_blank">OAuth</a>.</p>
+</aside>
+<p>After you&#39;ve verified you can connect to Snowflake using key-pair authentication, you&#39;ll need to generate a JWT token.  This JWT token is time limited token which has been signed with your key and Snowflake will know that you authorized this token to be used to authenticate as you for the SQL API.</p>
+<pre><code>$ snowsql -a &lt;account&gt; -u &lt;user&gt; --private-key-path &lt;path to private key&gt; --generate-jwt
+&lt;returns JWT token&gt;
+</code></pre>
+<p>You&#39;ll need the JWT token generated to be used for using the SQL API. The following headers need be set in each API request that you send within your application code:</p>
+<ul>
+<li><code>Authorization: Bearer *jwt_token*</code> where <code>*jwt_token*</code> is the generated JWT token from SnowSQL</li>
+<li><code>X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT</code></li>
+</ul>
+<p>Altogether, your request query and header will take the following form:</p>
+<pre><code>POST /api/v2/statements?requestId=&lt;UUID&gt; HTTP/1.1
+Authorization: Bearer &lt;jwt_token&gt;
+Content-Type: application/json
+Accept: application/json
+User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
+</code></pre>
+<p>Now that you have been introduced to authentication and unique request IDs, you can now move to actually making a request to execute a SQL statement.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Submitting a Request to Execute a SQL Statement" duration="3">
+        <p>To submit a SQL statement for execution, send a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements" target="_blank">POST request to the /api/v2/statements/ endpoint</a>:</p>
+<pre><code>POST /api/v2/statements?requestId=&lt;UUID&gt; HTTP/1.1
+Authorization: Bearer &lt;jwt_token&gt;
+Content-Type: application/json
+Accept: application/json
+User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
+
+(request body)
+</code></pre>
+<p>In the request URL, you can also set query parameters to:</p>
+<ul>
+<li>Execute the statement asynchronously: <code>async=true</code></li>
+</ul>
+<p>For the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#body-of-the-post-request-to-api-v2-statements" target="_blank">body of the request</a>, set the following fields:</p>
+<ul>
+<li>Set the <code>statement</code> field to the SQL statement that you want to execute.</li>
+<li>To specify the warehouse, database, schema, and role to use, set the <code>warehouse</code>, <code>database</code>, <code>schema</code>, and <code>role</code> fields.</li>
+</ul>
+<aside class="warning"><p>Note: the values in these fields are case-sensitive.</p>
+</aside>
+<ul>
+<li>To set a timeout for the statement execution, set the <code>timeout</code> field to the maximum number of seconds to wait. If the <code>timeout</code> field is not set, the timeout specified by the <a href="https://docs.snowflake.com/en/sql-reference/parameters.html#label-statement-timeout-in-seconds" target="_blank">STATEMENT_TIMEOUT_IN_SECONDS</a> parameter is used.</li>
+</ul>
+<pre><code>POST /api/v2/statements HTTP/1.1
+Authorization: Bearer &lt;jwt_token&gt;
+Content-Type: application/json
+Accept: application/json
+User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
+
+{
+&#34;statement&#34;: &#34;select * from T&#34;,
+&#34;timeout&#34;: 60,
+&#34;database&#34;: &#34;&lt;your_database&gt;&#34;,
+&#34;schema&#34;: &#34;&lt;your_schema&gt;&#34;,
+&#34;warehouse&#34;: &#34;&lt;your_warehouse&gt;&#34;,
+&#34;role&#34;: &#34;&lt;your_role&gt;&#34;
+}
+</code></pre>
+<p>Let&#39;s go over some specific fields in this request:</p>
+<ul>
+<li>The <code>statement</code> field specifies the SQL statement to execute.</li>
+<li>The <code>timeout</code> field specifies that the server allows 60 seconds for the statement to be executed.</li>
+</ul>
+<p>If the statement was executed successfully, Snowflake returns the HTTP response code 200 and the first results in a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset" target="_blank">ResultSet</a> object. We&#39;ll go over how to check the status and retrieve the results after we look at including bind variables.</p>
+<p>Now we&#39;ll look at how you can include bind variables (<code>?</code> placeholders) in the statement and set the <code>bindings</code> field to an object that specifies the corresponding Snowflake data types and values for each variable.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Bind Variables in a Statement" duration="5">
+        <p>If you want to use bind variables (<code>?</code> placeholders) in the statement, use the <code>bindings</code> field to specify the values that should be inserted.</p>
+<p>Set this field to a JSON object that specifies the <a href="https://docs.snowflake.com/en/sql-reference/intro-summary-data-types.html" target="_blank">Snowflake data type</a> and value for each bind variable.</p>
+<pre><code>...
+&#34;statement&#34;: &#34;select * from T where c1=?&#34;,
+...
+&#34;bindings&#34;: {
+&#34;1&#34;: {
+&#34;type&#34;: &#34;FIXED&#34;,
+&#34;value&#34;: &#34;123&#34;
+}
+},
+...
+</code></pre>
+<p>Choose the binding type that corresponds to the type of the value that you are binding. For example, if the value is a string representing a date (e.g. <code>2021-04-15</code>) and you want to insert the value into a DATE column, use the <code>TEXT</code> binding type.</p>
+<p>The following table specifies the values of the <code>type</code> field that you can use to bind to different <a href="https://docs.snowflake.com/en/sql-reference/data-types.html" target="_blank">Snowflake data types</a> for this preview release.</p>
+<ul>
+<li>The first column on the left specifies the binding types that you can use.</li>
+<li>The rest of the columns specify the Snowflake data type of the column where you plan to insert the data.</li>
+<li>Each cell specifies the type of value that you can use with a binding type to insert data into a column of a particular Snowflake data type.</li>
+</ul>
+<aside class="warning"><p>If the cell for a binding type and Snowflake data type is empty, you cannot use the specified binding type to insert data into a column of that Snowflake data type.</p>
+</aside>
+<p class="image-container"><img alt="binding types" src="img/82c6f92720df5bd1.png"></p>
+<p>For additional information on binding specific data types, see the documentation&#39;s section on <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset" target="_blank">Using Bind Variables in a Statement</a></p>
+<p>If the value is in a format not supported by Snowflake, the API returns an error:</p>
+<pre><code>{
+code: &#34;100037&#34;,
+message: &#34;&lt;bind type&gt; value &#39;&lt;value&gt;&#39; is not recognized&#34;,
+sqlState: &#34;22018&#34;,
+statementHandle: &#34;&lt;ID&gt;&#34;
+}
+</code></pre>
+<p>Whether you use bind variables or not, you&#39;ll want to check the status of your statements. Let&#39;s look at that next.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Checking the Status of the Execution of the Statement" duration="1">
+        <p>When you submit a SQL statement for execution, Snowflake returns a 202 response code if the execution of the statement has not yet been completed or if you submitted an asynchronous query.</p>
+<p>In the body of the response, Snowflake includes a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#querystatus" target="_blank">QueryStatus</a> object. The <code>statementStatusUrl</code> field in this object specifies the URL to the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#get-api-v2-statements-statementhandle" target="_blank">/api/v2/statements/ endpoint</a> that you can use to check the execution status:</p>
+<pre><code>{
+&#34;code&#34;: &#34;090001&#34;,
+&#34;sqlState&#34;: &#34;00000&#34;,
+&#34;message&#34;: &#34;successfully executed&#34;,
+&#34;statementHandle&#34;: &#34;e4ce975e-f7ff-4b5e-b15e-bf25f59371ae&#34;,
+&#34;statementStatusUrl&#34;: &#34;/api/v2/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae&#34;
+}
+</code></pre>
+<p>As illustrated by the URL above, in requests to check the status of a statement and cancel the execution of a statement, you specify the statement handle (a unique identifier for the statement) as a path parameter in order to identify the statement to use.</p>
+<p>Note that the <code>QueryStatus</code> object also provides the statement handle as a separate value in the <code>statementHandle</code> field.</p>
+<p>To check the status of the execution of the statement, send a GET request using this URL:</p>
+<pre><code>GET /api/v2/statements/{statementHandle}
+</code></pre>
+<p>For example, the following request checks the execution status of the statement with the handle <code>e4ce975e-f7ff-4b5e-b15e-bf25f59371ae</code>:</p>
+<pre><code>GET /api/v2/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae HTTP/1.1
+Authorization: Bearer &lt;jwt_token&gt;
+Content-Type: application/json
+Accept: application/json
+User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
+</code></pre>
+<p>If the statement has finished executing successfully, Snowflake returns the HTTP response code 200 and the first results in a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset" target="_blank">ResultSet</a> object. However, if an error occurred when executing the statement, Snowflake returns the HTTP response code 422 with a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#queryfailurestatus" target="_blank">QueryFailureStatus</a> object.</p>
+<p>Once the statement has executed successfully, you can then retrieve the results, detailed in the next step.</p>
+<h2 is-upgraded>Cancelling the Execution of a SQL Statement</h2>
+<p>To cancel the execution of a statement, send a POST request to the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#cancelling-the-execution-of-a-sql-statement" target="_blank">cancel endpoint</a>.</p>
+<pre><code>POST /api/v2/statements/{statementHandle}/cancel
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Retrieving the Results" duration="1">
+        <p>If you <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#label-sql-api-executing-multiple-statements" target="_blank">submit a SQL statement for execution</a> or <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data" target="_blank">check the status of statement execution</a>, Snowflake returns a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data" target="_blank">ResultSet</a> object in the body of the response if the statement was executed successfully.</p>
+<p>The following is an example of a <code>ResultSet</code> object that is returned for a query, truncated for brevity.</p>
+<pre><code>{
+  &#34;code&#34; : &#34;090001&#34;,
+  &#34;statementStatusUrl&#34; : &#34;/api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=f8ccd534-7cd5-4c06-b673-f25361e96d7f&#34;,
+  &#34;requestId&#34; : &#34;f8ccd534-7cd5-4c06-b673-f25361e96d7f&#34;,
+  &#34;sqlState&#34; : &#34;00000&#34;,
+  &#34;statementHandle&#34; : &#34;01a288b9-0603-af68-0000-328502422e7e&#34;,
+  &#34;message&#34; : &#34;Statement executed successfully.&#34;,
+  &#34;createdOn&#34; : 1645742998434,
+  &#34;resultSetMetaData&#34; : {
+    &#34;rowType&#34; : [ {
+      &#34;name&#34; : &#34;HIGH_NDV_COLUMN&#34;,
+      &#34;database&#34; : &#34;&#34;,
+      &#34;schema&#34; : &#34;&#34;,
+      &#34;table&#34; : &#34;&#34;,
+      &#34;type&#34; : &#34;fixed&#34;,
+      &#34;scale&#34; : 0,
+      &#34;precision&#34; : 19,
+      &#34;byteLength&#34; : null,
+      &#34;nullable&#34; : false,
+      &#34;collation&#34; : null,
+      &#34;length&#34; : null
+    }, {
+      &#34;name&#34; : &#34;LOW_NDV_COLUMN&#34;,
+      &#34;database&#34; : &#34;&#34;,
+      &#34;schema&#34; : &#34;&#34;,
+      &#34;table&#34; : &#34;&#34;,
+      &#34;type&#34; : &#34;fixed&#34;,
+      &#34;scale&#34; : 0,
+      &#34;precision&#34; : 2,
+      &#34;byteLength&#34; : null,
+      &#34;nullable&#34; : false,
+      &#34;collation&#34; : null,
+      &#34;length&#34; : null
+    }, {
+      &#34;name&#34; : &#34;CONSTANT_COLUM&#34;,
+      &#34;database&#34; : &#34;&#34;,
+      &#34;schema&#34; : &#34;&#34;,
+      &#34;table&#34; : &#34;&#34;,
+      &#34;type&#34; : &#34;fixed&#34;,
+      &#34;scale&#34; : 0,
+      &#34;precision&#34; : 1,
+      &#34;byteLength&#34; : null,
+      &#34;nullable&#34; : false,
+      &#34;collation&#34; : null,
+      &#34;length&#34; : null
+    } ],
+    &#34;numRows&#34; : 100000000,
+    &#34;format&#34; : &#34;jsonv2&#34;,
+    &#34;partitionInfo&#34; : [ {
+      &#34;rowCount&#34; : 8192,
+      &#34;uncompressedSize&#34; : 152879,
+      &#34;compressedSize&#34; : 22412
+    }, {
+      &#34;rowCount&#34; : 53248,
+      &#34;uncompressedSize&#34; : 1048161,
+      &#34;compressedSize&#34; : 151251
+    }, {
+      &#34;rowCount&#34; : 86016,
+      &#34;uncompressedSize&#34; : 1720329,
+      &#34;compressedSize&#34; : 249447
+    }, {
+</code></pre>
+<p>Notice that there is an <code>ARRAY</code> of <code>partitionInfo</code> objects.  These partitions objects give you some information, such as rowCount and size, about the partitions that are available for retrieval.  The API returns the data data inline in JSON of the first partition, or partition <code>0</code> with the response and we&#39;ll cover how to retrieve subsequent partitions in a later section.</p>
+<h2 is-upgraded>Getting Metadata About the Result</h2>
+<p>It also includes, in the response the <code>rowType</code> which gives additional metadata about the datatypes and names of data returned from the query.  This metadata is only included in the initial response, and no metadata is returned when retrieving subsequent partitions.</p>
+<p>In the <code>ResultSet</code> object returned in the response, the <code>resultSetMetaData</code> field contains a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#getting-metadata-about-the-results" target="_blank"><code>ResultSet_resultSetMetaData</code></a> object that describes the result set (for example, the format of the results, etc.).</p>
+<p>In this object, the <code>rowType</code> field contains an array of <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#label-sql-api-reference-resultset-resultsetmetadata-rowtype" target="_blank">ResultSet_resultSetMetaData_rowType</a> objects. Each object describes a column in the results. The <code>type</code> field specifies the Snowflake data type of the column.</p>
+<pre><code>{
+&#34;resultSetMetaData&#34;: {
+&#34;rowType&#34;: [
+{
+&#34;name&#34;:&#34;ROWNUM&#34;,
+&#34;type&#34;:&#34;FIXED&#34;,
+&#34;length&#34;:0,
+&#34;precision&#34;:38,
+&#34;scale&#34;:0,
+&#34;nullable&#34;:false
+}, {
+&#34;name&#34;:&#34;ACCOUNT_NAME&#34;,
+&#34;type&#34;:&#34;TEXT&#34;,
+&#34;length&#34;:1024,
+&#34;precision&#34;:0,
+&#34;scale&#34;:0,
+&#34;nullable&#34;:false
+}, {
+&#34;name&#34;:&#34;ADDRESS&#34;,
+&#34;type&#34;:&#34;TEXT&#34;,
+&#34;length&#34;:16777216,
+&#34;precision&#34;:0,
+&#34;scale&#34;:0,
+&#34;nullable&#34;:true
+}, {
+&#34;name&#34;:&#34;ZIP&#34;,
+&#34;type&#34;:&#34;TEXT&#34;,
+&#34;length&#34;:100,
+&#34;precision&#34;:0,
+&#34;scale&#34;:0,
+&#34;nullable&#34;:true
+}, {
+&#34;name&#34;:&#34;CREATED_ON&#34;,
+&#34;type&#34;:&#34;TIMESTAMP_NTZ&#34;,
+&#34;length&#34;:0,
+&#34;precision&#34;:0,
+&#34;scale&#34;:3,
+&#34;nullable&#34;:false
+}
+]
+},
+}
+</code></pre>
+<h2 is-upgraded>Retrieving Result Partitions</h2>
+<p>Partitions are <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#retrieving-additional-partitions" target="_blank">retrieved</a> using the <code>partition=n</code> query parameter at <code>/api/v2/statements/<handle>?partition=<partition_number></code> endpoint.  This can be used to iterate, or even retrieve in parallel, the results from the SQL API call.</p>
+<pre><code>GET /api/v2/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae?partition=1 HTTP/1.1
+Authorization: Bearer &lt;jwt_token&gt;
+Content-Type: application/json
+Accept: application/json
+User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
+</code></pre>
+<p>The above query call, with <code>partition=1</code> returns just the data below.  Notice that the <code>data</code> object does not contain any of the additional metadata about the result.  Only the data, in gzipped format that needs to be uncompressed.</p>
+<pre><code>{&#34;data&#34;: [
+[&#34;32768&#34;,&#34;3&#34;,&#34;5&#34;],
+[&#34;32772&#34;,&#34;4&#34;,&#34;5&#34;],
+[&#34;32776&#34;,&#34;3&#34;,&#34;5&#34;],
+[&#34;32780&#34;,&#34;3&#34;,&#34;5&#34;],
+[&#34;32784&#34;,&#34;2&#34;,&#34;5&#34;],
+....
+]}
+</code></pre>
+<p>Each array within the array contains the data for a row:</p>
+<ul>
+<li>The first element in each array is a JSON string containing a sequence ID that starts from 0.</li>
+<li>The rest of the elements in each array represent the data in a row.</li>
+</ul>
+<p>The data in the result set is encoded in JSON v1.0, which means that all data is expressed as strings, regardless of the Snowflake data type of the column.</p>
+<p>For example, the value <code>1.0</code> in a <code>NUMBER</code> column is returned as the string <code>" 1.0"</code>. As another example, timestamps are returned as the number of nanoseconds since the epoch. For example, the timestamp for Thursday, January 28, 2021 10:09:37.123456789 PM is returned as <code>"1611871777123456789"</code>.</p>
+<p>You are responsible for converting the strings to the appropriate data types.</p>
+<h2 is-upgraded>Helpful URLs to iterate and retrieve partitions</h2>
+<p>Since your results may contain significant number of partitions, the Snowflake SQL API provides a special header, <code>Link</code>, which assists in helping clients traverse and retrieve those results.</p>
+<p>To get the next parition of results or other partitions, use the URLs provided in the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#response-headers-for-all-operations" target="_blank">Link header</a> in the HTTP response. The <code>Link</code> header specifies the URLs for retrieving the first, next, previous, and last partitions of results:</p>
+<pre><code>HTTP/1.1 200 OK
+Link: &lt;/api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=918e2211-d1d6-4c53-bec3-457d047651f7&amp;partition=0&gt;; rel=&#34;first&#34;
+,&lt;/api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=51ad0c0a-e514-4d8a-9cf2-cf537d439e39&amp;partition=1&gt;; rel=&#34;next&#34;
+,&lt;/api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=c6a17bb3-7593-489d-bbac-5e3b268bc6da&amp;partition=47&gt;; rel=&#34;last&#34;
+...
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="1">
+        <p>This tutorial was designed as a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html" target="_blank">Snowflake SQL API Reference</a>.</p>
+<p>If you&#39;ve completed this lab using the Snowflake free trial, we encourage you to continue exploring what Snowflake can help you accomplish. There are several ways Snowflake can help you with this:</p>
+<ul>
+<li>At the very top of the UI, click on the &#34;Partner Connect&#34; icon to get access to trial/free ETL and BI tools to help you analyze your data with Snowflake</li>
+<li>Read the &#34;<a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">Definitive Guide to Maximizing Your Free Trial</a>&#34;</li>
+<li>Attend a Snowflake virtual or in-person <a href="https://www.snowflake.com/about/webinars/" target="_blank">event</a> to learn more about our capabilities and how customers use us</li>
+<li>Contact <a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">Sales</a> to learn more</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

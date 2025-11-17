@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "reach_and_frequency_queries",
+  "duration": 30,
+  "title": "Reach and Frequency queries for advertising measurement",
+  "summary": "Shows common reach and frequency queries for advertising measurement",
+  "source": "reach_and_frequency_queries/reach_and_frequency_queries.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "solution-examples"
+  ],
+  "tags": [
+    "adtech",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "reach_and_frequency_queries"
+}

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "parsing_semi_structured_data_with_coalesce",
+  "duration": 14,
+  "title": "Parsing Semi-Structured Data with Coalesce",
+  "summary": "Parsing Semi-Structured Data (JSON / XML) with Coalesce",
+  "source": "parsing_semi_structured_data_with_coalesce/parsing_semi_structured_data_with_coalesce.md",
+  "theme": "",
+  "status": [
+    "public"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "parsing_semi_structured_data_with_coalesce"
+}

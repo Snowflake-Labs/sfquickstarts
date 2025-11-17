@@ -1,0 +1,192 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Time Travel</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_time_travel"
+                  title="Getting Started with Time Travel"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>Panic hits when you mistakenly delete data. Problems can come from a mistake that disrupts a process, or worse, the whole database was deleted. Thoughts of how recent was the last backup and how much time will be lost might have you wishing for a rewind button. Straightening out your database isn&#39;t a disaster to recover from with Snowflake&#39;s Time Travel. A few SQL commands allow you to go back in time and reclaim the past, saving you from the time and stress of a more extensive restore.</p>
+<p>We&#39;ll get started in the Snowflake web console, configure data retention, and use Time Travel to retrieve historic data. Before querying for your previous database states, let&#39;s review the prerequisites for this guide.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Quick Video <a href="https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc." target="_blank">Introduction to Snowflake</a></li>
+<li>Snowflake <a href="https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc." target="_blank">Data Loading Basics</a> Video</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Snowflake account and user permissions</li>
+<li>Make database objects</li>
+<li>Set data retention timelines for Time Travel</li>
+<li>Query Time Travel data</li>
+<li>Clone past database states</li>
+<li>Remove database objects</li>
+<li>Next options for data protection</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?lab=getStartedWithTimeTravel&utm_cta=quickstart-getstartedwithtimetravel-en" target="_blank">Snowflake</a> Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Create database objects with Time Travel data retention</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get Started With the Essentials" duration="7">
+        <p>First things first, let&#39;s get your Snowflake account and user permissions primed to use Time Travel features.</p>
+<h2 is-upgraded>Create a Snowflake Account</h2>
+<p>Snowflake lets you try out their services for free with a <a href="https://signup.snowflake.com/?lab=getStartedWithTimeTravel&utm_cta=quickstart-getstartedwithtimetravel-en" target="_blank">trial account</a>. A <strong>Standard</strong>  account allows for one day of Time Travel data retention, and an <strong>Enterprise</strong> account allows for 90 days of data retention. An <strong>Enterprise</strong> account is necessary to practice some commands in this tutorial.</p>
+<h2 is-upgraded>Login and Setup Lab</h2>
+<p>Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:</p>
+<p><a href="https://app.snowflake.com/resources/labs/getStartedWithTimeTravel" target="_blank"><paper-button class="colored" raised>Setup Lab Environment</paper-button></a></p>
+<p>This will create worksheets containing the lab SQL that can be executed as we step through this lab.</p>
+<p class="image-container"><img alt="setup_lab" src="img/9257538f95272374.png"></p>
+<p>Once the lab has been setup, it can be continued by revisiting the <a href="https://app.snowflake.com/resources/labs/getStartedWithTimeTravel" target="_blank">lab details page</a> and clicking <code>Continue Lab</code></p>
+<p class="image-container"><img alt="continue_lab" src="img/794cb1f4d1842ed6.png"></p>
+<p>or by navigating to Worksheets and selecting the <code>Getting Started with Time Travel</code> folder.</p>
+<p class="image-container"><img alt="worksheets" src="img/9ee5a3a01be442ca.png"></p>
+<h2 is-upgraded>Increase Your Account Permission</h2>
+<p>Snowflake&#39;s web interface has a lot to offer, but for now, switch the account role from the default <code>SYSADMIN</code> to <code>ACCOUNTADMIN</code>. You&#39;ll need this increase in permissions later.</p>
+<p class="image-container"><img alt="account-role-change-image" src="img/d5b235cb982b3156.png"></p>
+<p>Now that you have the account and user permissions needed, let&#39;s create the required database objects to test drive Time Travel.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate Database Objects" duration="5">
+        <p>Within the Snowflake web console, navigate to <strong>Worksheets</strong> and use the ‘Getting Started with Time Travel&#39; Worksheets we created earlier.</p>
+<h2 is-upgraded>Create Database</h2>
+<pre><code>create or replace database timeTravel_db;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_TT_CreateDB-image" src="img/70870a1123775b8f.png"></p>
+<p>Use the above command to make a database called ‘timeTravel_db&#39;. The <strong>Results</strong> output will show a status message of <code>Database TIMETRAVEL_DB successfully created</code>.</p>
+<h2 is-upgraded>Create Table</h2>
+<pre><code>create or replace table timeTravel_table(ID int);
+</code></pre>
+<p class="image-container"><img alt="Snowflake_TT_CreateTable-image" src="img/aa7804906c853868.png"></p>
+<p>This command creates a table named ‘timeTravel_table&#39; on the timeTravel_db database. The <strong>Results</strong> output should show a status message of <code>Table TIMETRAVEL_TABLE successfully created</code>.</p>
+<p>With the Snowflake account and database ready, let&#39;s get down to business by configuring Time Travel.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Database for Disaster" duration="6">
+        <p>Be ready for anything by setting up data retention beforehand. The default setting is one day of data retention. However, if your one day mark passes and you need the previous database state back, you can&#39;t retroactively extend the data retention period. This section teaches you how to be prepared by preconfiguring Time Travel retention.</p>
+<h2 is-upgraded>Alter Table</h2>
+<pre><code>alter table timeTravel_table set data_retention_time_in_days=55;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_TT_AlterTable-image" src="img/fa2565072ae13e34.png"></p>
+<p>The command above changes the table&#39;s data retention period to 55 days. If you opted for a <strong>Standard</strong> account, your data retention period is limited to the default of one day. An <strong>Enterprise</strong> account allows for 90 days of preservation in Time Travel.</p>
+<p>Now you know how easy it is to <a href="https://docs.snowflake.com/en/sql-reference/sql/alter-table.html#alter-table" target="_blank">alter</a> your data retention, let&#39;s bend the rules of time by querying an old database state with Time Travel.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Your Time Travel Data" duration="4">
+        <p>With your data retention period specified, let&#39;s turn back the clock with the <code>AT</code> and <code>BEFORE</code> <a href="https://docs.snowflake.com/en/sql-reference/constructs/at-before.html#at-before" target="_blank">clauses</a>.</p>
+<h2 is-upgraded>At</h2>
+<pre><code>select * from timeTravel_table at(timestamp =&gt; &#39;Fri, 23 Oct 2020 16:20:00 -0700&#39;::timestamp);
+</code></pre>
+<p>Use <code>timestamp</code> to summon the database state <strong>at</strong>  a specific date and time.</p>
+<pre><code>select * from timeTravel_table at(offset =&gt; -60*5);
+</code></pre>
+<p>Employ <code>offset</code> to call the database state <strong>at</strong> a time difference of the current time. Calculate the offset in seconds with math expressions. The example above states, <code>-60*5</code>, which translates to five minutes ago.</p>
+<h2 is-upgraded>Before</h2>
+<pre><code>select * from timeTravel_table before(statement =&gt; &#39;&lt;statement_id&gt;&#39;);
+</code></pre>
+<p>If you&#39;re looking to restore a database state just <strong>before</strong> a transaction occurred, grab the transaction&#39;s statement id. Use the command above with your statement id to get the database state right before the transaction statement was executed.</p>
+<p>By practicing these queries, you&#39;ll be confident in how to find a previous database state. After locating the desired database state, you&#39;ll need to get a copy by cloning in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clone Past Database States" duration="5">
+        <p>With the past at your fingertips, make a copy of the old database state you need with the <code>clone</code> keyword.</p>
+<h2 is-upgraded>Clone Table</h2>
+<pre><code>create table restoredTimeTravel_table clone timeTravel_table
+  at(offset =&gt; -60*5);
+</code></pre>
+<p class="image-container"><img alt="Snowflake_TT_CloneTable-image" src="img/b37d8f37e39c25ae.png"></p>
+<p>The command above creates a new table named <code>restoredTimeTravel_table</code> that is an exact copy of the table <code>timeTravel_table</code> from five minutes prior.</p>
+<p>Cloning will allow you to maintain the current database while getting a copy of a past database state. After practicing the steps in this guide, remove the practice database objects in the next section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup and Know Your Options" duration="4">
+        <p>You&#39;ve created a Snowflake account, made database objects, configured data retention, query old table states, and generate a copy of the old table state. Pat yourself on the back! Complete the steps to this tutorial by deleting the objects created.</p>
+<h2 is-upgraded>Drop Table</h2>
+<pre><code>drop table if exists timeTravel_table;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_TT_DropTable-image" src="img/4a18c1c1649b7aff.png"></p>
+<p>By dropping the table before the database, the retention period previously specified on the object is honored. If a parent object(e.g., database) is removed without the child object(e.g., table) being dropped prior, the child&#39;s data retention period is null.</p>
+<h2 is-upgraded>Drop Database</h2>
+<pre><code>drop database if exists timeTravel_db;
+</code></pre>
+<p class="image-container"><img alt="Snowflake_TT_DropDB-image" src="img/7ed460cfdf5b53d6.png"></p>
+<p>With the database now removed, you&#39;ve completed learning how to call, copy, and erase the past.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

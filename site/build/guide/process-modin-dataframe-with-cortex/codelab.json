@@ -1,0 +1,37 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "process-modin-dataframe-with-cortex",
+  "duration": 90,
+  "title": "Build an AI-Powered Data Processing Pipeline with Modin and Snowflake Cortex",
+  "summary": "Learn how to process data using Modin DataFrames with Snowflake Cortex AI capabilities for text classification, translation, sentiment analysis, and more.",
+  "source": "process-modin-dataframe-with-cortex/process-modin-dataframe-with-cortex.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "streamlit",
+    "notebooks",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "ai",
+    "cortex",
+    "dataframes",
+    "dataprocessing",
+    "ml",
+    "modin",
+    "snowflake",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "process-modin-dataframe-with-cortex"
+}

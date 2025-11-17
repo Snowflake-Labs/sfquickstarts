@@ -1,0 +1,218 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Monitor Schema Drift in Data Shares with Sharewatch</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="monitor_schema_drift_in_data_shares_with_sharewatch"
+                  title="Monitor Schema Drift in Data Shares with Sharewatch"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>ShareWatch is a Streamlit-based application installed on consumers of data share&#39;s Snowflake accounts to detect schema drifts in data shares received by these consumers.  ShareWatch triggers notifications based on schema drift detection, which is part of Snowflake&#39;s <a href="https://www.snowflake.com/en/resources/white-paper/data-sharing-best-practices-managing-schema-drift-and-data-change-with-shared-data/" target="_blank">best practices to operationalize shares</a>, and integrates them in mission-critical data pipelines. The app provides a starting point and can be extended to implemenet other best practices discussed in the whitepaper.</p>
+<p>Schema drift occurs where the structure (schema) of shared data is changed over time by the data provider. ShareWatch detects schema drifts by comparing the expected schema of each share to its current schema, and displaying the state of each share monitored in the app. ShareWatch also sets up a master task that runs all monitors on a schedule and sends email notifications if:</p>
+<ol type="1">
+<li>Share is in &#34;Warning&#34; State: schema is appended i.e. new schema, object, or attribute is added to the schema.</li>
+<li>Share is in &#34;Outage&#34; State: schema is altered i.e. An alter, rename, delete, or revoke command on a schema, object, or attribute is performed</li>
+</ol>
+<p class="image-container"><img alt="alt text" src="img/16fe5ad3707c9539.png"></p>
+<p>ShareWatch will also tell you which schemas, objects, or attributes are affected so you have a targeted area to explore and make the appropriate fixes in your pipelines. ShareWatch&#39;s &#34;Accept Drift&#34; feature allows you to accept changes in a share&#39;s schema and make it the new &#34;expected&#34; schema.</p>
+<p>See below diagram for details on how ShareWatch detects schema drift</p>
+<p class="image-container"><img alt="alt text" src="img/3d815907c98ed75b.png"></p>
+<h2 is-upgraded>Key Features</h2>
+<p>Share Watch has 2 sections</p>
+<ol type="1">
+<li>Configuration section - Set up schema drift monitoring on databases mounted from shares, set up an email recepient for notifications, and set up frequency at which ShareWatch&#39;s task should check for schema drift.</li>
+<li>Monitoring section - Shows the status of schema drift on databases mounted from shares based on the monitors set up in the Configuration section.</li>
+</ol>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) <a href="https://signup.snowflake.com/" target="_blank">Register for a free trial</a>, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, streamlit, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.</li>
+<li>One or more data shares set up from Marketplace or Private Listings (<a href="https://www.youtube.com/watch?v=4ksdOBT1HCw" target="_blank">here&#39;s a guide for setting up shares</a>)</li>
+<li>An email address to which schema drift notifications will be sent.</li>
+<li>Github access to download <a href="https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/tree/main" target="_blank">install scripts</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>What is sharewatch</li>
+<li>How to install sharewatch app</li>
+<li>how to setup initial configuration of the app</li>
+<li>how to use sharewatch app to monitor your incoming shares</li>
+<li>how to modify configuration settings of the app</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An streamlit in snowflake app that will monitor schema drifts of the incoming shares in your snowflake account</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install ShareWatch" duration="0">
+        <ul>
+<li>Create a SQL worksheet in Snowsight and paste the ShareWatch SQL Setup script from sf-samples. <a href="https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/blob/main/1-install-sp.sql" target="_blank">LINK TO SQL SCRIPT</a><ul>
+<li>Select all commands, and run them all. This will set up all the stored procedures used by the ShareWatch app.</li>
+</ul>
+</li>
+<li>Create a Streamlit app in Snowsight and replace the starter code it comes with with the ShareWatch Streamlit script. <a href="https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/blob/main/2-install-st.py" target="_blank">LINK TO STREAMLIT SCRIPT</a><ul>
+<li>Choose an appropriate warehouse and a database to set your Snowflake internal stage that would hold your Streamlit&#39;s python files.</li>
+</ul>
+</li>
+<li>Refresh the app after pasting the ShareWatch Streamlit script and (assuming you&#39;ve already set up the stored procedures from the SQL script), you should now see the Initial Configuration section in your Streamlit app.</li>
+<li>At this point, you&#39;re all set! You can hide the code and start using the Streamlit app as intended, proceeding to the Initial Configuration section.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Initial Configuration" duration="0">
+        <ul>
+<li>The Initial Configuration section includes 3 pieces to set up: <ul>
+<li>Which shares do you want to set up monitors for? (You can always add/remove shares after this step too in the Configuration section)</li>
+<li>What email recipient do you want the alerts sent to?</li>
+<li>What schedule do you want to set up the ShareWatch Task with? <ul>
+<li>ShareWatch will create the task in a suspended state, assuming you want to start your schedule from the moment you initiate this configuration.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Once you have the settings above configured to your liking, you can click the Add Shares button. <ul>
+<li>Be careful that this task will initiate a warehouse and could incur costs</li>
+<li>This will create a database called ShareWatch <ul>
+<li>Utils schema</li>
+<li>For each monitored database, there will be a corresponding schema in this database that tracks the received (current) state and expected state of the schema</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="alt text" src="img/f909a07d44f1347b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring Shares" duration="0">
+        <h2 is-upgraded>What Triggers Alerts</h2>
+<p>ShareWatch&#39;s monitors are run from two places: either from task based on the schedule you set up or manually from &#34;Manually Run Monitors&#34; button at the top right of the Monitoring section.</p>
+<p>When a monitor runs, it will check the expected schema of each share against the current schema of the share. If no changes are found, it will log in the share&#39;s history that it was checked at this time and skip to the next one.</p>
+<p>If it does find drift within the share&#39;s schema, it will trigger one of two warning depending on the type of drift:</p>
+<ol type="1">
+<li>Share is in &#34;Warning&#34; State: schema is appended i.e. new schema, object, or attribute is added to the schema.</li>
+</ol>
+<p class="image-container"><img alt="alt text" src="img/953987e6a838ead8.png"></p>
+<ol type="1" start="2">
+<li>Share is in &#34;Outage&#34; State: schema is altered i.e. An alter, rename, delete, or revoke command on a schema, object, or attribute is performed</li>
+</ol>
+<p class="image-container"><img alt="alt text" src="img/92189eb6bf121ec4.png"></p>
+<p>ShareWatch will also tell you which schemas, objects, or attributes are affected so you have a targeted area to explore and make the appropriate fixes in your pipelines.</p>
+<h2 is-upgraded>Share Monitor History</h2>
+<p>At the bottom of the Monitoring section, you can choose a check a share monitor to check its history, which includes:</p>
+<ul>
+<li>When the share monitor is set up</li>
+<li>When the share monitor is run to check for drift</li>
+<li>When the share monitor is triggered with a Warning</li>
+<li>When the share monitor is triggered with an Outage</li>
+<li>When the share monitor is removed</li>
+</ul>
+<p>This history exists in the ShareWatch database and can be accessed from there for any workflows/analytics you&#39;d like to build on top of ShareWatch.</p>
+<p class="image-container"><img alt="alt text" src="img/7bdbaf57f51cdcc3.png"></p>
+<h2 is-upgraded>Remediation</h2>
+<p>Once a schema has drifted work with the provider to understand the nature of the drift. Once provider due dilligence is done, you can use the &#34;Accept Drifted State&#34; button to accept the new schema of the shared dataset. This button will temporarily remove and re-add the monitor again, essentially resetting its expected state to the new schema structure.</p>
+<p class="image-container"><img alt="alt text" src="img/3a2629b8649eeb02.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuration Changes" duration="0">
+        <h2 is-upgraded>Changing Task Schedule</h2>
+<p>ShareWatch will initially create the task in a suspended state as part of the Initial Configuration stage, assuming you want to start your schedule from the moment you initiate this configuration.</p>
+<p>Here, you can change that task&#39;s schedule and it will start that schedule from the moment you changed this configuration as well.</p>
+<p>You can always check the current configuration of the task using: describe task sharewatch.util.master_task;</p>
+<h2 is-upgraded>Removing Share Monitors</h2>
+<p>This will show you the current shares you already have monitors for. If you want to remove any of them to reduce the number of shares checked every cadence of the task, you can do it from here. This will keep the history of that share if it gets added again.</p>
+<h2 is-upgraded>Adding Share Monitors</h2>
+<p>This will show you the current databases based on shares you have in your environment. You can pick any of these shares to add a monitor for, and this share monitor will then be included in any future runs of the master task checking for schema drift in this share&#39;s database. If this share was added before as a monitor and then removed, you will also be able to see the history of that share under the Share History section.</p>
+<p class="image-container"><img alt="alt text" src="img/aabdc3fef97cc59e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations! You&#39;ve successfully installed and configured sharewatch app to monitor schema drifts in your incoming shares.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>What is sharewatch</li>
+<li>How to install sharewatch app</li>
+<li>how to setup initial configuration of the app</li>
+<li>how to use sharewatch app to monitor your incoming shares</li>
+<li>how to modify configuration settings of the app</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.snowflake.com/en/resources/white-paper/data-sharing-best-practices-managing-schema-drift-and-data-change-with-shared-data/" target="_blank">Data sharing best practices: managing schema drift and data changes</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/getting-started" target="_blank">Getting Started with Streamlit in Snowflake</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/tree/main" target="_blank">Sharewatch Code on Github</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

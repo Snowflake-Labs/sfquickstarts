@@ -1,0 +1,446 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started - Processing HL7 FHIR Messages with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="processing_hl7_fhir_messages_with_snowflake"
+                  title="Getting Started - Processing HL7 FHIR Messages with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This Quickstart is designed to help you understand the capabilities included in Snowflake&#39;s support for processing Healthcare HL7 FHIR messages. The lab will give you a view into how you can leverage Snowflake&#39;s features to ingest semistructured data and use other native features to parse HL7 FHIR messages in JSON format and analyze them using Snowsight.</p>
+<p>Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing the labs, you&#39;ll be ready to start processing and managing your own HL7 JSON FHIR messages in Snowflake.</p>
+<p class="image-container"><img alt="Architecture" src="img/baf9a6774b9bdf38.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account</li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Recommend to get familiarized with the <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting_started_with_snowflake/getting_started_with_snowflake.md" target="_blank">Snowflake User Interface</a></li>
+<li>Recommended to also complete <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowsql/index.html?index=..%2F..index" target="_blank">Getting Started with SnowSQL</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to ingest and process HL7 FHIR JSON messages</li>
+<li>How to display the ingested data using Snowsight in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A snowflake stage (internal) for storing and accessing HL7 FHIR files in Snowflake.</li>
+<li>A Snowsight dashboard for analyzing the data ingested and processed.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Notice and Terms of Use" duration="5">
+        <p>The data provided for this lab is an provided by the Synthea Data Generator on github (<a href="https://github.com/synthetichealth/synthea" target="_blank">Synthea Github</a>). More details about Synthea and general terms of use can be found dirently in their <a href="https://synthetichealth.github.io/synthea/" target="_blank">website</a>.</p>
+<p>We will provide the ready-to-use data in this quickstart,  but if in the future you would like to create your own customized datasets and experiment further, you can accomplish this by leveraging the versatility of the <strong>Synthea&#39;s Data Generator</strong>, following the instructions specified <a href="https://github.com/synthetichealth/synthea/wiki/Basic-Setup-and-Running" target="_blank">here</a>.</p>
+<p>Use of the data provided is limited to this quickstart in connection with the Snowflake service and is subject to any additional terms and conditions on the Synthea github repository.</p>
+<p>By accessing this data, you acknowledge and agree to the limits and terms related to the use of the HL7 FIRE datasets.</p>
+<h2 is-upgraded><strong>Note:</strong></h2>
+<p><em>The implementations provided here are at best MVP/Prototype versions, they are not of production quality. You are free to extend the functionality and improve the code as it fits your functionality.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your lab environment" duration="10">
+        <p>If you haven&#39;t already, register for a <a href="https://trial.snowflake.com/" target="_blank">Snowflake free 30-day trial</a>. The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.</p>
+<h2 is-upgraded>Navigating to Snowflake User Interface</h2>
+<p>For this lab, you will use the latest Snowflake web interface.</p>
+<ol type="1">
+<li>Open a browser window and enter the URL of your Snowflake 30-day trial environment that was sent with your registration email.Log into your Snowflake trial account</li>
+<li>Click on <strong>Worksheets</strong> tab in the left-hand navigation bar. The ​Worksheets​ tab provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete.</li>
+<li>A new worksheet is created by clicking <strong>+ Worksheet</strong> on the top right.</li>
+</ol>
+<h2 is-upgraded>Download Data and Scripts</h2>
+<p>All the files used in this lab can be found directly in Synthea&#39;s <a href="https://synthetichealth.github.io/synthea/" target="_blank">website</a>.</p>
+<p>We need to first download these files to the local workstation by clicking on the hyperlink below.</p>
+<h3 is-upgraded>Sample HL7 FHIR JSON messages data file.</h3>
+<p><a href="https://synthetichealth.github.io/synthea-sample-data/downloads/synthea_sample_data_fhir_stu3_nov2021.zip" target="_blank">synthea_sample_data_fhir_stu3_nov2021.zip</a> - Sample HL7 FHIR messages data files.</p>
+<p>After downloading the zip file to your preferred location, please unzip the contents of the file. The result will be a folder named <strong>fhir_stu3</strong> with several hundred <strong>HL7 FHIR JSON</strong> files.</p>
+<p><strong>Local Files</strong></p>
+<p class="image-container"><img alt="Local Files" src="img/70e47ad5d33502be.png"></p>
+<p>The subsequent steps in the next section require <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL CLI</a>, installed on the local workstation where the lab is ran.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Store &amp; Access HL7 FHIR Messages" duration="15">
+        <p>Let&#39;s start by preparing to load the HL7 FHIR messages into Snowflake. Snowflake supports two types of stages for storing data files used for loading and unloading:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#internal-stages" target="_blank">Internal stages</a> store the files internally within Snowflake.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#external-stages" target="_blank">External stages</a> store the files in an external location (i.e. S3 bucket) that is referenced by the stage. An external stage specifies location and credential information, if required, for the bucket.</li>
+</ul>
+<h2 is-upgraded>Create a Database, Schema, and Warehouse</h2>
+<p>Before creating any stages, let&#39;s create a database and a schema that will be used for loading the semistructured data. We will use the UI within the Worksheets tab to run the DDL that creates the database and schema. Copy the commands below into your trial environment, and execute each individually.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE SYSADMIN;
+
+CREATE OR REPLACE DATABASE HL7_FHIR COMMENT = &#39;HL7 FHIR DATABASE&#39;;
+CREATE OR REPLACE SCHEMA HL7_FHIR_V1;
+CREATE OR REPLACE WAREHOUSE &#34;HL7_FHIR_WH&#34;
+    WAREHOUSE_SIZE = &#39;SMALL&#39;
+    INITIALLY_SUSPENDED = FALSE
+    AUTO_SUSPEND=600
+    AUTO_RESUME=TRUE
+    MIN_CLUSTER_COUNT=1
+    MAX_CLUSTER_COUNT=1
+    SCALING_POLICY=&#39;STANDARD&#39;
+    COMMENT=&#39;&#39;;
+</code></pre>
+<p>In this statement we are also creating a compute warehouse named <code>HL7_FHIR_WH</code> that will be the main compute resource to load files into Snowflake and perform analytical queries.</p>
+<h2 is-upgraded>Create Snowflake Stages to Ingest and Store HL7 FHIR Messages</h2>
+<p>Stages in Snowflake are locations used to store data. If the data that needs to be loaded into Snowflake is stored in other cloud regions like AWS S3 or Azure or GCP then these are called External stages whereas if the data is stored inside Snowflake then these are called Internal stages.</p>
+<p><strong>Note:</strong> For the purpose of this lab we are using Internal stage. You could accomplish the same result with an External Stage.</p>
+<h2 is-upgraded>Store HL7 FHIR messages in an Internal Stage</h2>
+<p>You can store data and files directly in Snowflake with internal stages. Now, we want to create an internal stage and upload the files using SnowSQL CLI.</p>
+<h3 is-upgraded>Create an Internal Stage</h3>
+<p>Run this command in the <strong>Worksheets</strong> interface to create an internal stage called <code>HL7_FHIR_STAGE_INTERNAL</code> as follows.</p>
+<pre><code language="language-sql" class="language-sql">USE SCHEMA HL7_FHIR_V1;
+-- Directory tables store a catalog of staged files in cloud storage.
+CREATE OR REPLACE STAGE HL7_FHIR_STAGE_INTERNAL
+   DIRECTORY = ( ENABLE = TRUE )
+   COMMENT = &#39;Used For Staging Data&#39;;
+</code></pre>
+<h3 is-upgraded>Upload Files using SnowSQL to Internal Stage</h3>
+<p>Let&#39;s now upload the files downloaded to your workstation to Snowflake internal stage <code>HL7_FHIR_STAGE_INTERNAL</code>. We will use <strong>SnowSQL CLI</strong> and the <strong>PUT</strong> command to load all files. Before opening terminal, find out your account identifier which for the trial account will be.</p>
+<p>For example, if the URL to access the trial account is <code>https://xx74264.ca-central-1.aws.snowflakecomputing.com/</code>. These are the values for the account identifier:</p>
+<ul>
+<li>Account identifier: <code>xx74264</code></li>
+</ul>
+<p>There may be additional segments if you are using your own account part of an organization. You can find those from the URL of your Snowflake account. Please check the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#account-identifiers" target="_blank">Snowflake Documentation</a> for additional details on this topic.</p>
+<p>For your convenience, use the below query in the <strong>Worksheets</strong> interface to retrieve account identifier.</p>
+<pre><code language="language-sql" class="language-sql">-- Retrieve your Snowflake account identifier 
+SELECT REPLACE(T.VALUE:host::VARCHAR,&#39;.snowflakecomputing.com&#39;) AS ACCOUNT_IDENTIFIER 
+FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(system$allowlist()))) AS T
+WHERE T.VALUE:type::VARCHAR = &#39;SNOWFLAKE_DEPLOYMENT_REGIONLESS&#39;;
+
+</code></pre>
+<p><strong>Internal Stage Files</strong></p>
+<p>Using Snowsql upload the files.</p>
+<pre><code language="language-sql" class="language-sql">-- Using a terminal window invoke snowsql.
+
+snowsql -a &lt;account-identifier&gt; -u &lt;username&gt;
+
+-- set the database/schema/warehouse context
+USE DATABASE HL7_FHIR;
+USE SCHEMA HL7_FHIR_V1;
+USE WAREHOUSE HL7_FHIR_WH;
+
+-- Load sample HL7 FHIR data
+put &#39;file:////&lt;downloaded files folder path&gt;/*.json&#39; @HL7_FHIR_STAGE_INTERNAL;
+
+</code></pre>
+<p><strong>Note:</strong> The URI formatting differs depending on your client operating system. For additional details check <a href="https://docs.snowflake.com/en/sql-reference/sql/put.html#required-parameters" target="_blank">Snowflake Documentation</a></p>
+<p class="image-container"><img alt="SnowSQL Put File" src="img/bdcafa701948dcf8.png"><img alt="SnowSQL Put File" src="img/397f519300b13fa8.png"></p>
+<p>It should take around 30 seconds to import the files into the internal stage.</p>
+<p><strong>Refresh Stage</strong></p>
+<p>Back in the <strong>Worksheets</strong> interface, let&#39;s make sure we can see the files we just brought over by executing this refresh command:</p>
+<pre><code language="language-sql" class="language-sql">-- Ensure to refresh the stage
+ALTER STAGE HL7_FHIR_STAGE_INTERNAL REFRESH;
+</code></pre>
+<p class="image-container"><img alt="Refresh stage metadata" src="img/5b6ea07f13a8143.png"></p>
+<p><strong>List Files</strong></p>
+<pre><code language="language-sql" class="language-sql">-- Run this to verify the files shows up in the list
+SELECT *
+FROM DIRECTORY(@HL7_FHIR_STAGE_INTERNAL);
+</code></pre>
+<p class="image-container"><img alt="Put Files" src="img/eb5fbb485096a64b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Loading HL7 FHIR messages into Snowflake Tables" duration="10">
+        <h2 is-upgraded>Create Table</h2>
+<p>This creates the PATIENT landing table for the HL7 data:</p>
+<pre><code language="language-sql" class="language-sql">--Create PATIENT table for HL7 data via JSON
+CREATE TABLE HL7_FHIR.HL7_FHIR_V1.PATIENT
+    (JSON_STRING VARIANT);
+</code></pre>
+<h2 is-upgraded>Create File Format</h2>
+<p>After creating the table, we need to create a <a href="https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html" target="_blank">file format</a> to ingest JSON data according to the specific characteristics of the data structure in the staged files.</p>
+<p>In the worksheet, run the following command to create the file format:</p>
+<pre><code language="language-sql" class="language-sql">--Create file format for json
+CREATE FILE FORMAT HL7_FHIR.HL7_FHIR_V1.JSON
+  TYPE = &#39;JSON&#39;
+  COMPRESSION = &#39;AUTO&#39;
+  ENABLE_OCTAL = FALSE
+  ALLOW_DUPLICATE = FALSE
+  STRIP_OUTER_ARRAY = FALSE
+  STRIP_NULL_VALUES = FALSE
+  IGNORE_UTF8_ERRORS = FALSE;
+</code></pre>
+<p>After running this statement, we verify that the file format has been created with the correct settings by executing the following command:</p>
+<pre><code language="language-sql" class="language-sql">--Verify file format is created
+SHOW FILE FORMATS IN DATABASE HL7_FHIR;
+</code></pre>
+<p class="image-container"><img alt="Put Files" src="img/aa06699a362d998b.png"></p>
+<h2 is-upgraded>Load Files</h2>
+<p>Once that the file format and the table have been created, we can run a COPY command to load the data into the PATIENT landing table we created earlier:</p>
+<pre><code language="language-sql" class="language-sql">--Copy data from HL7_FHIR_STAGE_INTERNAL stage
+    COPY INTO HL7_FHIR.HL7_FHIR_V1.PATIENT
+    FROM @HL7_FHIR_STAGE_INTERNAL
+    FILE_FORMAT = (FORMAT_NAME = &#39;JSON&#39;)
+    ON_ERROR = &#39;SKIP_FILE&#39;;
+</code></pre>
+<p>This operation should take a few seconds, and the output of the previous statement should looks similar to this:</p>
+<p class="image-container"><img alt="Put Files" src="img/56743cb1a3849939.png"></p>
+<p>Now, let&#39;s take a look at the data that was loaded:</p>
+<pre><code language="language-sql" class="language-sql">--Select raw JSON 
+SELECT *
+    FROM HL7_FHIR.HL7_FHIR_V1.PATIENT
+    LIMIT 5;
+</code></pre>
+<p>Click any of the rows to display the formated JSON in the right panel. You should see a message that says that the value is to large to be displayed.</p>
+<p class="image-container"><img alt="Put Files" src="img/d68e17d621bea002.png"></p>
+<p>This lead us to demonstrate the value of the native capabilities of Snowflake to ingest this raw data and parse it into an structured array. We can do exactly that by creating a view of the table <code>PATIENTS</code> we have been using, with a statement that will create a view called <code>PATIENTS_VIEW</code> and flatten the structure to provide us with a clear reflection of the data that we have ingested:</p>
+<pre><code language="language-sql" class="language-sql">--Create PATIENTS_VW view
+CREATE OR REPLACE VIEW HL7_FHIR.HL7_FHIR_V1.PATIENTS_VW AS
+    SELECT
+        JSON_STRING:entry[0].fullUrl::string PATIENT_ID,
+        MIN(DECODE(IDENTIFIER.VALUE:type.text,&#39;Medical Record Number&#39;,IDENTIFIER.VALUE:value::string)) PATIENT_MRN,
+        MIN(DECODE(IDENTIFIER.VALUE:type.text,&#39;Social Security Number&#39;,IDENTIFIER.VALUE:value::string)) PATIENT_SSN,
+        MIN(DECODE(IDENTIFIER.VALUE:type.text,&#39;Driver\&#39;s License&#39;,IDENTIFIER.VALUE:value::string)) PATIENT_DRIVERS_LICENSE_NUM,
+        MIN(DECODE(IDENTIFIER.VALUE:type.text,&#39;Passport Number&#39;,IDENTIFIER.VALUE:value::string)) PATIENT_PASSPORT_NUM,
+        UPPER(ANY_VALUE(UPPER(PATIENT_FLAT.VALUE:resource:name[0].family::string))) PATIENT_LAST_NM,
+        UPPER(ANY_VALUE(UPPER(PATIENT_FLAT.VALUE:resource:name[0].given[0]::string))) PATIENT_FIRST_NM,
+        UPPER(ANY_VALUE(UPPER(PATIENT_FLAT.VALUE:resource:name[0].prefix[0]::string))) PATIENT_NM_PREFIX,
+        ANY_VALUE(UPPER(PATIENT_FLAT.VALUE:resource:gender::string)) PATIENT_SEX,
+        UPPER(DECODE(MIN(DECODE(EXTENSION.VALUE:url,&#39;http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex&#39;,EXTENSION.VALUE:valueCode::string)),&#39;M&#39;,&#39;Male&#39;,
+        &#39;F&#39;,&#39;Female&#39;,
+        &#39;Unknown&#39;)) PATIENT_BIRTH_SEX,
+        UPPER(MIN(DECODE(EXTENSION.VALUE:url,&#39;http://hl7.org/fhir/us/core/StructureDefinition/us-core-race&#39;,EXTENSION.VALUE:extension[0]:valueCoding.display::string))) PATIENT_CORE_RACE,
+        UPPER(MIN(DECODE(EXTENSION.VALUE:url,&#39;http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity&#39;,EXTENSION.VALUE:extension[0]:valueCoding.display::string))) PATIENT_CORE_ETHNICITY,
+        UPPER(DECODE(ANY_VALUE(PATIENT_FLAT.VALUE:resource:maritalStatus.text::string),&#39;M&#39;,&#39;Married&#39;,
+        &#39;S&#39;,&#39;Single&#39;,
+        ANY_VALUE(PATIENT_FLAT.VALUE:resource:maritalStatus.text::string))) PATIENT_MARITAL_STATUS,
+        TRUNC(ANY_VALUE(PATIENT_FLAT.VALUE:resource:birthDate::date),&#39;D&#39;) PATIENT_BIRTH_DT,
+        UPPER(COALESCE(ANY_VALUE(PATIENT_FLAT.VALUE:resource:multipleBirthBoolean::string),&#39;Unknown&#39;)) PATIENT_MULTIPLE_BIRTH_IND,
+        UPPER(MIN(DECODE(EXTENSION.VALUE:url,&#39;http://hl7.org/fhir/StructureDefinition/birthPlace&#39;,EXTENSION.VALUE:valueAddress:city::string))) PATIENT_BIRTH_CITY,
+        UPPER(MIN(DECODE(EXTENSION.VALUE:url,&#39;http://hl7.org/fhir/StructureDefinition/birthPlace&#39;,EXTENSION.VALUE:valueAddress:country::string))) PATIENT_BIRTH_COUNTRY,
+        UPPER(MIN(DECODE(EXTENSION.VALUE:url,&#39;http://hl7.org/fhir/StructureDefinition/birthPlace&#39;,EXTENSION.VALUE:valueAddress:state::string))) PATIENT_BIRTH_STATE,
+        TRUNC(ANY_VALUE(PATIENT_FLAT.VALUE:resource:deceasedDateTime::date),&#39;D&#39;) PATIENT_DEATH_DT,
+        UPPER(ANY_VALUE(DECODE(PATIENT_FLAT.VALUE:resource:deceasedDateTime::date,NULL,&#39;Unknown&#39;,&#39;true&#39;))) PATIENT_DECEASED_IND,
+        UPPER(MIN(DECODE(EXTENSION.VALUE:url,&#39;http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName&#39;,EXTENSION.VALUE:valueString::string))) PATIENT_MOTHERS_MAIDEN_NAME,
+        UPPER(ANY_VALUE(ADDRESS.VALUE:line[0]::string)) PATIENT_ADDR_LINE1,
+        UPPER(ANY_VALUE(ADDRESS.VALUE:line[1]::string)) PATIENT_ADDR_LINE2,
+        UPPER(ANY_VALUE(ADDRESS.VALUE:line[2]::string)) PATIENT_ADDR_LINE3,
+        UPPER(ANY_VALUE(ADDRESS.VALUE:city::string)) PATIENT_CITY,
+        UPPER(ANY_VALUE(ADDRESS.VALUE:state::string)) PATIENT_STATE,
+        UPPER(ANY_VALUE(ADDRESS.VALUE:country::string)) PATIENT_COUNTRY,
+        ANY_VALUE(ADDRESS.VALUE:postalCode::string) PATIENT_POSTAL_CD,
+        ANY_VALUE(COALESCE(DECODE(ADDRESS.VALUE:extension[0]:extension[0].url::string,&#39;latitude&#39;,ADDRESS.VALUE:extension[0]:extension[0].valueDecimal::float),DECODE(ADDRESS.VALUE:extension[0]:extension[1].url::string,&#39;latitude&#39;,ADDRESS.VALUE:extension[0]:extension[1].valueDecimal::float))) PATIENT_LATITUDE,
+        ANY_VALUE(COALESCE(DECODE(ADDRESS.VALUE:extension[0]:extension[0].url::string,&#39;longitude&#39;,ADDRESS.VALUE:extension[0]:extension[0].valueDecimal::float),DECODE(ADDRESS.VALUE:extension[0]:extension[1].url::string,&#39;longitude&#39;,ADDRESS.VALUE:extension[0]:extension[1].valueDecimal::float))) PATIENT_LONGITUDE,
+        MIN(DECODE(EXTENSION.VALUE:url,&#39;http://synthetichealth.github.io/synthea/disability-adjusted-life-years&#39;,EXTENSION.VALUE:valueDecimal::string)) PATIENT_DISABILITY_ADJUSTED_LIFE_YEARS,
+        MIN(DECODE(EXTENSION.VALUE:url,&#39;http://synthetichealth.github.io/synthea/quality-adjusted-life-years&#39;,EXTENSION.VALUE:valueDecimal::string)) PATIENT_QUALITY_ADJUSTED_LIFE_YEARS,
+        1 PATIENT_CNT
+         FROM hl7_fhir.hl7_fhir_v1.PATIENT
+        , LATERAL FLATTEN(INPUT =&gt; JSON_STRING:entry) PATIENT_FLAT
+        , LATERAL FLATTEN(INPUT =&gt; PATIENT_FLAT.VALUE:resource:identifier) IDENTIFIER
+        , LATERAL FLATTEN(INPUT =&gt; PATIENT_FLAT.VALUE:resource:extension) EXTENSION
+        , LATERAL FLATTEN(INPUT =&gt; PATIENT_FLAT.VALUE:resource:address) ADDRESS
+    WHERE UPPER(PATIENT_FLAT.VALUE:resource:resourceType::string) = &#39;PATIENT&#39;
+    GROUP BY
+    PATIENT_ID;
+</code></pre>
+<p>We will also create another view called <code>CONDITIONS</code></p>
+<pre><code language="language-sql" class="language-sql">--Create CONDITIONS_VW view
+ CREATE OR REPLACE VIEW HL7_FHIR.HL7_FHIR_V1.CONDITIONS_VW AS
+    SELECT
+        CONDITION_FLAT.value:fullUrl::string condition_id,
+        JSON_STRING:entry[0].fullUrl::string PATIENT_ID,
+        CODING.VALUE:code::string CONDITION_CD,
+        UPPER(CODING.VALUE:display::string) CONDITION_DESC,
+        UPPER(CONDITION_FLAT.VALUE:resource.code.text::string) CONDITION_TXT,
+        CONDITION_FLAT.VALUE:resource.assertedDate::date ASSERTED_DTTM,
+        CONDITION_FLAT.VALUE:resource.onsetDateTime::date ONSET_DTTM,
+        CONDITION_FLAT.VALUE:resource.abatementDateTime::date ABATEMENT_DTTM,
+        UPPER(CONDITION_FLAT.VALUE:resource.verificationStatus::string) VERIFICATION_STATUS,
+        UPPER(CONDITION_FLAT.VALUE:resource.clinicalStatus::string) CLINICAL_STATUS,
+        1 CONDITION_CNT
+    FROM HL7_FHIR.HL7_FHIR_V1.PATIENT
+        , LATERAL FLATTEN(INPUT =&gt; JSON_STRING:entry) CONDITION_FLAT
+        , LATERAL FLATTEN(INPUT =&gt; CONDITION_FLAT.VALUE:resource.code.coding) CODING
+    WHERE UPPER(CONDITION_FLAT.VALUE:request.url::string) = &#39;CONDITION&#39;;
+</code></pre>
+<p>Now that we have created these flattened views, we can query them to take a look at the HL7 FHIR data in a tabular format:</p>
+<pre><code language="language-sql" class="language-sql">--Select from view to show data from raw json ordered up by patients
+SELECT * FROM HL7_FHIR.HL7_FHIR_V1.PATIENTS_VW;
+</code></pre>
+<p class="image-container"><img alt="Put Files" src="img/96e21f69a2147948.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Masking Policies to Protect Confidential Data" duration="10">
+        <p>Now let&#39;s demostrate how you can leverage <a href="https://docs.snowflake.com/en/user-guide/security-column-ddm.html" target="_blank">Dynamic Data Masking</a> to protect PII or HIPPA data by selecting different functional roles. To learn more about roles, please click <a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview.html" target="_blank">here</a>.</p>
+<p>Create one masking policy to protect PII and another one to protect HIPPA data by executing these two statements:</p>
+<pre><code language="language-sql" class="language-sql">--Create masking policy for PII
+CREATE OR REPLACE MASKING POLICY SIMPLE_MASK_PII_CHAR AS
+  (VAL CHAR) RETURNS CHAR -&gt;
+  CASE
+    WHEN CURRENT_ROLE() IN (&#39;SYSADMIN&#39;) THEN VAL
+      ELSE &#39;***PII MASKED***&#39;
+    END;
+
+ --Create masking policy for HIPPA    
+ CREATE OR REPLACE MASKING POLICY SIMPLE_MASK_HIPAA_CHAR AS
+  (VAL CHAR) RETURNS CHAR -&gt;
+  CASE
+    WHEN CURRENT_ROLE() IN (&#39;SYSADMIN&#39;) THEN VAL
+      ELSE &#39;***HIPAA***&#39;
+    END;
+</code></pre>
+<p>Now let&#39;s apply these policies to specific columns in our view to protect our data. These statements will apply the PII policy to our <code>PATIENTS_SSN</code> column, and the HIPPA policy to the <code>PATIENT_BIRTH_SEX</code> and <code>PATIENT_BIRTH_CITY</code> columns:</p>
+<pre><code language="language-sql" class="language-sql">--Apply policies to specific columns
+ALTER VIEW PATIENTS_VW MODIFY COLUMN PATIENT_SSN SET MASKING POLICY SIMPLE_MASK_PII_CHAR;
+ALTER VIEW PATIENTS_VW MODIFY COLUMN PATIENT_BIRTH_SEX SET MASKING POLICY SIMPLE_MASK_HIPAA_CHAR;
+ALTER VIEW PATIENTS_VW MODIFY COLUMN PATIENT_BIRTH_CITY SET MASKING POLICY SIMPLE_MASK_HIPAA_CHAR;
+</code></pre>
+<p>Our policies specify that if I query data from <code>PATIENTS_VW</code> using the SYS_ADMIN role, I should be able to see the unrestricted data. Let&#39;s see if this is accurate:</p>
+<pre><code language="language-sql" class="language-sql">--Verify masking policy using SYSADMIN
+USE ROLE SYSADMIN;
+
+SELECT PATIENT_ID, PATIENT_MRN, PATIENT_SSN, PATIENT_DRIVERS_LICENSE_NUM, PATIENT_BIRTH_SEX, PATIENT_BIRTH_CITY FROM HL7_FHIR.HL7_FHIR_V1.PATIENTS_VW
+LIMIT 100;
+</code></pre>
+<p class="image-container"><img alt="Put Files" src="img/49b0952ed5c02a06.png"></p>
+<p>Our policies also specify that if I use ANY other role to query data from <code>PATIENTS_VW</code>, I should hit the masking policies. Let&#39;s make sure that&#39;s the case:</p>
+<pre><code language="language-sql" class="language-sql">--Verify masking policy is applied and data is protected while a different role such as ACCOUNTADMIN
+USE ROLE ACCOUNTADMIN;
+
+SELECT PATIENT_ID, PATIENT_MRN, PATIENT_SSN, PATIENT_DRIVERS_LICENSE_NUM, PATIENT_BIRTH_SEX, PATIENT_BIRTH_CITY FROM HL7_FHIR.HL7_FHIR_V1.PATIENTS_VW
+LIMIT 100;
+</code></pre>
+<p class="image-container"><img alt="Put Files" src="img/830c2746b58e95fb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Analyze FHIR messages using Snowsight" duration="15">
+        <p>Once we have this data ready for analysis, let&#39;s create a couple of dashboards leveraging <strong>Snowsight</strong>, the exploratory visualization feature within Snowflake.</p>
+<p>As a first step, let&#39;s create a new <strong>Dashboard</strong> in the Snowflake GUI. First we need to go to the <strong>Dashboards</strong> section:</p>
+<p class="image-container"><img alt="Put Files" src="img/654d44ba12c0157.png"></p>
+<p>The following step is to create a new <strong>Dashboard</strong> using the icon placed in the upper right corner:</p>
+<p class="image-container"><img alt="Put Files" src="img/10da1517b70a4ddd.png"></p>
+<p>Please name the dashboard in any way you prefer.</p>
+<p>As a next step, let&#39;s make sure the right context is set to run the queries to populate the visualizations. We need to assign a role (SYSADMIN) and a compute warehouse (You can use the one you created earlier in the workshop):</p>
+<p class="image-container"><img alt="Put Files" src="img/844590c84eb8d239.png"></p>
+<p>Now click in the <strong>+New Tile</strong> button to create our first visualization:</p>
+<p class="image-container"><img alt="Put Files" src="img/2e0a3dd0b25a5286.png"></p>
+<p>At this step, we also need to specify the <strong>database</strong> and <strong>schema</strong> that we will be using. Please select the ones we have been using in the workshop:</p>
+<p class="image-container"><img alt="Put Files" src="img/b8f0b35baa69bccb.png"></p>
+<p>To retrieve our initial dataset, please copy and paste the following query, which will give us a breakdown of patient conditions by gender:</p>
+<pre><code language="language-sql" class="language-sql">--Patients by Condition by Gender
+SELECT PATIENTS_VW.PATIENT_SEX, CONDITIONS_VW.CONDITION_DESC, COUNT(*) AS PATIENT_COUNT
+FROM PATIENTS_VW
+JOIN CONDITIONS_VW ON PATIENTS_VW.PATIENT_ID=CONDITIONS_VW.PATIENT_ID
+GROUP BY PATIENT_SEX, CONDITION_DESC
+ORDER BY PATIENT_COUNT DESC;
+</code></pre>
+<p>As we execute the query, we will get our results as a table:</p>
+<p class="image-container"><img alt="Put Files" src="img/2d85b55e61f97376.png"></p>
+<p>As a next step, click on the <strong>Chart</strong> button next to <strong>Results</strong>:</p>
+<p class="image-container"><img alt="Put Files" src="img/59fd72940fca669.png"></p>
+<p>In the right-hand side of the screen we see the chart properties. Please change the options to match the following settings:</p>
+<p><strong>Chart Type</strong>: Heatgrid</p>
+<p><strong>Cell Value</strong>: PATIENT_COUNT</p>
+<p><strong>Rows</strong>: CONDITION_DESC</p>
+<p><strong>Columns</strong>: PATIENT_SEX</p>
+<p>We encourage you to play around with the different settings and graphs to get familiar with the feature. Once done with the exploration, leave the settings/fields as displayed.</p>
+<p class="image-container"><img alt="Put Files" src="img/9392ad93d7c7836.png"></p>
+<p>Also, please rename the tile to <code>Patient Conditions by Gender</code>. This should give you a heatgrid visualizations as follows:</p>
+<p class="image-container"><img alt="Put Files" src="img/7a1c76580027d9a7.png"></p>
+<p>Once completed, click on <strong>Return to Dashboard</strong> in the upper left corner, to take a look at your dashboard. Once in the dashboard view, click on the <strong>+</strong> button to add additional graphs to the dashboard, by clicking on <strong>New Tile from Worksheet</strong>:</p>
+<p class="image-container"><img alt="Put Files" src="img/31724ec746b493c8.png"></p>
+<p>This will give us the option to repeat the process and configure additional graphs for our dashboard. Please use any other query of your preference to do this. Here we provide you a couple of query examples in case you need them:</p>
+<pre><code language="language-sql" class="language-sql">--Patients by Core Race
+SELECT PATIENT_CORE_RACE, COUNT(*) AS PATIENT_COUNT
+FROM PATIENTS_VW
+GROUP BY PATIENT_CORE_RACE
+ORDER BY PATIENT_COUNT DESC;
+</code></pre>
+<pre><code language="language-sql" class="language-sql">--Total Number of Patients
+SELECT COUNT(*) AS TOTAL_NUMBER_OF_PATIENTS FROM PATIENTS_VW;
+
+</code></pre>
+<p>Once you finish creating additional visualizations, you could have a dashboard like this, providing you graphic insights of your data:</p>
+<p class="image-container"><img alt="Put Files" src="img/f28e51c0397587e7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You used Snowflake to trasform your HL7 FHIR JSON messages using Snowflake native capabilities and gather valuable insights by using Snowsight&#39;s exploratory features.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Storing HL7 FHIR JSON messages with an <strong>Internal Stage</strong> and <strong>SnowSQL</strong></li>
+<li>Ingesting HL7 FHIR JSON messages with semi-structured data support</li>
+<li>Processing HL7 FHIR messages with Snowflake native capabilities</li>
+<li>Displaying HL7 FHIR data with Snowsight</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html" target="_blank">Snowsight</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-column-ddm.html" target="_blank">Dynamic Data Masking</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/flatten.html" target="_blank">Flatten Function</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

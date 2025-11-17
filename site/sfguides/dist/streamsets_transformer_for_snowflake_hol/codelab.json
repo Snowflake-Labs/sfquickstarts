@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "streamsets_transformer_for_snowflake_hol",
+  "duration": 96,
+  "title": "StreamSets' Transformer for Snowflake: Hands on Lab",
+  "summary": "Hands on Lab for Transformer for Snowflake",
+  "source": "streamsets_hol/streamsets_hol.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "streamsets",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "streamsets_transformer_for_snowflake_hol"
+}

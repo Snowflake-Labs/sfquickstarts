@@ -1,0 +1,269 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build an Ad Tag in Python on AWS</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_an_ad_tag_in_python_on_aws"
+                  title="Build an Ad Tag in Python on AWS"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Many Snowflake customers use Snowflake as their centralized platform for their advertising data. In some cases, this can come directly through Snowflake, as with <a href="https://www.snowflake.com/datasets/the-trade-desk-raw-event-data-stream-reds/" target="_blank">The Trade Desk</a>. In other cases, though, it might be easiest to place a tag in the media, and ingest that data into Snowflake.</p>
+<p>This Ad Tag takes information from the HTTP request and stores it in Snowflake. <a href="https://www.serverless.com/" target="_blank">Serverless Framework</a> was used to build and deploy the application for simplicity of operation and ease of scaling.</p>
+<p>After completing this guide, you will have built, tested, and deployed an Ad Tag built with <a href="https://flask.palletsprojects.com/en/2.0.x/" target="_blank">Python Flask</a>, <a href="https://www.serverless.com/" target="_blank">Serverless Framework</a>, and <a href="https://aws.amazon.com/" target="_blank">AWS</a> Lambda/API Gateway.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Privileges necessary to create an API Gateway and Lambda in Amazon Web Services</li>
+<li>Ability to install and run software on your computer</li>
+<li>Basic experience using git and editing yml</li>
+<li>Intermediate knowledge of Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to configure and build an Ad Tag Powered by Snowflake</li>
+<li>How to deploy an Ad Tag on AWS serverless technologies</li>
+<li>How to test and monitor the Ad Tag</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://aws.amazon.com" target="_blank">AWS</a> Account</li>
+<li><a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li><a href="https://serverless.com" target="_blank">Serverless.com</a> Account</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+<li><a href="https://www.serverless.com/framework/docs/providers/aws/guide/installation" target="_blank">Serverless Framework</a> Installed</li>
+<li><a href="https://www.python.org/" target="_blank">Python 3</a> Installed</li>
+<li><a href="https://virtualenv.pypa.io/en/latest/installation.html" target="_blank">Virtualenv</a> Installed</li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">AWS CLI</a> Installed and <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html" target="_blank">Configured</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Ad Tag by Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Downloading the Code" duration="3">
+        <p>The code used in this guide is hosted in github. You can download the code as a ZIP from <a href="https://github.com/Snowflake-Labs/sf-samples" target="_blank">GitHub</a> or use the following git command to clone the repository.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sf-samples.git
+</code></pre>
+<p>After downloading you will have a folder sf-samples, and the code for this project would be in sf-samples/samples/sfguide-snowflake-python-adtag containing all the code needed for the Ad Tag. Open the folder in VSCode to review the project.</p>
+<p>The app.py contains all of the python for this very simple ad tag. The main function is below.</p>
+<pre><code language="language-python" class="language-python">@app.route(&#34;/&#34;, methods=[&#34;GET&#34;])
+def log_request_and_return():
+    existing_cookie = request.cookies.get(cookie_id)
+    cookie = existing_cookie if existing_cookie else str(uuid.uuid1())
+    response = impressionClient.put_record(
+           DeliveryStreamName=stream_name,
+           Record={
+                &#39;Data&#39;: json.dumps({
+                    &#39;event_time&#39;: datetime.datetime.now().isoformat(),
+                    &#39;cookie&#39;: cookie,
+                    &#39;args&#39;: request.args,
+                    &#39;headers&#39;: dict(request.headers),
+                    &#39;browser&#39;: request.user_agent.browser,
+                    &#39;platform&#39;: request.user_agent.platform,
+                    &#39;remote_addr&#39;: request.remote_addr,
+                })
+            }
+        )
+    
+    resp = make_response(&#39;&#39;, 204)
+    if (not existing_cookie):
+        resp.set_cookie(cookie_id, cookie)
+    return resp
+</code></pre>
+<p>The tag reads data from the HTTP request, serializes the data as JSON, and sends it to Kinesis Firehose. The tag itself returns no payload and uses 204 no content, because the ad tag just needs information about the ad impression, and need not waste bytes across the wire sending a response.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake and AWS" duration="3">
+        <p>The setup.sql file contains the SQL statements used in this section.</p>
+<h2 is-upgraded>Set up warehouse, database, schema and table</h2>
+<p>Run the following SQL commands to create the warehouse, database, and schema.</p>
+<pre><code language="language-sql" class="language-sql">-- setup warehouse, database and schema
+USE ROLE ACCOUNTADMIN;
+CREATE WAREHOUSE TAG_DEMO_WH WITH WAREHOUSE_SIZE=&#39;XSmall&#39;  STATEMENT_TIMEOUT_IN_SECONDS=15 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS=15;
+USE WAREHOUSE TAG_DEMO_WH;
+CREATE DATABASE TAG_DEMO;
+CREATE SCHEMA TAG_DEMO.DEMO;
+</code></pre>
+<p>Following that, you can create the table as follows.</p>
+<pre><code language="language-sql" class="language-sql">-- create table to hold impressions
+use TAG_DEMO.DEMO;
+create or replace table IMPRESSIONS
+(event variant);
+</code></pre>
+<p>Next, you should create an S3 bucket to hold the files.  Please note the name of the bucket.  See the <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html" target="_blank">AWS documentation</a> for details about how to create a bucket.</p>
+<p>Then you will need to create the Kinesis Firehose stream that will write the files into S3.</p>
+<p class="image-container"><img alt="Create the firehose stream" src="img/24e1d078f63c8c8d.png"></p>
+<p>Select &#34;Direct PUT&#34; as the Source, and &#34;Amazon S3&#34; as the Destination.  Name your firehose stream, and note the name used.  Next scroll down to the &#34;Destination settings&#34; section, and put the bucket you created above.</p>
+<p>Go back to Snowflake, and run the following SQL to create the stage.  Make sure to add your AWS credentials and set the name of the S3 bucket you created above.</p>
+<pre><code language="language-sql" class="language-sql">-- create a stage to take the data from S3
+create or replace stage tag_demo_stage
+url=&#39;s3://&lt;s3_location&gt;]/&#39;
+credentials = (AWS_KEY_ID=&#39;&lt;accesskey&gt;&#39; AWS_SECRET_KEY=&#39;&lt;secretkey&gt;&#39;);
+</code></pre>
+<p>You can now create the pipe to ingest the data into your impressions table.</p>
+<pre><code language="language-sql" class="language-sql">-- create the pipe to load it into the table
+create or replace pipe tag_demo_pipe auto_ingest=true as
+copy into IMPRESSIONS
+from @tag_demo_stage
+file_format = (type = &#39;JSON&#39;);
+</code></pre>
+<p>Next, run the following SQL to get the notification channel for the pipe.  This gives an ARN to an SQS queue that should be notified when a new file is written to S3.  Copy this ARN.</p>
+<pre><code language="language-sql" class="language-sql">show pipes;
+</code></pre>
+<p>Then you will take this ARN to S3 to set up notifications when new files arrive in the S3 bucket that is the endpoint for the Firehose stream. Head back to the AWS console, and bring up S3. Click on the S3 bucket you created above, and click &#34;Properties.&#34; Scroll down to &#34;Event Notifications&#34; and click the &#34;Create event notification&#34; button. Give it a name, e.g. &#34;tag-creation&#34; and click the button for &#34;All object create events.&#34; Scroll down to the &#34;Destination&#34; section, and click &#34;SQS queue&#34; as the destination. In the &#34;Specify SQS queue&#34; section, choose &#34;Enter SQS queue ARN&#34; and paste the ARN you selected above.  Click &#34;Save changes.&#34;</p>
+<p>Now you are ready to run your tag code.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring the Application" duration="3">
+        <p>Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to name your service by replacing &lt;NAME_OF_YOUR_SERVICE&gt; and set the name of your Kinesis Firehose stream by replacing &lt;FIREHOSE_STREAM_NAME&gt;.</p>
+<p>Modify the region in the serverless.yml (line 17) to the same region as your credentials.</p>
+<pre><code language="language-bash" class="language-bash">aws configure get region
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring, Packaging, and Testing" duration="5">
+        <p>Serverless login will open a browser to authenticate the serverless tool. When running serverless, it will ask you what org to add it to. You can choose the default or any org you have setup in serverless.com. You can also keep the original snowflake-python-api name for the application or give it a new name. When asked to deploy the application, choose No.</p>
+<pre><code language="language-bash" class="language-bash">npm install
+serverless login
+serverless
+</code></pre>
+<p>After this is complete, the Serverless Framework is configured for use.</p>
+<p>Before we deploy the application, we should test locally. For local development, we will isolate the python dependencies in user space using virtualenv.</p>
+<p>Create a virtualenv locally and install python packages.</p>
+<pre><code language="language-bash" class="language-bash">virtualenv venv --python=python3
+source ./venv/bin/activate
+pip install -r requirements.txt
+</code></pre>
+<p>You can now start the local serverless server which hosts the API.</p>
+<pre><code language="language-bash" class="language-bash">sls wsgi serve
+</code></pre>
+<p>To verify the API is working properly you can hit the 3 API endpoints:</p>
+<pre><code language="language-bash" class="language-bash">curl &#34;http://localhost:5000/?adid=1234&amp;placementid=abcd&amp;creativeid=789&#34;
+</code></pre>
+<p>If these endpoints are not working and you are on macOS, make sure <a href="https://www.reddit.com/r/webdev/comments/qg8yt9/apple_took_over_port_5000_in_the_latest_macos/" target="_blank">port 5000 is not in use</a>.</p>
+<p>The curl commands will not return any data because we used 204 no content as the HTTP response. You can also open these uris in a browser if that&#39;s preferred.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying, Verifying and Monitoring the tag" duration="6">
+        <h2 is-upgraded>Deploying to AWS</h2>
+<p>Now that the application and configuration is verified to be working, you can deploy it to AWS by running the following command:</p>
+<pre><code language="language-bash" class="language-bash">serverless deploy
+</code></pre>
+<p>After the completion of deployment, serverless info will give you the URI where your API is now hosted.</p>
+<pre><code language="language-bash" class="language-bash">serverless info
+</code></pre>
+<p>You can now do the same tests you did locally on the now publicly available API. Replace the server uri with your API location.</p>
+<pre><code language="language-bash" class="language-bash">curl &#34;http://&lt;DEPLOYMENT&gt;.execute-api.&lt;REGION&gt;/?adid=1234&amp;placementid=abcd&amp;creativeid=789&#34;
+</code></pre>
+<p>Your api is now available for use by your mobile and web applications.</p>
+<h2 is-upgraded>Placing the tag in your ad server</h2>
+<p>While the tag can often be placed using a simple HTML img tag, the information about placements, creatives, etc. most often come in the form of macros that your ad server will expand. For this and more details about placing the tag, please refer to your ad server documentation.</p>
+<p>When using Google&#39;s Campaign Manager 360, the tag may look something like the following:</p>
+<pre><code language="language-html" class="language-html">&lt;img src=&#34;http://&lt;DEPLOYMENT&gt;.execute-api.&lt;REGION&gt;/?adid=%eaid!&amp;placementid=%epid!&amp;creativeid=%ecid!&#34; width=&#34;1&#34; height=&#34;1&#34;&gt;
+</code></pre>
+<h2 is-upgraded>Verify the loaded data</h2>
+<p>You can query Snowflake to verify that the JSON impressions were loaded into the table.</p>
+<pre><code language="language-sql" class="language-sql">-- verify that data is loading
+select * from IMPRESSIONS;
+</code></pre>
+<h2 is-upgraded>Monitoring your API with Serverless Framework</h2>
+<p>You can monitor your application directly by logging into serverless.</p>
+<pre><code language="language-bash" class="language-bash">sls login
+</code></pre>
+<p>The serverless console allows you to easily view requests to the API as well as errors. The overview and api endpoints tabs allow you to view requests, errors, and latencies for your API. The explorer is useful to look at logs of each request.</p>
+<p>If you are more familiar with the AWS Console this same information is available in Cloudwatch Metrics and Logs.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>If you are done with this exercise you can remove all aws resources by having Serverless Framework cleanup.</p>
+<pre><code language="language-bash" class="language-bash">serverless remove
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>You&#39;ve successfully built, tested, and deployed an ad tag on AWS Powered by Snowflake. The serverless stack from AWS is a great way to quickly and easily build an ad tag that can scale to any volume.</p>
+<p>Code for this project is available at <a href="https://github.com/Snowflake-Labs/sf-samples" target="_blank">https://github.com/Snowflake-Labs/sf-samples</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to build, configure and package an ad tag Powered by Snowflake</li>
+<li>How to test the tag locally</li>
+<li>How to deploy the tag on AWS serverless technologies</li>
+<li>How to test and monitor the tag in AWS</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

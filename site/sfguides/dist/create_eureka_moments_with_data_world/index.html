@@ -1,0 +1,255 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Create Eureka Moments with data.world and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="create_eureka_moments_with_data_world"
+                  title="Create Eureka Moments with data.world and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>At data.world we offer organizations and teams private, secure environments in which they can collaborate together. By bringing in data from Snowflake, you can further extend your data using data.world features, and connecting to open datasets.</p>
+<p>data.world supports the largest open data community in the world, where we&#39;re excited to connect members with a vast collection of scientific research, government, and demographic data, as well as other members who are interested in similar data work so they can join forces to solve real problems faster.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to set up a connection to Snowflake in data.world</li>
+<li>How to access your Snowflake data in data.world</li>
+<li>How to extend your data with open datasets and other data available on data.world</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free data.world account</li>
+<li>A trial Snowflake Account with ACCOUNTADMIN access</li>
+</ul>
+<p>We will walk through both data.world and Snowflake account creation in the next steps.</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A data.world dataset and project, with live data from Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your data.world Account" duration="2">
+        <p>To create a free data.world account, do the following:</p>
+<ol type="1">
+<li>Click <a href="https://data.world/login/" target="_blank">this link</a> and then click <code>Join now</code> below the login section. <img alt="2-1" src="img/ec2c80b88b07a8ba.png"></li>
+<li>Enter your email, name, username, and password then click <code>Continue</code>. <ul>
+<li>Alternatively, you can create an account by linking to your Google, Facebook, GitHub, or Twitter account on the bottom of the sign-up popup modal. <img alt="2-2" src="img/69e804cd8a5e5a0e.png"></li>
+</ul>
+</li>
+<li>You will then be redirected to your data.world landing page.</li>
+<li>Check your email for a verification email from data.world In the email, click the <code>Verify email</code> button, or copy and paste the unique link into your browser to verify your email address and complete your account creation. <img alt="2-3" src="img/bd004e79b778af74.png"></li>
+</ol>
+<p>On the data.world landing page, you will find some helpful resources. In addition to links to the getting started guide and documentation, you can complete the <code>Getting started</code> checklist, find and follow trusted data providers, or explore the introduction tutorials. Feel free to explore these now, or move on to the next step in this quickstart. <img alt="2-4" src="img/d4d8a45583617119.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your Snowflake Trial Account" duration="3">
+        <p>To create a Snowflake trial account, do the following:</p>
+<ol type="1">
+<li>Click <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">this link</a>.</li>
+<li>Enter your first name, last name, email, company, role, and country. Click <code>Continue</code>. <img alt="3-1" src="img/7a5f218f3547214b.png"></li>
+<li>Choose a Snowflake account version (Enterprise recommended) and a cloud provider.</li>
+<li>Check the box to agree to the terms, and click <code>Get Started</code>. <img alt="3-2" src="img/b73b32dc52446e48.png"></li>
+<li>Check your email for a verification email from Snowflake, and in the email click the <code>Click To Activate</code> button. <img alt="3-3" src="img/95a3dff107956b44.png"></li>
+<li>Create a new password, and then login to your Snowflake account.</li>
+</ol>
+<p>Your Snowflake account is now ready to go!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect to data.world via Partner Connect" duration="3">
+        <p>With your data.world and Snowflake accounts set up, you are now ready to connect Snowflake to data.world. In this step, you will activate the data.world partner conenction, and create a dataset in data.world where that connection can be accessed.</p>
+<ol type="1">
+<li>In Snowflake, expand the <code>Admin</code> menu on the left sidebar.</li>
+<li>Choose <code>Partner Connect</code>. <img alt="4-1" src="img/8e3db649e5cc1c87.png"></li>
+<li>Scroll down to the <code>Security & Governance</code> section, and select the <code>data.world</code> tile. <ul>
+<li>Alternatively you can search for &#34;data.world&#34; and then click the tile.</li>
+</ul>
+</li>
+<li>Click the <code>Connect</code> button. <ul>
+<li>When you click <code>Connect</code>, the data.world partner database, warehouse, user, and role will be created in your Snowflake instance. <img alt="4-2" src="img/32be7f64cb659695.png"></li>
+</ul>
+</li>
+<li>Once the partner account is created, click <code>Activate</code>. <ul>
+<li>You are redirected to data.world. If you are in a new session, you may be prompted to login to your data.world account.</li>
+<li>The data.world partner Snowflake connection is automatically created. <img alt="4-3" src="img/4be0ece076bdd589.png"></li>
+</ul>
+</li>
+</ol>
+<p>Your data.world partner account has been created, and connected to your data.world account. Congratulations! <img alt="4-4" src="img/2c827a23998f04c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Dataset and Add Data" duration="3">
+        <p>Now that you have successfully connected Snowflake to data.world, it&#39;s time to create a dataset, where you will be able to interact with your data.</p>
+<ol type="1">
+<li>Click <code>Create a dataset</code>. <img alt="5-0" src="img/2c827a23998f04c.png"></li>
+<li>Give the dataset a name, like &#34;Snowflake Quickstart&#34;, then click <code>Create Dataset</code>. <img alt="5-1" src="img/ed3ec2aa2b1d6dad.png"></li>
+<li>Click <code>Add data</code>. <img alt="5-2" src="img/6a7d05bbfb31b354.png"></li>
+<li>Click the Snowflake tile under <code>My Integrations</code>. <ul>
+<li>This tile is the connection that was automatically created when you clicked <code>Activate</code> in the previous step. <img alt="5-3" src="img/f533663ff63b8faa.png"></li>
+</ul>
+</li>
+<li>Click <code>Use live table</code>. <img alt="5-4" src="img/1e400f92ade10091.png"></li>
+<li>Select the following schema: <ul>
+<li>TPCDS_SF10TCL <img alt="5-5" src="img/d218759204d3ae4e.png"></li>
+</ul>
+</li>
+<li>Select the following tables: <ul>
+<li>CUSTOMER</li>
+<li>CUSTOMER_ADDESS</li>
+</ul>
+</li>
+<li>Click <code>Import 2 tables</code><img alt="5-6" src="img/a62fd3c4bc726448.png"></li>
+<li>Click <code>Got it</code><img alt="5-7" src="img/690652ce8294796e.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Interact With Your Data" duration="5">
+        <p>After you add the tables to your dataset, it will take a few moments for data.world to index the columns. Once the tables have completed processing, you will see a live preview of the first 5 rows of each table. Now is time to write some queries. In this step, you&#39;ll create a new data.world project, where you can link datasets, run queries, and save results.</p>
+<ol type="1">
+<li>In the dataset, click <code>Launch workspace</code>. <img alt="6-1" src="img/444febf13f699742.png"></li>
+<li>Click on <code>Untitled Project</code> in the header. <img alt="6-2" src="img/f5283138f509979a.png"></li>
+<li>Give the project a name, like &#34;Snowflake Quickstart Project&#34; and click <code>Create</code>. <img alt="6-3" src="img/5ef2a9c29df565a9.png"></li>
+<li>Click <code>+ Add</code> and choose <code>SQL Query</code>. <img alt="6-4" src="img/42f6e26cf587ff0f.png"></li>
+<li>Paste the following query into the editor. <ul>
+<li>This query returns the count of customers by state, separated by dwelling type.</li>
+</ul>
+</li>
+</ol>
+<pre><code>select
+  a.ca_state AS state,
+  a.ca_location_type AS location_type,
+  COUNT(c.c_customer_sk) AS customer_count
+from customer c
+join customer_address a
+  on customer.c_current_addr_sk = a.ca_address_sk
+group by ca_state, ca_location_type
+</code></pre>
+<ol type="1" start="6">
+<li>Click <code>Run query</code>.</li>
+<li>Admire your query results! <img alt="6-5" src="img/b1855ca36f0e6faa.png"></li>
+<li>Save your query to the project by clicking <code>Save</code>, and give the query a name, like &#34;cust-by-state-type&#34; and then click <code>Save</code>. <img alt="6-6" src="img/a7ad1a270b7e1400.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Save Query Results and Extend Your Data" duration="3">
+        <p>So far, you&#39;ve created a query against data that you already have access to in Snowflake. In this example, we will extend your data using built-in features of data.world.</p>
+<ol type="1">
+<li>Click on the query created in the previous step to view the query results.</li>
+<li>Click <code>Download</code> and select <code>Save to dataset or project</code>. <img alt="7-1" src="img/3a20f0854273b316.png"></li>
+<li>Give the file a name, like &#34;cust-by-state-type&#34;, and click <code>Save</code>. <ul>
+<li>The name may be already populated, if you saved the query in the previous step. <img alt="7-2" src="img/84399cc3f3532446.png"></li>
+</ul>
+</li>
+<li>In the <code>Project Files</code> section on the left sidebar, you will find your new file. Click on it to open it in the workspace.</li>
+<li>You will notice that the <code>state</code> column has a green triangle on the corner. This indicates that data.world has detected that the data contained in the column matches known contextual data. <img alt="7-3" src="img/9a434f5d0fba9b9f.png"></li>
+<li>Click the green triangle, and select <code>Match this column</code>. <img alt="7-4" src="img/be4d6bb733efd07d.png"></li>
+<li>data.world has matched the <code>state</code> column to the US States or Territories. Click <code>Add matched column</code> to add it to the table. <img alt="7-5" src="img/81eb839c0bcacb8c.png"></li>
+<li>After adding the matched column, you can add more related columns. Scroll to the left, and click <code>Add related column</code> under <code>census_region</code>, then click <code>Done</code>. <img alt="7-6" src="img/a64d10185ee35891.png"></li>
+</ol>
+<p>You now have a report that can be aggregated from State to Region, without having necessarily contained that information in your base data. <img alt="7-7" src="img/31e8291319980239.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an Insight" duration="3">
+        <p>To lead the rest of your team the Eureka moments you discover through the data, you can create insights on your projects. Insights are a space where you can embed content via markdown, have discussions, and collaborate with your team members.</p>
+<ol type="1">
+<li>With your report open in the workspace, click <code>Open in app</code>. <img alt="8-1" src="img/a98a4d912eb084fa.png"></li>
+<li>Select <code>Chart Builder</code>. <img alt="8-2" src="img/4dd8097ee410fa54.png"></li>
+<li>On the next screen, click <code>data.world Community</code>. <img alt="8-3" src="img/c3981272a0c96b5f.png"></li>
+<li>To complete authorization of the Chart Builder integration, click <code>Authorize Chart Builder(by data.world)</code>. <img alt="8-4" src="img/931928cceabf2022.png"></li>
+<li>In Chart Builder, next to <code>X</code>, click <code>Select a field...</code> and choose <code>census_region</code>. <img alt="8-5" src="img/3ba7cc83a15d6e48.png"></li>
+<li>Next to <code>Y</code>, click <code>Select a field...</code> and choose <code>customer_count</code>.</li>
+<li>Next to <code>Color</code>, click <code>Select a field...</code> and choose <code>census_region</code>.</li>
+<li>Set the chart size <code>Width</code> to 500, and the <code>Height</code> to 330. <img alt="8-6" src="img/81d5d2f486386b7a.png"></li>
+<li>Click <code>Share</code> in the upper righthand corner, and select <code>Insight</code>. <img alt="8-7" src="img/b106ca320a1a6311.png"></li>
+<li>Enter a title, like &#34;Customer Count by Region&#34; and click <code>Save</code>. <img alt="8-8" src="img/75a6f5dd07ef214a.png"></li>
+<li>In the green success header, click <code>Open in new tab</code> to view your insight in your project. <img alt="8-9" src="img/d91635e2a05b8b82.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Blim Blam!! You&#39;ve seen how you can use data.world and Snowflake together to create Eureka insights for you and your team. This is just a small sample of what you can do in data.world. You can also join your data to other open dataset hosted on data.world by organizations around the world, import data from files such as CSV, JSON, Excel, or XML. And so much more!</p>
+<h2 is-upgraded>Continue exploring data.world</h2>
+<ul>
+<li><a href="https://docs.data.world/en/98378-base-platform-quickstart.html" target="_blank">data.world Quickstart Guides</a></li>
+<li><a href="https://docs.data.world/?lang=en" target="_blank">data.world Documentation</a></li>
+<li>Complete the <a href="https://data.world/" target="_blank">New User Check List</a>.</li>
+<li>Dive into the <a href="https://data.world/jonloyens/an-intro-to-dataworld-dataset" target="_blank">An Intro to data.world</a> dataset.</li>
+<li>Want to level up? Check out the <a href="https://data.world/jonloyens/intermediate-data-world" target="_blank">Intermediate Tutorial</a>.</li>
+<li><a href="https://data.world/settings/billing" target="_blank">Upgrade your account</a> to get more tables/datasets/projects/storage.</li>
+<li>See what else data.world can do! <a href="https://data.world/product/schedule-a-demo/" target="_blank">Schedule a demo with a data.world representative</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

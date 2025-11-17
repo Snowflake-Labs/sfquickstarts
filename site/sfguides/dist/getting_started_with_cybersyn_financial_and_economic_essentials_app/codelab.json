@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_cybersyn_financial_and_economic_essentials_app",
+  "duration": 12,
+  "title": "Quickstart Guide: Cybersyn Financial \u0026 Economic Essentials App",
+  "summary": "How to access and use Cybersyn’s Financial \u0026 Economic Essentials App.",
+  "source": "getting_started_with_cybersyn_financial_and_economic_essentials_app/getting_started_with_cybersyn_financial_and_economic_essentials_app.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "streamlit"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_cybersyn_financial_and_economic_essentials_app"
+}

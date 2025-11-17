@@ -1,0 +1,270 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Customer Support Streamlit Application Powered by Cortex</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_customer_support_email_app"
+                  title="Tasty Bytes - Customer Support Streamlit Application Powered by Cortex"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img alt="banner" src="img/37d5585e295ee0d4.png"></p>
+<p>Welcome to the Powered by Tasty Bytes - Customer Support Email App!</p>
+<p>This application streamlines the workload of call center agents by automating responses to customer emails using a knowledge base. When an email arrives, a Cortex LLM determines if it can address the customer query using the knowledge base. If it can, an automatic response is sent; if not, the email is directed to an agent. Agents have the choice to reply to customer emails, with a Cortex LLM offering suggested responses.</p>
+<p>Additionally, agents can contribute responses to the knowledge base, enabling the LLM to address similar queries automatically in the future. Sentiment scores are generated from both agent and auto-responses for further analysis. Moreover, there&#39;s an option to simulate a new email for demo purposes.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How Snowflake tools can build a full email support application using powerful LLM functionality</li>
+<li>How to build a multi-page Streamlit in Snowflake App</li>
+<li>How to use Cortex LLMs in your application, including: <ul class="checklist">
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex Complete</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/sentiment-snowflake-cortex" target="_blank">Cortex Sentiment Analysis</a></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Snowflake account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A customer support Streamlit application powered by Cortex LLMs</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <h2 is-upgraded>Step 1 - Accessing hosted Setup SQL in GitHub</h2>
+<ul>
+<li>Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.</li>
+</ul>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/blob/main/customer-support-email-app/setup/setup.sql" target="_blank"><paper-button class="colored" raised>setup.sql</paper-button></a></p>
+<h2 is-upgraded>Step 2 - Run the contents of setup.sql</h2>
+<p>Open a new Snowsight worksheet and run all commands from setup.sql.</p>
+<h2 is-upgraded>Step 3 - Load Streamlit Files</h2>
+<ul>
+<li>Download all files from the <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/tree/main/customer-support-email-app/app" target="_blank">app directory</a>. This includes all files in the pages subdirectory.</li>
+<li>In Snowsight, change the role to <strong>sysadmin</strong></li>
+<li>open the <strong>tasty_bytes_customer_support_email.app.customer_support_email_app</strong> stage</li>
+</ul>
+<p class="image-container"><img alt="stage" src="img/ecdcafe5e6ca1efe.png"></p>
+<ul>
+<li>Click + Files in the top right of the stage</li>
+<li>Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory <ul>
+<li>01_Queue.py and environment.yml are at the top level</li>
+<li>02_History.py and 03_Simulate_New_Email.py and in the pages folder.</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="pages-folder" src="img/f0f6aec003780c91.png"></p>
+<p class="image-container"><img alt="streamlit-files" src="img/afbfed2fa7d78007.png"></p>
+<h2 is-upgraded>Step 4 - Create the Streamlit App</h2>
+<p>Run the code below in a Snowsight worksheet to build the Streamlit app.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE sysadmin;
+
+CREATE OR REPLACE STREAMLIT tasty_bytes_customer_support_email.app.customer_support_email_app
+ROOT_LOCATION = &#39;@tasty_bytes_customer_support_email.app.customer_support_email_app&#39;
+MAIN_FILE = &#39;01_Queue.py&#39;
+QUERY_WAREHOUSE = &#39;tasty_bytes_customer_support_email_wh&#39;
+COMMENT=&#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;voc&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;streamlit&#34;, &#34;vignette&#34;:&#34;customer_email_app&#34;}}&#39;;
+
+GRANT USAGE ON STREAMLIT tasty_bytes_customer_support_email.app.customer_support_email_app TO ROLE customer_support_email_role;
+</code></pre>
+<h2 is-upgraded>Step 5 - Open the Streamlit App</h2>
+<ul>
+<li>From Snowsight, ensure you are using the <strong>customer_support_email_role</strong> role.</li>
+<li>Under Projects, click Streamlit</li>
+<li>Open <strong>CUSTOMER_SUPPORT_EMAIL_APP</strong> from the list of apps</li>
+</ul>
+<p class="image-container"><img alt="streamlit-app" src="img/6b1c61f29f9a27d8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running the Customer Support Email App" duration="10">
+        <p>This application is divided into three sections.</p>
+<ul>
+<li>Queue displays a list of emails awaiting responses to customers.</li>
+<li>History showcases emails previously addressed by agents and auto-responses from LLM.</li>
+<li>Additionally, there&#39;s an option to Simulate a New Email, acting as a customer for demonstration purposes. The primary objective of this demonstration is to illustrate how the app utilizes the knowledge base in real-time.</li>
+</ul>
+<p>Let&#39;s simulate a scenario where we first act as a customer, sending an email that the LLM cannot answer. Then, we will act as a Customer Support Agent to respond, adding the summarized response to our knowledge base or corpus, and resend a similar email to trigger an auto-response from LLM.</p>
+<p>To do this, please follow the steps below:</p>
+<ul>
+<li>Click on Simulate New Email</li>
+<li>Send a new email with the following information: <ul>
+<li><strong>Body:</strong> I wanted to ask if the the Buffalo Wings at Toronto Plant Palace are still Vegan? Last time I was there they were.</li>
+<li><strong>Email Address:</strong> Use your email or a fake email address</li>
+<li><strong>Subject:</strong> Are the Buffalo Wings at Toronto Plant Palace still vegan?</li>
+</ul>
+</li>
+<li>Click Send to dispatch the email, which the LLM will process. Since the auto-response Knowledge Base lacks information about this query, it will be routed to an agent.</li>
+</ul>
+<p class="image-container"><img alt="simulate-email" src="img/4446b530998366e1.png"></p>
+<ul>
+<li>Navigate to the Queue to view the list of emails to be addressed.</li>
+<li>Scroll to the bottom and click Reply next to the email sent. This action reveals the full email and a suggested response generated by LLM for sending to the customer.</li>
+</ul>
+<p class="image-container"><img alt="auto-response" src="img/1011a19a656c272c.png"></p>
+<ul>
+<li>Click Send to dispatch the email. You will then be prompted to add the response to the knowledge base.</li>
+<li>Choose Yes to add it, which will provide a summary for addition.</li>
+<li>Click Save to store the response in the knowledge base. Additionally, you have the option to interact with the chatbot for further assistance.</li>
+</ul>
+<p class="image-container"><img alt="knowledge-base" src="img/a712c0bb06ebeb8a.png"></p>
+<ul>
+<li>Now that the response is saved to the knowledge base, you can pose the same or a similar question again to observe the auto-response.</li>
+<li>Once the auto-response is received, navigate to the History section to view the response.</li>
+</ul>
+<p>If you prefer not to find something new to add to the knowledge base for each demo, you can simply delete the ones you added by executing the commands below:</p>
+<pre><code language="language-sql" class="language-sql">delete from tasty_bytes_customer_support_email.harmonized.chunk_text
+where source = &#39;EMAIL&#39;;
+
+delete from tasty_bytes_customer_support_email.harmonized.vector_store
+where source = &#39;EMAIL&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding the Customer Support Email App" duration="5">
+        <p>The following features are used in the customer support email app.</p>
+<h2 is-upgraded>Auto Response with Cortex Complete</h2>
+<p>Cortex complete generates a response (completion) to a prompt using your choice of supported language model. In the application, we pass the prompt and model (mistral-large) to Cortex complete to generate a response to the customer&#39;s email. You can read more <a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">documentation here</a>.</p>
+<p>We add additional information to the prompt to ensure the email is answered accurately.</p>
+<ul>
+<li><strong>get_context</strong> uses RAG to find the most similar support case and passes the text into our prompt.</li>
+<li><strong>background_info</strong> is a document explaining many high-level details of Tasty Bytes. This add Tasty Bytes specific data to the prompt.</li>
+</ul>
+<pre><code language="language-python" class="language-python">def generate_email_response(email):
+  prompt = f&#34;&#34;&#34;Generate an email response to send to {email[&#39;sender&#39;]} 
+                who is a customer of A Tasty Bytes Food Truck. Do not inlude Subject and use Tasty Bytes Support Team for Best Regards. Provide response to this customer question sent to our support agent 
+                at Tasty Bytes Food Truck Company. Use the background information and provided context taken from the 
+                most relevant corporate documents or previous support chat logs with other customers. Be concise and only answer 
+                the latest question.
+                Email Subject from Customer: &lt;Subject&gt; {email[&#39;subject&#39;]} &lt;/Subject&gt;.
+                Customer Email Address: &lt;Email_Address&gt; {email[&#39;sender&#39;]} &lt;/Email_Address&gt;.
+                Email body is: &lt;EMAIL_BODY&gt; {email[&#39;body&#39;]} &lt;/EMAIL_BODY&gt;.
+                Context: &lt;context&gt; {get_context(email[&#39;body&#39;], DOC_TABLE)} &lt;/context&gt;.
+                Background Info: &lt;background_info&gt; {st.session_state.background_info} &lt;/background_info&gt;.&#34;&#34;&#34;
+  response = Complete(&#39;mistral-large&#39;, prompt.replace(&#34;&#39;&#34;, &#34;&#39;&#39;&#34;))
+  return response.strip()
+</code></pre>
+<h2 is-upgraded>Summarize Emails with Cortex Complete</h2>
+<p>We again leverage Cortex Complete to generate a summary of emails manually sent by agents. The email summaries are then added to our knowlege base so agents don&#39;t need to answer the question again.</p>
+<pre><code language="language-python" class="language-python">prompt = f&#34;&#34;&#34;Generate a summary to add to the call center knowledge base. If the bot can&#39;t answer a customer&#39;s 
+          question, it should be transferred to an agent. The agent answers the question, and if it&#39;s a 
+          recurring query, the summary should be stored in the knowledge base. This way, the bot can utilize 
+          the knowledge base for future similar inquiries. Create a summary that includes the question and 
+          its corresponding answer for storage in the knowledge base. Question is: 
+          {st.session_state.current_record[&#39;body&#39;]} and answer is:
+          {st.session_state.email_response}&#34;&#34;&#34;
+response = Complete(&#39;mistral-large&#39;, prompt.replace(&#34;&#39;&#34;, &#34;&#39;&#39;&#34;))
+</code></pre>
+<h2 is-upgraded>Cortex Sentiment</h2>
+<p><a href="https://docs.snowflake.com/en/sql-reference/functions/sentiment-snowflake-cortex" target="_blank">Cortex Sentiment Analysis</a> is used to determine the sentiment of customer emails. You can use SNOWFLAKE.CORTEX.SENTIMENT in a standard query to determine the sentiment of text. In the code below, the single line is added to our query returning emails to collect the sentiment.</p>
+<pre><code language="language-python" class="language-python">agent_history = session.sql(&#34;&#34;&#34;SELECT 
+                                  es.email_id,
+                                  es.email_object AS Email_Request,
+                                  er.email_response AS Email_Response,
+                                  er.sent_ts,
+                                  SNOWFLAKE.CORTEX.SENTIMENT(CONCAT(&#39;Email from Customer is: &#39;, TO_VARCHAR(es.email_object), &#39;, Response from Company is: &#39;, TO_VARCHAR(er.email_response))) AS sentiment_score
+                                FROM 
+                                  raw_support.email_status_app es
+                                JOIN 
+                                  raw_support.email_response_app er ON es.email_id = er.email_id
+                                WHERE 
+                                  1=1
+                                  AND es.responded_flag = TRUE
+                                  AND es.email_status_code = 3
+                                  and er.email_response is not null
+                                ORDER BY 
+                                er.sent_ts DESC;&#34;&#34;&#34;).to_pandas()
+</code></pre>
+<h2 is-upgraded>RAG Chatbot</h2>
+<p>The app has an embedded RAG chatbot for agents to ask more questions of the knowlege base. Check out the <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_rag_chatbot_using_cortex_and_streamlit/index.html?index=..%2F..index" target="_blank">Tasty Bytes - RAG Chatbot Using Cortex and Streamlit</a> quickstart for more details on building RAG chatbots.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You have built a customer support email application in Streamlit using Cortex LLMs. This powerful application helps Tasty Bytes customer support agents quickly and accurately answer customer emails, including automatic responses.</p>
+<p>Check out several the <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html?index=..%2F..index" target="_blank">Tasty Bytes - RAG Chatbot Using Cortex and Streamlit</a> and <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_rag_chatbot_using_cortex_and_streamlit/index.html?index=..%2F..index" target="_blank">Tasty Bytes - Enhance Customer Experience Streamlit App</a> to learn more about how Streamlit and Cortex helps Tasty Bytes improve customer experience.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How Snowflake tools can build a full email support application using powerful LLM functionality</li>
+<li>How to build a multi-page Streamlit in Snowflake App</li>
+<li>Learn how to use Cortex LLMs in your application including: <ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex Complete</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/sentiment-snowflake-cortex" target="_blank">Cortex Sentiment Analysis</a></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html?index=..%2F..index" target="_blank">Tasty Bytes - RAG Chatbot Using Cortex and Streamlit</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_rag_chatbot_using_cortex_and_streamlit/index.html?index=..%2F..index" target="_blank">Tasty Bytes - Enhance Customer Experience Streamlit App</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

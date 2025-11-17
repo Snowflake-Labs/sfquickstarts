@@ -1,0 +1,1752 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tokenization in Snowflake Using Python UDFs (Python Camouflage)</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="python_camouflage"
+                  title="Tokenization in Snowflake Using Python UDFs (Python Camouflage)"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Python Camouflage Overview" duration="1">
+        <p>Project Python Camouflage provides a basic framework for tokenization in Snowflake that allows customers to obfuscate (or <em>mask</em>) personal identifiable information (PII), while also allowing the masked data to be used in joins and other operations that require data consistency. Python Camouflage uses Snowflake Python UDFs (user defined functions) and Python encryption libraries to mask data natively in Snowflake. This version of Python Camouflage is a working MVP (minimum viable product) that others may embrace and extend. It is not a full-featured solution for obfuscating PII. Rather, it is a demo that can serve as a starting point for customers who want to have the benefits of tokenization and are willing to roll up their sleeves a bit to get what they want, but do not want to turn to a commercial solution or use external functions.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake Enterprise Edition account</li>
+<li>Ability to connect to Snowflake via a web browser and SnowSQL</li>
+<li>Access to the GitHub CLI, and basic knowledge of its use</li>
+<li>Beginner-level knowledge of Python</li>
+<li>Working knowledge of SQL in Snowflake</li>
+<li>Working knowledge of Snowflake&#39;s Web UI</li>
+<li>Working knowledge of Snowflake&#39;s SnowSQL CLI</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to install and use the Python Camouflage Python UDFs to run FF3 format-preserving encryption in a test setup in your Snowflake account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Enterprise Edition (or better) account</a></li>
+<li>SnowSQL installed on your machine</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A demo that shows you how to use Python UDFs to achieve FF3 tokenization</li>
+</ul>
+<h2 is-upgraded>Using This as a Snowflake Worksheet</h2>
+<p>Because this demo has quite a few code snippets, we recommend putting the whole thing in a Snowflake worksheet. To make that easier, we added / * and  * / comments throughout the demo. If you are using the Snowflake Quickstart site to view this, you can ignore these. If you want to move the whole thing to a worksheet, you will find these disable the extraneous, non-SQL text in the worksheet (including this text). That&#39;s why you will see these in what may seem like random spots. To  get the full Worksheet version, go to this Quickstart&#39;s GitHub repo, and grab the raw version of the <code>*.md</code> file you find there. <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/python_camouflage/python_camouflage.md" target="_blank">This link should take you directly to that spot</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding Tokenization" duration="2">
+        <p>The key to understanding this project is understanding the difference between &#34;masking&#34; and &#34;tokenization.&#34; These terms (as well as &#34;obfuscation,&#34; and even sometimes &#34;encryption&#34;) are often used interchangeably. However, there is a formal distinction between them.</p>
+<p>Masking is something that is destructive. If I take the value &#34;Wade Wilson&#34; and I mask it, I could get completely different masked versions each time I run it through my masking algorithm. When I use tokenization, I expect the results to be the same every time I run &#34;Wade Wilson&#34; through my tokenization algorithm. The result is that, if I take the tokenized version of &#34;Wade Wilson&#34; and place it in several different tables, then I can still join on this value even though it&#39;s not the &#34;real&#34; value of the data. Tokenization gives me consistent results across multiple iterations. Since many identifiers are PII, this has a lot of value in analytical data sets.</p>
+<p>Another aspect of tokenization is that it will often give you tokens that appear to have the same qualities as the data that was tokenized. In other words, you can tokenize a number and get back a number of the same order of magnitude. You can tokenize an email and get back a string with the same format as the email (<em>i.e.</em> it will follow a valid email format with an @ in the middle, <em>etc.</em>). Confusingly, this is most commonly referred to as &#34;format preserving encryption&#34;—even though it is another form of what we are calling tokenization here with all the consistency benefits.</p>
+<p>Tokenization, especially the format-preserving kind, is very complex. And when you need to scale it to hundreds of millions of records and beyond, it becomes even more difficult. This is why third-party, commercially available solutions are typically used. Of course, it is still only technology, so there are libraries in many languages that provide the basic building blocks of tokenization. Project Python Camouflage takes advantage of the pre-existing Python libraries that provide FF3 tokenization. FF3 is based on AES encryption, and has been the standard upon which the entire industry providing tokenization solutions has based its work.</p>
+<p>Let&#39;s get started!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up Roles, the Database, Schema, and Warehouse" duration="3">
+        <p>This QuickStart requires quite a few objects. Let&#39;s create those and grant the rights to them.</p>
+<p><strong>Note:</strong> Replace values in brackets (<em>e.g. </em><code>&lt;REPLACEME&gt;</code>) with values appropriate to your own lab environment. Include the brackets.</p>
+<pre><code language="language-*/" class="language-*/">---  Create objects for use in the demo and grant the rights to them.
+
+--- Create demo roles
+create or replace role ff3_encrypt;
+create or replace role ff3_decrypt;
+create or replace role data_sc;
+create or replace role masked;
+
+--- Grant demo roles to your demo user
+--- Replace &lt;USER&gt; with your demo user
+grant role ff3_encrypt to user &lt;USER&gt;;
+grant role ff3_decrypt to user &lt;USER&gt;;
+grant role data_sc to user &lt;USER&gt;;
+grant role masked to user &lt;USER&gt;;
+
+--- Create warehouse for demo  
+create or replace warehouse ff3_testing_wh warehouse_size=medium initially_suspended=true;
+
+--- Grants on warehouse for demo
+grant usage, operate on warehouse ff3_testing_wh to role ff3_encrypt;
+grant usage, operate on warehouse ff3_testing_wh to role ff3_decrypt;
+grant usage, operate on warehouse ff3_testing_wh to role data_sc;
+grant usage, operate on warehouse ff3_testing_wh to role masked;
+
+--- Create demo database and schema for demo
+create or replace database ff3_testing_db;
+create schema ff3_testing_db.ff3_testing_schema;
+
+use database ff3_testing_db;
+use schema ff3_testing_db.ff3_testing_schema;
+
+--- Create internal stage for the FF3 Python library
+create stage python_libs;
+/*
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up a Stage and Upload FF3 Python Libraries" duration="5">
+        <p>The libraries we will use for FF3 tokenization are not included in Snowflake&#39;s default set, so we need to get those, package them for use in Snowflake, and upload them to a Snowflake Stage where they can be accessed by our user-defined functions (UDFs) that will do the heavy lifting later. Let&#39;s start by making sure our stage is ready by running a simple list command.</p>
+<pre><code language="language-*/" class="language-*/">ls @python_libs; -- should be empty for now, gets &#34;Query produced no results&#34;
+/*
+</code></pre>
+<p><strong>Note:</strong> If you stopped earlier and are returning, be sure you set the same environment (that is, using the same role, database, schema, and warehouse). Otherwise you may get different results.</p>
+<p>With the stage ready, we can now upload the file. To do this, you will need to upload the FF3 Python library from the Mysto FPE Project (https://github.com/mysto/python-fpe). Clone the repository and zip up the contents of its <code>ff3</code> directory. Next, upload the zip file to the Snowflake Stage you created. See the outline of steps below, but note that they are best suited as an example for Linux or Mac systems. For Windows, adjust the settings as needed for correct results.</p>
+<p><strong>Note:</strong> Replace values in brackets (<em>e.g. </em><code>&lt;REPLACEME&gt;</code>) with values appropriate to your own lab environment. Include the brackets.</p>
+<pre><code language="language-*/" class="language-*/">--- Upload the FF3 Python library from here https://github.com/mysto/python-fpe
+--- Git clone this library locally, change (cd) into the python-fpe directory, then zip up the ff3 folder and
+--- upload this zip file into the stage.
+
+--- The whole procedure looks like this (substitute in your local values):
+/*
+% mkdir ff3-demo-code
+% cd ff3-demo-code/
+% git clone https://github.com/mysto/python-fpe
+% cd python-fpe/
+% zip -r ff3.zip ff3/
+% pwd
+&lt;PATH&gt;
+% snowsql -a &lt;ACCOUNT&gt;.&lt;REGION&gt;.&lt;CLOUD&gt; -u &lt;USER&gt;
+* SnowSQL * v1.2.23
+Type SQL statements or !help
+&lt;USER&gt;#ff3_testing_wh@ff3_testing_db.ff3_testing_schema&gt; put file://&lt;PATH&gt;/ff3.zip @python_libs auto_compress=false;
+*/
+
+/*
+</code></pre>
+<p>Once you have the file uploaded, you can run the list command on your stage again, and you should not see that zip file listed in the results.</p>
+<pre><code language="language-*/" class="language-*/">ls @python_libs; -- should now contain the ff3.zip file
+/*
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tags, Source and Target Table Preparation, Granting Rights" duration="3">
+        <p>In addition to the database, schema, and stage objects, we will  use tags and some demo data in a couple tables. We will create those now. Let&#39;s start with the tags.</p>
+<pre><code language="language-*/" class="language-*/">--- Create tags
+create or replace tag ff3_data_sc;
+create or replace tag ff3_encrypt;
+create or replace tag sqljoin;
+create or replace tag email;
+create or replace tag uspostal;
+create or replace tag usphone;
+/*
+</code></pre>
+<p>Next we create two tables to be used for the demo portions of the lab. We will populate one of these with some rows of fake data that have properties that will allow us to exercise the FF3 tokenization well.</p>
+<pre><code language="language-*/" class="language-*/">--- Create source table for encrypt, decrypt and data analyst demo
+create or replace table ff3_pass3_source1 (
+  name varchar(255) default NULL,
+  phone varchar(100) default NULL,
+  email varchar(255) default NULL,
+  postalZip varchar(10) default NULL,
+  integernumber integer NULL,
+  floatnumber float NULL,
+  decimalnumber number(38,8) NULL
+);
+
+--- Populate source table with demo data
+insert into ff3_pass3_source1 (name,phone,email,postalZip,integernumber,floatnumber,decimalnumber)
+values
+  (&#39;Keegan Melendez&#39;,&#39;(0088) 11345912&#39;,&#39;sapien@protonmail.edu&#39;,&#39;31242&#39;,1,2.754,6.54),
+  (&#39;Daniel Black&#39;,&#39;(0964) 05573972&#39;,&#39;ullamcorper.viverra@hotmail.org&#39;,&#39;98-353&#39;,4,343.4,45.8),
+  (&#39;Malachi Bass&#39;,&#39;(047) 36000411&#39;,&#39;dictum@protonmail.net&#39;,&#39;52545&#39;,5,1.7,698.543),
+  (&#39;Gabriel Mcknight&#39;,&#39;(1) 7865551120&#39;,&#39;duis.elementum@outlook.com&#39;,&#39;10912&#39;,7,884.53,86.987),
+  (&#39;Tate Hicks&#39;,&#39;(079) 44284558&#39;,&#39;ut.aliquam@outlook.net&#39;,&#39;26465&#39;,4,54545.01,19.2);
+
+--- Create target table
+create or replace table ff3_pass3_target1 (
+  keyid varchar(255) default NULL,
+  name varchar(255) default NULL,
+  phone varchar(255) default NULL,
+  email varchar(255) default NULL,
+  postalZip varchar(255) default NULL,
+  integernumber integer NULL,
+  floatnumber float NULL,
+  decimalnumber number(38,8) NULL
+);
+/*
+</code></pre>
+<p>Now we will grant rights to the roles we will use in the demo.</p>
+<pre><code language="language-*/" class="language-*/">--- Grant access rights to demo database, schema and tables
+grant usage on database ff3_testing_db to role ff3_encrypt;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
+
+grant usage on database ff3_testing_db to role ff3_decrypt;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
+
+grant usage on database ff3_testing_db to role data_sc;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role data_sc;
+
+grant usage on database ff3_testing_db to role masked;
+grant usage on schema ff3_testing_db.ff3_testing_schema to role masked;
+
+grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
+grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
+grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role data_sc;
+grant select on all tables in schema ff3_testing_db.ff3_testing_schema to role masked;
+
+grant insert on all tables in schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
+
+grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_encrypt;
+grant all privileges on schema ff3_testing_db.ff3_testing_schema to role ff3_decrypt;
+grant all privileges on schema ff3_testing_db.ff3_testing_schema to role data_sc;
+grant all privileges on schema ff3_testing_db.ff3_testing_schema to role masked;
+/*
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Encryption Keys – Caution!" duration="2">
+        <p>Under the covers, FF3 is using encryption to achieve results. As with all encryption, there are keys, which are secrets. For this demo, the keys will be set explicitly, and we will give example keys here as part of the demo. The actual requirement is that they be present as a session variable. These keys can then be populated any way that is appropriate. In a real world setting. they may be retrieved programmatically via an external function from an external KMS or another vault.</p>
+<p><strong>CAUTION: DO NOT EVER USE THESE KEYS IN A REAL WORLD SYSTEM!</strong> Because they have been used in this demo, regard them as dangerous and never use them apart from this demo.</p>
+<p><strong>Note:</strong> Feel free to substitute in different keys at this time. If you do so,  understand that the results you get during  future steps will differ from the example output provided. This is because the different keys will cause the resulting, underlying encryption operations to turn out differently.</p>
+<pre><code language="language-*/" class="language-*/">---  Set the userkeys.
+-------------------------------------
+---  For this demo, the keys will be set explicitly. The actual requirement is that they be present as a session variable.
+---  These keys can be populated any way that is appropriate. In a real-world setting they can be retrieved programmatically
+---  via an external function from an external KMS or another vault.
+
+/*
+!!!!!!!!!!!!!!! DO NOT EVER USE THESE KEYS IN THE REAL WORLD !!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!! NOW THAT THEY ARE PART OF THIS DEMO, THEY ARE DANGEROUS !!!!!!!
+*/
+
+set userkeys=&#39;&#39;&#39;{
+    &#34;678901&#34;: [&#34;2DE79D232DF5585D68CE47882AE256D6&#34;, &#34;CBD09280979564&#34;, &#34;56854&#34;],
+    &#34;678902&#34;: [&#34;c2051e1a93c3fd7f0e4f20b4fb4f7889aeb8d6fd10f68551af659323f42961e9&#34;, &#34;CBD09280979841&#34;, &#34;85567&#34;]
+}&#39;&#39;&#39;; -- key can be either in HEX or raw string form
+
+/*
+!!!!!!!!!!!!!!! DO NOT EVER USE THESE KEYS IN THE REAL WORLD !!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!! NOW THAT THEY ARE PART OF THIS DEMO, THEY ARE DANGEROUS !!!!!!!
+*/
+
+select $userkeys; -- check the results
+/*
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installing and Testing String Tokenization UDFs" duration="7">
+        <p>All the real tokenization work is done in UDFs leveraging Python. We will work with these UDFs in a few stages. First, we will take an example using strings (specifically emails), and walk through it step-by-step. Then we will install the remaining UDFs for the data types that are currently supported in this demo code. Finally, we will use the tables and tags we created in the first steps to apply these UDFs to something more like a real-world demo.</p>
+<p>There&#39;s a lot to copy and paste below. First you will create five Python-based UDFs leveraging the zip file you uploaded earlier, and then we will run some tests that use those files.</p>
+<p><strong>Note:</strong> The <code>encrypt_ff3_string_pass3()</code> UDF contains a custom alphabet that determines what characters can be used in the FF3 tokenization. If your data contains characters not listed in that alphabet, then you would need to add it to that alphabet. If you intend to use this demo with any data aside from the demo data provided, then please take care to review that alphabet to ensure it meets your needs.</p>
+<pre><code language="language-*/" class="language-*/">--- Install &amp; Test the Python-based Tokenization UDFs for Email Strings
+-------------------------------------
+--- All the real work is done in UDFs leveraging Python. We will work with these UDFs in a
+--- few stages. First, we will take an example using strings, specifically emails, and walk
+--- through it step-by-step. Then we will install the remaining UDFs for the data types that
+--- are currently supported in this demo code. Finally, we will use the tables and tags we
+--- created in the first steps to apply these UDFs to something more like a real-world demo.
+
+--- Install the string encrypting UDF
+create or replace function encrypt_ff3_string_pass3(ff3key string, ff3input string, ff3_user_keys string)
+returns string
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+import json
+from ff3 import FF3Cipher
+
+def udf(ff3keyinput, ff3input, userkeys):
+
+    if ff3input[0:3] == &#39;KEY&#39;:
+        return ff3input
+
+    userkeys=userkeys.replace(&#34;&#39;&#34;,&#34;&#34;)
+    ff3_userkey_dict=json.loads(userkeys)
+    userkeys_list=[]
+    userkeyslist=ff3_userkey_dict[ff3keyinput[3:]]
+
+    ff3_key=userkeyslist[0]
+    ff3_tweak=userkeyslist[1]
+    padding=userkeyslist[2]
+
+    length=len(ff3input)
+
+    # THIS IS WHERE YOU NEED TO ADD CHARACTERS TO THE ALPHABET
+    c = FF3Cipher.withCustomAlphabet(ff3_key, ff3_tweak, &#34;&#34;&#34;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-().@ &#39;&#34;&#34;&#34;)
+
+    n =30
+
+    chunks = [ff3input[i:i+n] for i in range(0, len(ff3input), n)]
+
+    encrypted_value_list=[]
+    result=&#39;&#39;
+    lengthpadding=[]
+    for chunk in chunks:
+        lengthchunk=len(chunk)
+
+        if lengthchunk&gt;=4:
+                plaintext=chunk
+                lengthpadding.append(&#39;0&#39;)
+        if lengthchunk==3:
+                plaintext=chunk+padding[0:1]
+                lengthpadding.append(&#39;1&#39;)
+        if lengthchunk==2:
+                plaintext=chunk+padding[0:2]
+                lengthpadding.append(&#39;2&#39;)
+        if lengthchunk==1:
+                plaintext=chunk+padding[0:3]
+                lengthpadding.append(&#39;3&#39;)
+
+        ciphertext = c.encrypt(plaintext)
+        encrypted_value_list.append(ciphertext)
+
+    i=0
+    x=0
+    for encrypted_value in encrypted_value_list:
+        i=i+1
+        result = result + &#39;[C&#39; + lengthpadding[x] +&#39;]&#39; + encrypted_value
+        x=x+1
+
+    if length&lt;10:
+        result=result+&#34;00&#34;+str(length)
+        return result
+
+    if 10 &lt;= length &lt;= 99:
+        result=result+&#39;0&#39;+str(length)
+        return result
+
+    if length&gt;99 :
+        result=result+str(length)
+        return result
+$$;
+
+--- Install the string token formatting UDF
+create or replace function format_ff3_string_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = &#39;udf&#39;
+as $$
+
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
+
+def udf(ff3input):
+    result=&#39;&#39;
+    encrypted_value_list=ff3input.split(&#39;[C&#39;)
+    decrypted_value_list=[]
+    encryptedvalue=&#39;&#39;
+    i=0
+    x=0
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i &gt;= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+ lastvalue
+
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+
+    if x ==1:
+        #formatted=encryptedvalue[2:]
+        formatted=formatted[0:howmany-2]
+        formatted=encryptedvalue[2:]
+    else:
+        formatted=encryptedvalue
+        formatted=formatted[0:howmany]
+        #formatted=encryptedvalue
+
+    formatted=formatted.replace(&#39; &#39;,&#39;&#39;)
+
+    return formatted
+$$;
+
+-- Install string token email formatting UDF
+create or replace function format_email_ff3_string_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = &#39;udf&#39;
+as $$
+
+
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
+
+
+def udf(ff3input):
+    result=&#39;&#39;
+    encrypted_value_list=ff3input.split(&#39;[C&#39;)
+    decrypted_value_list=[]
+    encryptedvalue=&#39;&#39;
+    i=0
+    x=0
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i &gt;= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+ lastvalue
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+
+    if x ==1:
+        email=encryptedvalue[2:]
+    else:
+        email=encryptedvalue
+
+    howlongemail=len(email)
+    positionemail=howlongemail/2
+    if isDivisibleBy2(positionemail)==True:
+       positionemail=int(positionemail)
+    else:
+       positionemail=int(positionemail+1)
+    email=email.replace(&#39;@&#39;,&#39;&#39;)
+    email = email[:positionemail] + &#34;@&#34; + email[positionemail:]
+    email=email[0:howmany]
+    email=email+&#34;.com&#34;
+    email=email.replace(&#39; &#39;,&#39;&#39;)
+
+    email=email.replace(&#39;@@&#39;,&#39;@&#39;)
+
+    return email
+$$;
+
+--- Install string token SQL join formatting UDF
+create or replace function sqljoin_ff3_string_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = &#39;udf&#39;
+as $$
+
+def udf(ff3input):
+    result=&#39;&#39;
+    encrypted_value_list=ff3input.split(&#39;[C&#39;)
+
+    encryptedvalue=&#39;&#39;
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        encryptedvalue=encryptedvalue+encrypted_value[2:]
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    encryptedvalue=encryptedvalue+lastvalue[2:]
+    encryptedvalue=encryptedvalue[:-3]
+
+    return encryptedvalue
+$$;
+
+--- Install the string decrypting UDF
+create or replace function decrypt_ff3_string_pass3(ff3key string, ff3input string, ff3_user_keys string)
+returns string
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+import json
+from ff3 import FF3Cipher
+
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
+
+def udf(ff3keyinput, ff3input, userkeys):
+    userkeys=userkeys.replace(&#34;&#39;&#34;,&#34;&#34;)
+    ff3_userkey_dict=json.loads(userkeys)
+    userkeys_list=[]
+    userkeyslist=ff3_userkey_dict[ff3keyinput[3:]]
+
+    key=userkeyslist[0]
+    tweak=userkeyslist[1]
+    padding=userkeyslist[2]
+
+    result=&#39;&#39;
+    length=len(ff3input)
+
+    c = FF3Cipher.withCustomAlphabet(key, tweak, &#34;&#34;&#34;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-().@ &#39;&#34;&#34;&#34;)
+
+    encrypted_value_list=ff3input.split(&#39;[C&#39;)
+    decrypted_value_list=[]
+    encryptedvalue=&#39;&#39;
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+         paddinglength=int(encrypted_value[0])
+         encrypted_value=encrypted_value[2:]
+         decrypted = c.decrypt(encrypted_value)
+         if paddinglength != 0:
+            decrypted=decrypted[:-paddinglength]
+         decrypted_value_list.append(decrypted)
+         encryptedvalue=encryptedvalue+encrypted_value
+
+    for decrypted_value in decrypted_value_list:
+             result=result+decrypted_value
+
+    lastvalue=encrypted_value_list[-1]
+    lastvalue = lastvalue[:-3]
+    paddinglength=int(lastvalue[0])
+    lastvalue = lastvalue[2:]
+    lastdecrypt=c.decrypt(lastvalue)
+    if paddinglength != 0:
+        lastdecrypt=lastdecrypt[:-int(paddinglength)]
+    result=result+lastdecrypt
+    return result
+$$;
+/*
+</code></pre>
+<p>Let&#39;s be sure all the UDFs were properly created:</p>
+<pre><code language="language-*/" class="language-*/">show functions like &#39;%ff3%&#39;;
+/*
+</code></pre>
+<p>You should see five rows of results, with each of these UDFs listed:</p>
+<ol type="1">
+<li><code>DECRYPT_FF3_STRING_PASS3</code></li>
+<li><code>ENCRYPT_FF3_STRING_PASS3</code></li>
+<li><code>FORMAT_EMAIL_FF3_STRING_PASS3</code></li>
+<li><code>FORMAT_FF3_STRING_PASS3</code></li>
+<li><code>SQLJOIN_FF3_STRING_PASS3</code></li>
+</ol>
+<p>With the UDFs created, we can now run some tests. We will run the tests in a specific order, each building on the last. That order will reflect the natural flow of the tokenization process:</p>
+<ul>
+<li>We will tokenize the data using an <code>encrypt*</code> UDF.</li>
+<li>We will format the newly created token in different ways, reflecting how it would be used in different circumstances.</li>
+<li>We will make the token suitable for unique SQL joins.</li>
+<li>We will de-tokenize the data back to its original form.</li>
+</ul>
+<p>The need for formatting and SQL join UDFs are both subtle. The first formatting example (<code>format_ff3_string_pass3()</code>) takes the token and removes metadata that this process adds. That can be useful to display the string. The second formatting example (<code>format_email_ff3_string_pass3()</code>) is specific to email strings, and will make a token look like an email for display or other purposes. The SQL join formatting procedure (<code>sqljoin_ff3_string_pass3()</code>) also removes metadata and padding, but for the purpose of ensuring that those elements do not accidentally introduce noise to joins. Essentially they leave the token in its original form without any extra layers.</p>
+<p>First, we will apply tokenization to a fake email address to get a token.</p>
+<pre><code language="language-*/" class="language-*/">-- Now we can test the procedure for strings that contain emails. The first thing we do is
+-- take an email string and tokenize it using the FF3 method. You can run this as many times
+-- as you like and you will always get the same result. Only when you change the keys or the
+-- input string will you get a different output.
+-- Output should be: [C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031
+select encrypt_ff3_string_pass3(&#39;KEY678901&#39;, &#39;ullamcorper.viverra@hotmail.org&#39;, $userkeys);
+/*
+</code></pre>
+<p>Next, we will apply both generic string formatting and specific email formatting to the token.</p>
+<pre><code language="language-*/" class="language-*/">-- The raw token result carries not only the encrypted value of the string, but also a certain
+-- amount of metadata to help the system manage the tokens and their decryption. This removes
+-- the some metadata from the token and makes sure that the token length matches the intial
+-- value that was encrypted.
+-- Output should be: D.eaU(5+iijkXsS4@yFULDB58hLTGDg (Note the &#34;@&#34; is coincidental, not related to
+-- the email used as input. You can test with other values to convince yourself of this.)
+select format_ff3_string_pass3(&#39;[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031&#39;);
+
+-- This UDF formats and converts the string token into a string token that looks like an email
+-- to a human user.
+-- Output should be: D.eaU(5+iijkXsS4yF@ULDB58hLTGDgyYs.com (Note the &#34;.com&#34; and &#34;@&#34;)
+select format_email_ff3_string_pass3(&#39;[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031&#39;);
+/*
+</code></pre>
+<p>Next, we make the token ready to be used in SQL joins.</p>
+<pre><code language="language-*/" class="language-*/">-- Test string token SQL join formatting UDF. This UDF removes metadata and just gives the plain
+-- token back. This insures that SQL joins can be done with token values that are guaranteed to be
+-- unique. This removes any token formatting.
+-- Output should be: D.eaU(5+iijkXsS4@yFULDB58hLTGDgyYs
+select sqljoin_ff3_string_pass3(&#39;[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031&#39;);
+/*
+</code></pre>
+<p>Finally, we will take the token and convert it back to its original form.</p>
+<pre><code language="language-*/" class="language-*/">-- Finally, this takes the token in it&#39;s full form and converts it back to the real string as
+-- long as the session is in possesion of the keys.
+-- Output should be: ullamcorper.viverra@hotmail.org
+select decrypt_ff3_string_pass3(&#39;KEY678901&#39;, &#39;[C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031&#39;, $userkeys);
+/*
+</code></pre>
+<p>This section provides a first glimpse of the potential of using these FF3 capabilities. After we get the rest of the UDFs set up, we can see them at full speed.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install the Python-based Tokenization UDFs for Other Strings, Numbers (Integer &#43; Decimal), and Floats" duration="3">
+        <p>Now that we understand the basic concepts, we will install the UDFs needed for all the other data types. Then we will test them. Get your copy &amp; paste muscles warmed up!</p>
+<p><strong>Note:</strong> Since this approach to tokenization includes the use of metadata stored along with the value, values for Float and Number data types will require some space for this metadata. This means that Floats cannot be  larger than 9 digits, and Number data types will require 5 of the digits to store metadata (which will always appear to the right of the decimal point). If you intend to use this demo with data outside of the demo data provided, then take care to review these requirements to ensure it meets your needs.</p>
+<pre><code language="language-*/" class="language-*/">--- Install the Python-based Tokenization UDFs for Other Strings, Numbers(Integer + Decimal), and Floats.
+-------------------------------------
+--- Now that we understand the basic concept, we will install the UDFs needed for all the
+--- other data types. After they are installed we will test them all out.
+
+--- Install the encrypt float UDF
+create or replace function encrypt_ff3_float_pass3(ff3key string, ff3input float, ff3_user_keys string)
+returns float
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+import json
+from ff3 import FF3Cipher
+
+def udf(ff3key_input, ff3_input, userkeys):
+
+    userkeys=userkeys.replace(&#34;&#39;&#34;,&#34;&#34;)
+    ff3_userkey_dict=json.loads(userkeys)
+    userkeys_list=[]
+    userkeyslist=ff3_userkey_dict[ff3key_input[3:]]
+
+    ff3_key=userkeyslist[0]
+    ff3_tweak=userkeyslist[1]
+    ff3_padding=userkeyslist[2]
+
+    c = FF3Cipher(ff3_key, ff3_tweak)
+
+    value = str(ff3_input)
+    lengthvalue=len(value)
+
+    if lengthvalue==3:
+        ff3_padding=ff3_padding[0:4]
+    if lengthvalue==4:
+        ff3_padding=ff3_padding[0:3]
+    if lengthvalue==5:
+        ff3_padding=ff3_padding[0:2]
+    if lengthvalue==6:
+        ff3_padding=ff3_padding[0:1]
+    if lengthvalue &gt;= 7:
+        ff3_padding=None
+
+    plaintext_org=value
+    commais=value.find(&#39;.&#39;)
+    commais=commais
+    detect_float=plaintext_org.split(&#39;.&#39;)
+
+    #dont try to encode more than 11 digits with float or more than 9 digits before or after the comma
+    if len(detect_float[0]) &gt;= 10:
+        print (&#34;VALUE BEFORE COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED&#34;)
+    if len(detect_float[1])&gt;=10:
+        print(&#34;VALUE AFTER COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED&#34;)
+    if len(detect_float[1])+len(detect_float[0])&gt;=12:
+        print (&#34;VALUE  TOO BIG NOT MORE THAN 11 DIGITS ALLOWED&#34;)
+
+    plaintext =  value
+    plaintext=plaintext.replace(&#39;.&#39;,&#39;&#39;)
+    if ff3_padding !=None:
+        lengthpadding=len(ff3_padding)+1
+        ciphertext = c.encrypt(plaintext+ff3_padding)
+    else:
+        lengthpadding=1
+        ciphertext = c.encrypt(plaintext)
+
+    beforecomma=len(detect_float[0])
+    aftercomma=len(detect_float[1])
+
+    endresult=ciphertext
+
+    endresult=str(commais)+endresult+str(beforecomma)+str(aftercomma)+str(lengthpadding)
+    return float(endresult)
+$$;
+
+--- Install the float token formatting UDF
+create or replace function format_ff3_float_pass3(ff3input float)
+returns float
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+def udf(ff3_input):
+    formatting=str(ff3_input)[-5:]
+    formatting = formatting[:-3]
+
+    beforecomma=int(formatting[0])
+    aftercomma=int(formatting[-1])
+    numberofdigits=beforecomma+aftercomma
+
+    formatted=str(ff3_input)[0:numberofdigits]
+    formatted=formatted[:beforecomma] + &#39;.&#39; + formatted[beforecomma:]
+
+    checkformatted=int(formatted[-1])
+    if checkformatted==0:
+            formatted = formatted[:-1] + &#39;1&#39;
+
+    return float(formatted)
+$$;
+
+--- Install  float token formatting for sql joins UDF
+create or replace function sqljoin_ff3_float_pass3(ff3input float)
+returns float
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+def udf(ff3_input):
+    return float(ff3_input)
+$$;
+
+--- Install the decrypt float UDF
+create or replace function decrypt_ff3_float_pass3(ff3key string, ff3input float, ff3_user_keys string)
+returns float
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+from ff3 import FF3Cipher
+import json
+
+def udf(ff3key_input, ff3_input, userkeys):
+
+    userkeys=userkeys.replace(&#34;&#39;&#34;,&#34;&#34;)
+    ff3_userkey_dict=json.loads(userkeys)
+    userkeys_list=[]
+    userkeyslist=ff3_userkey_dict[ff3key_input[3:]]
+
+    ff3_key=userkeyslist[0]
+    ff3_tweak=userkeyslist[1]
+
+
+    plaintext_org=str(ff3_input)
+    plaintext_org=plaintext_org[1:]
+    plaintext_org=plaintext_org[:-5]
+
+    c = FF3Cipher(ff3_key, ff3_tweak)
+
+    decrypted = c.decrypt(plaintext_org)
+    #decrypted=&#39;&#39;
+
+    lengthpadding=int(str(ff3_input)[-3])
+    commais=int(str(ff3_input)[0])
+
+    if lengthpadding==1:
+            decrypted=decrypted[:commais] + &#39;.&#39; + decrypted[commais:]
+    else:
+            decrypted=decrypted[:-lengthpadding+1]
+            decrypted=decrypted[:commais] + &#39;.&#39; + decrypted[commais:]
+
+
+    return float(decrypted)
+$$;
+
+--- Install the encrypt number UDF. You can install it as taking integers and returning
+--- integers or taking and returning number 38,X)
+create or replace function encrypt_ff3_number_38_8_pass3(ff3key string, ff3input number(38,8), ff3_user_keys string)
+returns number(38,8)
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+from ff3 import FF3Cipher
+import json
+import re
+from decimal import *
+
+
+
+def udf(ff3key, ff3input, userkeys):
+
+    userkeys=userkeys.replace(&#34;&#39;&#34;,&#34;&#34;)
+    ff3_userkey_dict=json.loads(userkeys)
+    userkeys_list=[]
+    userkeyslist=ff3_userkey_dict[ff3key[3:]]
+    
+    ff3key=userkeyslist[0]
+    tweak=userkeyslist[1]
+    padding=userkeyslist[2]
+    
+    
+    checkdecimal=&#34;.&#34; in str(ff3input)
+    
+    
+    
+    if checkdecimal==False :
+    
+        length=len(str(ff3input))
+        lengthpadding=0
+
+        c = FF3Cipher(ff3key, tweak)
+    
+
+        if length&lt;=6:
+            plaintext=str(ff3input)
+            lengthpadding=1
+
+        if length==5:
+            plaintext=str(ff3input)+padding[0:1]
+            lengthpadding=2
+
+        if length==4:
+            plaintext=str(ff3input)+padding[0:2]
+            lengthpadding=3
+
+        if length==3:
+            plaintext=str(ff3input)+padding[0:3]
+            lengthpadding=4
+
+        if length==2:
+            plaintext=str(ff3input)+padding[0:4]
+            lengthpadding=5
+
+        if length==1:
+            plaintext=str(ff3input)+padding
+            lengthpadding=6
+            
+        if ff3input==0:
+            plaintext=&#39;000000&#39;
+            lengthpadding=6
+
+        ciphertext = c.encrypt(plaintext)
+
+        
+        if length&lt;10:
+           ciphertext=ciphertext+&#34;0&#34;+str(length)
+        else:
+            ciphertext=ciphertext+str(length)
+
+
+        ciphertext=str(lengthpadding)+ciphertext
+        return int(ciphertext)
+        
+        
+    if checkdecimal==True :       
+
+        c = FF3Cipher(ff3key, tweak)
+
+        value = str(ff3input)
+        lengthvalue=len(value)
+
+        if lengthvalue==3:
+            ff3_padding=ff3_padding[0:4]
+        if lengthvalue==4:
+            ff3_padding=ff3_padding[0:3]
+        if lengthvalue==5:
+            ff3_padding=ff3_padding[0:2]
+        if lengthvalue==6:
+            ff3_padding=ff3_padding[0:1]
+        if lengthvalue &gt;= 7:
+            ff3_padding=None
+
+        plaintext_org=value
+        commais=value.find(&#39;.&#39;)
+        commais=commais
+        detect_float=plaintext_org.split(&#39;.&#39;)
+
+        #dont try to encode more than 11 digits with decimal generally or more than 9 digits before or after the comma
+
+        #if len(detect_float[0]) &gt;= 10:
+         #   print (&#34;VALUE BEFORE COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED&#34;)
+        #if len(detect_float[1])&gt;=10:
+        #    print(&#34;VALUE AFTER COMMA TOO BIG NOT MORE THAN 9 DIGITS ALLOWED&#34;)
+        #if len(detect_float[1])+len(detect_float[0])&gt;=12:
+        #    print (&#34;VALUE  TOO BIG NOT MORE THAN 11 DIGITS ALLOWED&#34;)
+
+
+        plaintext =  value
+        plaintext=plaintext.replace(&#39;.&#39;,&#39;&#39;)
+        if ff3_padding !=None:
+            lengthpadding=len(ff3_padding)+1
+            ciphertext = c.encrypt(plaintext+ff3_padding)
+        else:
+            lengthpadding=1
+            ciphertext = c.encrypt(plaintext)
+
+        beforecomma=len(detect_float[0])
+        aftercomma=len(detect_float[1])
+        
+        aftercommacheck=value
+        
+        mo = re.search(&#39;(?:(\.\d*?[1-9]+)|\.)0*$&#39;, aftercommacheck)
+        
+        if mo.group(1) !=  None:
+    
+            aftercommacheck=mo.group(1).replace(&#39;.&#39;,&#39;&#39;)
+            aftercomma=len(aftercommacheck)
+        
+        else:
+            aftercomma=0
+
+        endresult=ciphertext
+
+        endresult=str(commais)+endresult+str(beforecomma)+str(aftercomma)+str(lengthpadding)
+        
+        return Decimal(endresult)
+$$;
+
+
+--- Install the number token formatting UDF
+create or replace function format_ff3_number_38_8_pass3(ff3input number(38,8))
+returns number(38,8)
+language python
+runtime_version = 3.8
+handler = &#39;udf&#39;
+as $$
+from decimal import *
+
+
+
+def udf(ff3input):
+
+    
+    checkdecimal=&#34;.&#34; in str(ff3input)
+    
+    if checkdecimal==False :
+    
+        value=str(ff3input)
+        length=int(value[-2:])
+        
+        formatted=&#39;&#39;
+        formatted=value[1:]
+        formatted=formatted[:-2]
+        formatted=formatted[0:length]
+        #formatted=&#39;1&#39;+formatted
+        final=&#39;&#39;
+        addition=0
+        numberofzeros=0
+        nullen=&#39;&#39;
+        result=0
+        
+        
+        if formatted[0]==&#39;0&#39;:
+            numberofzeros=length-1
+            addition=length-numberofzeros
+            for zeros in range(numberofzeros):
+                nullen=nullen+&#39;0&#39;
+            final=str(addition)+nullen
+            result=int(formatted)+int(final)
+            return result
+            
+
+        return int(formatted)
+        
+    if checkdecimal==True :
+    
+        value=str(ff3input).split(&#39;.&#39;)
+        result=value[0]
+        
+        if len(result)!=9:
+            result=result[1:]
+            result=result[:-1]
+            commas=result[-2:]
+            result=result[:-2]
+        
+            beforecomma=int(commas[0])
+            aftercomma=int(commas[-1])
+        
+            if beforecomma!=1:
+                bcdigits=value[0][0:beforecomma]
+        
+                if aftercomma!=0: 
+                    acdigits=value[0][-aftercomma:]
+                else:
+                    acdigits=0
+        
+                endresult=str(bcdigits)+&#39;.&#39;+str(acdigits)
+      
+                return Decimal(endresult)
+                
+            else:
+            
+                bcdigits=value[0][4]
+        
+                if aftercomma!=0: 
+                    acdigits=value[0][-aftercomma:]
+                else:
+                    acdigits=0
+        
+                endresult=str(bcdigits)+&#39;.&#39;+str(acdigits)
+      
+                return Decimal(endresult)              
+            
+        else:
+            endresult=result[5]
+            return Decimal(endresult)
+
+$$;
+
+--- Install the sql join formatting UDF for numbers.
+create or replace function sqljoin_ff3_number_38_8_pass3(ff3input number(38,8))
+returns number(38,8)
+language python
+runtime_version = 3.8
+handler = &#39;udf&#39;
+as $$
+
+from decimal import *
+
+def udf(ff3input):
+    checkdecimal=&#34;.&#34; in str(ff3input)
+
+    if checkdecimal==False :
+        value=str(ff3input)
+
+        formatted=&#39;&#39;
+        formatted=value[1:]
+        formatted=formatted[:-2]
+        return int(formatted)
+
+    if checkdecimal==True :
+        value=str(ff3input).split(&#39;.&#39;)
+        result=value[0]
+        result=result[1:]
+        result=result[:-1]
+        commas=result[-2:]
+        result=result[:-2]
+
+        bcdigits=result
+
+        acdigits=0
+
+        endresult=str(bcdigits)+&#39;.&#39;+str(acdigits)
+
+        return Decimal(endresult)
+$$;
+
+--- Install the decrypt number UDF. Can take and return an integer or decimal like number 38,X
+create or replace function decrypt_ff3_number_38_8_pass3(ff3key string, ff3input number(38,8), ff3_user_keys string)
+returns number(38,8)
+language python
+runtime_version = 3.8
+packages = (&#39;pycryptodome&#39;)
+imports = (&#39;@python_libs/ff3.zip&#39;)
+handler = &#39;udf&#39;
+as $$
+
+from ff3 import FF3Cipher
+import json
+from decimal import *
+
+
+
+def udf(ff3key, ff3input, userkeys):
+
+
+    userkeys=userkeys.replace(&#34;&#39;&#34;,&#34;&#34;)
+    ff3_userkey_dict=json.loads(userkeys)
+    userkeys_list=[]
+    userkeyslist=ff3_userkey_dict[ff3key[3:]]
+    
+    ff3key=userkeyslist[0]
+    tweak=userkeyslist[1]
+    padding=userkeyslist[2]
+    
+    checkdecimal=&#34;.&#34; in str(ff3input)
+    
+    if checkdecimal==False :
+        
+        lengthpadding=str(ff3input)[0]
+        lengthpadding=int(lengthpadding)
+        lengthpadding=lengthpadding-1
+    
+        c = FF3Cipher(ff3key, tweak)
+
+        
+        ciphertext=str(ff3input)[1:]
+        ciphertext=ciphertext[:-2]
+        decrypted = c.decrypt(ciphertext)
+        length=lengthpadding 
+ 
+        if length==5:
+            decrypted=decrypted[:-5]
+        if length==4:
+            decrypted=decrypted[:-4]
+        if length==3:
+            decrypted=decrypted[:-3]
+        if length==2:
+            decrypted=decrypted[:-2]
+        if length==1:
+            decrypted=decrypted[:-1]
+
+    
+
+        return int(decrypted)
+        
+    if checkdecimal==True :
+    
+        c = FF3Cipher(ff3key, tweak)
+
+        value=str(ff3input)
+        valuesplit=value.split(&#39;.&#39;)
+        
+        plaintext_org=valuesplit[0]
+        length_pt_org=len(valuesplit[0])
+        
+        
+        if length_pt_org==9:
+            ciphertext=str(plaintext_org)[1:]
+            ciphertext=ciphertext[:-2]
+            decrypted = c.decrypt(ciphertext)
+            
+            return Decimal(decrypted)
+        
+        else:    
+            plaintext_org=plaintext_org[1:]
+            plaintext_org=plaintext_org[:-3]
+
+            decrypted = c.decrypt(str(plaintext_org))
+            value=valuesplit[0]
+            lengthpadding=int(value[-1])
+            commais=int(value[0])
+
+     
+            if lengthpadding==1:
+                decrypted=decrypted[:commais] + &#39;.&#39; + decrypted[commais:]
+            else:
+                decrypted=decrypted[:-lengthpadding+1]
+                decrypted=decrypted[:commais] + &#39;.&#39; + decrypted[commais:]
+
+            return Decimal(decrypted)
+
+$$;
+
+-- Install string token USphone formatting UDFs.
+create or replace function format_ff3_string_usphone_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = &#39;udf&#39;
+as $$
+
+def split(word):
+    return [char for char in word]
+
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
+
+def udf(ff3input):
+    result=&#39;&#39;
+    encrypted_value_list=ff3input.split(&#39;[C&#39;)
+    decrypted_value_list=[]
+    encryptedvalue=&#39;&#39;
+    i=0
+    x=0
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i &gt;= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+lastvalue
+
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+
+    if x ==1:
+        formatted=encryptedvalue[2:]
+    else:
+        formatted=encryptedvalue
+
+    formatted=formatted.replace(&#39; &#39;,&#39;&#39;)
+
+    l = split(formatted)
+    k = [ord(x) for x in l]
+
+    for i in k:
+        result=result+str(i)
+
+    result=result[:3] + &#34;) &#34; + result[3:]
+    result=&#39;(&#39;+result
+    result = (result[:14] ) if len(result) &gt; 14 else result
+    return result
+$$;
+
+--- Install string token US-postal-code formatting UDFs.
+create or replace function format_ff3_string_uspostal_pass3(ff3input string)
+returns string
+language python
+runtime_version = 3.8
+handler = &#39;udf&#39;
+as $$
+
+def split(word):
+    return [char for char in word]
+
+def isDivisibleBy2(num):
+    if (num % 2) == 0:
+        return True
+    else:
+        return False
+
+def udf(ff3input):
+    result=&#39;&#39;
+    encrypted_value_list=ff3input.split(&#39;[C&#39;)
+    decrypted_value_list=[]
+    encryptedvalue=&#39;&#39;
+    i=0
+    x=0
+
+    for encrypted_value in encrypted_value_list[1:-1]:
+        if i &gt;= 1:
+            x=1
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+
+        else:
+            encrypted_value=encrypted_value[2:]
+            encryptedvalue=encryptedvalue+encrypted_value
+        i=i+1
+
+    ## Formatting Block
+    lastvalue=encrypted_value_list[-1]
+    lastvalue=lastvalue[2:]
+    encryptedvalue=encryptedvalue+ lastvalue
+
+    howmany = int(encryptedvalue[-3:])
+    encryptedvalue=encryptedvalue[:-3]
+
+    if x ==1:
+        formatted=encryptedvalue[2:]
+    else:
+        formatted=encryptedvalue
+
+    formatted=formatted.replace(&#39; &#39;,&#39;&#39;)
+
+    l = split(formatted)
+    k = [ord(x) for x in l]
+
+    for i in k:
+        result=result+str(i)
+
+    result = (result[:5] ) if len(result) &gt; 5 else result
+    return result
+$$;
+/*
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test the Python-based Tokenization UDFs for Other Strings, Numbers (Integer  &amp; Decimal), and Floats" duration="5">
+        <p>Let&#39;s be sure all the UDFs were properly created:</p>
+<pre><code language="language-*/" class="language-*/">show functions like &#39;%ff3%&#39;;
+/*
+</code></pre>
+<p>You should see 15 rows of results, with each of these UDFs listed:</p>
+<ol type="1">
+<li><code>DECRYPT_FF3_FLOAT_PASS3</code></li>
+<li><code>DECRYPT_FF3_NUMBER_38_8_PASS3</code></li>
+<li><code>DECRYPT_FF3_STRING_PASS3</code></li>
+<li><code>ENCRYPT_FF3_FLOAT_PASS3</code></li>
+<li><code>ENCRYPT_FF3_NUMBER_38_8_PASS3</code></li>
+<li><code>ENCRYPT_FF3_STRING_PASS3</code></li>
+<li><code>FORMAT_EMAIL_FF3_STRING_PASS3</code></li>
+<li><code>FORMAT_FF3_FLOAT_PASS3</code></li>
+<li><code>FORMAT_FF3_NUMBER_38_8_PASS3</code></li>
+<li><code>FORMAT_FF3_STRING_PASS3</code></li>
+<li><code>FORMAT_FF3_STRING_USPHONE_PASS3</code></li>
+<li><code>FORMAT_FF3_STRING_USPOSTAL_PASS3</code></li>
+<li><code>SQLJOIN_FF3_FLOAT_PASS3</code></li>
+<li><code>SQLJOIN_FF3_NUMBER_38_8_PASS3</code></li>
+<li><code>SQLJOIN_FF3_STRING_PASS3</code></li>
+</ol>
+<p>With the full set of UDFs installed, let&#39;s test each of them to see how they work. Each of the sets deals with tokenizing the data, formatting the tokens for both human and machine use (<em>e.g.</em> in SQL joins), and detokenizing the data.</p>
+<p>First we step through float data types.</p>
+<pre><code language="language-*/" class="language-*/">--- Test the Python-based Tokenization UDFs for Other Strings, Numbers (Integer + Decimal), and Floats.
+-------------------------------------
+--- With the full set of UDFs installed, let us now test each of them to see how they work. Each of the
+--- sets deals with tokenizing the data, formatting the tokens for both human and machine use (e.g. in
+--- SQL joins), and detokenizing the data.
+
+-- Test the tokenize float UDF.
+-- Output should be: 1417378124
+select encrypt_ff3_float_pass3(&#39;KEY678901&#39;, 9.03, $userkeys);
+
+-- Test the float token formatting. This formatter reads the metadata from the token and gives back
+-- a float number that has the same length and the comma at the same place as the original float number
+-- that was encrypted. This is aimed at use by humans.
+-- Output should be: 1.41
+select format_ff3_float_pass3(1417378124);
+
+-- Test the float token sqljoin formatting. This just passes through the token and returns it as is in
+-- order to make sure this value is unique for sql joins. This is aimed at use by machines.
+-- Output should be: 1417378124
+select sqljoin_ff3_float_pass3(1417378124);
+
+-- Test the detokenize float UDF. Here you trade the token for the real value if you have the keys.
+-- Output should be: 9.03
+select decrypt_ff3_float_pass3(&#39;KEY678901&#39;,1417378124, $userkeys);
+/*
+</code></pre>
+<p>Next, we deal with number data types. Since numbers can be formatted in so many different ways, this demo makes the assumption that each different way for your data may have a distinct function to properly handle it. In a more real-world scenario, you may try to handle a variety of numbers in a single function, or align to previously assigned standards for how numbers may be formatted in your data. Since all the number input and output has been defined as <code>38,8</code> in the functions, all the tests will expect that format as well. You can see how if you wished to use integers or other supported number types, you would need to change or extend this model.</p>
+<pre><code language="language-*/" class="language-*/">-- Test the tokenize number UDF. Since numbers can be formatting in so many different ways, this demo makes
+-- the assumption that each different way for your data may have a distinct function to properly handle it.
+-- In a more real world scenario you may try to handle a variety of numbers in a single function, or align
+-- to previously assigned standards for how numbers may be formatted in your data. Since all the number input
+-- and output has been defined as `38,8` in the functions, all the tests will expect that format as well.
+-- Output should be: 4121376945460401.00000000
+select encrypt_ff3_number_38_8_pass3(&#39;KEY678901&#39;, 1000, $userkeys);
+/*
+</code></pre>
+<p>One important thing to note is that when looking for the value indicated in the output expected, it&#39;s best to select the value in the UI and look at the data displayed in the right hand pane. In this case (shown in the following screen capture), we see the right-hand pane correctly displays ther &#34;raw&#34; value of <code>4121376945460401.00000000</code>—which is what we want to see. This only underscores the importance of having many display options to process data like this.</p>
+<p class="image-container"><img alt="UI Screen Shot" title="UI Screen Shot" src="img/cf9d5ac6289be8dc.png"></p>
+<p>Now we continue to test the number UDFs.</p>
+<pre><code language="language-*/" class="language-*/">-- Test number token formatting UDF. This gives back the value in the same length and form as it was before
+-- it was encrypted.
+-- Output should be: 1,213 (1213.00000000)
+select format_ff3_number_38_8_pass3(&#39;4121376945460401.00000000&#39;);
+
+-- Test number token formatting UDF. This gives back a unique, simplified token with all metadata and padding
+-- removed to guarantee uniqueness for sql joins.
+-- Output should be: 121376945460.00000000
+select sqljoin_ff3_number_38_8_pass3(&#39;4121376945460401.00000000&#39;);
+
+-- Test the detokenize number UDF.
+-- Output should be: 1,000 (1000.00000000)
+select decrypt_ff3_number_38_8_pass3(&#39;KEY678901&#39;, 4121376945460401.00000000, $userkeys);
+/*
+</code></pre>
+<p>Finally, we move to the other string examples. Above, we tested the email string examples, but let&#39;s try out two more the demo includes.</p>
+<pre><code language="language-*/" class="language-*/">-- Above we tested the email string exmaples, but let&#39;s try out two more the demo includes.
+
+-- Test string token USphone formatting UDF. This UDF formats and converts the string token into a
+-- string token that is represented by numbers and looks like a US phone number.
+
+-- First let&#39;s create a token from a &#34;real&#34; us phone number
+-- Output should be: [C0]D.eaU(5+iijkXsS4@yFULDB58hLTGD[C3]gyYs031
+select encrypt_ff3_string_pass3(&#39;KEY678901&#39;, &#39;+1 (888) 555-1337&#39;, $userkeys);
+
+-- Now we run this through the formatting UDF for US phone numbers.
+-- Output should be: (113) 46668065
+select format_ff3_string_usphone_pass3(&#39;[C0]q.BPAvFlRwWWfq+60017&#39;);
+
+-- Test string token USpostal-code formatting UDFs. This UDF formats and converts the string token
+-- into a string token that is represented by numbers and looks like a US post code number.
+
+-- First let&#39;s create a token from a &#34;real&#34; us phone zip code
+-- Output should be: [C0]58KuL005
+select encrypt_ff3_string_pass3(&#39;KEY678901&#39;, &#39;17182&#39;, $userkeys);
+
+-- Now we run this through the formatting UDF for US zip codes.
+-- Output should be: 53567
+select format_ff3_string_uspostal_pass3(&#39;[C0]58KuL005&#39;);
+/*
+</code></pre>
+<p>This gives us a full set of tools, but now we want to see how those tools can be applied in different circumstances. To achieve that, we need to build out a little more for our demo environment.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Masking Policies and Grant More Rights" duration="4">
+        <p>The final step before our last big walkthrough is to create a number of policies and grant rights on those and the other UDFs to all the roles that will need to interact with the policies to see these controls applied automatically.</p>
+<pre><code language="language-*/" class="language-*/">--- Create encrypt polices
+create or replace masking policy ff3_encrypt_string_pass3 as (val string, keyid string)  returns string -&gt;
+  case
+    when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+   when  current_role() in (&#39;FF3_ENCRYPT&#39;)
+     then encrypt_ff3_string_pass3(keyid,val, $userkeys)
+    else &#39;** masked **&#39;
+  end;
+
+create or replace masking policy ff3_encrypt_float_pass3 as (val float,keyid string)  returns float -&gt;
+  case
+   when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+    when  current_role() in (&#39;FF3_ENCRYPT&#39;)
+     then encrypt_ff3_float_pass3(keyid,val, $userkeys)
+    else -999
+  end;
+
+create or replace masking policy ff3_encrypt_number_pass3_integer as (val integer,keyid string)  returns integer -&gt;
+  case
+   when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+    when  current_role() in (&#39;FF3_ENCRYPT&#39;)
+     then encrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+    else -999
+  end;
+
+create or replace masking policy ff3_encrypt_number_pass3_decimal as (val number(38,8),keyid string)  returns number(38,8) -&gt;
+  case
+   when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+    when  current_role() in (&#39;FF3_ENCRYPT&#39;)
+     then encrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+    else -999
+  end;
+
+
+--- Create decrypt and format policies
+create or replace masking policy ff3_decrypt_format_string_pass3 as (val string, keyid string)  returns string -&gt;
+  case
+    when  current_role() in (&#39;FF3_DECRYPT&#39;)
+     then decrypt_ff3_string_pass3(keyid,val, $userkeys)
+
+     when  current_role() in (&#39;DATA_SC&#39;) AND system$get_tag_on_current_column(&#39;sqljoin&#39;)=&#39;&#39;
+     then sqljoin_ff3_string_pass3(val)  
+
+    when  current_role() in (&#39;DATA_SC&#39;) AND system$get_tag_on_current_column(&#39;email&#39;)=&#39;&#39;
+     then format_email_ff3_string_pass3(val)
+
+    when  current_role() in (&#39;DATA_SC&#39;) AND system$get_tag_on_current_column(&#39;uspostal&#39;)=&#39;&#39;
+     then format_ff3_string_uspostal_pass3(val)
+
+     when  current_role() in (&#39;DATA_SC&#39;) AND system$get_tag_on_current_column(&#39;usphone&#39;)=&#39;&#39;
+     then format_ff3_string_usphone_pass3(val)
+
+    when  current_role() in (&#39;DATA_SC&#39;)
+     then format_ff3_string_pass3(val)
+    when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+    else &#39;** masked **&#39;
+  end;
+
+
+create or replace masking policy ff3_decrypt_format_float_pass3 as (val float, keyid string)  returns float -&gt;
+  case
+    when  current_role() in (&#39;FF3_DECRYPT&#39;)
+     then decrypt_ff3_float_pass3(keyid,val, $userkeys)
+    when  current_role() in (&#39;DATA_SC&#39;) AND system$get_tag_on_current_column(&#39;sqljoin&#39;)=&#39;&#39;
+     then sqljoin_ff3_float_pass3(val)
+    when  current_role() in (&#39;DATA_SC&#39;)
+     then format_ff3_float_pass3(val)
+    when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+    else -999
+  end;
+
+create or replace masking policy ff3_decrypt_format_pass3_integer as (val integer, keyid string)  returns integer -&gt;
+  case
+    when  current_role() in (&#39;FF3_DECRYPT&#39;)
+     then decrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+     when  current_role() in (&#39;DATA_SC&#39;) AND system$get_tag_on_current_column(&#39;sqljoin&#39;)=&#39;&#39;
+     then sqljoin_ff3_number_38_8_pass3(val)
+    when  current_role() in (&#39;DATA_SC&#39;)
+     then format_ff3_number_38_8_pass3(val)
+    when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+    else -999
+  end;
+
+
+create or replace masking policy ff3_decrypt_format_decimal_pass3 as (val number(38,8), keyid string)  returns number(38,8) -&gt;
+  case
+    when  current_role() in (&#39;FF3_DECRYPT&#39;)
+     then decrypt_ff3_number_38_8_pass3(keyid,val, $userkeys)
+     when  current_role() in (&#39;DATA_SC&#39;) AND system$get_tag_on_current_column(&#39;sqljoin&#39;)=&#39;&#39;
+     then sqljoin_ff3_number_38_8_pass3(val)
+    when  current_role() in (&#39;DATA_SC&#39;)
+     then format_ff3_number_38_8_pass3(val)
+    when  current_role() in (&#39;ACCOUNTADMIN&#39;)
+     then val
+    else -999
+  end;
+
+grant all privileges on function encrypt_ff3_string_pass3(string, string, string) to role ff3_encrypt;
+grant all privileges on function encrypt_ff3_string_pass3(string, string, string) to role masked;
+grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role ff3_decrypt;
+grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role data_sc;
+grant all privileges on function decrypt_ff3_string_pass3(string, string, string) to role masked;
+
+grant all privileges on function format_ff3_string_pass3(string) to role data_sc;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role data_sc;
+grant all privileges on function format_email_ff3_string_pass3(string) to role data_sc;
+
+grant all privileges on function format_ff3_string_pass3(string) to role masked;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role masked;
+grant all privileges on function format_email_ff3_string_pass3(string) to role masked;
+
+grant all privileges on function format_ff3_string_pass3(string) to role ff3_decrypt;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role ff3_decrypt;
+grant all privileges on function format_email_ff3_string_pass3(string) to role ff3_decrypt;
+
+grant all privileges on function format_ff3_string_pass3(string) to role masked;
+grant all privileges on function sqljoin_ff3_string_pass3(string) to role masked;
+grant all privileges on function format_email_ff3_string_pass3(string) to role masked;
+
+grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role ff3_encrypt;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role ff3_decrypt;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role data_sc;
+
+grant all privileges on function encrypt_ff3_float_pass3(string, float, string) to role masked;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role masked;
+grant all privileges on function decrypt_ff3_float_pass3(string, float, string) to role masked;
+
+grant all privileges on function format_ff3_float_pass3(float) to role data_sc;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role data_sc;
+
+grant all privileges on function format_ff3_float_pass3(float) to role masked;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role masked;
+
+grant all privileges on function format_ff3_float_pass3(float) to role ff3_decrypt;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role ff3_decrypt;
+
+grant all privileges on function format_ff3_float_pass3(float) to role masked;
+grant all privileges on function sqljoin_ff3_float_pass3(float) to role masked;
+
+grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_encrypt;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role ff3_decrypt;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role data_sc;
+
+grant all privileges on function encrypt_ff3_number_38_8_pass3(string, number, string) to role masked;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role masked;
+grant all privileges on function decrypt_ff3_number_38_8_pass3(string, number, string) to role masked;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role ff3_decrypt;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role ff3_decrypt;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role masked;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role masked;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role data_sc;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role data_sc;
+
+grant all privileges on function format_ff3_number_38_8_pass3(number) to role masked;
+grant all privileges on function sqljoin_ff3_number_38_8_pass3(number) to role masked;
+
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_encrypt;
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role ff3_decrypt;
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role masked;
+grant all privileges on function format_ff3_string_uspostal_pass3(string) to role data_sc;
+
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role ff3_encrypt;
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role ff3_decrypt;
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role masked;
+grant all privileges on function format_ff3_string_usphone_pass3(string) to role data_sc;
+/*
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Walk-through the Full Demo of Tokenization Applied Automatically" duration="7">
+        <p>Up to this point, we have called the UDFs directly to manipulate data. That is not a very real-world way to use this. Instead, you would want to have this applied in the background so that users don&#39;t need to do anything special. That is what we will explore in these steps.</p>
+<p>First, it&#39;s unlikely you would grant users access to keys directly. It&#39;s also unlikely that they would have access to all keys. They would only have access to specific keys. And steps like this to set that key may even be done in the background without their knowledge. Here we will set a specific key as the one to use for the following steps by putting a name in a session variable. Then we create a view that will use that keyname, and grant access to that view to some of our roles.</p>
+<pre><code language="language-*/" class="language-*/">-- which encryption key do you want to use for the encryption?
+set encryptkey=&#39;KEY678901&#39;;
+
+-- Create a view that will embed a keyname into the view itself
+create or replace view ff3_encrypt_view1 as select $encryptkey as KEYID, * from ff3_pass3_source1;
+
+-- Grant access rights to view
+grant all privileges on view ff3_encrypt_view1 to role masked;
+grant all privileges on view ff3_encrypt_view1 to role ff3_encrypt;
+/*
+</code></pre>
+<p>Now we can select from both the source table and the view to see the data, but we see the view also has a column showing the key used for each column. Note that, though this demo assumes the same key is used for each column, that would not be required in a more complex case. So you may allow different keys on a column-by-column basis.</p>
+<pre><code language="language-*/" class="language-*/">-- Test queries. Query source should be plaintext as well as view. View view however contains an extra
+-- column with the encryption key.
+select * from ff3_pass3_source1;
+select * from ff3_encrypt_view1;
+/*
+</code></pre>
+<p>Now we will tag each of the columns in the view, and then assign policies to the tag, which will fire based on the column&#39;s datatype and apply the tokenization.</p>
+<pre><code language="language-*/" class="language-*/">-- Set the tag that will trigger the encrypt policy on the view
+alter view ff3_encrypt_view1 modify
+    column name set tag ff3_encrypt=&#39;&#39;,
+    column phone set tag ff3_encrypt=&#39;&#39;,
+    column email set tag ff3_encrypt=&#39;&#39;,
+    column postalzip set tag ff3_encrypt=&#39;&#39;,
+    column integernumber set tag ff3_encrypt=&#39;&#39;,
+    column floatnumber set tag ff3_encrypt=&#39;&#39;,
+    column decimalnumber set tag ff3_encrypt=&#39;&#39;
+;
+
+-- Check the tags
+select * from table(
+    information_schema.tag_references_all_columns(
+        &#39;FF3_TESTING_DB.FF3_TESTING_SCHEMA.FF3_ENCRYPT_VIEW1&#39;, &#39;table&#39;
+    )
+);
+
+-- assign encrypt tags to to view
+alter tag ff3_encrypt set
+  masking policy ff3_encrypt_string_pass3,
+  masking policy ff3_encrypt_number_pass3_decimal,
+  masking policy ff3_encrypt_float_pass3;
+
+-- Check the policies applied
+select *
+from table (ff3_testing_db.information_schema.policy_references(
+  ref_entity_domain =&gt; &#39;VIEW&#39;,
+  ref_entity_name =&gt; &#39;FF3_TESTING_DB.FF3_TESTING_SCHEMA.FF3_ENCRYPT_VIEW1&#39; )
+);
+/*
+</code></pre>
+<p>Now we can change roles to show how the tokenization is applied by default based on the tags and their policies.</p>
+<pre><code language="language-*/" class="language-*/">-- Change to role FF3_Encrypt and query the view. Data should be encrypted now.
+use role ff3_encrypt;
+
+select * from ff3_encrypt_view1; -- you should see tokenized data
+/*
+</code></pre>
+<p>A common question is: &#34;What happens when people copy this data to other objects?&#34; Let&#39;s step through doing just that by inserting data into a new object, tagging that object appropriately, and then seeing if that data is recoverable in the new object.</p>
+<pre><code language="language-*/" class="language-*/">-- Populate target table with encrypted data.
+insert into ff3_testing_db.ff3_testing_schema.ff3_pass3_target1  select * from ff3_encrypt_view1;
+
+-- Change back to Accountadmin
+-- Assign decrypt tag to decrypt demo table
+use role accountadmin;
+alter table ff3_pass3_target1 modify
+    column name set tag ff3_data_sc=&#39;&#39;,
+    column phone set tag ff3_data_sc=&#39;&#39;,
+    column email set tag ff3_data_sc=&#39;&#39;,
+    column postalzip set tag ff3_data_sc=&#39;&#39;,
+    column integernumber set tag ff3_data_sc=&#39;&#39;,
+    column floatnumber set tag ff3_data_sc=&#39;&#39;,
+    column decimalnumber set tag ff3_data_sc=&#39;&#39;
+;
+
+-- Assign decrypt and format policies to decrypt/format tag
+alter tag ff3_data_sc set
+  masking policy ff3_decrypt_format_float_pass3,
+  masking policy ff3_decrypt_format_string_pass3,
+  masking policy ff3_decrypt_format_decimal_pass3;
+/*
+</code></pre>
+<p>Now we select from the target and we see the data is in its tokenized form.</p>
+<pre><code language="language-*/" class="language-*/">select * from ff3_pass3_target1;
+/*
+</code></pre>
+<p>We can use this tagging and policy approach to produce many different effects in how the data is seen. Here we will step through a number of them that will use many of the different UDFs we tested earlier.</p>
+<pre><code language="language-*/" class="language-*/">-- Assign format tags to target table to see tokenized data formatted differently. Set the email tag on
+-- a string column to see it formatted like an email, set the uspostal tag on a string column to see it
+-- formaated like an uspostal code.
+-- The same applies to the usphone number tag.
+-- Play with it as you see fit.
+
+use role accountadmin;
+alter table ff3_pass3_target1 modify column email set tag email=&#39;&#39;;
+alter table ff3_pass3_target1 modify column postalzip set tag uspostal=&#39;&#39;;
+alter table ff3_pass3_target1 modify column phone set tag usphone=&#39;&#39;;
+
+use role masked;
+select * from ff3_pass3_target1; -- shows data masked
+
+use role accountadmin;
+select * from ff3_pass3_target1; -- shows data tokenized
+
+use role ff3_decrypt;
+select * from ff3_pass3_target1; -- shows data detokenized
+
+use role data_sc;
+select * from ff3_pass3_target1; -- shows data tokenized but well formatted
+
+use role accountadmin;
+alter table ff3_pass3_target1 modify column email set tag sqljoin=&#39;&#39;;
+
+use role data_sc;
+select  * from ff3_pass3_target1; -- shows data in SQL join format
+/*
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Hopefully this demo has given you a glimpse into how tokenization can be achieved leveraging Snowflake&#39;s Python support. Project Python Camouflage aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing you to obfuscate (or &#34;mask&#34;) PII, while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that you can embrace and extend.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>What tokenization is, and how it relates to masking, encryption and other capabilities</li>
+<li>Leveraging Python to deliver FF3 style tokenization within Snowflake</li>
+<li>Combining tagging, masking policies, and their relationships to apply tokenization transparently</li>
+<li>A demo that can be extended to as many data types as you like</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

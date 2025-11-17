@@ -1,0 +1,808 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowflake入門 - ゼロからはじめるSnowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowflake_ja"
+                  title="Snowflake入門 - ゼロからはじめるSnowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="概要" duration="2">
+        <p>Snowflakeへようこそデータベースおよびデータウェアハウスの管理者およびアーキテクト向けに作成されたこのエントリーレベルガイドでは、Snowflakeインターフェイスの操作方法について説明すると共に、Snowflakeのコア機能をいくつかご紹介します。<a href="https://trial.snowflake.com" target="_blank">Snowflakeの30日間の無料トライアルに登録</a>し、このラボ演習を進めてください。基本事項を学習したら、自社のデータを処理したり、Snowflakeのより高度な機能をプロのように使いこなしたりできるようになります。</p>
+<h2 is-upgraded>無料のバーチャルハンズオンラボ</h2>
+<p>このSnowflakeガイドは、インストラクター主導の無料のバーチャルハンズオンラボとしてご利用いただけます。<a href="https://www.snowflake.com/virtual-hands-on-lab/" target="_blank">今すぐVHOLに登録してください</a>。</p>
+<h2 is-upgraded>前提条件：</h2>
+<ul>
+<li><a href="https://trial.snowflake.com" target="_blank">Snowflakeの30日間無料トライアル環境</a>の使用</li>
+<li>SQL、データベース構想、オブジェクトについての基本知識</li>
+<li>CSVカンマ区切りのファイルおよびJSON半構造化データに精通していること</li>
+</ul>
+<h2 is-upgraded>学習する内容：</h2>
+<ul>
+<li>ステージ、データベース、テーブル、ビュー、仮想ウェアハウスの作成方法。</li>
+<li>構造化データおよび半構造化データのロード方法。</li>
+<li>テーブル間の結合を含む、Snowflake内のデータに対する分析クエリの実行方法。</li>
+<li>オブジェクトのクローン方法。</li>
+<li>タイムトラベルを使用してユーザーエラーを元に戻す方法。</li>
+<li>ロールおよびユーザーを作成し、権限を付与する方法。</li>
+<li>他のアカウントと安全かつ簡単にデータを共有する方法。</li>
+<li>Snowflakeマーケットプレイスでデータセットを利用する方法。</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ラボ環境の準備" duration="2">
+        <p>まだ<a href="https://signup.snowflake.com/developers" target="_blank">Snowflakeの30日間無料トライアル</a>に登録していない方は、登録してください。このラボの残りのセクションでは、トライアルに登録することによって作成した新しいSnowflakeアカウントの使用を前提としています。</p>
+<p>このラボで使用するSnowflakeエディション（標準、エンタープライズ、ビジネスクリティカルなど）、クラウドプロバイダー（AWS、Azure、GCP）、リージョン（米国東部、EUなど）は、どれでも構いません。ただし、物理的に最も近いリージョンを選択し、Snowflakeエディションとして最も人気のあるエンタープライズを選択することをお勧めします。</p>
+<p>登録後、アクティベーションリンクとSnowflakeアカウントにアクセスするためのURLが記載されたメールが届きます。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflakeのユーザーインターフェイスとラボストーリー" duration="8">
+        <aside class="warning"><p><strong>スクリーンショット、サンプルコード、環境について</strong> このラボのスクリーンショットに表示される例と結果は、皆さんが演習を完了したときに実際に目にするものとは若干異なる場合があります。</p>
+</aside>
+<h2 is-upgraded>Snowflakeユーザーインターフェイス（UI）へのログイン</h2>
+<p>ブラウザウィンドウを開き、登録メールと合わせて送信されたSnowflakeの30日間トライアル環境のURLを入力します。</p>
+<p>以下のログインダイアログが表示されます。登録時に指定したユーザー名とパスワードを入力します。</p>
+<p class="image-container"><img alt="ログイン画面" src="img/94b9a152c373c99e.png"></p>
+<h2 is-upgraded>Snowflake UIを実際に操作してみる</h2>
+<p>Snowflakeの使い方に慣れていきましょう。このセクションでは、ユーザーインターフェイスの基本コンポーネントについて説明します。左側の余白を上から下へ見ていきましょう。</p>
+<p class="image-container"><img alt="snowflakeナビゲーションバー" src="img/ce13b4af78a66c6b.png"></p>
+<h3 is-upgraded>ワークシート</h3>
+<p class="image-container"><img alt="「ワークシート」タブのメイン画面" src="img/ba0e07fe7e6ab958.png"></p>
+<p>「<strong>ワークシート</strong>」タブには、SQLクエリの送信、DDLおよびDML操作の実行、クエリまたは操作の完了時の結果表示のためのインターフェイスが用意されています。新規ワークシートは、右上の「<strong>+ワークシート</strong>」をクリックして作成します。</p>
+<p class="image-container"><img alt="「ワークシート」タブの詳細" src="img/8fdb16c05fd8c436.png"></p>
+<p>左上には次の項目があります。</p>
+<ul>
+<li><strong>ホーム</strong>アイコン：メインコンソールに戻ったり、ワークシートを閉じたりするときに使用します。</li>
+<li><strong>Worksheet_name</strong>ドロップダウン：デフォルトの名前は、ワークシート作成時のタイムスタンプとなります。ワークシート名を編集するには、タイムスタンプをクリックしてください。ドロップダウンには、ワークシートに対して実行できる追加の操作も表示されます。</li>
+<li>「**フィルターの管理」**ボタン：カスタムフィルターは、サブクエリまたは値のリストとして解決される特別なキーワードです。</li>
+</ul>
+<p>右上には次の項目があります。</p>
+<ul>
+<li>「**コンテキスト」**ボックス：これにより、Snowflakeがこのセッションで使用するロールとウェアハウスを把握できます。UIまたはSQLコマンドで変更できます。</li>
+<li>「**共有」**ボタン：共有メニューを開いて他のユーザーに共有するか、ワークシートへリンクをコピーします。</li>
+<li>「<strong>再生/実行</strong>」ボタン：現在カーソルを合わせているSQLステートメント、または選択された複数のSQLステートメントを実行します。</li>
+</ul>
+<p>中央のペインには次の項目があります。</p>
+<ul>
+<li>上部にある、ワークシートのデータベース/スキーマ/オブジェクトコンテキストを設定するためのドロップダウン。</li>
+<li>クエリおよびその他のSQLステートメントを入力および実行する一般的な作業領域。</li>
+</ul>
+<p>中段左のパネルには次の項目があります。</p>
+<ul>
+<li>「<strong>ワークシート</strong>」タブ：このタブを使用すると、異なるワークシートを素早く選択して切り替えることができます。</li>
+<li>「<strong>データベース</strong>」タブ：このタブを使用すると、現在のロールが使用できるすべてのデータベースオブジェクトを確認できます。</li>
+<li><strong>検索</strong>バー：ワークシートで現在使用されているロールがアクセスできるすべてのデータベース、スキーマ、テーブル、ビューを探索できるデータベースオブジェクトブラウザです。</li>
+</ul>
+<p>最下部のペインには、クエリやその他の操作の結果が表示されます。さらに、4つのオプション（「<strong>オブジェクト</strong>」、「<strong>クエリ」</strong>、「<strong>結果」</strong>、「<strong>チャート」</strong>）もあります。これらはUI上の該当するパネルを開閉します。「**チャート」**を選択すると、返された結果を視覚化するパネルが開きます。これについては、後で詳しく説明します。</p>
+<p>このページの各種ペインは、スライダーを調整することでサイズを変更できます。ワークシート内に余裕が必要な場合は、左のパネルのデータベースオブジェクトブラウザを折りたたんでください。本ガイドのスクリーンショットの多くは、このパネルを閉じた状態となっています。</p>
+<aside class="warning"><p><strong>ワークシートとUIの比較</strong> このラボのほとんどの演習は、時間を節約するため、このワークシート内に記述済みのSQLを使用して実行されます。これらのタスクはUIからでも実行できますが、複数のUIタブを行ったり来たりしなければならないことになります。</p>
+</aside>
+<h3 is-upgraded>ダッシュボード</h3>
+<p class="image-container"><img alt="「ダッシュボード」タブ" src="img/21d6de710923c81b.png"></p>
+<p>「<strong>ダッシュボード</strong>」タブでは、1つ以上のチャートの柔軟な表示を作成できます（並べ替え可能なタイル形式で）。タイルとウィジェットは、ワークシートに結果を返すSQLクエリを実行することによって生成されます。ダッシュボードは、最小限の構成においてさまざまなサイズで機能します。</p>
+<h3 is-upgraded>データベース</h3>
+<p class="image-container"><img alt="「データベース」タブ" src="img/1efb94fd8e624f9.png"></p>
+<p>「<strong>データ</strong>」の下の「**データベース」**タブには、自分が作成したデータベースやアクセス権限のあるデータベースに関する情報が表示されます。データベースの作成、クローン、ドロップ、または所有権の譲渡を行ったり、UIのデータをロードしたりできます。自分の環境にデータベースがすでに存在していることに注意してください。ただし、それをこのラボで使用することはありません。</p>
+<h3 is-upgraded>プライベート共有データ</h3>
+<p class="image-container"><img alt="「共有データ」タブ" src="img/ac79b50634875aeb.png"></p>
+<p>また、「**データ」**の下の「<strong>プライベート共有データ</strong>」タブでは、データのコピーを作成することなく、個別のSnowflakeアカウント間または外部ユーザー間でSnowflakeテーブルを簡単かつ安全に共有するためのデータシェアリングを設定できます。データシェアリングについてはセクション10で取り上げます。</p>
+<h3 is-upgraded>マーケットプレイス</h3>
+<p class="image-container"><img alt="「マーケットプレイス」タブ" src="img/2ebba15c6973ed6d.png"></p>
+<p>「<strong>マーケットプレイス</strong>」タブでは、すべてのSnowflakeユーザーが、プロバイダーが提供するデータセットを閲覧および利用することができます。共有データには2つのタイプがあります。公開データとパーソナライズされたデータです。公開データとは、即時クエリに利用できる無料のデータセットです。パーソナライズされたデータの場合は、データのプロバイダーに連絡し、データ共有の承認を得る必要があります。</p>
+<h3 is-upgraded>クエリ履歴</h3>
+<p class="image-container"><img alt="「履歴」タブ" src="img/78319bfb37054a7a.png"></p>
+<p>「**アクティビティ」**の下には、「<strong>クエリ履歴</strong>」と「**コピー履歴」**という2つのタブがあります。</p>
+<ul>
+<li>「**クエリ履歴」**には、過去のクエリと、結果を絞り込むために使用できるフィルター（ユーザー、ウェアハウス、ステータス、クエリタグなど）が表示されます。過去14日間に自分のSnowflakeアカウントから実行されたすべてのクエリの詳細が表示されます。クエリIDをクリックすると、詳細情報を見ることができます。</li>
+<li>「<strong>コピー履歴</strong>」には、データをSnowflakeに取り込むために実行されたコピーコマンドのステータスが表示されます。</li>
+</ul>
+<h3 is-upgraded>ウェアハウス</h3>
+<p class="image-container"><img alt="「ウェアハウス」タブ" src="img/e8ae082b9907f027.png"></p>
+<p>「<strong>管理</strong>」の下の「**ウェアハウス」**タブでは、Snowflakeでデータをロードまたはクエリするための、仮想ウェアハウスと呼ばれるコンピューティングリソースを設定および管理します。COMPUTE_WHと呼ばれるウェアハウスが、お使いの環境内にすでに存在しています。</p>
+<h3 is-upgraded>リソースモニター</h3>
+<p class="image-container"><img alt="「リソースモニター」タブ" src="img/bf1224962773e6c8.png"></p>
+<p>「**管理」**の下の「**リソースモニター」**タブには、仮想ウェアハウスが消費するクレジット数を制御するために作成されたすべてのリソースモニターが表示されます。各リソースモニターについて、クレジットクォータ、監視のタイプ、スケジュール、および仮想ウェアハウスがクレジット上限に達したときに実行されるアクションが表示されます。</p>
+<h3 is-upgraded>ロール</h3>
+<p class="image-container"><img alt="「ロール」タブ" src="img/4dda97b955d14138.png"></p>
+<p>「**管理」**の下の「<strong>ユーザーとロール</strong>」タブのサブタブである「**ロール」**には、ロールのリストとその階層が表示されます。このタブでは、ロールの作成、再編成、およびユーザーへの付与を実行できます。「**テーブル」**サブタブを選択すると、ロールを表形式/リスト形式でも表示できます。</p>
+<h3 is-upgraded>ユーザー</h3>
+<p class="image-container"><img alt="「ユーザー」タブ" src="img/46fa56f76ccba504.png"></p>
+<p>「**管理」**タブの下の「<strong>ユーザーとロール</strong>」タブのサブタブである「<strong>ユーザー</strong>」には、そのアカウント内のユーザーのリストと、デフォルトのロールおよびユーザーの所有者が表示されます。新規アカウントでは、追加のロールが作成されていないため、レコードは表示されません。現在のロールを通じて付与された権限により、このタブに表示される情報が決まります。このタブで利用できるすべての情報を表示するには、ロールをアカウント管理者に切り替えてください。</p>
+<p class="image-container"><img alt="ユーザー設定ドロップダウン" src="img/f9ca5cc23fcd83cb.png"></p>
+<p>UIの右上にあるユーザー名をクリックすると、パスワード、ロール、環境設定を変更できます。Snowflakeには、システム定義のロールがいくつかあります。現在のロールはデフォルトの<code>SYSADMIN</code>であり、このラボではほぼこのロールのままとなります。</p>
+<aside class="warning"><p><strong>SYSADMIN </strong><code>SYSADMIN</code>（システム管理者）ロールには、アカウント内でウェアハウス、データベース、およびその他のオブジェクトを作成する権限があります。リアルワールド環境では、このラボのタスクにさまざまなロールを使用し、ユーザーにロールを割り当てることになります。ロールとSnowflakeのアクセス制御モデルについてはセクション9で詳しく取り上げます。また、<a href="https://docs.snowflake.com/user-guide/security-access-control-overview" target="_blank">Snowflakeドキュメント</a>でも追加情報をご覧いただけます。</p>
+</aside>
+<h2 is-upgraded>ラボストーリー</h2>
+<p>このラボは、米国のニューヨーク市に実在する市全域の自転車シェアリングシステムであるCiti Bikeの分析チームをベースとしています。このチームは、自社の自転車利用者についての理解を深め、利用者に最高のサービスを提供する方法を知るために、社内のトランザクションシステムからのデータについて分析を実行したいと考えています。</p>
+<p>まず私たちは、自転車利用者のトランザクションから得られた構造化された<code>.csv</code>データをSnowflakeにロードします。その後、オープンソースの半構造化JSON気象データを利用して、自転車の利用回数と天候に相関関係があるかを判断していきます。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="データロードの準備" duration="14">
+        <p>構造化されたCiti Bike利用者のトランザクションデータをSnowflakeにロードする準備から始めましょう。</p>
+<p>このセクションでは、以下の手順を、順を追って説明していきます。</p>
+<ul>
+<li>データベースとテーブルを作成する。</li>
+<li>外部ステージを作成する。</li>
+<li>データのファイル形式を作成する。</li>
+</ul>
+<aside class="warning"><p><strong>データをSnowflakeに取り込む</strong> 多くのロケーションからSnowflakeにデータを取り込むには多数の方法があります。たとえば、COPYコマンド、Snowpipeの自動取り込み、外部コネクタ、サードパーティのETL/ELTソリューションなどです。Snowflakeへのデータの取り込みに関する詳細については、<a href="https://docs.snowflake.com/guides-overview-loading-data" target="_blank">Snowflakeドキュメント</a>を参照してください。このラボでは、COPYコマンドとAWS S3ストレージを使用してデータを手動でロードします。実際のシナリオでは、自動化プロセスまたはETLソリューションを使用する可能性が高いでしょう。</p>
+</aside>
+<p>使用するデータは、Citi Bike（NYC）によって提供された自転車シェアのデータです。データは、米国西部リージョンのAmazon AWS S3バケットにエクスポートされ、事前設定されています。データは、走行時間、ロケーション、ユーザータイプ、性別、年齢などの情報で構成されています。AWS S3上では、このデータは6,150万行、377個のオブジェクト、圧縮サイズ1.9GBで表されています。</p>
+<p>以下は、Citi Bike（CSV）データファイルのスニペットです。</p>
+<p class="image-container"><img alt="データスニペット" src="img/a58c8af550412709.png"></p>
+<p>このカンマ区切り形式のファイルには、単一のヘッダーラインがあり、ヘッダーラインに含まれるフィールドの見出しを含め、すべての文字列値がダブルクォーテーションで囲まれています。これは、このセクションの後半で、このデータを格納するSnowflakeテーブルを構成する際に重要になります。</p>
+<h2 is-upgraded>データベースとテーブルを作成する</h2>
+<p>まず、構造化データのロードに使用する<code>CITIBIKE</code>という名前のデータベースを作成しましょう。</p>
+<p>左上の「<strong>ロールの切り替え」</strong> &gt; 「<strong>SYSADMIN</strong>」で自分の名前を選択し、現在SYSADMINロールを使用していることを確認してください。</p>
+<p>「**データベース」**タブに移動します。「<strong>作成</strong>」をクリックし、データベースに<code>CITIBIKE</code>という名前を付けて「<strong>作成</strong>」をクリックします。</p>
+<p class="image-container"><img alt="ワークシートの作成" src="img/617e691cd998d830.png"></p>
+<p>「<strong>ワークシート</strong>」タブに移動します。ステップ3で作成したワークシートが表示されます。</p>
+<p class="image-container"><img alt="新規ワークシート" src="img/12afc32e8196d6b0.png"></p>
+<p>ワークシート内のコンテキストを適切に設定する必要があります。ワークシートの右上隅で、「**共有」**ボタンの左のボックスをクリックし、コンテキストメニューを表示します。ここで、各ワークシートから表示および実行できるエレメントを制御します。ここでは、UIを使用してコンテキストを設定します。このラボの後半では、ワークシート内のSQLコマンドを使用して同じことを実行します。</p>
+<p>以下のコンテキスト設定を選択します。</p>
+<p>ロール：<code>SYSADMIN</code>ウェアハウス：<code>COMPUTE_WH</code></p>
+<p class="image-container"><img alt="コンテキストのロールとウェアハウスの設定" src="img/e1133050d123b025.png"></p>
+<p>次に、データベースのドロップダウンで、以下のコンテキスト設定を選択します。</p>
+<p>データベース：<code>CITIBIKE</code> スキーマ = <code>PUBLIC</code></p>
+<p class="image-container"><img alt="コンテキストデータベース設定" src="img/ba26c112cae47b4f.png"></p>
+<aside class="warning"><p>**データ定義言語（DDL）の操作は無料です。**これまで実行したDDL操作はどれもコンピューティングリソースを必要としません。そのため、すべてのオブジェクトを無料で作成することができます。</p>
+</aside>
+<p>ワークシートでの作業をしやすくするために、名前を変更しましょう。左上隅で、ワークシート名（これはワークシート作成時のタイムスタンプです）をダブルクリックし、<code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>に変更します。</p>
+<p>次に、カンマ区切りのデータのロードに使用する<code>TRIPS</code>という名前のテーブルを作成します。UIを使用する代わりに、ワークシートを使用してテーブルを作成するDDLを実行します。以下のSQLテキストをワークシートにコピーしてください。</p>
+<pre><code language="language-SQL" class="language-SQL">create or replace table trips
+(tripduration integer,
+starttime timestamp,
+stoptime timestamp,
+start_station_id integer,
+start_station_name string,
+start_station_latitude float,
+start_station_longitude float,
+end_station_id integer,
+end_station_name string,
+end_station_latitude float,
+end_station_longitude float,
+bikeid integer,
+membership_type string,
+usertype string,
+birth_year integer,
+gender integer);
+</code></pre>
+<aside class="warning"><p>**コマンド実行のための多数のオプション。**UI、「ワークシート」タブ、またはSnowSQLコマンドラインツールを使用して実行できます。また、お好みのSQLエディターを使用してODBC/JDBC経由で実行することも、その他のコネクタ（Python、Sparkなど）を使用して実行することもできます。前述のとおり、このラボでは、時間を節約するため、ほとんどの操作はUIを使用せずにワークシートで記述済みSQLを実行することで行われます。</p>
+</aside>
+<p>SQLテキストの任意の場所にカーソルを合わせ、ワークシートの右上にある青い「<strong>再生/実行</strong>」ボタンをクリックしてクエリを実行します。または、キーボードショートカットの[Ctrl]/[Cmd]+[Enter]を使用します。</p>
+<p>TRIPSテーブルが作成されたことを確認します。ワークシートの下部の「結果」セクションに、「Table TRIPS successfully created（テーブルTRIPSが問題なく作成されました）」というメッセージが表示されます。</p>
+<p class="image-container"><img alt="TRIPS確認メッセージ" src="img/dbed54bac4e63585.png"></p>
+<p>ワークシート左上の<strong>ホーム</strong>アイコンをクリックして「<strong>データベース</strong>」タブに移動します。「<strong>データ」</strong>、「**データベース」**の順にクリックします。データベースリストで、<code>CITIBIKE</code>、<code>PUBLIC</code>、「**テーブル」**の順にクリックすると、新たに作成した<code>TRIPS</code>テーブルが表示されます。左側にデータベースが表示されない場合は、データベースが隠れている場合がありますので、ブラウザを拡大してください。</p>
+<p class="image-container"><img alt="TRIPSテーブル" src="img/3b9b222029a49f7a.png"></p>
+<p><code>TRIPS</code>と「<strong>列</strong>」タブをクリックすると、先ほど作成したテーブル構造が表示されます。</p>
+<p class="image-container"><img alt="TRIPSテーブル構造" src="img/5201e54b3b7772f4.png"></p>
+<h2 is-upgraded>外部ステージを作成する</h2>
+<p>ここでは、公開された外部のS3バケット内ですでにステージングされている、構造化されたカンマ区切りのデータを扱います。このデータを使用する前に、まず外部バケットのロケーションを指定するステージを作成する必要があります。</p>
+<aside class="special"><p>このラボではAWS-Eastバケットを使用します。将来のデータのエグレス/転送コストを防ぐために、Snowflakeアカウントと同じクラウドプロバイダーおよびリージョンからステージングロケーションを選択する必要があります。</p>
+</aside>
+<p>「<strong>データベース</strong>」タブから、<code>CITIBIKE</code>データベースと<code>PUBLIC</code>スキーマをクリックします。「**作成」**ボタンをクリックし、その後、「<strong>Stage</strong>」、「<strong>Amazon S3</strong>」の順にクリックします。</p>
+<p class="image-container"><img alt="ステージ作成" src="img/a0b3421ffacddeec.png"></p>
+<p>開いた「セキュリティ保護可能なオブジェクトの作成」ダイアログで、SQLステートメントの以下の値を置き換えます。</p>
+<p><code><stage_name></code>: <code>citibike_trips</code></p>
+<p><code><url></code>: <code>s3://snowflake-workshop-lab/japan/citibike-trips/</code></p>
+<p>**注意：**URLの最後には、必ずフォワードスラッシュ（<code>/</code>）を入れてください。これを入れておかなければ、後でバケットからデータを読み込む際にエラーが発生します。また、必要のない「credentials = (...)」ステートメントが削除されていることを確認してください。下図のように「–」を使用してコメントアウトすることもできます。create stageコマンドは、下図のようになります。あるいは、3行目を含めないでください。</p>
+<aside class="special"><p>このラボのS3バケットは公開であるため、ステートメント内のcredentialsオプションは空のままで構いません。実際のシナリオでは、外部ステージに使用するバケットにはキー情報が必要になるでしょう。</p>
+</aside>
+<p class="image-container"><img alt="ステージ設定の作成" src="img/91fa215e0a17b483.png"></p>
+<p>では<code>citibike_trips</code>ステージのコンテンツを見ていきましょう。「**ワークシート」**タブに戻り、作成した「CITIBIKE_ZERO_TO_SNOWFLAKE」ワークシートを開いて、下図のように、先ほどのコードの下に以下のSQLステートメントを追加して実行します。</p>
+<pre><code language="language-SQL" class="language-SQL">list @citibike_trips;
+</code></pre>
+<p>最下部のペインの結果に、ステージ内のファイルのリストが表示されます。</p>
+<p class="image-container"><img alt="ワークシート結果" src="img/e60ace83025630e9.png"></p>
+<h2 is-upgraded>ファイル形式を作成する</h2>
+<p>Snowflakeにデータをロードする前に、データ構造に合うファイル形式を作成する必要があります。</p>
+<p>ワークシートで、以下のコマンドをそれ以外のコードの下に追加して実行し、ファイル形式を作成します。</p>
+<pre><code language="language-SQL" class="language-SQL">--create file format
+
+create or replace file format csv type=&#39;csv&#39;
+  compression = &#39;auto&#39; field_delimiter = &#39;,&#39; record_delimiter = &#39;\n&#39;
+  skip_header = 0 field_optionally_enclosed_by = &#39;\042&#39; trim_space = false
+  error_on_column_count_mismatch = false escape = &#39;none&#39; escape_unenclosed_field = &#39;\134&#39;
+  date_format = &#39;auto&#39; timestamp_format = &#39;auto&#39; null_if = (&#39;&#39;) comment = &#39;file format for ingesting data for zero to snowflake&#39;;
+</code></pre>
+<p class="image-container"><img alt="ファイル形式の作成" src="img/3c52420ff7677f1.png"></p>
+<p>次のコマンドを実行することにより、ファイル形式が正しい設定で作成されていることを確認します。</p>
+<pre><code language="language-SQL" class="language-SQL">--verify file format is created
+
+show file formats in database citibike;
+</code></pre>
+<p>作成されたファイル形式が結果にリスト表示されます。</p>
+<p class="image-container"><img alt="ファイル形式の作成設定" src="img/e277ae2e58729906.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="データのロード" duration="10">
+        <p>このセクションでは、仮想ウェアハウスとCOPYコマンドを使用して、前のセクションで作成したSnowflakeテーブルへの構造化データの一括ロードを開始します。</p>
+<h2 is-upgraded>データロードのためのウェアハウスのサイズ変更と使用</h2>
+<p>データをロードするにはコンピューティングリソースが必要です。Snowflakeコンピュートノードは仮想ウェアハウスと呼ばれ、データのロード、クエリの実行、DML操作の実行のいずれであっても、ワークロードに応じて動的にサイズを変更できます。それぞれのワークロードは独自のウェアハウスを持つことができるため、リソースの競合はありません。</p>
+<p>「<strong>ウェアハウス</strong>」タブへ移動します（「**管理」**の下）。ここでは、既存のウェアハウスをすべて表示できるほか、使用状況トレンドの分析も可能です。</p>
+<p>右上にある「**+ウェアハウス」**に注意してください。ここで新しいウェアハウスを素早く追加できます。ただし、ここでは30日間のトライアル環境に含まれる既存のウェアハウスであるCOMPUTE_WHを使用します。</p>
+<p><code>COMPUTE_WH</code>ウェアハウスの行をクリックします。その後、右上にある**...**（3つのドット）をクリックすると、ウェアハウス上で実行できるアクションが表示されます。このウェアハウスを使用して、AWS S3からデータをロードします。</p>
+<p class="image-container"><img alt="コンピューティングウェアハウスの設定" src="img/5fcf1309cb972674.png"></p>
+<p>「**編集」**をクリックし、このウェアハウスのオプションとSnowflakeのユニークな機能の一部を実際に確認してみてください。</p>
+<aside class="special"><p>このアカウントがSnowflakeエンタープライズエディション（またはそれ以上）を使用していない場合は、以下のスクリーンショットの「**モード」**または「**クラスター」**オプションは表示されません。このラボでは、マルチクラスターウェアハウス機能は使用しませんが、Snowflakeの主な機能として説明します。</p>
+</aside>
+<p class="image-container"><img alt="ウェアハウス構成の設定" src="img/94c5ebc4ce00220c.png"></p>
+<ul>
+<li>「**サイズ」**ドロップダウンでウェアハウスの容量を選択します。大規模なデータロード処理やコンピュートインテンシブなクエリの場合は、より大規模なウェアハウスが推奨されます。サイズは、Snowflakeアカウントがホストされているクラウドプロバイダー（AWS、Azure、またはGCP）からプロビジョニングされる基礎となるコンピューティングリソースの量に直結します。また、ウェアハウスが1時間稼働するごとに消費するクレジット数もこのサイズによって決まります。サイズが大きくなればなるほど、クラウドプロバイダーからウェアハウスに割り当てられるコンピューティングリソースの量とウェアハウスが消費するクレジットの数が多くなります。たとえば、<code>4X-Large</code>設定では、1時間ごとに128クレジットが消費されます。このサイズ設定は、いつでもワンクリックで変更できます。</li>
+<li>Snowflakeエンタープライズエディション（またはそれ以上）を使用している場合は、「<strong>クエリアクセラレーション</strong>」オプションを使用できます。このオプションをウェアハウスに対して有効にすると、通常のクエリよりも多くのリソースを使用する外れ値クエリの影響を減らすことで、ウェアハウス全体のパフォーマンスを向上させることができます。これは無効のままにしておきます。</li>
+<li>Snowflakeエンタープライズエディション（またはそれ以上）を使用しており、「**マルチクラスターウェアハウス」**オプションが有効になっている場合、追加のオプションが表示されます。ここでは、ウェアハウスがコンピューティングリソースのクラスターを複数（最大10クラスター）使用するように設定できます。たとえば、<code>4X-Large</code>マルチクラスターウェアハウスに最大クラスターサイズの10が割り当てられた場合、そのウェアハウスは基礎となるコンピューティングリソースの10倍までスケールアウトできます（しかも数秒で！）。ただし、この場合、10クラスターすべてが1時間フル稼働すると、ウェアハウスが消費するクレジット数は1280に増えることに注意してください（128クレジット/時間 x 10クラスター）。マルチクラスターは、多くのビジネスアナリストが同じウェアハウスを使用してさまざまなクエリを同時に実行するような同時実行シナリオに最適です。このユースケースでは、さまざまなクエリが高速に実行されるように複数のクラスターに割り当てられます。</li>
+<li>「<strong>詳細ウェアハウスオプション</strong>」では、使用していないウェアハウスを自動的に一時停止し、クレジットを無駄に消費しないようにするオプションがあります。一時停止されたウェアハウスを自動的に再開するオプションもあります。このオプションが有効な場合、新しいワークロードがウェアハウスに送信されると、自動的に再開されます。この機能によって、Snowflakeの効率的な「従量課金」モデルが可能となり、リソースが必要になったときにスケールアップし、不要になったときに自動的にスケールダウンするかオフにすることができるため、アイドリング状態のリソースをほぼ完全に排除できます。さらに、ウェアハウスのタイプを標準からSnowpark用に最適化されたものに変更するオプションもあります。Snowpark用に最適化されたウェアハウスは、ノードあたり16倍のメモリを提供し、単一の仮想ウェアハウスノードでストアドプロシージャを使用するMLトレーニングのユースケースなど、大規模なメモリ要件を持つワークロードに推奨されます。ここでは、タイプを標準のままにしておきます</li>
+</ul>
+<aside class="warning"><p><strong>Snowflakeコンピュートとその他のデータウェアハウスの比較</strong> 先ほど説明した仮想ウェアハウスとコンピュート機能の多く（仮想ウェアハウスの作成、スケールアップ、スケールアウト、自動サスペンド/再開機能など）は、Snowflakeでは簡単に使用でき、数秒で実行できます。オンプレミスデータウェアハウスでは、これらの機能を使用することは、不可能とは言えないまでもはるかに困難です。大量の物理ハードウェア、ワークロードの急増に対応するためのハードウェアのオーバープロビジョニング、かなりの量の設定作業、その他の課題への対処が必要になるからです。他のクラウドベースデータウェアハウスでさえも、Snowflakeのように設定に多大な労力と時間をかけずにスケールアップやスケールアウトを行うことはできません。</p>
+</aside>
+<p>**警告 - 支出に注意してください。**このラボ中またはその終了後に、正当な理由なく以下の操作を実行しないよう注意してください。これらの操作を行うと、400ドルの無料クレジットを必要以上に早く使い切ってしまう可能性があります。</p>
+<ul>
+<li>自動サスペンドを無効にしないでください。自動サスペンドが無効化されていると、ウェアハウスは使用されていなくても稼働し続け、クレジットを消費し続けます。</li>
+<li>ワークロードを考慮し、過剰なウェアハウスサイズを使用しないでください。ウェアハウスが大きいほど、消費されるクレジットが多くなります。</li>
+</ul>
+<p>この仮想ウェアハウスを使用して、CSVファイルの構造化データ（AWS S3バケットに格納）をSnowflakeにロードすることになります。しかし、まずウェアハウスのサイズを変更して、使用するコンピューティングリソースを増やすことにします。ロード後、所要時間を記録してください。このセクションの後のステップで、さらに大きなウェアハウスで同じロード操作を再実行し、ロード時間が短縮していることを確認します。</p>
+<p>このデータウェアハウスの<strong>サイズ</strong>を<code>X-Small</code>から<code>Small</code>へ変更し、その後「<strong>ウェアハウスを保存</strong>」ボタンをクリックします。</p>
+<p class="image-container"><img alt="小さく設定" src="img/8c4fb3ecad091198.png"></p>
+<h2 is-upgraded>データのロード</h2>
+<p>これで、COPYコマンドを実行し、先ほど作成した<code>TRIPS</code>テーブルにデータをロードできるようになりました。</p>
+<p>「<strong>ワークシート</strong>」タブで<code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>ワークシートに戻ります。ワークシートのコンテキストが以下のように正しく設定されていることを確認してください。</p>
+<p>ロール：<code>SYSADMIN</code> ウェアハウス：<code>COMPUTE_WH</code> データベース：<code>CITIBIKE</code> スキーマ = <code>PUBLIC</code></p>
+<p class="image-container"><img alt="ワークシートのコンテキスト" src="img/a22dcc20c3929d09.png"></p>
+<p>ワークシートで以下のステートメントを実行し、ステージングされたデータをテーブルにロードします。これには30秒ほどかかる場合があります。</p>
+<pre><code language="language-SQL" class="language-SQL">copy into trips from @citibike_trips file_format=csv PATTERN = &#39;.*csv.*&#39; ;
+</code></pre>
+<p>結果ペインに、ロードされた各ファイルのステータスが表示されます。ロードが完了すると、右下の「<strong>クエリの詳細</strong>」ペインをスクロールして、最後に実行されたステートメントのさまざまなステータス、エラー統計、および視覚化を確認できるようになります。</p>
+<p class="image-container"><img alt="結果ロードステータス" src="img/6bcc9ac924e135ed.png"></p>
+<p>次に、<strong>ホーム</strong>アイコンをクリックしてから、「<strong>アクティビティ」</strong>、「<strong>クエリ履歴</strong>」の順にクリックして、「<strong>クエリ履歴</strong>」タブに移動します。リストの一番上にあるクエリを選択します。これは、最後に実行されたCOPY INTOステートメントです。「**クエリプロファイル」**タブを選択し、クエリ実行時のステップ、クエリの詳細、最もコストの高いノード、およびその他の統計情報を記録します。</p>
+<p class="image-container"><img alt="履歴と期間" src="img/ba7874d9fe5cb2b7.png"></p>
+<p>次に、より大きなウェアハウスで<code>TRIPS</code>テーブルをリロードし、追加されたコンピューティングリソースがロード時間に与える影響を見てみましょう。</p>
+<p>ワークシートに戻り、TRUNCATE TABLEコマンドを使用して、テーブルからすべてのデータとメタデータを消去します。</p>
+<pre><code language="language-SQL" class="language-SQL">truncate table trips;
+</code></pre>
+<p>以下のコマンドを実行して、テーブルが空になったことを確認します。</p>
+<pre><code language="language-SQL" class="language-SQL">--verify table is clear
+select * from trips limit 10;
+</code></pre>
+<p>結果には「Query produced no results（クエリで結果が生成されませんでした）」と表示されます。</p>
+<p>次のALTER WAREHOUSEを使用してウェアハウスのサイズを<code>large</code>に変更します。</p>
+<pre><code language="language-SQL" class="language-SQL">--change warehouse size from small to large (4x)
+alter warehouse compute_wh set warehouse_size=&#39;large&#39;;
+</code></pre>
+<p>次のSHOW WAREHOUSESを使用して変更を確認します。</p>
+<pre><code language="language-SQL" class="language-SQL">--load data with large warehouse
+show warehouses;
+</code></pre>
+<p class="image-container"><img alt="UIステップ1でコンテキストのサイズを大に変更" src="img/808e94b8dc375648.png"></p>
+<p>サイズはUIを使用して変更することもできます。その場合は、ワークシートコンテキストボックスをクリックし、コンテキストボックスの右横にある<strong>設定</strong>（3本線）アイコンをクリックし、「**サイズ」**ドロップダウンで<code>Small</code>から<code>Large</code>に変更します。</p>
+<p class="image-container"><img alt="UIステップ1でコンテキストのサイズを大に変更" src="img/a22dcc20c3929d09.png"> <img alt="UIステップ2でコンテキストのサイズを大に変更" src="img/e92369b011ce703f.png"></p>
+<p>先ほどと同じCOPY INTOステートメントを実行し、同じデータを再度ロードします。</p>
+<pre><code language="language-SQL" class="language-SQL">copy into trips from @citibike_trips
+file_format=CSV;
+</code></pre>
+<p class="image-container"><img alt="ロード時間の比較" src="img/2e1eaaced0a95340.png"></p>
+<p>ロードが完了したら、「**クエリ」**ページに戻ります（<strong>ホーム</strong>アイコン、「<strong>アクティビティ」</strong>、「**クエリ履歴」**の順にクリック）。2つのCOPY INTOコマンドの時間を比較します。<code>Large</code>ウェアハウスを使用してロードするほうが大幅に速いことが分かります。</p>
+<h2 is-upgraded>データアナリティクス用の新しいウェアハウスの作成</h2>
+<p>ラボストーリーに戻り、Citi Bikeチームがデータロード/ETLワークロードと、BIツールを使用してSnowflakeをクエリする分析エンドユーザーの間でリソースの競合が発生しないようにしたいと考えているとしましょう。前述したように、Snowflakeでは、適切なサイズのさまざまなウェアハウスを各種ワークロードに割り当てることで、これを簡単に実現できます。Citi Bikeには、すでにデータロード用のウェアハウスがあるため、分析を実行するエンドユーザー用に新しいウェアハウスを作成しましょう。次のセクションでは、このウェアハウスを使用して分析を実行します。</p>
+<p>「<strong>管理</strong>」から「<strong>ウェアハウス</strong>」タブへ進み、「<strong>+ウェアハウス</strong>」をクリックして新しいウェアハウスの名前を``とし、サイズを<code>Large</code>に設定します。</p>
+<p>Snowflakeエンタープライズエディション（またはそれ以上）を使用しており、「<strong>マルチクラスターウェアハウス</strong>」が有効になっている場合、追加の設定が表示されます。</p>
+<ul>
+<li>「<strong>最大クラスター</strong>」が<code>1</code>に設定されていることを確認します。</li>
+<li>その他の設定はすべてデフォルトのままにしておきます。</li>
+</ul>
+<p class="image-container"><img alt="ウェアハウス設定" src="img/970f2ab7dc954538.png"></p>
+<p>「**ウェアハウスの作成」**ボタンをクリックし、ウェアハウスを作成します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="クエリ、結果キャッシュ、クローンの操作" duration="8">
+        <p>前の演習では、SnowflakeのCOPY一括ローダーコマンドと<code>COMPUTE_WH</code>仮想ウェアハウスを使用して、2つのテーブルにデータをロードしました。今回は、Citi Bikeのアナリティクスユーザーとして、ワークシートと2つ目のウェアハウス<code>ANALYTICS_WH</code>を使用して、これらのテーブルのデータをクエリします。</p>
+<aside class="warning"><p><strong>実際のロールとクエリ作業</strong> 実際の企業内では、アナリティクスユーザーはSYSADMINとは異なるロールを担うことが多いでしょう。ラボをシンプルに保つため、このセクションでは引き続きSYSADMINロールを使用していきます。さらに、クエリは通常、Tableau、Looker、PowerBIなどのビジネスインテリジェンスプロダクトで実行されます。より高度な分析が必要な場合は、Datarobot、Dataiku、AWS Sagemakerなどのデータサイエンスツールを使用してSnowflakeをクエリできます。JDBC/ODBC、Spark、Python、その他のサポート対象のプログラムインターフェイスを利用するテクノロジーであれば、Snowflakeのデータに対して分析を実行することができます。このラボをシンプルに保つため、すべてのクエリはSnowflakeワークシートを使用して実行されます。</p>
+</aside>
+<h2 is-upgraded>クエリの実行</h2>
+<p><strong>CITIBIKE_ZERO_TO_SNOWFLAKE</strong>ワークシートに移動し、前のセクションで作成した新しいウェアハウスを使用するよう、ウェアハウスを変更します。ワークシートのコンテキストは次のようになっているはずです。</p>
+<p>ロール：<code>SYSADMIN</code> ウェアハウス：<code>ANALYTICS_WH (L)</code> データベース：<code>CITIBIKE</code> スキーマ = <code>PUBLIC</code></p>
+<p class="image-container"><img alt="サンプルデータクエリ結果" src="img/9635d6afa094fff2.png"></p>
+<p>以下のクエリを実行し、<code>trips</code>データのサンプルを表示します。</p>
+<pre><code language="language-SQL" class="language-SQL">select * from trips limit 20;
+</code></pre>
+<p class="image-container"><img alt="サンプルデータクエリ結果" src="img/af740efabf9cd961.png"></p>
+<p>では、Citi Bikeの利用状況に関する基本的な時間別統計をいくつか見ていきましょう。ワークシートで以下のクエリを実行します。それぞれの時間の走行回数、平均走行時間、平均走行距離が表示されます。</p>
+<pre><code language="language-SQL" class="language-SQL">select date_trunc(&#39;hour&#39;, starttime) as &#34;date&#34;,
+count(*) as &#34;num trips&#34;,
+avg(tripduration)/60 as &#34;avg duration (mins)&#34;,
+avg(haversine(start_station_latitude, start_station_longitude, end_station_latitude, end_station_longitude)) as &#34;avg distance (km)&#34;
+from trips
+group by 1 order by 1;
+</code></pre>
+<p class="image-container"><img alt="時間ごとのクエリ結果" src="img/57b57e5d9b3f0d00.png"></p>
+<h2 is-upgraded>結果キャッシュの使用</h2>
+<p>Snowflakeには、過去24時間に実行されたすべてのクエリの結果を保持する結果キャッシュがあります。これはウェアハウスをまたいで利用可能であるため、あるユーザーに返されたクエリ結果を、基礎データが変更されていない限り、同じクエリを実行したシステム上の他のどのユーザーでも利用することができます。このようにクエリ結果を繰り返し返すことで、クエリの実行が非常に高速になるだけでなく、コンピュートクレジットの消費も回避できます。</p>
+<p>まったく同じクエリを再度実行し、結果キャッシュの動作を見てみましょう。</p>
+<pre><code language="language-SQL" class="language-SQL">select date_trunc(&#39;hour&#39;, starttime) as &#34;date&#34;,
+count(*) as &#34;num trips&#34;,
+avg(tripduration)/60 as &#34;avg duration (mins)&#34;,
+avg(haversine(start_station_latitude, start_station_longitude, end_station_latitude, end_station_longitude)) as &#34;avg distance (km)&#34;
+from trips
+group by 1 order by 1;
+</code></pre>
+<p>右側の「**クエリの詳細」**ペインで、2回目のクエリ実行速度が大幅に向上していることに注意してください。これは、結果がキャッシュされているためです。</p>
+<p class="image-container"><img alt="キャッシュされたクエリの実行時間" src="img/f4f345c789dd5be5.png"></p>
+<h2 is-upgraded>別のクエリの実行</h2>
+<p>次に、以下のクエリを実行し、どの月が最も忙しいかを確認してみましょう。</p>
+<pre><code language="language-SQL" class="language-SQL">select
+monthname(starttime) as &#34;month&#34;,
+count(*) as &#34;num trips&#34;
+from trips
+group by 1 order by 2 desc;
+</code></pre>
+<p class="image-container"><img alt="月のクエリ結果" src="img/770de9bb669575ab.png"></p>
+<h2 is-upgraded>テーブルの複製</h2>
+<p>Snowflakeを使用すると、テーブル、スキーマ、およびデータベースのクローンを数秒で作成できます。これは、「ゼロコピークローン」とも呼ばれます。クローンが作成されると、Snowflakeは、ソースオブジェクト内に存在するデータのスナップショットを取得し、クローンオブジェクトでそれを利用できるようにします。クローンオブジェクトは書き込み可能であり、クローン元から独立しています。つまり、ソースオブジェクトまたはクローンオブジェクトのどちらかに加えられた変更は、もう一方のオブジェクトには反映されないということです。</p>
+<p>ゼロコピークローニングの一般的なユースケースは、本番環境のクローンを作成し、開発およびテストチームがテストや実験に使用できるようにすることです。こうすることで、本番環境に悪影響が及ぶことがなくなると同時に、2つの別個の環境を設定して管理する必要がなくなります。</p>
+<aside class="warning"><p><strong>ゼロコピークローニング</strong> ゼロコピークローニングの大きな利点は、基礎データはコピーされないという点にあります。変更されるのは、基礎データへのポインタとメタデータのみです。したがって、クローンは「ゼロコピー」であり、データがクローンされてもストレージ要件が2倍になることはありません。ほとんどのデータウェアハウスではこれを行うことはできませんが、Snowflakeでは簡単にできます。</p>
+</aside>
+<p>ワークシートで以下のコマンドを実行し、<code>trips</code>テーブルの開発（dev）テーブルクローンを作成します。</p>
+<pre><code language="language-SQL" class="language-SQL">create table trips_dev clone trips;
+</code></pre>
+<p>左のペインで3つの点（<strong>...</strong>）をクリックし、「**更新」**を選択します。<code>CITIBIKE</code>データベースの下のオブジェクトツリーを展開し、<code>trips_dev</code>という名前の新規テーブルが表示されていることを確認します。これで、開発チームは、<code>trips</code>テーブルや他のオブジェクトに影響を与えることなく、更新や削除も含め、このテーブルに対してどのような操作でも実行することができるようになります。</p>
+<p class="image-container"><img alt="trips_devテーブル" src="img/adae9f4ec4cec092.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="半構造化データ、ビュー、結合の操作" duration="16">
+        <aside class="special"><p>このセクションでは、追加データをロードする必要があるため、データロードをおさらいしつつ、半構造化データのロードも紹介していきます。</p>
+</aside>
+<p>ラボの例に戻りましょう。Citi Bikeの分析チームは天候が自転車の利用回数にどのような影響を与えるかを見極めたいと考えています。そのため、このセクションでは次のことを行います。</p>
+<ul>
+<li>公開されているS3バケットにある半構造化JSON形式の気象データをロードする。</li>
+<li>ビューを作成し、SQLドット表記を使用してJSONデータをクエリする。</li>
+<li>前にロードした<code>TRIPS</code>データにJSONデータを結合するクエリを実行する。</li>
+<li>気象データと自転車の利用回数データを分析し、それらの関係を見極める。</li>
+</ul>
+<p>JSONデータは、<em>MeteoStat</em>によって提供される気象情報で構成されており、2016年7月5日から2019年6月25日までのニューヨーク市の歴史的条件を詳細に示しています。また、AWS S3上でステージングされており、データは75000行、36個のオブジェクトで構成され、1.1MBに圧縮されています。テキストエディタで見ると、GZファイルの未加工JSONは以下のようになります。</p>
+<p class="image-container"><img alt="未加工のJSONサンプル" src="img/c025f1200b524e26.png"></p>
+<aside class="warning"><p><strong>半構造化データ</strong> Snowflakeでは、JSON、Parquet、Avroなどの半構造化データを変換なしで簡単にロードしたりクエリしたりすることができます。これはSnowflakeの重要な機能です。現在生成されているビジネス関連データの多くが半構造化データであり、従来のデータウェアハウスの多くは、そのようなデータを簡単にロードしたりクエリしたりできないからです。Snowflakeでは、それを簡単に実行できます。</p>
+</aside>
+<h2 is-upgraded>データ用に新しいデータベースとテーブルを作成する</h2>
+<p>まず、ワークシートで、半構造化JSONデータの格納に使用する<code>WEATHER</code>という名前のデータベースを作成しましょう。</p>
+<pre><code language="language-SQL" class="language-SQL">create database weather;
+</code></pre>
+<p>以下のUSEコマンドを実行し、ワークシートのコンテキストを適切に設定します。</p>
+<pre><code language="language-SQL" class="language-SQL">use role sysadmin;
+
+use warehouse compute_wh;
+
+use database weather;
+
+use schema public;
+</code></pre>
+<aside class="special"><p><strong>複数コマンドの実行</strong> それぞれのコマンドを個別に実行する必要があることに注意してください。ただし、すべてのコマンドを選択してから、「<strong>再生/実行</strong>」ボタンをクリックする（あるいはキーボードのショートカットを使用する）ことで、それらをまとめて順番に実行することができます。</p>
+</aside>
+<p>次に、JSONデータのロードに使用する<code>JSON_WEATHER_DATA</code>という名前のテーブルを作成しましょう。ワークシートで、次のCREATE TABLEコマンドを実行します。</p>
+<pre><code language="language-SQL" class="language-SQL">create table json_weather_data (v variant);
+</code></pre>
+<p>なお、Snowflakeには、JSONオブジェクト全体を単一の行として格納し、最終的にオブジェクトを直接クエリできるようにする、<code>VARIANT</code>という名前の特殊な列データ型があります。</p>
+<aside class="warning"><p><strong>半構造化データマジック</strong> VARIANTデータ型により、Snowflakeはスキーマを事前に定義することなく半構造化データを取り込むことができます。</p>
+</aside>
+<p>ワークシート下部の結果ペインで、テーブル<code>JSON_WEATHER_DATA</code>が作成されていることを確認します。</p>
+<p class="image-container"><img alt="成功メッセージ" src="img/d8810aacbaa1cbcf.png"></p>
+<h2 is-upgraded>別の外部ステージの作成</h2>
+<p><code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>ワークシートで、以下のコマンドを使用して、半構造化JSONデータがAWS S3に保存されているバケットをポイントするステージを作成します。</p>
+<pre><code language="language-SQL" class="language-SQL">create stage nyc_weather
+url = &#39;s3://snowflake-workshop-lab/zero-weather-nyc&#39;;
+</code></pre>
+<p>では<code>nyc_weather</code>ステージのコンテンツを見ていきましょう。以下のLISTコマンドを実行して、ファイルのリストを表示します。</p>
+<pre><code language="language-SQL" class="language-SQL">list @nyc_weather;
+</code></pre>
+<p>結果ペインにS3からの<code>.gz</code>ファイルのリストが表示されます。</p>
+<p class="image-container"><img alt="結果出力" src="img/f94b7130857937b0.png"></p>
+<h2 is-upgraded>半構造化データのロードと検証</h2>
+<p>このセクションでは、ウェアハウスを使用して、S3バケットからのデータを先ほど作成した<code>JSON_WEATHER_DATA</code>テーブルにロードします。</p>
+<p><code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>ワークシートで、以下のCOPYコマンドを実行し、データをロードします。</p>
+<p>なお、<code>FILE FORMAT</code>オブジェクトはコマンド内のインラインで指定できます。構造化データをCSV形式でロードした前のセクションでは、CSV構造に対応するファイル形式を定義する必要がありました。ここでのJSONデータは整形式であるため、JSONタイプを指定するだけで、すべてのデフォルト設定を使用することができます。</p>
+<pre><code language="language-SQL" class="language-SQL">copy into json_weather_data
+from @nyc_weather 
+    file_format = (type = json strip_outer_array = true);
+</code></pre>
+<p>各ファイルのステータスが<code>LOADED</code>となっていること確認します。</p>
+<p class="image-container"><img alt="クエリ結果" src="img/56840eb3550a91e2.png"></p>
+<p>では、ロードされたデータを見ていきましょう。</p>
+<pre><code language="language-SQL" class="language-SQL">select * from json_weather_data limit 10;
+</code></pre>
+<p>いずれかの行をクリックすると、右側のパネルにフォーマットされたJSONが表示されます。</p>
+<p class="image-container"><img alt="JSONデータスニペット" src="img/396dcc5f249ba6ff.png"></p>
+<p>パネル内の表示を閉じてクエリの詳細を再度表示するには、パネルの右隅にカーソルを合わせると表示される<strong>X</strong>（閉じる）ボタンをクリックします。</p>
+<h2 is-upgraded>ビューの作成と半構造化データのクエリ</h2>
+<p>次に、Snowflakeでビューを作成し、SQLを使用してJSONデータを直接クエリする方法を見ていきましょう。</p>
+<aside class="warning"><p><strong>ビューとマテリアライズドビュー</strong> ビューを使用すると、クエリの結果にテーブルのようにアクセスできます。ビューを使用すると、エンドユーザーにデータを分かりやすく提示したり、エンドユーザーがソーステーブルで表示できる内容を制限したり、よりモジュール化されたSQLを書いたりすることができるようになります。Snowflakeは、マテリアライズドビューにも対応しています。このビューではクエリ結果がテーブルであるかのように格納されます。それによってアクセスは迅速化しますが、これにはストレージスペースが必要となります。Snowflakeエンタープライズエディション（またはそれ以上）を使用していれば、マテリアライズドビューを作成し、それをクエリすることができます。</p>
+</aside>
+<p>以下のコマンドを実行して、半構造化JSON気象データの列ビューを作成します。こうすることで、アナリストによるデータの理解とクエリの実行が容易になります。<code>station_id</code>の<code>72502</code>という値は、ニューアーク空港に対応しています。ここは、全期間の気象条件を有する最も近いステーションです。</p>
+<pre><code language="language-SQL" class="language-SQL">// create a view that will put structure onto the semi-structured data
+create or replace view json_weather_data_view as
+select
+    v:obsTime::timestamp as observation_time,
+    v:station::string as station_id,
+    v:name::string as city_name,
+    v:country::string as country,
+    v:latitude::float as city_lat,
+    v:longitude::float as city_lon,
+    v:weatherCondition::string as weather_conditions,
+    v:coco::int as weather_conditions_code,
+    v:temp::float as temp,
+    v:prcp::float as rain,
+    v:tsun::float as tsun,
+    v:wdir::float as wind_dir,
+    v:wspd::float as wind_speed,
+    v:dwpt::float as dew_point,
+    v:rhum::float as relative_humidity,
+    v:pres::float as pressure
+from
+    json_weather_data
+where
+    station_id = &#39;72502&#39;;
+</code></pre>
+<p>このコマンドでは、SQLドット表記である<code>v:temp</code>を使用してJSONオブジェクト階層内の下位レベルの値を取得します。これにより、各フィールドをリレーショナルテーブルの列のように扱うことができます。</p>
+<p>新しいビューは、オブジェクトブラウザの左側の<code>WEATHER</code> &gt; <code>PUBLIC</code> &gt; 「<strong>ビュー</strong>」の下に<code>JSON_WEATHER_DATA</code>として表示されます。このビューを表示するには、オブジェクトブラウザの展開または更新が必要になる場合があります。</p>
+<p class="image-container"><img alt="ドロップダウンのJSON_WEATHER_DATA \\_VIEW" src="img/19a8eb22f6f8c146.png"></p>
+<p>以下のクエリでビューを確認します。</p>
+<pre><code language="language-SQL" class="language-SQL">select * from json_weather_data_view
+where date_trunc(&#39;month&#39;,observation_time) = &#39;2018-01-01&#39;
+limit 20;
+</code></pre>
+<p>結果は、通常の構造化データソースと同じように見えることに注意してください。皆さんの結果セットでは<code>observation_time</code>の値が異なる場合があります。</p>
+<p class="image-container"><img alt="ビューでのクエリ結果" src="img/1f418f127b4bf730.png"></p>
+<h2 is-upgraded>結合操作を使用してデータセットに対して相関させる</h2>
+<p>ここで、天候が自転車の利用回数にどのような影響を与えるかという当初の質問に答えるために、JSON気象データを<code>CITIBIKE.PUBLIC.TRIPS</code>データに結合します。</p>
+<p>以下のクエリを実行して、<code>WEATHER</code>を<code>TRIPS</code>に結合し、特定の天候条件に関連する走行回数をカウントします。</p>
+<aside class="special"><p>まだワークシートの中にいるため、<code>WEATHER</code>データベースも使用中です。したがって、データベース名とスキーマ名を指定することで<code>TRIPS</code>テーブルへの参照を完全に修飾する必要があります。</p>
+</aside>
+<pre><code language="language-SQL" class="language-SQL">select weather_conditions as conditions
+,count(*) as num_trips
+from citibike.public.trips
+left outer join json_weather_data_view
+on date_trunc(&#39;hour&#39;, observation_time) = date_trunc(&#39;hour&#39;, starttime)
+where conditions is not null
+group by 1 order by 2 desc;
+</code></pre>
+<p class="image-container"><img alt="天候の結果" src="img/a155931384ef1a63.png"></p>
+<p>当初の目標は、自転車の利用者数データと気象データの両方を分析することで、自転車に乗る回数と天候の間に何らかの相関関係があるかどうかを判断することでした。上記の結果から、明確な答えが得られました。想像のとおり、天候が良好であれば走行回数はかなり多くなっています。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="タイムトラベルの使用" duration="6">
+        <p>Snowflakeの強力なタイムトラベル機能を使用すると、履歴データや、データを格納するオブジェクトに、一定期間内の任意の時点でアクセスすることができます。デフォルトの期間の幅は24時間ですが、Snowflakeエンタープライズエディションを使用している場合は、最大90日間まで増やすことができます。ほとんどのデータウェアハウスではこの機能が提供されていませんが、Snowflakeではこれを簡単に実行できます。</p>
+<p>次に、便利な適用例をいくつかご紹介します。</p>
+<ul>
+<li>削除されたデータ関連オブジェクト（テーブル、スキーマ、データベースなど）を復元する。</li>
+<li>過去の重要な時点のデータを複製し、バックアップする。</li>
+<li>特定の期間におけるデータの使用状況および操作を分析する。</li>
+</ul>
+<h2 is-upgraded>テーブルのドロップとドロップ解除</h2>
+<p>まず、誤って、または意図的に削除されたデータオブジェクトを復元する方法を見てみましょう。</p>
+<p><code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>ワークシートで、以下のDROPコマンドを実行し、<code>JSON_WEATHER_DATA</code>テーブルを削除します。</p>
+<pre><code language="language-SQL" class="language-SQL">drop table json_weather_data;
+</code></pre>
+<p>テーブルに対してクエリを実行します。</p>
+<pre><code language="language-SQL" class="language-SQL">select * from json_weather_data limit 10;
+</code></pre>
+<p>基礎テーブルがドロップされているため、下部の結果ペインにはエラーが表示されます。</p>
+<p class="image-container"><img alt="テーブルがドロップされたことを示すエラー" src="img/b3e5cb9802b07b8d.png"></p>
+<p>次に、テーブルを復元します。</p>
+<pre><code language="language-SQL" class="language-SQL">undrop table json_weather_data;
+</code></pre>
+<p>json_weather_dataテーブルが復元されたはずです。以下のクエリを実行して確認してください。</p>
+<pre><code language="language-SQL" class="language-SQL">--verify table is undropped
+
+select * from json_weather_data limit 10;
+</code></pre>
+<p class="image-container"><img alt="復元されたテーブルの結果" src="img/1c83f7a8b9f40112.png"></p>
+<h2 is-upgraded>テーブルのロールバック</h2>
+<p><code>CITIBIKE</code>データベース内の<code>TRIPS</code>テーブルを以前の状態にロールバックし、テーブル内のステーション名をすべて「oops」という単語に置き換えてしまう、意図しないDMLエラーを修正してみましょう。</p>
+<p>まず、以下のSQLステートメントを実行し、ワークシートを正しいコンテキストに切り替えます。</p>
+<pre><code language="language-SQL" class="language-SQL">use role sysadmin;
+
+use warehouse compute_wh;
+
+use database citibike;
+
+use schema public;
+</code></pre>
+<p>以下のコマンドを実行し、テーブル内のすべての駅名を「oops」という単語に置き換えます。</p>
+<pre><code language="language-SQL" class="language-SQL">update trips set start_station_name = &#39;oops&#39;;
+</code></pre>
+<p>次に、自転車の利用回数の上位20ステーションを返すクエリを実行します。ステーション名の結果に1行しか含まれていないことに注意してください。</p>
+<pre><code language="language-SQL" class="language-SQL">select
+start_station_name as &#34;station&#34;,
+count(*) as &#34;rides&#34;
+from trips
+group by 1
+order by 2 desc
+limit 20;
+</code></pre>
+<p class="image-container"><img alt="1行の結果" src="img/7c217a81e0eaaf86.png"></p>
+<p>通常であれば、バックアップがあることを祈りながらあれこれ奔走するところです。</p>
+<p>Snowflakeでは、1つのコマンドを実行するだけで、直近のUPDATEコマンドのクエリIDを見つけ、それを<code>$QUERY_ID</code>という名前の変数に格納することができます。</p>
+<pre><code language="language-SQL" class="language-SQL">set query_id =
+(select query_id from table(information_schema.query_history_by_session (result_limit=&gt;5))
+where query_text like &#39;update%&#39; order by start_time desc limit 1);
+</code></pre>
+<p>タイムトラベルを使用して、正しいステーション名でテーブルを作り直します。</p>
+<pre><code language="language-SQL" class="language-SQL">create or replace table trips as
+(select * from trips before (statement =&gt; $query_id));
+</code></pre>
+<p>前のクエリを再度実行し、ステーション名が復元されていることを確認します。</p>
+<pre><code language="language-SQL" class="language-SQL">select
+start_station_name as &#34;station&#34;,
+count(*) as &#34;rides&#34;
+from trips
+group by 1
+order by 2 desc
+limit 20;
+</code></pre>
+<p class="image-container"><img alt="復元された名前の結果" src="img/9f28f362225b2ee1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ロール、アカウント管理者、アカウント使用状況の操作" duration="8">
+        <p>このセクションでは、ロールの作成やロールへの特定の権限の付与など、Snowflakeのアクセス制御セキュリティモデルについて説明します。また、ラボの前半で簡単に紹介したACCOUNTADMIN（アカウント管理者）ロールのその他の用途についても検討します。</p>
+<p>ラボストーリーを続けます。ここでは、ある若手のDBAがCiti Bikeに入社し、システム定義のデフォルトロールであるSYSADMINよりも権限の少ない新しいロールを作成するとしましょう。</p>
+<aside class="warning"><p><strong>ロールベースのアクセス制御</strong> Snowflakeは、ユーザーがアクセスできるオブジェクトと機能、およびユーザーのアクセスレベルを指定する、非常に強力かつ粒度の高いアクセス制御を提供しています。詳細については、<a href="https://docs.snowflake.com/user-guide/security-access-control-overview" target="_blank">Snowflakeドキュメント</a>を確認してください。</p>
+</aside>
+<h2 is-upgraded>新しいロールの作成とユーザーの追加</h2>
+<p><code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>ワークシートでACCOUNTADMINロールに切り替え、新しいロールを作成します。ACCOUNTADMINは、SYSADMINとSECURITYADMINのシステム定義ロールをカプセル化したものです。これはアカウントの最上位のロールであり、限られた数のユーザーにのみ付与する必要があります。</p>
+<p><code>CITIBIKE_ZERO_TO_SNOWFLAKE</code>ワークシートで以下のコマンドを実行します。</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+</code></pre>
+<p>ワークシートの右上で、コンテキストがACCOUNTADMINに変更されていることに注意してください。</p>
+<p class="image-container"><img alt="ACCOUNTADMINコンテキスト" src="img/1ce33af499221e4e.png"></p>
+<p>ロールをアクセス制御で使用できるようにするには、少なくとも1人のユーザーがそのロールに割り当てられている必要があります。では、<code>JUNIOR_DBA</code>という名前の新しいロールを作成し、Snowflakeユーザーに割り当ててみましょう。このタスクを完了するには、ユーザー名を把握している必要があります。ユーザー名は、自分がUIにログインするときに使用した名前です。</p>
+<p>以下のコマンドを使用して、ロールを作成し、それを自分に割り当てます。GRANT ROLEコマンドを実行する前に、<code>YOUR_USERNAME_GOES_HERE</code>を自分のユーザー名に置き換えてください。</p>
+<pre><code language="language-SQL" class="language-SQL">create role junior_dba;
+
+grant role junior_dba to user YOUR_USERNAME_GOES_HERE;
+</code></pre>
+<aside class="special"><p>SYSADMINなどのロールでこの操作を実行しようとすると、権限が不十分であるため、操作が失敗します。デフォルト（および設計上）では、SYSADMINロールでは新しいロールやユーザーを作成できないようになっています。</p>
+</aside>
+<p>ワークシートのコンテキストを、新しい<code>JUNIOR_DBA</code>ロールに変更します。</p>
+<pre><code language="language-SQL" class="language-SQL">use role junior_dba;
+</code></pre>
+<p>ワークシートの右上で、コンテキストが変更され、<code>JUNIOR_DBA</code>ロールが反映されていることに注意してください。</p>
+<p class="image-container"><img alt="JUNIOR_DBAコンテキスト" src="img/575ebcf012a2eb20.png"></p>
+<p>また、新しく作成されたロールにはウェアハウスの使用権限がないため、ウェアハウスは選択されていません。ADMINロールに戻し、<code>COMPUTE_WH</code>ウェアハウスの使用権限を付与することで、この問題を解決しましょう。</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+
+grant usage on warehouse compute_wh to role junior_dba;
+</code></pre>
+<p><code>JUNIOR_DBA</code>ロールに戻します。これで<code>COMPUTE_WH</code>を使用できるようになりました。</p>
+<pre><code language="language-SQL" class="language-SQL">use role junior_dba;
+
+use warehouse compute_wh;
+</code></pre>
+<p>最後に、左のデータベースオブジェクトブラウザパネルにデータベース、<code>CITIBIKE</code>と<code>WEATHER</code>が表示されなくなったことに気付くでしょう。これは、<code>JUNIOR_DBA</code>ロールにはそれらにアクセスする権限がないためです。</p>
+<p>ACCOUNTADMINロールに再度切り替えて、データベース<code>CITIBIKE</code>および<code>WEATHER</code>を表示し使用するために必要な使用権限を<code>JUNIOR_DBA</code>に付与します。</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+
+grant usage on database citibike to role junior_dba;
+
+grant usage on database weather to role junior_dba;
+</code></pre>
+<p><code>JUNIOR_DBA</code>ロールに切り替えます。</p>
+<pre><code language="language-SQL" class="language-SQL">use role junior_dba;
+</code></pre>
+<p>これで、左のデータベースオブジェクトブラウザにデータベース<code>CITIBIKE</code>および<code>WEATHER</code>が表示されるようになりました。表示されない場合は、パネルの**...**をクリックし、その後「**更新**」をクリックしてみてください。</p>
+<p class="image-container"><img alt="データベースが表示されたオブジェクトブラウザパネル" src="img/ca8ad7b1ccd3299e.png"></p>
+<h2 is-upgraded>アカウント管理者UIの表示</h2>
+<p>では、このロールのみがアクセスできるUIのその他の領域を確認するために、アクセス制御ロールを<code>ACCOUNTADMIN</code>に戻してみましょう。ただし、このタスクの実行には、ワークシートではなくUIを使用します。</p>
+<p>まず、ワークシート左上の<strong>ホーム</strong>アイコンをクリックします。次に、UIの左上にある自分の名前をクリックし、ユーザー設定メニューを表示します。メニューで「<strong>ロールの切り替え</strong>」へ進み、ACCOUNTADMINを選択します。</p>
+<p class="image-container"><img alt="UIロールの切り替え" src="img/214666277b661dea.png"></p>
+<aside class="warning"><p><strong>ユーザー設定とワークシートのロールの比較</strong> ここでワークシートではなく、ユーザー設定メニューを使ってロールを変更したのはなぜでしょうか？UIセッションとそれぞれのワークシートは、別々のロールを有します。UIセッションのロールは、UIで表示やアクセスが可能なエレメントを制御するものであり、ワークシートのロールは、そのロール内でアクセスできるオブジェクトと操作のみを制御するものです。</p>
+</aside>
+<p>UIセッションをACCOUNTADMINロールに切り替えると、「<strong>管理</strong>」の下で新しいタブが利用できるようになることに注意してください。</p>
+<h3 is-upgraded>使用状況</h3>
+<p class="image-container"><img alt="アカウントの使用状況" src="img/8d884fa261e50a8a.png"></p>
+<p>「<strong>使用状況</strong>」タブには以下の項目が表示され、それぞれに独自のページが用意されています。</p>
+<ul>
+<li><strong>組織</strong>：組織内の全アカウントのクレジット使用状況です。</li>
+<li><strong>消費</strong>：現在のアカウントの仮想ウェアハウスによって消費されたクレジットです。</li>
+<li><strong>ストレージ</strong>：現在のアカウントのすべてのデータベース、内部ステージ、Snowflake Failsafeに格納されている過去1か月の平均データ量です。</li>
+<li><strong>転送</strong>：過去1か月に（現在のアカウントの）リージョンから他のリージョンに転送された平均データ量です。</li>
+</ul>
+<p>各ページの右上にあるフィルターを使用すると、使用状況/消費量/その他の視覚化をさまざまな尺度で細分化することができます。</p>
+<h3 is-upgraded>セキュリティ</h3>
+<p class="image-container"><img alt="アカウントの使用状況" src="img/7120e6f745df5b1a.png"></p>
+<p>「<strong>セキュリティ</strong>」タブには、Snowflakeアカウント用に作成されたネットワークポリシーが含まれています。新しいネットワークポリシーは、ページの右上にある「+ネットワークポリシー」を選択して作成できます。</p>
+<h3 is-upgraded>請求</h3>
+<p class="image-container"><img alt="アカウントの使用状況" src="img/f0aa505b50d2f777.png"></p>
+<p>「<strong>請求</strong>」タブには、アカウントの支払い方法が含まれています。</p>
+<ul>
+<li>Snowflakeのご契約ユーザーの場合は、このタブに契約情報に関連付けられたお名前が表示されます。</li>
+<li>オンデマンドのSnowflakeユーザーで、月々のお支払いに使用するクレジットカード情報が登録されている場合は、このタブにそのクレジットカード情報が表示されます。クレジットカードが登録されていない場合、トライアル終了時にクレジットカード情報を追加することで、引き続きSnowflakeをご利用いただくことができます。</li>
+</ul>
+<p>次のセクションのために、UIセッションはACCOUNTADMINロールのままにしておきます。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="データの安全な共有とマーケットプレイス" duration="12">
+        <p>Snowflakeは、安全なデータシェアリング機能を通じて、アカウント間でのデータアクセスを実現します。共有は、データプロバイダーによって作成され、データコンシューマーにより、自身のSnowflakeアカウントまたはプロビジョニングされたSnowflakeリーダーアカウントを通じてインポートされます。コンシューマーは、外部エンティティの場合もあれば、独自のSnowflakeアカウントを持つ必要がある社内の部門である場合もあります。</p>
+<p>安全なデータシェアリングについて：</p>
+<ul>
+<li>データプロバイダーのアカウントに存在するデータのコピーは1つのみ。</li>
+<li>共有データは常にライブのリアルタイムであり、コンシューマーが即時に利用可能。</li>
+<li>プロバイダーは、共有に対する取り消し可能なきめ細かいアクセスを設定可能。</li>
+<li>データシェアリングは特に旧式のデータシェアリング方法と比較した場合にシンプルで安全。旧式の方法は一般に、インターネットを介した大容量の<code>.csv</code>ファイルの転送など、手動で安全でない。</li>
+</ul>
+<aside class="special"><p><strong>クロスリージョンおよびクロスクラウドなデータシェアリング</strong> リージョンまたはクラウドプラットフォームをまたいでデータを共有するには、レプリケーションを設定する必要があります。これはこのラボの範囲外ですが、詳細は<a href="https://www.snowflake.com/trending/what-is-data-replication" target="_blank">こちらのSnowflakeの記事</a>でご確認いただけます。</p>
+</aside>
+<p>Snowflakeは、安全なデータシェアリングを使用して、アカウント使用状況データおよびサンプルデータセットをすべてのSnowflakeアカウントに提供します。この機能において、Snowflakeはデータプロバイダーとして機能し、他のすべてのアカウントはコンシューマーとして機能します。</p>
+<p>安全なデータシェアリングはSnowflakeマーケットプレイスの原動力でもあります。Snowflakeマーケットプレイスは、すべてのSnowflakeユーザーが利用できるものであり、多数のデータプロバイダーやSaaSベンダーからサードパーティのデータセットを見つけ、それらにアクセスすることができます。このデータシェアリングモデルでも、データはプロバイダーのアカウントから移動することはなく、データセットを変換なしで利用することができます。</p>
+<h2 is-upgraded>既存の共有を表示</h2>
+<p>ホームページで、「<strong>データ」</strong>、「**データベース」**の順に進みます。データベースのリストで、<strong>SOURCE</strong>列を調べます。この列に<code>Local</code>と表示されている2つのデータベースがあります。これらは、ラボで先に作成していた2つのデータベースです。もう1つのデータベース、<code>SNOWFLAKE</code>には列に<code>Share</code>の表示がありますが、これは、プロバイダーから共有されていることを示しています。</p>
+<p class="image-container"><img alt="データベースアイコンの上の矢印" src="img/9cca7e7a65947747.png"></p>
+<h2 is-upgraded>アウトバウンド共有の作成</h2>
+<p>Citi Bikeのストーリーに戻りましょう。ここでは、私たちがCiti BikeのSnowflakeアカウント管理者であると想定します。私たちには、ほぼリアルタイムで<code>TRIPS</code>データベースのデータを分析することを希望している信頼できるパートナーがいます。このパートナーは、私たちのアカウントと同じリージョンに自社のSnowflakeアカウントを持っています。では、安全なデータシェアリングを使って、このパートナーがこの情報にアクセスできるようにしていきましょう。</p>
+<p>「<strong>データ</strong>」、「<strong>プライベートシェアリング</strong>」の順に進み、タブの上部の「<strong>マイアカウントで共有</strong>」をクリックします。右上の「<strong>共有</strong>」ボタンをクリックし、「<strong>直接共有の作成</strong>」を選択します。</p>
+<p class="image-container"><img alt="アウトバウンド共有ボタン" src="img/cd89c2f5d7184298.png"></p>
+<p>「<strong>+データの選択</strong>」をクリックし、<code>CITIBIKE</code>データベースと<code>PUBLIC</code>スキーマに移動します。スキーマで作成済みの2つのテーブルを選択し、「<strong>完了</strong>」ボタンをクリックします。</p>
+<p class="image-container"><img alt="フィールドの共有" src="img/11826cb562ca6ac2.png"></p>
+<p>共有のデフォルト名は、ランダムな数値を付加した一般的な名前となっています。デフォルト名を編集し、将来的に共有を識別するのに役立つわかりやすい名前に変更します（<code>ZERO_TO_SNOWFLAKE_SHARED_DATA</code>など）。コメントを追加することもできます。</p>
+<p>実際のシナリオでは、次に、Citi Bikeのアカウント管理者が1つ以上のコンシューマーアカウントを共有に追加することになると思いますが、今回のラボではそこまでは実行しません。</p>
+<p>ダイアログの下部にある「<strong>共有の作成</strong>」ボタンをクリックします。</p>
+<p class="image-container"><img alt="成功メッセージ" src="img/9a779766bb0908b6.png"></p>
+<p>ダイアログが閉じ、作成した安全な共有がページに表示されます。</p>
+<p class="image-container"><img alt="TRIPS_SHARE共有" src="img/1054c2298f427b81.png"></p>
+<p>コンシューマーの追加、説明の追加/変更、共有内のオブジェクトの編集はいつでも実行できます。このページで共有名の隣にある**&lt;**ボタンをクリックすると、「**他のアカウントと共有**」ページに戻ります。</p>
+<p class="image-container"><img alt="TRIPS_SHARE共有" src="img/7ef3b0f4e0abcfed.png"></p>
+<p>ここでは、自分のSnowflakeアカウントのデータへのアクセスを、データのコピーや転送を必要としない安全な方法で他のアカウントにほんの数秒で付与できることを示しました。</p>
+<p>Snowflakeは、機密性を損なうことなくデータを安全に共有する方法をいくつか提供しています。テーブルに加えて、安全なビュー、安全なUDF（ユーザー定義関数）、その他の安全なオブジェクトを共有できます。これらの方法を使用して機密情報へのアクセスを防ぎながらデータを共有することについての詳細は、<a href="https://docs.snowflake.com/ja/user-guide/data-sharing-secure-views.html" target="_blank">Snowflakeドキュメント</a>を参照してください。</p>
+<h2 is-upgraded>Snowflakeマーケットプレイス</h2>
+<p>自分がACCOUNTADMINロールを使用していることを確認したうえで、<strong>マーケットプレイス</strong>に移動します。</p>
+<p class="image-container"><img alt="マーケットプレイスタブ" src="img/f68187f997fbab13.png"></p>
+<h3 is-upgraded>リスティングの検索</h3>
+<p>上部の検索ボックスでリスティングを検索できます。検索ボックスの右にあるドロップダウンリストを使用すると、プロバイダー、ビジネスニーズ、カテゴリーでデータリスティングをフィルタリングできます。</p>
+<p>検索ボックスに「<code>COVID</code>」と入力し、結果をスクロールして<strong>COVID-19疫学データ</strong>（提供：Starschema）を選択します。</p>
+<p class="image-container"><img alt="健康タブ" src="img/65eaa2ae94859dda.png"></p>
+<p><strong>COVID-19疫学データ</strong>のページでは、データセットの詳細や、クエリの使用例を見ることができます。準備ができたら、「<strong>取得</strong>」ボタンをクリックします。そうすることで、この情報を自分のSnowflakeアカウント内で利用できるようになります。</p>
+<p class="image-container"><img alt="データフィールドの取得" src="img/bef8d41daf4d9db5.png"></p>
+<p>ダイアログで情報を確認し、再度「<strong>取得</strong>」をクリックします。</p>
+<p class="image-container"><img alt="データフィールドの取得" src="img/972d3855489076f5.png"></p>
+<p>ここで「<strong>完了</strong>」をクリックしても構いません。あるいは、Starschemaが提供するサンプルクエリを実行することもできます。</p>
+<p class="image-container"><img alt="データフィールドの取得" src="img/d145f0c4d17fd68f.png"></p>
+<p>「<strong>開く</strong>」を選択すると、新しいブラウザタブ/ウィンドウで新規ワークシートが開きます。</p>
+<ol type="1">
+<li>コンテキストの設定</li>
+<li>実行したいクエリを選択します（または、クエリテキストにカーソルを合わせます）。</li>
+<li>「<strong>実行/再生</strong>」ボタンをクリックします（または、キーボードのショートカットを使用します）。</li>
+<li>最下部のペインでデータ結果を確認できます。</li>
+<li>サンプルクエリの実行が完了したら、左上の<strong>ホーム</strong>アイコンをクリックします。</li>
+</ol>
+<p class="image-container"><img alt="データフィールドの取得" src="img/9cde374afcc7c1c8.png"></p>
+<p>次：</p>
+<ol type="1">
+<li>「<strong>データ」</strong>、「**データベース」**の順にクリックします。</li>
+<li><code>COVID19_BY_STARSCHEMA_DM</code>データベースをクリックします。</li>
+<li>クエリできるスキーマ、テーブル、ビューの詳細を確認できます。</li>
+</ol>
+<p class="image-container"><img alt="covid19データベース" src="img/64d8b592cac65f81.png"></p>
+<p>これで完了です。これで、Starschema提供のCOVID-19データセットのサブスクライブが問題なく完了しました。このデータセットは、世界的なCOVIDのデータにより毎日更新されます。データベース、テーブル、ビュー、ETLプロセスを作成する必要がなかったことに注意してください。Snowflakeマーケットプレイスの共有データを検索し、アクセスするだけでした。</p>
+<p>新しいワークシートインターフェイスの使い方について詳しくは、<a href="https://docs.snowflake.com/ja/user-guide/ui-snowsight.html#using-snowsight" target="_blank">Snowsightドキュメント</a>を参照してください</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake環境のリセット" duration="2">
+        <p>このラボの一環として作成したオブジェクトをすべて削除して環境をリセットしたい場合は、ワークシートでSQLステートメントを実行します。</p>
+<p>まず、ワークシートで自分がACCOUNTADMINロールを使用していることを確認してください。</p>
+<pre><code language="language-SQL" class="language-SQL">use role accountadmin;
+</code></pre>
+<p>次に、以下のSQLコマンドを実行して、ラボで作成したすべてのオブジェクトをドロップします。</p>
+<pre><code language="language-SQL" class="language-SQL">drop share if exists zero_to_snowflake_shared_data;
+-- If necessary, replace &#34;zero_to_snowflake-shared_data&#34; with the name you used for the share
+
+drop database if exists citibike;
+
+drop database if exists weather;
+
+drop warehouse if exists analytics_wh;
+
+drop role if exists junior_dba;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめと次のステップ" duration="2">
+        <p>おめでとうございます。導入ラボ実習が終了しました。これで、Snowflakeの基礎はマスターできましたので、学んだ基礎を自分のデータに適用することができます。おさらいが必要な場合は、このガイドを参照するようにしてください。</p>
+<p>無料トライアルを続行し、自分のサンプルデータまたは本番データをロードして、このラボで扱っていないSnowflakeのより高度な機能を試してみることをお勧めします。</p>
+<h2 is-upgraded>関連リソース：</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/ja/user-guide/ui-snowsight.html#using-snowsight" target="_blank">Snowsight</a>ドキュメントの詳細を確認する。</li>
+<li><a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">無料トライアルを最大限に活用するための決定版ガイド</a>を読む。</li>
+<li><a href="https://www.snowflake.com/about/events/" target="_blank">Snowflakeのバーチャルイベントまたは対面イベント</a>に参加し、当社の機能や顧客についてさらに詳しい情報を得る。</li>
+<li><a href="https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake" target="_blank">Snowflake Community</a>に参加する。</li>
+<li><a href="https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University" target="_blank">Snowflake University</a>に登録する。</li>
+<li>詳細を当社<a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">セールスチーム</a>に問い合わせる。</li>
+</ul>
+<h2 is-upgraded>ここまで学んだ内容：</h2>
+<ul>
+<li>ステージ、データベース、テーブル、ビュー、仮想ウェアハウスの作成方法。</li>
+<li>構造化データおよび半構造化データのロード方法。</li>
+<li>テーブル間の結合を含む、Snowflake内のデータに対する分析クエリの実行方法。</li>
+<li>オブジェクトのクローン方法。</li>
+<li>タイムトラベルを使用してユーザーエラーを元に戻す方法。</li>
+<li>ロールおよびユーザーを作成し、権限を付与する方法。</li>
+<li>他のアカウントと安全かつ簡単にデータを共有する方法。</li>
+<li>Snowflakeマーケットプレイスでデータセットを利用する方法。</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

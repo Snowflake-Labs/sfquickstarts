@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "prompt_engineering_and_llm_evaluation",
+  "duration": 33,
+  "title": "Prompt Engineering and Evaluation of LLM responses",
+  "summary": "This guide provides instructions to perform prompt engineering on your LLM models and to build a streamlit app for evaluating LLM responses using human feedback",
+  "source": "prompt_engineering_and_llm_evaluation/prompt_engineering_and_llm_evaluation.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "app-development"
+  ],
+  "tags": [
+    "datascience",
+    "generativeai",
+    "gettingstarted",
+    "llms",
+    "openai",
+    "snowflakeexternalaccess",
+    "snowflakemarketplace",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "prompt_engineering_and_llm_evaluation"
+}

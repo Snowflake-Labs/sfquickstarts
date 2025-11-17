@@ -1,0 +1,601 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Retail Analytics Data Engineering Pipeline with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="building-retail-analytics-de-pipeline"
+                  title="Build a Retail Analytics Data Engineering Pipeline with Snowflake"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>This quickstart demonstrates how to build a comprehensive retail analytics data analytics pipeline using Snowflake&#39;s latest data engineering capabilities in Python. Python has become the preferred language for data engineers due to its rich ecosystem of data processing libraries, ease of use, and extensive community support. Snowflake offers native Python support through Snowpark API, Snowpark Pandas APIs and offers  seamless integration with popular Python libraries, and familiar APIs that make data engineering accessible and efficient.</p>
+<p>You&#39;ll learn how to integrate data from multiple sources, perform advanced analytics and create interactive dashboards - all within Snowflake&#39;s unified platform using the Python ecosystem you already know.</p>
+<p>The retail pipeline follows a modern data architecture pattern with three distinct layers following the medallion architecture.</p>
+<h2 is-upgraded>Key Components</h2>
+<ul>
+<li><strong>Data Integration</strong>: Snowpark DB APIs for MySQL and Snowpark for file processing</li>
+<li><strong>Data Processing</strong>: Snowpark for transformations, Cortex for AI/ML</li>
+<li><strong>Data Quality</strong>: Great Expectations with Artifact Repository</li>
+<li><strong>Orchestration</strong>: Snowflake Tasks with DAG dependencies</li>
+<li><strong>Analytics</strong>: Snowpark Pandas API for advanced analytics</li>
+<li><strong>Observability</strong>: Snowflake Trail Integration</li>
+<li><strong>Visualization</strong>: Streamlit dashboard with real-time data</li>
+<li><strong>File Write to Stage</strong>: Saving chart from streamlit to Snowflake stage as html file.</li>
+</ul>
+<h2 is-upgraded>Data Layers</h2>
+<ul>
+<li><strong>Bronze Layer</strong>: Raw data from multiple sources (databases, JSON, XML files)</li>
+<li><strong>Silver Layer</strong>: Cleaned and enriched data with AI-powered insights</li>
+<li><strong>Gold Layer</strong>: Analytics-ready data stored in managed Iceberg tables and regular Snowflake tables.</li>
+</ul>
+<p class="image-container"><img alt="Architecture" src="img/902dc94c984d1ace.jpeg"></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>You will learn how to leverage Snowpark DB APIs for seamless data integration from external databases using DB APIs, use Snowpark APIs and Snowpark Pandas API for distributed data processing , implement AI-powered analytics with Cortex, and build a complete data pipeline with open source data quality checks - all using Python. Discover how Snowflake&#39;s native Python support eliminates the need for complex ETL tools and enables data engineers to work with familiar Python syntax and libraries.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<p>An end to end Data Engineering pipeline which does the following:</p>
+<ul>
+<li>Data integration pipeline connecting MYSQL databases using Snowpark DB API to load into Snowflake tables.</li>
+<li>Semi-structured data ingestion for JSON and XML files using Snowpark APIs</li>
+<li>Data processing with Snowpark and Snowpark Pandas API</li>
+<li>AI-powered sentiment analysis and address extraction using Cortex AI</li>
+<li>Automated data quality validation with open source Great Expectations library</li>
+<li>Comprehensive observability and monitoring using Snowflake&#39;s native observability feature like Snowflae Trail.</li>
+<li>Interactive analytics dashboard with Streamlit with file writes to stage.</li>
+<li>End-to-end pipeline orchestration with Tasks Graphs.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic Python programming experience</li>
+<li>Access to external databases (MySQL) or ability to set up sample data. You can download the sample data used for this demo from here.</li>
+<li>Basic understandig of Snowflake tasks.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <h2 is-upgraded>1. Environment Setup</h2>
+<p>Create the necessary Snowflake objects for the pipeline:</p>
+<pre><code language="language-sql" class="language-sql">-- Create database and schemas
+
+USE ROLE ACCOUNTADMIN;
+
+CREATE ROLE DE_DEMO_ROLE;
+
+CREATE DATABASE IF NOT EXISTS retail_pipeline_db;
+-- Create warehouse
+CREATE WAREHOUSE IF NOT EXISTS retail_wh 
+    WAREHOUSE_SIZE = &#39;SMALL&#39;
+    AUTO_SUSPEND = 300
+    AUTO_RESUME = TRUE;
+
+USE DATABASE retail_pipeline_db;
+USE SCHEMA PUBLIC;
+
+-- UPDATE &lt;MYSQL_HOST_NAME&gt; WITH YOUR MYSQL HOST AND PORT NUMBER
+CREATE OR REPLACE NETWORK RULE dbms_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = (&#39;&lt;MYSQL_HOST_NAME&gt;:3306&#39;);
+
+-- Update the usename and password with you mysql username and password
+
+CREATE OR REPLACE SECRET mysql_db_secret
+  TYPE = PASSWORD
+  username = &#39;&lt;enter the username&gt;&#39;
+  password = &#39;&lt;enter the password&gt;&#39;;
+
+-- Update the secret with you mysql hostname only. Do not include the port number. We are using 3306 which is used in db_connections.py
+
+CREATE OR REPLACE SECRET mysql_hostname
+  TYPE = GENERIC_STRING
+  SECRET_STRING = &#39;&lt;enter the mysql hostname&gt;&#39;
+  COMMENT = &#39;host name for mysql db without port number&#39;;
+
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dbms_access_integration
+  ALLOWED_NETWORK_RULES = (dbms_network_rule)
+  ALLOWED_AUTHENTICATION_SECRETS = (mysql_db_secret,mysql_hostname)
+  ENABLED = true;
+
+GRANT USAGE ON INTEGRATION dbms_access_integration TO ROLE DE_DEMO_ROLE;
+
+GRANT OWNERSHIP ON SECRET mysql_db_secret TO ROLE DE_DEMO_ROLE;
+
+GRANT OWNERSHIP ON SECRET mysql_hostname TO  ROLE DE_DEMO_ROLE;
+
+-- GRANT OWNERSHIP ON THE DB TO THE CUSTOM ROLE
+GRANT OWNERSHIP ON DATABASE retail_pipeline_db TO ROLE DE_DEMO_ROLE COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE retail_pipeline_db TO ROLE DE_DEMO_ROLE COPY CURRENT GRANTS;
+
+GRANT USAGE ON WAREHOUSE retail_wh TO ROLE DE_DEMO_ROLE;
+
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE DE_DEMO_ROLE;
+
+GRANT ROLE DE_DEMO_ROLE TO USER &lt;username&gt;;
+
+-- Creating Event tables in a dedicated database. This is used for observability
+CREATE OR REPLACE DATABASE central_log_trace_db;
+USE DATABASE central_log_trace_db;
+CREATE OR REPLACE EVENT TABLE demo_event_table;
+ALTER ACCOUNT SET EVENT_TABLE = central_log_trace_db.PUBLIC.demo_event_table;
+
+USE ROLE DE_DEMO_ROLE;
+USE DATABASE retail_pipeline_db;
+USE WAREHOUSE retail_wh;
+USE SCHEMA PUBLIC;
+
+CREATE STAGE IF NOT EXISTS SOURCE_FILES
+ ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+
+CREATE STAGE IF NOT EXISTS CODEFILES
+ ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+
+-- This is for Observability Feature
+ALTER DATABASE retail_pipeline_db SET TRACE_LEVEL = ALWAYS;
+
+ALTER DATABASE retail_pipeline_db SET LOG_LEVEL = DEBUG;
+
+ALTER DATABASE retail_pipeline_db SET METRIC_LEVEL = ALL;
+
+</code></pre>
+<p>Note:</p>
+<ul>
+<li>Upload all the files in <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/tree/main/sample_data" target="_blank"><strong><em><code>sample_data</code></em></strong></a> folder from your cloned repo to <em>SOURCE_FILES</em> stage that you have created above.</li>
+<li>Upload all the files in  <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/tree/main/src" target="_blank"><strong><em><code>src</code></em></strong></a> folder while has all the python files from your cloned repo to <em>CODEFILES</em> stage that you have created above.</li>
+</ul>
+<p>Here&#39;s a summary of the functionality provided by each Python file:</p>
+<p><strong><code>db_connections.py</code></strong> - Has the connection details for the RDBMS sources.</p>
+<p><strong><code>data_integration_for_databases.py</code></strong> - Connects to Oracle, Azure SQL, and MySQL databases to extract data and load it into Snowflake bronze tables using Snowpark. In this quickstart we are only loading data from MySQL DB.</p>
+<p><strong><code>transformations.py</code></strong> - Implements a medallion architecture data pipeline that transforms bronze (raw) data to silver (cleaned) to gold (analytics-ready) layers in Iceberg Tables and using Snowflake Cortex for sentiment analysis and address extraction.</p>
+<p><strong><code>order_analytics.py</code></strong> - Performs comprehensive order analysis including product performance, category analysis, customer order history, and top-selling products using Snowpark DataFrames.</p>
+<p><strong><code>data_integration_for_files.py</code></strong> - Loads JSON product reviews and XML customer preferences/product specifications into Snowflake bronze tables using Snowpark&#39;s file reading capabilities.</p>
+<p><strong><code>data_integration_for_analytics.py</code></strong> - Provides database connection functions and data loading utilities specifically for analytics workflows, supporting Oracle, Azure SQL, and MySQL sources.</p>
+<p><strong><code>dashboard.py</code></strong> - Creates an interactive Streamlit dashboard displaying e-commerce analytics including KPIs, sales analysis, customer insights, and product performance visualizations.</p>
+<p><strong><code>save_charts_to_stage.py</code></strong> - Exports customer preference data to CSV format and saves HTML chart visualizations to Snowflake stages for dashboard consumption.</p>
+<p><strong><code>customer_analytics.py</code></strong> - Implements parallel data loading and customer analytics using <strong>Snowpark Pandas API</strong> to generate customer statistics, order analytics, inventory analysis, and product pricing insights.</p>
+<p><strong><code>create_task_DAG.py</code></strong> - Creates and manages a Snowflake task DAG (Directed Acyclic Graph) that orchestrates the entire data pipeline from data loading through transformations to analytics in a scheduled workflow.</p>
+<h2 is-upgraded>2. External Database Connections</h2>
+<p>Configure connections to external databases using Snowpark DB APIs. The pipeline supports following sources:</p>
+<ul>
+<li><strong>MySQL Database</strong>: Direct connection using <code>session.read.dbapi()</code> with native MySQL drivers</li>
+<li><strong>File Sources</strong>: JSON and XML files using Snowpark file readers APIs</li>
+</ul>
+<p>Snowpark DB APIs eliminate the need for traditional ETL tools by providing native Python connectivity to external databases, making it the preferred platform for Python-based data engineering workflows. Below is an example we are using on how to connect to MySQL using the Snowpark DB API. The code db_connections.py has the logic to read data from Azure SQL and Oracle as well.</p>
+<pre><code language="language-python" class="language-python">def create_mysql_db_connection():
+    import pymysql
+    &#34;&#34;&#34;Create MySQL database connection using credentials from appropriate source&#34;&#34;&#34;
+    HOST = get_host_name(&#39;mysql&#39;)
+    PORT = 3306
+    USERNAME, PASSWORD = get_db_credentials(&#39;mysql&#39;)
+    DATABASE = &#34;retail_db&#34;
+
+    connection = pymysql.connect(
+        host=HOST,
+        port=PORT,
+        db=DATABASE,
+        user=USERNAME,
+        password=PASSWORD,
+    )
+    return connection
+</code></pre>
+<p>Reference implementation: <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/db_connections.py" target="_blank"><code>db_connections.py</code></a>. This file has the logic for multiple rdms sources. Update the port number if you not using 3306 for MySQL.</p>
+<h2 is-upgraded>3. Sample Data Setup for MySQL</h2>
+<p>Load sample data to MySQL database using the provided CSV files in <a href="snowflake_retail_pipeline/sample_data/" target="_blank"><code>sample_data/</code></a>. Run the follow DDL in your MYSQL DB. Ensure you create a database with name retail_db in your MySQL instance.</p>
+<pre><code language="language-sql" class="language-sql">use retail_db
+
+-- Create Customers table
+CREATE TABLE customers (
+    customer_id VARCHAR(8) PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address VARCHAR(200) NOT NULL,
+    created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create Products table
+CREATE TABLE products (
+    product_id VARCHAR(8) PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create Orders table
+CREATE TABLE orders (
+    order_id VARCHAR(8) PRIMARY KEY,
+    customer_id VARCHAR(8) NOT NULL,
+    order_date TIMESTAMP NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    payment_method VARCHAR(20) NOT NULL,
+    created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    -- FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+-- Create Inventory table
+CREATE TABLE inventory (
+    inventory_id VARCHAR(8) PRIMARY KEY,
+    product_id VARCHAR(8) NOT NULL,
+    quantity INT NOT NULL,
+    warehouse_id VARCHAR(5) NOT NULL,
+    last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    -- FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+-- Create Order_Items table
+CREATE TABLE order_items (
+    order_id VARCHAR(8) NOT NULL,
+    product_id VARCHAR(8) NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (order_id, product_id)
+    -- ,FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    -- FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+</code></pre>
+<p><strong>Note:</strong> You can use any method to load these CSV files into the mysql tables created above.</p>
+<h2 is-upgraded>4. Creating External Volumnes for Managed Iceberg Tables</h2>
+<p>For this pipeline, we will be implementing Snowflake managed Iceberg tables for selected gold layer tables to leverage the open table format. Iceberg tables require external volumes as a prerequisite for their creation and management.</p>
+<p><strong>Prerequisites:</strong></p>
+<ol type="1">
+<li>Create an AWS S3 bucket named <strong>de-managed-iceberg</strong> in the same region where your Snowflake account runs.</li>
+<li>Ensure proper IAM permissions are configured for Snowflake to access the S3 bucket</li>
+<li>Configure the external volume following the cloud-specific instructions below</li>
+</ol>
+<p>The external volume serves as the storage layer for Iceberg table metadata and data files, enabling features such as time travel, schema evolution, and optimized query performance. Follow the detailed instructions in the links below to create the external volume that will be used throughout this pipeline for managed Iceberg table operations.</p>
+<p>AWS - https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3 Azure - https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE EXTERNAL VOLUME iceberg_external_volume_de_demo
+   STORAGE_LOCATIONS =
+      (
+         (
+            NAME = &#39;my-s3-us-east-1&#39;
+            STORAGE_PROVIDER = &#39;S3&#39;
+            STORAGE_BASE_URL = &#39;s3://de-managed-iceberg/&#39;
+            STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::&lt;your role info&gt;&#39;   
+            STORAGE_AWS_EXTERNAL_ID = &#39;iceberg_table_external_id&#39;
+         )
+      )
+      ALLOW_WRITES = TRUE;
+
+GRANT USAGE ON EXTERNAL VOLUME iceberg_external_volume_de_demo TO ROLE DE_DEMO_ROLE;
+
+&lt;&lt; Following additional steps as mentioned in the docs after creating the external volume&gt;&gt;
+
+USE ROLE DE_DEMO_ROLE;
+
+ALTER DATABASE retail_pipeline_db SET EXTERNAL_VOLUME = &#39;iceberg_external_volume_de_demo&#39;;
+
+
+create or replace iceberg TABLE retail_pipeline_db.public.GOLD_PRODUCT_REVIEWS_ANALYTICS (
+	PRODUCT_ID string,
+	AVG_RATING NUMBER(38,6),
+	TOTAL_REVIEWS NUMBER(38,0) NOT NULL,
+	VERIFIED_REVIEWS NUMBER(38,0),
+	AVG_BATTERY_RATING FLOAT,
+	AVG_QUALITY_RATING FLOAT,
+	AVG_VALUE_RATING FLOAT,
+	POSITIVE_REVIEWS NUMBER(38,0) NOT NULL,
+	NEGATIVE_REVIEWS NUMBER(38,0) NOT NULL,
+	LAST_UPDATED TIMESTAMP_LTZ NOT NULL
+)
+    CATALOG = &#39;SNOWFLAKE&#39;
+    EXTERNAL_VOLUME = &#39;iceberg_external_volume_de_demo&#39;
+    BASE_LOCATION = &#39;retail_gold_layer/GOLD_PRODUCT_REVIEWS_ANALYTICS/&#39;
+    STORAGE_SERIALIZATION_POLICY  = &#39;OPTIMIZED&#39; ;
+
+
+   CREATE OR REPLACE ICEBERG TABLE retail_pipeline_db.public.GOLD_CUSTOMER_INSIGHTS(
+       CUSTOMER_ID STRING NOT NULL , 
+       STATE STRING, 
+       TOTAL_ORDERS BIGINT NOT NULL , 
+       TOTAL_SPENT NUMBER(22, 2), 
+       AVG_ORDER_VALUE NUMBER(28, 8), 
+       LAST_ORDER_DATE TIMESTAMP_NTZ, 
+       LAST_UPDATED TIMESTAMP_LTZ 
+   )  
+   CATALOG = &#39;SNOWFLAKE&#39;
+   BASE_LOCATION = &#39;retail_gold_layer/GOLD_CUSTOMER_INSIGHTS/&#39;  
+   EXTERNAL_VOLUME = &#39;iceberg_external_volume_de_demo&#39;
+   STORAGE_SERIALIZATION_POLICY = &#39;OPTIMIZED&#39; ;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Integration and Transformation" duration="10">
+        <p>Upload the <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/Retail-DE-Pipeline.ipynb" target="_blank">‘Retail-DE-Pipeline.ipynb&#39;</a> notebook from Snowsight.</p>
+<p>Navigate to Projects → Notebooks and then click ⌄ to Import ipynb file and select the file Retail-DE-Pipeline.ipynb. Make sure to choose the notebook location to match <strong>retail_pipeline_db</strong> Database and the <strong>public</strong> Schema, and choose the warehouse we created earlier <strong>retail_wh</strong> for the query warehouse and the notebook warehouse.</p>
+<p class="image-container"><img alt="import_notebook" src="img/8309128870e2aee1.jpg"></p>
+<p>This notebook contains comprehensive instructions for implementing the data engineering pipeline, encompassing all stages from multi-source data ingestion through Streamlit application development.Follow all steps and directives outlined in the uploaded notebook file.</p>
+<p>Please ensure that all prerequisite steps mentioned in the <strong>Setup</strong> have been completed prior to executing the notebook. Failure to complete will result in code execution errors within the notebook environment.</p>
+<h2 is-upgraded>1. Multi-Source Data Loading</h2>
+<p>In the notebook uploaded under section 1 (1.1 and 1.2) we are loading from multiple sources (MySQL and files). Snowpark DB APIs enable seamless data integration from external databases without complex ETL processes, making it the ideal platform for Python developers. The pipeline demonstrates how Python data engineers can leverage familiar database connectivity patterns:</p>
+<p><strong>File Processing</strong></p>
+<pre><code language="language-python" class="language-python"># JSON and XML file processing with Snowpark
+df = session.read.format(&#34;json&#34;).load(&#34;@stage/product_reviews.json&#34;)
+df = session.read.format(&#34;xml&#34;).option(&#34;rowTag&#34;, &#34;customer&#34;).load(&#34;@stage/preferences.xml&#34;)
+</code></pre>
+<p>Code reference in <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/data_integration_for_files.py" target="_blank">‘data_integration_for_files.py&#39;</a></p>
+<p><strong>Note</strong>: The <code>rowTag</code> option is a new feature in Snowpark for XML file processing that allows you to specify which XML element should be treated as a row when parsing XML data. This is particularly useful for nested XML structures.</p>
+<p>For example, when using <code>rowTag="customer"</code>, each <code><customer></code> element in the XML file becomes a separate row in the resulting DataFrame, making it easier to work with hierarchical XML data in a tabular format. This feature enhances Snowpark&#39;s ability to handle semi-structured data formats efficiently.</p>
+<p>For more details: https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameReader.xml</p>
+<h2 is-upgraded>2. Data Transformations and Validation</h2>
+<h3 is-upgraded>2.1 Data Transformation</h3>
+<p>Sections 2.1 of the notebook where the usp_loadBronzeToSilver created, it demonstrate advanced data transformation workflows leveraging Snowpark API combined with Snowflake Cortex AISQL functions. This integration showcases how modern data engineers can build intelligent pipelines that combine traditional ETL operations with AI-powered data enrichment.</p>
+<p><strong>AI-Powered Data Enrichment Pipeline</strong></p>
+<p>In the transformation.py used by the usp_loadBronzeToSilver SP we are calling cortex function to get the sentiment and address detalils from other fields of the tables as show below.</p>
+<pre><code language="language-python" class="language-python"># Advanced sentiment analysis with categorical scoring
+df = df.withColumn(
+    &#34;sentiment_score&#34;,
+    when(sentiment(col(&#34;content&#34;)) &gt; 0.6, &#39;Positive&#39;)
+    .otherwise(when(sentiment(col(&#34;content&#34;)) &lt; 0.4, &#39;Negative&#39;)
+    .otherwise(&#39;Neutral&#39;))
+)
+
+# Intelligent address parsing using natural language extraction
+df = df.withColumn(&#39;state&#39;, 
+    extract_answer(col(&#39;address&#39;), &#39;what is name of the state of the customer&#39;)[0][&#39;answer&#39;]
+)
+</code></pre>
+<p>This approach eliminates the complexity of managing separate AI/ML infrastructure while providing production-ready intelligence capabilities directly within your data transformation workflows.</p>
+<p>Reference implementation: <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/transformations.py" target="_blank">‘transformations.py&#39;</a></p>
+<h3 is-upgraded>2.2. Automated Data Validation with Great Expectations</h3>
+<p>In the notebook section 2.2 we are leveraging Snowflake&#39;s Artifact Repository feature, which allows Python developers to use their favorite open-source libraries directly within Snowflake without the need for uploading libraries to a stage. We have to specify the list of libararies under ARTIFACT_REPOSITORY_PACKAGES while creating the stored procedure. We are creating a SP which is using Great Expectation library for data validation on set of columns of a table.</p>
+<p><strong>Validation Framework</strong></p>
+<pre><code language="language-sql" class="language-sql">-- Using Artifact Repository for OSS libraries
+CREATE PROCEDURE usp_generateValidationResults()
+  LANGUAGE PYTHON
+  RUNTIME_VERSION = 3.9
+  ARTIFACT_REPOSITORY = snowflake.snowpark.pypi_shared_repository
+  ARTIFACT_REPOSITORY_PACKAGES = (&#39;great-expectations==0.15.14&#39;)
+</code></pre>
+<p>Reference implementation: <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/data_validation_ge.sql" target="_blank"><code>data_validation_ge.sql</code></a>. This is a sample implementation to demonstrate how to use any open source library which is not found in anaconda channel and can be downloaded from PyPI.</p>
+<p>For more details: https://www.snowflake.com/en/blog/snowpark-supports-pypi-packages/</p>
+<h2 is-upgraded>2.3. Gold Layer Storage</h2>
+<p>In notebook section 2.3, the pipeline utilizes Snowflake&#39;s managed Iceberg tables and regular FDN tables for the gold layer.</p>
+<p><strong>Managed Iceberg Tables Implementation</strong></p>
+<p>The pipeline leverages Snowflake&#39;s managed Iceberg tables for the gold layer, providing an open table format that offer interoperability between compute engines. This implementation demonstrates how Python data engineers can seamlessly work with modern table formats without sacrificing ease of use.</p>
+<p><strong>Implementation Example:</strong></p>
+<pre><code language="language-python" class="language-python"># Writing to managed Iceberg tables with optimized configuration
+df.write.mode(&#34;overwrite&#34;).saveAsTable(
+    &#34;GOLD_CUSTOMER_INSIGHTS&#34;,
+    iceberg_config={
+        &#34;BASE_LOCATION&#34;: &#34;retail_gold_layer/GOLD_CUSTOMER_INSIGHTS/&#34;,
+        &#34;storage_serialization_policy&#34;: &#34;OPTIMIZED&#34;
+    }
+)
+</code></pre>
+<p>This approach provides open lakehouse capabilities all within Snowflake, making it ideal for modern analytics workloads that require both performance, flexibility and interoperability.</p>
+<h2 is-upgraded>3. Advanced Analytics with Snowpark Pandas API</h2>
+<p>In the section 3 (3. Analytics Layer) of the notebook demonstrates how to leverage Snowflake&#39;s Snowpark Pandas API for complex analytics operations. The Snowpark Pandas API provides familiar pandas-like syntax while harnessing Snowflake&#39;s distributed processing power, making it the ideal platform for Python data engineers.</p>
+<p><strong>Key Benefits:</strong></p>
+<ul>
+<li><strong>Familiar Syntax</strong>: Use standard pandas operations with distributed processing</li>
+<li><strong>Automatic Optimization</strong>: Snowflake optimizes queries for performance</li>
+<li><strong>Scalability</strong>: Process large datasets without memory constraints</li>
+<li><strong>Integration</strong>: Seamless integration with existing Python workflows</li>
+</ul>
+<p><strong>Parallel Data Processing Implementation</strong></p>
+<p>The pipeline implements parallel processing patterns that combine Python&#39;s concurrent programming capabilities with Snowflake&#39;s distributed architecture. This approach maximizes throughput and reduces overall pipeline execution time significantly.</p>
+<p><strong>Parallel Loading Implementation:</strong></p>
+<pre><code language="language-python" class="language-python"># Concurrent data loading with optimized thread management
+from concurrent.futures import ThreadPoolExecutor
+import modin.pandas as pd
+import snowflake.snowpark.modin.plugin
+
+def load_data_parallel(session: Session):
+    &#34;&#34;&#34;Load data from multiple sources concurrently with intelligent resource allocation&#34;&#34;&#34;
+    table_params = [
+        {&#39;source&#39;: &#39;mysql&#39;, &#39;source_table&#39;: &#39;customers&#39;},
+        {&#39;source&#39;: &#39;mysql&#39;, &#39;source_table&#39;: &#39;products&#39;},
+        {&#39;source&#39;: &#39;mysql&#39;, &#39;source_table&#39;: &#39;orders&#39;},
+        {&#39;source&#39;: &#39;mysql&#39;, &#39;source_table&#39;: &#39;inventory&#39;},
+        {&#39;source&#39;: &#39;mysql&#39;, &#39;source_table&#39;: &#39;order_items&#39;}
+    ]
+    
+    # Optimal worker count matches data source count for maximum parallel efficiency
+    with ThreadPoolExecutor(max_workers=len(table_params)) as executor:
+        futures = [executor.submit(load_single_table, params) for params in table_params]
+        results = [future.result() for future in futures]
+    
+    return results
+</code></pre>
+<p><strong>Performance Advantages:</strong></p>
+<ul>
+<li><strong>Reduced Latency</strong>: Parallel execution cuts total data loading time by ~80% compared to sequential processing</li>
+<li><strong>Resource Optimization</strong>: Concurrent threads utilize available compute capacity efficiently without resource contention</li>
+<li><strong>Scalable Architecture</strong>: Thread pool automatically adapts to data source count, ensuring optimal resource utilization</li>
+</ul>
+<p><strong>Analytics Operations using Snowpark Pandas API:</strong></p>
+<p>We are using Pandas like operation which is joining between tables and also perform aggregations. Using Snowpark Pandas API you can bring in your existing pandas code and run it with very minimal changes and it supports most of the pandas operations.</p>
+<pre><code language="language-python" class="language-python"># Customer analytics using familiar pandas syntax
+def customer_analytics(customers, orders):
+    &#34;&#34;&#34;Perform customer analytics with pandas-like operations&#34;&#34;&#34;
+    df = orders.merge(customers, on=&#39;customer_id&#39;, how=&#39;left&#39;)
+    
+    # Calculate customer metrics
+    total_spend = df.groupby([&#39;customer_id&#39;,&#39;first_name&#39;,&#39;last_name&#39;])[&#39;total_amount&#39;] \
+                    .sum().reset_index(name=&#39;total_spend&#39;)
+    
+    order_count = df.groupby(&#39;customer_id&#39;)[&#39;order_id&#39;] \
+                    .count().reset_index(name=&#39;order_count&#39;)
+    
+    avg_order = df.groupby(&#39;customer_id&#39;)[&#39;total_amount&#39;] \
+                    .mean().reset_index(name=&#39;avg_order_value&#39;)
+    
+    return total_spend.merge(order_count, on=&#39;customer_id&#39;) \
+                    .merge(avg_order, on=&#39;customer_id&#39;)
+</code></pre>
+<p>Reference implementation: <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/customer_analytics.py" target="_blank"><code>customer_analytics.py</code></a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pipeline Orchestration" duration="0">
+        <p>In the Section 4 of the notebook wedemonstrate how to create an orchestration pipeline using Snowflake Tasks and DAGs that orchestrates all the Python stored procedures created in the previous steps.</p>
+<h2 is-upgraded>Task-Based Workflow Management</h2>
+<p>The pipeline uses Snowflake Tasks to create a sophisticated DAG (Directed Acyclic Graph) for workflow orchestration. Python developers can orchestrate complex data pipelines using familiar SQL syntax while maintaining the power and flexibility of Python stored procedures:</p>
+<p><strong>Task Dependencies</strong></p>
+<pre><code language="language-python" class="language-python"># Parallel data loading tasks
+CREATE TASK oracle_customer_task AFTER root_task
+AS CALL usp_loadMySQLData(&#39;mysql&#39;,&#39;customers&#39;,&#39;BRONZE_CUSTOMER&#39;);
+
+# Sequential transformation tasks
+CREATE TASK bronze_silver_task 
+AFTER productreview_task,mysql_customer_task,mysql_product_task
+AS CALL usp_loadBronzeToSilver();
+</code></pre>
+<p><strong>Pipeline Flow</strong></p>
+<ol type="1">
+<li><strong>Data Ingestion</strong>: Parallel loading from multiple sources</li>
+<li><strong>Data Transformation</strong>: Bronze to Silver to Gold processing</li>
+<li><strong>Quality Validation</strong>: Automated data quality checks</li>
+<li><strong>Analytics Generation</strong>: Customer and order analytics</li>
+</ol>
+<h2 is-upgraded>Key Benefits for Data Engineers</h2>
+<ul>
+<li><strong>Python stored procedures</strong>: Write complex logic in Python</li>
+<li><strong>Declarative orchestration</strong>: Simple task definition and dependencies</li>
+<li><strong>Automatic scheduling</strong>: Built-in cron-based scheduling</li>
+<li><strong>Monitoring</strong>: Built-in task monitoring and logging</li>
+<li><strong>No external orchestration tools</strong>: Everything runs within Snowflake</li>
+</ul>
+<p>Below is the screenshot of the graph that will be created. <img alt="dag_creation" src="img/cca685b306a6cbc9.jpg"></p>
+<p>After running the Task Graph you can check the status of the executions from the <em>Run History</em> tab and can check status of task per execution.</p>
+<p class="image-container"><img alt="dag_run_history" src="img/2a704bb449fedfa.jpg"></p>
+<p>Reference implementation: <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/create_task_DAG.py" target="_blank"><code>create_task_DAG.py</code></a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dashboard and Exporting Charts to Stage" duration="0">
+        <p>After you create the Streamlit App (section 5.Dashboard) as the last step in the notebook, from the Snowsight go to Streamlit option under Projects open the RETAIL_ANALYTICS_DASHBOARD streamlit app. When you launch the streamlit app you will get &#34;ModuleNotFoundError: No module named ‘plotly&#39;&#34; error. To fix the error click on Edit which is on the top right of the streamlit app and add plotly under packages as shown in the below screenshot and run the app.</p>
+<p class="image-container"><img alt="Streamlit Error" src="img/a45796d890029b87.jpg"></p>
+<p>After the error is resolved the app should be running. Below is the screenshot of the Streamlit app.</p>
+<p class="image-container"><img alt="streamlit_app" src="img/1e26c0b967faa5d0.jpg"></p>
+<h2 is-upgraded>Exporting Charts Directly to Snowflake Stage</h2>
+<p>This dashboard includes an <strong>export functionality</strong> that allows users to generate HTML charts and save them direclty to <strong>Snowflake stage</strong> using Snowflake File Write Access feature.</p>
+<p>Go to the Export Top Customer Preferences to HTML section of the application and click on <em>Export</em> button to export the chart as html to SOURCE_FILES stage.</p>
+<p class="image-container"><img alt="Export_Chart" src="img/14b0336c94271f86.jpg"></p>
+<p>Reference implementation: <a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline/blob/main/src/dashboard.py" target="_blank"><code>dashboard.py</code></a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Observability and Monitoring" duration="5">
+        <h2 is-upgraded>Snowflake Trail Integration</h2>
+<p>The pipeline implements comprehensive observability using Snowflake Trail. From Snowsight, go to Monitoring and under that you will find <em>Traces and Logs</em></p>
+<p><strong>Telemetry Features</strong></p>
+<ul>
+<li>Execution time tracking</li>
+<li>Resource utilization monitoring</li>
+<li>Error logging and alerting</li>
+<li>Performance metrics collection</li>
+</ul>
+<p>When you run the task Graph, you will find events being written to Event tables as we have set the required log level, metrics and events at the database level to track the required information. You can access this information from Snowsight under the Monitoring section <strong>Traces and Logs</strong>. The screenshot below shows the execution of the customer_analytics stored procedure. You can see the series of spans and identify which parts of the code are consuming the most time, providing valuable insights during debugging or root cause analysis.</p>
+<p class="image-container"><img alt="Observability Screenshot" src="img/30c0d6751b0e72d6.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>This quickstart demonstrates the power of Snowflake as a comprehensive data engineering platform for Python developers. By leveraging Snowflake&#39;s native Python ecosystem, including DB APIs, Snowpark, Snowpark Pandas API, and Cortex AI, you can build sophisticated data pipelines without leaving the Snowflake environment or sacrificing the familiar Python syntax and libraries you already know.</p>
+<p>The retail analytics pipeline showcases how modern data engineering workflows can be streamlined by eliminating data movement between systems and using a unified platform for all data processing needs. The medallion architecture (bronze → silver → gold) provides a clean separation of concerns while maintaining data lineage and enabling advanced analytics.</p>
+<p>By completing this guide, you&#39;ve learned how to implement a complete Python-based data engineering workflow on Snowflake - from data integration through transformation to visualization - with enterprise-grade features like orchestration, data quality validation, and comprehensive observability.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>You&#39;ve built a comprehensive retail analytics pipeline that demonstrates:</p>
+<ul>
+<li><strong>Modern data integration</strong> with Snowpark DB APIs and Snowpark APIs</li>
+<li><strong>Run your Pandas code</strong> at scale using Snowpark Pandas API</li>
+<li><strong>AI-powered analytics</strong> using Snowflake Cortex</li>
+<li><strong>Automated data quality using open source libs</strong>  using Artifact Repository</li>
+<li><strong>Scalable orchestration</strong> with Tasks and DAGs</li>
+<li><strong>Interactive visualization and File Writes</strong> with Streamlit</li>
+<li><strong>Open Table Format</strong> with managed Iceberg tables</li>
+<li><strong>Observability</strong>: with Snowflake Trail to track pipeline execution, resource usage, and performance metrics for End-to-end monitoring.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql" target="_blank">Snowflake Cortex Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit Documentation</a></li>
+<li><a href="https://www.snowflake.com/en/product/use-cases/observability/" target="_blank">Snowflake Trail</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameReader.dbapi" target="_blank">Snowpark DB API</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

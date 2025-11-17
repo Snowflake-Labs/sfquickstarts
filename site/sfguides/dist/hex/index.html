@@ -1,0 +1,272 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building and deploying a time series forecast with Hex &#43; Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="hex"
+                  title="Building and deploying a time series forecast with Hex &#43; Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Lab Overview" duration="5">
+        <p>In this demo, we will play the role of a data scientist at a large restaurant chain tasked with helping the restaurant operators optimize their staffing schedule. To do this, we would like to forecast the hourly foot traffic for each of the restaurants stores in 200 different locations. Let&#39;s see how we can use Hex in collaboration with Snowflake/Snowpark to build an XGBoost forecasting model to help with the task at hand.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with basic Python and SQL</li>
+<li>Familiarity with training ML models</li>
+<li>Familiarity with data science notebooks</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to generate a time series dataset</li>
+<li>How to import/export data between Hex and Snowflake</li>
+<li>How to train an XGBoost model and deploy to Snowflake using UDTFs</li>
+<li>How to visualize the predicted results from the forecasting model</li>
+<li>How to convert a Hex project into an interactive web app</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the <code>ACCOUNTADMIN</code> role, which is required for this lab).</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An end-to-end Machine Learning pipeline to forecast hourly traffic for a restaurant chain using Hex, Snowflake, Snowpark, and XGBoost.</p>
+<p>This pipeline will:</p>
+<ul>
+<li>Generate the hourly restaurant data used for training the model</li>
+<li>Write your data back to Snowflake using writeback cells</li>
+<li>Train an XGBoost forecasting model</li>
+<li>Deploy the trained model as a UDTF</li>
+<li>Use the model to make predictions on future data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Snowflake account" duration="5">
+        <p>Head over to the <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> sign-up page and register for a free account. Once you&#39;ve registered, you&#39;ll get an email that will bring you to Snowflake so that you can sign in.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connecting Snowflake with Hex" duration="5">
+        <p>Once you&#39;ve logged into your Snowflake account, you&#39;ll land on the <code>Learn</code> page. Simply navigate to the <code>Admin</code> tab on the left and click <code>Partner connect</code>. In the search bar at the top, type in <code>Hex</code>, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the connect button in the lower right corner. After this, you&#39;ll see a new screen confirming that your account has been created and from here you can click <code>Activate</code>.</p>
+<p class="image-container"><img src="img/cd6cfdab98dd48c8.gif"></p>
+<h2 is-upgraded>Workflow roadblocks</h2>
+<p>The following issues may occur if you have an existing Hex account and you&#39;re not an Admin in that org.</p>
+<p><strong>Unauthorized error</strong></p>
+<p>If you have an existing Hex account that was created with a password and username, you may run into an &#34;Unauthorized&#34; error when activating your workspace in Partner Connect. If this is your experience, head over to <a href="https://hex.tech" target="_blank">hex.tech</a> and login with your password and username.</p>
+<p><strong>Plan upgrade</strong></p>
+<p>If you are an existing Hex user currently on a Community plan, you may encounter an issue that will prevent you from using Partner Connect. If you&#39;re unclear on what Hex plan you are on, feel free to reach out to <a href="mailto:support@hex.tech" target="_blank">support@hex.tech</a>. If you are the Admin of your organization, you can see your plan under Manage plan on the Settings page. To extend a trial, email <a href="mailto:support@hex.tech" target="_blank">support@hex.tech</a> with the subject &#34;VHOL trial extension.&#34;</p>
+<p><strong>Role privileges</strong></p>
+<p>If you do not have an Editor role or higher, you won&#39;t be able to create data connections in your workspace. To upgrade your role, contact your workspace Admin. You can find out who this is by navigating to Settings -&gt; Users &amp; groups within your Hex workspace.</p>
+<p><em>If you&#39;re still encountering issues, or encounter any issues other than the ones listed above, please contact our support team </em><a href="mailto:support@hex.tech" target="_blank"><em>support@hex.tech</em></a><em> with the subject &#34;VHOL&#34; for priority support.</em></p>
+<h2 is-upgraded>Creating a workspace</h2>
+<p>Once activated, you&#39;ll be brought over to Hex and will be prompted to create/name your new workspace. After you&#39;ve named your workspace, you&#39;ll be brought to the <a href="https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home" target="_blank">projects</a> page where you can create new projects, import existing projects (Hex or Jupyter) as well as navigate to other sections of your workspace.</p>
+<h2 is-upgraded>Enabling ORGADMIN</h2>
+<p>We&#39;ll revisit your newly created workspace in a bit, but for now, head back over to Snowflake. Let&#39;s navigate to the <code>Admin</code> tab again but this time select <code>Users & roles</code>. From here, you should see 3 users with one of them being named <code>PC_HEX_USER</code>. This is the user that was created when you activated Hex with partner connect. We&#39;ll need to activate the <code>ORGADMIN</code> role for this user. Select <code>PC_HEX_USER</code>, and at the bottom of the page you&#39;ll see a section to grant new roles.</p>
+<p class="image-container"><img src="img/43fe8218fbbcfd1c.png"></p>
+<p>Click on grant role, which will open a window to grant roles to the <code>PC_HEX_USER</code> account. In the <code>Role to grant</code> dropdown, you&#39;ll see the role <code>ORGADMIN</code>. Select this role and then click <code>Grant</code>. We will revisit this step in a later section.</p>
+<p class="image-container"><img src="img/c02ccaaf2f36df7e.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with Hex" duration="5">
+        <p>Now we can move back over to Hex and get started on our project. The first thing you&#39;ll need to do is download the Hex project that contains all of the code for generating our data and training our model.</p>
+<p><a href="https://static.hex.site/Forecasting%20Hourly%20Traffic.yaml" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download Hex project</paper-button></a></p>
+<p>Once downloaded, head over to Hex and you&#39;ll see a button to import a project in the upper right corner. Select <code>import</code> and upload the file that we just downloaded above.</p>
+<p class="image-container"><img src="img/f2d16809c7246437.gif"></p>
+<p>Now that you&#39;ve got your project imported, you will find yourself in the <a href="https://learn.hex.tech/docs/develop-logic/logic-view-overview" target="_blank">Logic view</a> of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you&#39;ll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we&#39;ll need to:</p>
+<ol type="1">
+<li>Change our compute profile to run Python 3.8</li>
+<li>Import our Snowflake data connection</li>
+</ol>
+<p>Which we can do all from the left control panel. To change the compute profile, click on the Environments tab represented by a cube. At the top of this section you&#39;ll see the compute profile portion at the top. Click on the <code>Image</code> dropdown and select Python 3.8.</p>
+<p class="image-container"><img src="img/7d71930bd2f6acb2.gif"></p>
+<p>Next we can import our Snowflake data connection by heading over to the <code>Data sources</code> tab represented by a database icon with a lightning bolt. At the bottom of this section, you&#39;ll see a portion that says available workspace connections and you should see one that says Snowflake. Once you import this connection, all the setup steps will be completed and we can dive into the project.</p>
+<p class="image-container"><img src="img/9515f639ff33a69b.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install and import required packages" duration="3">
+        <p>The first thing we&#39;ll want to do is make sure that all of the packages we want to use are installed and imported. Hex comes with a variety of <a href="https://learn.hex.tech/docs/environment-configuration/using-packages#use-a-pre-installed-package" target="_blank">pre-installed</a> packages and also supports <a href="https://learn.hex.tech/docs/environment-configuration/using-packages#install-new-packages-through-pip" target="_blank">installing new packages through pip</a>. You can run this cell to install the packages:</p>
+<p class="image-container"><img src="img/c41173a1bdb5c9ea.gif"></p>
+<p>Notice that running the cell doesn&#39;t actually install the packages and the output prompts us to click the button above the cell in order to install. This is because this cell is being controlled by a <a href="https://learn.hex.tech/docs/logic-cell-types/input-parameter-cells/run-button" target="_blank">button input parameter</a>, which allows you to control when and how your code gets executed. If you take a look under the button input parameter, you&#39;ll see an output variable named <code>install</code>. This variable is set to true whenever the button is activated, resulting in any conditional logic to be executed.</p>
+<p>Clicking the button will install the packages.</p>
+<p class="image-container"><img src="img/a449620bda7274d5.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Establishing a connection to Snowflake" duration="3">
+        <p>Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you&#39;ll see a <code>query</code> option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a Snowpark session using this connection. Click on the dropdown next to the <code>query</code> button and select <code>get Snowpark session</code>. What this will do is create a new cell for us with all the code needed to spin up a Snowpark session.</p>
+<p><em>The cell created by this button will be positioned under the cell that is currently selected. Make sure that the cell you have selected is the markdown cell with the header &#34;Establishing a secure connection to Snowflake.&#34; You&#39;ll know if this cell is selected because it&#39;ll be outlined in blue.</em></p>
+<p class="image-container"><img src="img/ede2cd1f76e65e5c.gif"></p>
+<p>We&#39;ll also add the following two lines at the end of the cell to let Snowpark know which schema and database we want to use throughout the project.</p>
+<pre><code language="language-python" class="language-python">hex_snowpark_session.use_schema(&#34;PC_HEX_DB.PUBLIC&#34;)
+hex_snowpark_session.use_database(database=&#39;PC_HEX_DB&#39;)
+</code></pre>
+<p>In this cell, we reference our Snowpark session with the variable <code>hex_snowpark_session</code> which is the name assigned by default. Throughout the rest of the project however, we reference our Snowpark session with the variable name <code>session</code>. The most effective way to change the name of variables in Hex is to change the name of the output variable located at the bottom of the cell rather than in the cell itself. By changing the name of the output variable, we ensure that all other references to that variable are updated throughout the entirety of the project.</p>
+<p class="image-container"><img src="img/f78a9d435e35496b.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generating our forecasting data" duration="8">
+        <p>In order to train our forecasting model, we&#39;ll need to show it historical data so that it can have a source to learn from. In code cell 7, we&#39;ve defined a class that does all the heavy lifting for us and we can generate the data we need with a single function call. In code cell 8, we&#39;re creating an instance of our dataset class so that we can use this object in the following cells. In code cell 9, we&#39;re calling the <code>create_traffic_table()</code> function which will return a dataframe with the hourly traffic data from 2018 up until now. The final data generation step in code cell 10 creates a calendar table that includes the day of the week, month of the year, holidays, etc.</p>
+<p class="image-container"><img src="img/abe25e34cd5af811.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write the data back to Snowflake" duration="5">
+        <p>Now that we&#39;ve created our data, we&#39;re going to write our tables back to Snowflake. To do this, we&#39;ll use one of Hex&#39;s utility cells called the <a href="https://learn.hex.tech/docs/logic-cell-types/writeback-cells" target="_blank">writeback cell</a>. What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header &#34;Write data back to database&#34; an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you&#39;ll find writeback under utilities.</p>
+<p class="image-container"><img src="img/89a1aa6486f73f0.gif"></p>
+<p>Using this cell is quite simple. First we&#39;ll need choose the source data from the dataframes currently in the project that we want to write back into Snowflake. The first dataframe we&#39;ll want to write back is our <code>traffic</code> dataframe, so we&#39;ll choose <code>traffic</code> from our list. The next step is to select our Snowflake connection as the warehouse that we want to write the data to. Once complete, we&#39;ll choose the database and schema, then we can name our table. For the database, choose <code>PC_HEX_DB</code> and use the <code>PUBLIC</code> schema. For the table name, use <code>HOURLY_TRAFFIC</code>.</p>
+<p class="image-container"><img src="img/c1979a03193139e4.gif"></p>
+<p>You can repeat these same steps for the <code>cal</code> dataframe, the only change to make here is naming the table <code>CALENDAR_INFO</code>.</p>
+<p class="image-container"><img src="img/9f870e214c47c098.gif"></p>
+<p>To write the data back to our database, we&#39;ll want to enable the cell by clicking on the disabled button in the top right corner and selecting <code>Logic session</code>. To initiate the writeback, run the cell.</p>
+<p class="image-container"><img src="img/bb689ba607ea59ab.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploring the Historical data" duration="3">
+        <p>Now that we have our data back in Snowflake, we can use our Snowpark session object to pull our data back into Hex using the function <code>session.table()</code> with the name of our tables as arguments. By calling the <code>toPandas</code> function, we can preview the table in Hex.</p>
+<p class="image-container"><img src="img/6a54f67d85a12a03.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Engineering" duration="5">
+        <p>To create our training dataset we&#39;ll use our tables pulled in from Snowflake and join them together. We extract the date and hour from the <code>TIME_POINTS</code> column in the traffic table and join on the <code>DATE</code> column in the calendar table. We&#39;ve also filtered out records between the hours of 10pm and 7am which is when the restaurants are closed. This table will be the input to our XGBoost model where we&#39;ll index on the <code>TIME_POINTS</code> column, the rest of the columns will be our features and <code>HOURLY_TRAFFIC</code> is the value we want to predict.</p>
+<p class="image-container"><img src="img/8617cfab2d0155a7.png"></p>
+<p>To run a forecast using XGBoost, not only do we need to provide the historical values but we will need the future ones as well. To do this, we&#39;ll create a column that will have the hourly records for the next 4 weeks and filtering out the closed hours. Then, we <a href="https://www.w3resource.com/sql/joins/cross-join.php" target="_blank">cross join</a> this column with the <code>HOURLY_TRAFFIC</code> table such that each store has these future values.</p>
+<p class="image-container"><img src="img/dd14086e7795bf1d.png"></p>
+<p>Next, we want to also add in the calendar features for the next 4 weeks while also replacing nulls for the holiday column. We can then join the future hourly traffic with the future calendar info to get our final future table. Since we don&#39;t know what the traffic will be like in the future, we&#39;ve filled that columns with 0s and it will be replaced with the predictions once we run our forecast.</p>
+<p class="image-container"><img src="img/526c47b1074e486.png"></p>
+<p>As the last step, we combine the past and future tables together in order to obtain our final training table. Then we can write this table back to Snowflake by calling <code>write.saveAsTable()</code> on our joined dataframe.</p>
+<p class="image-container"><img src="img/9697f80b1ddd081d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Training the model" duration="10">
+        <p>The objective here is to provide a store level forecast across the restaurant&#39;s 200 locations, which means we need to train 200 individual forecast models. By leveraging a UDTF, we&#39;re able to distribute the processing across multiple nodes and train our model in parallel. First, we&#39;ll define the output schema for the UDTF.</p>
+<p class="image-container"><img src="img/d88470fd030f3b86.png"></p>
+<p>We can register our UDTF using the decorator and specify the required parameters such as the output and input types, name of the UDTF, and required packages. Because the same packages and versions are being installed in Snowflake, Snowpark automatically picks up and resolves these dependencies on the server side using the integrated Conda package manager ensuring all our code runs seamlessly inside of Snowflake.</p>
+<p class="image-container"><img src="img/a0114190cf4a9730.png"></p>
+<p>To get a high level overview of the forecast class, the init method initializes the processing of input partitions. The process method is invoked for each input drill, and the end partition method is invoked to finalize the processing of input partitions. In the end partition method, we set the datetime column as our index. We then convert all variables to categorical, then encode our features since the XGBoost model expects all numerical inputs. Next, we split our data into train and test sets and pass the training data to our XGBoost model.</p>
+<h2 is-upgraded>Accepting Anaconda terms</h2>
+<p>At this point, you are going to run into an error when running the cell that defines the UDTF. This is because we haven&#39;t yet accepted the Anaconda terms and conditions. In this step, we&#39;ll go over how to accept the <a href="https://docs.Snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda terms and conditions enabled by the ORGADMIN</a> role we granted ourselves access to earlier. To do this, navigate back to Snowflake and click on your username in the top left corner. You&#39;ll see a section that will allow you to switch to the <code>ORGADMIN</code> role. Once switched over, navigate to the <code>Admin</code> tab and select <code>Billing & Terms</code>. From here, you will see a section that will allow you to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that defines our UDTF.</p>
+<p class="image-container"><img src="img/9a2f53fe8c9b1321.gif"></p>
+<h2 is-upgraded>Using our forecasting model</h2>
+<p>Now that we&#39;ve developed our training code, to get our predictions without moving any data out of Snowflake, all we need to do is call the UDTF on the model features we created earlier. The UDTF runs the model on the historical data and returns the forecast for the hourly traffic.</p>
+<p class="image-container"><img src="img/6edf7f40d3789249.png"></p>
+<p>As a last step, we can write the predicted values back into our Snowflake database. To do this, we&#39;ll call <code>write.saveAsTable('FOUR_WEEK_FORECAST', mode='overwrite', create_temp_table=False)</code> on our forecast model.</p>
+<p>If you want to see a performance boost at this step, you can upgrade the size of the warehouse that processes our model. To do this, head back over to Snowflake and select <code>Warehouses</code> under the <code>Admin</code> tab. Here, you should only see a single warehouse that we can edit. Click the 3-dot menu on the far right and select edit. You&#39;ll see a dropdown to change the size of your warehouse. If the model is already running, you may want to cancel and run again in order to run on the new warehouse.</p>
+<p class="image-container"><img src="img/5d3f925ad344fadd.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualizing the results" duration="5">
+        <p>Now that we have our data in Snowflake, we can pull the predicted values back into Hex using an SQL cell. To do this, add a new SQL cell to the project and paste the following snippet into the cell.</p>
+<pre><code language="language-sql" class="language-sql">select * from &#34;PC_HEX_DB&#34;.&#34;PUBLIC&#34;.&#34;FOUR_WEEK_FORECAST&#34;
+</code></pre>
+<p>By default, the output of SQL cells in Hex are dataframes. This allows us to seamlessly switch between SQL and Python where the dataframe can be further manipulated in any Python cell. You can even query it again using <a href="https://learn.hex.tech/docs/logic-cell-types/sql-cells/overview#dataframe-sql" target="_blank">dataframe SQL</a>.</p>
+<p class="image-container"><img src="img/c890b732d2df118e.gif"></p>
+<p>Here, we&#39;ve taken the results of our query and combined the <code>DATE</code> and <code>HOUR_OF_DAY</code> columns into a datetime column so that we can visualize the traffic per hour.</p>
+<p class="image-container"><img src="img/618aea69dbfb85a7.png"></p>
+<p>We can use a native Hex chart to build up this visual. First, hover over the output variable <code>cast</code> under cell 36. You&#39;ll see a panel appear with the option to visualize in a chart cell. Select this option and select <code>time</code> as the x-axis variable and <code>HOURLY_FORECAST</code> as the y-axis variable.</p>
+<p class="image-container"><img src="img/997f89027706312.gif"></p>
+<p>Once selected you will see this visual appear:</p>
+<p class="image-container"><img src="img/2fe5114ead60b66.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sharing our results" duration="3">
+        <p>Now that we&#39;ve completed going through our project, how can we share this project with others? First, we might want to arrange our cells and also hide some of the logic that isn&#39;t super important for understanding how to build a forecast model. To do this we can head over to the app side of things. At the top of your project, you&#39;ll see a button showing if you&#39;re in the logic or app view. By switching over to the app side of things, we can start arranging our cells and adding/removing them as we see fit. Check out the <a href="https://learn.hex.tech/docs/build-apps/app-builder" target="_blank">Hex docs</a> to learn about how you can effectively use the app builder.</p>
+<p class="image-container"><img src="img/c1c6d72fbcda91ef.gif"></p>
+<p>Once we&#39;re happy with the layout, we can go a head and publish. Publishing is like taking a snapshot of the current state of our app and publishing it as an interactive web app that anyone can see. To publish, hit the green publish button in the top right corner. Once that&#39;s done, hit the blue share button next to publish, and select <code>Publish to web</code>. Whoever you share the link with will be able to see the live version of your app.</p>
+<p class="image-container"><img src="img/dccd19ff0c5dddb.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>Congratulations on on making it to the end of this Lab! You can view the published version of this <a href="https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest" target="_blank">project here</a>!</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Use Snowflake&#39;s &#34;Partner Connect&#34; to seamlessly create a Hex trial</li>
+<li>How to navigate the Hex workspace/notebooks</li>
+<li>How to train an XGBoost model and deploy to Snowflake using UDTFs</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://learn.hex.tech/docs" target="_blank">Hex docs</a></li>
+<li><a href="https://docs.Snowflake.com/en/" target="_blank">Snowflake Docs</a></li>
+<li><a href="https://docs.Snowflake.com/en/developer-guide/udf/sql/udf-sql-tabular-functions.html" target="_blank">UDTFs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

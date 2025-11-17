@@ -1,0 +1,637 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Google Analytics 4 (GA4) Using Snowflake and Sigma</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="google_analytics_4_template_setup"
+                  title="Getting Started with Google Analytics 4 (GA4) Using Snowflake and Sigma"
+                  environment="web"
+                  feedback-link="https://github.com/sigmacomputing/sigmaquickstarts/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <h2 is-upgraded>Overview</h2>
+<p>This <strong>QuickStart</strong> provides instructions on how to set up Sigma&#39;s <strong>Google Analytics 4</strong> template.</p>
+<p>This template gives you a prebuilt analytics package for Google Analytics 4 events data, including detailed page-level metrics for <strong>every</strong> page and the ability to dive into event-level details, and is based on reports from Universal Analytics/GA3.</p>
+<p>The template can run on top of any cloud data warehouse, but this guide details how to use the template on top of <a href="https://other-docs.snowflake.com/en/connectors/google/gard/gard-connector-about" target="_blank">Snowflake&#39;s Google Analytics connector</a>.</p>
+<p>There are 4 steps to setting up the template:</p>
+<ol type="1">
+<li>Prepare your Google Analytics and Google Cloud Platform (GCP) accounts</li>
+<li>Install and configure Snowflake&#39;s Google Analytics Raw Data connector</li>
+<li>Transform the Google Analytics events data using the provided SQL script</li>
+<li>Launch the template in Sigma and <strong>Swap Sources</strong> to the table created in step 3</li>
+</ol>
+<p class="image-container"><img style="width: 800.00px" src="img/c519fa55cdd6fe96.png"></p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An up-to-date, analytics-ready Google Analytics events table in your Snowflake account.   </li>
+<li>A Sigma workbook that tracks website activity with full visibility into granular event-level metrics. </li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>How to deploy Sigma&#39;s <strong>Google Analytics 4</strong> template.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to your Google Analytics and GCP accounts.</li>
+<li>Access to your Snowflake account with the ability to create tables and grant access to the role used in your Sigma connection.</li>
+<li>Access to your Sigma account with the ability to create a workbook.</li>
+</ul>
+<p><a href="https://www.sigmacomputing.com/free-trial/" target="_blank"><paper-button class="colored" raised>Sigma Free Trial</paper-button></a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparing your Google Analytics and GCP accounts" duration="20">
+        <p>Before configuring the Snowflake Connector for Google Analytics Raw Data (GARD), you will need to perform some one-time setup in your Google account.  This process requires access to both Google Analytics and Google Cloud Platform (GCP).</p>
+<p>At a high level, the necessary actions in your Google account are</p>
+<ol type="1">
+<li>Migrate your Google Analytics from Universal Analytics to GA4.  This is done inside the GA platform.</li>
+<li>Configure a BigQuery link for GA4 data.  This is done inside the GA platform and allows raw GA data to be dumped into a GCP project.  Note that you should use the Daily export option.</li>
+<li>Configure a service account or OAuth authentication to allow Snowflake to read data from BigQuery storage.  This is done in the GCP platform.</li>
+</ol>
+<p>For a detailed step-by-step process, we refer to Snowflake&#39;s documentation on <a href="https://other-docs.snowflake.com/en/connectors/google/gard/gard-connector-prereqs" target="_blank">Preparing your Google analytics and GCP accounts for the GARD Connector</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install and configure Snowflake&#39;s Google Analytics Raw Data Connector" duration="10">
+        <p>Once your Google Analytics data is in BigQuery, it&#39;s time to install the GARD Connector. To do that, find the <a href="https://app.snowflake.com/marketplace/listing/GZSTZTP0KKC/snowflake-snowflake-connector-for-google-analytics-raw-data" target="_blank">Snowflake Connector for Google Analytics Raw Data</a> listing on the Snowflake Marketplace.</p>
+<p>You will be prompted to configure a few fields for the connector (Warehouse, Destination Database, Destination Schema and Role) as well as the authentication (either service account or OAuth).</p>
+<p>Follow <a href="https://other-docs.snowflake.com/en/connectors/google/gard/gard-connector-installing" target="_blank">this Snowflake Documentation for setup</a>, and make sure to note the <strong>Destination Database</strong> and <strong>Destination Schema</strong> as we will reference them again later.</p>
+<p>Once the connector is installed, you&#39;ll need to set up Data Ingestion.  This is a quick process and <a href="https://other-docs.snowflake.com/en/connectors/google/gard/gard-connector-setting-up-data" target="_blank">Snowflake provides directions here</a>.</p>
+<p>Now the GA4 raw data will sync into your Snowflake account at the desired cadence.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Transforming the Raw GA4 Data" duration="5">
+        <p>The Google Analytics data that the Snowflake Connector loads into your account is raw events data.  Each row represents a unique event, but that data is wrapped in nested JSON.</p>
+<p>To make it analytics-ready, we provide you with a SQL script that transforms the data into the format needed for the template.  The script requires you to input a few fields, then creates a new table called <code>events</code> and a stored procedure to update the <code>events</code> table with new rows each day.  It will also grant access on the table to the role used in your Sigma connection.</p>
+<p>Copy and paste the following SQL script into a new worksheet in Snowflake:</p>
+<p><strong>Input the required fields (indicated below the script) and then run the script.</strong></p>
+<pre><code language="language-sql" class="language-sql">/*************************************************************************************
+*   Name: google_analytics_4_setup_script.sql
+*   Dev:  Oscar Bashaw and Jake Hannan
+*   Date: Feb 15 2023
+*   Summary: creates a modeled GA4 events table and sets up incremental materialization (updates) for that table
+*   Desc: This series of commands will do the following:
+*           1. Set session variables and create materialization task
+*           2. Grant necessary privileges to materialization role
+*           3. Create the modeled Google Analytics events table with all events that happened on or before yesterday
+*           4. Create a stored procedure that models raw events not in the table created in step 3 and insert them to that table
+*           5. Start the task created in step 1 (calls the stored procedure created in step 4)
+*          
+*           
+*   Prereqs: To run this script the following is required:
+*           - The ability to use the SYSADMIN role (just briefly, to give the proper privileges to another role)
+*           - The ability to use a role that will be the owner of the GA4 data modeling
+*           - The database, schema and table names for the raw GA4 data in your Snowflake account
+*           - The name of the role used in your Sigma connection
+*
+*   Additional Resources: The Quickstart tutorial found at ##
+*************************************************************************************/
+
+---------------------------------------------------------------------------------------------------------
+-- 1. Set session variables and create materialization task
+---------------------------------------------------------------------------------------------------------
+
+-- Specify the database, schema and table of the raw Google Analytics data
+set ga_raw_data_dest_db = &#39;the database where the raw Google Analytics data lives&#39;;
+set ga_raw_data_dest_schema = &#39;the schema where the raw Google Analytics data lives&#39;;
+set ga_raw_data_dest_table = &#39;the table where the raw Google Analytics data lives&#39;;
+
+-- Set the database and schema where the modeled Google Analytics events table will live
+-- NOTE: this database and schema must already exist in your Snowflake account
+set ga_modeled_data_target_db = &#39;target database for modeled Google Analytics data (must exist already)&#39;;
+set ga_modeled_data_target_schema = &#39;target schema for modeled Google Analytics data (must exist already)&#39;;
+
+-- Set the role and warehouse used for materialization 
+set materialization_role_name = &#39;role that will own the modeled events table and the stored procedure / task used for materialization&#39;;
+set materialization_warehouse_name = &#39;name of warehouse used to create and update the modeled events table&#39;;
+-- Optional: adjust this CRON string to update the modeled events table on a different schedule
+set materialization_CRON_string = &#39;USING CRON 0 3 * * Mon-Fri America/Los_Angeles&#39;;
+
+-- Set the role used in your Sigma connection, ie the role that will need select access to the modeled table
+set sigma_role_name = &#39;role used in your Sigma connection&#39;;
+
+/* IMPORTANT!!
+  Inside the parentheses of usp_materialize_ga_events(&#39;&#39;), replace database.schema.table with the fully qualified
+  name of the raw Google Analytics table (the database, schema and table you specified above)
+  For example, if you have 
+    set ga_raw_data_dest_db = &#39;GA_RAW_DATA_DEST_DB&#39;;
+    set ga_raw_data_dest_schema = &#39;GA_RAW_DATA_DEST_SCHEMA&#39;;
+    set ga_raw_data_dest_table = &#39;ANALYTICS_123456&#39;;
+  then the command (last line) of the task should read
+    call usp_materialize_ga_events(&#39;GA_RAW_DATA_DEST_DB.GA_RAW_DATA_DEST_SCHEMA.ANALYTICS_123456&#39;);
+
+  Note that the stored procedure usp_materialize_ga_events() will be created later in the script.  We have just placed this piece here for your convenience.
+*/
+create or replace task task_call_usp_materialize_ga_events
+warehouse = $materialization_warehouse_name
+schedule = $materialization_CRON_string
+as
+call usp_materialize_ga_events(&#39;raw_database.raw_schema.raw_table&#39;);
+
+/*************************************************************************************
+*
+*   DO NOT MODIFY BELOW THIS SECTION
+*
+*************************************************************************************/
+
+---------------------------------------------------------------------------------------------------------
+-- 2. Grant necessary privileges to materialization role
+---------------------------------------------------------------------------------------------------------
+-- Use the sysadmin (or similarly-privileged) role to grant permissions to the materialization role
+use role sysadmin;
+
+grant usage on database identifier($ga_raw_data_dest_db) to role identifier($materialization_role_name);
+use database identifier($ga_raw_data_dest_db);
+
+grant usage on schema identifier($ga_raw_data_dest_schema) to role identifier($materialization_role_name);
+use schema identifier($ga_raw_data_dest_schema);
+
+grant select on table identifier($ga_raw_data_dest_table) to role identifier($materialization_role_name);
+grant usage on warehouse identifier($materialization_warehouse_name) to role identifier($materialization_warehouse_name);
+grant execute task on account to role identifier($materialization_role_name);
+
+-- Use the materialization role for the remainder of the script
+use role identifier($materialization_role_name);
+use warehouse identifier($materialization_warehouse_name);
+use database identifier($ga_modeled_data_target_db);
+use schema identifier($ga_modeled_data_target_schema);
+grant create table on schema identifier($ga_modeled_data_target_db) to role identifier($materialization_role_name);
+
+set ga_raw_data_fully_qualified_table = concat(GETVARIABLE(&#39;GA_RAW_DATA_DEST_DB&#39;), &#39;.&#39;, GETVARIABLE(&#39;GA_RAW_DATA_DEST_SCHEMA&#39;), &#39;.&#39;, GETVARIABLE(&#39;GA_RAW_DATA_DEST_TABLE&#39;));
+
+------------------------------------------------------------------------------------------------------------
+-- 3. Create the modeled Google Analytics events table with all events that happened on or before yesterday
+------------------------------------------------------------------------------------------------------------
+create or replace table events as (
+with raw_data as (
+  select * 
+  from identifier($ga_raw_data_fully_qualified_table)
+  where to_timestamp(raw:&#34;event_timestamp&#34;::int, 6) &lt; date_trunc(day, current_date())
+)
+
+, parsed_data as (
+  select
+    to_date(raw:&#34;event_date&#34;::string, &#39;yyyymmdd&#39;) as event_date
+    , to_timestamp(raw:&#34;event_timestamp&#34;::int, 6) as event_timestamp
+    , raw:&#34;event_name&#34;::string as event_name
+    , parse_json(raw:&#34;event_params&#34;) as event_params
+    , to_timestamp(raw:&#34;event_previous_timestamp&#34;::int, 6) as event_previous_timestamp
+    , raw:&#34;event_value_in_usd&#34;::float as event_value_in_usd
+    , raw:&#34;event_bundle_sequence_id&#34;::int as event_bundle_sequence_id
+    , raw:&#34;event_dimensions&#34;::string as event_dimensions
+    , raw:&#34;event_server_timestamp_offset&#34;::int as event_server_timestamp_offset
+    , raw:&#34;user_id&#34;::string as user_id
+    , raw:&#34;user_pseudo_id&#34;::string as user_pseudo_id
+    , raw:&#34;privacy_info&#34;.&#34;analytics_storage&#34;::string as privacy_info_analytics_storage
+    , raw:&#34;privacy_info&#34;.&#34;ads_storage&#34;::string as privacy_info_ads_storage
+    , raw:&#34;privacy_info&#34;.&#34;uses_transient_token&#34;::string as privacy_info_uses_transient_token
+    , raw:&#34;user_properties&#34; as user_properties
+    , to_timestamp(raw:&#34;user_first_touch_timestamp&#34;::int, 6) as user_first_touch_timestamp
+    , raw:&#34;user_ltv&#34;.&#34;revenue&#34;::float as user_ltv_revenue
+    , raw:&#34;user_ltv&#34;.&#34;currency&#34;::string as user_ltv_currency
+    , raw:&#34;device&#34;.&#34;category&#34;::string as device_category
+    , raw:&#34;device&#34;.&#34;mobile_brand_name&#34;::string as device_mobile_brand_name
+    , raw:&#34;device&#34;.&#34;mobile_model_name&#34;::string as device_mobile_model_name
+    , raw:&#34;device&#34;.&#34;mobile_marketing_name&#34;::string as device_mobile_marketing_name
+    , raw:&#34;device&#34;.&#34;mobile_os_hardware_model&#34;::string as device_mobile_os_hardware_model
+    , raw:&#34;device&#34;.&#34;operating_system&#34;::string as device_operating_system
+    , raw:&#34;device&#34;.&#34;operating_system_version&#34;::string as device_operating_system_version
+    , raw:&#34;device&#34;.&#34;vendor_id&#34;::string as device_vendor_id
+    , raw:&#34;device&#34;.&#34;advertising_id&#34;::string as device_advertising_id
+    , raw:&#34;device&#34;.&#34;language&#34;::string as device_language
+    , raw:&#34;device&#34;.&#34;is_limited_ad_tracking&#34;::boolean as device_is_limited_ad_tracking
+    , raw:&#34;device&#34;.&#34;time_zone_offset_seconds&#34;::int as device_time_zone_offset_seconds
+    , raw:&#34;device&#34;.&#34;browser&#34;::string as device_browser
+    , raw:&#34;device&#34;.&#34;browser_version&#34;::string as device_browser_version
+    , raw:&#34;device&#34;.&#34;web_info&#34;.&#34;browser&#34;::string as device_web_info_browser
+    , raw:&#34;device&#34;.&#34;web_info&#34;.&#34;browser_version&#34;::string as device_web_info_browser_version
+    , raw:&#34;device&#34;.&#34;web_info&#34;.&#34;hostname&#34;::string as device_web_info_hostname
+    , raw:&#34;geo&#34;.&#34;continent&#34;::string as geo_continent
+    , raw:&#34;geo&#34;.&#34;country&#34;::string as geo_country
+    , raw:&#34;geo&#34;.&#34;region&#34;::string as geo_region
+    , raw:&#34;geo&#34;.&#34;city&#34;::string as geo_city
+    , raw:&#34;geo&#34;.&#34;sub_continent&#34;::string as geo_sub_continent
+    , raw:&#34;geo&#34;.&#34;metro&#34;::string as geo_metro
+    , raw:&#34;app_info&#34;.&#34;id&#34;::string as app_info_id
+    , raw:&#34;app_info&#34;.&#34;version&#34;::string as app_info_version
+    , raw:&#34;app_info&#34;.&#34;install_store&#34;::string as app_info_install_store
+    , raw:&#34;app_info&#34;.&#34;firebase_app_id&#34;::string as app_info_firebase_app_id
+    , raw:&#34;app_info&#34;.&#34;install_source&#34;::string as app_info_install_source
+    , raw:&#34;traffic_source&#34;.&#34;name&#34;::string as traffic_source_name
+    , raw:&#34;traffic_source&#34;.&#34;medium&#34;::string as traffic_medium
+    , raw:&#34;traffic_source&#34;.&#34;source&#34;::string as traffic_source
+    , raw:&#34;stream_id&#34;::string as stream_id
+    , raw:&#34;platform&#34;::string as platform
+    , raw:&#34;event_dimensions&#34;.&#34;hostname&#34;::string as event_dimensions_hostname
+    , raw:&#34;ecommerce&#34;.&#34;total_item_quantity&#34;::int as ecommerce_total_item_quantity
+    , raw:&#34;ecommerce&#34;.&#34;purchase_revenue_in_usd&#34;::float as ecommerce_purchase_revenue_in_usd
+    , raw:&#34;ecommerce&#34;.&#34;purchase_revenue&#34;::float as ecommerce_purchase_revenue
+    , raw:&#34;ecommerce&#34;.&#34;refund_value_in_usd&#34;::float as ecommerce_refund_value_in_usd
+    , raw:&#34;ecommerce&#34;.&#34;refund_value&#34;::float as ecommerce_refund_value
+    , raw:&#34;ecommerce&#34;.&#34;shipping_value_in_usd&#34;::float as ecommerce_shipping_value_in_usd
+    , raw:&#34;ecommerce&#34;.&#34;shipping_value&#34;::float as ecommerce_shipping_value
+    , raw:&#34;ecommerce&#34;.&#34;tax_value_in_usd&#34;::float as ecommerce_tax_value_in_usd
+    , raw:&#34;ecommerce&#34;.&#34;tax_value&#34;::float as ecommerce_tax_value
+    , raw:&#34;ecommerce&#34;.&#34;unique_items&#34;::int as ecommerce_unique_items
+    , raw:&#34;ecommerce&#34;.&#34;transaction_id&#34;::string as ecommerce_transaction_id
+    , raw:&#34;items&#34; as items
+    , raw:&#34;collected_traffic_source&#34;.&#34;manual_campaign_id&#34;::string as collected_trafic_source_manual_campaign_id
+    , raw:&#34;collected_traffic_source&#34;.&#34;manual_campaign_name&#34;::string as collected_trafic_source_manual_campaign_name
+    , raw:&#34;collected_traffic_source&#34;.&#34;manual_source&#34;::string as collected_trafic_source_manual_source
+    , raw:&#34;collected_traffic_source&#34;.&#34;manual_medium&#34;::string as collected_trafic_source_manual_medium
+    , raw:&#34;collected_traffic_source&#34;.&#34;manual_term&#34;::string as collected_trafic_source_manual_term
+    , raw:&#34;collected_traffic_source&#34;.&#34;manual_content&#34;::string as collected_trafic_source_manual_content
+    , raw:&#34;collected_traffic_source&#34;.&#34;gclid&#34;::string as collected_trafic_source_gclid
+    , raw:&#34;collected_traffic_source&#34;.&#34;dclid&#34;::string as collected_trafic_source_dclid
+    , raw:&#34;collected_traffic_source&#34;.&#34;srsltid&#34;::string as collected_trafic_source_srsltid
+  from raw_data 
+)
+
+, final as (
+  select
+    event_date
+    , event_timestamp
+    , user_pseudo_id
+    , traffic_medium
+    , traffic_source
+    , traffic_source_name
+    , event_name
+    , geo_country
+    , geo_city
+    , device_web_info_hostname as host_name
+    , platform
+    , max(case when params.value:key::string = &#39;ga_session_id&#39; then params.value:value:int_value end)::int as ga_session_id
+    , max(case when params.value:key::string = &#39;engaged_session_event&#39; then params.value:value:int_value end)::int as engaged_session_event
+    , max(case when params.value:key::string = &#39;ga_session_number&#39; then params.value:value:int_value end)::int as ga_session_number
+    , max(case when params.value:key::string = &#39;page_title&#39; then params.value:value:string_value end)::string as page_title
+    , max(case when params.value:key::string = &#39;page_location&#39; then params.value:value:string_value end)::string as page_location
+    , parse_url(page_location, 1) as page_url_parsed
+    , page_url_parsed:parameters.utm_term::string as utm_term
+    , page_url_parsed:parameters.utm_medium::string as utm_medium
+    , page_url_parsed:parameters.utm_campaign::string as utm_campaign
+    , case 
+        when page_url_parsed:path::string = &#39;&#39; then &#39;home&#39; 
+        else split_part(page_url_parsed:path::string, &#39;/&#39;, 1)
+      end as website_bucket
+    , max(case when params.value:key::string = &#39;page_referrer&#39; then params.value:value:string_value end)::string as page_referrer
+    , max(case when params.value:key::string = &#39;session_engaged&#39; then params.value:value:string_value end)::int as session_engaged
+    , max(case when params.value:key::string = &#39;campaign&#39; then params.value:value:string_value end)::string as campaign_name
+    , div0(max(case when params.value:key::string = &#39;engagement_time_msec&#39; then params.value:value:int_value end)::int, 1000) as engagement_time_sec
+  from parsed_data
+  , lateral flatten(input =&gt; parsed_data.event_params) params
+  group by all
+  order by event_timestamp asc
+)
+
+select
+  event_date
+  , event_timestamp
+  , user_pseudo_id
+  , traffic_medium
+  , traffic_source
+  , traffic_source_name
+  , event_name
+  , utm_term
+  , utm_medium
+  , utm_campaign
+  , geo_country
+  , geo_city
+  , host_name
+  , platform
+  , ga_session_id
+  , engaged_session_event
+  , ga_session_number
+  , page_title
+  , page_location
+  , page_url_parsed
+  , website_bucket
+  , page_referrer
+  , session_engaged
+  , campaign_name
+  , engagement_time_sec
+  , md5(concat(
+      event_timestamp
+      , user_pseudo_id
+      , event_name
+      , website_bucket
+      , page_location
+    )) as ga_event_id
+from final
+)
+;
+
+-- Grant role used in Sigma connection access to this modeled events table
+grant usage on database identifier($ga_modeled_data_target_db) to role identifier($sigma_role_name);
+grant usage on schema identifier($ga_modeled_data_target_schema) to role identifier($sigma_role_name);
+grant select on table events to role identifier($sigma_role_name);
+
+------------------------------------------------------------------------------------------------------------
+-- 4. Create stored procedure to model and insert new events into the modeled events table
+------------------------------------------------------------------------------------------------------------
+create or replace procedure usp_materialize_ga_events(ga_raw_data_fully_qualified_table string)
+returns string
+language sql
+as
+$$
+BEGIN
+  begin transaction;
+  
+  insert into events 
+    with last_inserted_event as (
+        select max(event_timestamp) as last_inserted_event_ts
+        from events
+    ) 
+    , raw_data as (
+        select * 
+        from identifier(:ga_raw_data_fully_qualified_table)
+        where to_timestamp(raw:&#34;event_timestamp&#34;::int, 6) &gt; (select last_inserted_event_ts from last_inserted_event)
+        )
+
+    , parsed_data as (
+        select
+            to_date(raw:&#34;event_date&#34;::string, &#39;yyyymmdd&#39;) as event_date
+            , to_timestamp(raw:&#34;event_timestamp&#34;::int, 6) as event_timestamp
+            , raw:&#34;event_name&#34;::string as event_name
+            , parse_json(raw:&#34;event_params&#34;) as event_params
+            , to_timestamp(raw:&#34;event_previous_timestamp&#34;::int, 6) as event_previous_timestamp
+            , raw:&#34;event_value_in_usd&#34;::float as event_value_in_usd
+            , raw:&#34;event_bundle_sequence_id&#34;::int as event_bundle_sequence_id
+            , raw:&#34;event_dimensions&#34;::string as event_dimensions
+            , raw:&#34;event_server_timestamp_offset&#34;::int as event_server_timestamp_offset
+            , raw:&#34;user_id&#34;::string as user_id
+            , raw:&#34;user_pseudo_id&#34;::string as user_pseudo_id
+            , raw:&#34;privacy_info&#34;.&#34;analytics_storage&#34;::string as privacy_info_analytics_storage
+            , raw:&#34;privacy_info&#34;.&#34;ads_storage&#34;::string as privacy_info_ads_storage
+            , raw:&#34;privacy_info&#34;.&#34;uses_transient_token&#34;::string as privacy_info_uses_transient_token
+            , raw:&#34;user_properties&#34; as user_properties
+            , to_timestamp(raw:&#34;user_first_touch_timestamp&#34;::int, 6) as user_first_touch_timestamp
+            , raw:&#34;user_ltv&#34;.&#34;revenue&#34;::float as user_ltv_revenue
+            , raw:&#34;user_ltv&#34;.&#34;currency&#34;::string as user_ltv_currency
+            , raw:&#34;device&#34;.&#34;category&#34;::string as device_category
+            , raw:&#34;device&#34;.&#34;mobile_brand_name&#34;::string as device_mobile_brand_name
+            , raw:&#34;device&#34;.&#34;mobile_model_name&#34;::string as device_mobile_model_name
+            , raw:&#34;device&#34;.&#34;mobile_marketing_name&#34;::string as device_mobile_marketing_name
+            , raw:&#34;device&#34;.&#34;mobile_os_hardware_model&#34;::string as device_mobile_os_hardware_model
+            , raw:&#34;device&#34;.&#34;operating_system&#34;::string as device_operating_system
+            , raw:&#34;device&#34;.&#34;operating_system_version&#34;::string as device_operating_system_version
+            , raw:&#34;device&#34;.&#34;vendor_id&#34;::string as device_vendor_id
+            , raw:&#34;device&#34;.&#34;advertising_id&#34;::string as device_advertising_id
+            , raw:&#34;device&#34;.&#34;language&#34;::string as device_language
+            , raw:&#34;device&#34;.&#34;is_limited_ad_tracking&#34;::boolean as device_is_limited_ad_tracking
+            , raw:&#34;device&#34;.&#34;time_zone_offset_seconds&#34;::int as device_time_zone_offset_seconds
+            , raw:&#34;device&#34;.&#34;browser&#34;::string as device_browser
+            , raw:&#34;device&#34;.&#34;browser_version&#34;::string as device_browser_version
+            , raw:&#34;device&#34;.&#34;web_info&#34;.&#34;browser&#34;::string as device_web_info_browser
+            , raw:&#34;device&#34;.&#34;web_info&#34;.&#34;browser_version&#34;::string as device_web_info_browser_version
+            , raw:&#34;device&#34;.&#34;web_info&#34;.&#34;hostname&#34;::string as device_web_info_hostname
+            , raw:&#34;geo&#34;.&#34;continent&#34;::string as geo_continent
+            , raw:&#34;geo&#34;.&#34;country&#34;::string as geo_country
+            , raw:&#34;geo&#34;.&#34;region&#34;::string as geo_region
+            , raw:&#34;geo&#34;.&#34;city&#34;::string as geo_city
+            , raw:&#34;geo&#34;.&#34;sub_continent&#34;::string as geo_sub_continent
+            , raw:&#34;geo&#34;.&#34;metro&#34;::string as geo_metro
+            , raw:&#34;app_info&#34;.&#34;id&#34;::string as app_info_id
+            , raw:&#34;app_info&#34;.&#34;version&#34;::string as app_info_version
+            , raw:&#34;app_info&#34;.&#34;install_store&#34;::string as app_info_install_store
+            , raw:&#34;app_info&#34;.&#34;firebase_app_id&#34;::string as app_info_firebase_app_id
+            , raw:&#34;app_info&#34;.&#34;install_source&#34;::string as app_info_install_source
+            , raw:&#34;traffic_source&#34;.&#34;name&#34;::string as traffic_source_name
+            , raw:&#34;traffic_source&#34;.&#34;medium&#34;::string as traffic_medium
+            , raw:&#34;traffic_source&#34;.&#34;source&#34;::string as traffic_source
+            , raw:&#34;stream_id&#34;::string as stream_id
+            , raw:&#34;platform&#34;::string as platform
+            , raw:&#34;event_dimensions&#34;.&#34;hostname&#34;::string as event_dimensions_hostname
+            , raw:&#34;ecommerce&#34;.&#34;total_item_quantity&#34;::int as ecommerce_total_item_quantity
+            , raw:&#34;ecommerce&#34;.&#34;purchase_revenue_in_usd&#34;::float as ecommerce_purchase_revenue_in_usd
+            , raw:&#34;ecommerce&#34;.&#34;purchase_revenue&#34;::float as ecommerce_purchase_revenue
+            , raw:&#34;ecommerce&#34;.&#34;refund_value_in_usd&#34;::float as ecommerce_refund_value_in_usd
+            , raw:&#34;ecommerce&#34;.&#34;refund_value&#34;::float as ecommerce_refund_value
+            , raw:&#34;ecommerce&#34;.&#34;shipping_value_in_usd&#34;::float as ecommerce_shipping_value_in_usd
+            , raw:&#34;ecommerce&#34;.&#34;shipping_value&#34;::float as ecommerce_shipping_value
+            , raw:&#34;ecommerce&#34;.&#34;tax_value_in_usd&#34;::float as ecommerce_tax_value_in_usd
+            , raw:&#34;ecommerce&#34;.&#34;tax_value&#34;::float as ecommerce_tax_value
+            , raw:&#34;ecommerce&#34;.&#34;unique_items&#34;::int as ecommerce_unique_items
+            , raw:&#34;ecommerce&#34;.&#34;transaction_id&#34;::string as ecommerce_transaction_id
+            , raw:&#34;items&#34; as items
+            , raw:&#34;collected_traffic_source&#34;.&#34;manual_campaign_id&#34;::string as collected_trafic_source_manual_campaign_id
+            , raw:&#34;collected_traffic_source&#34;.&#34;manual_campaign_name&#34;::string as collected_trafic_source_manual_campaign_name
+            , raw:&#34;collected_traffic_source&#34;.&#34;manual_source&#34;::string as collected_trafic_source_manual_source
+            , raw:&#34;collected_traffic_source&#34;.&#34;manual_medium&#34;::string as collected_trafic_source_manual_medium
+            , raw:&#34;collected_traffic_source&#34;.&#34;manual_term&#34;::string as collected_trafic_source_manual_term
+            , raw:&#34;collected_traffic_source&#34;.&#34;manual_content&#34;::string as collected_trafic_source_manual_content
+            , raw:&#34;collected_traffic_source&#34;.&#34;gclid&#34;::string as collected_trafic_source_gclid
+            , raw:&#34;collected_traffic_source&#34;.&#34;dclid&#34;::string as collected_trafic_source_dclid
+            , raw:&#34;collected_traffic_source&#34;.&#34;srsltid&#34;::string as collected_trafic_source_srsltid
+        from raw_data 
+        )
+
+    , final as (
+        select
+            event_date
+            , event_timestamp
+            , user_pseudo_id
+            , traffic_medium
+            , traffic_source
+            , traffic_source_name
+            , event_name
+            , geo_country
+            , geo_city
+            , device_web_info_hostname as host_name
+            , platform
+            , max(case when params.value:key::string = &#39;ga_session_id&#39; then params.value:value:int_value end)::int as ga_session_id
+            , max(case when params.value:key::string = &#39;engaged_session_event&#39; then params.value:value:int_value end)::int as engaged_session_event
+            , max(case when params.value:key::string = &#39;ga_session_number&#39; then params.value:value:int_value end)::int as ga_session_number
+            , max(case when params.value:key::string = &#39;page_title&#39; then params.value:value:string_value end)::string as page_title
+            , max(case when params.value:key::string = &#39;page_location&#39; then params.value:value:string_value end)::string as page_location
+            , parse_url(page_location, 1) as page_url_parsed
+            , page_url_parsed:parameters.utm_term::string as utm_term
+            , page_url_parsed:parameters.utm_medium::string as utm_medium
+            , page_url_parsed:parameters.utm_campaign::string as utm_campaign
+            , case 
+                when page_url_parsed:path::string = &#39;&#39; then &#39;home&#39; 
+                else split_part(page_url_parsed:path::string, &#39;/&#39;, 1)
+            end as website_bucket
+            , max(case when params.value:key::string = &#39;page_referrer&#39; then params.value:value:string_value end)::string as page_referrer
+            , max(case when params.value:key::string = &#39;session_engaged&#39; then params.value:value:string_value end)::int as session_engaged
+            , max(case when params.value:key::string = &#39;campaign&#39; then params.value:value:string_value end)::string as campaign_name
+            , div0(max(case when params.value:key::string = &#39;engagement_time_msec&#39; then params.value:value:int_value end)::int, 1000) as engagement_time_sec
+        from parsed_data
+        , lateral flatten(input =&gt; parsed_data.event_params) params
+        group by all
+        order by event_timestamp asc
+        )
+
+    select
+    event_date
+    , event_timestamp
+    , user_pseudo_id
+    , traffic_medium
+    , traffic_source
+    , traffic_source_name
+    , event_name
+    , utm_term
+    , utm_medium
+    , utm_campaign
+    , geo_country
+    , geo_city
+    , host_name
+    , platform
+    , ga_session_id
+    , engaged_session_event
+    , ga_session_number
+    , page_title
+    , page_location
+    , page_url_parsed
+    , website_bucket
+    , page_referrer
+    , session_engaged
+    , campaign_name
+    , engagement_time_sec
+    , md5(concat(
+        event_timestamp
+        , user_pseudo_id
+        , event_name
+        , website_bucket
+        , page_location
+        )) as ga_event_id
+    from final;  
+  commit;
+  return &#39;Success! GA Events table materialized.&#39;;
+EXCEPTION
+    when other then 
+        rollback;
+        return sqlerrm;
+END;
+$$
+;
+
+---------------------------------------------------------------------------------------------------------
+-- 5. Start the task created in step 1 that calls the stored procedure for materialization
+---------------------------------------------------------------------------------------------------------
+alter task task_call_usp_materialize_ga_events resume;
+
+
+---------------------------------------------------------------------------------------------------------
+-- END OF SCRIPT
+---------------------------------------------------------------------------------------------------------
+</code></pre>
+<p>The necessary input fields are:</p>
+<ul>
+<li><strong>ga_raw_data_dest_db</strong>: the destination database you specified in Snowflake when setting up the GARD connector</li>
+<li><strong>ga_raw_data_dest_schema</strong>: the destination schema you specified in Snowflake when setting up the GARD connector</li>
+<li><strong>ga_raw_data_dest_table</strong>: the table that contains raw GA4 events data (created by the connector, named like ANALYTICS_123546)</li>
+<li><strong>ga_modeled_data_target_db</strong>: the target database for the modeled Google Analytics data (must exist already)</li>
+<li><strong>ga_modeled_data_target_schema</strong>: the target schema for modeled Google Analytics data (must exist already)</li>
+<li><strong>materialization_role_name</strong>: the Snowflake role that will own the modeled GA data and materialization</li>
+<li><strong>materialization_warehouse_name</strong>: the warehouse used to create and update the modeled events table</li>
+<li><strong>materialization_CRON_string</strong>: the materialization schedule.  Default is every weekday at 3am PT</li>
+<li><strong>sigma_role_name</strong>: the role used in your Sigma connection</li>
+</ul>
+<p>You will be instructed how to input these fields in Section 1 of the SQL script.  For each variable, delete the placeholder text and enter the desired value inside the single quotes. <br></p>
+<aside class="warning"><p><strong>IMPORTANT:<br></strong> Setup is not done at this point.  Read below.  </p>
+</aside>
+<p>Then, you&#39;ll need to set the argument for the stored procedure called by the task <code>task_call_usp_materialize_ga_events</code>. At the end of Section 1, you will see the following statement:</p>
+<pre><code language="language-plaintext" class="language-plaintext">create or replace task task_call_usp_materialize_ga_events
+warehouse = $materialization_warehouse_name
+schedule = $materialization_CRON_string
+as
+call usp_materialize_ga_events(&#39;raw_database.raw_schema.raw_table&#39;);
+</code></pre>
+<p>You need to replace the argument passed to <code>usp_materialize_ga_events()</code> with the name of your <strong>raw</strong> Google Analytics events table. For example, if your raw table (the one created by the GARD connector) is located at <code>GA_RAW_DATA_DEST_DB.GA_RAW_DATA_DEST_SCHEMA.ANALYTICS_123456</code>, you would edit the argument in the stored procedure like so:</p>
+<pre><code language="language-plaintext" class="language-plaintext">create or replace task task_call_usp_materialize_ga_events
+warehouse = $materialization_warehouse_name
+schedule = $materialization_CRON_string
+as
+call usp_materialize_ga_events(&#39;GA_RAW_DATA_DEST_DB.GA_RAW_DATA_DEST_SCHEMA.ANALYTICS_123456&#39;);
+</code></pre>
+<p> Once you&#39;ve set this value, you can run the entire script and verify that you can see the new `events` table in your Sigma connection browser. <br><img style="width: 300.00px" src="img/d7cf815defe50d7f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying the template" duration="5">
+        <p>Once you have created the <code>events</code> table, go to Sigma.</p>
+<p>From the home page, navigate to the <code>Templates</code> section, then to <code>External</code>.</p>
+<p>Click on the <code>Google Analytics 4</code> template:</p>
+<p class="image-container"><img style="width: 700.00px" src="img/d2483c6662f7271b.png"></p>
+<p>You will be prompted to swap data sources. Click <code>Swap Now</code>:</p>
+<p class="image-container"><img style="width: 500.00px" src="img/716dff0d5b21e136.png"></p>
+<p>Verify that Sigma has found the <code>events</code> table and click <code>Swap Now</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/579240e8853cce4b.png"></p>
+<p>Click <code>Save As</code> and give your workbook a title.</p>
+<p><strong>That&#39;s all there is to it!</strong></p>
+<p>You should now see the Google Analytics 4 Template on top of your own data.</p>
+<p>For example:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/c519fa55cdd6fe96.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>What You Learned</h2>
+<p>In this QuickStart we created a table called <code>events</code> with analytics-ready GA4 data and launched Sigma&#39;s <code>Google Analytics 4</code> template.</p>
+<h2 is-upgraded>Related Resources</h2>
+<p>Be sure to check out all Sigma&#39;s latest developments at <a href="https://quickstarts.sigmacomputing.com/firstfridayfeatures/" target="_blank">Sigma&#39;s First Friday Feature page!</a></p>
+<p><a href="https://help.sigmacomputing.com" target="_blank">Help Center Home</a><br><a href="https://community.sigmacomputing.com/" target="_blank">Sigma Community</a><br><a href="https://www.sigmacomputing.com/blog/" target="_blank">Sigma Blog</a><br><br></p>
+<p><a href="https://twitter.com/sigmacomputing" target="_blank"><img style="width: 75.00px" src="img/917f56367ae24b50.png"></a>  <a href="https://www.linkedin.com/company/sigmacomputing" target="_blank"><img style="width: 75.00px" src="img/a18a55886a7f2a91.png"></a>  <a href="https://www.facebook.com/sigmacomputing" target="_blank"><img style="width: 75.00px" src="img/4678deb447cfa22f.png"></a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

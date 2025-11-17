@@ -1,0 +1,165 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Predicting Insurance Claims using XGBoost Regression Model</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-predicting-insurance-claims-regression-model"
+                  title="Getting Started with Predicting Insurance Claims using XGBoost Regression Model"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p class="image-container"><img src="img/25973ab85c6b8f88.png"></p>
+<p>This solution provides an end-to-end workflow for predicting insurance claim outcomes using machine learning, focusing on feature engineering, model training, and deployment. It showcases Snowflake&#39;s Feature Store and Model Registry, emphasizing streamlined ML operations tailored for the insurance claims domain.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to load and examine insurance claims data using the DataFrame API to identify key patterns and trends.</li>
+<li>How to generate a new insurance-related feature with a vectorized UDF, perform essential transformations (e.g., ordinal encoding) using Snowflake ML Preprocessing API, and utilize Snowflake&#39;s Feature Store to manage and reuse features.</li>
+<li>How to build a preprocessing pipeline with Snowflake ML Modeling API, facilitating consistent data preparation for modeling.</li>
+<li>How to train an XGBoost model for claims prediction with the Snowflake ML Model API and optimize parameters using distributed GridSearchCV to improve predictive accuracy.</li>
+<li>How to register the model in Snowflake&#39;s Model Registry for easy deployment and version control, enabling direct predictions on new claims data.</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account with Accountadmin access</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>An end-to-end workflow for predicting insurance claim outcomes using machine learning</li>
+<li>A feature engineering pipeline</li>
+<li>A model training pipeline</li>
+<li>A model deployment pipeline</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <p>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</p>
+<p>Run the SQL from the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-predicting-insurance-claims-regression-model/blob/main/scripts/setup.sql" target="_blank">file</a> in the worksheet to create Snowflake objects (database, schema, tables)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture" duration="0">
+        <p>This architecture for the Insurance Claims Prediction solution is designed to generate prediction probabilities, providing a streamlined and scalable end-to-end ML workflow that integrates various Snowflake capabilities. Each component contributes to efficient processing, consistency, and scalability.</p>
+<p class="image-container"><img src="img/1183f6711dce8996.png"></p>
+<p><strong>Extracting Features:</strong> Data ingestion brings in policy and claims data from multiple sources into Snowflake. Using Snowflake Notebooks, SQL and Python can be seamlessly combined to query, manipulate, and prepare the data. Automated feature extraction ensures data from different sources is consolidated and ready for preprocessing.</p>
+<p><strong>Preprocessing Data Using the Snowflake ML Library:</strong> The Snowpark API enables large-scale data transformations in Python, handling feature engineering efficiently. Snowflake&#39;s Feature Store manages complex aggregations and reusable features, promoting consistency and simplifying feature computation with moving windows and other advanced calculations.</p>
+<p><strong>Model Training (XGBoost):</strong> Preprocessed data is used to train an XGBoost model with Snowpark ML&#39;s Modeling API. With GridSearchCV, Snowflake enables efficient hyperparameter tuning, helping to optimize model performance through distributed tuning.</p>
+<p><strong>Model Registration and Deployment:</strong> The Snowflake Model Registry serves as a central hub for managing the model&#39;s lifecycle, tracking versions, and managing metadata. The registered model is then ready for deployment.</p>
+<p><strong>Model Inference Predictions:</strong> The deployed model generates predictions in real time, producing claim prediction probabilities for new data inputs, supporting decision-making.</p>
+<p>This architecture leverages Snowflake&#39;s integrated ML tools, covering data ingestion, preprocessing, model training, deployment, and inference to provide a comprehensive, efficient solution for insurance claims prediction.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Insurance Claims Prediction - Regression Notebook" duration="5">
+        <p>This notebook demonstrates how to create and manage feature views within a feature store. By facilitating collaboration across teams, it enables seamless reuse of features while bridging the gap between training and serving environments. In this example, we train and deploy a XGBoost model to generate insurance claims predictions.</p>
+<ul>
+<li>Navigate to Snowsight and change role to <strong>INSURANCECLAIMSPREDICTIONREGRESSION_DATA_SCIENTIST</strong></li>
+<li>Select the Notebooks tab.</li>
+<li>Import the following Snowflake Notebook in Snowsight: <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-predicting-insurance-claims-regression-model/blob/main/notebooks/0_start_here.ipynb" target="_blank">0_start_here.ipynb</a></li>
+</ul>
+<p class="image-container"><img src="img/6c1dd82171f0970c.png"></p>
+<ul>
+<li>Create notebook with the settings in the screenshot.</li>
+</ul>
+<p class="image-container"><img src="img/953eebe874a73eb9.png"></p>
+<ul>
+<li>Once created, Add Packages(snowflake-ml-python, plotly, matplotlib &amp; seaborn) to Notebook</li>
+</ul>
+<p class="image-container"><img src="img/699d3bbe636c92cb.png"></p>
+<ul>
+<li>Once Packages are added, download the exposure calculation image from <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-predicting-insurance-claims-regression-model/blob/main/notebooks/img/exposure.png" target="_blank">here</a> and upload the image under img folder within the notebook. This is used in the notebook.</li>
+</ul>
+<p class="image-container"><img src="img/718eccbd4e7baa98.png"><img src="img/ea4ea9ea24b11842.png"></p>
+<ul>
+<li>Click each cell or Run all to run the Notebook</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>In this quickstart, you learned how to use Snowflake&#39;s integrated ML tools to create an end-to-end workflow for predicting insurance claim outcomes. You learned how to load and examine insurance claims data, generate new features, build a preprocessing pipeline, train an XGBoost model, and deploy the model for real-time predictions.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to load and examine insurance claims data using the DataFrame API to identify key patterns and trends.</li>
+<li>How to generate a new insurance-related feature with a vectorized UDF, perform essential transformations (e.g., ordinal encoding) using Snowflake ML Preprocessing API, and utilize Snowflake&#39;s Feature Store to manage and reuse features.</li>
+<li>How to build a preprocessing pipeline with Snowflake ML Modeling API, facilitating consistent data preparation for modeling.</li>
+<li>How to train an XGBoost model for claims prediction with the Snowflake ML Model API and optimize parameters using distributed GridSearchCV to improve predictive accuracy.</li>
+<li>How to register the model in Snowflake&#39;s Model Registry for easy deployment and version control, enabling direct predictions on new claims data.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-predicting-insurance-claims-regression-model" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Feature Store</a></li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview?utm_cta=snowpark-dg-hero-card" target="_blank">Model Registry</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Machine Learning with Snowpark Python: - Credit Card Approval Prediction</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_snowpark_machine_learning"
+                  title="Machine Learning with Snowpark Python: - Credit Card Approval Prediction"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <h2 is-upgraded>What is Snowpark?</h2>
+<p>The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.</p>
+<p><strong>Familiar Client Side Libraries</strong> - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling (public preview) and ML operations (private preview).</p>
+<p><strong>Flexible Runtime Constructs</strong> - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.</p>
+<p>Learn more about <a href="https://www.snowflake.com/snowpark/" target="_blank">Snowpark</a>.</p>
+<p class="image-container"><img alt="Snowpark" src="img/9f7d4fd72f4d8a3f.png"></p>
+<h2 is-upgraded>What is Snowpark ML?</h2>
+<p>Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (in Public Preview) for model development and Snowpark ML Operations (in Private Preview) for model deployment.</p>
+<p>This quickstart will focus on the Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution in Snowflake.</p>
+<p>The source code for this quickstart is available on <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning" target="_blank">GitHub</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Working knowledge of <a href="https://www.udemy.com/course/data-analysis-with-python-and-pandas/" target="_blank">Python</a></li>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Loading and transforming data via Snowpark</li>
+<li>Apply scalable data transformations with Snowpark ML</li>
+<li>Train, score and evaluate models with Snowpark ML</li>
+<li>Hyperparameter Tuning with Snowpark ML</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Trial Account</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Integration enabled by ORGADMIN</a></li>
+<li>Python 3.9</li>
+<li>Jupyter Notebook</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end data science workflow</p>
+<ul>
+<li>to load, clean and prepare data</li>
+<li>to train different machine learning models</li>
+<li>to tune hyper parameters</li>
+</ul>
+<p>The end-to-end workflow will look like this:</p>
+<p class="image-container"><img alt="&amp;lsquo;flow&amp;rsquo;" src="img/260977190219d765.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use-Case: Credit Card Approval Prediction" duration="3">
+        <p>You are part of a team of data engineers and data scientists at a banking company that has been tasked to identify high-risk customers using a machine learning based solution. The goal is to give a recommendation to either approve or reject the issueing of a credit card.</p>
+<p>To build this, you have access to customer demographic and credit history data. Using Snowpark, we will ingest, analyze and transform this data to train a model that will then be deployed inside Snowflake to score new data.</p>
+<p>The dataset you are using is part of a Kaggle competition that can be found here:<br><a href="https://www.kaggle.com/datasets/rikdifos/credit-card-approval-prediction" target="_blank">Kaggle: Credit Card Approval Prediction</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Python Environment Setup" duration="5">
+        <p>Let&#39;s set up the Python environment necessary to run this quickstart:</p>
+<p>First, clone the source code for this repo to your local environment:</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning.git
+cd sfguide-getting-started-machine-learning/
+</code></pre>
+<h2 is-upgraded>Snowpark Python via Anaconda</h2>
+<p>If you are using <a href="https://www.anaconda.com/products/distribution" target="_blank">Anaconda</a> on your local machine, create a conda env for this quickstart:</p>
+<pre><code language="language-bash" class="language-bash">conda env create -f conda_env.yml
+conda activate pysnowpark
+</code></pre>
+<p>Conda will automatically install <code>snowflake-snowpark-python</code> and all other dependencies for you.</p>
+<p>Now, launch Jupyter Notebook on your local machine:</p>
+<pre><code language="language-bash" class="language-bash">jupyter notebook
+</code></pre>
+<h2 is-upgraded>Snowpark with your own Environment</h2>
+<p>If you decide to bring your own Python environment, please make sure to install all of the required packages from the conda_env.yml</p>
+<aside class="special"><p> There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL. Please refer to the Snowpark documentation to solve this issue: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites" target="_blank">Issue with running Snowpark Python on Apple M1 chips</a></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment Setup" duration="5">
+        <p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Establish the Snowpark Python session</li>
+<li>Create the database, schema, and warehouses needed for the remainder of the lab</li>
+<li>Load raw csv data into Snowflake</li>
+<li>Accept Anaconda terms &amp; conditions to enable 3rd-Party packages</li>
+</ul>
+<p>First of all, locate the following information:</p>
+<ul>
+<li>Username</li>
+<li>Password</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/organizations-gs.html#viewing-the-name-of-your-organization-and-its-accounts" target="_blank">Organization- and Accountname</a></li>
+</ul>
+<p>You&#39;ll need these values to connect to your Snowflake Account via Snowpark.</p>
+<p>After that, open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/0_setup_environment.ipynb" target="_blank"><code>0_setup_environment</code></a> Jupyter notebook and run each of the cells to setup your Snowflake Account and load the required datasets into Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Exploration and Transformation" duration="20">
+        <h2 is-upgraded>Demo</h2>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Understand the difference between Snowpark DataFrames and Pandas DataFrames</li>
+<li>Performing simple data transformations</li>
+<li>Performing simple data analysis</li>
+<li>Persist your analysis results</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_1_DEMO_basic_data_exploration_transformation.ipynb" target="_blank"><code>1_1_DEMO_basic_data_exploration_transformation</code></a> Jupyter notebook and run each of the cells.</p>
+<h2 is-upgraded>Excercise</h2>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Test your understanding of working with Snowpark DataFrames</li>
+<li>Answer basic questions about your data by using the Snowpark-API</li>
+<li>Create a new feature variable</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_2_EXERCISE_basic_data_exploration_transformation.ipynb" target="_blank"><code>1_2_EXERCISE_basic_data_exploration_transformation</code></a> Jupyter notebook and develop/adjust the code to solve the tasks.</p>
+<h2 is-upgraded>Solution</h2>
+<p>You can verify your excercise results by having a look at the solution provided in the  <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_2_SOLUTION_basic_data_exploration_transformation.ipynb" target="_blank"><code>1_2_SOLUTION_basic_data_exploration_transformation</code></a> Jupyter notebook.</p>
+<h2 is-upgraded>Demo</h2>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Transform the data into a final dataset ready to be used as input for machine learning models</li>
+<li>Variable analysis</li>
+<li>Perform value imputation &amp; variable encoding using scalable Snowpark ML functions</li>
+<li>Create the target variable</li>
+<li>Synthetic Minority Oversampling via Snowflake Stored Procedure</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/1_3_DEMO_full_data_exploration_transformation.ipynb" target="_blank"><code>1_3_DEMO_full_data_exploration_transformation</code></a> Jupyter notebook and run each of the cells.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Building &amp; Deployment" duration="15">
+        <h2 is-upgraded>Demo</h2>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Train, score and evaluate a simple logistic regression model with Snowpark ML that is based on <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html" target="_blank">scikit-learn</a></li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/2_1_DEMO_model_building_scoring.ipynb" target="_blank"><code>2_1_DEMO_model_building_scoring</code></a> Jupyter notebook and run each of the cells.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building Additional Models" duration="20">
+        <h2 is-upgraded>Excercise</h2>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Apply your knowledge of Snowpark ML to train, score and evaluate additional models</li>
+<li>You can choose between <a href="https://github.com/dmlc/xgboost" target="_blank">XGBoost</a> or <a href="https://github.com/microsoft/LightGBM" target="_blank">LightGBM</a> as your additional model</li>
+</ul>
+<p><strong>For XGBoost:<br></strong> Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_1_EXERCISE_additional_models_xgboost.ipynb" target="_blank"><code>3_1_EXERCISE_additional_models_xgboost</code></a> Jupyter notebook and develop/adjust the code to solve the tasks.</p>
+<p><strong>For LightGBM:<br></strong> Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_2_EXERCISE_additional_models_lightgbm.ipynb" target="_blank"><code>3_2_EXERCISE_additional_models_lightgbm</code></a> Jupyter notebook and develop/adjust the code to solve the tasks.</p>
+<h2 is-upgraded>Solution</h2>
+<p><strong>For XGBoost:<br></strong> You can verify your excercise results by having a look at the solution provided in the  <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_1_SOLUTION_additional_models_xgboost.ipynb" target="_blank"><code>3_1_SOLUTION_additional_models_xgboost</code></a> Jupyter notebook.</p>
+<p><strong>For LightGBM:<br></strong> You can verify your excercise results by having a look at the solution provided in the  <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/3_2_SOLUTION_additional_models_lightgbm.ipynb" target="_blank"><code>3_2_SOLUTION_additional_models_lightgbm</code></a> Jupyter notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Hyperparameter Tuning with Snowpark ML and GridSearchCV" duration="10">
+        <h2 is-upgraded>Demo</h2>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Tune the parameters of an XGBoost model with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html" target="_blank">GridSearchCV</a> using the Snowpark ML API</li>
+<li>Evaluate the parameter tuning process</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-machine-learning/blob/main/hol/4_1_DEMO_hyperparameter_tuning_gridsearch.ipynb" target="_blank"><code>4_1_DEMO_hyperparameter_tuning_gridsearch</code></a> Jupyter notebook and run each of the cells.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>Through this Quickstart we were able to experience how Snowpark for Python enables you to use familiar syntax and constructs to process data where it lives with Snowflake&#39;s elastic, scalable and secure engine, accelerating the path to production for data pipelines and ML workflows. Here&#39;s what you were able to complete:</p>
+<ul>
+<li>Loading and transforming data via Snowpark</li>
+<li>Apply scalable data transformations with Snowpark ML</li>
+<li>Train, score and evaluate models with Snowpark ML</li>
+<li>Hyperparameter Tuning with Snowpark ML</li>
+</ul>
+<p>For more information on Snowpark Python, and Machine Learning in Snowflake, check out the following resources:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html" target="_blank">Snowpark Python API Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">Snowpark ML Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

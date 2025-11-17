@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "develop-and-manage-ml-models-with-feature-store-and-model-registry",
+  "duration": 14,
+  "title": "Develop and Manage ML Models with Feature Store and Model Registry",
+  "summary": "This guide demonstrates an end-to-end ML experiment cycle in Snowflake including feature creation, training data generation, model training and inference",
+  "source": "develop-and-manage-ml-models-with-feature-store-and-model-registry/develop-and-manage-ml-models-with-feature-store-and-model-registry.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "data-science-\u0026-ml",
+    "getting-started",
+    "notebooks"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "develop-and-manage-ml-models-with-feature-store-and-model-registry"
+}

@@ -1,0 +1,236 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Interfacing with ArcGIS Location Services (API) using Snowpark</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="sf_esri_arcgis_locationservice"
+                  title="Interfacing with ArcGIS Location Services (API) using Snowpark"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>The <a href="https://developers.arcgis.com/documentation/mapping-and-location-services/" target="_blank">ArcGIS Location Services</a> are services hosted by Esri that provide geospatial functionality and data for building mapping applications. You can use the service APIs to display maps, access basemaps styles, visualize data, find places, geocode addresses, find optimized routes, enrich data, and perform other mapping operations. The services also support advanced routing operations such as fleet routing, calculating service areas, and solving location-allocation problems. To build applications you can use ArcGIS Maps SDKs, open source libraries, and scripting APIs.</p>
+<p>This process also can be replicated if users have [ArcGIS Enterprise] (https://enterprise.arcgis.com/en/)</p>
+<p>A service area, also known as an isochrone, is a polygon that represents the distance that can be reached when driving or walking on a street network. This type of analysis is common in real estate search or determining the driving proximity to schools, businesses, or other facilities. For example, you can create a drive time polygon that represents how far you can drive in any direction from the center of a city in 20 minutes.</p>
+<p>You can use service areas to build applications that:</p>
+<ul>
+<li>Visualize and measure the accessibility of locations that provide some kind of service. For example, a three-minute drive-time polygon around a grocery store can determine which residents are able to reach the store within three minutes and are thus more likely to shop there.</li>
+<li>By generating multiple service areas around one or more locations that can show how accessibility changes with an increase in travel time or travel distance. It can be used, for example, to determine how many hospitals are within 5, 10, and 15 minute drive times of schools.</li>
+<li>When creating service areas based on travel times, the service can make use of traffic data, which can influence the area that can be reached during different times of the day.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>In this Quickstart you will be go over the steps of calculating servicearea/isochrones using the ArcGIS Location Services. You will also be visualizing them using ArcGIS Pro. <img alt="ServiceArea" src="img/eb2143f604cd84d.png"></p>
+<h2 is-upgraded>What You Will Build</h2>
+<p class="image-container"><img alt="Solution" src="img/2f017d222099a525.jpg"></p>
+<ol type="1">
+<li>Develop a Snowpark UDF which invokves the ArcGIS ServiceArea service function and stores the response back into the source table.</li>
+<li>Develop a Snowpark UDF which extracts and converts the geometry from ArcGIS reponse into Geojson co-ordinates.</li>
+<li>Connect and visualize the service areas / isochrones using ArcGIS Pro.</li>
+</ol>
+<h2 is-upgraded>What You will Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake</a> Account.</li>
+<li>A <a href="https://www.esri.com/en-us/arcgis/products/arcgis-online/trial" target="_blank">ArcGIS</a> Account.</li>
+<li>A <a href="https://www.esri.com/en-us/arcgis/products/arcgis-pro/trial" target="_blank">ArcGIS Pro</a> Installed.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to : <ol type="1">
+<li>Register for a free trial.</li>
+<li>Use a different role that has the ability to <ul>
+<li>create database, schema, tables, stages ,UDFs.</li>
+<li>create secrets, network rule, external access integrations.</li>
+<li>create notebook, streamlit.</li>
+</ul>
+</li>
+<li>Use an existing database and schema in which you are able to create the mentioned objects.</li>
+</ol>
+</li>
+</ul>
+<h2 is-upgraded>Skills</h2>
+<p>It is assumed that you have the following skills:</p>
+<ul>
+<li>Intermediate knowledge of Snowflake.</li>
+<li>Intermediate knowledge of Snowpark (Python).</li>
+<li>Knowledge of creating and using Snowflake notebook.</li>
+<li>Knowledgeable on ArcGIS and ArcGIS Pro.</li>
+<li>Basic understanding of Geospatial concepts.</li>
+</ul>
+<aside class="special"><p><strong>INFO:</strong> If you want to understand Geospatial capabilities of Snowflake, please feel free to go over the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_geospatial_geography/index.html" target="_blank">Quickstart: Getting Started with Geospatial - Geography</a>.</p>
+</aside>
+<aside class="special"><p><strong>IMPORTANT:</strong> Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started" target="_blank">here</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up An ArcGIS account" duration="20">
+        <h2 is-upgraded>(Optional) Create ArcGIS account</h2>
+<p>This tutorial requires ArcGIS account, preferrably with appropriate privileges to create API key and optionally to connect via ArcGIS pro. If you do not have those privileges or wish to create one, you can sign up for an <a href="https://www.esri.com/en-us/arcgis/products/arcgis-online/trial" target="_blank">ArcGIS Online Trial</a> account.</p>
+<h2 is-upgraded>Create an API Key</h2>
+<p>You will be invoking API services in ArcGIS, using Snowpark UDF. For this, you will need to create an API key with appropriate privileges as found in the <a href="https://developers.arcgis.com/documentation/security-and-authentication/api-key-authentication/api-key-credentials/#create-api-key-credentials" target="_blank">documentation: Create API key credentials</a>.</p>
+<p>Keep the API key saved in a secure location. You will need it in the folowing steps.</p>
+<aside class="special"><p><strong>IMPORTANT:</strong> Ensure the privilege for the API key is enabled as below:</p>
+</aside>
+<p class="image-container"><img src="img/93bcdf050199fe4d.jpg"></p>
+<h2 is-upgraded>Configure ArcGIS Pro and Snowflake connectivity</h2>
+<p>You will be visualizing the service area using ArcGIS Pro. To do that, you will need to connect to your Snowflake account from ArcGIS Pro.</p>
+<p>Follow the instructions in the <a href="https://pro.arcgis.com/en/pro-app/latest/help/data/databases/connect-snowflake.htm" target="_blank">documentation: Connect to Snowflake from ArcGIS</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup An Snowflake Account" duration="10">
+        <h2 is-upgraded>Create Database and assets</h2>
+<p>In this step, you will create a new database, schema, and warehouse to store the data and run the queries.</p>
+<p><strong>NOTE:</strong> To keep it simple, we will using the accountadmin by default. But in real world, you should be using a custom role with the appropriate privileges.</p>
+<p>Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+
+-- you can create the warehouse as below or use any
+-- existing warehouse that you have access to.
+create warehouse if not exists compute_wh
+  warehouse_type = standard
+  warehouse_size = xsmall
+  auto_suspend = 600
+  auto_resume = true
+  initially_suspended = true
+  ;
+
+create database if not exists arcgis_db;
+
+-- a default schema &#39;public&#39; is created by default when a database is created.
+
+</code></pre>
+<aside class="special"><p><strong>IMPORTANT:</strong> If you want to explore and learn more about the Snowflake Notebook, please go over the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html" target="_blank">Quickstart: Getting Started with Snowflake Notebooks</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Defining UDF ServiceArea Calculation" duration="15">
+        <h2 is-upgraded>Importing and running the notebook</h2>
+<p>The codebase needed for the quickstart is available in the notebook. You will need to import it into your Snowflake account as follows:</p>
+<ol type="1">
+<li>Download the notebook: <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/ArcGIS_Snowflake/ARCGIS_SERVICEAREA.ipynb" target="_blank">ARCGIS_SERVICEAREA.ipynb</a>.Download the file by clicking on the <code>Download raw file</code> from the top right. <img alt="importing notebook" src="img/bbc2bd2b14e99f2f.jpg"></li>
+<li>On your Snowflake web interface, <a href="https://app.snowflake.com" target="_blank">Snowsight</a>, Navigate to <code>Project</code> &gt; <code>Notebooks</code> from the left menu bar.</li>
+<li>Click the notebook button on the top right and select <code>Import from .ipynb</code> from the dropdown.</li>
+<li>Select the downloaded notebook file from your local directory and press <code>Open</code>.</li>
+<li>A <code>Create Notebook</code> dialog will show up. Select database, schema, and warehouse for the Notebook and click <code>Create</code>. <img alt="Create Notebook" src="img/fd3d0fbfc3160059.jpg"></li>
+<li>Add packages to the notebook. You need to add the following packages: <ol type="1">
+<li>pydeck <img alt="add packages" src="img/c8ff055ed22209b0.jpg"></li>
+</ol>
+</li>
+<li>Update the variables in the cell ‘initialization&#39;. <img alt="update variables" src="img/961367176a95178f.jpg"></li>
+<li>Start the notebook session by clicking ‘Start&#39;. and wait for the status to change to ‘Active&#39;.</li>
+<li>Run the notebook cells, by clicking ‘Run all&#39;.</li>
+</ol>
+<h2 is-upgraded>Solution execution</h2>
+<p>Once all the cell has been executed successfully, you will see the following objects in the database.</p>
+<p class="image-container"><img src="img/dc2845f9d6217944.jpg"></p>
+<p>The notebook also creates an quick visualization of the service area also:</p>
+<p class="image-container"><img src="img/ce1ae1e8d3d014a.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualizing Using ArcGIS Pro" duration="10">
+        <p>In this step, you will be connecting to your Snowflake account from ArcGIS Pro and visualize the service areas.</p>
+<aside class="special"><p><strong>Warning:</strong> It is assumed that you had already Snowflake setup connection in ArcGIS Pro.</p>
+</aside>
+<ol type="1">
+<li>Open ArcGIS Pro, on your laptop and Create a new project</li>
+<li>Add a new map.</li>
+<li>Create a Snowflake connection, ensure database and role are set correctly. <img src="img/1a2fcabacea0e43b.jpg"></li>
+<li>Add the view &#39; vw_warehouses_serviceareas_serviceareas_feature&#39; to the map. <img src="img/6b58f4378691f047.jpg"></li>
+</ol>
+<ul>
+<li>In the resulting dialog, select as follows: <img src="img/34f73d055cbacae8.jpg"></li>
+<li>Update the Symbology as in the diagram: <img src="img/2004b584d2d24f37.jpg"></li>
+</ul>
+<ol type="1" start="5">
+<li>Repeat the process to add the view ‘vw_warehouses_serviceareas_address_feature&#39; to the map. This feature is to display the warehouse address location hence the Geometry Type is ‘Point&#39;. The Symbology need not be updated. <img src="img/947e9386080fa0c8.jpg"></li>
+</ol>
+<p>Once you have added the features to the map, you will see the service area and the warehouse location as shown below:</p>
+<p class="image-container"><img src="img/45686baf2bf30213.jpg"></p>
+<aside class="special"><p><strong>Idea:</strong> If you want to play with the layers you can take advantage of the <a href="https://pro.arcgis.com/en/pro-app/latest/help/mapping/layer-properties/create-a-query-layer-cloud-data-warehouse.htm" target="_blank">query layer feature in ArcGIS Pro</a>. This feature will allow you to create queries on the fly and customize your visualization of Snowflake data.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Having gone over the tutorial, you now have seen how to communicate with ArcGIS Location services and enrich your data.</p>
+<p>Snowflake provides powerful solutions when you bring Snowflake&#39;s advanced analytics, a rich set of geospatial functions, Cortex (Generative AI), Snowpark and Streamlit&#39;s visualization capabilities together. With a rich dataset of marketplace providers, and the ability to enrich and derive insights on your data and new use case is easier.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to define a Snowpark UDF which invokes the ArcGIS Location services.</li>
+<li>Stores the response back into the a table and extract appropriate geometry.</li>
+<li>Connect and visualize the service areas / isochrones using ArcGIS Pro.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions-geospatial" target="_blank">Snowflake Geospatial functions</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#1" target="_blank">Geospatial Analytics, AI and ML using Snowflake</a></li>
+<li><a href="https://developers.arcgis.com/rest/location-based-services/" target="_blank">ArcGIS Location services</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

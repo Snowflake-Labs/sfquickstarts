@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-predicting-insurance-claims-regression-model",
+  "duration": 19,
+  "title": "Getting Started with Predicting Insurance Claims using XGBoost Regression Model",
+  "summary": "This quickstart provides an end-to-end workflow for predicting insurance claim outcomes using machine learning, focusing on feature engineering, model training, and deployment.",
+  "source": "getting-started-with-predicting-insurance-claims-regression-model/getting-started-with-predicting-insurance-claims-regression-model.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-predicting-insurance-claims-regression-model"
+}

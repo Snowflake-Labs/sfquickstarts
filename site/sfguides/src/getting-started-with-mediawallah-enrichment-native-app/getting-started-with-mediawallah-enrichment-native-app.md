@@ -1,16 +1,15 @@
 author: Jeffrey Chen
 id: getting-started-with-mediawallah-enrichment-native-app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a guide to use MediaWallah's Enrichment Application
-categories: data-science, Getting-Started, data-science, data-applications
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, MediaWallah, Enrichment, Matchtest, Identity, Resolution, Graph
 
 # Getting Started with MediaWallah Enrichment Application
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 **Note: The Enrichment Application is currently only available on**
 `AWS US-EAST-1`
@@ -41,11 +40,10 @@ Enrichment results are returned in four tables.
 - The requied databases, schemas, warehouse, and role to use MediaWallah's Enrichment Application
 
 ### Architecture
-<!-- <img src="assets/solution_architecture.png" alt="solution_architecture" width="800"> -->
+<!-- ![assets/solution_architecture.png](assets/solution_architecture.png) -->
 ![solution_architecture](assets/solution_architecture.png)
 
 ## Installation
-Duration: 2
 
 ### Account Setup (Post-Install)
 Create objects and “helper” stored procedures.
@@ -419,7 +417,6 @@ GRANT APPLICATION ROLE MEDIAWALLAH_ENRICHMENT_APP.APP_ROLE TO ROLE C_MWEN_APP_AD
 
 <!-- ------------------------ -->
 ## Verify Installation
-Duration: 1
 
 Once the app is installed, the consumer should verify installation by querying the METADATA_C_V view. If the table’s headers are visible then the consumer can continue to Onboarding.
 **Example:**
@@ -433,7 +430,6 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V;
 
 <!-- ------------------------ -->
 ## Onboarding
-Duration: 1
 
 To be onboarded the consumer must send their CURRENT_ORGANIZATION_NAME, CURRENT_ACCOUNT, and CURRENT_ACCOUNT_NAME to operations@mediawallah.com; with the subject line “Native App Onboarding Request: MediaWallah MEDIAWALLAH_ENRICHMENT_APP App".
 These details can be found using the following queries:
@@ -457,7 +453,6 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V;
 
 <!-- ------------------------ -->
 ## Log/Metric Sharing
-Duration: 3
 
 After being successfully Onboarded, the consumer uses the **C_MWEN_APP_ADMIN** role to call the CREATE_LOG_SHARE helper stored procedure. This procedure creates the necessary database, tables, and share to store the logs and metrics tables and enable MediaWallah to access them.
 **Example:**
@@ -474,7 +469,6 @@ CALL C_MWEN_HELPER_DB.PRIVATE.CREATE_LOG_SHARE(
 
 <!-- ------------------------ -->
 ## Enablement
-Duration: 1
 
 The consumer will be automatically enabled once the log share is verified by the application (this process takes about two minutes). Query the METADATA_C_V table to check for successful enablement:
 **Example:**
@@ -489,7 +483,6 @@ WHERE KEY = 'enabled'
 
 <!-- ------------------------ -->
 ## Granting Application Access to the Consumer's Dataset(s)
-Duration: 1
 
 ### Granting Access to the Consumer’s Dataset(s)
 The application will need access to the consumer's dataset; **Either directly to the table or a view of the table.**
@@ -516,7 +509,6 @@ CREATE OR REPLACE VIEW C_MWEN_HELPER_DB.SOURCE.[CONSUMER_VIEW] AS
 
 <!-- ------------------------ -->
 ## Generating Requests
-Duration: 5
 
 Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumer’s allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. View [Results Guide](https://nativeapps.mediawallah.com/MEDIAWALLAH_ENRICHMENT_APP/MWEN%20-%20Results%20Guide.pdf) for a detailed explanation of the generated data.
 Optimal warehouse sizing will depend on consumer input dateset dimensions. MediaWallah maintains an average run times based on historical runs in a Warehouse Sizing Doc, ask for details.
@@ -584,7 +576,6 @@ CALL C_MWEN_HELPER_DB.PRIVATE.GENERATE_REQUEST(
 
 <!-- ------------------------ -->
 ## Parameters Description
-Duration: 1
 
 ##### JSON Parameters Description
 ```markdown
@@ -639,7 +630,6 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Match Key Type
-Duration: 1
 
 ##### Available options for match_key_type:
 *note*: allowed match_key_types may vary due to contract
@@ -674,7 +664,6 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Return Type
-Duration: 1
 
 ##### Available options for return_types:
 *note*: allowed return_types may vary due to contract
@@ -744,7 +733,6 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Viewing Results
-Duration: 1
 #### View Results
 Depending on which application (aka proc_name) used, the GENERATE_REQUEST procedure will generate different outputs based on the RESULTS_TABLE.
 **Matchtest**
@@ -787,7 +775,6 @@ ORDER BY BUCKET_TYPE, MATCHED_DATA_TYPE
 ```
 <!-- ------------------------ -->
 ## Using ARID
-Duration: 5
 
 An ARID (App Resolution Identifier) is the primary key generated per run of the application, used to join the original data with enriched digital data, enriched offline data and/or enriched audience segment data.
 **Example joining Data**
@@ -819,7 +806,6 @@ ON (
 
 <!-- ------------------------ -->
 ## Metadata (Reference)
-Duration: 1
 #### Metadata (Reference)
 ```markdown
 SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
@@ -858,7 +844,6 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
 
 <!-- ------------------------ -->
 ## Uninstall (Optional)
-Duration: 1
 #### Uninstall (Optional)
 In the event the consumer wishes to uninstall the app, the consumer can use the **C_MWEN_APP_ADMIN** role to call the UNINSTALL helper stored procedure. This procedure will drop the application database, the logs share, and the shared logs database. The Application Share (which includes the results and logs tables) will be permanently removed from the consumer’s Snowflake instance.
 **Note**: It is important to note any data generated by the application stored in MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP will be lost. Please export results accordingly.
@@ -891,7 +876,6 @@ DROP ROLE C_MWEN_APP_ADMIN;
 
 <!-- ------------------------ -->
 ## Upgrade (Optional)
-Duration: 1
 
 #### Upgrade (Optional)
 As new versions and patches are relased. To Upgrade use the following commands.
@@ -902,7 +886,6 @@ ALTER APPLICATION MEDIAWALLAH_ENRICHMENT_APP UPGRADE;
 
 <!-- ------------------------ -->
 ## Re-Enablement
-Duration: 2
 
 #### Re-Enablement
 Consumer usage of the application is disabled when either of the following happens:
@@ -929,7 +912,6 @@ If the log share no longer exists, the share can be re-created by calling the CR
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Conclusions
 Congratulations! You've successfully completed the Getting Started with MediaWallah Enrichment Native Application quickstarts Guide.
@@ -950,5 +932,7 @@ We look forward to working with you. Please reach out for any questions snowflak
 - [Reference Architecture](https://drive.google.com/file/d/1Es4gaeOOmpfmBDSp9RkCIGZB1PQHyzHg/view])
 - [Blog](https://medium.com/snowflake/ultra-secure-identity-and-audience-profile-enrichment-made-simple-21e48a56ab4a)
 <!-- - [<link to github code repo>] -->
+[Fork Repo on GitHub](https://github.com/Snowflake-Labs/sf-samples/pull/155)
 <!-- - [<link to documentation>] -->
 <!-- - [<link to youtube>] -->
+[Watch the Demo](https://youtu.be/I4e-qj5jHW8?list=TLGGsB5qTdKOvZ4yNDA5MjAyNQ)

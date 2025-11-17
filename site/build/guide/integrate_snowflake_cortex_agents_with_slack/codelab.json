@@ -1,0 +1,21 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "integrate_snowflake_cortex_agents_with_slack",
+  "duration": 43,
+  "title": "Getting Started with Cortex Agents and Slack",
+  "summary": "This guide outlines the process for integrating Snowflake Cortex Agents with Slack.",
+  "source": "integrate_cortex_agents_with_slack/integrate_cortex_agents_with_slack.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": null,
+  "tags": [
+    "web"
+  ],
+  "url": "integrate_snowflake_cortex_agents_with_slack"
+}

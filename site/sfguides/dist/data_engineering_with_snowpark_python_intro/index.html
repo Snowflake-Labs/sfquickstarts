@@ -1,0 +1,586 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Intro to Data Engineering with Snowpark Python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_with_snowpark_python_intro"
+                  title="Intro to Data Engineering with Snowpark Python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p>This Quickstart will cover the basics of data engineering with Snowpark for Python. By completing this guide, you will be able to build a data pipeline to process data from different sources, and periodically run the pipeline to update your data tables in Snowflake.</p>
+<p>Here is a summary of what you will be able to learn in each step by following this quickstart:</p>
+<ul>
+<li><strong>Setup Environment</strong>: Use stages and tables to ingest and organize raw data from S3 into Snowflake</li>
+<li><strong>Snowflake Marketplace</strong>: Download the data you need from Snowflake Marketplace and use it for your analysis</li>
+<li><strong>Data Engineering</strong>: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, and join to prep for the data for downstream applications</li>
+<li><strong>Orchestrating Pipelines</strong>: Use Snowflake Python Tasks API to turn your data pipeline code into operational pipelines with integrated monitoring</li>
+</ul>
+<p>In case you are new to some of the technologies mentioned above, here is a quick summary with the links to documentation.</p>
+<h2 is-upgraded>What is Snowpark?</h2>
+<p>Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Snowpark can be used to build data pipelines, ML models, apps, and other data processing tasks.</p>
+<p><strong>Client Side Libraries</strong> - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.</p>
+<p><strong>Code Execution Environments</strong> - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. These server-side capabilities allow users to bring in and run custom logic in Python with user-defined functions and stored procedures.</p>
+<p>Learn more about <a href="https://www.snowflake.com/snowpark/" target="_blank">Snowpark</a>.</p>
+<p class="image-container"><img alt="Snowpark" src="img/850013255a9d6c40.png"></p>
+<h2 is-upgraded>Working with Snowflake Marketplace</h2>
+<p>Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.</p>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>How to ingest data from an external stage such as an S3 bucket into a Snowflake table</li>
+<li>How to access data from Snowflake Marketplace and use it for your analysis</li>
+<li>How to analyze data and perform data engineering tasks using Snowpark DataFrame API, Python Stored Procedures and more</li>
+<li>How to use open-source Python libraries from curated Snowflake Anaconda channel</li>
+<li>How to create Snowflake Tasks and use the Python Tasks API to schedule data pipelines</li>
+<li>How to use VS Code extension for Snowflake to perform standard snowflake operations from VS Code and Snowsigt UI</li>
+</ul>
+<p class="image-container"><img style="width: 800.00px" src="img/30d89accfa7fee7d.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Python</li>
+<li>Familiarity with the DataFrame API</li>
+<li>Familiarity with Snowflake</li>
+<li>Familiarity with Git repositories and GitHub</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ul>
+<li>Snowflake account <ul>
+<li><strong>A Snowflake Account</strong></li>
+<li><strong>A Snowflake user created with ACCOUNTADMIN permissions</strong>. This user will be used to get things setup in Snowflake.</li>
+<li><strong>Anaconda Terms &amp; Conditions accepted</strong>. See Getting Started section in <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started" target="_blank">Third-Party Packages</a>.</li>
+</ul>
+</li>
+<li>GitHub account <ul>
+<li><strong>A GitHub account</strong>. If you don&#39;t already have a GitHub account you can create one for free. Visit the <a href="https://github.com/signup" target="_blank">Join GitHub</a> page to get started.</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Quickstart Setup" duration="10">
+        <h2 is-upgraded>Fork the GitHub Repository</h2>
+<p>The very first step is to fork the GitHub repository <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro" target="_blank">Intro to Data Engineering with Snowpark Python associated GitHub Repository</a>. This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the &#34;Fork&#34; button near the top right. Complete any required fields and click &#34;Create Fork&#34;.</p>
+<h2 is-upgraded>Create GitHub Codespace</h2>
+<p>For this Quickstart we will be using <a href="https://docs.github.com/en/codespaces/overview" target="_blank">GitHub Codespaces</a> for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers <a href="https://github.com/features/codespaces" target="_blank">60 hours for free each month</a> when using a 2 node environment, which should be enough to work through this lab.</p>
+<p>To create a GitHub Codespace, click on the green <code><> Code</code> button from the GitHub repository homepage. In the Code popup, click on the <code>Codespaces</code> tab and then on the green <code>Create codespace on main</code>.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/ae29eb7744471dd9.png"></p>
+<p>This will open a new tab and begin setting up your codespace. It will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:</p>
+<ul>
+<li>Creating a container for your environment</li>
+<li>Installing Anaconda (miniconda)</li>
+<li>SnowSQL setup <ul>
+<li>Installing SnowSQL</li>
+<li>Creating a directory and default config file for SnowSQL</li>
+</ul>
+</li>
+<li>Anaconda setup <ul>
+<li>Creating the Anaconda environment</li>
+<li>Installing the Snowpark Python library</li>
+</ul>
+</li>
+<li>VS Code setup <ul>
+<li>Installing VS Code</li>
+<li>Installing the Snowflake VS Code extension</li>
+</ul>
+</li>
+<li>Starting a hosted, web-based VS Code editor</li>
+</ul>
+<p>Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we&#39;re ready to start.</p>
+<aside class="special"><p><strong>NOTE</strong>: Going forward references to <code>VS Code</code> means the VS Code editor on the Codespaces</p>
+</aside>
+<h2 is-upgraded>Configure Snowflake Credentials</h2>
+<p>We will not be directly using <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">the SnowSQL command line client</a> for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at <code>~/.snowsql/config</code>. A default config file was created for you during the codespace setup.</p>
+<p>The easiest way to edit the default <code>~/.snowsql/config</code> file is directly from VS Code in your codespace. Type <code>Command-P</code>, type (or paste) <code>~/.snowsql/config</code> and hit return. The SnowSQL config file should now be open. You just need to edit the file and replace the <code>accountname</code>, <code>username</code>, and <code>password</code> with your values. See <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier#finding-the-organization-and-account-name-for-an-account" target="_blank">here</a> on how to find the  account identifier, and make sure to replace the dot between the organization name and the account name with a hyphen. Then save and close the file.</p>
+<p><strong>Note:</strong> The SnowCLI tool (and by extension this Quickstart) currently does not work with Key Pair authentication. It simply grabs your username and password details from the shared SnowSQL config file.</p>
+<h2 is-upgraded>Verify Your Anaconda Environment is Activated</h2>
+<p>During the codespace setup we created an Anaconda environment named <code>snowflake-demo</code>. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see <code>(snowflake-demo)</code> before your bash prompt.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake Objects" duration="10">
+        <h2 is-upgraded>Snowflake Extensions for VS Code</h2>
+<p>You can run SQL queries and Python APIs against Snowflake in many different ways through the Snowsight UI, SnowCLI, etc. But for this Quickstart we&#39;ll be using the Snowflake extension for VS Code. For a brief overview of Snowflake&#39;s native extension for VS Code, please check out our <a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">VS Code Marketplace Snowflake extension page</a>.</p>
+<p>To put this in context, we are on step <strong>#3</strong> in our data flow overview:</p>
+<p class="image-container"><img alt="Quickstart Pipeline Overview" src="img/30d89accfa7fee7d.png"></p>
+<h2 is-upgraded>Create Roles, Databases, Tables, Schema and Stages</h2>
+<p>You can log into <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> or VS Code to create all the snowflake objects needed to work through this guide.</p>
+<p>For the purpose of this quickstart, we will use VS Code to run the SQL commands and create the Snowflake objects. To do that, open the Snowflake extension tab on the left and use the account identifier and other credentials you previously entered in the SnowSQL config to sign in.</p>
+<p>You can now open the sql file <code>steps/03_setup_snowflake.sql</code> in VS Code. You can click on the <code>Execute</code> option above every SQL command to run each command separately or click on <code>Execute All</code> to run all the commands sequentially.</p>
+<p class="image-container"><img alt="Execute in VS Code" src="img/77c7a59fc5cd6878.png"></p>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</li>
+<li>For each SQL script block below, select all the statements in the block and execute them top to bottom.</li>
+</ul>
+</aside>
+<p>Let&#39;s run through the commands individually and understand what each command does and finally create Snowflake Objects required for the lab.</p>
+<h2 is-upgraded>Creating Account Level Objects</h2>
+<ul>
+<li>In this step, we create the role <code>HOL_ROLE</code> and assign this role to <code>CURRENT_USER()</code> within Snowflake. This role will have access permissions to create all the Snowflake objects needed for the quickstart. First, grant the <code>HOL_ROLE</code> the same permissions as <code>SYSADMIN</code> role. Then, grant permissions to run tasks, monitor the execution of tasks and to import privileges on the database to <code>HOL_ROLE</code>.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SET MY_USER = CURRENT_USER();
+CREATE OR REPLACE ROLE HOL_ROLE;
+GRANT ROLE HOL_ROLE TO ROLE SYSADMIN;
+GRANT ROLE HOL_ROLE TO USER IDENTIFIER($MY_USER);
+
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE HOL_ROLE;
+GRANT MONITOR EXECUTION ON ACCOUNT TO ROLE HOL_ROLE;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE HOL_ROLE;
+</code></pre>
+<ul>
+<li>Create a new database <code>HOL_DB</code> and assign ownership of the database to <code>HOL_ROLE</code>.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE HOL_DB;
+GRANT OWNERSHIP ON DATABASE HOL_DB TO ROLE HOL_ROLE;
+</code></pre>
+<ul>
+<li>Create a new warehouse <code>HOL_WH</code> to serve the compute requirements for the quickstart. I have used a XSMALL warehouse, and configured it to auto suspend after 300 seconds (5 mins), and enabled auto resume on it. I have assigned ownership of the warehouse to the <code>HOL_ROLE</code> too.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE HOL_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, AUTO_RESUME= TRUE;
+GRANT OWNERSHIP ON WAREHOUSE HOL_WH TO ROLE HOL_ROLE;
+</code></pre>
+<h3 is-upgraded>Database Level Objects</h3>
+<ul>
+<li>Set the right Database Context such as role, warehouse and database,</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE HOL_ROLE;
+USE WAREHOUSE HOL_WH;
+USE DATABASE HOL_DB;
+
+USE SCHEMA HOL_SCHEMA;
+CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
+    URL = &#39;s3://sfquickstarts/data-engineering-with-snowpark-python/&#39;
+;
+</code></pre>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Weather" duration="5">
+        <p>During this step we will be &#34;loading&#34; the raw weather data to Snowflake. But &#34;loading&#34; is really the wrong word here. Because we&#39;re using Snowflake&#39;s unique data sharing capability we don&#39;t actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace.</p>
+<p>To put this in context, we are on step <strong>#4</strong> in our data flow overview:</p>
+<p class="image-container"><img alt="Quickstart Pipeline Overview" src="img/30d89accfa7fee7d.png"></p>
+<h2 is-upgraded>Snowflake Marketplace</h2>
+<p>Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.</p>
+<p>But what about data that needs constant updating - like the WEATHER data? We would need to build a pipeline process to constantly update that data to keep it fresh. Perhaps a better way to get this external data would be to source it from a trusted data supplier. Let them manage the data, keeping it accurate and up to date.</p>
+<h2 is-upgraded>Weather data from Snowflake Marketplace</h2>
+<p>Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let&#39;s connect to the <code>Weather Source LLC: frostbyte</code> feed from Weather Source in the Snowflake Marketplace by following these steps:</p>
+<ul>
+<li>Login to Snowsight</li>
+<li>Click on the <code>Marketplace</code> link in the left navigation bar</li>
+<li>Enter &#34;Weather Source LLC: frostbyte&#34; in the search box and click return</li>
+<li>Click on the &#34;Weather Source LLC: frostbyte&#34; listing tile</li>
+<li>Click the blue &#34;Get&#34; button <ul>
+<li>Expand the &#34;Options&#34; dialog</li>
+<li>Change the &#34;Database name&#34; to read &#34;FROSTBYTE_WEATHERSOURCE&#34; (all capital letters)</li>
+<li>Select the &#34;HOL_ROLE&#34; role to have access to the new database</li>
+</ul>
+</li>
+<li>Click on the blue &#34;Get&#34; button</li>
+</ul>
+<p class="image-container"><img alt="Snowflake Marketplace" src="img/2b38c38edcec7a06.png"></p>
+<p>That&#39;s it... we don&#39;t have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn&#39;t have to do here to get access to an always up-to-date, third-party dataset!</p>
+<h2 is-upgraded>Query the Weather data</h2>
+<p>Open the <code>steps/04_load_weather.sql</code> script in VS Code from the file Explorer in the left navigation bar, and select <code>Execute All</code> from the top right corner. Notice how easy it is to query data shared through the Snowflake Marketplace! You access it just like any other table or view in Snowflake:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
+</code></pre>
+<p>You can also view the shared database <code>FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODE</code> by navigating to the Snowsight UI -&gt; Data -&gt; Databases.</p>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>If you used a different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Location and Order Detail" duration="10">
+        <p>During this step we will be &#34;loading&#34; the raw excel files containing location and order details data from an external stage (s3 bucket) to Snowflake using the Dynamic File Access feature. If you would like to peek at the raw excel files, you can check out the <code>data</code> folder in the <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data" target="_blank">Git repo</a>. We use a Python stored procedure to load this data from an S3 bucket into a Snowflake table.</p>
+<p>In this step, we will run through the commands in the SQL file <code>steps/05_load_excel_files.sql</code>. You can open the sql file <code>steps/05_load_excel_files.sql</code> in VS Code. You can click on the <code>Execute</code> option above every SQL command to run each command separately or click on <code>Execute All</code> to run all the commands sequentially.</p>
+<p>To put this in context, we are on step <strong>#5</strong> in our data flow overview:</p>
+<p class="image-container"><img alt="Quickstart Pipeline Overview" src="img/30d89accfa7fee7d.png"></p>
+<h2 is-upgraded>Dynamic File Access</h2>
+<p>You can read a file from an internal or external stage using the <code>SnowflakeFile</code> class in the Snowpark <code>snowflake.snowpark.files</code> module. The <code>SnowflakeFile</code> class provides dynamic file access, which lets you stream files of any size.</p>
+<h2 is-upgraded>Loading Excel files from an External Stage</h2>
+<p>In this quickstart, we will use dynamic file access to load the excel files from an s3 bucket (an external stage we created before <code>FROSTBYTE_RAW_STAGE</code>).</p>
+<p>First let&#39;s check if the two excel files are present in the S3 bucket by calling <code>LIST</code> on the stage.</p>
+<pre><code language="language-sql" class="language-sql">LIST @FROSTBYTE_RAW_STAGE/intro;
+</code></pre>
+<h2 is-upgraded>Creating the Stored Procedure to load Excel files</h2>
+<p>During this step we will be creating our first Snowpark Python stored procedure (or SPROC) to Snowflake. This SPROC <code>LOAD_EXCEL_WORKSHEET_TO_TABLE_SP</code> will load the excel data files into snowflake tables for further analysis.</p>
+<p>Below is the SQL query to create the SPROC:</p>
+<ul>
+<li>We use the python runtime 3.10 for the SPROC</li>
+<li>We use the python packages <code>snowflake-snowpark-python</code>, <code>pandas</code> and <code>openpyxl</code> to load excel files</li>
+<li>Then import <code>snowflake.snowpark.files.SnowflakeFile</code> for the dynamic file access to load file from an external stage</li>
+<li>We use <code>Snowflake.open()</code> to open the excel file, read the contents of the file into a pandas DataFrame, and save the DataFrame as a Snowflake table using <code>save_as_table()</code> API.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE PROCEDURE LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(file_path string, worksheet_name string, target_table string)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.10&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;, &#39;pandas&#39;, &#39;openpyxl&#39;)
+HANDLER = &#39;main&#39;
+AS
+$$
+from snowflake.snowpark.files import SnowflakeFile
+from openpyxl import load_workbook
+import pandas as pd
+ 
+def main(session, file_path, worksheet_name, target_table):
+ with SnowflakeFile.open(file_path, &#39;rb&#39;) as f:
+     workbook = load_workbook(f)
+     sheet = workbook.get_sheet_by_name(worksheet_name)
+     data = sheet.values
+ 
+     # Get the first line in file as a header line
+     columns = next(data)[0:]
+     # Create a DataFrame based on the second and subsequent lines of data
+     df = pd.DataFrame(data, columns=columns)
+ 
+     df2 = session.create_dataframe(df)
+     df2.write.mode(&#34;overwrite&#34;).save_as_table(target_table)
+ 
+ return True
+$$;
+</code></pre>
+<h2 is-upgraded>Running the Sproc in Snowflake</h2>
+<p>In the above step, we only created the Stored procedure. However, we need to invoke <code>CALL</code> on the SPROC to actually load the excel files into a Snowflake target table.</p>
+<p>To load <code>ORDER_DETAIL.xlsx</code> file, you can run the following SQL command in the SQL file <code>steps/05_load_excel_files.sql</code> from VS Code.</p>
+<pre><code language="language-sql" class="language-sql">CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(BUILD_SCOPED_FILE_URL(@FROSTBYTE_RAW_STAGE, &#39;intro/order_detail.xlsx&#39;), &#39;order_detail&#39;, &#39;ORDER_DETAIL&#39;);
+</code></pre>
+<p>To laod the <code>LOCATION.xlsx</code> file, you can run the following SQL command in the SQL file <code>steps/05_load_excel_files.sql</code> from VS Code.</p>
+<pre><code language="language-sql" class="language-sql">CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(BUILD_SCOPED_FILE_URL(@FROSTBYTE_RAW_STAGE, &#39;intro/location.xlsx&#39;), &#39;location&#39;, &#39;LOCATION&#39;);
+</code></pre>
+<p>Next up, to verify if the excel files are loaded successfully into respective Snowflake tables, you can run the following <code>DESC</code> and <code>SELECT</code> statements from VS Code.</p>
+<pre><code language="language-sql" class="language-sql">DESCRIBE TABLE ORDER_DETAIL;
+SELECT * FROM ORDER_DETAIL;
+
+DESCRIBE TABLE LOCATION;
+SELECT * FROM LOCATION;
+</code></pre>
+<p>Fantastic. We now have all the raw data needed to build our data pipeline and further analyze them.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Daily City Metrics Update Sproc" duration="10">
+        <p>During this step we will be creating our second Snowpark Python sproc to Snowflake. This sproc will join the <code>ORDER_DETAIL</code> table with the <code>LOCATION</code> table and <code>HISTORY_DAY</code> table to create a final, aggregated table for analysis named <code>DAILY_CITY_METRICS</code>.</p>
+<p>In this step, we will run through the commands in the SQL file <code>steps/06_load_daily_city_metrics.sql</code>. You can open the sql file <code>steps/06_load_daily_city_metrics.sql</code> in VS Code. You can click on the <code>Execute</code> option above every SQL command to run each command separately or click on <code>Execute All</code> to run all the commands sequentially.</p>
+<p>To put this in context, we are on step <strong>#6</strong> in our data flow overview:</p>
+<p class="image-container"><img alt="Quickstart Pipeline Overview" src="img/30d89accfa7fee7d.png"></p>
+<h2 is-upgraded>Creating Sproc to Calculate Daily City Metrics</h2>
+<p>Below is the SQL query to create the SPROC:</p>
+<ul>
+<li>We use the python runtime 3.10 for the SPROC, and use the python package <code>snowflake-snowpark-python</code></li>
+<li>First part of the Sproc contains <code>table_exists()</code> function which we use to verify if the raw tables exist in the defined database and schema.</li>
+<li>Second part of the Sproc contains the  <code>main()</code> function that reads the raw tables <code>ORDER_DETAIL</code>, <code>LOCATION</code>, and <code>FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.HISTORY_DAY</code>. Remember the Frostbyte Weather Source data is from Snowflake Marketplace but we can use it like any other standard snowflake table.</li>
+<li>After loading all 3 raw tables into their respective Snowpark Python Dataframes, we prepare to join the Dataframes.</li>
+<li>We join all three Dataframes into a final DataFrame <code>order_detail</code>.</li>
+<li>Next step is data aggregation based on date, country and city. So we use group_by() on <code>DATE_VALID_STD</code>, <code>ISO_COUNTRY_CODE</code> and <code>CITY_NAME</code> columns.</li>
+<li>After grouping by these 3 columns, we calculate the aggregate daily sales, daily average temperature in Farenheit, and daily average precipitation in inches.</li>
+<li>The resulting DataFrame called <code>final_agg</code> is saved. If the table <code>DAILY_CITY_METRICS</code> does not exist, we create a table and save the <code>final_agg</code> DataFrame as a table. If the table already exists, we append it to the existing table using Snowpark <code>merge()</code> function.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE PROCEDURE LOAD_DAILY_CITY_METRICS_SP()
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.10&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+HANDLER = &#39;main&#39;
+AS
+$$
+from snowflake.snowpark import Session
+import snowflake.snowpark.functions as F
+
+def table_exists(session, schema=&#39;&#39;, name=&#39;&#39;):
+    exists = session.sql(&#34;SELECT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = &#39;{}&#39; AND TABLE_NAME = &#39;{}&#39;) AS TABLE_EXISTS&#34;.format(schema, name)).collect()[0][&#39;TABLE_EXISTS&#39;]
+    return exists
+
+def main(session: Session) -&gt; str:
+    schema_name = &#34;HOL_SCHEMA&#34;
+    table_name = &#34;DAILY_CITY_METRICS&#34;
+
+    # Define the tables
+    order_detail = session.table(&#34;ORDER_DETAIL&#34;)
+    history_day = session.table(&#34;FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.HISTORY_DAY&#34;)
+    location = session.table(&#34;LOCATION&#34;)
+
+    # Join the tables
+    order_detail = order_detail.join(location, order_detail[&#39;LOCATION_ID&#39;] == location[&#39;LOCATION_ID&#39;])
+    order_detail = order_detail.join(history_day, (F.builtin(&#34;DATE&#34;)(order_detail[&#39;ORDER_TS&#39;]) == history_day[&#39;DATE_VALID_STD&#39;]) &amp; (location[&#39;ISO_COUNTRY_CODE&#39;] == history_day[&#39;COUNTRY&#39;]) &amp; (location[&#39;CITY&#39;] == history_day[&#39;CITY_NAME&#39;]))
+
+    # Aggregate the data
+    final_agg = order_detail.group_by(F.col(&#39;DATE_VALID_STD&#39;), F.col(&#39;CITY_NAME&#39;), F.col(&#39;ISO_COUNTRY_CODE&#39;)) \
+                        .agg( \
+                            F.sum(&#39;PRICE&#39;).alias(&#39;DAILY_SALES_SUM&#39;), \
+                            F.avg(&#39;AVG_TEMPERATURE_AIR_2M_F&#39;).alias(&#34;AVG_TEMPERATURE_F&#34;), \
+                            F.avg(&#34;TOT_PRECIPITATION_IN&#34;).alias(&#34;AVG_PRECIPITATION_IN&#34;), \
+                        ) \
+                        .select(F.col(&#34;DATE_VALID_STD&#34;).alias(&#34;DATE&#34;), F.col(&#34;CITY_NAME&#34;), F.col(&#34;ISO_COUNTRY_CODE&#34;).alias(&#34;COUNTRY_DESC&#34;), \
+                            F.builtin(&#34;ZEROIFNULL&#34;)(F.col(&#34;DAILY_SALES_SUM&#34;)).alias(&#34;DAILY_SALES&#34;), \
+                            F.round(F.col(&#34;AVG_TEMPERATURE_F&#34;), 2).alias(&#34;AVG_TEMPERATURE_FAHRENHEIT&#34;), \
+                            F.round(F.col(&#34;AVG_PRECIPITATION_IN&#34;), 2).alias(&#34;AVG_PRECIPITATION_INCHES&#34;), \
+                        )
+
+    # If the table doesn&#39;t exist then create it
+    if not table_exists(session, schema=schema_name, name=table_name):
+        final_agg.write.mode(&#34;overwrite&#34;).save_as_table(table_name)
+
+        return f&#34;Successfully created {table_name}&#34;
+    # Otherwise update it
+    else:
+        cols_to_update = {c: final_agg[c] for c in final_agg.schema.names}
+
+        dcm = session.table(f&#34;{schema_name}.{table_name}&#34;)
+        dcm.merge(final_agg, (dcm[&#39;DATE&#39;] == final_agg[&#39;DATE&#39;]) &amp; (dcm[&#39;CITY_NAME&#39;] == final_agg[&#39;CITY_NAME&#39;]) &amp; (dcm[&#39;COUNTRY_DESC&#39;] == final_agg[&#39;COUNTRY_DESC&#39;]), \
+                            [F.when_matched().update(cols_to_update), F.when_not_matched().insert(cols_to_update)])
+
+        return f&#34;Successfully updated {table_name}&#34;
+$$;
+</code></pre>
+<h2 is-upgraded>Running the Sproc</h2>
+<p>In the above step, we only created a Stored procedure. However, we need to invoke <code>CALL</code> on the SPROC to actually perform those aggregations and calculations.</p>
+<p>To calculate <code>final_agg</code> and update the <code>DAILY_CITY_METRICS</code> table, you can run the following SQL command in the SQL file <code>steps/06_load_daily_city_metrics.sql</code> from VS Code.</p>
+<pre><code language="language-sql" class="language-sql">CALL LOAD_DAILY_CITY_METRICS_SP();
+</code></pre>
+<p>You can also simply run the entire script from Snowsight UI or VS Code. Execute the <code>steps/06_load_daily_city_metrics.sql</code> script by selecting Execute All from VS Code.</p>
+<h2 is-upgraded>Viewing What Happened in Snowflake</h2>
+<p>The <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history" target="_blank">Query History</a> in Snowflake is a very powerful feature, that logs every query run against your Snowflake account, no matter which tool or process initiated it. And this is especially helpful when working with client tools and APIs.</p>
+<p>The stored procedure we invoked in the previous step <code>LOAD_DAILY_CITY_METRICS_SP</code> would be logged in the Query History tab in the Snowsight UI.</p>
+<h2 is-upgraded>More on the Snowpark API</h2>
+<p>In this step we&#39;re starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the <a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html" target="_blank">Spark SQL API</a>. To begin with you need to create a Snowpark session object. Like PySpark, this is accomplished with the <code>Session.builder.configs().create()</code> methods.</p>
+<p>When building a Snowpark Python sproc the contract is that the first argument to the entry point (or handler) function is a Snowpark session.</p>
+<p>The first thing you&#39;ll notice in the <code>steps/06_load_daily_city_metrics.sql</code> script is that we have some functions which use SQL to create objects in Snowflake and to check object status. To issue a SQL statement to Snowflake with the Snowpark API you use the <code>session.sql()</code> function, like you&#39;d expect. Here&#39;s one example:</p>
+<pre><code language="language-python" class="language-python">def table_exists(session, schema=&#39;&#39;, name=&#39;&#39;):
+    exists = session.sql(&#34;SELECT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = &#39;{}&#39; AND TABLE_NAME = &#39;{}&#39;) AS TABLE_EXISTS&#34;.format(schema, name)).collect()[0][&#39;TABLE_EXISTS&#39;]
+    return exists
+</code></pre>
+<p>The second thing to point out is how we&#39;re using DataFrames to join the data from different data sources into an <code>ORDER_DETAIL</code> df using the <code>join()</code> API.</p>
+<pre><code language="language-python" class="language-python">order_detail = order_detail.join(location, order_detail[&#39;LOCATION_ID&#39;] == location[&#39;LOCATION_ID&#39;])
+    order_detail = order_detail.join(history_day, (F.builtin(&#34;DATE&#34;)(order_detail[&#39;ORDER_TS&#39;]) == history_day[&#39;DATE_VALID_STD&#39;]) &amp; (location[&#39;ISO_COUNTRY_CODE&#39;] == history_day[&#39;COUNTRY&#39;]) &amp; (location[&#39;CITY&#39;] == history_day[&#39;CITY_NAME&#39;]))
+</code></pre>
+<p>The last thing to point out is how we are using the Snowpark Python Dataframe APIs to aggregate DataFrames using APIs such as <code>agg()</code>, <code>group_by()</code>, and <code>select()</code>.</p>
+<pre><code language="language-python" class="language-python">final_agg = order_detail.group_by(F.col(&#39;DATE_VALID_STD&#39;), F.col(&#39;CITY_NAME&#39;), F.col(&#39;ISO_COUNTRY_CODE&#39;)) \
+                        .agg( \
+                            F.sum(&#39;PRICE&#39;).alias(&#39;DAILY_SALES_SUM&#39;), \
+                            F.avg(&#39;AVG_TEMPERATURE_AIR_2M_F&#39;).alias(&#34;AVG_TEMPERATURE_F&#34;), \
+                            F.avg(&#34;TOT_PRECIPITATION_IN&#34;).alias(&#34;AVG_PRECIPITATION_IN&#34;), \
+                        ) \
+                        .select(F.col(&#34;DATE_VALID_STD&#34;).alias(&#34;DATE&#34;), F.col(&#34;CITY_NAME&#34;), F.col(&#34;ISO_COUNTRY_CODE&#34;).alias(&#34;COUNTRY_DESC&#34;), \
+                            F.builtin(&#34;ZEROIFNULL&#34;)(F.col(&#34;DAILY_SALES_SUM&#34;)).alias(&#34;DAILY_SALES&#34;), \
+                            F.round(F.col(&#34;AVG_TEMPERATURE_F&#34;), 2).alias(&#34;AVG_TEMPERATURE_FAHRENHEIT&#34;), \
+                            F.round(F.col(&#34;AVG_PRECIPITATION_IN&#34;), 2).alias(&#34;AVG_PRECIPITATION_INCHES&#34;), \
+                        )
+</code></pre>
+<p>Again, for more details about the Snowpark Python DataFrame API, please check out our <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Working with Dataframe in Snowpark Python</a> page.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Orchestrate Jobs" duration="10">
+        <p>During this step we will be orchestrating our new Snowpark pipelines with Snowflake&#39;s native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as Python Task APIs. For the scope of this quickstart, we will use Snowflake Python Task APIs to create and run Tasks.</p>
+<p>In this step, we will create two tasks, one for each stored procedure, and chain them together. We will then deploy or run the tasks to operationalize the data pipeline.</p>
+<p>In this step, we will run through the commands in the Python file <code>steps/07_deploy_task_dag.py</code> from VS Code. To execute the file, you can open the terminal in VS Code and run <code>cd steps && python 07_deploy_task_dag.py</code>.</p>
+<p>To put this in context, we are on step <strong>#7</strong> in our data flow overview:</p>
+<p class="image-container"><img alt="Quickstart Pipeline Overview" src="img/30d89accfa7fee7d.png"></p>
+<h2 is-upgraded>Exploring the different terminologies associated with Snowflake Tasks</h2>
+<ul>
+<li><strong>Tasks</strong>: Task is a basic, smallest unit of execution. A task can execute a single SQL statement, a call to a stored procedure, or any procedural logic using <a href="https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index" target="_blank">Snowflake Scripting</a>. One or more tasks make up a Dag.  A root task is a special type of task which is the first task in a dag with no parent tasks before it.</li>
+<li><strong>Dags</strong>: A Directed Acyclic Graph (DAG) is a series of tasks composed of a single root task and additional tasks, organized by their dependencies. DAGs flow in a single direction, meaning a task runs only after all of its predecessor tasks have run successfully to completion.</li>
+<li><strong>Schedule Interval</strong>: Schedule interval refers to the interval of time between successive scheduled executions of a standalone task or the root task in a DAG.</li>
+<li><strong>Deploying a Dag</strong>: When you create a dag, you define the schedule interval, transformation logic in the tasks and task dependencies. However, you need to deploy a dag to actually run those transformations on the schedule. If you don&#39;t deploy the dag, the dag will not run on the schedule.</li>
+<li><strong>Running a dag</strong>: When a dag is deployed, it is run on the defined schedule. Each instance of this scheduled run is called a Task Run.</li>
+</ul>
+<h2 is-upgraded>Creating Tasks, and DAGs</h2>
+<p>Let us create a dag and configure the schedule and transformations we want to run as part of the dag.</p>
+<p>In this example, we have two tasks <code>dag_task1</code>, <code>dag_task2</code> and <code>dag_task3</code> as part of <code>HOL_DAG</code>. The dag is scheduled daily.</p>
+<ul>
+<li><code>dag_task1</code> loads the  <code>order_detail</code> data by calling the stored procedure <code>LOAD_EXCEL_WORKSHEET_TO_TABLE_SP</code>.</li>
+<li><code>dag_task2</code> loads the <code>location</code> data by calling the stored procedure <code>LOAD_EXCEL_WORKSHEET_TO_TABLE_SP</code>.</li>
+<li><code>dag_task3</code> updates the <code>DAILY_CITY_METRICS</code> table in snowflake by calling the stored procedure <code>LOAD_DAILY_CITY_METRICS_SP</code>.</li>
+</ul>
+<p>Here is the code snippet for dag and task creation:</p>
+<pre><code language="language-python" class="language-python">dag_name = &#34;HOL_DAG&#34;
+    dag = DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name)
+    with dag:
+        dag_task1 = DAGTask(&#34;LOAD_ORDER_DETAIL_TASK&#34;, definition=&#34;CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(BUILD_SCOPED_FILE_URL(@FROSTBYTE_RAW_STAGE, &#39;intro/order_detail.xlsx&#39;), &#39;order_detail&#39;, &#39;ORDER_DETAIL&#39;)&#34;, warehouse=warehouse_name)
+        dag_task2 = DAGTask(&#34;LOAD_LOCATION_TASK&#34;, definition=&#34;CALL LOAD_EXCEL_WORKSHEET_TO_TABLE_SP(BUILD_SCOPED_FILE_URL(@FROSTBYTE_RAW_STAGE, &#39;intro/location.xlsx&#39;), &#39;location&#39;, &#39;LOCATION&#39;)&#34;, warehouse=warehouse_name)
+        dag_task3 = DAGTask(&#34;LOAD_DAILY_CITY_METRICS_TASK&#34;, definition=&#34;CALL LOAD_DAILY_CITY_METRICS_SP()&#34;, warehouse=warehouse_name)
+
+</code></pre>
+<p>Great, we have the tasks and the dag created. But how do we define the task dependencies? Which tasks should run first?</p>
+<p>If you are familiar with Apache Airflow, you might know how we can use <code>>></code> operator to define task dependency. If not, let&#39;s understand the flow.</p>
+<p>Here is how we define the order of execution of the tasks in our dag:</p>
+<pre><code language="language-python" class="language-python">dag_task1 &gt;&gt; dag_task3
+dag_task2 &gt;&gt; dag_task3
+</code></pre>
+<p>The above definition <code>dag_task1 >> dag_task3</code> means that <code>dag_task3</code> is dependant on <code>dag_task1</code>.</p>
+<p>Similarly, <code>dag_task2 >> dag_task3</code> means that <code>dag_task3</code> is dependant on <code>dag_task2</code>.</p>
+<h2 is-upgraded>Deploying the DAG</h2>
+<p>So far, we have only created the dag and defined the order of execution of tasks within the dag. To enable the dag to run on the defined schedule, we have to <code>deploy()</code> it first.</p>
+<pre><code language="language-python" class="language-python">dag_op.deploy(dag, mode=&#34;orreplace&#34;)
+</code></pre>
+<p>After we deploy the dag, the tasks in the dag will run periodically as per the schedule interval in the dag definition.</p>
+<h2 is-upgraded>Running a DAG</h2>
+<p>In addition to running the dags periodically, suppose if you need to run the dag on demand for debugging or troubleshooting, you can use the <code>run()</code> function.</p>
+<pre><code language="language-python" class="language-python">dag_op.run(dag)
+</code></pre>
+<p>And for more details on Tasks see <a href="https://docs.snowflake.com/en/user-guide/tasks-intro.html" target="_blank">Introduction to Tasks</a>.</p>
+<h2 is-upgraded>Task Metadata</h2>
+<p>Snowflake keeps metadata for almost everything you do, and makes that metadata available for you to query (and to create any type of process around). Tasks are no different. Snowflake maintains rich metadata to help you monitor your task runs. Here are a few sample SQL queries you can use to monitor your tasks runs:</p>
+<pre><code language="language-sql" class="language-sql">-- Get a list of tasks
+SHOW TASKS;
+
+-- Task execution history in the past day
+SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT =&gt; 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+
+-- Scheduled task runs
+SELECT
+    TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP, SCHEDULED_TIME) NEXT_RUN,
+    SCHEDULED_TIME,
+    NAME,
+    STATE
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY())
+WHERE STATE = &#39;SCHEDULED&#39;
+ORDER BY COMPLETED_TIME DESC;
+</code></pre>
+<h2 is-upgraded>Monitoring Tasks</h2>
+<p>Now, after your dag is deployed, all the tasks in your dag will be running as per the defined schedule. However, as a Snowflake user, how can you peek into the success and failure of each run, look at the task run time, and more?</p>
+<p>Snowflake provides some rich task observability features in the Snowsight UI. Try it out for yourself by following these steps:</p>
+<ul>
+<li>In the Snowsight navigation menu, click <strong>Data</strong> » <strong>Databases</strong>.</li>
+<li>In the right pane, using the object explorer, navigate to a database and schema.</li>
+<li>For the selected schema, select and expand <strong>Tasks</strong>.</li>
+<li>Select a task. Task information is displayed, including <strong>Task Details</strong>, <strong>Graph</strong>, and <strong>Run History</strong> sub-tabs.</li>
+<li>Select the <strong>Graph</strong> tab. The task graph appears, displaying a hierarchy of child tasks.</li>
+<li>Select a task to view its details.</li>
+</ul>
+<p class="image-container"><img alt="Tasks" src="img/20f56b673014d394.png"></p>
+<p>To monitor all the tasks at an account level, you can use the Task History tab as well.</p>
+<ul>
+<li>In the Snowsight navigation menu, click <strong>Activity</strong> » <strong>Task History</strong>.</li>
+<li>In the right pane, select the <strong>Task Runs</strong> tab. You can scroll through all the task runs in the account.</li>
+</ul>
+<p class="image-container"><img alt="Task Runs" src="img/214f53d8a0419814.png"></p>
+<p>For more details, and to learn about viewing account level task history, please check out our <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html" target="_blank">Viewing Task History</a> documentation.</p>
+<h2 is-upgraded>Query History for Tasks</h2>
+<p>One important thing to understand about tasks, is that the queries which get executed by the task won&#39;t show up with the default Query History UI settings. In order to see the queries that just ran you need to do the following:</p>
+<ul>
+<li>Remove filters at the top of this table, including your username, as later scheduled tasks will run as &#34;System&#34;:</li>
+</ul>
+<p class="image-container"><img alt="remove filter" src="img/7c3c7f9b6d6e23ad.png"></p>
+<ul>
+<li>Click &#34;Filter&#34;, and add filter option ‘Queries executed by user tasks&#39; and click &#34;Apply Filters&#34;:</li>
+</ul>
+<p class="image-container"><img alt="remove filter" src="img/445b67a969de9a0d.png"></p>
+<p>You should now see all the queries run by your tasks!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Teardown" duration="2">
+        <p>Once you&#39;re finished with the Quickstart and want to clean things up, you can simply run the <code>steps/08_teardown.sql</code>. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the <code>steps/08_teardown.sql</code> script in VS Code and run the whole thing using the &#34;Execute All Statements&#34; button in the upper right corner of the editor window.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <p>Congratulations! You have successfully built a data engineering pipeline using Snowpark Python, loaded data from an external stage using Snowflake Dynamic File Access, used data from Snowflake Marketplace and orchestrated the data pipeline using Snowflake Tasks as well.</p>
+<p>We would love your feedback on this QuickStart Guide! Please submit your feedback using this <a href="https://forms.gle/M7C8EC3sYKide1ro9" target="_blank">Feedback Form</a>.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>Here is the overview of what we built:</p>
+<ul>
+<li>How to ingest data from an external stage such as an S3 bucket into a Snowflake table</li>
+<li>How to access data from Snowflake Marketplace and use it for your analysis</li>
+<li>How to analyze data and perform data engineering tasks using Snowpark DataFrame API, Python Stored Procedures and more</li>
+<li>How to use open-source Python libraries from curated Snowflake Anaconda channel</li>
+<li>How to create Snowflake Tasks and use the Python Tasks API to schedule data pipelines</li>
+<li>How to use VS Code extension for Snowflake to perform standard snowflake operations from VS Code and Snowsigt UI</li>
+</ul>
+<p class="image-container"><img alt="Quickstart Pipeline Overview" src="img/30d89accfa7fee7d.png"></p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python" target="_blank">Advanced: Data Engineering Pipelines with Snowpark Python</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python" target="_blank">Advanced: Getting Started with Data Engineering and ML using Snowpark for Python</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark for Python Developer Guide</a><ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html" target="_blank">Writing Stored Procedures in Snowpark (Python)</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Working with DataFrame in Snowpark Python</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">Snowflake Visual Studio Code Extension</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

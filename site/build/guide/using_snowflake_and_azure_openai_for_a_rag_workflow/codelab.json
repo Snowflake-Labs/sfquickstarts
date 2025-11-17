@@ -1,0 +1,40 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "using_snowflake_and_azure_openai_for_a_rag_workflow",
+  "duration": 65,
+  "title": "Using Snowflake with Azure OpenAI to build a RAG workflow",
+  "authors": "Matt Marzillo",
+  "summary": "Using Snowflake with Azure OpenAI to build a RAG workflow",
+  "source": "using_snowflake_and_azure_openai_for_a_rag_workflow/using_snowflake_and_azure_openai_for_a_rag_workflow.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "rag",
+    "app-development",
+    "azure",
+    "openai",
+    "streamlit",
+    "genai",
+    "ai",
+    "ml",
+    "image"
+  ],
+  "tags": [
+    "azure",
+    "generativeai",
+    "openai",
+    "rag",
+    "snowflakeexternalaccess",
+    "snowpark",
+    "streamlit",
+    "web"
+  ],
+  "url": "using_snowflake_and_azure_openai_for_a_rag_workflow"
+}

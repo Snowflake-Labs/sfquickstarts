@@ -1,0 +1,199 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data Engineering Pipeline with pandas on Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_pipelines_with_snowpark_pandas"
+                  title="Data Engineering Pipeline with pandas on Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Through this quickstart, you will learn how to use <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a>, <a href="https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-pandas" target="_blank">pandas on Snowflake</a>, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit" target="_blank">Git integration</a>, and <a href="https://docs.snowflake.com/en/user-guide/tasks-intro" target="_blank">Serverless Tasks</a> to build an end-to-end data engineering pipeline.</p>
+<p>You will create a customer profile using the <a href="https://docs.snowflake.com/en/user-guide/sample-data-tpch" target="_blank">Snowflake Sample TPC-H dataset</a>, save it into a Snowflake table and to create a serverless task to schedule the feature engineering.</p>
+<p class="image-container"><img alt="Architecture" src="img/5323005c00e5ffdd.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to build a Python data pipeline with Snowflake Notebooks</li>
+<li>how to aggregate and transform data to create new features with pandas on Snowflake</li>
+<li>how to version control and collaborate with Git integration</li>
+<li>how to create a Serverless Task to schedule the feature engineering</li>
+</ul>
+<h2 is-upgraded>What is pandas on Snowflake?</h2>
+<p>pandas on Snowflake lets you run your pandas code in a distributed manner scalably and securely directly on your data in Snowflake. Just by changing the import statement and a few lines of code, you can get the same pandas-native experience you know and love with the scalability and security benefits of Snowflake. With pandas on Snowflake this API, you can work with much larger datasets and avoid the time and expense of porting your pandas pipelines to other big data frameworks or provisioning large and expensive machines. It runs workloads natively in Snowflake through transpilation to SQL, enabling it to take advantage of parallelization and the data governance and security benefits of Snowflake.</p>
+<h2 is-upgraded>Why use pandas on Snowflake?</h2>
+<p>pandas is the go-to data processing library for millions worldwide, including countless Snowflake users. However, pandas was never built to handle data at the scale organizations are operating today. Running pandas code requires transferring and loading all of the data into a single in-memory process. It becomes unwieldy on moderate-to-large data sets and breaks down completely on data sets that grow beyond what a single node can handle. With pandas on Snowflake, you can run the same pandas code, but with all the pandas processing pushed down to run in a distributed fashion in Snowflake. Your data never leaves Snowflake, and your pandas workflows can process much more efficiently using the Snowflake elastic engine. This brings the power of Snowflake to pandas developers everywhere.</p>
+<p>pandas on Snowflake is delivered through the Snowpark pandas API as part of the Snowpark Python library, which enables scalable data processing of Python code within the Snowflake platform. You will learn how to use Snowpark pandas as part of this quickstart. This quickstart will focus on getting started with Snowpark pandas API, and enable you to perform common pandas operations on large volumes of data while leveraging the power of Snowflake.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas" target="_blank">Snowpark Pandas API</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed <aside class="special"><p>Clone or download the <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake" target="_blank">git repo</a></p>
+</aside>
+</li>
+<li>A Snowflake account. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with a role that has the ability to create database, schema and tables. If not, you will need to register for a free trial or use a different role.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A Customer profile table using the Snowpark Pandas API and a serverless task that will run the feature engineering pipeline on a schedule.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup The Snowflake Environment" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)</p>
+<h2 is-upgraded>Clone The Git Repository</h2>
+<p>The very first step is to clone the <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake" target="_blank">GitHub repository</a>. This repository contains all the code you will need to successfully complete this QuickStart Guide.</p>
+<p>Using HTTPS:</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake.git
+</code></pre>
+<p>OR, using SSH:</p>
+<pre><code language="language-shell" class="language-shell">git clone git@github.com:Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake.git
+</code></pre>
+<p>You can also use the Git integration feature of Snowflake Notebooks, in order to do that you need to fork the <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake" target="_blank">GitHub repository</a> to be allowed to commit changes. For instructions how to set up Git integration for your Snowflake account see <a href="https://docs.snowflake.com/developer-guide/git/git-setting-up" target="_blank">here</a> and for using it with Snowflake Notebooks see <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit" target="_blank">this page</a>. You can refer to <a href="https://www.youtube.com/watch?v=4GOa1eUccmQ" target="_blank">this video</a> for a walkthrough on how you can set up Git integration and use it with Snowflake Notebooks.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="10">
+        <p>During this step you will verify that the <a href="https://docs.snowflake.com/en/user-guide/sample-data-tpch" target="_blank">Snowflake Sample TPC-H dataset</a> is available in your account, and if not add the share.</p>
+<h2 is-upgraded>Verify That The Snowflake Sample TPC-H Dataset Is Available</h2>
+<ol type="1">
+<li>Log into <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> for your account</li>
+<li>Navigate to <strong>Databases</strong></li>
+<li>Verify that you can see the <strong>SNOWFLAKE_SAMPLE_DATA</strong> database, if it is missing then you can add it folling the instructions <a href="https://docs.snowflake.com/en/user-guide/sample-data-using" target="_blank">here</a>.</li>
+</ol>
+<h2 is-upgraded>Create Database, Schema And Warehouse To Be Used</h2>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE SNOW_PANDAS_DE_QS;
+CREATE SCHEMA SNOW_PANDAS_DE_QS.NOTEBOOKS;
+CREATE SCHEMA SNOW_PANDAS_DE_QS.DATA;
+
+CREATE WAREHOUSE SNOW_PANDAS_DE_QS_WH;
+</code></pre>
+<h2 is-upgraded>Create Snowflake Notebook</h2>
+<h2 is-upgraded>Navigate To Snowflake Notebooks</h2>
+<ol type="1">
+<li>Navigate to the Notebooks section by clicking <strong>Projects</strong> and then <strong>Notebooks</strong><img alt="Navigate to Notebooks" src="img/665466c6401b64db.png"></li>
+<li>Click on the *<em>down arrow</em> next to <strong>+ Notebook</strong><img alt="New notebook drop down" src="img/bf689d454571002d.png"></li>
+<li>If you have set up git integration choose  <strong>Create from repository</strong>. If not, then choose <strong>import .ipynb file</strong>.<img alt="New notebook from menu" src="img/c2af89124ced6055.png"></li>
+</ol>
+<h2 is-upgraded>Import .ipynb File</h2>
+<ol type="1">
+<li>Navigate to where you have cloned the <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake" target="_blank">GitHub repository</a> and select <strong>Customer Profile Creation Pipeline.ipynb</strong> and click <strong>Open<br></strong><img alt="Select Notebook File" src="img/c311b7ef710d1224.png"></li>
+<li>Give the notebook a name, then select <strong>SNOW_PANDAS_DE_QS</strong> and <strong>NOTEBOOKS</strong> for <strong>Notebook location</strong>, <strong>SNOW_PANDAS_DE_QS_WH</strong> for <strong>Notebook warehouse</strong> and click <strong>Create<br></strong><img alt="Select Notebook File" src="img/1dbcf96b53e75c94.png"></li>
+</ol>
+<h2 is-upgraded>Create From Repository</h2>
+<p>If you have forked the <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas" target="_blank">GitHub repository</a> and create a Git integration to it in Snowflake you can open the notebook directly from the repository. See <a href="https://docs.snowflake.com/en/developer-guide/git/git-overview" target="_blank">here</a> for instructions on how to set up Git integration.</p>
+<ol type="1">
+<li>In the <strong>Create Notebook from Repository</strong> dialog, click on <strong>Select .ipynb file<br></strong><img alt="Create Notebook from Repository Dialog" src="img/53146fad9125ceda.png"></li>
+<li>In the <strong>Select file from Git Repository</strong> dialog, click on the repository integration you are using and select the notebook file and click <strong>Select File</strong>, if you do not see the file press <strong>Fetch</strong> to refresh with the latest changes from the repository</li>
+<li>Back to the <strong>Create Notebook from Repository</strong> dialog, give the notebook a name, then select <strong>SNOW_PANDAS_DE_QS</strong>, <strong>NOTEBOOKS</strong> for <strong>Notebook location</strong> and <strong>SNOW_PANDAS_DE_QS_WH</strong> for <strong>Notebook warehouse</strong> and click <strong>Create</strong></li>
+</ol>
+<h2 is-upgraded>Add Required Python Libraries</h2>
+<p>Before you run the notebook you need to add the following Python libraries:</p>
+<ul>
+<li>modin</li>
+<li>snowflake</li>
+<li>matplotlib</li>
+<li>seaborn</li>
+</ul>
+<ol type="1">
+<li>In the Notebook click on <strong>Packages</strong></li>
+<li>Search for <strong>modin</strong> and select <strong>modin</strong> in the list<br><img alt="Modin search result" src="img/75e676b7a0a8f88d.png"></li>
+<li>Do the same for <strong>snowflake</strong>, <strong>matplotlib</strong> and <strong>seaborn</strong>. When done you should have the same packages as the list below (the versions might differ)<br><img alt="Added packages" src="img/e2dff2ca6620c43d.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Engineering with pandas on Snowflake" duration="30">
+        <p>During this step you will learn how to use pandas on Snowflake to:</p>
+<ul>
+<li>Create datframe from a Snowflake table</li>
+<li>Aggregate data to create new features</li>
+<li>Join dataframes</li>
+<li>Save the result into a Snowflake table</li>
+<li>Create a serverless task to schedule the feature engineering pipeline (Currently in Private Preview)</li>
+</ul>
+<p>Follow along and run each of the cells in <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb" target="_blank">the Notebook</a>.</p>
+<p>Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join them, create new features and create a serverless task to schedule the feature engineering pipeline.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="4">
+        <p>Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a>, <a href="https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-pandas" target="_blank">pandas on Snowflake</a>, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit" target="_blank">Git integration</a>, and <a href="https://docs.snowflake.com/en/user-guide/tasks-intro" target="_blank">Serverless Tasks</a> to build an end-to-end data engineering pipeline.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>how to build a Python data pipeline with Snowflake Notebooks</li>
+<li>how to aggregate and transform data to create new features with pandas on Snowflake</li>
+<li>how to version control and collaborate with Git integration</li>
+<li>how to create a Serverless Task to schedule the feature engineering</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas" target="_blank">pandas on Snowflake Developer Guide</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_pandas_on_snowflake/" target="_blank">Getting Started with pandas on Snowflake Quickstart</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

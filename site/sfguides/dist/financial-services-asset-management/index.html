@@ -1,0 +1,735 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Financial Services Asset Management P&amp;L Dashboard</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="financial-services-asset-management"
+                  title="Build a Financial Services Asset Management P&amp;L Dashboard"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Data silos have been a significant problem in the Financial Services industry. During the Global Financial Crisis of 2008, firms without a Single Version of the Truth (SVOT) made multi-million dollar trading decisions without visibility into their risk, exposure, and the cascading impact of their positions. These data silos led to multi-billion dollar losses and bankruptcies.</p>
+<p>In this guide, you&#39;ll build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations. You&#39;ll learn how to leverage Snowflake&#39;s unique architecture to scale compute resources up and down as needed, create a dashboard for monitoring positions, and implement DevOps practices like zero-copy cloning and time travel.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to query free stock market history data instantly without copying or moving data</li>
+<li>Creating synthetic traders and billions of trades using Python and SQL</li>
+<li>Scaling compute resources up and down to optimize performance and cost</li>
+<li>Implementing cluster keys and auto-clustering for performance optimization</li>
+<li>Creating interactive dashboards with filters for business users</li>
+<li>Using DevOps features like zero-copy cloning and time travel</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A complete Financial Services Asset Management demo with:</p>
+<ul>
+<li>A database of 3 billion synthetic trades</li>
+<li>Real-time position, cash, and profit/loss calculations</li>
+<li>An interactive dashboard for monitoring trading positions</li>
+<li>DevOps capabilities for testing and rollback</li>
+</ul>
+<p class="image-container"><img alt="Figure 1" src="img/8b1a990bbc83fd26.jpg"></p>
+<p>This is powered by four SQL Worksheets and a Python Function:</p>
+<p class="image-container"><img alt="Figure 2" src="img/84b762c2b83e020d.jpg"></p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a> (a free trial on Standard Edition will suffice)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <h2 is-upgraded>Mount a Free Data Share</h2>
+<p>First, we need to mount a free data share containing financial market data:</p>
+<ol type="1">
+<li>Log into your Snowflake account</li>
+<li>Navigate to the Marketplace</li>
+<li>Search for &#34;Snowflake Data: Finance &amp; Economic Essentials&#34;</li>
+<li>Click &#34;Get&#34; to mount this free share as a database named &#34;Snow_Finance_Share&#34;</li>
+<li>Grant the PUBLIC role access to the database</li>
+</ol>
+<p class="image-container"><img alt="Figure 3" src="img/c2e773d9ddcf43d2.jpg"></p>
+<h2 is-upgraded>Create the Setup Worksheet</h2>
+<p>Now we&#39;ll create our first SQL worksheet to set up the environment:</p>
+<ol type="1">
+<li>Navigate to Worksheets Mode</li>
+<li>Click the Plus Symbol (+), then SQL Worksheet</li>
+</ol>
+<p class="image-container"><img alt="Figure 4" src="img/428f443457ca386c.jpg"></p>
+<ol type="1" start="3">
+<li>Click the Ellipsis and rename the script to &#34;Finserv 10 Setup&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 5" src="img/a6547af766c8e367.jpg"></p>
+<ol type="1" start="4">
+<li>Copy and paste the following SQL:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Create role
+use role accountadmin;
+create role if not exists finservam_admin comment = &#39;Ownership of finservam database and demo&#39;;
+
+-- Create compute
+create warehouse if not exists finservam_devops_wh
+with warehouse_size = &#39;xsmall&#39; auto_suspend = 120 initially_suspended = true comment = &#39;Financial Services DevOps Compute&#39;;
+create warehouse if not exists xsmall_const_wh
+with warehouse_size = &#39;xsmall&#39; auto_suspend = 60 initially_suspended = true comment = &#39;Constant so should always be XS and not resized&#39;;
+
+-- Permissions are granular to meet your requirements
+create database if not exists finservam comment = &#39;Financial Service Asset Management&#39;;
+grant ownership on database finservam to role finservam_admin;
+grant ownership on schema finservam.public to role finservam_admin;
+grant ownership on warehouse finservam_devops_wh to role finservam_admin;
+grant ownership on warehouse xsmall_const_wh to role sysadmin;
+grant monitor, operate, usage on warehouse xsmall_const_wh to role finservam_admin;
+grant role finservam_admin to role sysadmin;
+
+use schema finservam.public;
+create schema if not exists transform comment = &#39;for silver layer transformations in a medallion architecture. generally not meant for end user visibility&#39;;
+grant ownership on schema transform to role finservam_admin;
+
+use schema finservam.public;
+use warehouse finservam_devops_wh;
+</code></pre>
+<ol type="1" start="5">
+<li>Click the Inverted Chevron to <strong>Run All</strong></li>
+</ol>
+<p class="image-container"><img alt="Figure 6" src="img/9b334f7320d16835.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Quality and Preparation" duration="15">
+        <h2 is-upgraded>Create the &#34;Finserv 20 Data Quality&#34; Worksheet</h2>
+<ol type="1">
+<li>Create a new SQL Worksheet named &#34;Finserv 20 Data Quality&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 7" src="img/a98b464b34709fb8.jpg"></p>
+<ol type="1" start="2">
+<li>Copy and paste the following SQL:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- setup
+use role finservam_admin;
+use warehouse finservam_devops_wh;
+use schema finservam.public;
+
+-- Verify Data Marketplace Share
+select *
+from Snow_Finance_Share.cybersyn.stock_price_timeseries
+where ticker = &#39;SNOW&#39; and variable = &#39;post-market_close&#39; order by date;
+
+-- transform.exclude_symbol
+create or replace table transform.exclude_symbol
+comment = &#39;Exclude Symbols that have ever had a price less than 1 cent or greater than $4500&#39;
+as
+select distinct ticker symbol
+from Snow_Finance_Share.cybersyn.stock_price_timeseries
+where
+variable = &#39;post-market_close&#39;
+and primary_exchange_name in (&#39;NASDAQ CAPITAL MARKET&#39;, &#39;NEW YORK STOCK EXCHANGE&#39;)
+and (value &lt; .01 or value &gt; 4500)
+order by 1;
+
+-- stock_history
+create or replace transient table finservam.public.stock_history
+comment = &#39;Daily closing prices for NASDAQ &amp; NYSE&#39;
+as
+select
+ticker symbol,
+date,
+value close,
+primary_exchange_code exchange,
+asset_class
+from Snow_Finance_Share.cybersyn.stock_price_timeseries k
+left outer join transform.exclude_symbol e on e.symbol = k.ticker
+where
+variable = &#39;post-market_close&#39;
+and primary_exchange_name in (&#39;NASDAQ CAPITAL MARKET&#39;, &#39;NEW YORK STOCK EXCHANGE&#39;)
+order by symbol, date;
+
+--add comment on column
+comment on column stock_history.close is &#39;security price at the end of the financial market business day&#39;;
+</code></pre>
+<h2 is-upgraded>Create Python Faker Function</h2>
+<p>Next, we&#39;ll create a Python function to generate synthetic trader data:</p>
+<pre><code language="language-sql" class="language-sql">-- Python fake function used to generate synthetic traders
+create or replace function fake_py(locale varchar,provider varchar,parameters variant)
+returns variant
+language python
+volatile
+runtime_version = &#39;3.8&#39;
+packages = (&#39;faker&#39;,&#39;simplejson&#39;)
+handler = &#39;fake&#39;
+as
+$$
+import simplejson as json
+from faker import Faker
+def fake(locale,provider,parameters):
+  if type(parameters).__name__==&#39;sqlNullWrapper&#39;:
+    parameters = {}
+  fake = Faker(locale=locale)
+  return json.loads(json.dumps(fake.format(formatter=provider,**parameters), default=str))
+$$;
+
+-- Verify English &amp; Chinese fake names
+select fake_py(&#39;en_US&#39;,&#39;name&#39;,null)::varchar as FAKE_NAME from table(generator(rowcount =&gt; 10));
+select fake_py(&#39;zh_CN&#39;,&#39;name&#39;,null)::varchar as FAKE_NAME from table(generator(rowcount =&gt; 10));
+</code></pre>
+<p>Run the entire worksheet to create the necessary tables and functions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate Dataset" duration="20">
+        <h2 is-upgraded>Create the Trades Worksheet</h2>
+<ol type="1">
+<li>Create a new SQL Worksheet named &#34;Finserv 30 Billions of Trades&#34;</li>
+<li>Copy and paste the following SQL to set variables and create synthetic portfolio managers:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Set Variables (which we can use to scale up and down) and fake Portfolio Managers (PM)
+-- Set context
+use role finservam_admin; use warehouse finservam_devops_wh; use schema finservam.public;
+
+-- Set Variables
+set limit_trader = 300; //on xxlarge will create ~3B trades
+set limit_pm = $limit_trader / 10; //Every Portfolio Manager (PM) will have about 10 traders reporting to her.
+
+-- Portfolio Manager (PM)
+-- Unique number generator
+create or replace sequence pm_id;
+create or replace transient table pm
+comment = &#39;PM is the Portfolio Manager who manages the traders&#39; as
+select
+fake_py(&#39;en_UK&#39;,&#39;name&#39;,null)::varchar as PM,
+pm_id.nextval id
+from table(generator(rowcount =&gt; $limit_pm));
+</code></pre>
+<h2 is-upgraded>Create Synthetic Traders</h2>
+<p>Next, add the code to create synthetic traders:</p>
+<pre><code language="language-sql" class="language-sql">-- Create Synthetic Traders
+-- We don&#39;t need a transaction but we demo it
+begin transaction;
+    create or replace transient table trader
+    comment = &#39;Trader with their Portfolio Manager (PM) and trader authorized buying power&#39; as
+    with cte as
+    (
+        select
+        fake_py(&#39;en_US&#39;,&#39;name&#39;,null)::varchar as trader,
+        uniform(1, $limit_pm, random()) PM_id, //random function to assign a PM to a trader
+        uniform(500, 3500, random())::number buying_power //how much a trader can buy per day
+        from table(generator(rowcount =&gt; $limit_trader))
+    )
+    select
+        t.trader,
+        pm.pm,
+        t.buying_power
+    from cte t
+    inner join pm on t.pm_id = pm.id
+    order by 2,1;
+    
+    comment on column public.trader.PM is &#39;Portfolio Manager (PM) manages traders&#39;;
+    comment on column public.trader.buying_power is &#39;Trader is authorized this buying power in each transaction&#39;;
+commit;
+</code></pre>
+<h2 is-upgraded>Generate Billions of Trades</h2>
+<p>Now, we&#39;ll scale up our compute resources and generate billions of trades:</p>
+<pre><code language="language-sql" class="language-sql">-- create billions of trades where action = buy
+drop table if exists trade;
+
+-- size up to save time since we are generating billions of trades
+alter warehouse finservam_devops_wh set warehouse_size = &#39;xxlarge&#39; wait_for_completion = TRUE enable_query_acceleration = true;
+
+-- create billions of trades where action = buy
+create or replace transient table trade
+comment = &#39;trades made and cash used; unique_key: symbol, exchange, date&#39;
+as
+select
+    c.*,
+    round(buying_power/close,0) num_shares,
+    close * round(buying_power/close,0) * -1 cash,
+    t.trader, t.PM
+from
+(
+    select
+    date, h.symbol, h.exchange, &#39;buy&#39;::varchar(25) action, close
+    from stock_history h
+    where year(date) &lt; 2021
+) c
+full outer join public.trader t
+order by 8,2,1; -- Trader, symbol, date
+
+-- create billions of trades where action = hold
+insert into trade
+select
+    c.*,
+    0 num_shares,
+    0 cash,
+    t.trader, t.PM
+from
+(
+    select
+    date, h.symbol, h.exchange, &#39;hold&#39;::varchar(25) action, close
+    from stock_history h
+    where year(date) &gt;= 2021
+) c
+full outer join public.trader t
+order by 8,2,1; -- Trader, symbol, date
+
+-- Size down to immediately save credits
+alter warehouse finservam_devops_wh suspend;
+alter warehouse finservam_devops_wh set warehouse_size = &#39;xsmall&#39;;
+</code></pre>
+<h2 is-upgraded>Create Cluster Key and Position View</h2>
+<p>Finally, we&#39;ll optimize our table with a cluster key and create a view for position calculations:</p>
+<pre><code language="language-sql" class="language-sql">-- Create clustered key based on what we sorted
+alter table trade cluster by (trader, symbol, date);
+
+-- Cluster_by column
+show tables like &#39;trade&#39;;
+
+-- Common-Table Expressions (CTEs) and window functions for real-time number of stock shares, cash used, and Profit and Loss
+create or replace view public.position
+(
+    symbol, exchange, date, trader, pm, num_shares_cumulative, cash_cumulative, close, market_value,
+    PnL comment &#39;Profit and Loss: Demonstrate comment on view column&#39;
+)
+comment = &#39;what assets owned; demo Window Function running sum&#39;
+as
+with cte as
+(
+select
+    t.symbol, t.exchange, t.date, trader, pm,
+    Sum(num_shares) OVER(partition BY t.symbol, t.exchange, trader ORDER BY t.date rows UNBOUNDED PRECEDING ) num_shares_cumulative,
+    Sum(cash) OVER(partition BY t.symbol, t.exchange, trader ORDER BY t.date rows UNBOUNDED PRECEDING ) cash_cumulative,
+    s.close
+from public.trade t
+inner join public.stock_history s on t.symbol = s.symbol and s.date = t.date
+)
+select
+    *,
+    num_shares_cumulative * close as market_value,
+    (num_shares_cumulative * close) + cash_cumulative as PnL
+from cte;
+
+-- Business_date function to get current date used by the business
+CREATE or replace FUNCTION business_date()
+RETURNS date
+MEMOIZABLE
+AS
+$$
+    select max(date) dt from public.trade
+$$;
+</code></pre>
+<p>Run the entire worksheet. Note that generating 3 billion trades will take approximately 5 minutes with an XXLarge warehouse.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DevOps in Production" duration="15">
+        <h2 is-upgraded>Create the DevOps Worksheet</h2>
+<ol type="1">
+<li>Create a new SQL Worksheet named &#34;Finserv 40 DevOps in Prod&#34;</li>
+<li>Copy and paste the following SQL to demonstrate ANSI-SQL compliance and instant row counts:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Context
+use role finservam_admin; use warehouse finservam_devops_wh; use schema finservam.public;
+alter warehouse finservam_devops_wh set warehouse_size = &#39;xsmall&#39;;
+
+-- ANSI-Compliant, ie information_schema for data dictionary
+select table_type object_type, table_name object_name, comment /* JSON */
+  from information_schema.tables
+  where table_schema = &#39;PUBLIC&#39; and comment is not null
+union all
+select &#39;COLUMN&#39; object_type, table_name || &#39;.&#39; || column_name object_type, comment
+  from information_schema.columns
+  where table_schema = &#39;PUBLIC&#39; and comment is not null
+ order by 1,2;
+
+-- Instant rowcount and metadata
+show tables like &#39;trade&#39;;
+
+-- Let&#39;s format that rowcount
+set q = last_query_id();
+select &#34;rows&#34;, TO_VARCHAR(&#34;rows&#34;, &#39;999,999,999,999&#39;) &#34;pretty_rowcount&#34; from table(result_scan($q));
+</code></pre>
+<h2 is-upgraded>Test Queries and Caching</h2>
+<p>Add the following SQL to test queries against a random trader and demonstrate Snowflake&#39;s caching capabilities:</p>
+<pre><code language="language-sql" class="language-sql">-- Test against a random trader
+set trader = (select top 1 trader from trader sample(1) where trader is not null);
+
+-- Trade - date and quantity of buy, sell, or hold action on assets
+select *
+from trade
+where trader = $trader and symbol = &#39;CMG&#39;
+order by date;
+
+-- Notice the Solid State Drive (SSD cache) by running this query and - before the Virtual Warehouse suspends - rerun the query but change the date to something after your original date filter. [Because that data is already in the Compute layer&#39;s memory, it doesnt need to pull it from the micro-partitions again].
+select *
+from trade
+where trader = $trader and symbol = &#39;SNOW&#39; and action = &#39;buy&#39; and date &gt;= &#39;2020-10-01&#39;
+order by date;
+
+-- Window functions so we only pay storage for trade table while getting real-time calculations
+select get_ddl(&#39;view&#39;,&#39;position&#39;);
+
+-- Time-series: what are my real-time trades, cash, and PnL?
+-- Notice query results cache on 2nd execution
+select symbol, date, trader, cash_cumulative, num_shares_cumulative, close, market_value, PnL
+from position where symbol = &#39;COST&#39; and trader = $trader
+order by date;
+
+-- Metadata cache for count, min, max, etc
+select count(*) from trade;
+
+-- Python Faker: ie verify English &amp; Chinese Synthetic names
+select fake_py(&#39;en_US&#39;,&#39;name&#39;,null)::varchar as FAKE_NAME from table(generator(rowcount =&gt; 10));
+select fake_py(&#39;zh_CN&#39;,&#39;name&#39;,null)::varchar as FAKE_NAME from table(generator(rowcount =&gt; 10));
+
+-- Cross-Database Joins
+select *
+from Snow_Finance_Share.cybersyn.stock_price_timeseries s
+inner join finservam.public.stock_history h on s.ticker = h.symbol and h.date = s.date
+where s.ticker = &#39;SNOW&#39; and s.variable = &#39;post-market_close&#39; and s.date = business_date();
+</code></pre>
+<h2 is-upgraded>DevOps Features</h2>
+<p>Finally, add the following SQL to demonstrate DevOps features like zero-copy cloning, time travel, and undrop:</p>
+<pre><code language="language-sql" class="language-sql">-- Zero Copy Clone for instant dev,qa,uat sandboxes and backups
+use role sysadmin;
+drop database if exists finservam_dev;
+
+create database finservam_dev clone finservam;
+grant ownership on database finservam_dev to role finservam_admin;
+use role finservam_admin;
+
+-- Clones are zero additional storage cost; storage cost is only on deltas;
+-- ie if you have 10 TB in prod but change only 1 TB in your clone, you only pay for 11 automatically compressed TBs
+select *
+from finservam.public.trade
+where trader = $trader and symbol = &#39;COST&#39;;
+
+-- We can change clones without impacting production
+select *
+from finservam_dev.public.trade
+where trader = $trader and symbol = &#39;COST&#39;;
+
+update finservam_dev.public.trade
+set symbol = &#39;CMG&#39;
+where trader = $trader and symbol = &#39;COST&#39;;
+
+-- We use Time Travel for DevOps &amp; Rollbacks [configurable from 0–90 days]
+set queryID = last_query_id();
+
+-- Currently Costco doesn&#39;t exist
+select *
+from finservam_dev.public.trade
+where trader = $trader and symbol = &#39;COST&#39;;
+
+-- But we can Time Travel to see before the (DML) delete
+select *
+from finservam_dev.public.trade
+before (statement =&gt; $queryid)
+where trader = $trader and symbol = &#39;COST&#39;;
+
+-- Roll back our our change
+insert into finservam_dev.public.trade
+select *
+from finservam_dev.public.trade
+before (statement =&gt; $queryid)
+where trader = $trader and symbol = &#39;COST&#39;;
+
+-- Undrop is also up to 90 days of Time Travel; DBAs and Release Managers sleep much better than backup &amp; restore
+drop table finservam_dev.public.trade;
+
+-- Uncomment this and watch it fail
+-- select count(*) from finservam_dev.public.trade;
+
+-- But we can undrop for the time travel that we have set
+undrop table finservam_dev.public.trade;
+
+-- We can also undrop databases
+drop database if exists finservam_dev;
+show databases like &#39;finserv%&#39;;
+
+-- Notice temporary escalation of privileges in RBAC model
+use role accountadmin;
+undrop database finservam_dev;
+
+use role finservam_admin;
+show databases like &#39;finserv%&#39;;
+
+-- Let&#39;s not wait for auto-suspend
+alter warehouse finservam_devops_wh suspend;
+use schema finservam.public;
+</code></pre>
+<p>Run the entire worksheet to demonstrate these features.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating Dashboard Filters" duration="10">
+        <p>Now we&#39;ll create filters for our dashboard:</p>
+<ol type="1">
+<li>Navigate to Dashboards from the left sidebar (Home | Projects | Dashboards)</li>
+</ol>
+<p class="image-container"><img alt="Figure 8" src="img/125164e07bb297d2.jpg"></p>
+<ol type="1" start="2">
+<li>Click the Ellipsis in the top right and select &#34;Manage Filters&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 9" src="img/89b928162bb00167.jpg"></p>
+<h2 is-upgraded>Add the TradeDate Filter</h2>
+<ol type="1">
+<li>Add a filter named &#34;TradeDate&#34; with the following settings: <ul>
+<li>Type: Date Range</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Figure 10" src="img/aee95572882d83d0.jpg"></p>
+<ul>
+<li>SQL Query: <code>select distinct date from finservam.public.trade order by 1;</code></li>
+<li>Set to refresh daily to save credits. Then click <strong>Save</strong>.</li>
+</ul>
+<p class="image-container"><img alt="Figure 11" src="img/fca1471328743e2.jpg"></p>
+<h2 is-upgraded>Add the TickerSymbol Filter</h2>
+<ol type="1">
+<li>Add a filter named &#34;TickerSymbol&#34; with the following settings: <ul>
+<li>Type: Multi-select</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Figure 12" src="img/10276393f883d797.jpg"></p>
+<ul>
+<li>SQL Query: <code>select distinct symbol from finservam.public.trade order by 1;</code></li>
+<li>Set to refresh daily</li>
+</ul>
+<p class="image-container"><img alt="Figure 13" src="img/592bc826229d1933.jpg"></p>
+<h2 is-upgraded>Add the Trader Filter</h2>
+<ol type="1">
+<li>Add a filter named &#34;Trader&#34; with the following settings: <ul>
+<li>Type: Multi-select</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Figure 14" src="img/1a4721b1142c4aa4.jpg"></p>
+<ul>
+<li>SQL Query: <code>select distinct trader from finservam.public.trader order by 1;</code></li>
+<li>Set to refresh daily</li>
+</ul>
+<p class="image-container"><img alt="Figure 15" src="img/6b582e157a85c669.jpg"></p>
+<p>When complete, you should have three custom filters plus the two Snowsight system filters.</p>
+<p class="image-container"><img alt="Figure 16" src="img/60ab1f9e6641a465.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building the Dashboard" duration="15">
+        <p>Now we&#39;ll create the dashboard with multiple tiles:</p>
+<ol type="1">
+<li>Click the plus icon and select &#34;Dashboard&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 17" src="img/dfe7c03f4c55667d.jpg"></p>
+<ol type="1" start="2">
+<li>Name it &#34;Finserv Asset Mgmt Dashboard&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 18" src="img/8d74187787f46dce.jpg"></p>
+<ol type="1" start="3">
+<li>Set the Role to &#34;finservam_admin&#34; and the Virtual Warehouse to &#34;finservam_devops_wh&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 19" src="img/d8b8db6c2bba5882.jpg"></p>
+<h2 is-upgraded>Add the Symbol Position Over Time Tile</h2>
+<ol type="1">
+<li>Click &#34;Add Tile&#34; | &#34;From SQL Worksheet&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 20" src="img/fd79830b0d707436.jpg"></p>
+<ol type="1" start="2">
+<li>Rename the tile to &#34;Symbol Position Over Time&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 21" src="img/6f9054080dbc3cdb.jpg"></p>
+<ol type="1" start="3">
+<li>Add the following SQL:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select
+symbol, date, trader, round(cash_cumulative) * -1 cash_used, num_shares_cumulative, round(close,2) close,
+round(market_value) market_value, round(PnL) PnL
+from finservam.public.position where date = :daterange and symbol = :fssymbol and trader = :fstrader
+order by date;
+</code></pre>
+<p>You&#39;ll get an expected error. This is good as it now exposes the filters — that we created in the prior step — for us:</p>
+<p class="image-container"><img alt="Figure 22" src="img/3f1ef541b5d14242.jpg"></p>
+<ol type="1" start="4">
+<li>Set the DateRange, TickerSymbol, and Trader filters</li>
+</ol>
+<p class="image-container"><img alt="Figure 23" src="img/dcd6a15b200c4c0e.jpg"></p>
+<ol type="1" start="5">
+<li>Click &#34;Chart&#34; and add &#34;Date&#34; as the X-Axis with bucketing set to &#34;Quarter&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 24" src="img/eff7b72ab5d829d8.jpg"></p>
+<ol type="1" start="6">
+<li>Add the five other columns (cash_used, num_shares_cumulative, close, market_value, PnL) with &#34;Use As&#34; set to &#34;Line&#34; and &#34;Aggregation&#34; set to &#34;Sum&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 25" src="img/40ed5744515138ba.jpg"></p>
+<ol type="1" start="7">
+<li>Click &#34;Run&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 26" src="img/ed65f8b3945225.jpg"></p>
+<p>Congrats you have added your first Chart Tile:</p>
+<p class="image-container"><img alt="Figure 27" src="img/1a13948e70bee552.jpg"></p>
+<h2 is-upgraded>Add the Portfolio PnL Top 10 Tile</h2>
+<ol type="1">
+<li>Click &#34;Plus&#34; | &#34;New Tile&#34; | &#34;From SQL Worksheet&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 28" src="img/553d0bb07f30485b.jpg"></p>
+<ol type="1" start="2">
+<li>Rename the tile to &#34;Portfolio PnL Top 10&#34;</li>
+<li>Add the following SQL:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select top 10 symbol, round(PnL) PnL
+from finservam.public.position
+where trader = :fstrader and date = finservam.public.business_date()
+order by PnL desc;
+</code></pre>
+<ol type="1" start="4">
+<li>Click &#34;Chart&#34; and ensure it&#39;s a &#34;Bar&#34; chart with &#34;Vertical&#34; appearance</li>
+</ol>
+<p class="image-container"><img alt="Figure 29" src="img/18297653f2706ba8.jpg"></p>
+<ol type="1" start="5">
+<li>Add &#34;Symbol&#34; as both the &#34;Series&#34; and &#34;X-Axis&#34;</li>
+<li>Set &#34;Grouping&#34; to &#34;Stacked&#34; and leave &#34;Stretching&#34; as &#34;No Stretching&#34;</li>
+<li>Click &#34;Label X-Axis&#34; to add &#34;SYMBOL&#34;</li>
+<li>Click &#34;Run&#34;</li>
+</ol>
+<p class="image-container"><img alt="Figure 30" src="img/d3d0bbd2c64479b4.jpg"></p>
+<ol type="1" start="9">
+<li>Click &#34;Return&#34; to go back to the dashboard</li>
+</ol>
+<p class="image-container"><img alt="Figure 31" src="img/4e434f2019bc2049.jpg"></p>
+<p>Congrats, you have 2 of the 4 tiles complete!</p>
+<h2 is-upgraded>Add the Portfolio Current PnL Tile</h2>
+<ol type="1">
+<li>Add a &#34;New Tile&#34; and name it &#34;Portfolio Current PnL&#34;</li>
+<li>Add the following SQL:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select round(sum(PnL)) PnL
+from finservam.public.position
+where trader = :fstrader and date = finservam.public.business_date();
+</code></pre>
+<ol type="1" start="3">
+<li>Set the Chart type as &#34;Scorecard&#34;</li>
+<li>Click &#34;Return&#34; to go back to the dashboard</li>
+</ol>
+<p class="image-container"><img alt="Figure 32" src="img/15ddd911cc13d8e9.jpg"></p>
+<p>Congrats! You&#39;ve created your dashboard! For extra credit: You can now drag and drop the tiles to arrange them as desired.</p>
+<p class="image-container"><img alt="Figure 33" src="img/8b1a990bbc83fd26.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="5">
+        <p>If you want to clean up all the objects created in this guide, you can create a new worksheet named &#34;Finserv 90 reset&#34; with the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">-- Optional Script to remove all objects created during this demo
+-- You can name this worksheet: &#34;Finserv 90 reset&#34;
+
+use role finservam_admin;
+drop database if exists finservam;
+drop database if exists finservam_dev;
+drop warehouse if exists finservam_devops_wh;
+
+use role accountadmin;
+drop role if exists finservam_admin;
+-- optional
+-- drop database if exists Snow_Finance_Share;
+-- drop warehouse if exists xsmall_const_wh;
+
+
+-- Note: You can also drop the Dashboard and the Dashboard Filters
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="3">
+        <p>Congratulations! You&#39;ve successfully built a Financial Services Asset Management demo in Snowflake that handles 3 billion synthetic trades while providing real-time cash and profit/loss calculations. You&#39;ve learned how to scale compute resources up and down as needed, create interactive dashboards, and implement DevOps practices like zero-copy cloning and time travel.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Queried free stock market history data without copying or moving data</li>
+<li>Created synthetic traders and billions of trades using Python and SQL</li>
+<li>Scaled compute resources up and down to optimize performance and cost</li>
+<li>Implemented cluster keys and auto-clustering for performance optimization</li>
+<li>Created interactive dashboards with filters for business users</li>
+<li>Used DevOps features like zero-copy cloning and time travel</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://medium.com/snowflake/flaker-2-0-fake-snowflake-data-the-easy-way-dc5e65225a13" target="_blank">Flaker 2.0: Fake Snowflake Data the Easy Way</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/performance-concepts#caching" target="_blank">Snowflake Caching Mechanisms</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-time-travel" target="_blank">Time Travel in Snowflake</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/intro-editions" target="_blank">Snowflake Editions and Features</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-filters" target="_blank">Snowsight Filters</a></li>
+</ul>
+<p>Additional Reading:</p>
+<ul>
+<li><a href="https://www.snowflake.com/en/solutions/industries/financial-services/asset-management/" target="_blank">Snowflake for Asset Management</a></li>
+<li><a href="https://youtu.be/HkrRXMHDd-E?si=nf0lAupIKK8HVMuM" target="_blank">Asset Management With Snowflake: Real-Time Cash &amp; PnL On 3 Billion Trades</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

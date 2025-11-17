@@ -1,0 +1,552 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Model Serving in Snowpark Container Services</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowpark-container-services-model-serving-guide"
+                  title="Getting Started with Model Serving in Snowpark Container Services"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>In this guide, you will learn how to leverage the power of Snowpark Container Services (SPCS) and the Snowflake Model Registry to build, deploy, and serve a machine learning model for real-time predictions in Snowflake ML. We will walk through a complete data science workflow, from data preparation and feature engineering to model training and deployment as a secure, scalable service.</p>
+<p>This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ridership to forecast future demand. By the end, you will have a fully functional model serving endpoint accessible from both within and outside of Snowflake.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to set up your Snowflake environment for machine learning.</li>
+<li>How to perform feature engineering with Snowpark.</li>
+<li>How to train, register, and version a model using the Snowflake Model Registry.</li>
+<li>How to deploy a model as a service in Snowpark Container Services.</li>
+<li>How to access the deployed model endpoint using both Key-Pair and Programmatic Access Token (PAT) authentication.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A complete data pipeline for feature engineering.</li>
+<li>A trained XGBoost regression model to forecast bus ridership.</li>
+<li>A secure, scalable model serving endpoint hosted in Snowpark Container Services.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Python and SQL.</li>
+<li>Basic understanding of machine learning concepts.</li>
+<li>Note that, trial account does not allow creation of compute pool, so model serving on Container Services cannot be tested in Trial Account.</li>
+<li>Have a database schema where objects can be created. In this exercise, we will create a notebook, table to store data, stored proc for training, model to log the trained model, container images for model serving and the service hosting the model. You need privileges to have all of them.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Setup" duration="5">
+        <p>First, we will create a database called <strong>MODEL_SERVING_DB</strong> in Snowflake as below. We will also create a warehouse called <strong>DEMO_BUILD_WAREHOUSE</strong>.  If you do not have privileges to create a database or warehouse, feel free to use existing ones where you have permission (please note to change database schema name accordingly throughout this exercise).</p>
+<p class="image-container"><img alt="1_DB_Creation" src="img/84472eb39955640e.png"></p>
+<p>We will then import the attached notebook inside this github <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs" target="_blank">repo</a> by clicking the import notebook option in Snowflake.</p>
+<p class="image-container"><img alt="2_Import_Notebooks" src="img/8f35ca83991044b9.png"></p>
+<ul>
+<li>Name: <strong>SNOWPARK_FORECASTING_MODEL_DEPLOYMENT</strong></li>
+<li>Notebook location: Set to the <strong>&#34;MODEL_SERVING_DB&#34;</strong> database and the <strong>&#34;PUBLIC&#34;</strong> schema.</li>
+<li>Python environment: <strong>&#34;Run on warehouse&#34;</strong> is selected, which is described as best for data analysis. The alternative, <strong>&#34;Run on container&#34;</strong> is for AI/ML workloads. In this case we will choose Run on container and we will choose the default compute pool.</li>
+<li>Query warehouse: This is the name of the warehouse used to run our queries. In this case I have created a warehouse called <strong>DEMO_BUILD_WH</strong>.</li>
+</ul>
+<p>We will also import the CSV file into the stage. This can be found in the github <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs" target="_blank">repo</a></p>
+<p class="image-container"><img alt="3_Import_CSVs" src="img/cd68b432aa3e767a.png"></p>
+<p>Lastly, we will import our packages into Snowflake</p>
+<ul>
+<li>snowflake: Latest</li>
+<li>snowflake-ml-python: Latest</li>
+<li>snowflake.core: Latest</li>
+<li>python: 3.9.*</li>
+<li>streamlit: 1.39.1</li>
+</ul>
+<p class="image-container"><img alt="4_Import_Packages" src="img/71240831df0e1f9e.png"></p>
+<h2 is-upgraded>Setup Environment</h2>
+<p>First, we set up the Python environment by importing the necessary libraries. This includes Snowpark for data manipulation, Snowflake ML for modeling, and the Feature Store.</p>
+<pre><code language="language-python" class="language-python"># Snowpark for Python
+from snowflake.snowpark.session import Session
+from snowflake.snowpark.version import VERSION
+from snowflake.snowpark import functions as F
+
+# Snowpark ML
+from snowflake.ml.modeling.pipeline import Pipeline
+from snowflake.ml.modeling.xgboost import XGBRegressor
+from snowflake.ml.feature_store import FeatureStore, CreationMode, Entity, FeatureView
+from snowflake.ml.registry import Registry
+
+# Misc
+import pandas as pd
+
+# Get active session
+session = get_active_session()
+</code></pre>
+<h2 is-upgraded>Load Data</h2>
+<p>We begin by loading the Chicago bus ridership data from a CSV file into a Pandas DataFrame, and then into a Snowpark DataFrame. This data is then saved as a table in Snowflake</p>
+<pre><code language="language-python" class="language-python"># Read data and create Snowpark DataFrame
+df_clean = pd.read_csv(&#39;CTA_Daily_Totals_by_Route.csv&#39;)
+df_clean.columns = df_clean.columns.str.upper()
+input_df = session.create_dataframe(df_clean)
+
+# Save DataFrame as a table in Snowflake
+input_df.write.mode(&#39;overwrite&#39;).save_as_table(&#39;MODEL_SERVING_DB.FEATURE_STORE_MLDEMO.CHICAGO_BUS_RIDES&#39;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Machine Learning" duration="10">
+        <h2 is-upgraded>Create and Register a Feature Store</h2>
+<p>A Feature Store is created to manage and version our features. We then register an Entity which represents a real-world object that our features are associated with, in this case, a bus route.</p>
+<pre><code language="language-python" class="language-python"># Create a feature store
+fs = FeatureStore(
+    session=session,
+    database=&#34;MODEL_SERVING_DB&#34;,
+    name=&#34;FEATURE_STORE_MLDEMO&#34;,
+    default_warehouse=&#34;DEMO_BUILD_WH&#34;,
+    creation_mode=CreationMode.CREATE_IF_NOT_EXIST,
+)
+
+# Register an entity
+entity = Entity(
+    name=&#34;route&#34;,
+    join_keys=[&#34;DATE&#34;],
+)
+fs.register_entity(entity)
+</code></pre>
+<h2 is-upgraded>Distributed Feature Engineering</h2>
+<p>We perform feature engineering to create new features that will be useful for our model. This includes extracting the day of the week and month from the date, and calculating the previous day&#39;s ridership. These engineered features are then registered as a FeatureView.</p>
+<pre><code language="language-python" class="language-python"># Perform feature engineering
+from snowflake.snowpark.functions import col, to_timestamp, dayofweek, month, sum, lag
+from snowflake.snowpark import Window
+
+df = session.read.table(&#39;MODEL_SERVING_DB.FEATURE_STORE_MLDEMO.CHICAGO_BUS_RIDES&#39;)
+df = df.with_column(&#39;DATE&#39;, to_timestamp(col(&#39;DATE&#39;), &#39;MM/DD/YYYY&#39;))
+df = df.with_column(&#39;DAY_OF_WEEK&#39;, dayofweek(col(&#39;DATE&#39;)))
+df = df.with_column(&#39;MONTH&#39;, month(col(&#39;DATE&#39;)))
+
+total_riders = df.group_by(&#39;DATE&#39;,&#39;DAY_OF_WEEK&#39;,&#39;MONTH&#39;).agg(
+    F.listagg(&#39;DAYTYPE&#39;, is_distinct=True).alias(&#39;DAYTYPE&#39;),
+    F.sum(&#39;RIDES&#39;).alias(&#39;TOTAL_RIDERS&#39;)
+).order_by(&#39;DATE&#39;)
+
+window_spec = Window.order_by(&#39;DATE&#39;)
+total_riders = total_riders.with_column(&#39;PREV_DAY_RIDERS&#39;, lag(col(&#39;TOTAL_RIDERS&#39;), 1).over(window_spec))
+
+# Register the feature view
+agg_fv = FeatureView(
+    name=&#34;AggBusData&#34;,
+    entities=[entity],
+    feature_df=total_riders,
+    timestamp_col=&#34;DATE&#34;,
+)
+agg_fv = fs.register_feature_view(agg_fv, version=&#34;1&#34;, overwrite=True)
+</code></pre>
+<h2 is-upgraded>Model Training and Evaluation</h2>
+<p>With our features ready, we define a machine learning pipeline to preprocess the data and train an XGBoost Regressor model. The model is trained and evaluated in a distributed manner using Snowflake&#39;s compute resources.</p>
+<p>Create and Train the Model</p>
+<pre><code language="language-python" class="language-python">from snowflake.ml.modeling.compose import ColumnTransformer
+from snowflake.ml.modeling.preprocessing import StandardScaler, OrdinalEncoder
+from snowflake.ml.modeling.pipeline import Pipeline
+from snowflake.ml.modeling.xgboost import XGBRegressor
+from snowflake.ml.modeling.model_selection import GridSearchCV
+
+# Define preprocessing steps
+numeric_features = [&#39;DAY_OF_WEEK&#39;,&#39;MONTH&#39;,&#39;PREV_DAY_RIDERS&#39;,&#39;MINIMUM_TEMPERATURE&#39;,&#39;MAXIMUM_TEMPERATURE&#39;,&#39;PRECIPITATION&#39;]
+numeric_transformer = Pipeline(steps=[(&#39;scaler&#39;, StandardScaler())])
+
+categorical_cols = [&#39;DAYTYPE&#39;]
+categorical_transformer = Pipeline(steps=[(&#39;onehot&#39;, OrdinalEncoder(handle_unknown=&#39;use_encoded_value&#39;,unknown_value=-99999))])
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        (&#39;num&#39;, numeric_transformer, numeric_features),
+        (&#39;cat&#39;, categorical_transformer, categorical_cols)
+        ])
+
+pipeline = Pipeline(steps=[(&#39;preprocessor&#39;, preprocessor),(&#39;model&#39;, XGBRegressor())])
+
+# Use GridSearchCV for hyperparameter tuning
+hyper_param = dict(model__max_depth=[2,4], model__learning_rate=[0.1,0.3])
+xg_model = GridSearchCV(
+    estimator=pipeline,
+    param_grid=hyper_param,
+    input_cols=numeric_features + categorical_cols,
+    label_cols=[&#39;TOTAL_RIDERS&#39;],
+    output_cols=[&#34;TOTAL_RIDERS_FORECAST&#34;],
+)
+
+# Fit the model
+xg_model.fit(train)
+</code></pre>
+<h2 is-upgraded>Model Lineage</h2>
+<p>Snowflake&#39;s UI provides a graphical representation of the lineage, making it easier to visualize and communicate your findings. To do so, we can go to the CHICAGO_BUS_RIDES_FORECAST table and click on lineage</p>
+<p class="image-container"><img alt="4_lineage" src="img/3808eddfe8be0f32.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Deployment" duration="0">
+        <h2 is-upgraded>Evaluate the Model</h2>
+<p>After training, we evaluate the model&#39;s performance on the test set.</p>
+<pre><code language="language-python" class="language-python">from snowflake.ml.modeling.metrics import mean_absolute_error
+
+testpreds = xg_model.predict(test)
+print(&#39;MSE:&#39;, mean_absolute_error(df=testpreds, y_true_col_names=&#39;TOTAL_RIDERS&#39;, y_pred_col_names=&#39;\&#34;TOTAL_RIDERS_FORECAST\&#34;&#39;))
+</code></pre>
+<h2 is-upgraded>Model Registration and Deployment</h2>
+<p>Finally, the trained model is logged to the Snowflake Model Registry. This allows for versioning, management, and easy deployment of the model.</p>
+<pre><code language="language-python" class="language-python">reg_model = reg.log_model(
+    model_name=&#34;Forecasting_Bus_Ridership&#34;,
+    version_name=&#34;v2&#34;,    
+    model=xg_model,
+    target_platforms=[&#34;WAREHOUSE&#34;],
+    conda_dependencies=[&#34;scikit-learn&#34;,&#34;xgboost&#34;],
+    sample_input_data=train,
+    comment=&#34;My awesome XGBoost model&#34;
+)
+
+</code></pre>
+<p>We are able to see the model stored inside the Model tab of the database.</p>
+<p class="image-container"><img alt="4_model_served" src="img/929f93341997f30f.png"></p>
+<p>Clicking on the model, we can then further drill down to understand the model such as the model lineage.</p>
+<p class="image-container"><img alt="4_lineage_model" src="img/42f418704eae307d.png"></p>
+<h2 is-upgraded>Deploy to Snowpark Container Services (SPCS)</h2>
+<p>The registered model can be deployed as a service in SPCS for real-time inference.</p>
+<pre><code language="language-python" class="language-python">reg_model = reg.get_model(&#34;Forecasting_Bus_Ridership&#34;).version(&#34;v2&#34;)
+
+reg_model.create_service(service_name=&#34;ChicagoBusForecastv12&#34;,
+                  service_compute_pool=&#34;mypool&#34;,
+                  image_repo=&#34;MODEL_SERVING_DB.notebooks.my_inference_images&#34;,
+                  ingress_enabled=True)
+</code></pre>
+<h2 is-upgraded>Seeing the Inference endpoint</h2>
+<p>To see our inference endpoint, we can go to our model and click on the Inference Services tab. Opening the details, we can futher view the logs of our inference service</p>
+<p class="image-container"><img alt="4_inference_serving" src="img/63ae03316a1b8387.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Serving" duration="10">
+        <p>The Snowflake Model Registry, when used with containers, allows you to package, manage, and deploy machine learning models with complex dependencies or custom runtime environments inside Snowflake. This is accomplished by using Snowpark Container Services (SPCS) which we have done above. Some parts of the architecture for <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container" target="_blank">model serving</a> are as described below.</p>
+<p class="image-container"><img alt="5_architecture" src="img/e5f61be96dc239cb.png"></p>
+<ul>
+<li>Inference Server: This is the engine that runs the model to serve predictions. It can use multiple processes to maximize the node&#39;s resources and includes an admission control feature to manage incoming requests, preventing overloads. Currently, Snowflake offers a flexible Python-based server, with plans to introduce servers optimized for specific model types in the future.</li>
+<li>Model-specific Python environment: To minimize the startup time for a model, Snowflake creates a container that packages the model with all its specific dependencies.</li>
+<li>Service functions: These functions allow you to call the inference server from code running within a Snowflake warehouse. They are designed with the same signature as the original model and use the external function protocol to communicate with the server.</li>
+<li>Ingress endpoint: An optional HTTP endpoint can be created, making the model accessible to applications outside of Snowflake over the public internet. This is achieved when we did the create service in the previous section.</li>
+</ul>
+<p>Our model is now deployed and ready to serve predictions. The service endpoint is secured and requires authentication. We will explore two common methods for accessing it: Key-Pair Authentication for service accounts and Programmatic Access Tokens (PAT) for user-centric access.</p>
+<p>First, you need the service&#39;s ingress URL. You can find it by running the following SQL command:</p>
+<pre><code language="language-sql" class="language-sql">SHOW ENDPOINTS IN SERVICE MODEL_SERVING_DB.FEATURE_STORE_MLDEMO.CHICAGOBUSFORECASTV12
+</code></pre>
+<p>The full prediction endpoint will be</p>
+<pre><code>https://&lt;YOUR_INGRESS_PATH&gt;/predict
+</code></pre>
+<p>predict here comes from the function exposed by the model. To know all the functions exposed in a model, you can use:</p>
+<pre><code>SHOW FUNCTIONS IN MODEL Forecasting_Bus_Ridership VERSION v2;
+</code></pre>
+<h2 is-upgraded>Using Key-Pair Authentication</h2>
+<p>This method is ideal for applications and service accounts. It involves using a public/private key pair to generate a session token for authentication. We will set up our SnowSQL connection and have a named connection in your <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-session#connect-by-using-the-connections-toml-file" target="_blank">connections.toml</a>. In this example our named connection is called <strong>&#34;named_connection&#34;</strong></p>
+<pre><code language="language-yaml" class="language-yaml">[named_connection]
+#Can be used in SnowSql as #connect example
+accountname = XXX
+username = YYY
+role = myrole
+</code></pre>
+<p>We will be passing in some dummy data and transforming the DataFrame into a JSON-like format before passing it to our predict URL endpoint. The full code can be found below.</p>
+<pre><code language="language-python" class="language-python">test = [[6 ,7,&#34;A&#34;,486139,734535,&#34;USW00014819&#34;,22.8,34.4,3.6 ,&#39;2019-07-13&#39;],  
+[6 ,6,&#34;A&#34;,444588,784734,&#34;USW00014819&#34;,13.9,21.7,5.1 ,&#39;2019-06-15&#39;],
+[4 ,6,&#34;W&#34;,780768,765409,&#34;USW00014819&#34;,11.1,20.6,0.5 ,&#39;2019-06-13&#39;]]
+
+df = pd.DataFrame(test, columns=[&#39;DAY_OF_WEEK&#39; ,&#39;MONTH&#39; ,&#39;DAYTYPE&#39; ,&#39;TOTAL_RIDERS&#39; ,&#39;PREV_DAY_RIDERS&#39; ,&#39;NOAA_WEATHER_STATION_ID&#39; ,&#39;MINIMUM_TEMPERATURE&#39; ,&#39;MAXIMUM_TEMPERATURE&#39; ,&#39;PRECIPITATION&#39; ,&#39;DATE&#39;])
+
+data = {&#34;data&#34;: np.column_stack([range(df.shape[0]), df.values]).tolist()}
+</code></pre>
+<p>Once done, save the code inside a file called &#34;KP-app.py&#34; and do &#34;</p>
+<pre><code language="language-shell" class="language-shell">python KP-app.py
+</code></pre>
+<pre><code language="language-python" class="language-python">import json
+from pprint import pprint
+import requests
+import snowflake.connector
+from snowflake.ml.utils.connection_params import SnowflakeLoginOptions
+import pandas as pd
+import numpy as np
+
+# --- 1. Connection and Authentication ---
+# This part of your code is correct. It gets a valid token.
+def initiate_snowflake_connection():
+    # IMPORTANT: Ensure &#34;named_connection&#34; is correctly defined in your
+    # ~/.snowflake/connections.toml file.
+    connection_parameters = SnowflakeLoginOptions(&#34;named_connection&#34;)
+    connection_parameters[&#34;session_parameters&#34;] = {&#34;PYTHON_CONNECTOR_QUERY_RESULT_FORMAT&#34;: &#34;json&#34;}
+    connection_parameters[&#34;insecure_mode&#34;] = True  # Disable SSL verification
+    snowflake_conn = snowflake.connector.connect(**connection_parameters)
+    return snowflake_conn
+
+def get_headers(snowflake_conn):
+    token = snowflake_conn._rest._token_request(&#39;ISSUE&#39;)
+    headers = {&#39;Authorization&#39;: f&#39;Snowflake Token=&#34;{token[&#34;data&#34;][&#34;sessionToken&#34;]}&#34;&#39;}
+    return headers
+
+print(&#34;Connecting to Snowflake to get auth token...&#34;)
+headers = get_headers(initiate_snowflake_connection())
+print(&#34;Token acquired successfully.&#34;)
+
+# --- 2. Endpoint URL ---
+# This must be the public endpoint for your service.
+URL = &#39;https://&lt;YOUR_INGRESS_PATH&gt;/predict&#39;
+
+# --- 3. Preparing our data ---
+def prepare_data():
+    # Ensure &#39;test&#39; is defined before this point
+    # Assuming &#39;test&#39; is a Snowpark DataFrame object
+    test = [[6 ,7,&#34;A&#34;,486139,734535,&#34;USW00014819&#34;,22.8,34.4,3.6 ,&#39;2019-07-13&#39;],  
+[6 ,6,&#34;A&#34;,444588,784734,&#34;USW00014819&#34;,13.9,21.7,5.1 ,&#39;2019-06-15&#39;],
+[4 ,6,&#34;W&#34;,780768,765409,&#34;USW00014819&#34;,11.1,20.6,0.5 ,&#39;2019-06-13&#39;]]
+
+    df = pd.DataFrame(test, columns=[&#39;DAY_OF_WEEK&#39; ,&#39;MONTH&#39; ,&#39;DAYTYPE&#39; ,&#39;TOTAL_RIDERS&#39; ,&#39;PREV_DAY_RIDERS&#39; ,&#39;NOAA_WEATHER_STATION_ID&#39; ,&#39;MINIMUM_TEMPERATURE&#39; ,&#39;MAXIMUM_TEMPERATURE&#39; ,&#39;PRECIPITATION&#39; ,&#39;DATE&#39;])
+    print(df)
+
+    data = {&#34;data&#34;: np.column_stack([range(df.shape[0]), df.values]).tolist()}     
+    print(data)
+    return data
+
+sample_df = prepare_data()
+
+
+# --- 4. Sending the Request ---
+def send_request(data: dict, headers: dict):
+    &#34;&#34;&#34;Posts the data to the URL and handles the response.&#34;&#34;&#34;
+    print(&#34;\nSending request to endpoint...&#34;)
+    try:
+        output = requests.post(URL, json=sample_df, headers=headers)
+        
+        print(&#34;--- Response from Server ---&#34;)
+        print(f&#34;Status Code: {output.status_code}&#34;)
+        
+        # Try to print JSON if possible, otherwise print raw text
+        try:
+            response_json = output.json()
+            print(&#34;Response JSON:&#34;)
+            pprint(response_json)
+        except json.JSONDecodeError:
+            print(&#34;Raw Response Text:&#34;)
+            print(output.text)
+            
+        return output
+
+    except requests.exceptions.RequestException as e:
+        print(f&#34;An error occurred during the request: {e}&#34;)
+        return None
+
+# --- Run the request ---
+send_request(data=sample_df, headers=headers)
+
+</code></pre>
+<h2 is-upgraded>Using Programmatic Access Token (PAT)</h2>
+<p>PATs are excellent for interactive or user-driven scenarios. A user generates a token in the Snowsight UI and uses it to authenticate.</p>
+<p>Setup:</p>
+<ol type="1">
+<li>Sign in to Snowsight.</li>
+<li>Click on your username in the top left corner, then select My Profile.</li>
+<li>In the dialog that appears, scroll down to the Programmatic Access Tokens section.</li>
+<li>Click + Generate new token.</li>
+<li>Fill in the token details:</li>
+</ol>
+<ul>
+<li>Name: A descriptive name for your token (e.g., dbt_cloud_token).</li>
+<li>Expires in: Choose an expiration period (e.g., 90 days). It is a security best practice to set an expiration date.</li>
+<li>Role: You can restrict the token to a specific role. This is highly recommended to limit the token&#39;s permissions to only what is necessary.</li>
+</ul>
+<ol type="1" start="6">
+<li>Click Generate.</li>
+<li>A dialog box will display your new token. This is the only time the token secret will be shown. Copy it immediately.</li>
+</ol>
+<p class="image-container"><img alt="6_PAT" src="img/4a92de83cfbc532.png"></p>
+<p>Once done, save the code below inside a file called &#34;PAT-app.py&#34; and do</p>
+<pre><code language="language-shell" class="language-shell">python PAT-app.py \
+  --account &lt;ACCOUNT_IDENTIFIER&gt; \
+  --user &lt;USERNAME&gt;&gt; \
+  --role ACCOUNTADMIN \
+  --pat &lt;PASS_IN_YOUR_PAT_TOKEN&gt;\
+  --endpoint &lt;YOUR_INGRESS_PATH&gt; \
+  --endpoint-path /predict
+</code></pre>
+<pre><code language="language-python" class="language-python">from datetime import timedelta
+import argparse
+import logging
+import sys
+import requests
+import numpy as np
+from pprint import pprint
+import json
+import pandas as pd
+
+logger = logging.getLogger(__name__)
+
+def main():
+    args = _parse_args()
+    spcs_access_token = token_exchange_pat(args.pat, endpoint=args.endpoint,
+					      role=args.role,
+					      snowflake_account_url=args.snowflake_account_url, 
+      snowflake_account=args.account)
+    spcs_url=f&#39;https://{args.endpoint}{args.endpoint_path}&#39;
+    connect_to_spcs(spcs_access_token, spcs_url)
+
+def token_exchange_pat(pat, role, endpoint, snowflake_account_url, snowflake_account) -&gt; str:
+    scope_role = f&#39;session:role:{role}&#39; if role is not None else None
+    scope = f&#39;{scope_role} {endpoint}&#39; if scope_role is not None else endpoint
+
+    data = {
+        &#39;grant_type&#39;: &#39;urn:ietf:params:oauth:grant-type:token-exchange&#39;,
+        &#39;scope&#39;: scope,
+        &#39;subject_token&#39;: pat,
+        &#39;subject_token_type&#39;: &#39;programmatic_access_token&#39;
+    }
+    logger.info(data)
+    url = f&#39;https://{snowflake_account}.snowflakecomputing.com/oauth/token&#39;
+    if snowflake_account_url:
+        url = f&#39;{snowflake_account_url}/oauth/token&#39;
+    response = requests.post(url, data=data)
+    logger.info(&#34;snowflake token : %s&#34; % response.text)
+    logger.info(&#34;snowflake token response code : %s&#34; % response.status_code)
+    assert 200 == response.status_code, &#34;unable to get snowflake token&#34;
+    return response.text
+
+
+def prepare_data():
+    # Ensure &#39;test&#39; is defined before this point
+    # Assuming &#39;test&#39; is a Snowpark DataFrame object
+    test = [[6 ,7,&#34;A&#34;,486139,734535,&#34;USW00014819&#34;,22.8,34.4,3.6 ,&#39;2019-07-13&#39;],  
+[6 ,6,&#34;A&#34;,444588,784734,&#34;USW00014819&#34;,13.9,21.7,5.1 ,&#39;2019-06-15&#39;],
+[4 ,6,&#34;W&#34;,780768,765409,&#34;USW00014819&#34;,11.1,20.6,0.5 ,&#39;2019-06-13&#39;]]
+
+    df = pd.DataFrame(test, columns=[&#39;DAY_OF_WEEK&#39; ,&#39;MONTH&#39; ,&#39;DAYTYPE&#39; ,&#39;TOTAL_RIDERS&#39; ,&#39;PREV_DAY_RIDERS&#39; ,&#39;NOAA_WEATHER_STATION_ID&#39; ,&#39;MINIMUM_TEMPERATURE&#39; ,&#39;MAXIMUM_TEMPERATURE&#39; ,&#39;PRECIPITATION&#39; ,&#39;DATE&#39;])
+    print(df)
+
+    data = {&#34;data&#34;: np.column_stack([range(df.shape[0]), df.values]).tolist()}     
+    print(data)
+    return data
+       
+
+def connect_to_spcs(token, url):
+  # Create a request to the ingress endpoint with authz.
+  headers = {&#39;Authorization&#39;: f&#39;Snowflake Token=&#34;{token}&#34;&#39;}
+  logger.info(url)
+  request_body = prepare_data()  # Convert the DataFrame to the right format
+  print (request_body)
+  response = requests.post(f&#39;{url}&#39;,data=json.dumps(request_body), headers=headers)     #data=json.dumps(request_body)
+  #assert (response.status_code == 200), f&#34;Failed to get response from the service. Status code: {response.status_code}&#34;
+  #return response.content
+  logger.info(&#34;return code %s&#34; % response.status_code)
+  logger.info(response.text)
+  logger.info(response.content)
+  logger.debug(response.content)
+
+def _parse_args():
+  logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+  cli_parser = argparse.ArgumentParser()
+  cli_parser.add_argument(&#39;--account&#39;, required=True,
+              help=&#39;The account identifier (for example, &#34;myorganization-myaccount&#34; for &#39;
+                &#39;&#34;myorganization-myaccount.snowflakecomputing.com&#34;).&#39;)
+  cli_parser.add_argument(&#39;--user&#39;, required=True, help=&#39;The user name.&#39;)
+  cli_parser.add_argument(&#39;--role&#39;,
+              help=&#39;The role we want to use to create and maintain a session for. If a role is not provided, &#39;
+                &#39;use the default role.&#39;)
+  cli_parser.add_argument(&#39;--endpoint&#39;, required=True,
+              help=&#39;The ingress endpoint of the service&#39;)
+  cli_parser.add_argument(&#39;--endpoint-path&#39;, default=&#39;/&#39;,
+              help=&#39;The url path for the ingress endpoint of the service&#39;)
+  cli_parser.add_argument(&#39;--snowflake_account_url&#39;, default=None,
+              help=&#39;The account url of the account for which we want to log in. Type of &#39;
+                &#39;https://myorganization-myaccount.snowflakecomputing.com&#39;)
+  cli_parser.add_argument(&#39;--pat&#39;,
+                            help=&#39;PAT for the user.&#39;)
+  args = cli_parser.parse_args()
+  return args
+
+
+if __name__ == &#34;__main__&#34;:
+    main()
+
+</code></pre>
+<p>If all is well you should get a response like below</p>
+<p class="image-container"><img alt="7_response" src="img/3e9a5c147711f06.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="2">
+        <p>Congratulations! You have successfully built, deployed, and accessed a machine learning model using Snowpark Container Services. You&#39;ve seen how <a href="https://www.snowflake.com/en/product/use-cases/end-to-end-ml-workflows/" target="_blank">Snowflake ML</a> can manage the entire MLOps lifecycle within a single, unified platform, from data engineering to production deployment.</p>
+<p>This powerful combination of Snowpark, the Model Registry, and SPCS enables data teams to build and scale AI/ML applications securely and efficiently.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Setting up a complete ML environment in Snowflake.</li>
+<li>Training and versioning models with the Snowflake Model Registry.</li>
+<li>Deploying models as scalable services using SPCS.</li>
+<li>Authenticating and consuming model predictions from a secure endpoint.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.snowflake.com/en/product/use-cases/end-to-end-ml-workflows/" target="_blank">Snowflake ML homepage</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart" target="_blank">More ML Quickstart</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container" target="_blank">Model Serving in SPCS</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs" target="_blank">Source Code on GitHub</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

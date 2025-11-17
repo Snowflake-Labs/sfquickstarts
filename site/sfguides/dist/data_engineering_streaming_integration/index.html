@@ -1,0 +1,535 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Streaming Data Integration with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_streaming_integration"
+                  title="Streaming Data Integration with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/devlabs/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>In today&#39;s fast-paced business environment, companies are facing increasing competition. Those that can effectively leverage the value of their data to drive improved outcomes will have the upper hand. With the ever-increasing volume and availability of data from sources such as IoT devices, mobile devices, and websites, there is a growing need for real-time data processing.</p>
+<p>This quickstart is a part of a series covering various aspects of wваorking with Streaming Data in Snowflake:</p>
+<ul>
+<li><strong>Streaming Data Integration with Snowflake (this very guide)</strong> - This guide will focus on design patterns and building blocks for data integration within Snowflake</li>
+<li><strong>Popular Kafka Integration options with Snowflake(coming up later!)</strong> - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations. In the meantime, please check out our quickstart on <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0" target="_blank">Streaming Snowpipe with Amazon MSK</a>.</li>
+<li><strong>Streaming Use cases(coming up later!)</strong> - This guide will share examples of common streaming use cases such as Change Data Capture (CDC), near real-time data sharing and others</li>
+<li><strong>Streaming with Snowflake. Post-load options(coming up later!)</strong> - The process of loading data is not the end of the pipeline. This guide will cover various options available in Snowflake for efficient post-integration processing to prepare data for consumption</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Prerequisites for this guide include:</p>
+<ul>
+<li>Familiarity with Snowflake, basic SQL knowledge, and understanding of Snowflake objects such as Snowsight UI</li>
+<li>Snowflake account. Existing or Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial</a>.  Please sign up using an email address that hasn&#39;t been used previously</li>
+<li>Additionally, for Kafka step we will need the following installed locally (steps to install are described in the corresponding section):<ul>
+<li>open-source Apache Kafka 2.13-3.1.0</li>
+<li>Snowflake Kafka Connector 1.9.1.jar (or newer version)</li>
+<li>openJDK &lt;= 15.0.2</li>
+<li><a href="https://brew.sh/" target="_blank">homebrew</a> for mac users</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>By the end of this guide, readers will learn about:</p>
+<ul>
+<li>Options available for working with streaming data</li>
+<li>Ways to use Snowpipe, COPY or Streaming Snowpipe</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Simple pipelines for various types of Streaming data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introduction" duration="30">
+        <p class="image-container"><img src="img/d3f31bd7098e71d9.png"></p>
+<p>Before we begin, let&#39;s take a few minutes to clarify the terminology as this topic can become quite confusing. It is crucial that we are all on the same page when discussing the variations in design patterns.</p>
+<h2 is-upgraded>Data Lifecycle</h2>
+<p>In this guide, we will outline the following key phases of the data lifecycle:</p>
+<ul>
+<li><strong>Data Change</strong>: This refers to a point in our timeline when events occur in the upstream system we integrate with</li>
+<li><strong>Integrate</strong>: This phase involves activities related to making a data change available for use in Snowflake</li>
+<li><strong>Process a-&gt;b</strong>: assuming data needs to be enriched/transformed before it can be used, this phase is for changing data from its initial state ‘a&#39; to a new state ‘b&#39;</li>
+<li><strong>Information is ready</strong>: A point in our timeline when ready-to-consume information is available for consumption at the rest point</li>
+<li><strong>Get results</strong>: The final step, in which the consumer retrieves or is pushed new portions of information</li>
+</ul>
+<h2 is-upgraded>Integration &amp; processing frequency</h2>
+<p>Another crucial aspect to consider is the processing frequency, which ultimately affects the latency between a data change event and its reflection in the final results. In real-world scenarios, different data products within an organization may have different requirements for availability latency. To ensure effective data management, it is best practice to catalog and publish this characteristic in your platform&#39;s data catalog. This not only helps with discovery, but also with justifying improvements, whether it is reducing latency or transitioning to a more cost-effective integration technique.</p>
+<p>Additionally, this is where the term &#34;real-time&#34; often comes into play!</p>
+<p>For the purpose of this guide, let&#39;s establish the following terminology.</p>
+<ul>
+<li><strong>Batch</strong>: Data is collected and stored over a period of time (such as hours or days) before being loaded and processed.</li>
+<li><strong>Micro-batch</strong>: Data is collected in small intervals (such as minutes) before being loaded and processed.</li>
+<li><strong>Continuous</strong>: Data item is loaded and processed individually and as soon as it is received.</li>
+<li><strong>Real-time</strong>: Data is processed and made available for use immediately after it is collected</li>
+</ul>
+<h2 is-upgraded>Synchronous vs Asynchronous processing</h2>
+<p>It is important to differentiate between these two.</p>
+<p>In <strong>synchronous processing</strong>, a task is executed and the program/script/pipeline must wait for it to complete before moving on to the next step. This means that the execution of the program is blocked until the task is finished and that next step will start immediately after the previous one completed.</p>
+<p>It is common opinion that sync processing is offering better simplicity from orchestration/logging/troubleshooting perspective as there is one master job process that controls the pipeline execution end-to-end.</p>
+<p>In <strong>asynchronous processing</strong>, steps are executed independently of one another and the program can continue to execute other tasks while one is still in progress, so the program execution is not blocked.</p>
+<p>Whilst delivering great possibilities for parallelization &amp; efficiency, async processing architectures often become a little more complex when it comes to monitoring / orchestration / troubleshooting as the state of the end-to-end pipeline is passed from one service to another.</p>
+<h2 is-upgraded>Next</h2>
+<p>This is excellent, but how does it relate to Snowpipe, the COPY command, and other fundamental tools that Snowflake offers? Let&#39;s discuss the available options in the next section!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Options. How to decide?" duration="5">
+        <p class="image-container"><img src="img/c6a8e2a663c562f7.png"></p>
+<p>Snowflake offers a variety of building blocks for working with streaming data. There is no one-size-fits-all approach, so it is important to understand the differences in order to effectively address requirements.</p>
+<p>Let&#39;s use the diagram above to talk about some design options. Here we see three stages of the data lifecycle we discussed in the previous section: <strong>integration</strong> -&gt; <strong>processing</strong> -&gt; <strong>consumption</strong>. Horizontally, five sections representing common patterns of working with streaming data are shown.</p>
+<h2 is-upgraded>File-base Integration</h2>
+<p>Data needs to be accessible in Snowflake Cloud in order to work with it. This typically involves transferring data to a public cloud bucket, but Snowflake also supports integration with ‘S3-like&#39; storage systems and can access data stored in customer-managed data centers. Data files can be created in cloud environment or easily uploaded from local environment using cloud-native solutions or <a href="https://docs.snowflake.com/en/user-guide-connecting.html#connecting-to-snowflake" target="_blank">Snowflake drivers/SnowSQL</a> with simple SFTP-like commands: <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system.html" target="_blank">PUT/GET/LIST/DEL</a>. Snowflake uses a <a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#supported-file-locations" target="_blank">stage object</a> to access data stored in buckets, which could be external(customer managed) or internal(Snowflake managed).</p>
+<p>This is the important integration milestone. As we have data files in the stage, from this time on, data is accessible for analysis and we have different options to optimize access by completing the integration phase:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/querying-stage.html" target="_blank">Query stage data directly</a>. This is commonly used for profiling incoming data, but can also deliver fast insights without the need for loading and optimizing for access. Technically this could be a direct query or a view or <a href="https://docs.snowflake.com/en/user-guide/tables-external-intro.html" target="_blank">external table</a>.</li>
+<li>Load using <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe.html" target="_blank">COPY</a>, a <strong>synchronous</strong> process that allows you to assign a virtual warehouse of various sizes(XS-&gt;6XL) to match the scale of your integration task. This process automatically creates metadata for file load history, allows for error tolerance thresholds, and gives you full control over compute allocation. It is ideal for bulk load operations. The COPY command could be initiated from an external process/orchestrator or from <a href="https://docs.snowflake.com/en/user-guide/tasks-intro.html" target="_blank">user managed task</a> or <a href="https://docs.snowflake.com/en/user-guide/tasks-intro.html#serverless-tasks" target="_blank">serverless task</a>.</li>
+<li>Load using <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe.html" target="_blank">Snowpipe</a>. This is an <strong>asynchronous</strong> process that utilizes automatically scaling, Snowflake-managed compute resources for data loading. Requests to load via Snowpipe can be submitted through the Snowpipe REST API or set up for automatic ingestion using <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe.html" target="_blank">Snowpipe Auto-ingest</a> setup, which leverages cloud storage notifications. Load requests are queued and processed on a frequent basis. Snowpipe is a great option for automating the integration of files and simplifying the management of compute resources when data file influxes are less predictable.</li>
+</ul>
+<p>These options are typically the best choice when the upstream system you are integrating with supplies data in the form of files. It is highly recommended to familiarize yourself with the best practices section in the corresponding documentation when using any of the above options, especially about recommended file sizes.</p>
+<h2 is-upgraded>Streaming Integration</h2>
+<p>When the upstream system is able to push streaming data via an API or when using a Kafka streaming platform, there are other options to consider:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html#overview-of-the-kafka-connector" target="_blank">Snowflake Connector for Kafka</a>. Snowflake Kafka connector is available as open source package for Kafka Connect cluster or run in Confluent managed platform. Snowflake&#39;s Kafka connector is a simple solution that allows you to easily read data from Kafka topics and write it to Snowflake tables, with all necessary automation including target table creation. The connector reads data from the topic, writes it to a file in an internal Snowflake stage, and then calls the Snowpipe API(see above) to submit the integration request. This provides a seamless integration of data from Kafka to Snowflake with minimal setup effort.</li>
+<li><a href="https://docs.snowflake.com/en/LIMITEDACCESS/snowpipe-streaming.html" target="_blank">Snowpipe Streaming API</a> writes rows of data to Snowflake tables, unlike bulk data loads or Snowpipe, which write data from staged files. This architecture results in lower load latencies, with corresponding lower costs for loading similar volumes of data. The Streaming API is intended to complement Snowpipe, not replace it. Currently Snowpipe Streaming service is implemented as a set of APIs for the Snowflake Ingest SDK available in Java. API requires a custom Java application interface capable of pumping rows of data and handling encountered errors. This can offer much lower latency and greater efficiency for both steady streams of data and bursts of data.</li>
+<li><a href="https://docs.snowflake.com/en/LIMITEDACCESS/snowpipe-streaming-kafka.html" target="_blank">Snowflake Connector for Kafka With Snowpipe Streaming</a>.  Another option for loading data from Kafka into Snowflake is to use the Snowpipe Streaming feature, which is available as a newer version of the Kafka Connect package and controlled by configuration. Unlike the Kafka Connector for Snowpipe, which writes data to temporary staged files before calling the Snowpipe API, the Snowpipe Streaming feature writes rows of data directly to Snowflake tables when a specified flush buffer threshold (time, memory, or number of messages) is reached. Efficiency benefits are similar to using the Snowpipe Streaming API.</li>
+</ul>
+<h2 is-upgraded>Integration with Data Sharing</h2>
+<p>Lastly, integration using <a href="https://docs.snowflake.com/en/user-guide/data-sharing-intro.html#how-does-secure-data-sharing-work" target="_blank">Snowflake Data Sharing</a> is superior in terms of its characteristics, despite being listed last. With Snowflake Data Sharing, consumers have the ability to access datasets published by providers live. Once the data share is configured, consumers can query new data immediately whenever changes occur on the provider side.</p>
+<p>Additionally, Snowflake Secure Data Sharing is a key component used within the Snowflake Cloud Marketplace, which offers additional data cataloging, making it easier for consumers to discover and access datasets, as well as providing providers with a range of metrics and controls. To take advantage of these features, it is recommended to explore the <a href="https://www.snowflake.com/snowflake-marketplace/" target="_blank">thousands of listings</a>  available on the Snowflake Marketplace to see what datasets can be added to your analytical landscape, all with minimal latency and effortless integration.</p>
+<p>Hope reviewing these patterns will help you to choose the right option for your next data pipeline. Seeing is believing! Let&#39;s see them in action.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowpipe batch" duration="10">
+        <p>In this section, we will construct a pipeline that is prepared to integrate a stream of data that arrives as files. The steps are as follows:</p>
+<ul>
+<li>Establish the environment</li>
+<li>Generate the input data files</li>
+<li>Integrate the data using Snowpipe</li>
+<li>Evaluate the results</li>
+</ul>
+<p>For the sake of simplicity, we will manually notify Snowpipe of the availability of new files to ingest in the stage. However, in real-life scenarios, it is more efficient to automate this process using the Snowpipe auto-ingest option and take advantage of storage events. If you&#39;d like to experience this in action, the quickstart guide may be helpful: <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html?index=..%2F..index#0" target="_blank">Snowpipe quickstart</a></p>
+<p>Let&#39;s login to Snowflake account (as agreed, we are going to use the ACCOUNTADMIN role for simplicity) and run the following:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE hol_streaming;
+
+USE DATABASE hol_streaming;
+
+CREATE OR REPLACE WAREHOUSE hol_streaming_wh WITH WAREHOUSE_SIZE = &#39;XSMALL&#39; MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 AUTO_SUSPEND = 60;
+</code></pre>
+<p>Next, let&#39;s create staging tables for our data loading. This syntax should be very familiar with anyone working with databases before. It is ANSI SQL compliant DDL, with probably one key exception - for stg_customer we are going to load the full payload of JSON into raw_json column. For this, Snowflake has a special data type <a href="https://docs.snowflake.com/en/sql-reference/data-types-semistructured.html" target="_blank">VARIANT</a>.</p>
+<p>As we load data we also going to add some technical metadata, like load data timestamp, row number in a file.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE stg_customer
+(
+  raw_json                VARIANT
+, filename                STRING   NOT NULL
+, file_row_seq            NUMBER   NOT NULL
+, ldts                    STRING   NOT NULL
+);
+
+CREATE OR REPLACE TABLE stg_orders
+(
+  o_orderkey              NUMBER
+, o_custkey               NUMBER  
+, o_orderstatus           STRING
+, o_totalprice            NUMBER  
+, o_orderdate             DATE
+, o_orderpriority         STRING
+, o_clerk                 STRING
+, o_shippriority          NUMBER
+, o_comment               STRING
+, filename                STRING   NOT NULL
+, file_row_seq            NUMBER   NOT NULL
+, ldts                    STRING   NOT NULL
+);
+</code></pre>
+<p>We will now create sample data by extracting a portion of our TPC-H sample dataset and storing it in files. To begin, we will set up two stages for each type of data, orders and customers. These stages can either be internal or external, depending on your use case, offering a wide range of possibilities.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE STAGE customer_data FILE_FORMAT = (TYPE = JSON);
+CREATE OR REPLACE STAGE orders_data   FILE_FORMAT = (TYPE = CSV) ;
+</code></pre>
+<p>Generate and unload sample data:</p>
+<pre><code language="language-sql" class="language-sql">COPY INTO @customer_data 
+FROM
+(SELECT object_construct(*)
+  FROM snowflake_sample_data.tpch_sf10.customer limit 10
+) 
+INCLUDE_QUERY_ID=TRUE;
+
+COPY INTO @orders_data 
+FROM
+(SELECT *
+  FROM snowflake_sample_data.tpch_sf10.orders limit 1000
+) 
+INCLUDE_QUERY_ID=TRUE;
+</code></pre>
+<p>There are couple of things going on. We are utilizing the Snowflake <a href="https://docs.snowflake.com/en/sql-reference/functions/object_construct.html" target="_blank">object_construct</a> function to quickly create an object/document from a subset of rows for customer data and then loading it into the customer_data stage.<br> For the orders data, we will be extracting it into compressed CSV files. While there are many other options available in the COPY INTO stage construct, we are using the INCLUDE_QUERY_ID option to make it easier to generate new incremental files as we will be running these commands repeatedly without the need to worry about file overriding.</p>
+<p>You can now run the following to validate that the data is now stored in files:</p>
+<pre><code language="language-sql" class="language-sql">list @customer_data;
+SELECT METADATA$FILENAME,$1 FROM @customer_data; 
+</code></pre>
+<p class="image-container"><img alt="staged data" src="img/f9a3c81e24836d1d.png"></p>
+<p>Next, we are going to setup Snowpipe to load data from files in a stage into staging tables:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE PIPE stg_orders_pp 
+AS 
+COPY INTO stg_orders 
+FROM
+(
+SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9 
+     , metadata$filename
+     , metadata$file_row_number
+     , CURRENT_TIMESTAMP()
+  FROM @orders_data
+);
+
+CREATE OR REPLACE PIPE stg_customer_pp 
+AS 
+COPY INTO stg_customer
+FROM 
+(
+SELECT $1
+     , metadata$filename
+     , metadata$file_row_number
+     , CURRENT_TIMESTAMP()
+  FROM @customer_data
+);
+
+ALTER PIPE stg_customer_pp REFRESH;
+
+ALTER PIPE stg_orders_pp   REFRESH;
+</code></pre>
+<p>Once this done, you should be able to see data starting to appear in the target tables:</p>
+<pre><code language="language-sql" class="language-sql">SELECT &#39;stg_customer&#39;, count(1) FROM stg_customer
+UNION ALL
+SELECT &#39;stg_orders&#39;, count(1) FROM stg_orders
+;
+</code></pre>
+<p class="image-container"><img alt="staged data" src="img/21d5f18f7bfdcf97.png"></p>
+<p>If you executed the query above quickly within a few seconds after refreshing the pipes, you may have noticed that the data in the target tables did not appear immediately. This is due to the asynchronous nature of Snowpipe loading that was discussed in the previous section. Once the data is loaded, you can also observe the difference in time between when Snowpipe was notified about the new file load request and when it was actually loaded.</p>
+<pre><code language="language-sql" class="language-sql">select pipe_received_time, last_load_time,src.*
+from table(information_schema.copy_history(table_name=&gt;&#39;STG_CUSTOMER&#39;, start_time=&gt; dateadd(hours, -1, current_timestamp()))) src;
+</code></pre>
+<p class="image-container"><img alt="staged data" src="img/b1fde59a7a178c6b.png"></p>
+<p>It&#39;s important to keep in mind that the asynchronous processing of Snowpipe provides greater efficiency, but also means that data may not appear immediately after a load request. However, you can see the details of credit usage for each load operation to gauge the efficiency of the process:</p>
+<pre><code language="language-sql" class="language-sql">select *
+  from table(information_schema.pipe_usage_history(
+    date_range_start=&gt;dateadd(&#39;hour&#39;,-12,current_timestamp()),
+    pipe_name=&gt;&#39;STG_CUSTOMER_PP&#39;))
+union all
+select *
+  from table(information_schema.pipe_usage_history(
+    date_range_start=&gt;dateadd(&#39;hour&#39;,-12,current_timestamp()),
+    pipe_name=&gt;&#39;STG_ORDERS_PP&#39;));
+</code></pre>
+<p class="image-container"><img alt="staged data" src="img/bab616f7824e6285.png"></p>
+<p>Here&#39;s a challenge for you. In the scripts we created earlier, we only loaded a small amount of data, around 1000 rows. Try generating more files based on sample data and observe how Snowpipe can handle a larger influx of data.</p>
+<p>Also, if you&#39;d like to learn more about SnowPipe and levelrage Cloud Storage Events for auto-ingest setup please have a look in our <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe/index.html?index=..%2F..index#0" target="_blank">Getting Started with Snowpipe</a> quickstart.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="COPY command" duration="15">
+        <p>Now that we have seen Snowpipe, let&#39;s run a similar experiment with COPY command. For this, let&#39;s reset the environment:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE hol_streaming;
+
+CREATE OR REPLACE TABLE stg_customer
+(
+  raw_json                VARIANT
+, filename                STRING   NOT NULL
+, file_row_seq            NUMBER   NOT NULL
+, ldts                    STRING   NOT NULL
+);
+
+CREATE OR REPLACE TABLE customer_target 
+( 
+  c_acctbal          NUMBER
+, c_name             STRING
+, c_mktsegment       STRING
+);
+
+CREATE OR REPLACE STAGE customer_data FILE_FORMAT = (TYPE = JSON) directory = (enable = true);
+
+CREATE OR REPLACE STREAM customer_data_files_stream ON STAGE customer_data ;
+
+COPY INTO @customer_data 
+FROM
+(SELECT object_construct(*)
+  FROM snowflake_sample_data.tpch_sf10.customer
+  -- LIMIT 10
+) 
+INCLUDE_QUERY_ID=TRUE;
+</code></pre>
+<p class="image-container"><img alt="staged data" src="img/c406bdd0163fca61.png"></p>
+<p>Note, this time we did a few little tweaks:</p>
+<ul>
+<li>we enabled <a href="https://docs.snowflake.com/en/user-guide/data-load-dirtables.html#directory-tables" target="_blank">directory table</a> on our stage to illustrate the idea of using it in a stream</li>
+<li>we created a stream on the directory table</li>
+<li>by commenting the &#34;LIMIT 10&#34; we are going to create much more files by offloading about 1.5Mn rows</li>
+</ul>
+<h2 is-upgraded>Manual process</h2>
+<p>Let&#39;s now carry out the load using the COPY command. The COPY command will verify the files in the stage against the file load history for the target table and load all of them in parallel using the virtual warehouse in use during the session.</p>
+<p>If there are more files to be loaded, we can easily increase the virtual warehouse size (from XS to 6XL) to speed up the process as needed by the business. This gives developers the greatest degree of control over the compute resources allocated to this operation.</p>
+<pre><code language="language-sql" class="language-sql">BEGIN TRANSACTION;
+COPY INTO stg_customer
+FROM 
+(
+SELECT $1
+     , metadata$filename
+     , metadata$file_row_number
+     , CURRENT_TIMESTAMP()
+  FROM @customer_data
+);  
+--
+MERGE INTO customer_target
+USING 
+(
+SELECT raw_json:C_ACCTBAL::number    src_c_acctbal
+     , raw_json:C_NAME::string       src_c_name
+     , raw_json:C_MKTSEGMENT::string src_c_mktsegment
+  FROM stg_customer
+) 
+ON (   customer_target.c_name = src_C_NAME
+   AND customer_target.c_name = src_C_MKTSEGMENT
+   )
+WHEN     MATCHED THEN UPDATE SET customer_target.c_acctbal = src_c_acctbal
+WHEN NOT MATCHED THEN INSERT (C_acctbal,c_name,c_mktsegment) VALUES (src_c_acctbal, src_c_name, src_c_mktsegment)
+;
+--
+COMMIT;
+</code></pre>
+<p>The COPY operation is also transactionally controlled. To demonstrate synchronous processing, we have added a subsequent step in the multi-statement transaction. Once the data from the files is loaded into the stg_customer table, its JSON content will be immediately merged into the customer_target table. From a developer&#39;s perspective, this provides a great simplification as the second command will automatically start as soon as the COPY finishes.</p>
+<h2 is-upgraded>Automation using Snowflake tasks</h2>
+<p>Now such COPY command can be issued by an external orchestrator, such as bash/batch script or 3rd party products like Airflow. What if we want to leverage Snowflake to automate use of COPY command for our stream of input data?</p>
+<p>Let&#39;s take a step back and discuss the new directory table construct we introduced. COPY and Snowpipe both automatically track the load history to prevent accidental reloading of the same file. However, we only want to run compute when there are new files available. One way to achieve this with the COPY command is to use the directory table and stream, which allows our integration process to start only when there are new entries (new files) in the stream.</p>
+<pre><code language="language-sql" class="language-sql">ALTER STAGE customer_data REFRESH;
+SELECT * FROM DIRECTORY(@customer_data);
+SELECT * FROM customer_data_files_stream;
+</code></pre>
+<p><img alt="staged data" src="img/1050f369217a6285.png"> Please note, in this example we are explicitly refreshing the STAGE, but in a real-life scenario, this could be <a href="https://docs.snowflake.com/en/user-guide/data-load-dirtables-auto.html#automated-directory-table-metadata-refreshes" target="_blank">integrated</a> with cloud storage event notifications.</p>
+<p>With this, we can create a task that every minute will be checking if there are new files detected in the stream and will be loading files using COPY command into the target table.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TASK tsk_customer_data_load
+--  WAREHOUSE = .... if_I_want_user_managed_task
+  USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = &#39;XSMALL&#39;
+  SCHEDULE = &#39;1 minute&#39;
+WHEN
+  SYSTEM$STREAM_HAS_DATA(&#39;CUSTOMER_DATA_FILES_STREAM&#39;)
+AS
+COPY INTO stg_customer
+FROM 
+(
+SELECT $1
+     , metadata$filename
+     , metadata$file_row_number
+     , CURRENT_TIMESTAMP()
+  FROM @customer_data
+);
+
+ALTER TASK tsk_customer_data_load RESUME;
+EXECUTE TASK tsk_customer_data_load;
+</code></pre>
+<p>Finally, as always it is possible to measure the efficiency of your data ingestion process. Snowflake automatically collects metadata about number of rows inserted, files loaded, size as well as detailed information of your compute usage. Whether it is serverless compute like serverless tasks &amp; snowpipe or user-managed compute with virtual warehouses - you are always in control.</p>
+<p>You can access this information via SnowSight UI <img alt="staged data" src="img/9294ba47dce3c9a.png"></p>
+<p>For those who prefer programmatic access, as is typical with Snowflake, there is a data point that can be queried:</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+  FROM TABLE(information_schema.serverless_task_history(
+    date_range_start=&gt;dateadd(d, -7, current_date),
+    date_range_end=&gt;current_date,
+    task_name=&gt;&#39;tsk_customer_data_load&#39;));
+</code></pre>
+<p class="image-container"><img alt="staged data" src="img/c15dedfa29615a19.png"></p>
+<p>Now that we covered most common file-based integration approaches for data that streams down into your warehouse let&#39;s talk about Streaming Snowpipe in the next section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streaming Snowpipe" duration="20">
+        <p>The Snowpipe Streaming service is implemented as a set of APIs for the Snowflake Ingest SDK, which can be downloaded from the <a href="(https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk)" target="_blank">Maven Central Repository</a>. The APIs require a custom Java application interface capable of pushing rows of data through one or more <a href="https://docs.snowflake.com/en/LIMITEDACCESS/snowpipe-streaming.html#channels" target="_blank">channels</a> and handling encountered errors.</p>
+<p>Instead of building a custom Java application, we will leverage the Snowflake connector for Kafka, as all Snowpipe Streaming API routines are neatly packaged in the connector and easy to use.</p>
+<p>When the Kafka connector comes online, it opens a channel corresponding to a partition in the Kafka topic and begins reading records from the Kafka partition. The connector then calls the API and makes an insertRows method request with the required offset.</p>
+<p>As always, in our documentation you can find more details about the use of <a href="(https://docs.snowflake.com/en/LIMITEDACCESS/snowpipe-streaming.html)" target="_blank">Snowpipe Streaming</a> and <a href="https://docs.snowflake.com/en/LIMITEDACCESS/snowpipe-streaming-kafka.html" target="_blank">Snowflake Connector for Kafka</a>.</p>
+<h2 is-upgraded>Snowflake Connector for Kafka</h2>
+<p>For testing this set up locally, we will need:</p>
+<ul>
+<li>open-source Apache Kafka 2.13-3.1.0 installed locally</li>
+<li>Snowflake Kafka Connector 1.9.1.jar (or new version)</li>
+<li>openJDK &lt;= 15.0.2</li>
+<li>a Snowflake user for streaming snowpipe with ssh key defined as authentication method</li>
+</ul>
+<h2 is-upgraded>Snowflake set up</h2>
+<p>Please follow the instruction to generate the ssh key-pair following the instruction <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html#step-1-generate-the-private-key" target="_blank">here</a></p>
+<p>Now let&#39;s log in to Snowflake and create a separate user that we are going to use for Streaming Snowpipe. Please remember to replace  <strong>&lt;YOURPUBLICKEY&gt;</strong> with the corresponding details. Please note, in this case you need to remove the begin/end comment lines from the key file (e.g. —–BEGIN PUBLIC KEY—–) but please keep the new-line characters.</p>
+<pre><code language="language-sql" class="language-sql">create user snowpipe_streaming_user password=&#39;&#39;,  default_role = accountadmin, rsa_public_key=&#39;&lt;YOURPUBLICKEY&gt;&#39;;
+
+grant role accountadmin  to user snowpipe_streaming_user;
+</code></pre>
+<h2 is-upgraded>Local set up</h2>
+<p>Let&#39;s open terminal and run the following commands to download Kafka and Snowflake kafka connector:</p>
+<pre><code>mkdir HOL_kafka
+cd HOL_kafka
+
+curl https://archive.apache.org/dist/kafka/3.3.1/kafka_2.13-3.3.1.tgz --output kafka_2.13-3.3.1.tgz
+tar -xzf kafka_2.13-3.3.1.tgz
+
+cd kafka_2.13-3.3.1/libs
+curl https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/1.9.1/snowflake-kafka-connector-1.9.1.jar --output snowflake-kafka-connector-1.9.1.jar
+</code></pre>
+<p>Create file <code>config/SF_connect.properties</code> with the following config. Please remember to replace <strong>&lt;YOURACCOUNT&gt;</strong> &amp; <strong>&lt;YOURPRIVATEKEY&gt;</strong> with the corresponding details. Also, please note when adding private key you need to remove all new line characters as well as beginning and ending comments (e.g —–BEGIN PRIVATE KEY—–):</p>
+<pre><code>name=snowpipe_streaming_ingest
+connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
+tasks.max=1
+topics=customer_data_topic
+snowflake.topic2table.map=customer_data_topic:customer_data_stream_stg
+buffer.count.records=1
+buffer.flush.time=10
+buffer.size.bytes=20000000
+snowflake.url.name=&lt;YOURACCOUNT&gt;.snowflakecomputing.com:443
+snowflake.user.name=SNOWPIPE_STREAMING_USER
+snowflake.private.key=&lt;YOURPRIVATEKEY&gt;
+snowflake.database.name=HOL_STREAMING
+snowflake.schema.name=PUBLIC
+snowflake.role.name=ACCOUNTADMIN
+snowflake.ingestion.method=SNOWPIPE_STREAMING
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=false
+value.converter.schemas.enable=false
+</code></pre>
+<p>For those of you using <a href="https://brew.sh/" target="_blank">homebrew</a> as a package manager for you mac, can easily install openjdk package of the required version using the following command:</p>
+<pre><code>brew install openjdk@15
+</code></pre>
+<p>Alternatively, openjdk can be set up following this <a href="https://openjdk.org/install/" target="_blank">instruction</a>.</p>
+<h2 is-upgraded>Start up</h2>
+<p>Great! Now this out of the way, let&#39;s start the environment. Please note, for this step you might get errors if using JDK&gt;=v15. And you might need a few separate terminal sessions for this:</p>
+<p>Session 1:</p>
+<pre><code>bin/zookeeper-server-start.sh config/zookeeper.properties
+</code></pre>
+<p>Session 2:</p>
+<pre><code>bin/kafka-server-start.sh config/server.properties
+</code></pre>
+<p>Session 3:</p>
+<pre><code>bin/connect-standalone.sh ./config/connect-standalone.properties ./config/SF_connect.properties
+</code></pre>
+<h2 is-upgraded>Test!</h2>
+<p>Excited? Everything seems ready. Next step is seeing the system in action.</p>
+<p>Please open another terminal session (Session 4) and run the kafka-console-producer. This utility is a simple way to manually put some data into the topic.</p>
+<pre><code>bin/kafka-console-producer.sh --topic customer_data_topic --bootstrap-server localhost:9092
+</code></pre>
+<p>Let&#39;s get back to Snowsight and run the following query to generate some sample customer data in json format:</p>
+<pre><code language="language-sql" class="language-sql">SELECT object_construct(*)
+  FROM snowflake_sample_data.tpch_sf10.customer limit 200;
+</code></pre>
+<p class="image-container"><img alt="staged data" src="img/52ec729cc630f9e7.png"></p>
+<p>Next, copy a set of records from the dataset in Snowsight (use Command + C or right-click and select ‘Copy&#39;) and paste them into the terminal window (kafka-console-producer) that you just opened. Please note, if you select the whole table/column(instead of selecting some rows), the row header (&#34;OBJECT_CONSTRUCT(*)&#34; in this example) will be added to the clipboard. If you do so, please make sure to remove it before pasting it to the kafka-console-producer window.</p>
+<p>What occurs next is that the console utility will push the data into the topic. The Snowflake Kafka sink connector, utilizing Snowpipe streaming, will then push it into the target table. And yes, that&#39;s correct, we don&#39;t need to create the target table manually as the Kafka connector does it automatically.</p>
+<p>On the Snowflake side, the data lands in a table with two columns:</p>
+<ul>
+<li>record_metadata (VARIANT)</li>
+<li>record_content (VARIANT) - the actual payload</li>
+</ul>
+<p>Thanks to Snowflake&#39;s exceptional support for querying semi-structured data, working with this content is very straightforward. Here&#39;s a sample query:</p>
+<pre><code language="language-sql" class="language-sql">  select TO_TIMESTAMP(TO_NUMBER(record_metadata:CreateTime),3) create_timestamp
+       , src.record_content:C_ACCTBAL::NUMBER  C_ACCTBAL
+       , src.record_content:C_NAME::STRING     C_NAME       
+       , src.record_content       
+  from customer_data_stream_stg src;
+</code></pre>
+<p><img alt="staged data" src="img/3c815521d2fe91eb.png"> As you can see, Snowpipe Streaming is a fantastic new capability that can significantly reduce integration latency and improve pipeline efficiency. It also opens up new opportunities for your business, providing near-real-time insights and operational reporting, among other benefits.</p>
+<p>For those of you who would like to know more about use of Snowpipe Streaming in Amazon MSK (Managed Streaming for Apache Kafka) please have a look at this <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0" target="_blank">Quickstart</a>!</p>
+<p>Hope you enjoyed this section. Let&#39;s summarize and provide some pointers to continue refining your streaming data pipeline skills.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="5">
+        <p>To clean up the objects we created for this lab, let&#39;s get back to SnowSight and run the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+DROP DATABASE hol_streaming;
+DROP WAREHOUSE hol_streaming_wh;
+DROP USER snowpipe_streaming_user;
+</code></pre>
+<p>And of course delete the <strong>HOL_kafka</strong> you created in the operating system.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="5">
+        <p>So, here you have it!</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<p>We discussed a lot of important aspects in this quickstart:</p>
+<ul>
+<li>batch, micro-batch, continuous, real-time integration &amp; processing</li>
+<li>synchronous and asynchronous design patterns</li>
+<li>discussed options of using Snowflake build primitives for working with Streaming data, including direct stage queries, COPY, Snowpipe, Streaming Snowpipe</li>
+<li>built three examples of getting sample streaming data into Snowflake target tables</li>
+</ul>
+<h2 is-upgraded>Next steps</h2>
+<p>Hope now understanding various options at your fingertips your next data pipeline will be done easier and more efficiently. Please stay tuned for the upcoming quickstarts in Snowflake Streaming series:</p>
+<ul>
+<li><strong>Streaming Data Integration with Snowflake (this very guide)</strong> - This guide will focus on design patterns and building blocks for data integration within Snowflake</li>
+<li><strong>Popular Kafka Integration options with Snowflake(coming up later!)</strong> - Kafka is a widely used message broker among customers. This guide will provide examples using common Kafka deployment configurations</li>
+<li><strong>Streaming Use cases(coming up later!)</strong> - This guide will share examples of common streaming use cases such as Change Data Capture (CDC), near real-time data sharing and others</li>
+<li><strong>Streaming with Snowflake. Post-load options(coming up later!)</strong> - The process of loading data is not the end of the pipeline. This guide will cover various options available in Snowflake for efficient post-integration processing to prepare data for consumption</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "building-retail-analytics-de-pipeline",
+  "duration": 23,
+  "title": "Build a Retail Analytics Data Engineering Pipeline with Snowflake",
+  "summary": "Build a comprehensive retail analytics pipeline using Snowflake’s modern data engineering features including Snowpark DB APIs, Snowpark APIS, Cortex AI, managed Iceberg tables, streamlit and using Snowflake Trail for Observability.",
+  "source": "building_retail_analytics_dataengineering_pipeline_with_snowflake/building_retail_analytics_dataengineering_pipeline_with_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "building-retail-analytics-de-pipeline"
+}

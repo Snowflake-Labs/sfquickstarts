@@ -1,0 +1,463 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started - Processing HL7 V2 Messages with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="processing_hl7_v2_messages_with_snowflake"
+                  title="Getting Started - Processing HL7 V2 Messages with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>This Quickstart is designed to help you understand the capabilities included in Snowflake&#39;s support for processing Healthcare HL7 V2.x messages. The labs will give you a view into how you can leverage Snowflake&#39;s data programmability features to parse HL7 V2.x messages using Java UDTF, Java UDF, and Python UDF.</p>
+<p>Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing the labs, you&#39;ll be ready to start processing and managing your own HL7 V2.x messages in Snowflake.</p>
+<p class="image-container"><img alt="Architecture" src="img/a91e6e195cdc2391.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account</li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Basic Python and Java knowledge</li>
+<li>Recommend to get familiarized with the <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting_started_with_snowflake/getting_started_with_snowflake.md" target="_blank">Snowflake User Interface</a></li>
+<li>Recommended to also complete <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowsql/index.html?index=..%2F..index" target="_blank">Getting Started with SnowSQL</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to ingest and process HL7 V2.x messages</li>
+<li>How to process HL7 V2.x messages using Java UDF&#39;s and UDTF&#39;s, Python UDF&#39;s.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A snowflake stage (internal) for storing and accessing HL7 V2.x in Snowflake.</li>
+<li>A user-defined function (UDF) and user-defined table functions (UDTF) using Snowflake&#39;s engine to process files.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Notice and Terms of Use" duration="1">
+        <p>The data provided for this lab is an extract from the Simhospital repository on github (<a href="https://github.com/google/simhospital/blob/master/docs/artifacts/messages.out" target="_blank">Simhospital dataset</a>).</p>
+<p>Use of the data provided is limited to this quickstart in connection with the Snowflake service and is subject to any additional terms and conditions on the Simhospital github repository.</p>
+<p>By accessing this data, you acknowledge and agree to the limits and terms related to the use of the HL7 V2.x dataset.</p>
+<h2 is-upgraded><strong>Note:</strong></h2>
+<p><em>The implementations provided here are at best MVP/Prototype versions, they are not of production quality. You are free to extend the functionality and improve the code as it fits your functionality.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your lab environment" duration="10">
+        <p>If you haven&#39;t already, register for a <a href="https://trial.snowflake.com/" target="_blank">Snowflake free 30-day trial</a>. The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.</p>
+<h2 is-upgraded>Navigating to Snowflake User Interface</h2>
+<p>For this lab, you will use the latest Snowflake web interface.</p>
+<ol type="1">
+<li>Open a browser window and enter the URL of your Snowflake 30-day trial environment that was sent with your registration email.Log into your Snowflake trial account</li>
+<li>Click on <strong>Worksheets</strong> tab in the left-hand navigation bar. The ​Worksheets​ tab provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete.</li>
+<li>A new worksheet is created by clicking <strong>+ Worksheet</strong> on the top right.</li>
+</ol>
+<h2 is-upgraded>Download Data and Scripts</h2>
+<p>All source code for this guide can be found on <a href="https://github.com/Snowflake-Labs/Snowflake-HL7V2-Parsing/" target="_blank">Snowflake Labs Github</a></p>
+<p>We need to first download the following files to the local workstation by clicking on the hyperlinks below. The subsequent steps in the next section require <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL CLI</a> installed on the local workstation where the lab is ran.</p>
+<h3 is-upgraded>Sample HL7 V2.x messages data file.</h3>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/Snowflake-HL7V2-Parsing/blob/main/src/test/data/hl7/hl7_2-3_samples.txt" target="_blank">hl7_2-3_samples.txt</a>    - Sample HL7 V2.x messages data file.</li>
+</ul>
+<h3 is-upgraded>Java UDF/UDTF related files and scripts</h3>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/Snowflake-HL7V2-Parsing/blob/main/target/sf-hl7v2-parser-1.0-SNAPSHOT-jar-with-dependencies.jar" target="_blank">sf-hl7v2-parser-1.0-SNAPSHOT-jar-with-dependencies.jar</a>  - This implementation uses the <a href="https://hapifhir.github.io/hapi-hl7v2/" target="_blank">HL7 HAPI parser</a> to parse the HL7 V2.x messages. Jar file includes all the dependencies.</li>
+</ul>
+<h3 is-upgraded>Python UDF related files and scripts</h3>
+<ul>
+<li><a href="https://files.pythonhosted.org/packages/28/85/09438fc4b5d9598192010d04347de98dc9f4676661ccbba2695707c217f0/hl7apy-1.3.4.tar.gz" target="_blank">hl7apy-1.3.4.tar.gz</a>  - This implementation uses the HL7APY python library, to parse the message into JSON format. The HL7APY v1.3.4 was used for this implementation.</li>
+<li><a href="https://github.com/Snowflake-Labs/Snowflake-HL7V2-Parsing/blob/main/src/main/python/hl7pyparserUDF.py" target="_blank">hl7pyparserUDF.py</a> - Snowflake HL7 Python UDF data processing code</li>
+</ul>
+<p>Download all the files locally to your workstation.</p>
+<p><strong>Local Files</strong></p>
+<p class="image-container"><img alt="Local Files" src="img/a8e0763e8b6e5164.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Store &amp; Access HL V2.x Messages" duration="15">
+        <p>Let&#39;s start by preparing to load the HL7 V2.x messages into Snowflake. Snowflake supports two types of stages for storing data files used for loading and unloading:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#internal-stages" target="_blank">Internal stages</a> store the files internally within Snowflake.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#external-stages" target="_blank">External stages</a> store the files in an external location (i.e. S3 bucket) that is referenced by the stage. An external stage specifies location and credential information, if required, for the bucket.</li>
+</ul>
+<h2 is-upgraded>Create a Database, Schema, and Warehouse</h2>
+<p>Before creating any stages, let&#39;s create a database and a schema that will be used for loading the unstructured data. We will use the UI within the Worksheets tab to run the DDL that creates the database and schema. Copy the commands below into your trial environment, and execute each individually.</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+
+create or replace database hl7db comment = &#39;HL7 Database&#39;;
+create or replace schema hl7db.hl7v2demo;
+create or replace warehouse quickstart warehouse_size = &#39;SMALL&#39; initially_suspended = TRUE auto_suspend=60;
+
+
+use database hl7db;
+use schema hl7v2demo;
+use warehouse quickstart;
+</code></pre>
+<h2 is-upgraded>Create Snowflake Stages to Ingest and Store HL7 V2.x Messages</h2>
+<p>Stages in Snowflake are locations used to store data. If the data that needs to be loaded into Snowflake is stored in other cloud regions like AWS S3 or Azure or GCP then these are called External stages whereas if the data is stored inside Snowflake then these are called Internal stages.</p>
+<p><strong>Note:</strong> For the purpose of this lab we are using Internal stage. You can do the same with External Stage.</p>
+<h2 is-upgraded>Store HL7 V2.x messages in an Internal Stage</h2>
+<p>You can store data and files directly in Snowflake with internal stages. Now, we want to create an internal stage and upload the files using SnowSQL CLI.</p>
+<h3 is-upgraded>Create an Internal Stage</h3>
+<p>Run this command to create an internal stage called <code>hl7_stage_internal</code> as follows.</p>
+<pre><code language="language-sql" class="language-sql">use schema hl7db.hl7v2demo;
+-- Directory tables store a catalog of staged files in cloud storage.
+create or replace stage hl7_stage_internal
+   directory = ( enable = TRUE )
+   comment = &#39;used for staging data &amp; libraries&#39;;
+</code></pre>
+<h3 is-upgraded>Upload Files using SnowSQL to Internal Stage</h3>
+<p>Let&#39;s now upload the files downloaded to your workstation to Snowflake internal stage <code>hl7_stage_internal</code>. We will use <strong>SnowSQL CLI</strong> and <strong>PUT</strong> command to load all files. Before opening terminal, find out your account identifier which for the trial account will be.</p>
+<p>For example, if the URL to access the trial account is <code>https://xx74264.ca-central-1.aws.snowflakecomputing.com/</code>. These are the values for the account identifier:</p>
+<ul>
+<li>Account identifier: <code>xx74264</code></li>
+</ul>
+<p>There may be additional segments if you are using your own account part of an organization. You can find those from the URL of your Snowflake account. Please check the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#account-identifiers" target="_blank">Snowflake Documentation</a> for additional details on this topic.</p>
+<p>For your convenience, use the below query to retrieve account identifier.</p>
+<pre><code language="language-sql" class="language-sql">-- retrieve your Snowflake account identifier 
+select replace(t.value:host::varchar,&#39;.snowflakecomputing.com&#39;) as account_identifier 
+from table(flatten(input =&gt; parse_json(system$allowlist()))) as t
+where t.value:type::varchar = &#39;SNOWFLAKE_DEPLOYMENT_REGIONLESS&#39;;
+
+</code></pre>
+<p>Let&#39;s first prepare the snowflake internal stage structure. stage name is <code>hl7_stage_internal</code> and we have three sub directories in it <code>dataset</code>, <code>java_stage</code> and <code>python_stage</code></p>
+<ul>
+<li><code>dataset</code>   - contains sample HL7 data files.</li>
+<li><code>java_stage</code>  - contains Java UDF/UDTF related code/dependencies jar file.</li>
+<li><code>python_stage</code>  - contains external HL7apy lib tar file and UDF code.</li>
+</ul>
+<p><strong>Internal Stage Files</strong></p>
+<p>Using Snowsql upload the files.</p>
+<pre><code language="language-sql" class="language-sql">-- Using a terminal window invoke snowsql.
+
+snowsql -a &lt;account-identifier&gt; -u &lt;username&gt;
+
+-- set the database/schema/warehouse context
+use database hl7db;
+use schema hl7v2demo;
+use warehouse quickstart;
+
+-- load sample hl7 data
+put file:////&lt;downloaded files folder path&gt;/hl7_2-3_samples.txt @hl7_stage_internal/dataset/ auto_compress=false;
+
+-- load java related code/dependencies jar
+put file:////&lt;downloaded files folder path&gt;/sf-hl7v2-parser-1.0-SNAPSHOT-jar-with-dependencies.jar @hl7_stage_internal/java_stage/ auto_compress=false;
+
+-- load external dependency python lib
+put file:////&lt;downloaded files folder path&gt;/hl7apy-1.3.4.tar.gz @hl7_stage_internal/python_stage/ auto_compress=false;
+
+
+-- load python UDF code
+put file:////&lt;downloaded files folder path&gt;/hl7pyparserUDF.py @hl7_stage_internal/python_stage/ auto_compress=false;
+
+</code></pre>
+<p class="image-container"><img alt="SnowSQL Put File" src="img/442324e308bf1d67.png"></p>
+<p><strong>Refresh Stage</strong></p>
+<pre><code language="language-sql" class="language-sql">-- ensure to refresh the stage
+alter stage hl7_stage_internal refresh;
+</code></pre>
+<p class="image-container"><img alt="Refresh stage metadata" src="img/fcc556a9f0156e23.png"></p>
+<p><strong>List Files</strong></p>
+<pre><code language="language-sql" class="language-sql">-- run this to verify the files shows up in the list
+select *
+from directory(@hl7_stage_internal);
+</code></pre>
+<p class="image-container"><img alt="Put Files" src="img/7958ea05457f85df.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Processing HL7 messages using Java UDF &amp; UDTF" duration="20">
+        <p>Java UDFs and UDTFs allow workloads expressed in Java to execute in Snowflake and therefore benefit from the virtually unlimited performance and scalability of the Data Cloud.</p>
+<p><strong>Create Java UDTF function</strong></p>
+<p>A UDTF is a user-defined function (UDF) that returns tabular results. A Java UDTF specifies the Java data types of the output columns by defining an output row class. Each row returned from the UDTF is returned as an instance of the output row class. Each instance of the output row class contains one public field for each output column. Snowflake reads the values of the public fields from each instance of the output row class, converts the Java values to SQL values, and constructs a SQL output row containing those values.</p>
+<h3 is-upgraded>Creating the Java UDTF</h3>
+<p>Now lets create the Java UDTF, this function will refer a HAPI library for parsing raw HL7 V2.x messages. The Java UDTF can be defined in Snowflake as below:</p>
+<pre><code language="language-sql" class="language-sql">create or replace function hl7_hapi_parser(hl7_fl_url varchar ,validate_message boolean)
+   returns table ( 
+        parsed_status boolean, 
+        raw_msg varchar, 
+        hl7_xml varchar,  
+        hl7_json variant,  
+        message_type varchar, 
+        message_version varchar, 
+        message_sequence_num integer, 
+        error_msg varchar 
+    )
+  language JAVA
+  imports = (&#39;@hl7_stage_internal/java_stage/sf-hl7v2-parser-1.0-SNAPSHOT-jar-with-dependencies.jar&#39;)
+  handler = &#39;com.snowflake.labs.hl7.HL7UDTF&#39;
+  comment = &#39;Java based UDTF for parsing HL7v2 files.&#39;;
+</code></pre>
+<p><strong><em>Note: The above ‘Create Java UDTF&#39; function is implemented using snowflake internal stage, the same definition can be used for external stage by replacing the stage name &lt;hl7_stage_internal&gt;</em></strong></p>
+<h3 is-upgraded>Parsing the HL7 data</h3>
+<pre><code language="language-sql" class="language-sql">-- Parse the file and store in a local table
+
+create or replace table hl7v2parsed as 
+  select * from (
+  with base as (
+      select 
+          relative_path as data_filepath,
+          concat(build_scoped_file_url(&#39;@hl7_stage_internal/&#39;, data_filepath)) as full_path
+      from directory( @hl7_stage_internal )
+      where relative_path like &#39;dataset/%&#39;
+  )
+  select 
+      full_path, p.* 
+  from base as b
+      ,table(hl7_hapi_parser(b.full_path, false) ) as p
+);
+
+-- verify the data inside the table
+select * from hl7v2parsed;
+</code></pre>
+<p class="image-container"><img alt="Java UDTF Result" src="img/fdb1a71732a3631.png"></p>
+<p>Lets run additional queries to analyze the data parsed.</p>
+<pre><code language="language-sql" class="language-sql">-- Flatten the JSON Field to pull OBSERVATION (OBR) segment fields for one of the ORU messages
+
+with base as (
+    select hl7_json as msg
+    from hl7v2parsed
+  where message_sequence_num=1 and message_type=&#39;ORU_R01&#39;
+), oru_response_sgmt as (
+    select 
+        msg:&#34;ORU_R01.RESPONSE&#34; as oru_response
+    from base
+)
+ select
+    oru_response,
+    oru_response:&#34;ORU_R01.ORDER_OBSERVATION&#34;:&#34;OBR&#34;:&#34;OBR.4&#34; as ob4,
+    ob4:&#34;CE.1&#34; as ce_1,
+    ob4:&#34;CE.2&#34;::string as ce_2,
+    ob4:&#34;CE.3&#34;::string as ce_3
+ from oru_response_sgmt as b;
+</code></pre>
+<p class="image-container"><img alt="Java UDTF Flatten Result1" src="img/21d070eb85507e7a.png"></p>
+<pre><code language="language-sql" class="language-sql">-- Flatten the JSON to pull OBSERVATION - Patient Report Text fields
+with base as (
+    select hl7_json as msg
+    from hl7v2parsed
+  where full_path like &#39;%hl7_2-3_samples.txt&#39; and message_type=&#39;ORU_R01&#39;
+)
+ select
+    msg,
+    msg:&#34;ORU_R01.RESPONSE&#34;:&#34;ORU_R01.ORDER_OBSERVATION&#34;:&#34;ORU_R01.OBSERVATION&#34; as OBSERVATIONS,
+    obx.value:&#34;OBX&#34;:&#34;OBX.5&#34; as PATIENT_REPORT_TEXT
+ from base,table(flatten(msg:&#34;ORU_R01.RESPONSE&#34;:&#34;ORU_R01.ORDER_OBSERVATION&#34;:&#34;ORU_R01.OBSERVATION&#34;)) obx ;
+</code></pre>
+<p class="image-container"><img alt="Java UDTF Flatten Result2" src="img/25e7c87b228e89da.png"></p>
+<pre><code language="language-sql" class="language-sql">-- List out patient and physician interactions
+
+with base as (
+    select hl7_json 
+    from hl7v2parsed
+    where message_type = &#39;ORU_R01&#39;
+)
+,patient_physician as (
+    select 
+        concat(
+            f.value:&#34;ORU_R01.PATIENT&#34;:&#34;ORU_R01.VISIT&#34;:&#34;PV1&#34;:&#34;PV1.7&#34;:&#34;XCN.2&#34;::string, &#39; &#39;
+            ,f.value:&#34;ORU_R01.PATIENT&#34;:&#34;ORU_R01.VISIT&#34;:&#34;PV1&#34;:&#34;PV1.7&#34;:&#34;XCN.3&#34;::string) as physician
+        ,concat(
+            f.value:&#34;ORU_R01.PATIENT&#34;:&#34;PID&#34;:&#34;PID.5&#34;:&#34;XPN.1&#34;::string, &#39; &#39;
+            ,f.value:&#34;ORU_R01.PATIENT&#34;:&#34;PID&#34;:&#34;PID.5&#34;:&#34;XPN.2&#34;::string, &#39; &#39;
+            ,f.value:&#34;ORU_R01.PATIENT&#34;:&#34;PID&#34;:&#34;PID.5&#34;:&#34;XPN.3&#34;::string, &#39; &#39;
+        ) as patient
+    from base as b
+        ,lateral flatten(input =&gt; hl7_json) as f
+    where key like &#39;ORU_R01.RESPONSE&#39;
+    and patient is not null
+)
+select
+    patient, physician
+    ,count(*) as number_of_visits
+from patient_physician
+group by patient, physician
+order by number_of_visits desc;
+</code></pre>
+<p class="image-container"><img alt="Java UDTF Flatten Result3" src="img/99a7efdbb3020c54.png"></p>
+<p><strong>Create Java UDF function</strong></p>
+<p>A UDF (user-defined function) is a user-written function that can be called from Snowflake in the same way that a built-in function can be called.When a user calls a UDF, the user passes the name of the UDF and the parameters of the UDF to Snowflake. If the UDF is a Java UDF, Snowflake calls the appropriate Java code (called a handler method) in a JAR file. The handler method then returns the output to Snowflake, which passes it back to the client.</p>
+<h3 is-upgraded>Creating the Java UDF</h3>
+<p>Ideally you would be using a Kafka connector, Snowpipe or other mechanisms to load the HL7 V2.x messages to Snowflake and then execute Java UDF for each raw HL7 V2.x message. For this lab we will simulate this by leveraging the HL7 V2.x raw messages loaded into the raw_msg column of hl7v2parsed table created in the previous section.</p>
+<p>Now lets create the Java UDF, this function will refer a HAPI library for parsing raw HL7 V2.x messages. The Java UDF can be defined in Snowflake as below:</p>
+<pre><code language="language-sql" class="language-sql">create or replace function hl7_hapi_udf_parser(hl7_msg varchar ,validate_message boolean)
+returns variant
+language java
+imports = (&#39;@hl7_stage_internal/java_stage/sf-hl7v2-parser-1.0-SNAPSHOT-jar-with-dependencies.jar&#39;)
+handler = &#39;com.snowflake.labs.hl7.HL7UDF.process&#39;
+comment = &#39;Java based UDF for parsing HL7v2 messages.&#39;;
+</code></pre>
+<p><strong><em>Note: The above ‘Create Java UDF&#39; function is implemented using snowflake internal stage, the same definition can be used for external stage by replacing the stage name &lt;hl7_stage_internal&gt;</em></strong></p>
+<h3 is-upgraded>Parsing the HL7 data</h3>
+<p>The previously loaded raw_hl7_table has each record as a single hl7v2 message in the raw_msg column. The following query invokes the function, to parse the HL7 message file :</p>
+<pre><code language="language-sql" class="language-sql">with base as (
+    select
+        raw_msg, -- column holding the HL7v2.x message in pipe delimited format
+        hl7_hapi_udf_parser(raw_msg, false) as parsed
+    from hl7v2parsed
+    limit 10
+)
+select
+    parse_json(parsed:&#34;hl7_json&#34;) as hl7_json
+from base;
+</code></pre>
+<p>The above query examples clearly demonstrates the beauty and simplicity of Snowflake&#39;s capabilities to parse and analyze the HL7 V2.x messages.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Processing HL7 messages using Python UDF" duration="0">
+        <p>User-defined functions (UDFs) let you extend the system to perform operations that are not available through the built-in, system-defined functions provided by Snowflake. Python UDFs (user-defined functions) allow you to write Python code and call it as though it were a SQL function</p>
+<p><strong>Create Python UDF function</strong></p>
+<p>Let&#39;s create a Python UDF function, this function will refer a hl7apy library for parsing raw messages. Using <code>imports</code> we can pass external library and python code. After executing <code>hl7pyparser</code> it will return a JSON messages and here in this example snowflake <code>variant</code> data type has been used to store JSON message.</p>
+<pre><code language="language-sql" class="language-sql">create or replace function hl7pyparser(hl7_raw string)
+returns variant
+language python
+runtime_version = 3.8
+imports=(&#39;@hl7_stage_internal/python_stage/hl7apy-1.3.4.tar.gz&#39;, &#39;@hl7_stage_internal/python_stage/hl7pyparserUDF.py&#39;)
+handler = &#39;hl7pyparserUDF.udf&#39;
+comment = &#39;python based hl7v2 message parser&#39;;
+</code></pre>
+<p><strong><em>Note: The above ‘Create Python UDF&#39; function is implemented using snowflake internal stage, the same definition can be used for external stage by replacing the stage name &lt;hl7_stage_internal&gt;</em></strong></p>
+<p><strong>File Format</strong></p>
+<p>We will create a Snowflake FILE FORMAT to read the RAW data directly from the stage, more details about snowflake file format can be found here - <a href="https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html#create-file-format" target="_blank">FILE FORMAT</a></p>
+<pre><code language="language-sql" class="language-sql">CREATE FILE FORMAT &#34;HL7DB&#34;.&#34;HL7V2DEMO&#34;.&#34;RAW_HL7_FILE_FORMAT&#34;
+   TYPE = &#39;CSV&#39;
+   COMPRESSION = &#39;NONE&#39;
+   FIELD_DELIMITER = &#39;NONE&#39;
+   RECORD_DELIMITER = &#39;\n&#39;
+   SKIP_HEADER = 0
+   FIELD_OPTIONALLY_ENCLOSED_BY = &#39;NONE&#39;
+   TRIM_SPACE = FALSE
+   ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE
+   ESCAPE = &#39;NONE&#39;
+   ESCAPE_UNENCLOSED_FIELD = &#39;\134&#39;
+   DATE_FORMAT = &#39;AUTO&#39;
+   TIMESTAMP_FORMAT = &#39;AUTO&#39; NULL_IF = (&#39;\\N&#39;);
+</code></pre>
+<p>Let&#39;s verify that our FILE FORMAT is correct and we are able to read files from stage. For now we will read raw message into single Column <code>RAW_MSG</code>.</p>
+<p>Remember our data is stored inside dataset sub directory and we will aslo add pattern for reading only text files.</p>
+<p><strong>Reading from stage</strong></p>
+<pre><code language="language-sql" class="language-sql">select t.$1 as RAW_MSG from @hl7_stage_internal/dataset
+   (file_format =&gt; &#39;RAW_HL7_FILE_FORMAT&#39;, pattern=&gt;&#39;.*.*[.]txt&#39;) t
+   where RAW_MSG is not NULL;
+</code></pre>
+<p>Let&#39;s create a separate temporary table to store this raw data <code>raw</code></p>
+<pre><code language="language-sql" class="language-sql">CREATE TEMPORARY TABLE raw
+AS SELECT t.$1 AS RAW_MSG FROM @hl7_stage_internal/dataset
+   (file_format =&gt; &#39;RAW_HL7_FILE_FORMAT&#39;, pattern=&gt;&#39;.*.*[.]txt&#39;) t
+   WHERE RAW_MSG IS NOT NULL;
+
+
+-- verify data inside raw table
+select * from raw;
+</code></pre>
+<p class="image-container"><img alt="Tmp Raw" src="img/689a90958cd2d839.png"></p>
+<p><strong>Use UDF function</strong></p>
+<p>Finally, let&#39;s use our UDF function <code>hl7pyparser</code> that we created  earlier.</p>
+<pre><code language="language-sql" class="language-sql">select
+   raw_msg,
+   parse_json(hl7pyparser(raw_msg)) as JSON_MSG,
+   parse_json(hl7pyparser(raw_msg)):msh:message_type:message_type:id as SRC
+from raw
+where src = &#39;ORU&#39;;
+</code></pre>
+<p><code>raw_msg</code></p>
+<ul>
+<li>Column contains RAW HL7 messages which we read earlier from the stage and from <code>raw</code> table</li>
+</ul>
+<p><code>parse_json(hl7pyparser(raw_msg)) as JSON_MSG</code></p>
+<ul>
+<li><strong>parse_json</strong> function will read the RAW HL7 messages from RAW_MSG column and it will convert it to JSON</li>
+</ul>
+<p><code>parse_json(hl7pyparser(raw_msg)):msh:message_type:message_type:id as SRC</code></p>
+<ul>
+<li>To further flatten or parse the json column, we will use colon (<code>:</code>) between keys.</li>
+</ul>
+<p>For example - <code>msh</code> is a root element in json string and <code>message_type</code> and <code>id</code> are nested keys (Inner elements in json)</p>
+<p class="image-container"><img alt="UDF Output" src="img/2d72dbf9a57f79c7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You used Snowflake to trasform your HL7 V2.x messages using Snowflake Java UDFs/UDTFs and Python UDFs.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Storing HL7 V2.x messages with an <strong>Internal Stage</strong> and <strong>SnowSQL</strong></li>
+<li>Catalog HL7 V2.x messages data with <strong>Directory Tables</strong></li>
+<li>Processing HL7 V2.x messages with a <strong>Java UDF</strong> and <strong>Java UDTF</strong></li>
+<li>Processing HL7 V2.x messages with a <strong>Python UDF</strong></li>
+<li>Processing JSON HL7 data with <strong>parse_json</strong> function</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/unstructured.html" target="_blank">Unstructured Data Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/java/udf-java.html" target="_blank">Java UDF Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/java/udf-java-tabular-functions.html#tabular-java-udfs-udtfs" target="_blank">Java UDTF Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-introduction.html#introduction-to-python-udfs" target="_blank">Python UDF Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-tabular-functions.html#implementing-user-defined-table-functions-udtfs-in-python" target="_blank">Python UDTF Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index.html" target="_blank">Snowpark Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "dcdf_incremental_processing",
+  "duration": 95,
+  "title": "Getting Started with DCDF Data Architecture Incremental Processing \u0026 Logical Partitions",
+  "summary": "Getting Started with DCDF Data Architecture Incremental Processing/Logical Partitions",
+  "source": "dcdf_incremental_processing/dcdf_incremental_processing.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "architecture-patterns"
+  ],
+  "tags": [
+    "dataarchitecture",
+    "dataclouddeploymentframework",
+    "dataengineering",
+    "dcdf",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "dcdf_incremental_processing"
+}

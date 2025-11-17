@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "seamless_ML_workflows_with_snowpark_and_deepnote",
+  "duration": 20,
+  "title": "Seamless Machine Learning Workflows with Snowpark \u0026 Deepnote",
+  "summary": "Prototype your ML models in Deepnote’s collaborative, multi-language notebook. Then, use Snowpark to productionize models without moving your data out of the warehouse or changing your code.",
+  "source": "seamless_ml_workflows_with_snowpark_and_deepnote/seamless_ml_workflows_with_snowpark_and_deepnote.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "seamless_ML_workflows_with_snowpark_and_deepnote"
+}

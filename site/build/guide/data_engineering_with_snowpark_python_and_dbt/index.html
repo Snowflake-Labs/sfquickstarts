@@ -1,0 +1,510 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data Engineering with Snowpark Python and dbt</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_with_snowpark_python_and_dbt"
+                  title="Data Engineering with Snowpark Python and dbt"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p class="image-container"><img style="width: 600.00px" src="img/9895256a62ae0766.png"></p>
+<h2 is-upgraded>Background</h2>
+<p>Data engineering is a broad discipline which includes data ingestion, data transformation, and data consumption, along with the accompanying SDLC best practices (i.e. DevOps). Data engineers employ different tools and approaches depending on the phase. For this Quickstart we will focus on the data transformation phase in particular.</p>
+<p>Data transformation involves taking source data which has been ingested into your data platform and cleansing it, combining it, and modeling it for downstream use. Historically the most popular way to transform data has been with the SQL language and data engineers have built data transformation pipelines using SQL often with the help of ETL/ELT tools. But recently many folks have also begun adopting the DataFrame API in languages like Python for this task. For the most part a data engineer can accomplish the same data transformations with either approach, and deciding between the two is mostly a matter of preference and particular use cases. That being said, there are use cases where a particular data transform can&#39;t be expressed in SQL and a different approach is needed. The most popular approach for these use cases is Python along with a DataFrame API.</p>
+<h2 is-upgraded>dbt</h2>
+<p>Enter dbt. dbt is one of the most popular data transformation tools today. And until now dbt has been entirely a SQL-based transformation tool. But with the release of dbt version 1.3, it&#39;s now possible to create both SQL and Python based models in dbt! Here&#39;s how dbt explains it:</p>
+<p>dbt Python (&#34;dbt-py&#34;) models will help you solve use cases that can&#39;t be solved with SQL. You can perform analyses using tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics. Before, you would have needed separate infrastructure and orchestration to run Python transformations in production. By defining your Python transformations in dbt, they&#39;re just models in your project, with all the same capabilities around testing, documentation, and lineage. (<a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models" target="_blank">dbt Python models</a>)</p>
+<h2 is-upgraded>Snowflake</h2>
+<p>Python based dbt models are made possible by <a href="https://www.snowflake.com/blog/snowpark-python-innovation-available-all-snowflake-customers/" target="_blank">Snowflake&#39;s new native Python support and Snowpark API for Python</a> (Snowpark Python for short). Snowpark Python includes the following exciting capabilities:</p>
+<ul>
+<li>Python (DataFrame) API</li>
+<li>Python Scalar User Defined Functions (UDFs)</li>
+<li>Python UDF Batch API (Vectorized UDFs)</li>
+<li>Python Table Functions (UDTFs)</li>
+<li>Python Stored Procedures</li>
+<li>Integration with Anaconda</li>
+</ul>
+<p>With Snowflake&#39;s Snowpark Python capabilities, you no longer need to maintain, secure and pay for separate infrastructure/services to run Python code as it can now be run directly within Snowflake&#39;s Enterprise grade data platform! For more details check out <a href="ttps://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">the Snowpark Developer Guide for Python</a>.</p>
+<p>This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt&#39;s new Python-based models.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>This guide assumes that you have a basic working knowledge of dbt, Python, and Anaconda.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>The basics of Snowpark Python</li>
+<li>How to create Python-based models in dbt</li>
+<li>How to create and use Python UDFs in your dbt Python model</li>
+<li>How the integration between Snowpark Python and dbt&#39;s Python models works</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ol type="1">
+<li>Snowflake <ol type="1">
+<li><strong>A Snowflake Account.</strong></li>
+<li><strong>A Snowflake Database named DEMO_DB.</strong></li>
+<li><strong>A Snowflake User created with appropriate permissions.</strong> This user will need permission to create objects in the DEMO_DB database.</li>
+</ol>
+</li>
+<li>Anaconda <ol type="1">
+<li><strong>Anaconda installed on your computer.</strong> Check out the <a href="https://docs.anaconda.com/anaconda/install/" target="_blank">Anaconda Installation</a> instructions for the details.</li>
+</ol>
+</li>
+<li>dbt <ol type="1">
+<li><strong>dbt installed on your computer.</strong> Python models were first introduced in dbt version 1.3, so make sure you install version 1.3 or newer of dbt. Please follow these steps (where <code>&lt;env-name&gt;</code> is any name you want for the Anaconda environment): <ol type="1">
+<li><code>conda create -n &lt;env-name&gt; python=3.8</code></li>
+<li><code>conda activate &lt;env-name&gt;</code></li>
+<li><code>pip install dbt-core dbt-snowflake</code> (or <code>pip install --upgrade dbt-core dbt-snowflake</code> if upgrading)</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Integrated Development Environment (IDE) <ol type="1">
+<li><strong>Your favorite IDE installed on your computer.</strong> If you don&#39;t already have a favorite IDE I would recommend the great, free, open-source <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>.</li>
+</ol>
+</li>
+</ol>
+<p>The following are optional but will help you debug your Python dbt models:</p>
+<ol type="1">
+<li><strong>Python extension installed in your IDE.</strong> For VS Code, install <a href="https://marketplace.visualstudio.com/items?itemName=ms-python.python" target="_blank">the Python extension from Microsoft</a>.</li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A simple dbt project with Python-based models!</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the dbt Project" duration="10">
+        <p>The easiest way to get started with dbt, and ensure you have the most up-to-date dbt configurations, is to the run the <code>dbt init</code> command. The <code>dbt init</code> process will create two folders in the directory you run it from, a <code>logs</code> folder and a folder with the same name as your project. So in a terminal change to the directory where you want the new dbt project folder created and execute <code>dbt init</code>. Follow the prompts to create your new project. For most of the prompts enter the value appropriate to your environment, but for <strong>database</strong> and <strong>schema</strong> enter the values below:</p>
+<ul>
+<li>Enter a name for your project (letters, digits, underscore): <code>&lt;project name&gt;</code></li>
+<li>Which database would you like to use? ... Enter a number: <code>[1] snowflake</code></li>
+<li>account (https://&lt;this_value&gt;.snowflakecomputing.com): <code>&lt;snowflake account&gt;</code></li>
+<li>user (dev username): <code>&lt;snowflake username&gt;</code></li>
+<li>Desired authentication type option (enter a number): <code>[1] password</code></li>
+<li>password (dev password): <code>&lt;snowflake password&gt;</code></li>
+<li>role (dev role): <code>&lt;snowflake role&gt;</code></li>
+<li>warehouse (warehouse name): <code>&lt;snowflake warehouse&gt;</code></li>
+<li>database (default database that dbt will build objects in): <code>DEMO_DB</code></li>
+<li>schema (default schema that dbt will build objects in): <code>DEMO_SCHEMA</code></li>
+<li>threads (1 or more) [1]: <code>1</code></li>
+</ul>
+<p>See the <a href="https://docs.getdbt.com/reference/commands/init" target="_blank">dbt init documentation</a> for more details on what just happened, but after <code>dbt init</code> finished you will have a functional dbt project and the following default SQL models in the <code>models</code> folder:</p>
+<pre><code>models
+|-- example
+|--|-- my_first_dbt_model.sql
+|--|-- my_second_dbt_model.sql
+|--|-- schema.yml
+</code></pre>
+<aside class="special"><p><strong>Note</strong> - The connection details you just entered have been stored in a dbt connection profile in the default location: <code>~/.dbt/profiles.yml</code>. To learn more about managing connection details with dbt profiles please see <a href="https://docs.getdbt.com/dbt-cli/configure-your-profile" target="_blank">configuring your profile</a>.</p>
+</aside>
+<p>To verify that everything is configured properly, open a terminal, cd to the folder that <code>dbt init</code> created and then execute <code>dbt run</code>. dbt should execute successfully and you should now have the following objects created in Snowflake in your <code>DEMO_DB.DEMO_SCHEMA</code> schema:</p>
+<ul>
+<li>A table named <code>my_first_dbt_model</code></li>
+<li>A view named <code>my_second_dbt_model</code></li>
+</ul>
+<aside class="warning"><p><strong>Note</strong> - If the <code>dbt run</code> command did not complete successfully, it&#39;s most likely something wrong with your connection details. Please review and update those details in your dbt connection profile saved here: <code>~/.dbt/profiles.yml</code>. Then retry.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Simple Python Model" duration="8">
+        <h2 is-upgraded>Overview</h2>
+<p>Now that you&#39;ve created your dbt project and run it once successfully, it&#39;s time to create our first Python model! But before we do, here&#39;s a brief overview of how to create a Python model in dbt (from <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models" target="_blank">dbt Python models</a>):</p>
+<p>Each Python model lives in a <code>.py</code> file in your <code>models/</code> folder. It defines a function named <strong><code>model()</code></strong>, which takes two parameters:</p>
+<ul>
+<li><code>dbt</code>: A class compiled by dbt Core, unique to each model, that enables you to run your Python code in the context of your dbt project and DAG.</li>
+<li><code>session</code>: A class representing the connection to the Python backend on your data platform. The session is needed to read in tables as DataFrames, and to write DataFrames back to tables. In PySpark, by convention, the <code>SparkSession</code> is named <code>spark</code>, and available globally. For consistency across platforms, we always pass it into the <code>model</code> function as an explicit argument named <code>session</code>.</li>
+</ul>
+<p>The <code>model()</code> function must return a single DataFrame.</p>
+<h2 is-upgraded>Create my_first_python_model</h2>
+<p>In the <code>models/example</code> folder, create a new file named <code>my_first_python_model.py</code> and copy &amp; paste the following content to the new file:</p>
+<pre><code language="language-python" class="language-python">def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = &#34;table&#34;)
+
+    # DataFrame representing an upstream model
+    df = dbt.ref(&#34;my_first_dbt_model&#34;)
+ 
+    return df
+</code></pre>
+<p>Finally, save the file and execute <code>dbt run</code> again. If everything ran successfully you just ran your very first Python model in dbt! It&#39;s that simple. Here are a few things to note at this point:</p>
+<ul>
+<li>No Jinja! dbt Python models don&#39;t use Jinja to render compiled code.</li>
+<li>You don&#39;t have to explicitly import the Snowflake Snowpark Python library, dbt will do that for you. More on this in the next step.</li>
+<li>As mentioned above, every dbt Python model must define a method named <code>model</code> that has the following signature: <code>model(dbt, session)</code>.</li>
+<li>As of 10/17/2022 only <code>table</code> or <code>incremental</code> materializations are supported, which is why we configured it explicitly here.</li>
+<li>You can use <code>dbt.ref()</code> and <code>dbt.source()</code> just the same as their Jinja equivalents in SQL models. And you can refer to either Python or SQL models interchangeably!</li>
+</ul>
+<aside class="special"><p><strong>Note</strong> - For more details on accessing dbt project contexts from your Python models, please check out <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models#accessing-project-context" target="_blank">Accessing project context</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understand How the Simple dbt Python Model Works" duration="10">
+        <p>So what just happened you ran your dbt Python model? The single best thing to help you debug and understand what&#39;s happening is to look at your <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history" target="_blank">Query History</a> in Snowflake. Please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history.</p>
+<h2 is-upgraded>Overview of dbt Executed Queries</h2>
+<p>Here are the queries that dbt executed when you ran the <code>my_first_python_model</code> model. I&#39;ve omitted the content of the stored procedure in this section so that it&#39;s easier to see what&#39;s happening at a high level. In the next section we&#39;ll discuss what&#39;s happening inside the stored procedure.</p>
+<ol type="1">
+<li>List schemas<pre><code> show terse schemas in database DEMO_DB
+</code></pre>
+</li>
+<li>List objects<pre><code> show terse objects in DEMO_DB.DEMO_SCHEMA
+</code></pre>
+</li>
+<li>Create stored procedure<pre><code> CREATE OR REPLACE PROCEDURE DEMO_DB.DEMO_SCHEMA.my_first_python_model__dbt_sp ()
+ RETURNS STRING
+ LANGUAGE PYTHON
+ RUNTIME_VERSION = &#39;3.8&#39; -- TODO should this be configurable?
+ PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+ HANDLER = &#39;main&#39;
+ EXECUTE AS CALLER
+ AS
+ $$
+
+ &lt;dbt compiled Python code&gt;
+
+ $$;
+</code></pre>
+</li>
+<li>Call stored procedure<pre><code> CALL DEMO_DB.DEMO_SCHEMA.my_first_python_model__dbt_sp()
+</code></pre>
+<ol type="1">
+<li>Materialize model<pre><code> CREATE  OR  REPLACE TABLE DEMO_DB.DEMO_SCHEMA.my_first_python_model AS  SELECT  *  FROM ( SELECT  *  FROM (DEMO_DB.DEMO_SCHEMA.my_first_dbt_model)
+</code></pre>
+</li>
+</ol>
+</li>
+<li>Drop stored procedure<pre><code> drop procedure if exists DEMO_DB.DEMO_SCHEMA.my_first_python_model__dbt_sp()
+</code></pre>
+</li>
+</ol>
+<h2 is-upgraded>Overview of Stored Procedure Code Generated by dbt</h2>
+<p>So what exactly is happening in the stored procedure? This is really the critical part to focus on in order to understand what dbt is doing with Python models. As we go through this, keep in mind that a core design principal for dbt Python models is that all of the Python code will be executed in Snowflake, and none will be run locally. Here&#39;s how dbt&#39;s documentation puts it:</p>
+<p>The prerequisites for dbt Python models include using an adapter for a data platform that supports a fully featured Python runtime. In a dbt Python model, all Python code is executed remotely on the platform. None of it is run by dbt locally. We believe in clearly separating model definition from model execution. In this and many other ways, you&#39;ll find that dbt&#39;s approach to Python models mirrors its longstanding approach to modeling data in SQL. (from <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models" target="_blank">dbt Python models</a>)</p>
+<p>With that, let&#39;s look at our first Python dbt model again:</p>
+<pre><code language="language-python" class="language-python">def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = &#34;table&#34;)
+
+    # DataFrame representing an upstream model
+    df = dbt.ref(&#34;my_first_dbt_model&#34;)
+ 
+    return df
+</code></pre>
+<p>So in order to run that in Snowflake we need a few things. First it needs to run in the context of a stored procedure, and second the stored procedure needs to contain everything necessary to run the model. This means that dbt needs to generate Python code to handle the following things:</p>
+<ol type="1">
+<li>Provide a <code>dbt</code> and <code>session</code> object to our <code>model()</code> method. <ol type="1">
+<li>The <code>dbt</code> object needs to provide access to dbt configuration and dag context with methods like <code>ref()</code>, <code>source()</code>, <code>config()</code>, <code>this()</code>, etc.</li>
+<li>The <code>session</code> object is the Snowpark session</li>
+</ol>
+</li>
+<li>Provide the logic to materialize the resulting DataFrame returned by the <code>model()</code> method</li>
+<li>Provide the overall orchestration of these pieces</li>
+</ol>
+<p>Here&#39;s the full content of the stored procedure generated by dbt (which was removed in the overview above and replaced with the <code>&lt;dbt compiled Python code&gt;</code> placeholder):</p>
+<pre><code language="language-python" class="language-python">def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = &#34;table&#34;)
+
+    # DataFrame representing an upstream model
+    df = dbt.ref(&#34;my_first_dbt_model&#34;)
+ 
+    return df
+
+
+# This part is user provided model code
+# you will need to copy the next section to run the code
+# COMMAND ----------
+# this part is dbt logic for get ref work, do not modify
+
+def ref(*args,dbt_load_df_function):
+    refs = {&#34;my_first_dbt_model&#34;: &#34;DEMO_DB.DEMO_SCHEMA.my_first_dbt_model&#34;}
+    key = &#34;.&#34;.join(args)
+    return dbt_load_df_function(refs[key])
+
+
+def source(*args, dbt_load_df_function):
+    sources = {}
+    key = &#34;.&#34;.join(args)
+    return dbt_load_df_function(sources[key])
+
+
+config_dict = {}
+
+
+class config:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    @staticmethod
+    def get(key):
+        return config_dict.get(key)
+
+class this:
+    &#34;&#34;&#34;dbt.this() or dbt.this.identifier&#34;&#34;&#34;
+    database = &#39;DEMO_DB&#39;
+    schema = &#39;DEMO_SCHEMA&#39;
+    identifier = &#39;my_first_python_model&#39;
+    def __repr__(self):
+        return &#39;DEMO_DB.DEMO_SCHEMA.my_first_python_model&#39;
+
+
+class dbtObj:
+    def __init__(self, load_df_function) -&gt; None:
+        self.source = lambda x: source(x, dbt_load_df_function=load_df_function)
+        self.ref = lambda x: ref(x, dbt_load_df_function=load_df_function)
+        self.config = config
+        self.this = this()
+        self.is_incremental = False
+
+# COMMAND ----------
+
+# To run this in snowsight, you need to select entry point to be main
+# And you may have to modify the return type to text to get the result back
+# def main(session):
+#     dbt = dbtObj(session.table)
+#     df = model(dbt, session)
+#     return df.collect()
+
+# to run this in local notebook, you need to create a session following examples https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python
+# then you can do the following to run model
+# dbt = dbtObj(session.table)
+# df = model(dbt, session)
+
+
+def materialize(session, df, target_relation):
+    # we have to make sure pandas is imported
+    import pandas
+    if isinstance(df, pandas.core.frame.DataFrame):
+        # session.write_pandas does not have overwrite function
+        df = session.createDataFrame(df)
+    df.write.mode(&#34;overwrite&#34;).save_as_table(&#34;DEMO_DB.DEMO_SCHEMA.my_first_python_model&#34;, create_temp_table=False)
+
+def main(session):
+    dbt = dbtObj(session.table)
+    df = model(dbt, session)
+    materialize(session, df, dbt.this)
+    return &#34;OK&#34;
+</code></pre>
+<aside class="special"><p><strong>Note</strong> - When building and debugging your dbt Python models, you can find this Python code in the compiled version of the model by running <code>dbt compile</code> (or <code>dbt run</code>). The compiled files are written to the <code>target-path</code> folder, which by default is a folder named <code>target</code> in your dbt project folder.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Python Model with a UDF" duration="10">
+        <p>Now that you understand the basics of dbt Python models, let&#39;s add in another concept, the user-defined function (or UDF for short). &#34;A UDF (user-defined function) is a user-written function that can be called from Snowflake in the same way that a built-in function can be called. Snowflake supports UDFs written in multiple languages, including Python.&#34; (see <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-introduction.html" target="_blank">Introduction to Python UDFs</a> for more details). By creating and registering a UDF it can be used in your DataFrame (or SQL) expression just like a built-in function.</p>
+<p>So let&#39;s create a second dbt Python model, this time with a UDF. In the <code>models/example</code> folder, create a new file named <code>my_second_python_model.py</code> and copy &amp; paste the following content to the new file:</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.functions import udf
+
+def model(dbt, session):
+    # Must be either table or incremental (view is not currently supported)
+    dbt.config(materialized = &#34;table&#34;)
+
+    # User defined function
+    @udf
+    def add_one(x: int) -&gt; int:
+        x = 0 if not x else x
+        return x + 1
+
+    # DataFrame representing an upstream model
+    df = dbt.ref(&#34;my_first_dbt_model&#34;)
+
+    # Add a new column containing the id incremented by one
+    df = df.withColumn(&#34;id_plus_one&#34;, add_one(df[&#34;id&#34;]))
+
+    return df
+</code></pre>
+<p>As you can see from the code above we&#39;re creating a very simple UDF named <code>add_one()</code> which adds one to the number passed to the function. Finally, save the file and execute <code>dbt run</code> again (or just run this new model by executing <code>dbt run --model my_second_python_model</code>). If everything ran successfully you just ran your second Python model with a UDF in dbt!</p>
+<h2 is-upgraded>Aside: Where to Define the UDF</h2>
+<p>Remember in the last section how we saw that your dbt Python model code is supplemented with dbt&#39;s compiled code and then wrapped in a Snowflake stored procedure? Well that&#39;s important to note as it has implications for where/how you define a UDF in your Python model. In the example above we defined and registered the function inside the <code>main()</code> handler function, using the <code>@udf</code> decorator.</p>
+<p>If you try and define and register the function outside of the <code>main()</code> handler function you will get the following error: <code>Query outside the handler is not allowed in Stored Procedure. Please move query related functions into the handler in function</code>. In order to move the function definition outside of the <code>main()</code> handler function you must only define it there and then register it inside. Here is an example from dbt&#39;s documentation (<a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models" target="_blank">dbt Python models</a>):</p>
+<pre><code language="language-python" class="language-python">import snowflake.snowpark.types as T
+import snowflake.snowpark.functions as F
+import numpy
+
+def register_udf_add_random():
+    add_random = F.udf(
+        # use &#39;lambda&#39; syntax, for simple functional behavior
+        lambda x: x + numpy.random.normal(),
+        return_type=T.FloatType(),
+        input_types=[T.FloatType()]
+    )
+    return add_random
+
+def model(dbt, session):
+
+    dbt.config(
+        materialized = &#34;table&#34;,
+        packages = [&#34;numpy&#34;]
+    )
+
+    temps_df = dbt.ref(&#34;temperatures&#34;)
+
+    add_random = register_udf_add_random()
+
+    # warm things up, who knows by how much
+    df = temps_df.withColumn(&#34;degree_plus_random&#34;, add_random(&#34;degree&#34;))
+    return df
+</code></pre>
+<p>Notice that the function is defined outside the <code>main()</code> handler function and then registered (and used) inside.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understand How the dbt Python Model with a UDF Works" duration="8">
+        <p>Now let&#39;s take another deep dive into what happened when we run the second dbt model with a UDF. As before, please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history (<a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history" target="_blank">Query History</a>).</p>
+<h2 is-upgraded>Overivew of dbt Executed Queries</h2>
+<p>Here are the queries that dbt executed when you ran the <code>my_second_python_model</code> model. You will notice that it&#39;s similar to the first model, but with some more queries to deal with creating the UDF. I&#39;ve again omitted the content of the stored procedure in this section so that it&#39;s easier to see what&#39;s happening at a high level. But I won&#39;t walk through it this time as it&#39;s very similar to the previous example, the only real difference being the difference in model code.</p>
+<ol type="1">
+<li>List schemas<pre><code> show terse schemas in database DEMO_DB
+</code></pre>
+</li>
+<li>List objects<pre><code> show terse objects in DEMO_DB.DEMO_SCHEMA
+</code></pre>
+</li>
+<li>Create stored procedure<pre><code> CREATE OR REPLACE PROCEDURE DEMO_DB.DEMO_SCHEMA.my_second_python_model__dbt_sp ()
+ RETURNS STRING
+ LANGUAGE PYTHON
+ RUNTIME_VERSION = &#39;3.8&#39; -- TODO should this be configurable?
+ PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+ HANDLER = &#39;main&#39;
+ EXECUTE AS CALLER
+ AS
+ $$
+
+ &lt;dbt compiled Python code&gt;
+
+ $$;
+</code></pre>
+</li>
+<li>Call stored procedure<pre><code> CALL DEMO_DB.DEMO_SCHEMA.my_second_python_model__dbt_sp()
+</code></pre>
+<ol type="1">
+<li>Use the correct database<pre><code> SELECT CURRENT_DATABASE()
+</code></pre>
+</li>
+<li>Create a temporary stage<pre><code> create temporary stage if not exists DEMO_DB.DEMO_SCHEMA.SNOWPARK_TEMP_STAGE_4LBT18DLR8
+</code></pre>
+</li>
+<li>List the contents of the stage<pre><code> ls &#39;@&#34;DEMO_DB&#34;.&#34;DEMO_SCHEMA&#34;.SNOWPARK_TEMP_STAGE_4LBT18DLR8&#39;
+</code></pre>
+</li>
+<li>Get the list of files in the stage<pre><code> SELECT &#34;name&#34; FROM ( SELECT  *  FROM  TABLE ( RESULT_SCAN(&#39;&lt;previous_query_id&gt;&#39;)))
+</code></pre>
+</li>
+<li>Create the temporary function<pre><code> CREATE TEMPORARY FUNCTION &#34;DEMO_DB&#34;.&#34;DEMO_SCHEMA&#34;.SNOWPARK_TEMP_FUNCTION_1Z5V5PPNVH(arg1 BIGINT)
+ RETURNS BIGINT
+ LANGUAGE PYTHON
+ RUNTIME_VERSION=3.8
+ PACKAGES=(&#39;cloudpickle==2.0.0&#39;)
+ HANDLER=&#39;compute&#39;
+
+ AS $$
+
+ &lt;Snowpark generated Python code, including pickled function&gt;
+
+ $$;
+</code></pre>
+</li>
+<li>Materialize the table<pre><code> CREATE  OR  REPLACE TABLE  DEMO_DB.DEMO_SCHEMA.my_second_python_model AS  SELECT  *  FROM ( SELECT &#34;ID&#34;, &#34;DEMO_DB&#34;.&#34;DEMO_SCHEMA&#34;.SNOWPARK_TEMP_FUNCTION_1Z5V5PPNVH(&#34;ID&#34;) AS &#34;ID_PLUS_ONE&#34; FROM ( SELECT  *  FROM (DEMO_DB.DEMO_SCHEMA.my_first_dbt_model)))
+</code></pre>
+</li>
+</ol>
+</li>
+<li>Drop stored procedure<pre><code> drop procedure if exists DEMO_DB.DEMO_SCHEMA.my_second_python_model__dbt_sp()
+</code></pre>
+</li>
+</ol>
+<p>The overall steps are the same, but notice that what happens during the stored procedure execution (step #4) is different and more complex. This is because the Snowpark library, running inside the Snowflake Python stored procedure has more work to do with UDFs. It has to pickle the UDF content, create a temporary stage,  and finally create the UDF in Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="4">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Hopefully you&#39;ve seen how powerful the combination of dbt Python models and the Snowflake platform can be! By supporting both SQL and Python based transformations in dbt, data engineers can take advantage of both while building robust data pipelines. While most of the time the choice between SQL or DataFrames is simply a matter of preference, as we discussed in the introduction there are use cases where data transformations can&#39;t be expressed in SQL. In these cases data engineers can make use of tools available in the open source Python ecosystem, including state-of-the-art packages for data science and statistics.</p>
+<p>And best of all, the Snowflake platform enables this with native Python support and rich Snowpark API for Python. This eliminates the need for data engineers to maintain and pay for separate infrastructure/services to run Python code. Snowflake manages all of it for you with the ease of use that you would expect from Snowflake!</p>
+<p>Data engineering with Snowflake and dbt just got easier!</p>
+<h2 is-upgraded>Some Tips for Debugging dbt Python Models</h2>
+<p>There are a few ways to debug your dbt Python models.</p>
+<p>The first tip is to build and debug via dbt. This is probably the default for most people. With this approach you edit the dbt Python model code directly in the dbt model file and execute it via the <code>dbt run</code> command (and it&#39;s often best to use the <code>dbt run --model &lt;model_name&gt;</code> syntax to only run the model in consideration). But this can be a bit time consuming and require you to flip back and forth between your dbt and Snowflake.</p>
+<p>The second tip is to build and debug the model code directly in Python. Like I mentioned in Section 1, I personally like Visual Studio Code and the <a href="https://marketplace.visualstudio.com/items?itemName=ms-python.python" target="_blank">the Python extension from Microsoft</a>, but you can use whatever Python IDE you prefer. Regardless, the idea here is to copy/paste the contents of the dbt generated Python code into a temporary Python script as a starting point then edit/debug until it&#39;s right and finally paste just the contents of the model back into your dbt model file. As we saw in section 4 of this Quickstart you can get the dbt generated Python code by compiling the model and looking at the compiled script. There is even commented out code in the dbt generated Python code to help get you started.</p>
+<p>Hope that helps!</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>The basics of Snowpark Python</li>
+<li>How to create Python-based models in dbt</li>
+<li>How to create and use Python UDFs in your dbt Python model</li>
+<li>How the integration between Snowpark Python and dbt&#39;s Python models works</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark Developer Guide for Python</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html" target="_blank">Snowpark API Reference (Python)</a></li>
+<li><a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models" target="_blank">dbt Python models</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

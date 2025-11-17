@@ -1,0 +1,445 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Snowpark 101 for Data Science</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_snowpark_101_for_data_science"
+                  title="Tasty Bytes - Snowpark 101 for Data Science"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img src="img/82e3f493a86ab504.png"></p>
+<p>In this Snowpark 101 for Data Science Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to increase sales by training a model to provide location recommendations to truck drivers. You will use <strong>Snowpark for Python</strong> to prepare data, train a model, and deploy the model. Once deployed, you will create an application prototype using <strong>Streamlit</strong> to demonstrate how truck drivers could use the model to find the best location to park for an upcoming shift.</p>
+<h2 is-upgraded>What is Snowpark?</h2>
+<p>Snowpark is a set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Learn more about <a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark</a>.</p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit is a Python library that makes it easy to create and share custom web apps. Learn more about <a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit</a>.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to access third-party data from the <strong>Snowflake Marketplace</strong></li>
+<li>How to explore data &amp; perform <strong>feature engineering with Snowpark DataFrame APIs</strong></li>
+<li>How to <strong>train a model in Snowflake</strong> using a Snowpark ML pipeline</li>
+<li>How to <strong>deploy a model in Snowflake</strong> using Snowflake Model Registry</li>
+<li>How to <strong>build a Streamlit app</strong> to interact with the model</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a <a href="https://signup.snowflake.com/" target="_blank">free trial account</a> or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li><strong>A sales forecast by location<br></strong><img src="img/e9ffd9efa2c170d2.gif"></li>
+<li><strong>A Streamlit application for finding the top locations by predicted sales<br></strong><img src="img/87f85f5553046884.gif"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Data in Snowflake" duration="6">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to:</p>
+<ul>
+<li>Access SafeGraph location data from the Snowflake Marketplace</li>
+<li>Create Snowflake objects (warehouse, database, schema)</li>
+<li>Ingest shift sales data from S3</li>
+<li>Join shift sales with the SafeGraph location data</li>
+</ul>
+<p>Tasty Bytes operates food trucks in cities across the globe with each truck having the ability to choose two different selling locations per day. The locations are mapped to SafeGraph points-of-interest. You want to join latitude and longitude from the SafeGraph Marketplace data to your shift sales data to use as features in model training.</p>
+<h2 is-upgraded>Step 1 - Acquiring SafeGraph POI Data from the Snowflake Marketplace</h2>
+<ul>
+<li>Log into your Snowflake account.</li>
+<li>Follow the steps and video below to access the SafeGraph Marketplace listing in your Snowflake account.<ul>
+<li>Click -&gt; Home Icon</li>
+<li>Click -&gt; Data Products</li>
+<li>Search -&gt; frostbyte</li>
+<li>Click -&gt; SafeGraph: frostbyte</li>
+<li>Click -&gt; Get</li>
+<li>Rename Database -&gt; FROSTBYTE_SAFEGRAPH (all capital letters)</li>
+<li>Grant to Additional Roles -&gt; PUBLIC</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/4726965c14c85c.gif"></p>
+<aside class="special"><p> SafeGraph is a global geospatial data company that offers any data on any place in the world. Customers like Esri, Tripadvisor, Mapbox, and Sysco use SafeGraph data to better understand their customers, create new products, and make better decisions for their business.</p>
+</aside>
+<h2 is-upgraded>Step 2 - Creating Objects, Loading Data, and Joining Data</h2>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema), ingest shift sales data from S3, and join shift sales with the SafeGraph location data.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+-- create a development database for data science work
+CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_dev;
+
+-- create raw, harmonized, and analytics schemas
+-- raw zone for data ingestion
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.raw;
+-- harmonized zone for data processing
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.harmonized;
+-- analytics zone for development
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.analytics;
+
+-- create csv file format
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_dev.raw.csv_ff 
+type = &#39;csv&#39;;
+
+-- create an external stage pointing to S3
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes_dev.raw.s3load
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39;
+url = &#39;s3://sfquickstarts/frostbyte_tastybytes/&#39;
+file_format = frostbyte_tasty_bytes_dev.raw.csv_ff;
+
+
+-- create and use a compute warehouse
+CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60;
+USE WAREHOUSE tasty_dsci_wh;
+show warehouses;
+---------------------------------------------------------------
+---------------------------------------------------------------
+---- CREATING RBAC FOR SNOWPARK 101 DEMO  ---------------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+
+USE ROLE securityadmin;
+
+CREATE ROLE IF NOT EXISTS tasty_bytes_admin;
+CREATE ROLE IF NOT EXISTS tasty_bytes_ds_role;
+
+/* role hierarchy */
+USE ROLE ACCOUNTADMIN;
+GRANT ROLE tasty_bytes_admin TO ROLE SYSADMIN;
+GRANT ROLE tasty_bytes_ds_role TO ROLE tasty_bytes_admin;
+
+/* grant privileges */
+USE ROLE ACCOUNTADMIN;
+
+-- databases
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_dev TO ROLE tasty_bytes_ds_role;
+
+--schemas 
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes_dev TO ROLE tasty_bytes_ds_role;
+
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_admin;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_admin;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+--tables
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT CREATE TABLE ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT CREATE TABLE ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT CREATE TABLE ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT CREATE STAGE ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT CREATE STAGE ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT CREATE STAGE ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+-- views
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+-- warehouse grants
+GRANT ALL ON WAREHOUSE tasty_dsci_wh TO ROLE tasty_bytes_admin;
+GRANT ALL ON WAREHOUSE tasty_dsci_wh TO ROLE tasty_bytes_ds_role;
+
+-- future grants
+GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT ALL ON FUTURE VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+---------------------------------------------------------------
+---------------------------------------------------------------
+-------- CREATE TABLES/VIEWS FOR SNOWPARK 101  ----------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+
+-- define shift sales table
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales(
+	location_id NUMBER(19,0),
+	city VARCHAR(16777216),
+	date DATE,
+	shift_sales FLOAT,
+	shift VARCHAR(2),
+	month NUMBER(2,0),
+	day_of_week NUMBER(2,0),
+	city_population NUMBER(38,0)
+);
+
+-- ingest from S3 into the shift sales table
+COPY INTO frostbyte_tasty_bytes_dev.raw.shift_sales
+FROM @frostbyte_tasty_bytes_dev.raw.s3load/analytics/shift_sales/;
+
+-- join in SafeGraph data
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.harmonized.shift_sales
+  AS
+SELECT
+    a.location_id,
+    a.city,
+    a.date,
+    a.shift_sales,
+    a.shift,
+    a.month,
+    a.day_of_week,
+    a.city_population,
+    b.latitude,
+    b.longitude,
+    b.location_name
+FROM frostbyte_tasty_bytes_dev.raw.shift_sales a
+JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b
+ON a.location_id = b.location_id;
+
+-- promote the harmonized table to the analytics layer for data science development
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_dev.analytics.shift_sales_v
+  AS
+SELECT * FROM frostbyte_tasty_bytes_dev.harmonized.shift_sales;
+
+-- view shift sales data
+SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Science with Snowpark" duration="22">
+        <h2 is-upgraded>Overview</h2>
+<p>Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support this goal and maximize daily revenue across the fleet of trucks, the data science team needs to build an ML model to direct trucks to locations that are expected to have the highest sales on a given shift.</p>
+<ul>
+<li>The <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a> notebook covers foundational feature/functions of a basic data science workflow using Snowpark for Python.</li>
+<li>You will walk through the following steps as a Tasty Bytes Data Scientist tasked with building and deploying a model on Snowflake to recommend the best locations for food trucks to park. <ul>
+<li><strong>Snowpark Fundamentals</strong><ul>
+<li>Connect to Snowflake</li>
+<li>Explore the API and DataFrames</li>
+</ul>
+</li>
+<li><strong>Data Exploration &amp; Feature Engineering</strong><ul>
+<li>Aggregate functions</li>
+<li>Imputation, encoding, and train/test split</li>
+</ul>
+</li>
+<li><strong>Model Training &amp; Deployment</strong><ul>
+<li>Training via a Snowpark ML Pipeline</li>
+<li>Elastic scalability</li>
+<li>Deploying a trained model to Snowflake Model Registry</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 1 - Download the Notebook</h2>
+<p>Download <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a> from GitHub.</p>
+<h2 is-upgraded>Step 2 - Upload the Notebook to Snowflake</h2>
+<ul>
+<li>Log into your Snowflake account.</li>
+<li>Follow the steps to upload the ipynb file.<ul>
+<li>Click -&gt; Home Icon</li>
+<li>Click -&gt; Products</li>
+<li>Click -&gt; Notebooks</li>
+<li>Click -&gt; Down Arrow, Import .ipynb File</li>
+<li>Ensure Database is FROSTBYTE_TASTY_BYTES_DEV</li>
+<li>Change Schema to ANALYTICS</li>
+<li>Change Warehouse to TASTY_DSCI_WH</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/362abdcb6aed60b5.gif"></p>
+<h2 is-upgraded>Step 3 - Add Required Packages</h2>
+<ul>
+<li>Click the packages drop down from the top right corner of the notebook. Add the following packages<ul>
+<li>snowflake-ml-python</li>
+<li>matplotlib</li>
+<li>plotly</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/5eb2ad9929d01ef2.gif"></p>
+<h2 is-upgraded>Step 4- Running the Jupyter Notebook</h2>
+<ul>
+<li>Run through the cells of <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a> from your Snowflake Notebook. <img src="img/e04c57e741f7d96b.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Prototype with Streamlit" duration="6">
+        <h2 is-upgraded>Overview</h2>
+<p>Now that you have deployed a model that predicts the shift sales of each location for the upcoming shift, you want to find a way for truck drivers to use these predictions to pick where they will park. You need to create an application prototype to show the engineering team how a truck driver would interact with the shift sales forecast model. The application will allow a user to pick a city and shift time (AM or PM) and show predicted sales by location on a map.</p>
+<h2 is-upgraded>Step 1 - Confirming Prerequisites</h2>
+<p>The <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a> notebook needs to be run before running the Streamlit application.</p>
+<h2 is-upgraded>Step 2 - Optional: Reviewing the Code</h2>
+<ul>
+<li>Open <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py" target="_blank">streamlit_app.py</a></li>
+<li>Identify where the connection to Snowflake happens.</li>
+<li>Identify where the model inference is called via Snowflake Model Registry to give shift sale predictions on the fly.</li>
+</ul>
+<h2 is-upgraded>Step 3 - Launching the App</h2>
+<ul>
+<li>From Snowsight, select the Projects and then Streamlit</li>
+<li>Create a new Streamlit-in-Snowflake application with: <ul>
+<li>Database: FROSTBYTE_TASTY_BYTES_DEV</li>
+<li>Schema: ANALYTICS</li>
+<li>Warehouse: TASTY_DSCI_WH</li>
+</ul>
+</li>
+<li>Add the following packages from the packages dropdown in the code editor section: <ul>
+<li>plotly</li>
+<li>pydeck</li>
+<li>snowflake-ml-python</li>
+</ul>
+</li>
+<li>Copy the code from <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py" target="_blank">streamlit_app.py</a> into the code editor section</li>
+<li>Run the app! <img src="img/21d90202aa08edc6.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="5">
+        <h2 is-upgraded>Overview of Objects Created in this Quickstart</h2>
+<p><strong>Snowflake:</strong></p>
+<ul>
+<li><strong>Warehouse:</strong> tasty_dsci_wh</li>
+<li><strong>Database:</strong> frostbyte_tasty_bytes_dev <ul>
+<li><strong>Schema:</strong> raw <ul>
+<li><strong>Table:</strong> frostbyte_tasty_bytes_dev.raw.shift_sales</li>
+<li><strong>Stage:</strong> frostbyte_tasty_bytes_dev.raw.s3load</li>
+<li><strong>File format:</strong> frostbyte_tasty_bytes_dev.raw.csv_ff</li>
+</ul>
+</li>
+<li><strong>Schema:</strong> harmonized <ul>
+<li><strong>Table:</strong> frostbyte_tasty_bytes_dev.harmonized.shift_sales</li>
+</ul>
+</li>
+<li><strong>Schema:</strong> analytics <ul>
+<li><strong>Tables:</strong><ul>
+<li>frostbyte_tasty_bytes_dev.analytics.shift_sales_train</li>
+<li>frostbyte_tasty_bytes_dev.analytics.shift_sales_test</li>
+</ul>
+</li>
+<li><strong>View:</strong> frostbyte_tasty_bytes_dev.analytics.shift_sales_v</li>
+<li><strong>Stage:</strong> frostbyte_tasty_bytes_dev.analytics.model_stage</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Shared Database:</strong> frostbyte_safegraph <ul>
+<li><strong>Table:</strong> frostbyte_safegraph.public.frostbyte_tb_safegraph_s</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 1 - Removing Snowflake Objects</h2>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+DROP DATABASE IF EXISTS frostbyte_tasty_bytes_dev;
+DROP DATABASE IF EXISTS frostbyte_safegraph;
+DROP WAREHOUSE IF EXISTS tasty_dsci_wh;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Next Steps" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p><strong>You did it!</strong> You have successfully complete the Tasty Bytes - Snowpark 101 for Data Science Quickstart.</p>
+<p>By doing so you have now:</p>
+<ul>
+<li>Acquired SafeGraph POI Data from the Snowflake Marketplace</li>
+<li>Explored data &amp; performed feature engineering with Snowpark</li>
+<li>Trained a model in Snowflake with a Snowpark ML Pipeline</li>
+<li>Deployed a model to a Snowflake Model Registry</li>
+<li>Built a Streamlit in Snowflake application to provide on the fly shift sale predictions by location</li>
+</ul>
+<h2 is-upgraded>Next Steps</h2>
+<p>To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes - Quickstarts available to you.</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3" target="_blank">Powered by Tasty Bytes - Quickstarts Table of Contents</a></h2>
+</li>
+<li><a href="https://developers.snowflake.com/demos/predictive-sales-snowflake/" target="_blank">Demo on Snowflake Demo Hub</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Develop and Manage ML Models with Feature Store and Model Registry</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="develop-and-manage-ml-models-with-feature-store-and-model-registry"
+                  title="Develop and Manage ML Models with Feature Store and Model Registry"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a> is an integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos, or governance tradeoffs. The Snowpark ML Python library (the snowflake-ml-python package) provides APIs for developing and deploying your Snowflake ML pipelines.</p>
+<p>This is part 3 of a 3-part introduction quickstart series to Snowflake Feature Store (check out part 1 <a href="https://quickstarts.snowflake.com/guide/intro-to-feature-store/index.html#0" target="_blank">here</a> and part 2 <a href="https://quickstarts.snowflake.com/guide/overview-of-feature-store-api/index.html?index=..%2F..index#0" target="_blank">here</a>). This quickstart demonstrates an end-to-end ML experiment cycle including feature creation, training data generation, model training and inference. The workflow touches on key Snowflake ML features including <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/feature-store/overview" target="_blank">Snowflake Feature Store</a>, <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/dataset" target="_blank">Dataset</a>, <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling" target="_blank">Snowflake ML APIs</a>, and <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a>.</p>
+<p class="image-container"><img alt="snowflake-ml-overview" src="img/47259c7ee0d60613.png"></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>The key features of Snowflake Feature Store including <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities" target="_blank">entities</a> and <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views" target="_blank">feature views</a>.</li>
+<li>How to train a model using <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling" target="_blank">Snowflake ML APIs</a></li>
+<li>How to log and reference models using <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An ML model using Snowflake Feature Store and Model Registry</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Your Account" duration="2">
+        <p>Complete the following steps to setup your account:</p>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and the following SQL in the worksheet</li>
+<li>Adjust &lt;YOUR_USER&gt; to your user</li>
+<li>Run all commands to create Snowflake objects</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE ML_MODEL_ROLE;
+GRANT ROLE ML_MODEL_ROLE to USER &lt;YOUR_USER&gt;;
+
+-- create our virtual warehouse
+CREATE OR REPLACE WAREHOUSE ML_MODEL_WH AUTO_SUSPEND = 60;
+
+GRANT ALL ON WAREHOUSE ML_MODEL_WH TO ROLE ML_MODEL_ROLE;
+
+-- Next create a new database and schema,
+CREATE OR REPLACE DATABASE ML_MODEL_DATABASE;
+CREATE OR REPLACE SCHEMA ML_MODEL_SCHEMA;
+
+GRANT OWNERSHIP ON DATABASE ML_MODEL_DATABASE TO ROLE ML_MODEL_ROLE COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE ML_MODEL_DATABASE TO ROLE ML_MODEL_ROLE COPY CURRENT GRANTS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Notebook" duration="10">
+        <ul>
+<li>Download the notebook from this <a href="https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/0_start_here.ipynb" target="_blank">link</a></li>
+<li>Download <a href="https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/feature-store-ui.png" target="_blank">feature-store-ui.png</a> and <a href="https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/model-registry-ui.png" target="_blank">model-registry-ui.png</a></li>
+<li>Change role to ML_MODEL_ROLE</li>
+<li>Navigate to Projects &gt; Notebooks in Snowsight</li>
+<li>Click Import .ipynb from the + Notebook dropdown</li>
+<li>Create a new notebok with the following settings <ul>
+<li>Notebook Location: ML_MODEL_DATABASE, ML_MODEL_SCHEMA</li>
+<li>Run on Warehouse</li>
+<li>Warehouse: ML_MODEL_WH</li>
+</ul>
+</li>
+<li>Create Notebook</li>
+<li>Click Packages in the top right, add <code>snowflake-ml-python</code> and <code>snowflake-snowpark-python</code></li>
+<li>Upload both image files by clicking the plus button on the file explorer in the left pane</li>
+<li>Run cells in the notebook!</li>
+</ul>
+<p class="image-container"><img alt="notebook-preview" src="img/3f49fc990847266.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Snowflake ML offers a comprehensive, integrated platform for end-to-end machine learning, allowing data scientists and ML engineers to develop and deploy scalable models seamlessly, all within a governed data environment. With the Snowpark ML Python library, you can build and manage your ML pipelines without the need for data movement or compromising on governance.</p>
+<p>This Quickstart has demonstrated how to execute an entire ML experiment cycle—from feature creation to model training and inference—while highlighting key features such as the Snowflake Feature Store, Dataset, Snowpark ML Modeling, and the Snowflake Model Registry.</p>
+<p>Ready to elevate your machine learning projects? Dive into the full potential of Snowflake ML and start transforming your data into actionable insights today. Check out the links below to get started and explore more advanced capabilities.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>The key features of Snowflake Feature Store including <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities" target="_blank">entities</a> and <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views" target="_blank">feature views</a>.</li>
+<li>How to train a model using <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling" target="_blank">Snowflake ML APIs</a></li>
+<li>How to log and reference models using <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a></li>
+</ul>
+<h2 is-upgraded>Related Quickstarts</h2>
+<ul>
+<li>Part 1: <a href="https://quickstarts.snowflake.com/guide/intro-to-feature-store/index.html#0" target="_blank">Introduction to Snowflake Feature Store with Snowflake Notebooks</a></li>
+<li>Part 2: <a href="https://quickstarts.snowflake.com/guide/overview-of-feature-store-api/index.html?index=..%2F..index#0" target="_blank">Getting Started with Snowflake Feature Store API</a></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Snowflake Feature Store</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities" target="_blank">Entities</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views" target="_blank">Feature Views</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/modeling#generating-datasets-for-training" target="_blank">Datasets</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

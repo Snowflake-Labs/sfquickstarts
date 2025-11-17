@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "vhol_data_marketplace_app",
+  "duration": 16,
+  "title": "Building an application on Snowflake with data from Snowflake Marketplace",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "vhol_data_marketplace_app/vhol_data_marketplace_app.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "app-development",
+    "marketing"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "vhol_data_marketplace_app"
+}

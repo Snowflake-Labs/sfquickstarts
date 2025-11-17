@@ -1,0 +1,379 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Resource Optimization: Setup &amp; Configuration</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="resource_optimization_setup"
+                  title="Resource Optimization: Setup &amp; Configuration"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>This resource optimization guide represents one module of the four contained in the series. These guides are meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Quickstarts for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming <a href="https://www.snowflake.com/education-and-training/" target="_blank">education and training</a>.</p>
+<p>This <a href="https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/" target="_blank">blog post</a> can provide you with a better understanding of Snowflake&#39;s Resource Optimization capabilities.</p>
+<p>Contact our team at <a href="mailto:marketing@snowflake.com" target="_blank">marketing@snowflake.com</a>, we appreciate your feedback.</p>
+<h2 is-upgraded>Setup &amp; Configuration</h2>
+<p>Setup &amp; Configuration queries provide more proactive insight into warehouses that are not utilizing key features that can prevent runaway resource and cost consumption.  Leverage these key queries listed below to identify warehouses which should be re-configured to leverage the appropriate features.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>available features and settings to control Snowflake consumption</li>
+<li>the importance of configuring auto-resume and auto-suspend</li>
+<li>how to configure relevant statement timeouts</li>
+<li>the value and configuration of resource monitors</li>
+<li>how to analyze user activity</li>
+<li>how to analyze task behavior</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>Access to view <a href="https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles" target="_blank">Account Usage Data Share</a></li>
+</ul>
+<h2 is-upgraded>Related Materials</h2>
+<ul>
+<li>Resource Optimization: Usage Monitoring</li>
+<li>Resource Optimization: Billing Metrics</li>
+<li>Resource Optimization: Performance</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Tiers" duration="0">
+        <p>Each query within the Resource Optimization Snowflake Quickstarts will have a tier designation just to the right of its name as &#34;(T*)&#34;.  The following tier descriptions should help to better understand those designations.</p>
+<h2 is-upgraded>Tier 1 Queries</h2>
+<p>At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.</p>
+<h2 is-upgraded>Tier 2 Queries</h2>
+<p>Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.</p>
+<h2 is-upgraded>Tier 3 Queries</h2>
+<p>Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake.  While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 &amp; 2.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouses without Auto-Resume (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Identifies all warehouses that do not have auto-resume enabled.  Enabling this feature will automatically resume a warehouse any time a query is submitted against that specific warehouse. By default, all warehouses have auto-resume enabled.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Make sure all warehouses are set to auto resume.  If you are going to implement auto suspend and proper timeout limits, this is a must or users will not be able to query the system.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SHOW WAREHOUSES
+;
+SELECT &#34;name&#34; AS WAREHOUSE_NAME
+      ,&#34;size&#34; AS WAREHOUSE_SIZE
+  FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+ WHERE &#34;auto_resume&#34; = &#39;false&#39;
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouses without Auto-Suspend (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Identifies all warehouses that do not have auto-suspend enabled.  Enabling this feature will ensure that warehouses become suspended after a specific amount of inactive time in order to prevent runaway costs.  By default, all warehouses have auto-suspend enabled.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Make sure all warehouses are set to auto suspend. This way when they are not processing queries your compute footprint will shrink and thus your credit burn.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SHOW WAREHOUSES
+;
+SELECT &#34;name&#34; AS WAREHOUSE_NAME
+      ,&#34;size&#34; AS WAREHOUSE_SIZE
+  FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+ WHERE IFNULL(&#34;auto_suspend&#34;,0) = 0
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouses with Long Suspension (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Identifies warehouses that have the longest setting for automatic suspension after a period of no activity on that warehouse.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>All warehouses should have an appropriate setting for automatic suspension for the workload.</p>
+<p>– For Tasks, Loading and ETL/ELT warehouses set to immediate suspension.</p>
+<p>– For BI and SELECT query warehouses set to 10 minutes for suspension to keep data caches warm for end users</p>
+<p>– For DevOps, DataOps and Data Science warehouses set to 5 minutes for suspension as warm cache is not as important to ad-hoc and highly unique queries.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SHOW WAREHOUSES
+;
+SELECT &#34;name&#34; AS WAREHOUSE_NAME
+      ,&#34;size&#34; AS WAREHOUSE_SIZE
+  FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+ WHERE &#34;auto_suspend&#34; &gt;= 3600  // 3600 seconds = 1 hour
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouses without Resource Monitors (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Identifies all warehouses without resource monitors in place.  Resource monitors provide the ability to set limits on credits consumed against a warehouse during a specific time interval or date range.  This can help prevent certain warehouses from unintentionally consuming more credits than typically expected.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Warehouses without resource monitors in place could be prone to excessive costs if a warehouse consumes more credits than anticipated.  Leverage the results of this query to identify the warehouses that should have resource monitors in place to prevent future runaway costs.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SHOW WAREHOUSES
+;
+SELECT &#34;name&#34; AS WAREHOUSE_NAME
+      ,&#34;size&#34; AS WAREHOUSE_SIZE
+  FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+ WHERE &#34;resource_monitor&#34; = &#39;null&#39;
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="User Segmentation (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Lists out all warehouses that are used by multiple ROLEs in Snowflake and returns the average execution time  and count of all queries executed by each ROLE in each warehouse.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>If execution times or query counts across roles within a single warehouse are wildly different it might be worth segmenting those users into separate warehouses and configuring each warehouse to meet the specific needs of each workload</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT *
+
+FROM (
+  SELECT 
+
+  WAREHOUSE_NAME
+  ,ROLE_NAME
+  ,AVG(EXECUTION_TIME) as AVERAGE_EXECUTION_TIME
+  ,COUNT(QUERY_ID) as COUNT_OF_QUERIES
+  ,COUNT(ROLE_NAME) OVER(PARTITION BY WAREHOUSE_NAME) AS ROLES_PER_WAREHOUSE
+
+
+  FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+  where to_date(start_time) &gt;= dateadd(month,-1,CURRENT_TIMESTAMP())
+  group by 1,2
+) A
+WHERE A.ROLES_PER_WAREHOUSE &gt; 1
+order by 5 DESC,1,2
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/5fe3c0415c85e53e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Idle Users (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Users in the Snowflake platform that have not logged in in the last 30 days</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Should these users be removed or more formally onboarded?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT 
+	*
+FROM SNOWFLAKE.ACCOUNT_USAGE.USERS 
+WHERE LAST_SUCCESS_LOGIN &lt; DATEADD(month, -1, CURRENT_TIMESTAMP()) 
+AND DELETED_ON IS NULL;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Users Never Logged In (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Users that have never logged in to Snowflake</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Should these users be removed or more formally onboarded?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT 
+	*
+FROM SNOWFLAKE.ACCOUNT_USAGE.USERS 
+WHERE LAST_SUCCESS_LOGIN IS NULL;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Idle Roles (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Roles that have not been used in the last 30 days</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Are these roles necessary? Should these roles be cleaned up?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT 
+	R.*
+FROM SNOWFLAKE.ACCOUNT_USAGE.ROLES R
+LEFT JOIN (
+    SELECT DISTINCT 
+        ROLE_NAME 
+    FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY 
+    WHERE START_TIME &gt; DATEADD(month,-1,CURRENT_TIMESTAMP())
+        ) Q 
+                ON Q.ROLE_NAME = R.NAME
+WHERE Q.ROLE_NAME IS NULL
+and DELETED_ON IS NULL;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Idle Warehouses (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Warehouses that have not been used in the last 30 days</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Should these warehouses be removed? Should the users of these warehouses be enabled/onboarded?</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SHOW WAREHOUSES;
+
+select * 
+from table(result_scan(last_query_id())) a
+left join (select distinct WAREHOUSE_NAME from SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY 
+    WHERE START_TIME &gt; DATEADD(month,-1,CURRENT_TIMESTAMP())
+) b on b.WAREHOUSE_NAME = a.&#34;name&#34;
+
+where b.WAREHOUSE_NAME is null;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Statement Timeouts (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Statement timeouts provide additional controls around how long a query is able to run before cancelling it. Using this feature will ensure that any queries that get hung up for extended periods of time will not cause excessive consumption of credits.</p>
+<p>Show parameter settings at the Account, Warehouse, and User Session levels.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SHOW PARAMETERS LIKE &#39;STATEMENT_TIMEOUT_IN_SECONDS&#39; IN ACCOUNT;
+SHOW PARAMETERS LIKE &#39;STATEMENT_TIMEOUT_IN_SECONDS&#39; IN WAREHOUSE &lt;warehouse-name&gt;;
+SHOW PARAMETERS LIKE &#39;STATEMENT_TIMEOUT_IN_SECONDS&#39; IN USER &lt;username&gt;;
+</code></pre>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>This parameter is set at the account level by default.  When the parameter is also set for both a warehouse and a user session, the lowest non-zero value is enforced.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stale Table Streams (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Indicates whether the offset for the stream is positioned at a point earlier than the data retention period for the table (or 14 days, whichever period is longer). Change data capture (CDC) activity cannot be returned for the table.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>To return CDC activity for the table, recreate the stream. To prevent a stream from becoming stale, consume the stream records within a transaction during the retention period for the table.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SHOW STREAMS;
+
+select * 
+from table(result_scan(last_query_id())) 
+where &#34;stale&#34; = true;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Failed Tasks (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Returns a list of task executions that failed.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Revisit these task executions to resolve the errors.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select *
+  from snowflake.account_usage.task_history
+  WHERE STATE = &#39;FAILED&#39;
+  and query_start_time &gt;= DATEADD (day, -7, CURRENT_TIMESTAMP())
+  order by query_start_time DESC
+  ;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Long Running Tasks (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Returns an ordered list of the longest running tasks</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>revisit task execution frequency or the task code for optimization</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select DATEDIFF(seconds, QUERY_START_TIME,COMPLETED_TIME) as DURATION_SECONDS
+                ,*
+from snowflake.account_usage.task_history
+WHERE STATE = &#39;SUCCEEDED&#39;
+and query_start_time &gt;= DATEADD (day, -7, CURRENT_TIMESTAMP())
+order by DURATION_SECONDS desc
+  ;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Zero to Snowflake - Cost Management</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_zero_to_snowflake_cost_management"
+                  title="Tasty Bytes - Zero to Snowflake - Cost Management"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Cost Management in Snowflake" duration="1">
+        <p class="image-container"><img src="img/17c7077a9a987e8c.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Cost Management!</p>
+<p>Within this Quickstart, we will learn about Cost Management in Snowflake by diving into Snowflake Warehouses and their configurability, Resource Monitors, Account and Warehouse Level Timeout Parameters, Budgets and Exploring Cost.</p>
+<p>For more detail on Cost Management in Snowflake please visit the <a href="https://docs.snowflake.com/en/guides-overview-cost#cost-management" target="_blank">Cost Management Overview documentation</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Before beginning, please make sure you have completed the <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html" target="_blank"><strong>Introduction to Tasty Bytes Quickstart</strong></a> which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to Create and Configure a Snowflake Warehouse</li>
+<li>How to Scale a Snowflake Warehouse Up and Down</li>
+<li>How to Suspend a Snowflake Warehouse</li>
+<li>How to Create, Configure and Apply a Resource Monitor</li>
+<li>How to Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.</li>
+<li>How to Create a Tag and Assign it to a Warehouse</li>
+<li>How to explore Cost with SQL or the Snowsight UI</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A Snowflake Warehouse</li>
+<li>A Resource Monitor</li>
+<li>A Cost Center Tag</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Worksheet and Copying in our SQL" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.</p>
+<p>This section will walk you through logging into Snowflake, Creating a New Worksheet, Renaming the Worksheet, Copying SQL from GitHub, and Pasting the SQL we will be leveraging within this Quickstart.</p>
+<h2 is-upgraded>Step 1 - Accessing Snowflake via URL</h2>
+<ul>
+<li>Open a browser window and enter the URL of your Snowflake Account</li>
+</ul>
+<h2 is-upgraded>Step 2 - Logging into Snowflake</h2>
+<ul>
+<li>Log into your Snowflake account.</li>
+</ul>
+<h2 is-upgraded>Step 3 - Navigating to Worksheets</h2>
+<ul>
+<li>Click on the Projects Tab in the left-hand navigation bar and click Worksheets.</li>
+</ul>
+<h2 is-upgraded>Step 4 - Creating a Worksheet</h2>
+<ul>
+<li>Within Worksheets, click the &#34;+&#34; button in the top-right corner of Snowsight.</li>
+</ul>
+<h2 is-upgraded>Step 5 - Renaming a Worksheet</h2>
+<ul>
+<li>Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting &#34;Tasty Bytes - Cost Management&#34;</li>
+</ul>
+<h2 is-upgraded>Step 6 - Accessing Quickstart SQL in GitHub</h2>
+<ul>
+<li>Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub. <a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25_Zero_To_Snowflake/tb_cost_management.sql" target="_blank"><paper-button class="colored" raised>tb_zts_financial_governance.sql</paper-button></a></li>
+</ul>
+<h2 is-upgraded>Step 7 - Copying Setup SQL from GitHub</h2>
+<ul>
+<li>Within GitHub navigate to the right side and click &#34;Copy raw contents&#34;. This will copy all of the required SQL into your clipboard. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet</h2>
+<ul>
+<li>Path back to Snowsight and your newly created Worksheet and Paste (<em>CMD + V for Mac or CTRL + V for Windows</em>) what we just copied from GitHub. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 9 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Virtual Warehouses and Settings" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>As a Tasty Bytes Snowflake Administrator we have been tasked with gaining an understanding of the features Snowflake provides to help ensure proper Financial Governance is in place before we begin querying and analyzing data.</p>
+<h2 is-upgraded>Step 1 - Role, Warehouse and Database Context</h2>
+<p>Before we create a Warehouse, let&#39;s first set our Role and Warehouse context.</p>
+<p>The queries below will set our Role to <code>tb_admin</code> using <a href="https://docs.snowflake.com/en/sql-reference/sql/use-role.html" target="_blank">USE ROLE</a>, our Warehouse to  <code>tb_de_wh</code> warehouse using <a href="https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html" target="_blank">USE WAREHOUSE</a> and our Database to <code>tb_101</code> using <a href="https://docs.snowflake.com/en/sql-reference/sql/use-database" target="_blank">USE DATABASE</a> .</p>
+<p>To run the queries, please highlight the three queries in your created Worksheet that match what you see below and click the &#34;► Run&#34; button in the top-right hand corner.</p>
+<p>Once these are executed you will see a <code>Statement executed successfully.</code> result and notice the Worksheet context reflect the Role, Warehouse and Database as shown in the screenshot below.</p>
+<pre><code>USE ROLE tb_admin;
+USE WAREHOUSE tb_de_wh;
+USE DATABASE tb_101;
+</code></pre>
+<p class="image-container"><img src="img/1269a227271d89ab.png">  </p>
+<h2 is-upgraded>Step 2 - Creating and Configuring a Warehouse</h2>
+<p>Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to meet compute needs or scaling out to meet concurrency needs.</p>
+<aside class="special"><p> A virtual warehouse, often referred to simply as a &#34;warehouse&#34;, is a cluster of compute resources in Snowflake.</p>
+</aside>
+<p>The next query will create our first Warehouse named <code>tb_test_wh</code>. Please execute this query now which result in another <code>Statement executed successfully.</code> message.</p>
+<pre><code>CREATE OR REPLACE WAREHOUSE tb_test_wh WITH
+COMMENT = &#39;test warehouse for tasty bytes&#39;
+    WAREHOUSE_TYPE = &#39;standard&#39;
+    WAREHOUSE_SIZE = &#39;xsmall&#39; 
+    MIN_CLUSTER_COUNT = 1 
+    MAX_CLUSTER_COUNT = 2 
+    SCALING_POLICY = &#39;standard&#39;
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = true
+    INITIALLY_SUSPENDED = true;
+</code></pre>
+<p>Based on the query we ran, please see the details below on what each configuration handles within our <a href="https://docs.snowflake.com/en/sql-reference/sql/create-warehouse" target="_blank">CREATE WAREHOUSE</a> statement.</p>
+<aside class="special"><p><strong>Warehouse Type</strong>: Warehouses are required for queries, as well as all DML operations, including loading data into tables. Snowflake supports Standard (most-common) or Snowpark-optimized Warehouse Types.</p>
+<p><strong>Warehouse Size</strong>: Size specifies the amount of compute resources available per cluster in a warehouse. Snowflake supports X-Small through 6X-Large sizes.</p>
+<p><strong>Minimum and Maximum Cluster Count</strong>: With multi-cluster warehouses, Snowflake supports allocating, either statically or dynamically, additional clusters to make a larger pool of compute resources available.</p>
+<p><strong>Scaling Policy</strong>: Specifies the policy for automatically starting and shutting down clusters in a multi-cluster warehouse running in Auto-scale mode.</p>
+<p><strong>Auto Suspend</strong>: By default, Auto-Suspend is enabled. Snowflake automatically suspends the warehouse if it is inactive for the specified period of time, in our case 60 seconds.</p>
+<p><strong>Auto Resume</strong>: By default, auto-resume is enabled. Snowflake automatically resumes the warehouse when any statement that requires a warehouse is submitted and the warehouse is the current warehouse for the session.</p>
+<p><strong>Initially Suspended</strong>: Specifies whether the warehouse is created initially in the ‘Suspended&#39; state.</p>
+<p><em>For further information on Snowflake Warehouses please visit the </em><a href="https://docs.snowflake.com/en/user-guide/warehouses" target="_blank"><em>Snowflake Warehouse Documentation</em></a></p>
+</aside>
+<h2 is-upgraded>Step 3 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Resuming, Suspending and Scaling a Warehouse" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>With a Warehouse created, let&#39;s now use it to answer a few questions from the business. While doing so we will learn how to resume, suspend and elastically scale the Warehouse.</p>
+<h2 is-upgraded>Step 1 - Setting our Role and Warehouse Context and running a Query</h2>
+<p>To begin, let&#39;s run the next three queries. The first two will set our <code>tbadmin</code> role and <code>tb_test_wh</code> context and the final one will query our <code>raw_pos.menu</code> table to find all food items sold at our Plant Palace branded trucks.</p>
+<pre><code>USE ROLE tb_admin;
+USE WAREHOUSE tb_test_wh;
+
+SELECT
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_id,
+    m.menu_item_name
+FROM raw_pos.menu m
+WHERE truck_brand_name = &#39;Plant Palace&#39;;
+</code></pre>
+<p class="image-container"><img src="img/65f30428662ca71.png">  </p>
+<h2 is-upgraded>Step 2 - Scaling Our Warehouse Up</h2>
+<p>After completing a basic query against one of our dimension tables, let&#39;s now get ready to query our much larger orders data set.</p>
+<p>Let&#39;s now instantly scale our <code>tb_test_wh</code> up by executing our next query leveraging <a href="https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters" target="_blank">ALTER WAREHOUSE... SET warehouse_size</a>.</p>
+<p>Upon completion we will recieve another <code>Statement executed successfully</code> result.</p>
+<pre><code>ALTER WAREHOUSE tb_test_wh SET warehouse_size = &#39;XLarge&#39;;
+</code></pre>
+<h2 is-upgraded>Step 3 - Run an Aggregation Query Against a Large Data Set</h2>
+<p>With our Warehouse scaled up, let&#39;s now run our next query which uses <a href="https://docs.snowflake.com/en/sql-reference/functions/concat" target="_blank">CONCAT</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/count" target="_blank">COUNT</a> and <a href="https://docs.snowflake.com/en/sql-reference/functions/sum" target="_blank">SUM</a> to calculate orders and total sales for Tasty Bytes customer loyalty members.</p>
+<pre><code>SELECT 
+    o.customer_id,
+    CONCAT(clm.first_name, &#39; &#39;, clm.last_name) AS name,
+    COUNT(DISTINCT o.order_id) AS order_count,
+    SUM(o.price) AS total_sales
+FROM analytics.orders_v o
+JOIN analytics.customer_loyalty_metrics_v clm
+    ON o.customer_id = clm.customer_id
+GROUP BY o.customer_id, name
+ORDER BY order_count DESC;
+</code></pre>
+<p class="image-container"><img src="img/7d62e12dccea801a.png"></p>
+<h2 is-upgraded>Step 4 - Scale our Warehouse Down</h2>
+<p>Having seen the instant upward scalability of our Snowflake Warehouse and how it can aggregate large result sets with ease, let&#39;s now instantly scale our <code>tb_test_wh</code> back down by running the next query.</p>
+<p>Upon completion we will recieve another <code>Statement executed successfully</code> result.</p>
+<pre><code>ALTER WAREHOUSE tb_test_wh SET warehouse_size = &#39;XSmall&#39;;
+</code></pre>
+<h2 is-upgraded>Step 5 - Suspend our Warehouse</h2>
+<p>To cap things off, we previously set the <code>auto_suspend</code> to 60 seconds on our <code>tb_test_wh</code> but let&#39;s also take a look at how to manually suspend a warehouse by executing our final query.</p>
+<pre><code>ALTER WAREHOUSE tb_test_wh SUSPEND;
+</code></pre>
+<p><strong>Note</strong>: Depending on how fast you have run through these last statements, you will receive one of the following two results:</p>
+<ol type="1">
+<li><strong>Statement executed successfully</strong>: This means you were very fast in executing the steps in this section and have beat the <code>auto_suspend</code> Warehouse setting we configured to 60 seconds.</li>
+<li><strong>Invalid state. Warehouse ‘TASTY_TEST_WH&#39; cannot be suspended</strong>: This means that the amazing <code>auto_suspend</code> Warehouse setting we configured to 60 seconds has won the Warehouse suspension race.</li>
+</ol>
+<h2 is-upgraded>Step 6 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Controlling Cost with Session Timeout Parameters" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>With monitoring in place, let&#39;s now make sure we are protecting ourselves from bad long running queries ensuring timeout parameters are adjusted on the Warehouse.</p>
+<h2 is-upgraded>Step 1 - Exploring Warehouse Statement Parameters</h2>
+<p>To begin, let&#39;s run the next query to find all Warehouse Parameters related to Statements using the <a href="https://docs.snowflake.com/en/sql-reference/sql/show-parameters" target="_blank">SHOW PARAMETERS</a> command.</p>
+<pre><code>SHOW PARAMETERS LIKE &#39;%statement%&#39; IN WAREHOUSE tb_test_wh;
+</code></pre>
+<p class="image-container"><img src="img/bd0b3ebe0f4f19a7.png"></p>
+<h2 is-upgraded>Step 2 - Adjusting Warehouse Statement Timeout Parameter</h2>
+<p>Having seen the two available Warehouse Statement Parameters, let&#39;s first adjust <code>statement_timeout_in_seconds</code> to 30 minutes by running the next query.</p>
+<p>Since this parameter is in seconds we will set it equal to 1800 (30 minutes x 60 seconds).</p>
+<p>Once executed we will receive another <code>Statement executed successfully.</code> result.</p>
+<pre><code>ALTER WAREHOUSE tb_test_wh SET statement_timeout_in_seconds = 1800;
+</code></pre>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds" target="_blank"><strong>STATEMENT_TIMEOUT_IN_SECONDS</strong></a><strong>:</strong> Timeout in <strong>seconds</strong> for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.</p>
+</aside>
+<h2 is-upgraded>Step 3 - Adjusting Warehouse Statement Queued Timeout Parameter</h2>
+<p>Next, we will adjust <code>statement_queued_timeout_in_seconds</code> to 10 minutes by running the next query.</p>
+<p>Since this parameter is also in seconds we will set it equal to 600 (10 minutes x 60 seconds).</p>
+<p>Once executed we will receive another <code>Statement executed successfully.</code> result.</p>
+<pre><code>ALTER WAREHOUSE tb_test_wh SET statement_queued_timeout_in_seconds = 600;
+</code></pre>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds" target="_blank"><strong>STATEMENT_QUEUED_TIMEOUT_IN_SECONDS</strong></a><strong>:</strong> Timeout in <strong>seconds</strong> for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.</p>
+</aside>
+<h2 is-upgraded>Step 4 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Controlling Cost with Account Timeout Parameters" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>The Timeout Parameters we set on our Test Warehouse are also available at the Account, User and Session level. Within this step, we will adjust these at the Account level.</p>
+<p>Moving forward we will plan to monitor these as our Snowflake Workloads and Usage grow to ensure they are continuing to protect our account from unneccesary consumption but allowing for expected longer jobs to complete</p>
+<h2 is-upgraded>Step 1 - Adjusting the Account Statement Timeout Parameter</h2>
+<p>To begin, our Account level Statement Parameter changes let&#39;s adjust <code>statement_timeout_in_seconds</code> to 5 hours by running the next two queries.</p>
+<p>Since this parameter is in seconds we will set it equal to 18000 ([5 hours x 60 minutes] x 60 seconds).</p>
+<p>Once executed we will receive another <code>Statement executed successfully.</code> result.</p>
+<pre><code>USE ROLE accountadmin;
+
+ALTER ACCOUNT SET statement_timeout_in_seconds = 18000; -- 18000 seconds = 5 hours
+</code></pre>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds" target="_blank"><strong>STATEMENT_TIMEOUT_IN_SECONDS</strong></a><strong>:</strong> Timeout in <strong>seconds</strong> for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.</p>
+</aside>
+<h2 is-upgraded>Step 2 - Adjusting the Account Statement Queued Timeout Parameter</h2>
+<p>As we did with our Warehouse, let&#39;s now adjust <code>statement_queued_timeout_in_seconds</code> to 1 hour by running the next query.</p>
+<p>Since this parameter is also in seconds we will set it equal to 3600 ([1 hour x 60 minutes] x 60 seconds). Once executed we will receive another <code>Statement executed successfully.</code> result.</p>
+<pre><code>ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
+</code></pre>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds" target="_blank"><strong>STATEMENT_QUEUED_TIMEOUT_IN_SECONDS</strong></a><strong>:</strong> Timeout in <strong>seconds</strong> for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.</p>
+</aside>
+<h2 is-upgraded>Step 3 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring Cost with Resource Monitors" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>With a Test Warehouse in place, let&#39;s now leverage Snowflakes Resource Monitors to ensure the Warehouse has a monthly quota.</p>
+<p>This will also allow Admins to monitor credit consumption and trigger Warehouse suspension if the quota is surpassed.</p>
+<p>Within this step we will create our Resource Monitor using SQL but these can also be deployed and monitored in Snowsight by navigating to <a href="https://docs.snowflake.com/en/user-guide/cost-exploring-overall#overview-of-account-level-costs" target="_blank">Admin -&gt; Cost Management</a>.</p>
+<aside class="special"><p> A resource monitor can be used to monitor credit usage by virtual warehouses and the cloud services needed to support those warehouses.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Creating a Resource Monitor</h2>
+<p>To begin, lets create our first Resource Monitor using <a href="https://docs.snowflake.com/en/sql-reference/sql/create-resource-monitor" target="_blank">CREATE RESOURCE MONITOR</a> by executing the next query.</p>
+<pre><code>CREATE OR REPLACE RESOURCE MONITOR tb_test_rm
+WITH 
+    CREDIT_QUOTA = 100 -- 100 credits
+    FREQUENCY = monthly -- reset the monitor monthly
+    START_TIMESTAMP = immediately -- begin tracking immediately
+    TRIGGERS 
+        ON 75 PERCENT DO NOTIFY -- notify accountadmins at 75%
+        ON 100 PERCENT DO SUSPEND -- suspend warehouse at 100 percent, let queries finish
+        ON 110 PERCENT DO SUSPEND_IMMEDIATE;
+</code></pre>
+<p class="image-container"><img src="img/79764313cee45de4.png">  </p>
+<p>For additional detail on what each configuration handles in our statement above please see below:</p>
+<aside class="special"><p><strong>Credit Quota</strong>: Credit quota specifies the number of Snowflake credits allocated to the monitor for the specified frequency interval. Any number can be specified.</p>
+<p><strong>Frequency</strong>: The interval at which the used credits reset relative to the specified start date.</p>
+<p><strong>Start Timestamp</strong>: Date and time (i.e. timestamp) when the resource monitor starts monitoring the assigned warehouses.</p>
+<p><strong>Notify</strong>: Perform no action, but send an alert notification (to all account administrators with notifications enabled).</p>
+<p><strong>Notify &amp; Suspend</strong>: Send a notification (to all account administrators with notifications enabled) and suspend all assigned warehouses after all statements being executed by the warehouse(s) have completed.</p>
+<p><strong>Notify &amp; Suspend Immediate</strong>: Send a notification (to all account administrators with notifications enabled) and suspend all assigned warehouses immediately, which cancels any statements being executed by the warehouses at the time.</p>
+<p><em>For further information on Snowflake Warehouses please visit the </em><a href="https://docs.snowflake.com/en/user-guide/resource-monitors" target="_blank">Working with Resource Monitors</a></p>
+</aside>
+<h2 is-upgraded>Step 2 - Applying our Resource Monitor to our Warehouse</h2>
+<p>With our Resource Monitor successfully created, let&#39;s now apply it to our created Warehouse using <a href="https://docs.snowflake.com/en/sql-reference/sql/alter-warehouse#properties-parameters" target="_blank">ALTER WAREHOUSE ... SET RESOURCE_MONITOR</a>.</p>
+<p>Please execute the final query of this step which will result in another <code>Statement executed successfully.</code> message.</p>
+<pre><code>ALTER WAREHOUSE tb_test_wh SET RESOURCE_MONITOR = tb_test_rm;
+</code></pre>
+<h2 is-upgraded>Step 3 - Click Next —&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tag Objects to Attribute Spend" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>Within this step, we will help our Finance department attribute consumption costs for the Test Warehouse to our Development Team.</p>
+<p>We will create a Tag object for associating Cost Centers to Database Objects and Warehouses and leverage it to assign the Development Team Cost Center to our Test Warehouse.</p>
+<h2 is-upgraded>Step 1 - Create our Tag</h2>
+<p>To begin, let&#39;s our Cost Center Tag using <a href="https://docs.snowflake.com/en/sql-reference/sql/create-tag" target="_blank">CREATE TAG</a> by executing the next query which will result in a <code>Tag COST_CENTER successfully created.</code> message.</p>
+<pre><code>CREATE OR REPLACE TAG cost_center;
+</code></pre>
+<h2 is-upgraded>Step 2 - Set Tag on Warehouse</h2>
+<p>Now we will to set the Development Team Cost Center Tag to the Test Warehouse byu executing the following query which will result in a <code>Statement executed successfully.</code> message.</p>
+<pre><code>ALTER WAREHOUSE tb_test_wh SET TAG cost_center = &#39;DEVELOPMENT_TEAM&#39;;
+</code></pre>
+<h2 is-upgraded>Step 3 - Click Next —&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploring Cost with Snowsight" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>Snowflake also provides many ways to visually inspect Cost data within Snowsight.</p>
+<h2 is-upgraded>Step 1 - <a href="https://docs.snowflake.com/en/user-guide/cost-exploring-overall#label-cost-exploring-account-overview" target="_blank">Overall Account Costs</a></h2>
+<p>To access an overview of incurred costs within Snowsight: 1. Select Admin » Cost Management. 2. Select a warehouse to use to view the usage data. • Snowflake recommends using an X-Small warehouse for this purpose. 3. Select Account Overview.</p>
+<h2 is-upgraded>Step 2 - <a href="https://docs.snowflake.com/en/user-guide/cost-exploring-overall#label-cost-exploring-consumption-page" target="_blank">Drill Down into Incurred Costs</a></h2>
+<p>To access and drill down into overall cost within Snowsight: 1. Select Admin » Cost Management. 2. Select a warehouse to use to view the usage data. • Snowflake recommends using an X-Small warehouse for this purpose. 3. Select Consumption. 4. Select All Usage Types from the drop-down list.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Next Steps" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Cost Management Quickstart.</p>
+<p>By doing so you have now:</p>
+<ul>
+<li>Created and Configured a Snowflake Warehouse</li>
+<li>Scaled a Snowflake Warehouse Up and Down</li>
+<li>Suspended a Snowflake Warehouse</li>
+<li>Created, Configured and Applied a Resource Monitor</li>
+<li>Set Statement Timeout and Statement Queue Timeout Parameters on a Snowflake Warehouse and Snowflake Account.</li>
+<li>Created and Attached a Tag to a Warehouse</li>
+<li>Explored Costs using Snowsight</li>
+</ul>
+<p>If you would like to re-run this Quickstart please leverage the Reset scripts in the bottom of your associated Worksheet.</p>
+<h2 is-upgraded>Next Steps</h2>
+<p>To continue your journey in the Snowflake AI Data Cloud, please now visit the link below to see all other Powered by Tasty Bytes - Quickstarts available to you.</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3" target="_blank">Powered by Tasty Bytes - Quickstarts Table of Contents</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

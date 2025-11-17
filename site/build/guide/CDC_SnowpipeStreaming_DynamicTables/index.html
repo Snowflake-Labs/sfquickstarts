@@ -1,0 +1,568 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowpipe Streaming and Dynamic Tables for Real-Time Ingestion (CDC Use Case)</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="CDC_SnowpipeStreaming_DynamicTables"
+                  title="Snowpipe Streaming and Dynamic Tables for Real-Time Ingestion (CDC Use Case)"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p>This guide will take you through a scenario of using Snowflake&#39;s Snowpipe Streaming to ingest a simulated stream, then utilize Dynamic tables to transform and prepare the raw ingested JSON payloads into ready-for-analytics datasets.  These are two of Snowflake&#39;s powerful Data Engineering innovations for ingestion and transformation.</p>
+<p>A simulated streaming datafeed will be generated for this exercise, using a java client running on your desktop, that implements the Snowpipe Streaming SDK.  The simulated datafeed will be Stock Limit Orders, with new, changed, and cancelled orders represented as RDBMS transactions logs captured from INSERT, UPDATE, and DELETE database events.  These events will be transmitted as JSON payloads and land into a Snowflake table with a variant data column.  The simulation will be high-volume, first starting at 1 million transactions in seconds and secondly as steady stream.  Finally, data will contain sensitive fields, so our process will have extra protections for this.</p>
+<p class="image-container"><img src="img/d8ec002e787e1754.png"></p>
+<p>This is the same type of stream ingestion typically created by Change-Data-Capture (CDC) agents that parse transaction logs of a database or event notification mechanisms of modern application.  However, this could be simulating any type of stream, in any industry.  This streaming ingestion use case was modeled similarly to one previously handled with Snowflake&#39;s Kafka Connector, but no Kafka is necessary for this use case as a Snowpipe Streaming client can enable replacing the Kafka middleware infrastucture, saving cost &amp; complexity.  Once landed, Dynamic Tables are purpose-built Snowflake objects for Data Engineering to transform the raw data into data ready for insights.</p>
+<h2 is-upgraded>The Use Case</h2>
+<p>Our Source ‘database&#39; has stock trades for the Dow Jones Industrials, <a href="https://www.nyse.com/quote/index/DJI" target="_blank">30 US stocks</a>.  On average 200M-400M stock trades are executed per day.  Our agent will be capturing Limit Order transaction events for these 30 stocks, which are new orders, updates to orders (changes in quantity or the limit price), and orders that are cancelled.  For this simulation, there are 3 new orders for every 2 updates, and then one cancellation.  This scenario&#39;s datastream will first reproduce a heavy workload of an initial market opening session and secondly a more modest continuous flow.  Snowflake data consumers want to see three perspectives on limit orders: what is the &#34;current&#34; list of orders that filters out stale and cancelled orders, a historical table showing every event on the source (in a traditional slowly changing dimension format), and current orders summarized by stock ticker symbol and by long or short position.  Latency needs to be minimized, 1-2 minutes would be ideal for the end-to-end process.</p>
+<p>While not covered in this exercise, more Snowflake capabilities can further enrich your incoming data using Snowflake Marketplace data, train and deploy machine learning models, perform fraud detection, and other use cases.  This Lab was to introduce you to real-time streaming ingestion and then transformation, making processing easier and more scalable than ever before.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake, basic SQL knowledge, using your desktop command line and executing a java program</li>
+<li>Have a Java JRE/JDK Runtime environment on your laptop/desktop (confirm by running &#34;java -version&#34; showing v11 or higher).  Suggest <a href="https://jdk.java.net/20/" target="_blank">OpenJDK</a> 20 or higher if installing.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Create Private &amp; Public keyfiles and using them for <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html" target="_blank">keypair authentication</a> into Snowflake</li>
+<li>Introduction to Snowpipe Streaming Java API, with a sample client and JSON-format datastream generator</li>
+<li>Ingest real-time semi-structured data into Snowflake and store as Variant datafield</li>
+<li>Create Dynamic Tables to do in-Snowflake ELT processing easier than ever before</li>
+<li>How to perform field-level <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">AES</a>-based data encryption at-the-source for security but governance controls for those authorized downstream</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>To complete this Quickstart, attendees need the following:</p>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Enterprise or Business Critical Account</a> with <strong>ACCOUNTADMIN</strong> access or setup assistance</li>
+<li>Be able to download a SQL and a Zip file</li>
+<li>Be able to run &#34;keytool&#34; command on your desktop (a utility included with Java)</li>
+<li>Be able to run a Java program from the command line on your desktop</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>User and Roles to control authentication and security</li>
+<li>A Snowflake database that contains all data and objects built in this lab</li>
+<li>A Landing/Staging table to initially land your incoming data stream</li>
+<li>Analytics-Ready Dynamic Tables</li>
+<li>Secure Functions for decrypting sensitive fields</li>
+<li>Secure Views to distribute data to various audiences</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake" duration="5">
+        <h2 is-upgraded>a) Download</h2>
+<p>The first thing you will need to do is download the following two files.  The first is a ZIP file you need to extract to a directory (for example C:/SnowflakeQuickstarts) that is the streaming simulator client.  The second file contains a series of SQL commands to execute in a Worksheet throughout this lab <strong>Click the green buttons to access the page to download the files</strong></p>
+<p><a href="https://sfquickstarts.s3.us-west-1.amazonaws.com/data_engineering_CDC_snowpipestreaming_dynamictables/CDCSimulatorApp.zip" target="_blank"><paper-button class="colored" raised>CDCSimulatorApp.zip</paper-button></a> (Click Download)</p>
+<p><a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/32fc9d8c26674f520cb894577e181dcfaeb7c7df/site/sfguides/src/data_engineering_CDC_SnowpipeStreaming_DynamicTables/files/Data_Engineering_Streams_CDC_DT_VHOL.sql" target="_blank"><paper-button class="colored" raised>Data_Engineering_Streams_CDC_DT_VHOL.sql</paper-button></a> (Click Raw, then from your browser, use &#34;Save Page As&#34;)</p>
+<h2 is-upgraded>b) Login</h2>
+<p>At this point login into your Snowflake account. If you have just created a free trial account, feel free to minimize or close hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.</p>
+<h2 is-upgraded>c) Create a Worksheet</h2>
+<p>In the Snowflake UI click on <strong>Worksheets</strong> on the left side. <img src="img/507991a287e4fd6b.png"></p>
+<p>Create a new Worksheet by clicking on the ** + ** button on the top right side and click <strong>SQL Worksheet</strong> which will create a new worksheet in a tab. <img src="img/a5b51fa05a1feff7.png"></p>
+<p>Next, from the <strong>Tab Menu</strong> you can rename the tab to something more meaningful and from the same menu click <strong>Import SQL from File</strong> and select the .sql file you downloaded and named earlier called <strong>Data_Engineering_Streams_CDC_DT_VHOL.sql</strong>. <img src="img/1b3de761abfe3843.png"></p>
+<p>Each step throughout the Snowflake portion of the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code one command at-a-time as you walk through the lab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Your Desktop" duration="10">
+        <h2 is-upgraded>a) Unzip and Prepare Java Client</h2>
+<p>Find where you downloaded your ZIP-compressed client application in step 2a), for example C:/SnowflakeQuickstarts.  Extract file <strong>CDCSimulatorApp.zip</strong> file which will create a CDCSimulatorApp directory and many files within.</p>
+<h2 is-upgraded>b) Generate Public and Private Keys</h2>
+<p>From your desktop&#39;s Command Line / Terminal window, navigate to your working directory, then the directory extracted (CDCSimulatorApp) and run these two commands:</p>
+<pre><code>openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+</code></pre>
+<p>Open file rsa_key.pub with a simple text editor and be prepared to copy your key soon in step 3.e, which is everything in-between the &#34;- - - -&#34; lines.  If ‘openssl&#39; command is not found, you need to review your Java installation before proceeding.</p>
+<p class="image-container"><img src="img/69c00310004a6775.png"></p>
+<p>(Yes, there will be carriage returns in the key, that is ok)</p>
+<h2 is-upgraded>c) Create a Dedicated Role and Limited Login for your Streaming Application</h2>
+<p>Return to your Snowflake worksheet and run these commands, using the Public Key generated and file opened in Step 3.b above:</p>
+<pre><code>create role if not exists VHOL_CDC_AGENT;
+create or replace user vhol_streaming1 COMMENT=&#34;Creating for VHOL&#34;;
+alter user vhol_streaming1 set rsa_public_key=&#39;&lt;Paste Your Public Key Here&gt;&#39;;
+</code></pre>
+<h2 is-upgraded>d) Edit Properties File</h2>
+<p>You will need to edit the snowflake.properties file to match your Snowflake account name (two places):</p>
+<pre><code>user=vhol_streaming1
+role=VHOL_CDC_AGENT
+account=&lt;MY_SNOWFLAKE_ACCOUNT&gt;
+warehouse=VHOL_CDC_WH
+private_key_file=rsa_key.p8
+host=&lt;ACCOUNT_IDENTIFIER&gt;.snowflakecomputing.com
+database=VHOL_ENG_CDC
+schema=ENG
+table=CDC_STREAMING_TABLE
+channel_name=channel_1
+AES_KEY=O90hS0k9qHdsMDkPe46ZcQ==
+TOKEN_KEY=11
+DEBUG=FALSE
+SHOW_KEYS=TRUE
+NUM_ROWS=1000000
+</code></pre>
+<p>For assistance on <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">Account identifiers</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Begin Construction" duration="0">
+        <h2 is-upgraded>a)  Create new roles for this Lab and grant permissions</h2>
+<pre><code>use role ACCOUNTADMIN;
+set myname = current_user();
+create role if not exists VHOL;
+grant role VHOL to user identifier($myname);
+grant role VHOL_CDC_AGENT to user vhol_streaming1;
+
+</code></pre>
+<p>For the PII Section (Step #7):</p>
+<pre><code>create role if not exists PII_ADMIN;
+grant role PII_ADMIN to user identifier($myname);
+create role if not exists PII_ALLOWED;
+grant role PII_ALLOWED to user identifier($myname);
+</code></pre>
+<h2 is-upgraded>b)  Create a Dedicated Virtual Compute Warehouse</h2>
+<p>Size XS, dedicated for this Hands-on Lab</p>
+<pre><code>create or replace warehouse VHOL_CDC_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 5, AUTO_RESUME= TRUE;
+grant all privileges on warehouse VHOL_CDC_WH to role VHOL;
+</code></pre>
+<p>For the PII Section (Step #7):</p>
+<pre><code>grant usage on warehouse VHOL_CDC_WH to role PII_ADMIN;
+grant usage on warehouse VHOL_CDC_WH to role PII_ALLOWED;
+</code></pre>
+<h2 is-upgraded>c)  Create Database used throughout this Lab</h2>
+<pre><code>create database VHOL_ENG_CDC;
+use database VHOL_ENG_CDC;
+grant ownership on schema PUBLIC to role VHOL;
+revoke all privileges on database VHOL_ENG_CDC from role ACCOUNTADMIN;
+grant ownership on database VHOL_ENG_CDC to role VHOL;
+</code></pre>
+<pre><code>use role VHOL;
+use database VHOL_ENG_CDC;
+create schema ENG;
+use VHOL_ENG_CDC.ENG;
+use warehouse VHOL_CDC_WH;
+grant usage on database VHOL_ENG_CDC to role VHOL_CDC_AGENT;
+grant usage on schema ENG to role VHOL_CDC_AGENT;
+grant usage on database VHOL_ENG_CDC to role PUBLIC;
+grant usage on schema PUBLIC to role PUBLIC;
+
+
+</code></pre>
+<h2 is-upgraded>d)  Create a Staging/Landing Table</h2>
+<p>Where all incoming data will land initially.  Each row will contain a transaction, but JSON will be stored as a VARIANT datatype within Snowflake.</p>
+<pre><code>create or replace table ENG.CDC_STREAMING_TABLE (RECORD_CONTENT variant);
+grant insert on table ENG.CDC_STREAMING_TABLE to role VHOL_CDC_AGENT;
+select * from CDC_STREAMING_TABLE;
+select count(*) from CDC_STREAMING_TABLE;
+</code></pre>
+<h2 is-upgraded>e) Test your Application and Test Connection to Snowflake</h2>
+<p>Return to your desktop, and run the program &#34;Test.sh&#34; or &#34;Test.bat&#34; to confirm your setup is complete and ready for ingestion.</p>
+<pre><code>./Test.sh
+</code></pre>
+<p>or (for Microsoft Windows)</p>
+<pre><code>Test.bat
+</code></pre>
+<p>You should see this:</p>
+<p class="image-container"><img src="img/e3acf8499a42bd79.png"></p>
+<p>If you get any errors / exceptions, read the error message closely and ask for help.  As this application is running on your desktop, you may be missing a prerequisite, have an older version of Java, have too restrictive user profile, or many other reasons.  Also check your snowflake.properties file to ensure you have the correct Account Name and Identifier set if you get connector errors.  If authentication issues, check and review your public key configuration.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streaming Records!" duration="15">
+        <h2 is-upgraded>a)  Run Streaming Application</h2>
+<p><strong>You are now ready to Stream data into Snowflake!</strong> Execute the Streaming Simulator using ‘Run_MAX.sh&#39;, which will stream 1,000,000 records as fast as your desktop can run (MAX will also be in the Channel name):</p>
+<pre><code>./Run_MAX.sh
+</code></pre>
+<p>or (for Microsoft Windows)</p>
+<pre><code>Run_MAX.bat
+</code></pre>
+<p>Which returns:<br><img src="img/d27bee4740d1ec39.png"></p>
+<p>This should take 10-20 seconds.</p>
+<h2 is-upgraded>b)  View New Records in Snowflake</h2>
+<p>Just like that, in a few seconds, you have 1M records in Snowflake (single-row inserts!)</p>
+<pre><code>select count(*) from ENG.CDC_STREAMING_TABLE;
+select * from CDC_STREAMING_TABLE limit 100;
+</code></pre>
+<p>Each record is a JSON payload, received via Snowpipe Streaming Ingestion API and stored in a Snowflake table as rows and Variant datafields.</p>
+<p class="image-container"><img src="img/95e3d71452f46739.png"></p>
+<p>Next run 2 queries, using Snowflake&#39;s semi-structured capability, to show our new records and part of the query we will use in our Dynamic Tables before proceeding:</p>
+<pre><code>select RECORD_CONTENT:transaction:primaryKey_tokenized::string as orderid from ENG.CDC_STREAMING_TABLE limit 10;
+</code></pre>
+<pre><code>select
+    RECORD_CONTENT:transaction:primaryKey_tokenized::varchar as orderid_tokenized,
+    RECORD_CONTENT:transaction:record_after:orderid_encrypted::varchar as orderid_encrypted,
+    RECORD_CONTENT:transaction:action::varchar as action,
+    RECORD_CONTENT:transaction:committed_at::varchar as committed_at,
+    RECORD_CONTENT:transaction:dbuser::varchar as dbuser,
+    RECORD_CONTENT:transaction:record_before::variant as before,
+    RECORD_CONTENT:transaction:record_after::variant as after
+  from ENG.CDC_STREAMING_TABLE
+  where RECORD_CONTENT:transaction:action::varchar=&#39;INSERT&#39; limit 1000;
+</code></pre>
+<p>As you can see, it is very easy to work with Semi-Structured data.  Our upcoming task of creating Dynamic Tables will take advantage of this.</p>
+<h2 is-upgraded>c)  But There is More Than One Table in My Source System</h2>
+<p>The CDC Agent could easily be capturing changes from more than one source table, lets prepare for that and write each dynamic table to only use the events received for our simulated Stock Limit Order stream.  These are the key fields to use:</p>
+<pre><code>select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transaction:table::varchar from CDC_STREAMING_TABLE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Dynamic Tables" duration="0">
+        <h2 is-upgraded>a)  The &#34;Current State&#34;</h2>
+<p>Create a more finished Dynamic Table sourcing from Landing Table that reflects the &#34;CURRENT STATE&#34; of the source table.  This pattern, for each source table, you create a Dynamic Table:</p>
+<pre><code>CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_CURRENT_DT
+LAG = &#39;1 minute&#39;
+WAREHOUSE = &#39;VHOL_CDC_WH&#39;
+AS
+SELECT * EXCLUDE (score,action) from (  
+  SELECT
+    RECORD_CONTENT:transaction:primaryKey_tokenized::varchar as orderid_tokenized,
+    RECORD_CONTENT:transaction:record_after:orderid_encrypted::varchar as orderid_encrypted,
+    TO_TIMESTAMP_NTZ(RECORD_CONTENT:transaction:committed_at::number/1000) as lastUpdated,
+    RECORD_CONTENT:transaction:action::varchar as action,
+    RECORD_CONTENT:transaction:record_after:client::varchar as client,
+    RECORD_CONTENT:transaction:record_after:ticker::varchar as ticker,
+    RECORD_CONTENT:transaction:record_after:LongOrShort::varchar as position,
+    RECORD_CONTENT:transaction:record_after:Price::number(38,3) as price,
+    RECORD_CONTENT:transaction:record_after:Quantity::number(38,3) as quantity,
+    RANK() OVER (
+        partition by orderid_tokenized order by RECORD_CONTENT:transaction:committed_at::number desc) as score
+  FROM ENG.CDC_STREAMING_TABLE 
+    WHERE 
+        RECORD_CONTENT:transaction:schema::varchar=&#39;PROD&#39; AND RECORD_CONTENT:transaction:table::varchar=&#39;LIMIT_ORDERS&#39;
+) 
+WHERE score = 1 and action != &#39;DELETE&#39;;
+</code></pre>
+<p>If you run this right away, it will show a warning that table is not yet ready.  You have to wait a bit for the refresh period and the Dynamic Table to be built</p>
+<pre><code>SELECT count(*) FROM LIMIT_ORDERS_CURRENT_DT;
+</code></pre>
+<p>– Wait for Lag Period (1 minute)</p>
+<pre><code>SELECT count(*) FROM LIMIT_ORDERS_CURRENT_DT;
+</code></pre>
+<h2 is-upgraded>Streaming Data is not Static Data</h2>
+<p>Let&#39;s work with dynamic data going forward, return to your desktop to provide a continuous stream.  Run this command and the application will be streaming 10 records/second until you stop the application (using Cntrl-C in your command/shell window).  If you want more volume, run the &#34;Run_Sloow&#34; for 100/second or &#34;Run_Slow&#34; for 1000/second stream rate, Snowflake will absorb these easily too.  But simulator is designed to run only one of these at a time (channel name is configured in property file).</p>
+<pre><code>./Run_Slooow.sh
+</code></pre>
+<p>or (for Microsoft Windows)</p>
+<pre><code>Run_Slooow.bat
+</code></pre>
+<h2 is-upgraded>b) Slowly Changing Dimensions (SCD) Example</h2>
+<p>First table is great, but we want to analyze how orders/records have changed and keep a historical record.  Let&#39;s do that by adding additional fields to each record to track and group them together:</p>
+<pre><code>CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_SCD_DT
+LAG = &#39;1 minute&#39;
+WAREHOUSE = &#39;VHOL_CDC_WH&#39;
+AS
+SELECT * EXCLUDE score from ( SELECT *,
+  CASE when score=1 then true else false end as Is_Latest,
+  LAST_VALUE(score) OVER (
+            partition by orderid_tokenized order by valid_from desc)+1-score as version
+  FROM (  
+      SELECT
+        RECORD_CONTENT:transaction:primaryKey_tokenized::varchar as orderid_tokenized,
+        --IFNULL(RECORD_CONTENT:transaction:record_after:orderid_encrypted::varchar,RECORD_CONTENT:transaction:record_before:orderid_encrypted::varchar) as orderid_encrypted,
+        RECORD_CONTENT:transaction:action::varchar as action,
+        IFNULL(RECORD_CONTENT:transaction:record_after:client::varchar,RECORD_CONTENT:transaction:record_before:client::varchar) as client,
+        IFNULL(RECORD_CONTENT:transaction:record_after:ticker::varchar,RECORD_CONTENT:transaction:record_before:ticker::varchar) as ticker,
+        IFNULL(RECORD_CONTENT:transaction:record_after:LongOrShort::varchar,RECORD_CONTENT:transaction:record_before:LongOrShort::varchar) as position,
+        RECORD_CONTENT:transaction:record_after:Price::number(38,3) as price,
+        RECORD_CONTENT:transaction:record_after:Quantity::number(38,3) as quantity,
+        RANK() OVER (
+            partition by orderid_tokenized order by RECORD_CONTENT:transaction:committed_at::number desc) as score,
+        TO_TIMESTAMP_NTZ(RECORD_CONTENT:transaction:committed_at::number/1000) as valid_from,
+        TO_TIMESTAMP_NTZ(LAG(RECORD_CONTENT:transaction:committed_at::number/1000,1,null) over 
+                         (partition by orderid_tokenized order by RECORD_CONTENT:transaction:committed_at::number desc)) as valid_to
+      FROM ENG.CDC_STREAMING_TABLE
+      WHERE 
+            RECORD_CONTENT:transaction:schema::varchar=&#39;PROD&#39; AND RECORD_CONTENT:transaction:table::varchar=&#39;LIMIT_ORDERS&#39;
+    ))
+;
+</code></pre>
+<p>Run some test queries against our new dynamic table</p>
+<pre><code>select  count(*) from LIMIT_ORDERS_SCD_DT;
+</code></pre>
+<p>wait the lag period (~ 1 minute)</p>
+<pre><code>select  * from LIMIT_ORDERS_SCD_DT  limit 1000;
+</code></pre>
+<p>(Note, you should now see more than the 1,000,000 initial records we loaded)</p>
+<pre><code>select  count(*) from LIMIT_ORDERS_SCD_DT;
+</code></pre>
+<h2 is-upgraded>c)  Aggregations / Summary Example</h2>
+<p>Let&#39;s try some aggregations for a Dynamic Table optimized for a specific use case.  This table summarizes by Stock and Order Type / Position:</p>
+<pre><code>CREATE OR REPLACE DYNAMIC TABLE ENG.LIMIT_ORDERS_SUMMARY_DT
+LAG = &#39;1 minute&#39;
+WAREHOUSE = &#39;VHOL_CDC_WH&#39;
+AS
+SELECT ticker,position,min(price) as MIN_PRICE,max(price) as MAX_PRICE, TO_DECIMAL(avg(price),38,2) as AVERAGE_PRICE,
+    SUM(quantity) as TOTAL_SHARES,TO_DECIMAL(TOTAL_SHARES*AVERAGE_PRICE,38,2) as TOTAL_VALUE_USD
+from (  
+  SELECT
+    RECORD_CONTENT:transaction:action::varchar as action,
+    RECORD_CONTENT:transaction:record_after:ticker::varchar as ticker,
+    RECORD_CONTENT:transaction:record_after:LongOrShort::varchar as position,
+    RECORD_CONTENT:transaction:record_after:Price::number(38,3) as price,
+    RECORD_CONTENT:transaction:record_after:Quantity::number(38,3) as quantity
+  FROM ENG.CDC_STREAMING_TABLE
+  WHERE 
+        RECORD_CONTENT:transaction:schema::varchar=&#39;PROD&#39; AND RECORD_CONTENT:transaction:table::varchar=&#39;LIMIT_ORDERS&#39;
+  QUALIFY RANK() OVER (
+        partition by RECORD_CONTENT:transaction:primaryKey_tokenized::varchar order by RECORD_CONTENT:transaction:committed_at::number desc) = 1
+) 
+WHERE action != &#39;DELETE&#39; group by ticker,position order by position,TOTAL_VALUE_USD DESC
+;
+</code></pre>
+<p>Table is created and populated.</p>
+<pre><code>select * from LIMIT_ORDERS_SUMMARY_DT where position=&#39;LONG&#39; order by TOTAL_VALUE_USD;;
+</code></pre>
+<p>We are tracking the 30 Dow Jones Industrial Average Stocks (both Long and Short Limit Orders)</p>
+<pre><code>select  count(*) from LIMIT_ORDERS_SUMMARY_DT; 
+</code></pre>
+<h2 is-upgraded>d) Monitoring Dynamic Tables</h2>
+<p>First, lets look at the properties page for a Dynamic Table, from the left-side menu, navigate to &#34;Data, Databases&gt;VHOL_ENG_CDC, ENG schema, Dynamic Tables&#34; and click one of the Dynamic Tables you created.</p>
+<p class="image-container"><img src="img/db2a1f7073b60753.png"></p>
+<p>You will see five tabs (Table Details, Columns, Data Preview, Graph, &amp; Refresh History).  Click on Refresh History first:</p>
+<p class="image-container"><img src="img/ed42c6378e306969.png"></p>
+<p>The Graph view will show you dependencies on this Dynamic Table:</p>
+<p class="image-container"><img src="img/11b3fd5c008fb16b.png"></p>
+<p>Can also leverage Query History, a more account-wide administrative view, from the left side menu, click Activity&gt;Query History:</p>
+<p class="image-container"><img src="img/71acf7db1d100d92.png"> <img src="img/97beca07e2fa38a2.png"></p>
+<p>and utilize the filters at the top.  Remove user filter, as these refresh actions are performed by user &#34;SYSTEM&#34;.  With Filter, enable the &#34;Client-generated statements&#34; to see the all dynamic table refresh activation events.  Can filter to a specific table by utilizing the &#34;SQL Text&#34;, entering a Dynamic Table name&#39;s name, for example: &#34;ENG.LIMIT_ORDERS_CURRENT_DT&#34;. <img src="img/4785f5fcdc302cbf.png"></p>
+<p>(Return to your Worksheet)</p>
+<h2 is-upgraded>e) Monitor Landing Table Channels</h2>
+<p>Specifically the offset token identifying the source&#39;s indicator of the last successfully-committed row identifier.  If there ever was an error on the source agent, this is the restart point.</p>
+<pre><code>show channels in table ENG.CDC_STREAMING_TABLE;
+</code></pre>
+<p class="image-container"><img src="img/c016a24272cb298a.png"></p>
+<h2 is-upgraded>f) Deliver to Consumers</h2>
+<p>This data is now ready for public use!  To create access for users to consume, lets use views to allow access (note, JSON path syntax not seen or needed except from landing table). For our &#34;Current View&#34; Table:</p>
+<pre><code>create or replace view PUBLIC.CURRENT_LIMIT_ORDERS_VW
+  as select orderid_tokenized, lastUpdated,client,ticker,position,quantity,price
+  FROM ENG.LIMIT_ORDERS_CURRENT_DT order by orderid_tokenized;
+
+grant select on view PUBLIC.CURRENT_LIMIT_ORDERS_VW to role PUBLIC;
+</code></pre>
+<p>No need to wait</p>
+<pre><code>select * from PUBLIC.CURRENT_LIMIT_ORDERS_VW limit 1000;
+</code></pre>
+<p>Note:  No reason to show consumers the encrypted orderid value</p>
+<p><strong>Congrats, your consumers are able to view and analyze Limit Orders!</strong></p>
+<h2 is-upgraded>Bonus:</h2>
+<p>Feel free to create views for the other two dynamic tables.  Could also create a summary dynamic table (third one) sourcing from the first dynamic table instead of the landing table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Handling PII/Sensitive Data" duration="15">
+        <p>This section will enable authorized users to utilize the orderid value, which was an encrypted-at-the-source field.  Next steps will create roles to assign to authorized users, a secure function to decrypt that value and the means to do so, and secondly create a secure view that adds the orderid as an unencypted value.  Within the Source Stream generator, there is two secure data fields added to protect the orderid value.  First is an AES-encryption method (reversible) and secondly a tokenization method (irreversible but repeatable to maintain referential integrity with other source tables).  Note:  These are not production-quality reusable security assets, but are for demonstration purposes.</p>
+<h2 is-upgraded>a)  Setup Database for PII Assets</h2>
+<p>Create PII schema and provide Grants to the PII roles.</p>
+<pre><code>use role VHOL;
+use database VHOL_ENG_CDC;
+grant ownership on schema PII to role PII_ADMIN;
+grant usage on database VHOL_ENG_CDC to role PII_ADMIN;
+grant usage on database VHOL_ENG_CDC to role PII_ALLOWED;
+grant usage on schema ENG to role PII_ADMIN;
+grant usage on schema ENG to role PII_ALLOWED;
+--grant select on dynamic table ENG.LIMIT_ORDERS_CURRENT_DT to role PII_ADMIN;
+grant select on dynamic table ENG.LIMIT_ORDERS_CURRENT_DT to role PII_ALLOWED;
+create or replace schema PII COMMENT=&#39;Stay Out - Authorized Users Only&#39;;
+revoke all privileges on schema VHOL_ENG_CDC.PII from role VHOL;
+grant ownership on schema VHOL_ENG_CDC.PII to role PII_ADMIN;
+</code></pre>
+<h2 is-upgraded>b)  Become PII Admin</h2>
+<p>Right click on the &#34;House&#34; icon and click &#34;Open in new Window&#34;.</p>
+<p>Click on Worksheets, and &#34;+&#34; on upper right to create a new worksheet (Same as we started this Lab). (While you could copy all this into one worksheet, the PII Admin is usually not the same person as a Data Engineer)</p>
+<pre><code>use role PII_ADMIN;
+use schema VHOL_ENG_CDC.PII;
+use warehouse VHOL_CDC_WH;
+</code></pre>
+<h2 is-upgraded>c)  Reusable Decryption Secure Function</h2>
+<p>Need to have a function that can decrypt the value (you may want to create your own internal or external secure function, this is just an example). For consistency with the source encryption, using a java UDF to decrypt the data fields over built-in functions or Python UDF. Here is the first UDF:</p>
+<pre><code>CREATE OR REPLACE SECURE FUNCTION PII._DECRYPT_AES(FIELD string, ENCRYPTIONKEY string)
+RETURNS VARCHAR 
+LANGUAGE JAVA
+HANDLER = &#39;Decrypt.decryptField&#39;
+AS
+$$;
+import java.security.Key;
+import java.util.Base64;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+
+class Decrypt {
+    private static final String ALGORITHM = &#34;AES&#34;;
+    private Key KEY;
+    private KeyGenerator KEYGENERATOR;
+    private Cipher CIPHER;
+    public Decrypt() throws Exception{
+        CIPHER = Cipher.getInstance(ALGORITHM);
+    }
+    public String decryptField(String field, String encryptionKey) {
+        try {
+            setKey(encryptionKey);
+            CIPHER.init(Cipher.DECRYPT_MODE, KEY);
+            byte[] decodedBytes=CIPHER.doFinal(Base64.getDecoder().decode(field));
+            return new String(decodedBytes, StandardCharsets.UTF_8);
+        }
+        catch (Exception ex){
+            return ex.getMessage();
+        }
+  }
+  public void setKey(String k) throws Exception {
+        byte[] k0 = new String(k.toCharArray()).getBytes(StandardCharsets.UTF_8);
+        SecretKeySpec secretKey = new SecretKeySpec(k0,ALGORITHM);
+        KEY=secretKey;
+  }
+}
+$$;
+</code></pre>
+<p>Test this new Function</p>
+<pre><code>grant usage on function PII._DECRYPT_AES(string,string) to role PII_ADMIN;
+select PII._DECRYPT_AES(&#39;NhVcyJa8/r3Wdy6WNvT0yQw+SouNYGPAy/ddVe6064Y=&#39;, &#39;O90hS0k9qHdsMDkPe46ZcQ==&#39;) as orderid;
+</code></pre>
+<h2 is-upgraded>d)  This Pipeline&#39;s Decryption Secure Function</h2>
+<p>For simplicity of this Lab, we will store the decryption key in a dedicated function, but ideally this is stored in a secrets vault.</p>
+<pre><code>CREATE OR REPLACE SECURE FUNCTION PII.DECRYPT_CDC_FIELD(FIELD string)
+RETURNS VARCHAR 
+ as
+ $$ 
+ select PII._DECRYPT_AES(FIELD, &#39;O90hS0k9qHdsMDkPe46ZcQ==&#39;)
+ $$;
+</code></pre>
+<p>Grant usage and test</p>
+<pre><code> grant usage on function PII.DECRYPT_CDC_FIELD(varchar) to role PII_ADMIN;
+ select PII.DECRYPT_CDC_FIELD(&#39;NhVcyJa8/r3Wdy6WNvT0yQw+SouNYGPAy/ddVe6064Y=&#39;);
+</code></pre>
+<p>Ok, it works.  Access no longer required.</p>
+<pre><code> revoke usage on function PII.DECRYPT_CDC_FIELD(varchar) from role PII_ADMIN;
+</code></pre>
+<h2 is-upgraded>e) Create Secure View</h2>
+<pre><code>Create or replace secure view PII.LIMIT_ORDERS_VW
+as 
+  select orderid_tokenized,orderid_encrypted,
+    PII.DECRYPT_CDC_FIELD(orderid_encrypted) as orderid_PII,
+    lastUpdated,client,ticker,position,price,quantity
+  from ENG.LIMIT_ORDERS_CURRENT_DT order by orderid_PII;
+</code></pre>
+<p>Grant usage to PII User Role</p>
+<pre><code>grant usage on schema PII to role PII_ALLOWED;
+grant usage on function PII._DECRYPT_AES(string,string) to role PII_ALLOWED;
+grant usage on function PII.DECRYPT_CDC_FIELD(varchar) to role PII_ALLOWED;
+grant select on view PII.LIMIT_ORDERS_VW to role PII_ALLOWED;
+</code></pre>
+<h2 is-upgraded>f)  Be PII-Enabled</h2>
+<pre><code>use role PII_ALLOWED;
+use database VHOL_ENG_CDC;
+select * from PII.LIMIT_ORDERS_VW order by ORDERID_PII limit 1000;
+select * from PII.LIMIT_ORDERS_VW where ticker=&#39;MMM&#39; and position=&#39;LONG&#39; order by ORDERID_PII;
+select * from PII.LIMIT_ORDERS_VW limit 1000;
+</code></pre>
+<p>You can now see the ORDERID in three forms:  Tokenized, Encrypted, and Decrypted.  But only if you have a role for PII.</p>
+<p>Snowflake&#39;s Granular, Role-Based Access enables you to control who has access to what, at the database/schema, table, column, and row level as you need! Dynamic Masking and tagging will be more layers of security available soon, but not included or enabled in this preview.</p>
+<h2 is-upgraded>g)  Check Security</h2>
+<pre><code>use role VHOL;
+use schema VHOL_ENG_CDC.PII;
+select * from VHOL_ENG_CDC.PII.LIMIT_ORDERS_VW limit 1000;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Final Steps &amp; Cleanup" duration="2">
+        <h2 is-upgraded>a) Use Cntrl-C to kill your Streaming App running on your Desktop</h2>
+<h2 is-upgraded>b) See how many transactions you have processed</h2>
+<pre><code>use role VHOL;
+select count(*) from ENG.CDC_STREAMING_TABLE;
+</code></pre>
+<h2 is-upgraded>c) Remove &amp; Cleanup Desktop Directory created for this Streaming Application</h2>
+<h2 is-upgraded>d) Drop Database, removing all objects created by this Hands-on Lab (Optional)</h2>
+<pre><code>drop database VHOL_ENG_CDC;
+</code></pre>
+<h2 is-upgraded>e) Drop Warehouse (Optional)</h2>
+<pre><code>use role ACCOUNTADMIN;
+drop warehouse VHOL_CDC_WH;
+</code></pre>
+<h2 is-upgraded>f) Drop Role (Optional)</h2>
+<pre><code>use role ACCOUNTADMIN;
+drop role VHOL;
+drop role VHOL_CDC_AGENT;
+drop role PII_ADMIN;
+drop role PII_ALLOWED;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p><strong>Congratulations, you have completed this Lab!</strong></p>
+<h2 is-upgraded>What We Covered</h2>
+<ul>
+<li>Setup keypair authentication into Snowflake</li>
+<li>Used Snowpipe Streaming Java API and streamed data into Snowflake</li>
+<li>Ingested Semi-Structured JSON data into Snowflake in real-time instead of bulk loading</li>
+<li>Created Multiple Dynamic Tables for Data Engineering Tasks</li>
+<li>Secured Sensitive Fields, beginning from the Source, but also decrypted for those authorized</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "recommendation_engine_aws_sagemaker",
+  "duration": 98,
+  "title": "Build a Recommendation Engine with Amazon SageMaker",
+  "summary": "Build a Recommendation Engine with AWS SageMaker and Snowflake",
+  "source": "recommendation_engine_aws_sagemaker/recommendation_engine_aws_sagemaker.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "aws",
+    "machinelearning",
+    "sagemaker"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "recommendation_engine_aws_sagemaker"
+}

@@ -1,0 +1,263 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Parsing Semi-Structured Data with Coalesce</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="parsing_semi_structured_data_with_coalesce"
+                  title="Parsing Semi-Structured Data with Coalesce"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>In Coalesce, you can parse semi-structured data in Snowflake using a handful of clicks. Coalesce&#39;s parsers analyze the structure of entries within a variant column and automatically generate columns and a JOIN that captures the different attributes within them.</p>
+<p>Read on for a step-by-step guide on how to parse JSON and XML data in Snowflake with Coalesce.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake</li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Completion of the foundational Coalesce Quickstart <a href="https://quickstarts.snowflake.com/guide/transform_your_data_with_coalesce/index.html?index=..%2F..index#0" target="_blank">Accelerating Transformations with Coalesce and Snowflake</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account (either a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">trial account</a> or access to an existing account)</li>
+<li>A Coalesce account (either a trial account created via <a href="https://coalesce.io/product-technology/launch-coalesce-from-snowflake-partner-connect/" target="_blank">Snowflake Partner Connect</a>, or access to an existing account)</li>
+<li>Google Chrome browser (recommended)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to load raw data from Snowflake into Coalesce</li>
+<li>How to parse semi-structured data (JSON / XML) in a matter of clicks in Coalesce</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Source Nodes</li>
+<li>Staging Nodes</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Snowflake Account" duration="2">
+        <ol type="1">
+<li>Navigate to your Snowflake account and create a new Worksheet. Rename it &#34;JSON Coalesce Sample.&#34;</li>
+</ol>
+<p class="image-container"><img alt="snowflakeUI" src="img/4084f5b8a9015e8b.png"></p>
+<ol type="1" start="2">
+<li>Copy <a href="https://docs.google.com/document/d/1vG3eQ20FGfeQ9mAN0Sh_fZ6buAG_C9n766QTnHUMGkw/edit" target="_blank">this code</a> and paste it into your Worksheet:</li>
+</ol>
+<p class="image-container"><img alt="snowflakecode" src="img/9899559fafea3df2.png"></p>
+<ol type="1" start="3">
+<li>Select and run the code to create a new table <code>DAILY_WEATHER</code> in the <code>COALESCE_SAMPLE_DATA</code> database and <code>COALESCE_SAMPLE_DATA_JSON</code> schema.</li>
+</ol>
+<p class="image-container"><img alt="tableweather" src="img/350868c57eebdb62.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Coalesce Account" duration="2">
+        <ol type="1">
+<li>Switch over to your Coalesce account and open your <strong>Development Workspace</strong> in your default Project.</li>
+</ol>
+<p class="image-container"><img alt="defaultproject" src="img/30dde83005790075.png"></p>
+<ol type="1" start="2">
+<li>Once in your <strong>Development Workspace</strong>, click the gear icon in the sidebar in the lower left-hand corner to open up your <strong>Build Settings</strong>.</li>
+</ol>
+<p class="image-container"><img alt="buildinterface" src="img/50537aae1f0697b5.png"></p>
+<ol type="1" start="3">
+<li>Click <strong>New Storage Location</strong> and name your new storage location <strong>JSON</strong>.</li>
+</ol>
+<p class="image-container"><img alt="jsonlocation" src="img/774cbd53448f2e94.png"></p>
+<ol type="1" start="4">
+<li>Click the <strong>Create</strong> button to create your new <strong>Storage Location</strong>.</li>
+</ol>
+<p class="image-container"><img alt="storagelocations" src="img/1a89c2307bbf33f8.png"></p>
+<ol type="1" start="5">
+<li>Click on the pencil icon in the upper left-hand corner of your screen (next to the name of your Workspace). This will open your <strong>Workspace Settings</strong>.</li>
+</ol>
+<p class="image-container"><img alt="workspace" src="img/e575fe0c7fe4bc.png"></p>
+<ol type="1" start="6">
+<li>Under <strong>Storage Mappings</strong>, select the <code>COALESCE_SAMPLE_DATABASE</code> next to your JSON <strong>Storage Location</strong>. Select <code>WEATHER</code> as your schema from the dropdown menu, then click &#34;Save&#34; and close your <strong>Workspace Settings</strong>.</li>
+</ol>
+<p class="image-container"><img alt="storage" src="img/963c3650cd81e2cd.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Adding Source Nodes" duration="2">
+        <ol type="1">
+<li>Click back to your Browser tab and click the Nodes icon in the left sidebar. Click the + icon that appears next to the Search bar. Click <strong>Add Sources</strong> from the dropdown menu.</li>
+</ol>
+<p class="image-container"><img alt="jsonsrc" src="img/324e44d56d5fa732.png"></p>
+<ol type="1" start="2">
+<li>Select the JSON <strong>Storage Location</strong> and the <code>DAILY_14_TOTAL_SHORT</code> table, then click <strong>Add 1 source</strong> at the bottom right of the window.</li>
+</ol>
+<p class="image-container"><img alt="dailytotal" src="img/d33ba1ede79dff9a.png"></p>
+<ol type="1" start="3">
+<li>You&#39;ll see that a source node has been added to your graph. Click <strong>Fetch Data</strong> at the bottom right corner of the screen to preview the raw data.</li>
+</ol>
+<p class="image-container"><img alt="fetchjson" src="img/4b3eb1a1e23d8100.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deriving JSON Mappings" duration="2">
+        <ol type="1">
+<li>Right click on your source node and hover over <strong>Add Node</strong> to open the dropdown menu. Click on <strong>Stage</strong> to create a stage node on top of your source node.</li>
+</ol>
+<p class="image-container"><img alt="stgjson" src="img/d0d5f925b00a3e0f.png"></p>
+<ol type="1" start="2">
+<li>In your stage node, right click on the first column named &#34;V&#34; and hover over <strong>Derive Mappings</strong> in the dropdown menu. Click on <strong>From JSON</strong>.</li>
+</ol>
+<p class="image-container"><img alt="derivejson" src="img/84c55f90a0e06f33.png"></p>
+<ol type="1" start="3">
+<li>You will see your first single column parsed into multiple columns. By deriving JSON mappings, you have created a column in the <a href="https://docs.coalesce.io/docs/mapping-grid" target="_blank">mapping grid</a> for every primitive type (string, number, boolean, and null) within the object, with the appropriate transform to parse that value. Deriving JSON Mappings also recursively flattens every JSON array using a table function in the <a href="https://docs.coalesce.io/docs/join-tab" target="_blank">Join Tab</a>.</li>
+</ol>
+<p>Click the <strong>Create</strong> button to create your stage node, and then click the <strong>Run</strong> button to populate it.</p>
+<p class="image-container"><img alt="runjson" src="img/bbf2afd31f184278.png"></p>
+<ol type="1" start="4">
+<li>Congratulations! You have easily parsed JSON in just a few clicks.</li>
+</ol>
+<p class="image-container"><img alt="jsonparsed" src="img/c9a8912b1253e0c9.png"></p>
+<p>You can explore the DDL and DML statements used to create your stage node under <strong>Results</strong>:</p>
+<p class="image-container"><img alt="ddljson" src="img/29d3770bf77f9997.png"></p>
+<p>Or you can preview the data within your stage node:</p>
+<p class="image-container"><img alt="preview" src="img/381ef4ec78c2c34e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Parsing XML" duration="5">
+        <p>Coalesce offers XML parsing capabilities (currently in beta). This process functions similarly to the JSON example that is previously covered in this guide.</p>
+<ol type="1">
+<li>Navigate back to your Snowflake account and create a new Worksheet. Name it <strong>Coalesce XML Sample</strong>. Copy the following SQL and paste it into your XML Worksheet in Snowflake, then highlight and run the code:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS COALESCE_SAMPLE_DATABASE;
+CREATE SCHEMA IF NOT EXISTS COALESCE_SAMPLE_DATABASE.XML;
+CREATE OR REPLACE TABLE COALESCE_SAMPLE_DATABASE.XML.MUSIC(src variant)
+as
+select parse_xml(&#39;&lt;catalog issue=&#34;spring&#34; date=&#34;2015-04-15&#34;&gt;
+&lt;cd id=&#34;cd105&#34;&gt;
+&lt;title&gt;XML Music&lt;/title&gt;
+&lt;genre&gt;Emo&lt;/genre&gt;
+&lt;artist&gt;Microsoft&lt;/artist&gt;
+&lt;publish_date&gt;1111-11-11&lt;/publish_date&gt;
+&lt;price&gt;1.00&lt;/price&gt;
+&lt;description&gt;This music sux!&lt;/description&gt;
+&lt;/cd&gt;
+&lt;cd id=&#34;cd106&#34;&gt;
+&lt;title&gt;Greg\&#39;s Song&lt;/title&gt;
+&lt;genre&gt;Funk&lt;/genre&gt;
+&lt;artist&gt;Greg Henkhaus&lt;/artist&gt;
+&lt;publish_date&gt;2023-01-01&lt;/publish_date&gt;
+&lt;price&gt;200.00&lt;/price&gt;
+&lt;description&gt;BUY IT&lt;/description&gt;
+&lt;/cd&gt;
+&lt;/catalog&gt;&#39;)
+</code></pre>
+<ol type="1" start="2">
+<li>You&#39;ll see that a table <code>MUSIC</code> was created:</li>
+</ol>
+<p class="image-container"><img alt="tablemusic" src="img/23ddc6a7d66e9a97.png"></p>
+<ol type="1" start="3">
+<li>Navigate back to your Coalesce account and click on the gear icon in the sidebar in the lower left-hand corner to open up your <strong>Build Settings</strong>.</li>
+</ol>
+<p class="image-container"><img alt="buildsettings" src="img/a4c8ae2cfd25210d.png"></p>
+<ol type="1" start="4">
+<li>Click on <strong>New Storage Location</strong> to create a location named XML. Then click the <strong>Create</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="xmllocation" src="img/e59bbaac558920aa.png"></p>
+<ol type="1" start="5">
+<li>Click the pencil icon in the upper right corner to open up your <strong>Workspace Settings</strong>.</li>
+</ol>
+<p class="image-container"><img alt="xml2" src="img/33aed1294f208699.png"></p>
+<ol type="1" start="6">
+<li>Under <strong>Storage Mappings</strong>, set your XML Storage Mappings as <code>COALESCE_SAMPLE_DATABASE</code> and XML schema. Then click the Save button and close your <strong>Workspace Settings</strong>.</li>
+</ol>
+<p class="image-container"><img alt="xmlmapping" src="img/4929537ac45e019c.png"></p>
+<ol type="1" start="7">
+<li>Navigate back to your Browser tab and click the + icon. Click <strong>Add Sources</strong> and select the XML source and <code>MUSIC</code> table. Click <strong>Add 1 source</strong> to add the raw data to your graph as a source node.</li>
+</ol>
+<p class="image-container"><img alt="xmlsrc" src="img/bcac25ca14c76f0.png"></p>
+<ol type="1" start="8">
+<li>Right click your XML source node and hover over <strong>Add Node</strong>. Click <strong>Stage</strong> to create a new stage node.</li>
+</ol>
+<p class="image-container"><img alt="xmlstg" src="img/70c5dd3f34ad447d.png"></p>
+<ol type="1" start="9">
+<li>In your Stage node, right click the first column and hover over <strong>Derive Mappings</strong>. Click &#34;From XML.&#34;</li>
+</ol>
+<p class="image-container"><img alt="xmlderive" src="img/4ea118530c81b497.png"></p>
+<ol type="1" start="10">
+<li>You&#39;ll see the contents of your single column parsed into multiple columns. Click the <strong>Create</strong> and <strong>Run</strong> buttons to create and populate your stage node. Preview the data by clicking on <strong>Data:</strong></li>
+</ol>
+<p class="image-container"><img alt="parsedxml" src="img/e80b998f5ff9eedb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations, you&#39;ve completed this guide and experienced how easy it is to parse semi-structured data in Snowflake with Coalesce! To learn more about Coalesce&#39;s JSON parsing capabilities, please visit our <a href="https://docs.coalesce.io/docs/parsers" target="_blank">documentation</a>.</p>
+<p>Happy transforming!</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>How to load raw data from Snowflake into Coalesce</li>
+<li>How to parse semi-structured data (JSON / XML) in a matter of clicks in Coalesce</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_tempo_and_snowflake",
+  "duration": 33,
+  "title": "Getting Started with TEMPO and Snowflake",
+  "summary": "This is a guide on getting started with Tempo on Snowflake",
+  "source": "getting_started_with_tempo_and_snowflake/getting_started_with_tempo_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "gettingstarted",
+    "intrusiondetection",
+    "llgm",
+    "security",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_tempo_and_snowflake"
+}

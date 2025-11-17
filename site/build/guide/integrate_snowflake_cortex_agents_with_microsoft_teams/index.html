@@ -1,0 +1,287 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Agents and Microsoft Teams</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="integrate_snowflake_cortex_agents_with_microsoft_teams"
+                  title="Getting Started with Cortex Agents and Microsoft Teams"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.</p>
+<p>In this guide, we will see how to integrate the Cortex Agents (<em>in Public Preview as of 01/12/2025</em>) with Microsoft Teams.</p>
+<h2 is-upgraded>Why Cortex Agents?</h2>
+<p>Business users have typically relied on BI dashboards and reports for data insights, but these tools often lack flexibility, requiring users to wait on busy data analysts for updates. Cortex Agents addresses this with a natural language interface allowing organizations to develop conversational applications. This enables business users to query data in natural language and get accurate answers in near real time.</p>
+<p>Under the hood it is a stateless REST API that unifies Cortex Search&#39;s hybrid search and Cortex Analyst&#39;s SQL generation (with 90%+ accuracy). It streamlines complex workflows by handling context retrieval, converting natural language to SQL via semantic models, and managing LLM orchestration and prompts. Enhanced with in-line citations, answer abstention for irrelevant queries, and multi-message conversation context management, it offers single API call integration, real-time streamed responses, and reduced latency. Together, these capabilities allow you to search sales conversations, translate text into SQL for analytical queries, and blend structured and unstructured data for natural language interactions.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a>, <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a>, and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a>.</p>
+<h2 is-upgraded>Why Microsoft Teams?</h2>
+<p>Microsoft Teams is a communication and collaboration platform designed to streamline workplace interactions. It allows teams to organize conversations by channels, send direct messages, share files, and integrate with other tools for a seamless workflow. Microsoft Teams also supports the deployment of bots and apps, making it a hub for productivity, quick information sharing, and team alignment across projects.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account in one of these <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability" target="_blank">regions</a> and also where <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability" target="_blank">PARSE_DOCUMENT</a> is available. If you do not have one you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li><a href="https://nodejs.org/" target="_blank">Node.js</a> – Supported versions: 18, 20</li>
+<li><a href="https://aka.ms/teams-toolkit" target="_blank">Teams Toolkit Visual Studio Code Extension</a> version 5.0.0 and higher or <a href="https://aka.ms/teamsfx-toolkit-cli" target="_blank">Teams Toolkit CLI</a>. For local debugging using Teams Toolkit CLI, complete extra steps described in <a href="https://aka.ms/teamsfx-cli-debugging" target="_blank">Set up your Teams Toolkit CLI for local debugging</a>.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to setup Cortex Analyst</li>
+<li>How to setup Cortext Search</li>
+<li>How to use Cortex Agents REST API and integrate it with Microsoft Teams</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>A conversationl interface using Cortex Agents REST API integrated with Microsoft Teams</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="12">
+        <p><strong>Step 1:</strong> Clone the <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams" target="_blank">GitHub repo</a>.</p>
+<p><strong>Step 2:</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/setup.sql" target="_blank">setup.sql</a> to <strong>execute all statements</strong> in order from top to bottom. This is to to create a database, schema, and tables <strong>SUPPORT_TICKETS</strong> and <strong>SUPPLY_CHAIN</strong> with data loaded from AWS S3 for both tables. And also to create Snowflake managed internal stages for storing the semantic model specification files and PDF documents.</p>
+<p><strong>Step 3:</strong> Use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage" target="_blank">Snowsight</a> to <strong>upload </strong><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/support_tickets_semantic_model.yaml" target="_blank">the <strong>support tickets</strong> semantic model spec file</a> and <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/supply_chain_semantic_model.yaml" target="_blank">the <strong>supply chain</strong> semantic model spec file</a> to the <strong>DASH_SEMANTIC_MODELS</strong> stage.</p>
+<p><strong>Step 4:</strong> Use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage" target="_blank">Snowsight</a> to <strong>upload six </strong><a href="https://github.com/Snowflake-Labs//sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/tree/main/data" target="_blank">PDF documents</a> to the <strong>DASH_PDFS</strong> stage.</p>
+<p><strong>Step 5:</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/cortex_search_service.sql" target="_blank">cortex_search_service.sql</a> to <strong>execute all statements</strong> in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents. <em>NOTE: </em><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability" target="_blank"><em>PARSE_DOCUMENT</em></a><em> is in Public Preview as of 01/12/2025.</em></p>
+<p><strong>Step 6:</strong> Configure <a href="https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication" target="_blank">key-pair authentication</a> and assign the public key to your user in Snowflake and store/save/copy the private key file (<strong><em>.p8</em></strong>) in your cloned app folder.</p>
+<aside class="warning"><p> IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Microsoft Teams" duration="15">
+        <h2 is-upgraded>Create Basic Bot</h2>
+<p><strong>Step 1.</strong> Select the <strong>Teams Toolkit</strong> extension icon on the left in the VS Code toolbar.</p>
+<p><strong>Step 2.</strong> Click on <strong>Create a New App</strong></p>
+<p><strong>Step 3.</strong> Select <strong>Bot</strong> from the dropdown menu and then select <strong>Basic Bot</strong></p>
+<p><strong>Step 4.</strong> Select <strong>JavaScript</strong> as the language</p>
+<p><strong>Step 5.</strong> Select location and give your application a name. For example, <strong>CortexBot</strong></p>
+<p>At this point, you should have a folder structure similar to the one shown below.</p>
+<p class="image-container"><img alt="basic bot" src="img/9031c5280b26c422.png"></p>
+<h2 is-upgraded>Test Basic Bot</h2>
+<p>Click on <strong>Run</strong> &gt; <strong>Start Debugging</strong> which launches your app in <strong>Teams App Test Tool</strong> in a web browser.</p>
+<p>If all goes well, you will see an application that you can interact with in Teams App Test Tool as shown below. You will receive a welcome message from the bot, and you can send anything to the bot to get an echoed response.</p>
+<p class="image-container"><img alt="basic bot" src="img/6f14e0028e5f347b.png"></p>
+<aside class="special"><p> NOTE: Before proceeding, please make sure you have the boilerplate Microsoft Teams application running as shown above.</p>
+</aside>
+<h2 is-upgraded>Update Soucre Code Files</h2>
+<p><strong>Step 1:</strong> Download <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/package.json" target="_blank">package.json</a> and <strong>overwrite/copy-paste the contents</strong> in your <strong>package.json</strong>.</p>
+<p><strong>Step 2:</strong> Download <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/index.js" target="_blank">index.js</a> and <strong>overwrite/copy-paste the contents</strong> in your <strong>index.js</strong>.</p>
+<p><strong>Step 3:</strong> Download <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/teamsBot.js" target="_blank">teamsBot.js</a> and <strong>overwrite/copy-paste the contents</strong> in your <strong>teamsBot.js</strong>.</p>
+<p><strong>Step 4:</strong> Download <strong>new </strong><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/cortexChat.js" target="_blank">cortexChat.js</a> and <strong>copy the file</strong> in the same folder.</p>
+<p><strong>Step 5:</strong> Download <strong>new </strong><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/snowflakeQueryExecutor.js" target="_blank">snowflakeQueryExecutor.js</a> and <strong>copy the file</strong> in the same folder.</p>
+<p><strong>Step 6:</strong> Download <strong>new </strong><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/jwtGenerator.js" target="_blank">jwtGenerator.js</a> and <strong>copy the file</strong> in the same folder.</p>
+<p><strong>Step 7:</strong> Set the following variables in existing <strong>env/.env.dev</strong> file:</p>
+<pre><code language="language-bash" class="language-bash">DEMO_DATABASE=&#39;DASH_DB&#39;
+DEMO_SCHEMA=&#39;DASH_SCHEMA&#39;
+WAREHOUSE=&#39;DASH_S&#39;
+DEMO_USER=&#39;&lt;your-user-name&gt;&#39;
+DEMO_USER_ROLE=&#39;&lt;your-user-role&gt;&#39;
+SUPPORT_SEMANTIC_MODEL=&#39;@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/support_tickets_semantic_model.yaml&#39;
+SUPPLY_CHAIN_SEMANTIC_MODEL=&#39;@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/supply_chain_semantic_model.yaml&#39;
+SEARCH_SERVICE=&#39;DASH_DB.DASH_SCHEMA.vehicles_info&#39;
+ACCOUNT=&#39;&lt;your-account-identifier&gt;&#39;
+HOST=&#39;&lt;your-account-identifier&gt;.snowflakecomputing.com&#39;
+AGENT_ENDPOINT=&#39;https://&lt;your-org&gt;-&lt;your-account&gt;.snowflakecomputing.com/api/v2/cortex/agent:run&#39;
+
+# You may NOT edit below values  
+RSA_PRIVATE_KEY_PATH=&#39;rsa_key.p8&#39;
+MODEL = &#39;claude-3-5-sonnet&#39;
+</code></pre>
+<p>At this point, you should have an updated folder structure similar to the one shown below.</p>
+<p class="image-container"><img alt="bot_folder_structure" style="width: 400.00px" src="img/65250852e6db5579.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test" duration="3">
+        <p>Before proceeding, make sure you <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/test.js" target="_blank">test</a> that the Cortex Agents API endpoint and other env variables in <strong>env/.env.dev</strong> have been set correctly.</p>
+<p>Browse to the cloned folder in VS Code and run <code>node test.js</code> in a terminal window.</p>
+<p>If you see the output as shown below, then you&#39;re good to go.</p>
+<pre><code language="language-bash" class="language-bash">✅ Cortex Agents response:
+
+event: message.delta
+data: {&#34;id&#34;:&#34;msg_001&#34;,&#34;object&#34;:&#34;message.delta&#34;,&#34;delta&#34;:{&#34;content&#34;:[{&#34;index&#34;:0,&#34;type&#34;:&#34;tool_use&#34;,&#34;tool_use&#34;:{&#34;tool_use_id&#34;:&#34;tooluse_f48f1f25f2744a2c9bc30b&#34;,&#34;name&#34;:&#34;supply_chain&#34;,&#34;input&#34;:{&#34;query&#34;:&#34;Can you show me a breakdown of customer support tickets by service type cellular vs business internet?&#34;,&#34;model&#34;:&#34;snowflake-hosted-semantic&#34;,&#34;experimental&#34;:&#34;&#34;}}},{&#34;index&#34;:0,&#34;type&#34;:&#34;tool_results&#34;,&#34;tool_results&#34;:{&#34;tool_use_id&#34;:&#34;tooluse_f48f1f25f2744a2c9bc30b&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;json&#34;,&#34;json&#34;:{&#34;text&#34;:&#34;This is our interpretation of your question:\n\nShow me the count of support tickets broken down by service type, specifically for Cellular and Business Internet services&#34;,&#34;sql&#34;:&#34;WITH __support_tickets AS (\n  SELECT\n    ticket_id,\n    service_type\n  FROM dash_db_swt_2024.data.support_tickets\n)\nSELECT\n  service_type,\n  COUNT(DISTINCT ticket_id) AS ticket_count\nFROM __support_tickets\nWHERE\n  service_type IN (\u0027Cellular\u0027, \u0027Business Internet\u0027)\nGROUP BY\n  service_type\n -- Generated by Cortex Analyst\n;&#34;,&#34;verified_query_used&#34;:false}}],&#34;status&#34;:&#34;success&#34;,&#34;name&#34;:&#34;supply_chain&#34;}}]}}
+
+event: done
+data: [DONE]
+</code></pre>
+<p>If you see any errors, please double check all values set in <strong>env/.env.dev</strong>. Common errors are related to ACCOUNT, AGENT_ENDPOINT and how the RSA key-pair is generated.</p>
+<p>If you get this error <strong>Caused by SSLError(SSLCertVerificationError(1, &#34;[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...</strong>, then try adding <strong>locator.region</strong> to <strong>your-account-identifier</strong>. For additional instructions and help, refer to the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">documentation</a>.</p>
+<aside class="warning"><p> IMPORTANT: Before proceeding, please make sure you have successfully tested everything as described above.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Application" duration="5">
+        <p>In VS Code, click on <strong>Run</strong> &gt; <strong>Start Debugging</strong> which launches your app in <strong>Teams App Test Tool</strong> in a web browser. If all goes well, you will see an application that you can interact with in Teams App Test Tool.</p>
+<p>Let&#39;s ask the following questions.</p>
+<h2 is-upgraded>Cortex Analyst: Structured Data – Support Tickets</h2>
+<p>These questions are correctly routed via the <strong>support tickets semantic model</strong>.</p>
+<p><strong>Question: </strong><em>Can you show me a breakdown of customer support tickets by service type cellular vs business internet?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A1" src="img/d34ba2d2a9beceb7.png"></p>
+<p>Now let&#39;s ask this question.</p>
+<p><strong>Question: </strong><em>How many unique customers have raised a support ticket with a ‘Cellular&#39; service type and have ‘Email&#39; as their contact preference?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A2" src="img/1e28ddca07579b13.png"></p>
+<h2 is-upgraded>Cortex Search: Unstructured Data</h2>
+<p>These questions are correctly routed to the <strong>vehicles info search service</strong>.</p>
+<p><strong>Question: </strong><em>What are the payment terms for Snowtires?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A3" src="img/aa261241a2626d98.png"></p>
+<p>Now let&#39;s ask this question.</p>
+<p><strong>Question: </strong><em>What&#39;s the latest, most effective way to recycle rubber tires?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A4" src="img/b8267fc2d88ae18d.png"></p>
+<p>As you can see, now (business) users can directly get answers to their questions written in natural language using the Microsoft Teams app.</p>
+<h2 is-upgraded>Cortex Analyst: Structured Data – Supply Chain</h2>
+<p>This question is correctly routed via the <strong>supply chain semantic model</strong>.</p>
+<p><strong>Question: </strong><em>What is the average shipping time for tires from Snowtires Automotive compared to average of our other suppliers?</em></p>
+<p class="image-container"><img alt="Q&amp;A5" src="img/bd855c47e523c7fd.png"></p>
+<h2 is-upgraded>Code Walkthrough</h2>
+<p>As you may have noticed, there are four main classes <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/teamsBot.js" target="_blank">teamsBot.js</a>, <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/cortexChat.js" target="_blank">cortexChat.js</a>, <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/snowflakeQueryExecutor.js" target="_blank">snowflakeQueryExecutor.js</a> and <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/jwtGenerator.js" target="_blank">jwtGenerator.js</a>.</p>
+<p>Here are some things you should make a note of in case you&#39;d like to extend or modify the application.</p>
+<p><strong>class TeamsBot extends TeamsActivityHandler</strong></p>
+<p>This is the main handler that orchestrates the interaction between the user and the application. When user enters a prompt/message/question, it first creates and instance of <strong>CortexChat</strong> class, then calls <strong><em>_retrieveResponse</em></strong> method. Then, if the response includes a SQl, then it creates an instance of <strong>SnowflakeQueryExecutor</strong> class and calls <strong><em>runQuery</em></strong> method to execute the query and convert the results in a dataframe that can be displayed to the user. In other cases, the response is displayed to the user which may also include citations.</p>
+<p><strong>class CortexChat</strong></p>
+<p>An instance of this class is constructed using parameters <strong><em>jwtGenerator, agentUrl, model, searchService, semanticModels</em></strong> and it has method <strong><em>_retrieveResponse()</em></strong> that calls the Cortex Agents REST API – which inturn calls other class methods to parse the response.</p>
+<aside class="special"><p> NOTE: In our case, we&#39;ve set up and provided two semantic models to the Cortex Agents REST API via <code>tool_spec > type: "cortex_analyst_text_to_sql"</code>; one for extract insights from <strong>SUPPORT_TICKETS</strong> and another one from <strong>SUPPLY_CHAIN</strong> structured data sources. Similarly, you may set up additional sematic models as well as search services.</p>
+</aside>
+<pre><code language="language-JavaScript" class="language-JavaScript">async _retrieveResponse(query, limit = 1) {
+    const headers = {
+        &#39;X-Snowflake-Authorization-Token-Type&#39;: &#39;KEYPAIR_JWT&#39;,
+        &#39;Content-Type&#39;: &#39;application/json&#39;,
+        &#39;Accept&#39;: &#39;application/json&#39;,
+        &#39;Authorization&#39;: `Bearer ${this.jwt}`
+    };
+
+    const data = {
+        model: this.model,
+        messages: [{ role: &#34;user&#34;, content: [{ type: &#34;text&#34;, text: query }] }],
+        tools: [
+            { tool_spec: { type: &#34;cortex_search&#34;, name: &#34;vehicles_info_search&#34; } },
+            { tool_spec: { type: &#34;cortex_analyst_text_to_sql&#34;, name: &#34;support&#34; } },
+            { tool_spec: { type: &#34;cortex_analyst_text_to_sql&#34;, name: &#34;supply_chain&#34; } }
+        ],
+        tool_resources: {
+            vehicles_info_search: {
+                name: this.searchService,
+                max_results: limit,
+                title_column: &#34;title&#34;,
+                id_column: &#34;relative_path&#34;
+            },
+            support: { semantic_model_file: this.semanticModels[0] },
+            supply_chain: { semantic_model_file: this.semanticModels[1] }
+        }
+    };
+
+    try {
+        const response = await fetch(this.agentUrl, { method: &#34;POST&#34;, headers, body: JSON.stringify(data) });
+        if (!response.ok) throw new Error(`Response status: ${response.status}`);
+        return await this._parseResponse(response); 
+    } catch (error) {
+        console.error(&#34;Error fetching response:&#34;, error);
+        return { text: &#34;An error occurred.&#34; };
+    }
+}
+</code></pre>
+<p><strong>class JWTGenerator</strong></p>
+<p>This class is responsible for generating a Java Web Token (JWT) for authenticating Cortex Agents REST API calls.</p>
+<p><strong>class SnowflakeQueryExecutor</strong></p>
+<p>The response from Cortex Agents REST API can include SQL query for questions served by Cortex Analyst. This class is responsible for executing that SQL on the client and returning the response as a dataframe.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps" duration="2">
+        <p>As next steps, follow these links to extend the Bot&#39;s functionality.</p>
+<ul>
+<li><a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/publish" target="_blank">Publish the app to your organization or the Microsoft Teams app store</a></li>
+<li><a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/teamsfx-multi-env" target="_blank">Add or manage the environment</a></li>
+<li><a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/add-capability" target="_blank">Create multi-capability app</a></li>
+<li><a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/add-single-sign-on" target="_blank">Add single sign on to your app</a></li>
+<li><a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/teamsfx-preview-and-customize-app-manifest" target="_blank">Customize the Teams app manifest</a></li>
+<li>Host your app in Azure by <a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/provision" target="_blank">provisioning cloud resources</a> and <a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/deploy" target="_blank">deploying the code to cloud</a></li>
+<li><a href="https://learn.microsoft.com/microsoftteams/platform/toolkit/use-cicd-template" target="_blank">Set up the CI/CD pipeline</a></li>
+<li><a href="https://aka.ms/teams-toolkit-cli/debug" target="_blank">Develop with Teams Toolkit CLI</a></li>
+<li><a href="https://aka.ms/teamsfx-mobile" target="_blank">Preview the app on mobile clients</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve sucessfully integrated Cortex Agents with Microsoft Teams. I hope you found this guide both educational and inspiring.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to setup Cortex Analyst</li>
+<li>How to setup Cortext Search</li>
+<li>How to use Cortex Agents REST API and integrate it with Microsoft Teams</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams" target="_blank">GitHub repo</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_horizon_for_data_governance_in_snowflake",
+  "duration": 78,
+  "title": "Getting Started with Horizon for Data Governance in Snowflake",
+  "summary": "This guide is used to demonstrate the capabilities of Horizon for Data Governance. The walk-through consists of being able to ingest and monitor data pipelines in your organization, how to actively govern data including lineage and masking, and how Horizon can help with monitoring data in Snowflake using Snowsight.",
+  "source": "getting_started_with_Horizon_for_Data_Governance/getting_started_with_horizon_for_data_governance_in_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "datagovernance",
+    "dataengineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "datagovernance",
+    "dataintelligence",
+    "gettingstarted",
+    "horizon",
+    "observability",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_horizon_for_data_governance_in_snowflake"
+}

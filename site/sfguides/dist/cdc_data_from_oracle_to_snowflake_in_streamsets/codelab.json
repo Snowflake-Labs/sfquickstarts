@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "cdc_data_from_oracle_to_snowflake_in_streamsets",
+  "duration": 14,
+  "title": "Process Change Data Capture (CDC) data from Oracle to Snowflake Using StreamSets",
+  "summary": "CDC Data from Oracle to Snowflake in StreamSets",
+  "source": "cdc_data_from_oracle_to_snowflake_in_streamsets/cdc_data_from_oracle_to_snowflake_in_streamsets.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "solution-examples"
+  ],
+  "tags": [
+    "oraclecdc",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "cdc_data_from_oracle_to_snowflake_in_streamsets"
+}

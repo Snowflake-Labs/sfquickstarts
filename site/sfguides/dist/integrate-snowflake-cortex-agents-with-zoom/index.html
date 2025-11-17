@@ -1,0 +1,309 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Agents and Zoom</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="integrate-snowflake-cortex-agents-with-zoom"
+                  title="Getting Started with Cortex Agents and Zoom"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.</p>
+<p><em>Note: Cortex Agents is in Public Preview as of 04/25/2025.</em></p>
+<h2 is-upgraded>Why Cortex Agents?</h2>
+<p>Business users have typically relied on BI dashboards and reports for data insights, but these tools often lack flexibility, requiring users to wait on busy data analysts for updates. Cortex Agents addresses this with a natural language interface allowing organizations to develop conversational applications. This enables business users to query data in natural language and get accurate answers in near real time.</p>
+<p>Under the hood it is a stateless REST API that unifies Cortex Search&#39;s hybrid search and Cortex Analyst&#39;s SQL generation (with 90%+ accuracy). It streamlines complex workflows by handling context retrieval, converting natural language to SQL via semantic models, and managing LLM orchestration and prompts. Enhanced with in-line citations, answer abstention for irrelevant queries, and multi-message conversation context management, it offers single API call integration, real-time streamed responses, and reduced latency. Together, these capabilities allow you to search sales conversations, translate text into SQL for analytical queries, and blend structured and unstructured data for natural language interactions.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a>, <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a>, and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a>.</p>
+<h2 is-upgraded>Why Zoom?</h2>
+<p>Zoom isn&#39;t just for video calls anymore. It&#39;s a modern, flexible collaboration platform that brings together video, voice, chat, and integrations under one roof. It is a communication platform designed to streamline workplace interactions and allows teams to organize conversations by channels, send direct messages, share files, and integrate with other tools for a seamless workflow. Zoom Team Chat goes beyond basic messaging. It&#39;s your interactive workspace and a powerful platform for bots and automation.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account in one of these <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#region-availability" target="_blank">regions</a> and also where <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability" target="_blank">PARSE_DOCUMENT</a> is available. If you do not have one you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A <a href="https://www.zoom.com/" target="_blank">Zoom Account</a> with access to Zoom App Marketplace. <ul>
+<li><strong>NOTE</strong>: You can create a <strong>free Basic account</strong> for getting through this guide.</li>
+</ul>
+</li>
+<li>Zoom Workspace installed locally. (You should be able to download it after you log into your Zoom account.) <ul>
+<li><strong>NOTE</strong>: Zoom Team Chat does not currently work with the Zoom web client.</li>
+</ul>
+</li>
+<li><a href="https://ngrok.com/" target="_blank">ngrok</a> or a similar API gateway to route requests from Zoom to a web server running locally. <ul>
+<li>On a Mac, run <code>brew install --cask ngrok</code></li>
+<li>Install your auth token. To learn more, <a href="https://dashboard.ngrok.com/get-started/your-authtoken" target="_blank">click here</a></li>
+<li>Run <code>ngrok config add-authtoken <YOUR_AUTH_TOKEN></code></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to setup Cortex Analyst</li>
+<li>How to setup Cortext Search</li>
+<li>How to use Cortex Agents and Cortex Inference REST APIs and integrate it in Zoom Team Chat</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>A conversational interface using Cortex Agents and Cortex Inference REST APIs integrated in Zoom Team Chat.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="12">
+        <h2 is-upgraded>Step 1</h2>
+<p>Clone the <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom" target="_blank">GitHub repo</a>.</p>
+<h2 is-upgraded>Step 2</h2>
+<p>In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/setup.sql" target="_blank">setup.sql</a> to <strong>execute all statements</strong> in order from top to bottom. This is to create a database, schema, and tables <strong>SUPPORT_TICKETS</strong> and <strong>SUPPLY_CHAIN</strong> with data loaded from AWS S3 for both tables. And also to create Snowflake managed internal stages for storing the semantic model specification files and PDF documents.</p>
+<h2 is-upgraded>Step 3</h2>
+<p>Use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage" target="_blank">Snowsight</a> to <strong>upload </strong><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/support_tickets_semantic_model.yaml" target="_blank">the <strong>support tickets</strong> semantic model spec file</a> and <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/supply_chain_semantic_model.yaml" target="_blank">the <strong>supply chain</strong> semantic model spec file</a> to the <strong>DASH_SEMANTIC_MODELS</strong> stage.</p>
+<h2 is-upgraded>Step 4</h2>
+<p>Use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage" target="_blank">Snowsight</a> to <strong>upload six </strong><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/tree/main/data" target="_blank">PDF documents</a> to the <strong>DASH_PDFS</strong> stage.</p>
+<h2 is-upgraded>Step 5</h2>
+<p>In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/cortex_search_service.sql" target="_blank">cortex_search_service.sql</a> to <strong>execute all statements</strong> in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents. <em>NOTE: </em><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability" target="_blank"><em>PARSE_DOCUMENT</em></a><em> is in Public Preview as of 04/23/2025.</em></p>
+<h2 is-upgraded>Step 6</h2>
+<p>Configure <a href="https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication" target="_blank">key-pair authentication</a> and assign the public key to your user in Snowflake and store/save/copy the private key file (<strong><em>.p8</em></strong>) in your cloned app folder.</p>
+<aside class="warning"><p> IMPORTANT: If you use different names for objects created in the above steps, be sure to update scripts and code in the following sections accordingly.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Zoom" duration="15">
+        <h2 is-upgraded>Step 1</h2>
+<p>Signin and start your Zoom Workplace running locally.</p>
+<p class="image-container"><img alt="build_app4" style="width: 600.00px" src="img/834d59ea0164105.png"></p>
+<h2 is-upgraded>Step 2</h2>
+<p>In a terminal window, browse to the cloned repo <em>sfguide-integrate-snowflake-cortex-agents-with-zoom</em> folder and run the following commands to create Python environment and install the Python packages and dependencies required for the application.</p>
+<pre><code language="language-bash" class="language-bash">python3 -m venv zoomenv
+source zoomenv/bin/activate
+pip install -r requirements.txt
+</code></pre>
+<h2 is-upgraded>Step 3</h2>
+<p>In the same folder, create a <code>.env</code> file and add these variables.</p>
+<ul>
+<li><strong>NOTE</strong>: Instructions on setting the values will follow so keep this file open/handy.</li>
+</ul>
+<pre><code language="language-bash" class="language-bash">ZOOM_ACCOUNT_ID = &#34;&#34;
+ZOOM_CLIENT_ID = &#34;&#34;
+ZOOM_CLIENT_SECRET = &#34;&#34;
+ZOOM_REDIRECT_URI = &#34;&#34;
+ZOOM_BOT_JID = &#34;&#34;
+SNOWFLAKE_DEMO_USER=&#34;&#34;
+SNOWFLAKE_ACCOUNT=&#34;&lt;your-account-identifier&gt;&#34;
+SNOWFLAKE_AGENT_ENDPOINT=&#39;https://&lt;your-org&gt;-&lt;your-account&gt;.snowflakecomputing.com/api/v2/cortex/agent:run&#39;
+SNOWFLAKE_INFERENCE_ENDPOINT=&#39;https://&lt;your-org&gt;-&lt;your-account&gt;.snowflakecomputing.com/api/v2/cortex/inference:complete&#39;
+
+# Only change these values if you used different names than provided in this guide
+SUPPORT_SEMANTIC_MODEL=&#39;@dash_db.dash_schema.semantic_models/support_tickets_semantic_model.yaml&#39;
+SUPPLY_CHAIN_SEMANTIC_MODEL=&#39;@dash_db.dash_schema.semantic_models/supply_chain_semantic_model.yaml&#39;
+VEHICLE_SEARCH_SERVICE=&#39;dash_db.dash_schema.vehicles_info&#39;
+
+# Should not change these values
+ZOOM_TOKEN_URL = &#34;https://zoom.us/oauth/token&#34;
+ZOOM_CHAT_URL = &#34;https://api.zoom.us/v2/im/chat/messages&#34; 
+MODEL = &#39;claude-4-sonnet&#39;
+RSA_PRIVATE_KEY_PATH=&#39;rsa_key.p8&#39;
+</code></pre>
+<h2 is-upgraded>Step 4</h2>
+<p>In a new terminal window, run <code>ngrok http 5000</code>.</p>
+<ul>
+<li>Before proceeding, make sure it&#39;s running and the output should something like the following with a forwarding URL like so <code>https://9b51-2601-646-8f02-2670-ddd6-ee13-476-441f.ngrok-free.app</code></li>
+</ul>
+<p class="image-container"><img alt="ngork" src="img/d3ca5ae362ee1a5a.png"></p>
+<ul>
+<li>Copy the forwarding URL and set it for <strong>ZOOM_REDIRECT_URI</strong> in your <code>.env</code> file</li>
+</ul>
+<aside class="special"><p> NOTE: It is important to keep <code>ngork</code> running all the way through until you are done implementing this guide. If for some reason you need to restart <code>ngork</code>, you will need to update the forwarding URL in <strong>sub-steps 3, 7, 8</strong> in this section and also <strong>ZOOM_REDIRECT_URI</strong> in your <code>.env</code> file.</p>
+</aside>
+<h2 is-upgraded>Step 5</h2>
+<p>Log into your <a href="https://www.zoom.com/" target="_blank">Zoom account</a> on the web.</p>
+<h2 is-upgraded>Step 6</h2>
+<p>On the left nav, click on <strong>Admin</strong> » <strong>App Marketplace</strong>. This should open <strong>Zoom App Marketplace</strong> for your account.</p>
+<h2 is-upgraded>Step 7</h2>
+<p>On the top-right, click on <strong>Develop</strong> » <strong>Build App</strong> and select <strong>General App</strong></p>
+<p class="image-container"><img alt="build_app" style="width: 600.00px" src="img/e38a1c1249b263e4.png"></p>
+<h2 is-upgraded>Step 8</h2>
+<p>On the left nav, click on <strong>Basic Information</strong></p>
+<ul>
+<li>Copy <strong>Client ID</strong> and <strong>Client Secret</strong> and set them for <strong>ZOOM_CLIENT_ID</strong> and <strong>ZOOM_CLIENT_SECRET</strong> in your <code>.env</code> file and for <strong>OAuth Redirect URL</strong> set it to the same value as <strong>ZOOM_REDIRECT_URI</strong> as in step 3 above.</li>
+</ul>
+<p class="image-container"><img alt="build_app2" style="width: 600.00px" src="img/742126683e206475.png"></p>
+<h2 is-upgraded>Step 9</h2>
+<p>On the left nav, click on <strong>Features</strong> » <strong>Surface</strong></p>
+<ul>
+<li>Select <strong>Team Chat</strong> under &#34;<strong>Select where to use your app</strong>&#34;</li>
+</ul>
+<p class="image-container"><img alt="build_app3" style="width: 600.00px" src="img/42c3889a05e75cfa.png"></p>
+<ul>
+<li>Scroll down and select/turn ON <strong>Team Chat Subscription</strong></li>
+<li>Copy <strong>Bot JID</strong> and set it for <strong>ZOOM_BOT_JID</strong> in your <code>.env</code> file</li>
+</ul>
+<p class="image-container"><img alt="build_app4" style="width: 600.00px" src="img/12423890eb2427db.png"></p>
+<ul>
+<li>Click on the dropdown to expand the <strong>Team Chat Subscription</strong> view and set <strong>Bot Endpoint URL</strong> to the same value as <strong>ZOOM_REDIRECT_URI</strong> as in step 3 above and add <code>/askcortex</code> suffix.</li>
+</ul>
+<p class="image-container"><img alt="build_app5" style="width: 600.00px" src="img/31fe025f6d70fd32.png"></p>
+<ul>
+<li>Click on <strong>Save</strong> button.</li>
+</ul>
+<h2 is-upgraded>Step 10</h2>
+<p>On the left nav, click on <strong>Scopes</strong> and add/enable the following scopes:</p>
+<ul>
+<li>imchat:userapp</li>
+<li>app:channel_content:write</li>
+<li>team_chat:write:user_message</li>
+<li>team_chat:write:message_files</li>
+<li>team_chat:write:files</li>
+<li>marketplace:write:notifications</li>
+<li>team_chat:write:user_channel</li>
+<li>team_chat:update:user_channel</li>
+<li>team_chat:delete:user_channel</li>
+<li>team_chat:read:list_user_sessions</li>
+<li>team_chat:read:list_user_messages</li>
+<li>team_chat:read:user_message</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Application" duration="5">
+        <p>Before proceeding, it is important to make sure that <code>ngork</code> is still running. If for some reason you need to restart it, you will need to update the forwarding URL as described in sub-steps 3, 7, 8 in &#34;<strong>Setup Application</strong>&#34; and also <strong>ZOOM_REDIRECT_URI</strong> in your <code>.env</code> file.</p>
+<h2 is-upgraded>Step 1</h2>
+<p>In the same cloned repo <em>sfguide-integrate-snowflake-cortex-agents-with-zoom</em> folder, open a new terminal window and run the following command to start the application.</p>
+<pre><code language="language-bash" class="language-bash">./zoom_bot.sh
+</code></pre>
+<aside class="warning"><p> NOTE: If you get this error <code>Caused by SSLError(SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...,</code> try adding <em>&lt;locator.region&gt;</em> to SNOWFLAKE_ACCOUNT in your <code>.env</code> file. For additional instructions and help, refer to the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">documentation</a>.</p>
+</aside>
+<h2 is-upgraded>Step 2</h2>
+<p>In your Zoom account on the web, navigate back to <strong>Admin</strong> » <strong>App Marketplace</strong> » <strong>Zoom App Marketplace</strong> and on the left nav, click on <strong>Add your app</strong> » <strong>Local Test</strong> » <strong>Add App Now</strong></p>
+<p class="image-container"><img alt="build_app6" style="width: 600.00px" src="img/a243469890995ffa.png"></p>
+<p>If all goes well, you should see the following popup</p>
+<p class="image-container"><img alt="build_app7" style="width: 600.00px" src="img/1b5bce498a8cd388.png"></p>
+<p>And, clicking on <strong>Allow</strong> should add it to Zoom Workspace running locally,</p>
+<p class="image-container"><img alt="build_app8" style="width: 600.00px" src="img/289f011f79bdfb42.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get Insights" duration="5">
+        <h2 is-upgraded>Structured Data</h2>
+<h3 is-upgraded>Support Tickets</h3>
+<p>These questions are automatically routed to Cortex Analyst » SUPPORT_SEMANTIC_MODEL to get insights from SUPPORT_TICKETS table.</p>
+<p><strong>Question: </strong><em>Can you show me a breakdown of customer support tickets by service type cellular vs business internet?</em></p>
+<p><strong>Question: </strong><em>How many unique customers have raised a support ticket with a ‘Cellular&#39; service type and have ‘Email&#39; as their contact preference?</em></p>
+<p>If all goes well, you should see responses similar to the following:</p>
+<p class="image-container"><img alt="Q&amp;A1" src="img/935fdc7ff46f52ae.png"></p>
+<h3 is-upgraded>Supply Chain</h3>
+<p>These questions are automatically routed to Cortex Analyst » SUPPLY_CHAIN_SEMANTIC_MODEL to get insights from SUPPLY_CHAIN table.</p>
+<p><strong>Question: </strong><em>What is the average shipping time for tires from Snowtires Automotive compared to average of our other suppliers?</em></p>
+<p><strong>Question: </strong><em>What about TirePro?</em></p>
+<p class="image-container"><img alt="Q&amp;A5" src="img/3c86f8a888f5907a.png"></p>
+<h2 is-upgraded>Unstructured Data</h2>
+<p>These questions are automatically routed to Cortex Search » VEHICLE_SEARCH_SERVICE to get insights from the PDFs.</p>
+<p><strong>Question: </strong><em>What are the payment terms for Snowtires?</em></p>
+<p><strong>Question: </strong><em>What&#39;s the latest, most effective way to recycle rubber tires?</em></p>
+<p>If all goes well, you should see responses similar to the following:</p>
+<p class="image-container"><img alt="Q&amp;A3" src="img/e3e67ad79211a8ac.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Code Walkthrough" duration="2">
+        <p>As you may have noticed, the main application code is in <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/app.py" target="_blank">app.py</a> and the Snowflake Cortex AI code is in <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/cortex_chat.py" target="_blank">cortex_chat.py</a>.</p>
+<p>Here are some things you should make a note of in case you&#39;d like to extend or modify the application.</p>
+<h3 is-upgraded>app.py</h3>
+<p><strong>init()</strong></p>
+<p>A secure connection to Snowflake is established and an instance of CortexChat is created.</p>
+<p><strong>@app.route(&#39;/&#39;, methods=[‘GET&#39;])</strong></p>
+<p>Redirect route that Zoom uses to generate an authorization URL for development and testing purposes.</p>
+<p><strong>@app.route(&#39;/askcortex&#39;, methods=[‘POST&#39;])</strong></p>
+<p>Endpoint that sends and receives messages to/from Zoom Team Chat. It calls these methods:</p>
+<ul>
+<li><code>CORTEX_APP.chat(prompt)</code> to get response from Snowflake Cortex Agents</li>
+<li><code>parse_agent_response(response)</code> to parse the Snowflake Cortex Agents response</li>
+<li><code>send_chat_message(user_jid, to_jid, agent_response)</code> to send the parsed response to Zoom Team Chat</li>
+</ul>
+<p><strong>parse_agent_response()</strong></p>
+<p>Parses response return by Snowflake Cortex Agents. If the response includes a SQL, in case of structured data, it executes the SQL and then calls <code>CORTEX_APP.data_to_answer(df.to_string())</code> to translate the dataframe into natural language.</p>
+<h3 is-upgraded>cortex_chat.py</h3>
+<p><strong>_retrieve_response()</strong></p>
+<p>Notice that we&#39;ve set up and provided two semantic models to the Cortex Agents REST API via <code>tool_spec > type: "cortex_analyst_text_to_sql"</code>; one to extract insights from <strong>SUPPORT_TICKETS</strong> and another one from <strong>SUPPLY_CHAIN</strong> structured data sources. Similarly, you may set up additional semantic models as well as multiple search services via <code>tool_spec > type: "cortex_search"</code>.</p>
+<p><strong>data_to_answer()</strong></p>
+<p>Translates the dataframe into natural language. This is done using Snowflake Cortex Inference API with prompt <code>Extract and explain the data in the following dataframe in natural language. Only output the explanation and nothing else.</code></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve sucessfully integrated Snowflake Cortex AI in Zoom. I hope you found this guide both educational and inspiring.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to setup Cortex Analyst</li>
+<li>How to setup Cortext Search</li>
+<li>How to use Cortex Agents and Cortex Inference REST APIs and integrate it in Zoom Team Chat</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom" target="_blank">GitHub repo</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api" target="_blank">Cortex Inference</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

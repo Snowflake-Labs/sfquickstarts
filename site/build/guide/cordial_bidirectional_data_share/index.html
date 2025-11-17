@@ -1,0 +1,418 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Create a Bidirectional Data Share with Cordial</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="cordial_bidirectional_data_share"
+                  title="Create a Bidirectional Data Share with Cordial"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Easy access to real-time customer data is crucial in marketers&#39; efforts to send messages that resonate. Marketers  also need to leverage that data to understand customer behavior and shape strategy. The bidirectional data integration between Cordial and Snowflake unlocks this potential.</p>
+<p>Using Cordial, data-driven marketing teams create personalized email, SMS, mobile, and website experiences for enterprise audiences, loading dynamic content tailored to message and site behavior, product affinity, seasonal deals, and more. With its industry leading data storage, Snowflake naturally complements what marketers can do with Cordial&#39;s marketing platform.</p>
+<p>In this Quickstart, Cordial and Snowflake walk you through how to set up a bidirectional data share between platforms so you can leverage your Snowflake customer data in Cordial and vice versa.</p>
+<p class="image-container"><img alt="Snowflake to Cordial architecture" src="img/e664f186e308b852.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake account</a></li>
+<li>A <a href="https://cordial.com/" target="_blank">Cordial account</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>This Quickstart is for data-driven marketers who want to unlock message personalization and segmentation possibilities at scale. You&#39;ll set up a Secure Data Share to easily access Cordial data within Snowflake—and then enable Snowflake as a source to import data into Cordial.</p>
+<p>At the end of this Quickstart, you will successfully:</p>
+<ul>
+<li>Set up a Secure Data Share between Cordial and Snowflake</li>
+<li>Understand what data is unlocked by integrating Cordial and Snowflake</li>
+<li>Send queries from Cordial to Snowflake</li>
+<li>Send data from Snowflake to Cordial for use in marketing campaigns</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Request a Secure Data Share" duration="4">
+        <p>Snowflake&#39;s Secure Data Share provides Cordial with immediate access to ready-to-query data. To get started, you need to request a Secure Share.</p>
+<ol type="1">
+<li>Visit <a href="https://app.snowflake.com/marketplace/listing/GZSTZ1D9SIF/cordial-messaging-data-personalized-user-profiles-events" target="_blank">Cordial&#39;s listing</a> in the Snowflake Marketplace to submit a request for the data share and reach out to your Cordial client success manager to let them know that you&#39;ve requested it.</li>
+</ol>
+<p class="image-container"><img alt="Snowflake to Cordial architecture" src="img/1d891e8e5e68d10a.png"></p>
+<ol type="1" start="2">
+<li>Click the <strong>Request</strong> button and fill in the form.</li>
+</ol>
+<p class="image-container"><img alt="Snowflake UI" src="img/b9ed7340f6d92594.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accept the Secure Data Share" duration="10">
+        <p>Once you&#39;ve requested the Secure Share, Cordial will verify and provision the data share from Cordial&#39;s Snowflake account to your Snowflake account. After the share is provisioned, Cordial will notify you that your data share has been provisioned—and you&#39;ll need to follow the steps below to accept the Secure Share.</p>
+<ol type="1">
+<li>Your account administrator will need to log in to your Snowflake account. To view the status or your data share request, click <strong>My requests</strong> in the <strong>Marketplace</strong> and select the Cordial listing. Alternatively, you can navigate directly to <a href="https://app.snowflake.com/marketplace/listing/GZSTZ1D9SIF/cordial-messaging-data-personalized-user-profiles-events" target="_blank">Cordial&#39;s listing</a> in the Snowflake Marketplace.</li>
+</ol>
+<p class="image-container"><img alt="Snowflake user interface" src="img/c0ebfbc2a4fc9fd5.png"></p>
+<ol type="1" start="2">
+<li>Once your request has been approved, click the <strong>Get</strong> button to begin setting up your share.</li>
+</ol>
+<p class="image-container"><img alt="Snowflake user interface" src="img/ef363ef3c5eab46a.png"></p>
+<ol type="1" start="3">
+<li>Your account administrator can then give the Secure Share a <strong>Database name</strong> and select who can access the data.</li>
+</ol>
+<p class="image-container"><img alt="Snowflake user interface" src="img/96f5ce654ca43b1c.png"></p>
+<ol type="1" start="4">
+<li>With access approved, you can go to the <strong>Worksheets</strong> tab in the top navigation bar in your Snowflake instance and see the new Cordial shared database and shared dataset.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query the Secure Data Share" duration="20">
+        <p>Once you accept the Cordial data share and assign it to a new database in your Snowflake account, you can start querying the data share. Here are the datasets available to query.</p>
+<h2 is-upgraded>Available datasets</h2>
+<p>The following datasets are available from Cordial through a Secure Data Share. Data is refreshed multiple times per day, giving you direct access to customer data in near real-time.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>View       </p>
+</td><td colspan="1" rowspan="1"><p>Description       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>contacts</code>       </p>
+</td><td colspan="1" rowspan="1"><p>Data specific to each contact such as name, address, etc. You can store string type (i.e. first name), number type (i.e. age), geo type (i.e. addresses), and array type (i.e. favorite colors). You can add as many attributes as needed to describe your contacts. Cart items are also stored with each contact and can contain information about a product such as SKU, description image, and much more.       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>contactactivity</code> (<code>events</code>)       </p>
+</td><td colspan="1" rowspan="1"><p> Data related to a contact&#39;s activity or behavior. This can be message activity as well as website activity (browsed a page, added to cart), or external (IoT) activity.       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>messagesends</code>       </p>
+</td><td colspan="1" rowspan="1"><p> Data specific to message sends, such as the channel used to send the message, whether the message is promotional or transactional, information about how and when the message was created, and more.       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>orders</code>       </p>
+</td><td colspan="1" rowspan="1"><p>         Data about a contact&#39;s order history.       </p>
+</td></tr>
+</table>
+<h2 is-upgraded>Example queries</h2>
+<p>The Snowflake Secure Data Share allows you to build powerful queries to get the exact data you want. Here are two examples.</p>
+<h3 is-upgraded><strong><code>CONTACTS</code></strong></h3>
+<p>Here&#39;s an example query that uses <code>CONTACTS</code> to find <strong>(1)</strong> the grand total dollar amount of all cart items across all carts, <strong>(2)</strong> the average dollar amount of all cart items per cart, <strong>(3)</strong> the average number of items per cart, and finally <strong>(4)</strong> the total number of carts.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+ SUM(TRY_TO_NUMBER(cart:&#34;totalAmount&#34;::varchar)) as &#34;grand_total_amount&#34;,
+ AVG(TRY_TO_NUMBER(cart:&#34;totalAmount&#34;::varchar)) as &#34;average_total_amount&#34;,
+ AVG(ARRAY_SIZE(cart:&#34;cartitems&#34;)) as &#34;average_num_cart_items&#34;,
+ count(*) as &#34;total_carts&#34;
+FROM
+ contacts
+WHERE
+ cart IS NOT NULL
+;
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>grand_total_amount</code>       </p>
+</td><td colspan="1" rowspan="1"><p><code>average_total_amount</code>       </p>
+</td><td colspan="1" rowspan="1"><p><code>average_num_cart_items</code>       </p>
+</td><td colspan="1" rowspan="1"><p><code>total_carts</code>       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         41479622       </p>
+</td><td colspan="1" rowspan="1"><p>         1595370.077       </p>
+</td><td colspan="1" rowspan="1"><p>         13.961538       </p>
+</td><td colspan="1" rowspan="1"><p>         26       </p>
+</td></tr>
+</table>
+<h3 is-upgraded><strong><code>CONTACTACTIVITY</code></strong></h3>
+<p>Here&#39;s an example query that demonstrates selecting data from <code>CONTACTACTIVITY</code>. The query returns total daily counts for several events (aka actions) related to sending messages for a specified date range (message sends, opens, clicks, and bounces). This query makes use of some advanced SQL features such as Common Table Expressions and the <code>PIVOT</code> function, demonstrating Snowflake&#39;s rich SQL support.</p>
+<pre><code language="language-sql" class="language-sql">WITH action_totals AS (
+  SELECT
+    to_date(action_date) as action_date,
+    action,
+    count(*) as total
+  FROM
+    contactactivity
+  WHERE
+    action_date BETWEEN &#39;2022-09-19&#39; AND &#39;2022-09-25&#39;
+    AND action IN (&#39;message-sent&#39;, &#39;open&#39;, &#39;click&#39;, &#39;bounce&#39;)
+GROUP BY
+  action_date,
+  action
+)
+SELECT
+ *
+FROM
+ action_totals
+PIVOT (
+ SUM(total) FOR action IN (&#39;message-sent&#39;, &#39;open&#39;, &#39;click&#39;, &#39;bounce&#39;)
+) as p
+ORDER BY
+  action_date
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>action_date</code>       </p>
+</td><td colspan="1" rowspan="1"><p><code>message-sent</code>       </p>
+</td><td colspan="1" rowspan="1"><p><code>open</code>       </p>
+</td><td colspan="1" rowspan="1"><p><code>click</code>       </p>
+</td><td colspan="1" rowspan="1"><p><code>bounce</code>       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         2022-09-19       </p>
+</td><td colspan="1" rowspan="1"><p>         2749273       </p>
+</td><td colspan="1" rowspan="1"><p>         1080279       </p>
+</td><td colspan="1" rowspan="1"><p>         3015       </p>
+</td><td colspan="1" rowspan="1"><p>         2829       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         2022-09-20       </p>
+</td><td colspan="1" rowspan="1"><p>         2605236       </p>
+</td><td colspan="1" rowspan="1"><p>        1796475       </p>
+</td><td colspan="1" rowspan="1"><p>        7139       </p>
+</td><td colspan="1" rowspan="1"><p>         6229       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         2022-09-21       </p>
+</td><td colspan="1" rowspan="1"><p>         2738569       </p>
+</td><td colspan="1" rowspan="1"><p>         1884556       </p>
+</td><td colspan="1" rowspan="1"><p>         4742       </p>
+</td><td colspan="1" rowspan="1"><p>        2145       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         2022-09-22       </p>
+</td><td colspan="1" rowspan="1"><p>         3073       </p>
+</td><td colspan="1" rowspan="1"><p>         929171       </p>
+</td><td colspan="1" rowspan="1"><p>        1485       </p>
+</td><td colspan="1" rowspan="1"><p>         6047       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         2022-09-23       </p>
+</td><td colspan="1" rowspan="1"><p>         2810032       </p>
+</td><td colspan="1" rowspan="1"><p>        812085       </p>
+</td><td colspan="1" rowspan="1"><p>         2628       </p>
+</td><td colspan="1" rowspan="1"><p>         466       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         2022-09-24       </p>
+</td><td colspan="1" rowspan="1"><p>         2041732       </p>
+</td><td colspan="1" rowspan="1"><p>         1600629       </p>
+</td><td colspan="1" rowspan="1"><p>        4839       </p>
+</td><td colspan="1" rowspan="1"><p>         2258       </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>         2022-09-25       </p>
+</td><td colspan="1" rowspan="1"><p>        928       </p>
+</td><td colspan="1" rowspan="1"><p>         87       </p>
+</td><td colspan="1" rowspan="1"><p>         1       </p>
+</td><td colspan="1" rowspan="1"><p>         1       </p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Send Data from Snowflake to Cordial" duration="20">
+        <p>Cordial provides an array of opportunities to leverage your Snowflake customer data to send messages that resonate. When Snowflake is enabled as a data source in Cordial, Cordial automatically queries one or multiple Tables and/or Views in your Snowflake warehouse on a customizable interval.</p>
+<p>The Cordial platform automatically detects <em>and updates</em> any new or updated customer records. This keeps your customer data in sync with Snowflake cloud data for real-time segmentation and message personalization.</p>
+<h2 is-upgraded>Create a Table or View in Snowflake</h2>
+<p>In your Snowflake account, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-table.html" target="_blank">create a Table or View to store the customer data</a> you want to utilize in your Cordial account. Here are some important settings to keep in mind when creating your Table in Snowflake:</p>
+<ul>
+<li>At minimum, you must have read-only access to the Table in Snowflake and access to the specific Table or View that will send data to Cordial.</li>
+<li>Cordial is unable to ingest binary Table columns.</li>
+<li>Set a specific maximum length in your Table/View for <code>VARCHAR</code> columns. Column size limit is 8kb or <code>VARCHAR(8192)</code>.</li>
+<li>Your Table/View must be set to convert nanoseconds (default in Snowflake) into microseconds (default in Cordial) in order to successfully transfer date attributes.</li>
+</ul>
+<h3 is-upgraded>Geo attributes</h3>
+<p>Geo attributes should be represented as separate columns. For example, the geo attribute <code>homeaddress</code> would be broken up into columns such as:</p>
+<ul>
+<li><code>homeaddress.street_address</code></li>
+<li><code>homeaddress.city</code></li>
+<li><code>homeaddress.state</code></li>
+<li><code>homeaddress.postal_code</code></li>
+</ul>
+<h3 is-upgraded>Array attributes</h3>
+<p>Array attributes will be updated as a whole unless additional syntax is included to add or remove an item from an array, as follows:</p>
+<ul>
+<li>Remove from array: <code>{ "remove": ["apple"] }</code></li>
+<li>Add to array: <code>{ "add": ["apple"] }</code></li>
+</ul>
+<p><strong>Note:</strong> Your Table/View must be set to convert nanoseconds (default in Snowflake) into microseconds (default in Cordial) in order to successfully transfer date attributes.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable Snowflake as a Data Source in Cordial" duration="10">
+        <p>You can enable Snowflake as a data source in Cordial&#39;s UI.</p>
+<ol type="1">
+<li>Log in to Cordial, navigate to <strong>Integrations &gt; Partners</strong>, and select <strong>Enable</strong> on the Snowflake card.</li>
+<li>Fill in the required information:</li>
+</ol>
+<ul>
+<li>Snowflake account identifier (format should be [organization]-[identifier])</li>
+<li>Warehouse name</li>
+<li>Username</li>
+<li>Authentication method: Password or Saved key</li>
+<li>Role name</li>
+<li>Database name</li>
+<li>Schema name</li>
+<li>Table or View name</li>
+</ul>
+<p><strong>Note:</strong> Connection parameters are case-sensitive and should match the exact case of the named objects—warehouse, user, role, database, Table/View, or schema—in Snowflake.</p>
+<p class="image-container"><img alt="Snowflake password" src="img/107054827bbfd90b.png"></p>
+<ol type="1" start="3">
+<li>To add a Table/View, click <strong>Add Table/View</strong>.</li>
+<li>Click <strong>Test Connection</strong>.</li>
+<li>If it&#39;s successful, select <strong>Continue</strong>.</li>
+</ol>
+<h2 is-upgraded>Saved key authentication</h2>
+<p>Select this method if you want to use <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth" target="_blank">key-pair authentication in Snowflake</a>.</p>
+<ol type="1">
+<li>You first need to create a secret (aka saved key) in Cordial by navigating to <strong>Settings &gt; Account Settings &gt; Secrets Vault &gt; New</strong>.</li>
+<li>Your new secret will include a <strong>Public key (PEM format)</strong>.<br><img alt="PEM key" src="img/4d3817834d4651d7.png"></li>
+<li>Update the user in Snowflake by pasting in the Public key (PEM format) of your created secret.</li>
+</ol>
+<p><strong>Note:</strong> Don&#39;t include the <code>—–BEGIN PUBLIC KEY—–</code> and <code>—–END PUBLIC KEY—–</code> that appear with your PEM key. Snowflake requires these markers to be removed in their environment.</p>
+<ol type="1" start="4">
+<li>In the export job from Cordial, select <strong>Saved Key</strong> as the authentication method and choose your Cordial secret under <strong>Saved key</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Saved key" src="img/709d2a84675bea9e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Data Jobs in Cordial with Snowflake as a Data Source" duration="10">
+        <p>In Cordial, you can use Data Jobs to:</p>
+<ul>
+<li>Import contacts or supplements.</li>
+<li>Export contacts, events, orders, or supplements.</li>
+<li>Sync your contacts with Facebook and Google Ads.</li>
+<li>Create a Transformation: custom, scripted export, or scripted import.</li>
+</ul>
+<p>These steps unlock Cordial&#39;s powerful automated messaging capabilities.</p>
+<h2 is-upgraded>Create new Data Job in Cordial</h2>
+<ol type="1">
+<li>Once you&#39;ve successfully enabled Snowflake to send data to Cordial, navigate to <strong>Data Jobs &gt; Create New Data Job</strong>, select the appropriate Data Job, and fill in the required fields.</li>
+</ol>
+<p class="image-container"><img alt="Data Jobs" src="img/b5f71e68d18154fb.gif"></p>
+<ol type="1" start="2">
+<li>In your Data Job, select <strong>Edit</strong> in the <strong>Data Source</strong> pane.</li>
+<li>Choose <strong>External</strong> under <strong>Data Source</strong>.</li>
+<li>Choose <strong>Snowflake</strong> under <strong>Data location</strong>.</li>
+<li>Choose the appropriate <strong>Snowflake connection</strong> and <strong>Snowflake Table/Views</strong>.</li>
+</ol>
+<p><strong>Note:</strong> Cordial will automatically query Snowflake at a specified interval, updating modified records and inserting any new records since the last sync. You can configure your data refresh interval to occur every 15 minutes, every 30 minutes, every hour, every week, or every month to optimize access to real-time data.</p>
+<ol type="1" start="6">
+<li>Choose the sync type: <strong>Full refresh</strong> or <strong>Incremental</strong>.</li>
+</ol>
+<h2 is-upgraded>Sync types</h2>
+<p>One-time Data Jobs only support full refresh syncs. Recurring Data Job Automations support both full refresh and incremental syncs.</p>
+<h3 is-upgraded>Full refresh</h3>
+<ul>
+<li>Used in one-time Data Jobs and recurring Data Job automations.</li>
+<li>Selects all records from the Snowflake Table.</li>
+<li>Query doesn&#39;t have <code>WHERE</code> and <code>ORDER</code> elements.</li>
+</ul>
+<p class="image-container"><img alt="Full refresh sync" src="img/339be19d6d9f001.png"></p>
+<h3 is-upgraded>Incremental</h3>
+<ul>
+<li>Used in recurring Data Job automations.</li>
+<li>Cordial stores sequence (last updated date from last imported row) as <code>{prevValue}</code></li>
+<li>Select the desired <strong>Cursor field</strong> from the dropdown.</li>
+<li><strong>The cursor value is not repeated between syncs</strong> option controls how Cordial selects records for the incremental sync.</li>
+</ul>
+<p><img alt="Incremental sync" src="img/1999aa8af2ecc066.png"><br><strong>Note:</strong> If the cursor field has unique values, such as unique IDs, Cordial can simplify the process and select all the new records. But if the cursor field is not unique, such as a timestamp or date, Cordial skips one or more records with the maximum value.</p>
+<p>In the examples below, <code>UPDATED_AT</code> and <code>ORDER_ID</code> are cursor fields:</p>
+<ul>
+<li>If you select <strong>The cursor value is not repeated</strong> checkbox, Cordial creates a query like this:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT ... WHERE ORDER_ID  {prevValue}
+</code></pre>
+<ul>
+<li>If the checkbox is not selected, Cordial runs a query like this:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT ... WHERE UPDATED_AT  {prevValue} AND UPDATED_AT &lt;(select
+max(updated_at)=&#34;max(UPDATED_AT)&#34; from=&#34;FROM&#34; {table})=&#34;{table})&#34;&gt;&lt;/(select&gt;
+</code></pre>
+<p><strong>Note:</strong> The second example means Cordial doesn&#39;t import at least one row with <code>max(UPDATED_AT)</code></p>
+<h2 is-upgraded>API support</h2>
+<p>The following Cordial endpoints support Snowflake as a data source:</p>
+<ul>
+<li><a href="https://support.cordial.com/hc/en-us/articles/203886058-Contact-imports-API#postContactImports" target="_blank">POST/v2/contactimports</a></li>
+<li><a href="https://support.cordial.com/hc/en-us/articles/204570687-Supplements-API#postSuppImports" target="_blank">POST/v2/supplements/{supplement}/imports</a></li>
+</ul>
+<p>Example JSON request:</p>
+<pre><code language="language-json" class="language-json">{
+   &#34;source&#34;:{
+      &#34;transport&#34;:&#34;snowflake&#34;,
+      &#34;connection&#34;:&#34;same_name_used_in_marketplace_setup&#34;,
+      &#34;tableview&#34;:&#34;same_table_view_name_used_in_marketplace_setup&#34;
+   },
+   &#34;hasHeader&#34;:true,
+   &#34;confirmEmail&#34;:&#34;msmith@example.com&#34;
+}
+</code></pre>
+<h2 is-upgraded>Disable connection</h2>
+<p>If you need to stop the sync, you can disable the connection by clicking <strong>Configure</strong> on the Snowflake card in Cordial (<strong>Integrations &gt; Partners</strong>) and selecting the <strong>Disable</strong> button. When the connection is re-enabled, the job will continue looking for all records that were inserted or updated since the last sync.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations! You have successfully learned how to create a two-way data share between Cordial and Snowflake, unlocking new opportunities for your team.</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>How to set up a Secure Data Share between Cordial and Snowflake</li>
+<li>The data that gets unlocked by integrating Cordial and Snowflake</li>
+<li>How to send queries from Cordial to Snowflake</li>
+<li>How to send data from Snowflake to Cordial for use in marketing campaigns</li>
+</ul>
+<h2 is-upgraded>Related resources</h2>
+<p>Want to learn more about Cordial and Snowflake? Check out the following resources:</p>
+<ul>
+<li><a href="https://app.snowflake.com/marketplace/listing/GZSTZ1D9SIF/cordial-messaging-data-personalized-user-profiles-events" target="_blank">Cordial&#39;s Snowflake Marketplace listing</a></li>
+<li><a href="https://cordial.com/partners/snowflake/" target="_blank">Snowflake/Cordial partner page</a></li>
+<li><a href="https://cordial.com/resources/why-data-sharing-is-important-for-real-time-personalization/" target="_blank">Why data sharing is important for real-time personalization blog</a></li>
+<li><a href="https://support.cordial.com/hc/en-us/articles/9615168271629-Snowflake-Secure-Data-Sharing" target="_blank">Cordial&#39;s Snowflake Secure Data Sharing Knowledge Base article</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

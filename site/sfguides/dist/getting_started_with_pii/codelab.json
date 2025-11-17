@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "getting_started_with_pii",
+  "duration": 45,
+  "title": "Process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security",
+  "summary": "Learn how to process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security",
+  "source": "build_2021_journey_to_processing_pii/build_2021_journey_to_processing_pii.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cybersecurity",
+    "architecture-patterns",
+    "solution-examples",
+    "marketing"
+  ],
+  "tags": [
+    "compliance",
+    "datagovernance",
+    "gettingstarted",
+    "masking",
+    "pii",
+    "rowlevelsecurity",
+    "security",
+    "sensitivedata",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_pii"
+}

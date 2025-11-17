@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "predict_ad_impressions_with_ml_powered_analysis",
+  "duration": 19,
+  "title": "Predict Ad Impressions with ML-Powered Analysis",
+  "summary": "Shows how advertisers can predict ad impressions using ML-powered analysis in Snowflake",
+  "source": "predict_ad_impressions_with_ml_powered_analysis/predict_ad_impressions_with_ml_powered_analysis.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "solution-examples",
+    "marketing"
+  ],
+  "tags": [
+    "adtech",
+    "gettingstarted",
+    "machinelearning",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "predict_ad_impressions_with_ml_powered_analysis"
+}

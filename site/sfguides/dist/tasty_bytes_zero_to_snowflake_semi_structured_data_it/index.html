@@ -1,0 +1,370 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_zero_to_snowflake_semi_structured_data_it"
+                  title="Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Elaborare dati semi-strutturati in Snowflake" duration="1">
+        <p class="image-container"><img src="img/9cdef4f98342f4b0.png"></p>
+<h2 is-upgraded>Panoramica</h2>
+<p>Questo quickstart Powered by Tasty Bytes - Da zero a Snowflake è dedicato all&#39;elaborazione dei dati semi-strutturati.</p>
+<p>Nel corso del quickstart impareremo come elaborare i dati semi-strutturati in Snowflake esaminando il tipo di dati VARIANT, come elaborare i dati semi-strutturati con una combinazione di notazione punto e appiattimento laterale e come creare viste e grafici in Snowsight.</p>
+<p>Per maggiori dettagli sui dati semi-strutturati in Snowflake, consulta la <a href="https://docs.snowflake.com/en/user-guide/semistructured-concepts" target="_blank">documentazione introduttiva sui dati semi-strutturati</a></p>
+<h2 is-upgraded>Prerequisiti</h2>
+<ul>
+<li>Prima di iniziare, assicurati di avere completato il <a href="/guide/tasty_bytes_introduction_it/index.html" target="_blank"><strong>quickstart Introduzione a Tasty Bytes</strong></a>, che spiega nei dettagli come configurare un account di prova e implementare l&#39;ambiente base di Tasty Bytes necessario per completare questo quickstart.</li>
+</ul>
+<h2 is-upgraded>Cosa imparerai</h2>
+<ul>
+<li>Che cos&#39;è il tipo di dati VARIANT</li>
+<li>Come utilizzare la notazione punto per interrogare i dati semi-strutturati</li>
+<li>Come appiattire i dati semi-strutturati</li>
+<li>Come analizzare gli array</li>
+<li>Come creare una vista</li>
+<li>Come creare un grafico a partire da un set di risultati in Snowsight</li>
+</ul>
+<h2 is-upgraded>Cosa realizzerai</h2>
+<ul>
+<li>Un processo di gestione dei dati semi-strutturati end-to-end</li>
+<li>Una vista armonizzata (Silver) e analitica (Gold)</li>
+<li>Un grafico a barre utile per i dirigenti</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creare un foglio di lavoro e copiare il codice SQL" duration="1">
+        <h2 is-upgraded>Panoramica</h2>
+<p>In questo quickstart seguiremo la storia del cliente Tasty Bytes attraverso un foglio di lavoro SQL di Snowsight, utilizzando questa pagina come guida completa di commenti aggiuntivi, immagini e link alla documentazione.</p>
+<p>In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuovo foglio di lavoro, rinominarlo, copiare da GitHub il codice SQL che utilizzeremo in questo quickstart e incollarlo nel foglio di lavoro.</p>
+<h2 is-upgraded>Passaggio 1 - Accedere a Snowflake tramite URL</h2>
+<ul>
+<li>Apri una finestra del browser e inserisci l&#39;URL del tuo account Snowflake</li>
+</ul>
+<h2 is-upgraded>Passaggio 2 - Effettuare l&#39;accesso a Snowflake</h2>
+<ul>
+<li>Accedi al tuo account Snowflake. <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 3 - Accedere ai fogli di lavoro</h2>
+<ul>
+<li>Fai clic sulla scheda Worksheets nella barra di navigazione sulla sinistra. <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 4 - Creare un foglio di lavoro</h2>
+<ul>
+<li>Nella scheda Worksheets, fai clic sul pulsante &#34;+&#34; nell&#39;angolo superiore destro di Snowsight e scegli &#34;SQL Worksheet&#34; <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 5 - Rinominare un foglio di lavoro</h2>
+<ul>
+<li>Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo &#34;Tasty Bytes - Semi-Structured Data&#34;. <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 6 - Accedere al codice SQL di questo quickstart in GitHub</h2>
+<ul>
+<li>Fai clic sul pulsante qui sotto, che ti porterà al file SQL di Tasty Bytes archiviato su GitHub. <a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_semi_structured_data.sql" target="_blank"><paper-button class="colored" raised>tb_zts_semi_structured_data.sql</paper-button></a></li>
+</ul>
+<h2 is-upgraded>Passaggio 7 - Copiare la configurazione SQL da GitHub</h2>
+<ul>
+<li>In GitHub, vai sul lato destro e fai clic su &#34;Copy raw contents&#34;. Tutto il codice SQL necessario verrà copiato nei tuoi Appunti. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Passaggio 8 - Incollare la configurazione SQL da GitHub nel tuo foglio di lavoro Snowflake</h2>
+<ul>
+<li>Torna a Snowsight e al foglio di lavoro che hai appena creato e incolla (<em>CMD + V per Mac o CTRL + V per Windows</em>) il codice che abbiamo appena copiato da GitHub.</li>
+</ul>
+<h2 is-upgraded>Passaggio 9 - Fai clic su Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Profilare i dati semi-strutturati dei menu" duration="1">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Nel ruolo di data engineer di Tasty Bytes, siamo stati incaricati di profilare i dati dei nostri menu, che includono una colonna di dati semi-strutturati. Da questa tabella dei menu dobbiamo produrre una vista del layer analitico che metta a disposizione dei nostri utenti finali i dati relativi alle restrizioni dietetiche e agli ingredienti.</p>
+<h2 is-upgraded>Passaggio 1 - Impostare il contesto ed eseguire query sulla tabella</h2>
+<p>Per iniziare, eseguiamo insieme le prime tre query per:</p>
+<ul>
+<li>Impostare il contesto del ruolo su <code>tasty_data_engineer</code></li>
+<li>Impostare il contesto del warehouse su <code>tasty_de_wh</code></li>
+<li>Produrre un set di risultati <a href="https://docs.snowflake.com/en/sql-reference/constructs/top_n" target="_blank">TOP</a> 10 dalla tabella <code>raw_pos.menu</code></li>
+</ul>
+<pre><code>USE ROLE tasty_data_engineer; 
+USE WAREHOUSE tasty_de_wh;
+
+SELECT TOP 10 m.truck_brand_name, m.menu_type, m.menu_item_name, m.menu_item_health_metrics_obj FROM frostbyte_tasty_bytes.raw_pos.menu m; 
+</code></pre>
+<p class="image-container"><img src="img/c6e9b80054add2f0.png"></p>
+<p>Nell&#39;output ottenuto, vediamo che la colonna <code>menu_item_health_metrics_obj</code> riporta i dati semi-strutturati che contengono le metriche che dobbiamo fornire a valle.</p>
+<p>Facendo clic in una delle celle di questa colonna, vedremo che Snowsight espande automaticamente il pannello delle statistiche per fornirci una visuale migliore del contenuto.</p>
+<p class="image-container"><img src="img/d0fb05606dbae142.png"></p>
+<h2 is-upgraded>Passaggio 2 - Esplorare la colonna di dati semi-strutturati</h2>
+<p>Per approfondire il modo in cui questa colonna è definita in Snowflake, esegui la prossima query, in cui utilizziamo <a href="https://docs.snowflake.com/en/sql-reference/sql/show-columns" target="_blank">SHOW COLUMNS</a> per esplorare i tipi di dati contenuti nella tabella <code>menu</code>.</p>
+<pre><code>SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
+</code></pre>
+<p class="image-container"><img src="img/a66f703ce0b39248.png"></p>
+<p>Esaminando il set di risultati, vediamo che i dati in <code>menu_item_health_metrics_obj</code> sono di tipo <a href="https://docs.snowflake.com/en/sql-reference/data-types-semistructured" target="_blank">VARIANT</a>.</p>
+<aside class="special"><p> Per dati generalmente regolari che utilizzano solo tipi di dati nativi del formato semi-strutturato in uso (ad es. string e integer per il formato JSON), i requisiti di storage e le prestazioni delle query per le operazioni sui dati relazionali e sui dati in una colonna VARIANT sono molto simili.</p>
+</aside>
+<h2 is-upgraded>Passaggio 3 - Attraversare i dati semi-strutturati utilizzando la notazione punto</h2>
+<p>Abbiamo visto che la colonna <code>menu_item_health_metrics_obj</code> includeva <code>menu_item_id</code> insieme ai dati più nidificati degli ingredienti e delle restrizioni dietetiche che ci servono.</p>
+<p>Esegui la prossima query, in cui iniziamo a utilizzare la <a href="https://docs.snowflake.com/en/user-guide/querying-semistructured#dot-notation" target="_blank">notazione punto</a> per attraversare i dati semi-strutturati.</p>
+<pre><code>SELECT 
+    m.menu_item_health_metrics_obj:menu_item_id AS menu_item_id,
+    m.menu_item_health_metrics_obj:menu_item_health_metrics AS menu_item_health_metrics
+FROM frostbyte_tasty_bytes.raw_pos.menu m;
+</code></pre>
+<p class="image-container"><img src="img/1b7500f1e4614e67.png"></p>
+<p>Utilizzando la notazione punto siamo riusciti a estrarre completamente <code>menu_item_id</code>, ma a quanto pare rimangono ancora altri oggetti semi-strutturati nell&#39;output della colonna <code>menu_item_health_metrics</code>.</p>
+<p>Facciamo nuovamente clic in una delle celle di questa colonna per esaminarla nei dettagli.</p>
+<p class="image-container"><img src="img/f65b844b229498c7.png"></p>
+<p><strong>Stiamo facendo progressi!</strong> Nella prossima sezione vedremo come possiamo elaborare ulteriormente <code>menu_item_health_metrics</code> utilizzando altre funzioni di Snowflake.</p>
+<h2 is-upgraded>Passaggio 4 - Fai clic su Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Appiattire i dati semi-strutturati" duration="2">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Dopo avere visto come interrogare facilmente i dati semi-strutturati contenuti in una colonna Variant utilizzando la notazione punto, il nostro data engineer di Tasty Bytes è sulla buona strada per fornire ai suoi stakeholder interni i dati che hanno richiesto.</p>
+<p>In questa sezione elaboreremo ulteriormente i dati semi-strutturati per soddisfare i requisiti.</p>
+<h2 is-upgraded>Passaggio 1 - Introduzione all&#39;appiattimento laterale</h2>
+<p>Per estrarre dalla colonna <code>menu_item_health_metrics_obj</code> i dati richiesti dagli utenti a valle, esegui la prossima query, che utilizza la funzionalità di notazione punto che abbiamo appena visto insieme alle funzioni <a href="https://docs.snowflake.com/en/sql-reference/functions/flatten" target="_blank">FLATTEN</a> e <a href="https://docs.snowflake.com/en/sql-reference/constructs/join-lateral" target="_blank">LATERAL JOIN</a> di Snowflake per fornirci il primo array <code>ingredient</code> che ci è stato richiesto.</p>
+<aside class="special"><p><strong>Flatten:</strong> una funzione per tabelle che produce una vista laterale a partire da una colonna VARIANT, OBJECT o ARRAY. La funzione Flatten può essere utilizzata per convertire dati semi-strutturati in una rappresentazione relazionale.</p>
+<p><strong>Lateral Join:</strong> a differenza dell&#39;output di un join non laterale, l&#39;output di un join laterale include solo le righe generate dalla vista in linea. Non è necessario fare il join delle righe sul lato sinistro con quelle sul lato destro, poiché le righe sul lato sinistro sono già state incluse passandole alla vista in linea.</p>
+</aside>
+<pre><code>SELECT 
+    m.menu_item_name,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+</code></pre>
+<p class="image-container"><img src="img/a9417cebf41a91f2.png"></p>
+<h2 is-upgraded>Passaggio 2 - Esplorare una funzione per array</h2>
+<p>Prima di estrarre i dati sulle restrizioni dietetiche richiesti, esegui la prossima query, in cui viene evidenziata una funzione per array di Snowflake che esplora la colonna <code>ingredients</code> alla ricerca di qualsiasi <code>menu_item_name</code> che contiene &#34;Lettuce&#34; utilizzando <a href="https://docs.snowflake.com/en/sql-reference/functions/array_contains" target="_blank">ARRAY_CONTAINS</a>.</p>
+<pre><code>SELECT 
+    m.menu_item_name,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj
+WHERE ARRAY_CONTAINS(&#39;Lettuce&#39;::VARIANT, obj.value:&#34;ingredients&#34;::VARIANT);
+</code></pre>
+<p class="image-container"><img src="img/e81ca6268f120579.png"></p>
+<p>Osservando l&#39;output, vediamo che numerose voci di menu contengono &#34;Lettuce&#34;. Questo tipo di analisi potrebbe essere molto utile ai responsabili degli acquisti in caso di richiami di prodotti alimentari nelle città e nei Paesi che supportiamo.</p>
+<h2 is-upgraded>Passaggio 3 - Strutturare i dati semi-strutturati su larga scala</h2>
+<p>Ora che abbiamo visto che tipo di valore possiamo già offrire alla nostra organizzazione, eseguiamo l&#39;ultima query di questa sezione.</p>
+<p>Questa query utilizza la notazione punto e la combinazione delle funzioni Lateral Join e Flatten Table per fornire il risultato che ci era stato chiesto di produrre.</p>
+<pre><code>SELECT 
+    m.menu_item_health_metrics_obj:menu_item_id::integer AS menu_item_id,
+    m.menu_item_name,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients,
+    obj.value:&#34;is_healthy_flag&#34;::VARCHAR(1) AS is_healthy_flag,
+    obj.value:&#34;is_gluten_free_flag&#34;::VARCHAR(1) AS is_gluten_free_flag,
+    obj.value:&#34;is_dairy_free_flag&#34;::VARCHAR(1) AS is_dairy_free_flag,
+    obj.value:&#34;is_nut_free_flag&#34;::VARCHAR(1) AS is_nut_free_flag
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+</code></pre>
+<p class="image-container"><img src="img/4706804d69f1ecd6.png"></p>
+<p><strong>Fantastico!</strong> Questo output soddisfa esattamente i requisiti dei nostri stakeholder. Nella prossima sezione vedremo come promuovere questa query al layer analitico in cui potranno accedervi.</p>
+<h2 is-upgraded>Passaggio 4 - Fai clic su Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creare viste strutturate dei dati semi-strutturati" duration="2">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Nella sezione precedente abbiamo creato una query che fornisce esattamente l&#39;output richiesto dai nostri utenti finali utilizzando una serie di funzionalità di Snowflake per i dati semi-strutturati. Ora vedremo il processo da seguire per promuovere questa query dal layer dei dati grezzi a quello armonizzato e infine a quello analitico, in cui gli utenti finali dispongono dei privilegi necessari per leggere i risultati.</p>
+<p><strong>Nota:</strong> per chi ha più familiarità con i modelli Bronze, Silver e Gold, il layer dei dati grezzi corrisponde a Bronze, il layer armonizzato a Silver e il layer analitico a Gold.</p>
+<h2 is-upgraded>Passaggio 1 - Creare la vista armonizzata utilizzando il codice SQL per l&#39;appiattimento dei dati semi-strutturati</h2>
+<p>Partendo dalla stessa query con cui abbiamo concluso la sezione precedente, esegui la prossima query, che contiene questo codice SQL più tutte le altre colonne della tabella <code>menu</code> già strutturate.</p>
+<p>In questa query utilizziamo <a href="https://docs.snowflake.com/en/sql-reference/sql/create-view" target="_blank">CREATE VIEW</a> nello schema armonizzato per incapsulare la logica di elaborazione dei dati semi-strutturati e le colonne aggiuntive in una tabella.</p>
+<aside class="special"><p> Una vista consente di accedere al risultato di una query come se fosse una tabella. Le viste possono essere utilizzate per vari scopi, tra cui combinare, separare e proteggere i dati.</p>
+</aside>
+<pre><code>CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.menu_v
+    AS
+SELECT 
+    m.menu_id,
+    m.menu_type_id,
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_health_metrics_obj:menu_item_id::integer AS menu_item_id,
+    m.menu_item_name,
+    m.item_category,
+    m.item_subcategory,
+    m.cost_of_goods_usd,
+    m.sale_price_usd,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients,
+    obj.value:&#34;is_healthy_flag&#34;::VARCHAR(1) AS is_healthy_flag,
+    obj.value:&#34;is_gluten_free_flag&#34;::VARCHAR(1) AS is_gluten_free_flag,
+    obj.value:&#34;is_dairy_free_flag&#34;::VARCHAR(1) AS is_dairy_free_flag,
+    obj.value:&#34;is_nut_free_flag&#34;::VARCHAR(1) AS is_nut_free_flag
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+</code></pre>
+<p class="image-container"><img src="img/36149b0169ddd359.png"></p>
+<p>Ora che abbiamo creato la vista <code>harmonized.menu_v</code>, possiamo interrogarla direttamente senza ricorrere al codice SQL più complesso che abbiamo utilizzato al suo interno. Tuttavia, poiché i nostri stakeholder accedono ai dati dal layer analitico, eseguiamo il prossimo passaggio per trasferire la vista a tale layer.</p>
+<h2 is-upgraded>Passaggio 2 - Promuovere facilmente dal layer armonizzato al layer analitico</h2>
+<p>Facendo riferimento a <code>harmonized.menu_v</code>, ora esegui la prossima query per creare la vista <code>analytics.menu_v</code>, che inizierà immediatamente a fornire valore a valle.</p>
+<p>In questa query vediamo alcune nuove funzioni che non abbiamo ancora trattato. Per prima cosa aggiungiamo un commento (<a href="https://docs.snowflake.com/en/sql-reference/sql/comment" target="_blank">COMMENT</a>), che può essere visualizzato nei comandi <a href="https://docs.snowflake.com/en/sql-reference/sql/show" target="_blank">SHOW VIEWS</a> o nell&#39;interfaccia Snowsight per documentare ciò che un utente potrebbe vedere quando interroga questa vista.</p>
+<p>Utilizziamo inoltre i parametri <a href="https://docs.snowflake.com/en/sql-reference/sql/select#parameters" target="_blank">SELECT * EXCLUDE e RENAME</a>, che possono facilitare molto il compito degli sviluppatori SQL riducendo la complessità della definizione di una query o di una vista.</p>
+<aside class="special"><p><strong>Exclude:</strong> quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.*), specifica le colonne da escludere dai risultati.</p>
+<p><strong>Rename:</strong> quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.*), specifica gli alias delle colonne da utilizzare nei risultati.</p>
+</aside>
+<p class="image-container"><img src="img/6423766894a12d52.png"></p>
+<h2 is-upgraded>Passaggio 3 - Fai clic su Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Analizzare dati semi-strutturati elaborati in Snowsight" duration="2">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Con la vista menu disponibile nel layer analitico, eseguiamo alcune query su questa vista che forniremo ai nostri utenti finali e che mostrano come Snowflake consente di ottenere l&#39;esperienza di una query relazionale su dati semi-strutturati senza dover creare copie aggiuntive o eseguire elaborazioni complesse.</p>
+<h2 is-upgraded>Passaggio 1 - Analizzare gli array</h2>
+<p>Nella sezione precedente abbiamo visto la colonna <code>ingredients</code> come risultato di una query, ma ora è disponibile senza bisogno di utilizzare la notazione punto nella vista <code>analytics.menu_v</code>.</p>
+<p>Con questa vista, ora esegui la prossima query, che sfrutta altre due funzioni per array di Snowflake, <a href="https://docs.snowflake.com/en/sql-reference/functions/array_intersection" target="_blank">ARRAY_INTERSECTION</a> e <a href="https://docs.snowflake.com/en/sql-reference/functions/arrays_overlap" target="_blank">ARRAYS_OVERLAP</a>, per vedere quali delle voci di menu che non sono bevande si sovrappongono per ciascuno dei menu dei vari marchi dei food truck.</p>
+<pre><code>SELECT 
+    m1.menu_type,
+    m1.menu_item_name,
+    m2.menu_type AS overlap_menu_type,
+    m2.menu_item_name AS overlap_menu_item_name,
+    ARRAY_INTERSECTION(m1.ingredients, m2.ingredients) AS overlapping_ingredients
+FROM frostbyte_tasty_bytes.analytics.menu_v m1
+JOIN frostbyte_tasty_bytes.analytics.menu_v m2
+    ON m1.menu_item_id &lt;&gt; m2.menu_item_id -- avoid joining the same menu item to itself
+    AND m1.menu_type &lt;&gt; m2.menu_type 
+WHERE 1=1
+    AND m1.item_category &lt;&gt; &#39;Beverage&#39; -- remove beverages
+    AND m2.item_category &lt;&gt; &#39;Beverage&#39; -- remove beverages
+    AND ARRAYS_OVERLAP(m1.ingredients, m2.ingredients) -- evaluates to TRUE if one ingredient is in both arrays
+ORDER BY m1.menu_type;
+</code></pre>
+<p class="image-container"><img src="img/7db043d4ac309c42.png"></p>
+<p>Di nuovo, utilizzando esattamente la vista che abbiamo creato, questo tipo di query potrebbe fornire valore ai nostri operatori di food truck in situazioni reali quando lavorano con il reparto acquisti per prevedere e ordinare gli ingredienti necessari ogni settimana.</p>
+<h2 is-upgraded>Passaggio 2 - Fornire metriche ai dirigenti</h2>
+<p>Ora vediamo come aiutare i dirigenti di Tasty Bytes a prendere decisioni sui menu basate sui dati con metriche di alto livello sulle restrizioni dietetiche attualmente utilizzate per i nostri diversi marchi.</p>
+<p>Esegui la prossima query, che utilizza istruzioni <a href="https://docs.snowflake.com/en/sql-reference/functions/count" target="_blank">COUNT</a> e <a href="https://docs.snowflake.com/en/sql-reference/functions/sum" target="_blank">SUM</a> e istruzioni <a href="https://docs.snowflake.com/en/sql-reference/functions/case" target="_blank">CASE</a> condizionali per aggregare le metriche richieste provenienti dalla vista <code>analytics.menu_v</code>.</p>
+<pre><code>SELECT
+    COUNT(DISTINCT menu_item_id) AS total_menu_items,
+    SUM(CASE WHEN is_healthy_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS healthy_item_count,
+    SUM(CASE WHEN is_gluten_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS gluten_free_item_count,
+    SUM(CASE WHEN is_dairy_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS dairy_free_item_count,
+    SUM(CASE WHEN is_nut_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS nut_free_item_count
+FROM frostbyte_tasty_bytes.analytics.menu_v m;
+</code></pre>
+<p class="image-container"><img src="img/9b9aa6e7a1f3ee4b.png"></p>
+<p>Con l&#39;output che abbiamo appena ricevuto, siamo passati da una tabella grezza contenente dati semi-strutturati a un&#39;unica riga aggregata a cui chiunque nella nostra organizzazione può accedere facilmente, per potenziare Tasty Bytes e renderla più orientata ai dati.</p>
+<h2 is-upgraded>Passaggio 3 - Trasformare i risultati in grafici</h2>
+<p>Dato che alcuni dei nostri dirigenti di Tasty Bytes preferiscono rappresentazioni visive dei dati, vediamo ora come è facile trasformare i risultati tabellari in grafici visivi facili da comprendere all&#39;interno di Snowsight.</p>
+<p>Esegui la prossima query, che aggiunge filtri per tre dei nostri marchi al codice SQL che abbiamo eseguito in precedenza.</p>
+<pre><code>SELECT
+    m.brand_name,
+    SUM(CASE WHEN is_gluten_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS gluten_free_item_count,
+    SUM(CASE WHEN is_dairy_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS dairy_free_item_count,
+    SUM(CASE WHEN is_nut_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS nut_free_item_count
+FROM frostbyte_tasty_bytes.analytics.menu_v m
+WHERE m.brand_name IN  (&#39;Plant Palace&#39;, &#39;Peking Truck&#39;,&#39;Revenge of the Curds&#39;)
+GROUP BY m.brand_name;
+</code></pre>
+<p class="image-container"><img src="img/3d7b44629b2a0fd.png"></p>
+<p>Di default, Snowsight restituisce i risultati delle query sotto forma di tabelle. Tuttavia, una potente funzionalità di Snowsight che non abbiamo ancora trattato è l&#39;<a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations#using-charts" target="_blank">utilizzo dei grafici</a>.</p>
+<p>Ora segui le frecce nella schermata qui sotto per creare un grafico a barre che mette a confronto le voci di menu per determinate restrizioni dietetiche dei diversi marchi di food truck.</p>
+<p class="image-container"><img src="img/ae788e60462c4bbe.png"></p>
+<p>Per completare questo quickstart, dobbiamo evidenziare la facilità con cui un dirigente di Tasty Bytes potrebbe svolgere questo tipo di analisi autonomamente, senza bisogno di sapere nulla dell&#39;elaborazione dei dati semi-strutturati che abbiamo incapsulato nelle nostre viste. In questo modo possiamo essere sicuri di avere contribuito alla democratizzazione dei dati all&#39;interno di Tasty Bytes.</p>
+<h2 is-upgraded>Passaggio 4 - Fai clic su Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusione e fasi successive" duration="1">
+        <h2 is-upgraded>Conclusione</h2>
+<p>Ottimo lavoro! Hai completato il quickstart Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati.</p>
+<p>In questo quickstart hai:</p>
+<ul>
+<li>Imparato che cos&#39;è il tipo di dati VARIANT</li>
+<li>Utilizzato la notazione punto per interrogare i dati semi-strutturati</li>
+<li>Appiattito dati semi-strutturati</li>
+<li>Analizzato array</li>
+<li>Creato due viste</li>
+<li>Creato un grafico a partire da un set di risultati in Snowsight</li>
+</ul>
+<p>Se desideri ripetere questo quickstart, usa gli script di ripristino alla fine del foglio di lavoro associato.</p>
+<h2 is-upgraded>Fasi successive</h2>
+<p>Per continuare il tuo percorso nel Data Cloud Snowflake, visita il link qui sotto per vedere tutti gli altri quickstart Powered by Tasty Bytes disponibili.</p>
+<ul>
+<li><h2 is-upgraded><a href="/guide/tasty_bytes_introduction_it/index.html#3" target="_blank">Quickstart Powered by Tasty Bytes - Sommario</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

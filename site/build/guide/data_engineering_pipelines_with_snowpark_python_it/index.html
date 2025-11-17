@@ -1,0 +1,712 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Pipeline di data engineering con Snowpark Python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_pipelines_with_snowpark_python_it"
+                  title="Pipeline di data engineering con Snowpark Python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Panoramica" duration="15">
+        <p>&#34;I data engineer si concentrano principalmente sulla creazione e la manutenzione delle pipeline di dati, che trasportano i dati attraverso vari passaggi per restituirli in uno stato utilizzabile... Il processo di data engineering include tutto il lavoro necessario per creare <strong>pipeline di dati</strong> che automatizzano il trasferimento di dati da un luogo all&#39;altro e li trasformano in un formato specifico per un determinato tipo di analisi. In questo senso, il data engineering non è un compito che si svolge una sola volta. È una procedura che continua nel tempo e comporta la raccolta, la preparazione, la trasformazione e la distribuzione dei dati. Una pipeline di dati aiuta ad automatizzare queste attività perché possano essere ripetute in modo affidabile. È una procedura più che una specifica tecnologia.&#34; (Da Cloud Data Engineering for Dummies, Snowflake Special Edition)</p>
+<p>Ti interessa sfruttare la potenza di Snowpark Python per creare pipeline di data engineering? Allora questo quickstart fa al caso tuo! Qui ci concentreremo sulla creazione di pipeline di data engineering con Python, non sulla data science. Per alcuni esempi di come utilizzare Snowpark Python per la data science, prova il nostro quickstart <a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html?index=..%2F..index#0" target="_blank">Machine Learning with Snowpark Python: - Credit Card Approval Prediction</a>.</p>
+<p>Questo quickstart tratterà molti argomenti e al termine avrai creato una solida pipeline di data engineering utilizzando le stored procedure di Snowpark Python. La pipeline elaborerà i dati in modo incrementale, sarà orchestrata con task di Snowflake e sarà distribuita tramite una pipeline CI/CD. Inoltre imparerai come utilizzare il nuovo strumento CLI per sviluppatori e l&#39;estensione Visual Studio Code di Snowflake. Ecco una rapida panoramica grafica:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<p>Allaccia le cinture e preparati a partire!</p>
+<aside class="warning"><p><strong>Nota</strong>: al 1 febbraio 2023, sia l&#39;<a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">estensione Visual Studio Code di Snowflake</a> che lo <a href="https://github.com/Snowflake-Labs/snowcli" target="_blank">strumento SnowCLI</a> sono ancora in preview.</p>
+</aside>
+<h2 is-upgraded>Prerequisiti</h2>
+<ul>
+<li>Familiarità con Python</li>
+<li>Familiarità con la DataFrame API</li>
+<li>Familiarità con Snowflake</li>
+<li>Familiarità con i repository Git e con GitHub</li>
+</ul>
+<h2 is-upgraded>Cosa imparerai</h2>
+<p>Nel corso di questo quickstart esplorerai le seguenti caratteristiche di Snowflake:</p>
+<ul>
+<li>Formato di tabella di Snowflake</li>
+<li>Ingestion di dati con COPY</li>
+<li>Inferenza dello schema</li>
+<li>Condivisione dei dati/Marketplace (invece di ETL)</li>
+<li>Stream per l&#39;elaborazione incrementale (CDC)</li>
+<li>Stream sulle viste</li>
+<li>UDF Python (con pacchetti di terze parti)</li>
+<li>Stored procedure di Python</li>
+<li>Snowpark DataFrame API</li>
+<li>Programmabilità di Snowpark Python</li>
+<li>Elasticità dei warehouse (scalabilità dinamica)</li>
+<li>Estensione nativa Visual Studio Code di Snowflake (public preview, integrazione Git)</li>
+<li>SnowCLI (public preview)</li>
+<li>Task (con attivazione tramite stream)</li>
+<li>Osservabilità dei task</li>
+<li>Integrazione delle GitHub Actions (CI/CD)</li>
+</ul>
+<h2 is-upgraded>Cosa ti serve</h2>
+<p>Prima di iniziare dovrai disporre di:</p>
+<ul>
+<li>Snowflake <ul>
+<li><strong>Un account Snowflake</strong></li>
+<li><strong>Un utente Snowflake creato con autorizzazioni ACCOUNTADMIN</strong>. Utilizzeremo questo utente per configurare l&#39;ambiente in Snowflake.</li>
+<li><strong>Termini e condizioni di Anaconda accettati</strong>. Consulta la sezione Getting Started della <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started" target="_blank">documentazione sull&#39;uso di pacchetti di terze parti</a>.</li>
+</ul>
+</li>
+<li>Miniconda <ul>
+<li><strong>Miniconda installato sul tuo computer</strong>. Scarica e installa <a href="https://conda.io/miniconda.html" target="_blank">Miniconda</a>. In alternativa, puoi usare qualsiasi altro ambiente Python con Python 3.8.</li>
+</ul>
+</li>
+<li>SnowSQL <ul>
+<li><strong>SnowSQL installato sul tuo computer</strong>. Vai alla <a href="https://developers.snowflake.com/snowsql/" target="_blank">pagina di download di SnowSQL</a> e consulta la pagina <a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">Installare SnowSQL</a> per maggiori informazioni.</li>
+</ul>
+</li>
+<li>Git <ul>
+<li><strong>Git installato sul tuo computer</strong>. Per maggiori informazioni, consulta la pagina <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Per iniziare - Installazione di Git</a>.</li>
+<li><strong>Git configurato con il tuo nome utente e indirizzo email</strong>. Se non l&#39;hai ancora fatto, <a href="https://docs.github.com/en/get-started/getting-started-with-git/setting-your-username-in-git#setting-your-git-username-for-every-repository-on-your-computer" target="_blank">imposta il tuo nome utente Git</a> e <a href="https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-email-preferences/setting-your-commit-email-address#setting-your-email-address-for-every-repository-on-your-computer" target="_blank">imposta il tuo indirizzo email Git</a> sul tuo computer locale.</li>
+</ul>
+</li>
+<li>Visual Studio Code con le estensioni richieste <ul>
+<li><strong>Visual Studio Code installato sul tuo computer</strong>. Vai alla home page di <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a> per il link alla pagina di download.</li>
+<li><strong>Estensione Python installata</strong>. Cerca e installa l&#39;estensione &#34;Python&#34; (fornita da Microsoft) nel riquadro <em>Extensions</em> in VS Code.</li>
+<li><strong>Estensione Snowflake installata</strong>. Cerca e installa l&#39;estensione &#34;Snowflake&#34; (fornita da Snowflake) nel riquadro <em>Extensions</em> in VS Code.</li>
+</ul>
+</li>
+<li>Account GitHub con un fork del repository del workshop clonato localmente <ul>
+<li><strong>Un account GitHub</strong>. Se non hai già un account GitHub, puoi crearne uno gratuitamente. Visita la <a href="https://github.com/signup" target="_blank">pagina di registrazione di GitHub</a> per iniziare.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Cosa realizzerai</h2>
+<p>Nel corso di questo quickstart eseguirai le seguenti operazioni:</p>
+<ul>
+<li>Caricare i dati Parquet in Snowflake utilizzando l&#39;inferenza dello schema</li>
+<li>Configurare l&#39;accesso ai dati del Marketplace Snowflake</li>
+<li>Creare un&#39;UDF Python per convertire la temperatura</li>
+<li>Creare una pipeline di data engineering con stored procedure di Python per elaborare i dati in modo incrementale</li>
+<li>Orchestrare le pipeline con i task</li>
+<li>Monitorare le pipeline con Snowsight</li>
+<li>Distribuire le stored procedure di Snowpark Python tramite una pipeline CI/CD</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configurare il quickstart" duration="10">
+        <h2 is-upgraded>Creare e clonare un fork del repository per il quickstart</h2>
+<p>Dovrai creare un fork del repository per questo quickstart nel tuo account GitHub. Visita il <a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python" target="_blank">repository Data Engineering Pipelines with Snowpark Python su GitHub</a> e fai clic sul pulsante &#34;Fork&#34; in alto a destra. Completa gli eventuali campi richiesti e fai clic su &#34;Create Fork&#34;.</p>
+<p>Per impostazione predefinita le GitHub Actions disabilitano qualsiasi flusso di lavoro (o pipeline CI/CD) definito nel fork del repository. Questo repository contiene un flusso di lavoro per distribuire le tue UDF e stored procedure di Snowpark Python, che utilizzeremo più avanti. Per il momento, abilita questo flusso di lavoro aprendo il tuo fork del repository in GitHub, facendo clic sulla scheda <code>Actions</code> al centro nella parte superiore della pagina e poi facendo clic sul pulsante verde <code>I understand my workflows, go ahead and enable them</code>.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/2efe7bef427192a5.png"></p>
+<p>A questo punto devi clonare il nuovo fork del repository sul tuo computer locale. Per i dettagli sulla connessione del nuovo repository Git, apri il repository, fai clic sull&#39;icona verde &#34;Code&#34; nella parte superiore della pagina e copia il link &#34;HTTPS&#34;.</p>
+<p class="image-container"><img style="width: 300.00px" src="img/e1db21d0c6906488.png"></p>
+<p>Utilizza il link in VS Code per clonare il repository sul tuo computer. Per maggiori informazioni, segui le istruzioni in <a href="https://learn.microsoft.com/it-it/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository" target="_blank">Clonare e usare un repository GitHub in Visual Studio Code</a>. Puoi anche clonare il repository dalla riga di comando, se per te è più semplice, eseguendo i seguenti comandi:</p>
+<pre><code language="language-bash" class="language-bash">git clone &lt;your-forked-repo-url&gt;
+cd sfguide-data-engineering-with-snowpark-python/
+</code></pre>
+<p>Una volta clonato il fork del repository sul tuo computer locale, apri la cartella con VS Code.</p>
+<h2 is-upgraded>Configurare le credenziali</h2>
+<p>Per questo quickstart non utilizzeremo direttamente <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">il client della riga di comando SnowSQL</a>, ma memorizzeremo i dettagli della connessione a Snowflake nel file di configurazione di SnowSQL in <code>~/.snowsql/config</code>. Se il file di configurazione di SnowSQL non esiste, creane uno vuoto.</p>
+<p>Crea una configurazione SnowSQL per questo workshop aggiungendo la seguente sezione al file <code>~/.snowsql/config</code> (sostituendo myaccount, myusername e mypassword con il tuo account, il tuo nome utente e la tua password):</p>
+<pre><code>[connections.dev]
+accountname = myaccount
+username = myusername
+password = mypassword
+rolename = HOL_ROLE
+warehousename = HOL_WH
+dbname = HOL_DB
+</code></pre>
+<p><strong>Nota:</strong> lo strumento SnowCLI (e per estensione questo quickstart) attualmente non può essere utilizzato con l&#39;autenticazione a coppia di chiavi. Recupera semplicemente il tuo nome utente e la tua password dal file di configurazione condiviso di SnowSQL.</p>
+<h2 is-upgraded>Creare l&#39;ambiente Anaconda</h2>
+<p>Crea e attiva un ambiente conda per questo workshop utilizzando il file <code>conda_env.yml</code> fornito a questo scopo. Esegui questi comandi da una finestra di Terminale nella directory root del tuo fork del repository locale.</p>
+<pre><code language="language-bash" class="language-bash">conda env create -f conda_env.yml
+conda activate pysnowpark
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configurare Snowflake" duration="10">
+        <h2 is-upgraded>Estensioni Snowflake per VS Code</h2>
+<p>Puoi eseguire query SQL sui dati contenuti in Snowflake in molti modi diversi (tramite l&#39;interfaccia utente Snowsight, SnowSQL, ecc.), ma per questo quickstart utilizzeremo l&#39;estensione Snowflake per VS Code. Per una breve panoramica dell&#39;estensione nativa di Snowflake per VS Code, consulta la <a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">pagina dell&#39;estensione VS Code nel Marketplace Snowflake</a>.</p>
+<h2 is-upgraded>Eseguire lo script</h2>
+<p>Per configurare tutti gli oggetti che ci serviranno in Snowflake per questo quickstart, esegui lo script <code>steps/01_setup_snowflake.sql</code>.</p>
+<p>Per iniziare, fai clic sull&#39;estensione Snowflake nella barra di navigazione sulla sinistra in VS Code. Quindi effettua il login al tuo account Snowflake con un utente dotato di autorizzazioni ACCOUNTADMIN. Una volta effettuato l&#39;accesso a Snowflake, apri lo script <code>steps/01_setup_snowflake.sql</code> in VS Code tornando al browser dei file nella barra di navigazione sulla sinistra.</p>
+<p>Per eseguire tutte le query di questo script, utilizza il pulsante &#34;Execute All Statements&#34; nell&#39;angolo superiore destro della finestra dell&#39;editor. In alternativa, se desideri eseguire le query in blocchi separati, puoi evidenziare quelle che vuoi eseguire e premere CMD/CTRL+Invio.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Caricare i dati grezzi" duration="10">
+        <p>In questo passaggio caricheremo i dati grezzi sui POS e sulla fidelizzazione dei clienti di Tasty Bytes dai file Parquet non elaborati in <code>s3://sfquickstarts/data-engineering-with-snowpark-python/</code> negli schemi <code>RAW_POS</code> e <code>RAW_CUSTOMER</code> in Snowflake. Orchestrerai questo processo dal tuo computer in Python utilizzando la Snowpark API per Python. Per contestualizzare, siamo al passaggio <strong>2</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Eseguire lo script</h2>
+<p>Per caricare i dati grezzi, esegui lo script <code>steps/02_load_raw.py</code>. Puoi farlo in diversi modi in VS Code, da un Terminale o direttamente tramite VS Code. Per questa demo devi eseguire gli script Python dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps
+python 02_load_raw.py
+</code></pre>
+<p>Mentre viene eseguito questo script, aprilo in VS Code e continua a leggere questa pagina per capire che cosa sta succedendo.</p>
+<h2 is-upgraded>Eseguire Snowpark Python localmente</h2>
+<p>In questo passaggio eseguirai il codice Snowpark Python localmente sul tuo computer. In fondo allo script compare un blocco di codice utilizzato per il debug locale (sotto il blocco <code>if __name__ == "__main__":</code>):</p>
+<pre><code language="language-python" class="language-python"># For local debugging
+if __name__ == &#34;__main__&#34;: 
+    # Add the utils package to our path and import the snowpark_utils function 
+    import os, sys
+    current_dir = os.getcwd() parent_dir = os.path.dirname(current_dir) sys.path.append(parent_dir)
+
+    from utils import snowpark_utils
+    session = snowpark_utils.get_snowpark_session()
+
+    load_all_raw_tables(session)
+#    validate_raw_tables(session)
+
+    session.close()
+</code></pre>
+<p>Ci sono alcune cose da notare a questo punto. Per prima cosa, la sessione Snowpark viene creata nel modulo <code>utils/snowpark_utils.py</code>. Dispone di vari metodi per ottenere le tue credenziali e per questo quickstart le recupera dal file di configurazione di SnowSQL in <code>~/.snowsql/config</code>.</p>
+<p>Quindi, dopo avere ottenuto la sessione Snowpark, richiama il metodo <code>load_all_raw_tables(session)</code> che si occupa delle operazioni più impegnative. Nelle prossime sezioni evidenzieremo i passaggi più importanti.</p>
+<p>Infine, quasi tutti gli script Python in questo quickstart includono un blocco di debug locale. Più avanti creeremo stored procedure e UDF di Snowpark Python e tali script Python includeranno un blocco simile, quindi è importante capire questo schema.</p>
+<h2 is-upgraded>Visualizzare le operazioni effettuate in Snowflake</h2>
+<p><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history" target="_blank">Query History</a> in Snowflake è una funzionalità molto potente che registra ogni query eseguita sul tuo account Snowflake, indipendentemente dallo strumento o dal processo che l&#39;ha avviata. Questo è particolarmente utile quando si lavora con API e strumenti client.</p>
+<p>Lo script Python che hai appena eseguito ha svolto alcune operazioni localmente, limitandosi in pratica a orchestrare il processo eseguendo un loop su ogni tabella e inviare il comando di caricamento dei dati a Snowflake. Ma tutte le operazioni più impegnative sono state eseguite all&#39;interno di Snowflake. Questo trasferimento delle operazioni è un&#39;importante caratteristica della Snowpark API, che consente di sfruttare la scalabilità e la potenza di calcolo di Snowflake.</p>
+<p>Effettua l&#39;accesso al tuo account Snowflake e dai una rapida occhiata al codice SQL generato dalla Snowpark API. Questo ti aiuterà a comprendere meglio le attività svolte dall&#39;API e a eseguire le eventuali operazioni di debug se dovessero verificarsi problemi.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/cc5b2beff49c0878.png"></p>
+<h2 is-upgraded>Inferenza dello schema</h2>
+<p>Una funzionalità molto utile in Snowflake è la possibilità di dedurre lo schema dei file con cui si desidera lavorare. In SQL, per farlo si utilizza la funzione <a href="https://docs.snowflake.com/en/sql-reference/functions/infer_schema.html" target="_blank"><code>INFER_SCHEMA()</code></a>. La Snowpark API per Python lo fa automaticamente quando richiami il metodo <code>session.read()</code>. Questo è il frammento di codice:</p>
+<pre><code language="language-python" class="language-python">    # we can infer schema using the parquet read option
+    df = session.read.option(&#34;compression&#34;, &#34;snappy&#34;) \
+                            .parquet(location)
+</code></pre>
+<h2 is-upgraded>Ingestion di dati con COPY</h2>
+<p>Per caricare i dati in una tabella Snowflake utilizzeremo il metodo <code>copy_into_table()</code> su un DataFrame. Questo metodo crea la tabella di destinazione in Snowflake utilizzando lo schema dedotto (se non esiste) e poi richiama il <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html" target="_blank">comando <code>COPY INTO &lt;table&gt;</code></a> altamente ottimizzato di Snowflake. Questo è il frammento di codice:</p>
+<pre><code language="language-python" class="language-python">    df.copy_into_table(&#34;{}&#34;.format(tname))
+</code></pre>
+<h2 is-upgraded>Formato di tabella di Snowflake</h2>
+<p>Uno dei vantaggi principali di Snowflake è che può eliminare la necessità di gestire un data lake basato su file. Snowflake è stato progettato a questo scopo fin dall&#39;inizio. In questo passaggio carichiamo i dati grezzi in una tabella gestita Snowflake strutturata. Tuttavia, le tabelle Snowflake possono supportare in modo nativo dati strutturati e semi-strutturati e sono memorizzate nel formato di tabella cloud ben consolidato di Snowflake (precedente a Hudi, Delta o Iceberg).</p>
+<p>Una volta caricati in Snowflake, i dati vengono archiviati e gestiti in modo sicuro, senza bisogno di preoccuparsi di proteggere e gestire file di dati grezzi. Inoltre i dati, sia grezzi che strutturati, possono essere trasformati e interrogati in Snowflake utilizzando SQL o il linguaggio che preferisci, senza bisogno di gestire servizi di calcolo separati come Spark.</p>
+<p>Questo è un vantaggio enorme per i clienti Snowflake.</p>
+<h2 is-upgraded>Elasticità dei warehouse (scalabilità dinamica)</h2>
+<p>Con Snowflake esiste un solo tipo di cluster di calcolo definito dall&#39;utente, il <a href="https://docs.snowflake.com/en/user-guide/warehouses.html" target="_blank">virtual warehouse</a>, indipendentemente dal linguaggio utilizzato per elaborare i dati (SQL, Python, Java, Scala, Javascript, ecc.) Questo semplifica molto le operazioni con i dati in Snowflake. Inoltre, la governance dei dati è completamente separata dal cluster di calcolo; in altri termini, non c&#39;è modo di aggirare la governance di Snowflake, indipendentemente dalle impostazioni del warehouse o dal linguaggio utilizzato.</p>
+<p>In più, questi virtual warehouse possono essere scalati dinamicamente e l&#39;operazione richiede meno di un secondo per la maggior parte delle dimensioni dei warehouse. Questo significa che nel tuo codice puoi ridimensionare dinamicamente l&#39;ambiente di calcolo, aumentando la capacità per eseguire una sezione di codice in un tempo nettamente inferiore, quindi ridimensionarlo di nuovo dinamicamente per ridurne la capacità. E grazie al nostro pricing al secondo (con un minimo di sessanta secondi) non pagherai extra per eseguire quella sezione di codice a tempo di record!</p>
+<p>Vediamo come è facile. Questo è il frammento di codice:</p>
+<pre><code language="language-python" class="language-python">_ = session.sql(&#34;ALTER WAREHOUSE HOL_WH SET WAREHOUSE_SIZE = XLARGE WAIT_FOR_COMPLETION = TRUE&#34;).collect()
+
+    # Some data processing code
+
+    _ = session.sql(&#34;ALTER WAREHOUSE HOL_WH SET WAREHOUSE_SIZE = XSMALL&#34;).collect()
+</code></pre>
+<p>Nota anche che abbiamo incluso il parametro <code>WAIT_FOR_COMPLETION</code> nella prima istruzione <code>ALTER WAREHOUSE</code>. Impostando questo parametro su <code>TRUE</code> si blocca il completamento del comando <code>ALTER WAREHOUSE</code> finché non sarà terminato il ridimensionamento di tutte le sue risorse di calcolo. In questo modo possiamo assicurarci che l&#39;intero cluster sia disponibile prima di utilizzarlo per elaborare i dati.</p>
+<p>Utilizzeremo ancora questo schema nel corso di questo quickstart, quindi è importante comprenderlo.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Caricare i dati meteorologici" duration="4">
+        <p>In questo passaggio &#34;caricheremo&#34; i dati meteorologici grezzi in Snowflake. Tuttavia, &#34;caricare&#34; non è la parola giusta in questo caso. Poiché utilizziamo l&#39;esclusiva funzionalità di condivisione dei dati di Snowflake, in realtà non abbiamo bisogno di copiare i dati nel nostro account Snowflake con un processo ETL personalizzato. Possiamo invece accedere direttamente ai dati meteorologici condivisi da Weather Source nel Marketplace Snowflake. Per contestualizzare, siamo al passaggio <strong>3</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Marketplace Snowflake</h2>
+<p>Weather Source è un fornitore leader di dati meteorologici e climatici globali e la sua suite di prodotti OnPoint fornisce alle aziende i dati meteorologici e climatici necessari per generare rapidamente insight pratici e significativi per un&#39;ampia gamma di casi d&#39;uso in tutti i settori. Connettiamoci al feed <code>Weather Source LLC: frostbyte</code> di Weather Source nel Marketplace Snowflake seguendo questi passaggi:</p>
+<ul>
+<li>Effettua il login a Snowsight</li>
+<li>Fai clic sul link <code>Marketplace</code> nella barra di navigazione a sinistra</li>
+<li>Inserisci &#34;Weather Source LLC: frostbyte&#34; nella barra di ricerca e premi Invio</li>
+<li>Fai clic sul riquadro del prodotto &#34;Weather Source LLC: frostbyte&#34;</li>
+<li>Fai clic sul pulsante blu &#34;Get&#34; <ul>
+<li>Espandi la finestra di dialogo &#34;Options&#34;</li>
+<li>Modifica il nome del database in &#34;FROSTBYTE_WEATHERSOURCE&#34; (tutte maiuscole)</li>
+<li>Seleziona il ruolo &#34;HOL_ROLE&#34; per avere accesso al nuovo database</li>
+</ul>
+</li>
+<li>Fai clic sul pulsante blu &#34;Get&#34;</li>
+</ul>
+<p>Ecco fatto. D&#39;ora in poi non avremo bisogno di fare nulla per mantenere aggiornati questi dati. Sarà il provider a occuparsene, e la condivisione dei dati significa che vedremo sempre tutto ciò che ha pubblicato. Non è fantastico? Pensa a tutte le operazioni che non hai bisogno di eseguire per avere accesso a un data set di terze parti sempre aggiornato!</p>
+<h2 is-upgraded>Eseguire lo script</h2>
+<p>Apri lo script <code>steps/03_load_weather.sql</code> in VS Code dal browser dei file nella barra di navigazione sulla sinistra ed eseguilo. Nota come è facile interrogare i dati condivisi utilizzando il Marketplace Snowflake. Puoi accedervi esattamente come a qualsiasi altra tabella o vista in Snowflake:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creare una vista POS" duration="10">
+        <p>In questo passaggio creeremo una vista per semplificare lo schema dei dati grezzi sui POS mettendo in join sei tabelle diverse e scegliendo solo le colonne che ci servono. Ma la cosa veramente interessante è che definiremo questa vista con la Snowpark DataFrame API! Poi creeremo uno stream Snowflake su questa vista per poter elaborare in modo incrementale le modifiche a qualsiasi tabella dei POS. Per contestualizzare, siamo al passaggio <strong>4</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Eseguire lo script</h2>
+<p>Per creare la vista e lo stream, esegui lo script <code>steps/04_create_pos_view.py</code>. Come nel passaggio 2, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps
+python 04_create_pos_view.py
+</code></pre>
+<p>Mentre viene eseguito questo script, aprilo in VS Code e continua a leggere questa pagina per capire che cosa sta succedendo.</p>
+<h2 is-upgraded>Snowpark DataFrame API</h2>
+<p>La prima cosa da notare nella funzione <code>create_pos_view()</code> è che definiamo la vista Snowflake utilizzando la Snowpark DataFrame API. Dopo avere definito l&#39;ultimo DataFrame, che raccoglie tutta la logica che ci serve per la vista, possiamo semplicemente richiamare il metodo <code>create_or_replace_view()</code> di Snowpark. Questa è la riga finale della funzione <code>create_pos_view()</code>:</p>
+<pre><code language="language-python" class="language-python">    final_df.create_or_replace_view(&#39;POS_FLATTENED_V&#39;)
+</code></pre>
+<p>Per maggiori informazioni sulla Snowpark Python DataFrame API, consulta <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Lavorare con i DataFrame in Snowpark Python</a>.</p>
+<h2 is-upgraded>Stream per l&#39;elaborazione incrementale (CDC)</h2>
+<p>Elaborare i dati in modo incrementale è molto semplice con Snowflake. Tradizionalmente il data engineer doveva tenere traccia di una soglia di riferimento (normalmente una colonna di tipo datetime) per elaborare solo i nuovi record di una tabella. Per farlo, doveva monitorare e memorizzare da qualche parte questa soglia, per poi utilizzarla in ogni query sulla tabella sorgente. Con gli stream di Snowflake, invece, è Snowflake a farsi carico del lavoro pesante. Per maggiori informazioni consulta la nostra guida per l&#39;utente <a href="https://docs.snowflake.com/en/user-guide/streams.html" target="_blank">Monitoraggio delle modifiche tramite stream delle tabelle</a>.</p>
+<p>Tu devi solo creare un oggetto <a href="https://docs.snowflake.com/en/sql-reference/sql/create-stream.html" target="_blank"><code>STREAM</code></a> in Snowflake sulla tabella o sulla vista di base, quindi interrogare tale stream esattamente come qualsiasi altra tabella in Snowflake. Lo stream restituirà solo i record modificati dopo l&#39;ultima operazione DML che hai effettuato. Per aiutarti a lavorare con i record modificati, gli stream Snowflake forniscono le seguenti colonne di metadati insieme alle colonne della tabella o della vista di base:</p>
+<ul>
+<li>METADATA$ACTION</li>
+<li>METADATA$ISUPDATE</li>
+<li>METADATA$ROW_ID</li>
+</ul>
+<p>Per maggiori informazioni su queste colonne di metadati degli stream, consulta la sezione <a href="https://docs.snowflake.com/en/user-guide/streams-intro.html#stream-columns" target="_blank">Colonne degli stream</a> della nostra documentazione.</p>
+<h2 is-upgraded>Stream sulle viste</h2>
+<p>Ciò che rende veramente interessante la funzionalità degli stream incrementali/CDC di Snowflake è la possibilità di creare uno stream su una vista. In questo esempio creeremo uno stream su una vista che mette in join sei tabelle di dati grezzi sui POS. Questo è il codice necessario:</p>
+<pre><code language="language-python" class="language-python">def create_pos_view_stream(session):
+    session.use_schema(&#39;HARMONIZED&#39;)
+    _ = session.sql(&#39;CREATE OR REPLACE STREAM POS_FLATTENED_V_STREAM \
+                        ON VIEW POS_FLATTENED_V \
+                        SHOW_INITIAL_ROWS = TRUE&#39;).collect()
+</code></pre>
+<p>Ora, quando interroghiamo lo stream <code>POS_FLATTENED_V_STREAM</code> per trovare i record modificati, Snowflake in realtà cerca i record modificati nelle sei tabelle incluse nella vista. Se hai mai provato a creare processi incrementali/CDC basati su schemi dematerializzati come questo, apprezzerai l&#39;incredibile potenza di questa funzionalità offerta da Snowflake.</p>
+<p>Per maggiori informazioni, consulta la sezione <a href="https://docs.snowflake.com/en/user-guide/streams-intro.html#streams-on-views" target="_blank">Stream sulle viste</a> della documentazione.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UDF per la conversione da Fahrenheit a Celsius" duration="10">
+        <p>In questo passaggio creeremo e distribuiremo su Snowflake il nostro primo oggetto Snowpark Python, una User Defined Function (UDF). Inizialmente l&#39;UDF sarà molto semplice, ma in un passaggio successivo la aggiorneremo per includere un pacchetto Python di terze parti. In questo passaggio incontrerai anche il nuovo strumento della riga di comando per sviluppatori SnowCLI. SnowCLI trasforma la creazione e la distribuzione di oggetti Snowpark Python in un&#39;esperienza coerente per lo sviluppatore. Più avanti troverai maggiori informazioni su SnowCLI. Per contestualizzare, siamo al passaggio <strong>5</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Eseguire l&#39;UDF localmente</h2>
+<p>Per testare l&#39;UDF localmente, esegui lo script <code>steps/05_fahrenheit_to_celsius_udf/app.py</code>. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps/05_fahrenheit_to_celsius_udf
+python app.py 35
+</code></pre>
+<p>Mentre sviluppi l&#39;UDF puoi eseguirla localmente in VS Code. Se la tua UDF non ha bisogno di interrogare dati contenuti in Snowflake, il processo sarà interamente locale.</p>
+<h2 is-upgraded>Distribuire l&#39;UDF su Snowflake</h2>
+<p>Per distribuire l&#39;UDF su Snowflake utilizzeremo lo strumento SnowCLI. Lo strumento SnowCLI si occupa di tutte le operazioni necessarie per pacchettizzare l&#39;applicazione, copiarla in uno stage di Snowflake e creare l&#39;oggetto in Snowflake. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps/05_fahrenheit_to_celsius_udf
+snow function create
+</code></pre>
+<p>Mentre viene eseguito questo script, aprilo in VS Code e continua a leggere questa pagina per capire che cosa sta succedendo.</p>
+<h2 is-upgraded>Eseguire l&#39;UDF in Snowflake</h2>
+<p>Per eseguire l&#39;UDF in Snowflake sono disponibili varie opzioni. Qualsiasi UDF in Snowflake può essere richiamata tramite SQL in questo modo:</p>
+<pre><code language="language-sql" class="language-sql">SELECT ANALYTICS.FAHRENHEIT_TO_CELSIUS_UDF(35);
+</code></pre>
+<p>Con l&#39;utility SnowCLI, puoi anche richiamare l&#39;UDF dal Terminale in VS Code, in questo modo:</p>
+<pre><code language="language-bash" class="language-bash">snow function execute -f &#34;fahrenheit_to_celsius_udf(35)&#34;
+</code></pre>
+<p>Così facendo, lo strumento SnowCLI genera la query SQL riportata sopra e la esegue sul tuo account Snowflake.</p>
+<h2 is-upgraded>Panoramica dello strumento SnowCLI</h2>
+<p><a href="https://github.com/Snowflake-Labs/snowcli" target="_blank">SnowCLI</a> è uno strumento della riga di comando per sviluppatori e viene eseguito come <code>snow</code> dalla riga di comando.</p>
+<aside class="warning"><p><strong>Nota</strong>: non confondere SnowCLI con lo strumento della riga di comando <a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL</a>, che è un client che consente di effettuare la connessione a Snowflake per eseguire query SQL e tutte le operazioni DDL e DML e viene eseguito come <code>snowsql</code> dalla riga di comando.</p>
+</aside>
+<p>SnowCLI semplifica lo sviluppo e la distribuzione dei seguenti oggetti Snowflake:</p>
+<ul>
+<li>UDF di Snowpark Python</li>
+<li>Stored procedure di Snowpark Python</li>
+<li>Applicazioni Streamlit</li>
+</ul>
+<p>Per questo quickstart ci concentreremo sui primi due. Nel caso delle UDF e delle stored procedure di Snowpark Python, SnowCLI si occupa delle operazioni necessarie per distribuire gli oggetti su Snowflake. Ecco un breve riepilogo dei passaggi svolti automaticamente dal comando &#34;deploy&#34; di SnowCLI:</p>
+<ul>
+<li>Gestire i pacchetti di terze parti <ul>
+<li>Nel caso dei pacchetti direttamente accessibili dal canale Anaconda, li aggiunge all&#39;elenco <code>PACKAGES</code> nel comando SQL <code>CREATE PROCEDURE</code> o <code>CREATE FUNCTION</code></li>
+<li>Nel caso dei pacchetti attualmente non disponibili nel canale Anaconda, scarica il codice e li include nel file .zip del progetto</li>
+</ul>
+</li>
+<li>Creare un file .zip di tutto il contenuto del tuo progetto</li>
+<li>Copiare il file .zip del progetto nel tuo stage Snowflake</li>
+<li>Creare l&#39;oggetto funzione o stored procedure di Snowflake</li>
+</ul>
+<p>Questo ti consente anche di sviluppare e testare l&#39;applicazione Python senza preoccuparti di incapsularla in un oggetto di database Snowflake corrispondente.</p>
+<aside class="warning"><p><strong>Nota</strong>: al 1 febbraio 2023 lo strumento SnowCLI è ancora in preview.</p>
+</aside>
+<h2 is-upgraded>Altre informazioni sulle UDF di Snowpark Python</h2>
+<p>In questo passaggio abbiamo distribuito un&#39;UDF Python molto semplice su Snowflake. In un passaggio futuro la aggiorneremo per utilizzare un pacchetto di terze parti. Inoltre, poiché l&#39;hai distribuita su Snowflake con il comando SnowCLI, non hai dovuto preoccuparti della sintassi DDL SQL per creare l&#39;oggetto in Snowflake. A scopo di riferimento, tuttavia, consulta la nostra guida per sviluppatori <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html" target="_blank">Creare UDF Python</a>.</p>
+<p>Di seguito è riportata la query SQL generata dallo strumento SnowCLI per distribuire la funzione:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
+         RETURNS float
+         LANGUAGE PYTHON
+         RUNTIME_VERSION=3.8
+         IMPORTS=(&#39;@HOL_DB.ANALYTICS.deployments/fahrenheit_to_celsius_udftemp_f_float/app.zip&#39;)
+         HANDLER=&#39;app.main&#39;
+         PACKAGES=();
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stored procedure per l&#39;aggiornamento degli ordini" duration="10">
+        <p>In questo passaggio creeremo e distribuiremo su Snowflake la nostra prima stored procedure (o sproc) Snowpark Python. Questa stored procedure farà il merge delle modifiche dallo stream <code>HARMONIZED.POS_FLATTENED_V_STREAM</code> con la tabella target <code>HARMONIZED.ORDERS</code>. Per contestualizzare, siamo al passaggio <strong>6</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Eseguire la stored procedure localmente</h2>
+<p>Per testare la stored procedure localmente, esegui lo script <code>steps/06_orders_update_sp/app.py</code>. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps/06_orders_update_sp
+python app.py
+</code></pre>
+<p>Mentre sviluppi la stored procedure puoi eseguirla localmente in VS Code. Il codice Python viene eseguito localmente sul tuo computer, ma il codice DataFrame di Snowpark invia query SQL al tuo account Snowflake.</p>
+<h2 is-upgraded>Distribuire la stored procedure su Snowflake</h2>
+<p>Per distribuire la stored procedure su Snowflake utilizzeremo lo strumento SnowCLI. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps/06_orders_update_sp
+snow procedure create
+</code></pre>
+<p>Mentre viene eseguito questo script, aprilo in VS Code e continua a leggere questa pagina per capire che cosa sta succedendo.</p>
+<h2 is-upgraded>Eseguire la stored procedure in Snowflake</h2>
+<p>Per eseguire la stored procedure in Snowflake sono disponibili varie opzioni. Qualsiasi stored procedure in Snowflake può essere richiamata tramite SQL in questo modo:</p>
+<pre><code language="language-sql" class="language-sql">CALL ORDERS_UPDATE_SP();
+</code></pre>
+<p>Con l&#39;utility SnowCLI, puoi anche richiamare l&#39;UDF dal Terminale in VS Code, in questo modo:</p>
+<pre><code language="language-bash" class="language-bash">snow procedure execute -p &#34;orders_update_sp()&#34;
+</code></pre>
+<p>Così facendo, lo strumento SnowCLI genera la query SQL riportata sopra e la esegue sul tuo account Snowflake.</p>
+<h2 is-upgraded>Altre informazioni sulle stored procedure di Snowpark Python</h2>
+<p>In questo passaggio hai distribuito una stored procedure Python su Snowflake. Inoltre, poiché l&#39;hai distribuita su Snowflake con il comando SnowCLI, non hai dovuto preoccuparti della sintassi DDL SQL per creare l&#39;oggetto in Snowflake. A scopo di riferimento, tuttavia, consulta la nostra guida <a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html" target="_blank">Creare stored procedure in Snowpark (Python)</a>.</p>
+<p>Questa è la query SQL generata dallo strumento SnowCLI per distribuire la stored procedure:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE  PROCEDURE orders_update_sp()
+         RETURNS string
+         LANGUAGE PYTHON
+         RUNTIME_VERSION=3.8
+         IMPORTS=(&#39;@HOL_DB.HARMONIZED.deployments/orders_update_sp/app.zip&#39;)
+         HANDLER=&#39;app.main&#39;
+         PACKAGES=(&#39;snowflake-snowpark-python&#39;,&#39;toml&#39;)
+        EXECUTE AS CALLER;
+</code></pre>
+<h2 is-upgraded>Altre informazioni sulla Snowpark API</h2>
+<p>In questo passaggio iniziamo a utilizzare veramente la Snowpark DataFrame API per le trasformazioni dei dati. La Snowpark API fornisce la stessa funzionalità della <a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html" target="_blank">Spark SQL API</a>. Per iniziare devi creare un oggetto sessione Snowpark. Come in PySpark, per farlo si utilizzano i metodi <code>Session.builder.configs().create()</code>. Per l&#39;esecuzione locale, utilizziamo la funzione di supporto <code>utils.snowpark_utils.get_snowpark_session()</code> per creare automaticamente l&#39;oggetto sessione. Quando è distribuito su Snowflake, invece, Snowflake provvede automaticamente al provisioning dell&#39;oggetto sessione. Quando si crea una stored procedure di Snowpark Python, il primo argomento passato alla funzione di ingresso (o handler) deve essere una sessione Snowpark.</p>
+<p>La prima cosa da notare nello script <code>steps/06_orders_update_sp/app.py</code> è che abbiamo alcune funzioni che utilizzano SQL per creare oggetti in Snowflake e verificarne lo stato. Per inviare un&#39;istruzione SQL a Snowflake con la Snowpark API, come prevedibile, si usa la funzione <code>session.sql()</code>. Ecco un esempio:</p>
+<pre><code language="language-python" class="language-python">def create_orders_stream(session):
+    _ = session.sql(&#34;CREATE STREAM IF NOT EXISTS HARMONIZED.ORDERS_STREAM ON TABLE HARMONIZED.ORDERS \
+                    SHOW_INITIAL_ROWS = TRUE;&#34;).collect()
+</code></pre>
+<p>La seconda cosa da notare è come stiamo utilizzando i DataFrame per fare il merge delle modifiche dalla vista sorgente alla tabella target. La Snowpark DataFrame API fornisce un metodo <code>merge()</code> che alla fine genererà un comando <code>MERGE</code> in Snowflake.</p>
+<pre><code language="language-python" class="language-python">    source = session.table(&#39;HARMONIZED.POS_FLATTENED_V_STREAM&#39;) 
+    target = session.table(&#39;HARMONIZED.ORDERS&#39;)
+
+    # TODO: Is the if clause supposed to be based on &#34;META_UPDATED_AT&#34;?
+    cols_to_update = {c: source[c] for c in source.schema.names if &#34;METADATA&#34; not in c}
+    metadata_col_to_update = {&#34;META_UPDATED_AT&#34;: F.current_timestamp()}
+    updates = {**cols_to_update, **metadata_col_to_update}
+
+    # merge into DIM_CUSTOMER
+    target.merge(source, target[&#39;ORDER_DETAIL_ID&#39;] == source[&#39;ORDER_DETAIL_ID&#39;], \
+                        [F.when_matched().update(updates), F.when_not_matched().insert(updates)])
+</code></pre>
+<p>Di nuovo, per maggiori informazioni sulla Snowpark Python DataFrame API, consulta <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Lavorare con i DataFrame in Snowpark Python</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stored procedure per l&#39;aggiornamento delle metriche giornaliere per città" duration="10">
+        <p>In questo passaggio creeremo e distribuiremo su Snowflake la nostra seconda stored procedure di Snowpark Python. Questa stored procedure esegue il join dei dati di <code>HARMONIZED.ORDERS</code> con i dati di Weather Source per creare una tabella aggregata finale per l&#39;analisi, chiamata <code>ANALYTICS.DAILY_CITY_METRICS</code>. Elaboreremo i dati della tabella <code>HARMONIZED.ORDERS</code> in modo incrementale utilizzando un altro stream Snowflake. Inoltre, utilizzeremo di nuovo il metodo <code>merge()</code> dei DataFrame di Snowpark per eseguire un merge/upsert dei dati. Per contestualizzare, siamo al passaggio <strong>7</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Eseguire la stored procedure localmente</h2>
+<p>Per testare la stored procedure localmente, esegui lo script <code>steps/07_daily_city_metrics_update_sp/app.py</code>. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps/07_daily_city_metrics_update_sp
+python app.py
+</code></pre>
+<p>Mentre sviluppi la stored procedure puoi eseguirla localmente in VS Code. Il codice Python viene eseguito localmente sul tuo computer, ma il codice DataFrame di Snowpark invia query SQL al tuo account Snowflake.</p>
+<h2 is-upgraded>Distribuire la stored procedure su Snowflake</h2>
+<p>Per distribuire la stored procedure su Snowflake utilizzeremo lo strumento SnowCLI. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps/07_daily_city_metrics_update_sp
+snow procedure create
+</code></pre>
+<p>Mentre viene eseguito questo script, aprilo in VS Code e continua a leggere questa pagina per capire che cosa sta succedendo.</p>
+<h2 is-upgraded>Eseguire la stored procedure in Snowflake</h2>
+<p>Per eseguire la stored procedure in Snowflake sono disponibili varie opzioni. Qualsiasi stored procedure in Snowflake può essere richiamata tramite SQL in questo modo:</p>
+<pre><code language="language-sql" class="language-sql">CALL DAILY_CITY_METRICS_UPDATE_SP();
+</code></pre>
+<p>Con l&#39;utility SnowCLI, puoi anche richiamare l&#39;UDF dal Terminale in VS Code, in questo modo:</p>
+<pre><code language="language-bash" class="language-bash">snow procedure execute -p &#34;daily_city_metrics_update_sp()&#34;
+</code></pre>
+<p>Così facendo, lo strumento SnowCLI genera la query SQL riportata sopra e la esegue sul tuo account Snowflake.</p>
+<h2 is-upgraded>Best practice per la modellazione dei dati</h2>
+<p>Una best practice per la modellazione dei dati per l&#39;analisi consiste nel definire e gestire chiaramente lo schema della tabella. Nel passaggio 2, quando abbiamo caricato i dati grezzi da Parquet, ci siamo avvalsi della funzionalità di rilevamento dello schema di Snowflake per creare una tabella con lo stesso schema dei file Parquet. In questo passaggio definiamo esplicitamente lo schema nella sintassi DataFrame e lo utilizziamo per creare la tabella.</p>
+<pre><code language="language-python" class="language-python">def create_daily_city_metrics_table(session): 
+    SHARED_COLUMNS= \
+    [T.StructField(&#34;DATE&#34;, T.DateType()), T.StructField(&#34;CITY_NAME&#34;, T.StringType()), T.StructField(&#34;COUNTRY_DESC&#34;, T.StringType()), T.StructField(&#34;DAILY_SALES&#34;, T.StringType()), T.StructField(&#34;AVG_TEMPERATURE_FAHRENHEIT&#34;, T.DecimalType()), T.StructField(&#34;AVG_TEMPERATURE_CELSIUS&#34;, T.DecimalType()), T.StructField(&#34;AVG_PRECIPITATION_INCHES&#34;, T.DecimalType()), T.StructField(&#34;AVG_PRECIPITATION_MILLIMETERS&#34;, T.DecimalType()), T.StructField(&#34;MAX_WIND_SPEED_100M_MPH&#34;, T.DecimalType()), ] DAILY_CITY_METRICS_COLUMNS = \
+    [*SHARED_COLUMNS, T.StructField(&#34;META_UPDATED_AT&#34;, T.TimestampType())] DAILY_CITY_METRICS_SCHEMA = T.StructType(DAILY_CITY_METRICS_COLUMNS)
+
+    dcm = session.create_dataframe([[None]*len(DAILY_CITY_METRICS_SCHEMA.names)], schema=DAILY_CITY_METRICS_SCHEMA) \
+                        .na.drop() \
+                        .write.mode(&#39;overwrite&#39;).save_as_table(&#39;ANALYTICS.DAILY_CITY_METRICS&#39;)
+    dcm = session.table(&#39;ANALYTICS.DAILY_CITY_METRICS&#39;)
+</code></pre>
+<h2 is-upgraded>Query di aggregazione complessa</h2>
+<p>La funzione <code>merge_daily_city_metrics()</code> contiene una query di aggregazione complessa utilizzata per fare il join dei dati dei POS e di Weather Source e aggregarli. Osserva la serie complessa di join e aggregazioni che vengono espresse e come sfruttiamo persino la Snowpark User Defined Function che abbiamo creato nel passaggio 5!</p>
+<p>La query di aggregazione complessa viene poi unita alla tabella di analisi finale utilizzando il metodo <code>merge()</code> di Snowpark. Se non l&#39;hai ancora fatto, esamina la Query History di Snowflake per vedere le query generate dalla Snowpark API. In questo caso, vedrai come la Snowpark API ha raccolto tutta la logica complessa, incluso il merge, per creare un&#39;unica query Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Orchestrare i processi" duration="10">
+        <p>In questo passaggio orchestreremo le nuove pipeline Snowpark con la funzionalità di orchestrazione nativa di Snowflake chiamata Tasks. Creeremo due task, uno per ogni stored procedure, poi li concateneremo e infine li eseguiremo. Per contestualizzare, siamo al passaggio <strong>8</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Eseguire lo script</h2>
+<p>Poiché questo è uno script SQL, utilizzeremo l&#39;estensione nativa VS Code per eseguirlo. Quindi, apri semplicemente lo script <code>steps/08_orchestrate_jobs.sql</code> in VS Code ed eseguilo tutto utilizzando il pulsante &#34;Execute All Statements&#34; nell&#39;angolo superiore destro della finestra dell&#39;editor.</p>
+<p>Mentre viene eseguito questo script, consultalo in VS Code e continua a leggere questa pagina per capire che cosa sta succedendo.</p>
+<h2 is-upgraded>Eseguire i task</h2>
+<p>In questo passaggio non abbiamo creato una pianificazione per il DAG dei task, quindi a questo punto non verrà eseguito automaticamente. Di conseguenza, in questo script puoi notare che eseguiamo manualmente il DAG, in questo modo:</p>
+<pre><code language="language-sql" class="language-sql">EXECUTE TASK ORDERS_UPDATE_TASK;
+</code></pre>
+<p>Per vedere cosa è successo quando hai eseguito questo task, evidenzia ed esegui (utilizzando CMD/CTRL+Invio) la seguente query impostata come commento nello script:</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT =&gt; 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+</code></pre>
+<p>Nell&#39;output della cronologia dei task noterai che ha saltato il task <code>ORDERS_UPDATE_TASK</code>. Questo è corretto, dato che lo stream <code>HARMONIZED.POS_FLATTENED_V_STREAM</code> non contiene dati. Nel prossimo passaggio aggiungeremo nuovi dati ed eseguiremo nuovamente i task.</p>
+<h2 is-upgraded>Altre informazioni sui task</h2>
+<p>I task sono la funzionalità di pianificazione/orchestrazione nativa di Snowflake. Con un task puoi eseguire uno dei seguenti tipi di codice SQL:</p>
+<ul>
+<li>Singola istruzione SQL</li>
+<li>Chiamata a una stored procedure</li>
+<li>Logica procedurale utilizzando la guida allo sviluppo con Snowflake Scripting (Snowflake Scripting Developer Guide)</li>
+</ul>
+<p>In questo quickstart richiameremo le nostre Snowpark Stored Procedures. Questo è il codice DDL SQL per creare il secondo task:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TASK DAILY_CITY_METRICS_UPDATE_TASK
+WAREHOUSE = HOL_WH
+AFTER ORDERS_UPDATE_TASK
+WHEN
+  SYSTEM$STREAM_HAS_DATA(&#39;ORDERS_STREAM&#39;)
+AS
+CALL ANALYTICS.DAILY_CITY_METRICS_UPDATE_SP();
+</code></pre>
+<p>Ci sono alcune cose da notare. Per prima cosa si specifica quale virtual warehouse Snowflake utilizzare durante l&#39;esecuzione del task con la clausola <code>WAREHOUSE</code>. La clausola <code>AFTER</code> ti consente di definire la relazione tra i task, e la struttura di questa relazione è un grafo aciclico diretto (o DAG) come quelli forniti dalla maggior parte degli strumenti di orchestrazione. La clausola <code>AS</code> ti consente di definire che cosa deve fare il task quando viene eseguito, in questo caso richiamare la stored procedure.</p>
+<p>La clausola <code>WHEN</code> è veramente interessante. Abbiamo già visto come funzionano gli stream in Snowflake, consentendoti di elaborare i dati in modo incrementale. Abbiamo anche visto come puoi creare uno stream su una vista (che mette in join numerose tabelle) e creare uno stream su quella vista per elaborare i suoi dati in modo incrementale. Qui, nella clausola <code>WHEN</code> richiamiamo la funzione di sistema <code>SYSTEM$STREAM_HAS_DATA()</code>, che restituisce &#34;true&#34; se lo stream specificato contiene nuovi dati. Grazie alla clausola <code>WHEN</code>, il virtual warehouse viene avviato solo quando lo stream contiene nuovi dati. Quindi, se non ci sono nuovi dati quando viene eseguito il task, il warehouse non viene avviato e non ti viene addebitato alcun costo. L&#39;addebito si verifica solo quando ci sono nuovi dati da elaborare. Non male, eh?</p>
+<p>Come accennato sopra, non abbiamo definito una <code>SCHEDULE</code> per il task principale, quindi questo DAG non verrà eseguito automaticamente. Questo è appropriato per il nostro quickstart, ma in una situazione reale definiresti una pianificazione. Per i dettagli, consulta <a href="https://docs.snowflake.com/en/sql-reference/sql/create-task.html" target="_blank">CREATE TASK</a>.</p>
+<p>Per maggiori informazioni sui task, consulta <a href="https://docs.snowflake.com/en/user-guide/tasks-intro.html" target="_blank">Introduzione ai task</a>.</p>
+<h2 is-upgraded>Metadati dei task</h2>
+<p>Snowflake memorizza metadati per quasi tutte le operazioni eseguite e li mette a tua disposizione per consentirti di interrogarli (e di usarli come base per qualsiasi tipo di processo). Questo vale anche per i task: Snowflake conserva un&#39;ampia gamma di metadati per aiutarti a monitorare l&#39;esecuzione dei tuoi task. Ecco alcuni esempi di query SQL che puoi utilizzare per monitorare l&#39;esecuzione dei task:</p>
+<pre><code language="language-sql" class="language-sql">-- Get a list of tasks 
+SHOW TASKS;
+
+-- Task execution history in the past day 
+SELECT * FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY( SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()), RESULT_LIMIT =&gt; 100)) ORDER BY SCHEDULED_TIME DESC ;
+
+-- Scheduled task runs 
+SELECT TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP, SCHEDULED_TIME) NEXT_RUN, SCHEDULED_TIME, NAME, STATE FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY()) WHERE STATE = &#39;SCHEDULED&#39; ORDER BY COMPLETED_TIME DESC; 
+</code></pre>
+<h2 is-upgraded>Monitorare i task</h2>
+<p>Come abbiamo visto, anche se puoi creare i processi operativi o di monitoraggio che preferisci, Snowflake fornisce alcune funzionalità avanzate per l&#39;osservabilità dei task nell&#39;interfaccia utente Snowsight. Provale subito seguendo questi passaggi:</p>
+<ol type="1">
+<li>Nel menu di navigazione di Snowsight, fai clic su <strong>Data</strong> » <strong>Databases</strong>.</li>
+<li>Nel riquadro di destra, utilizzando il browser degli oggetti, vai a un database e a uno schema.</li>
+<li>Nello schema scelto, seleziona ed espandi <strong>Tasks</strong>.</li>
+<li>Seleziona un task. Vengono visualizzate informazioni sul task, che includono le sottoschede <strong>Task Details</strong>, <strong>Graph</strong> e <strong>Run History</strong>.</li>
+<li>Seleziona la scheda <strong>Graph</strong>. Compare il grafico del task, che mostra una gerarchia di task secondari.</li>
+<li>Seleziona un task per visualizzarne i dettagli.</li>
+</ol>
+<p>Il grafico del task è simile a questo:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/9e5fbd96d055e667.png"></p>
+<p>E questo è un esempio della cronologia di esecuzione del task:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/73ed2e24c8cb0ba2.png"></p>
+<p>Per maggiori informazioni e per scoprire come visualizzare la cronologia dei task a livello di account, consulta <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html" target="_blank">Visualizzazione della cronologia dei task</a> nella nostra documentazione.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Elaborare in modo incrementale" duration="10">
+        <p>In questo passaggio aggiungeremo nuovi dati alle tabelle degli ordini dei POS e poi eseguiremo l&#39;intera pipeline end-to-end per elaborare i nuovi dati. Questa pipeline completa elaborerà i dati in modo incrementale grazie all&#39;avanzata funzionalità degli stream/CDC di Snowflake. Per contestualizzare, siamo al passaggio <strong>9</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Eseguire lo script</h2>
+<p>Poiché questo è uno script SQL, utilizzeremo l&#39;estensione nativa VS Code per eseguirlo. Quindi, apri semplicemente lo script <code>steps/09_process_incrementally.sql</code> in VS Code ed eseguilo tutto utilizzando il pulsante &#34;Execute All Statements&#34; nell&#39;angolo superiore destro della finestra dell&#39;editor.</p>
+<p>Mentre viene eseguito lo script, discutiamo brevemente le operazioni che stiamo svolgendo. Come nel passaggio 2, caricheremo dati da Parquet nelle tabelle di dati grezzi sui POS. Nel passaggio 2 abbiamo caricato tutti i dati degli ordini tranne i dati del 2022 per <code>ORDER_HEADER</code> e <code>ORDER_DETAIL</code>. Quindi ora caricheremo i dati rimanenti.</p>
+<p>Questa volta useremo SQL invece di Python per caricare i dati, ma il processo è lo stesso. Ridimensioneremo il warehouse, scalando verticalmente per poter caricare i dati più rapidamente e poi riducendo nuovamente le dimensioni al termine dell&#39;operazione. Dopo avere caricato i dati, eseguiremo nuovamente il DAG dei task, e questa volta entrambi i task verranno eseguiti ed elaboreranno i nuovi dati.</p>
+<h2 is-upgraded>Visualizzare la cronologia dei task</h2>
+<p>Come nel passaggio precedente, per vedere cosa è successo quando hai eseguito questo DAG dei task, evidenzia ed esegui (utilizzando CMD/CTRL+Invio) questa query impostata come commento nello script:</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT =&gt; 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+</code></pre>
+<p>Questa volta potrai notare che il task <code>ORDERS_UPDATE_TASK</code> non viene saltato, dato che lo stream <code>HARMONIZED.POS_FLATTENED_V_STREAM</code> contiene nuovi dati. In pochi minuti sia il task <code>ORDERS_UPDATE_TASK</code> che il task <code>DAILY_CITY_METRICS_UPDATE_TASK</code> dovrebbero essere completati correttamente.</p>
+<h2 is-upgraded>Query History per i task</h2>
+<p>Una cosa importante da capire in relazione ai task è che le query che vengono eseguite dai task non vengono visualizzate con le impostazioni predefinite dell&#39;interfaccia utente di Query History. Per vedere le query appena eseguite devi procedere come segue:</p>
+<ul>
+<li>Rimuovi i filtri nella parte alta di questa tabella, compreso il tuo nome utente, poiché alcuni task pianificati più avanti verranno eseguiti da &#34;System&#34;:</li>
+</ul>
+<p class="image-container"><img src="img/7c3c7f9b6d6e23ad.png"></p>
+<ul>
+<li>Fai clic su &#34;Filter&#34;, aggiungi l&#39;opzione del filtro &#34;Queries executed by user tasks&#34; e fai clic su &#34;Apply Filters&#34;:</li>
+</ul>
+<p class="image-container"><img src="img/445b67a969de9a0d.png"></p>
+<p>Ora dovresti vedere tutte le query eseguite dai task. Dai un&#39;occhiata a ciascuno dei comandi MERGE in Query History per vedere quanti record sono stati elaborati da ciascun task. E naturalmente, nota che abbiamo appena elaborato l&#39;intera pipeline e l&#39;abbiamo fatto in modo incrementale!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Distribuire tramite CI/CD" duration="15">
+        <p>In questo passaggio modificheremo l&#39;UDF <code>FAHRENHEIT_TO_CELSIUS_UDF()</code> e poi la distribuiremo tramite una pipeline CI/CD. Aggiorneremo l&#39;UDF <code>FAHRENHEIT_TO_CELSIUS_UDF()</code> per utilizzare un pacchetto Python di terze parti, la invieremo al fork del repository GitHub e infine la distribuiremo utilizzando SnowCLI in un flusso di lavoro GitHub Actions. Per contestualizzare, siamo al passaggio <strong>n. 10</strong> della nostra panoramica del flusso di dati:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<h2 is-upgraded>Aggiornare l&#39;UDF per la conversione da Fahrenheit a Celsius</h2>
+<p>Sostituiremo la conversione della temperatura specificata nel codice con un pacchetto della libreria <code>scipy</code>. Per prima cosa apporteremo alcune modifiche allo script <code>steps/05_fahrenheit_to_celsius_udf/app.py</code>. In questo file aggiungeremo un comando <code>import</code> e sostituiremo il corpo della funzione <code>main()</code>. Apri lo script <code>steps/05_fahrenheit_to_celsius_udf/app.py</code> in VS Code e sostituisci questa sezione:</p>
+<pre><code language="language-python" class="language-python">import sys
+
+def main(temp_f: float) -&gt; float: 
+    return (float(temp_f) - 32) * (5/9) 
+</code></pre>
+<p>Con questa:</p>
+<pre><code language="language-python" class="language-python">import sys from scipy.constants import convert_temperature
+
+def main(temp_f: float) -&gt; float: 
+    return convert_temperature(float(temp_f), &#39;F&#39;, &#39;C&#39;) 
+</code></pre>
+<p>Non dimenticare di salvare le modifiche.</p>
+<p>La seconda modifica da fare è aggiungere <code>scipy</code> al file <code>requirements.txt</code>. Apri il file <code>steps/05_fahrenheit_to_celsius_udf/requirements.txt</code> in VS Code, aggiungi una nuova riga con <code>scipy</code> e salva il file.</p>
+<h2 is-upgraded>Testare le modifiche localmente</h2>
+<p>Per testare l&#39;UDF localmente, esegui lo script <code>steps/05_fahrenheit_to_celsius_udf/app.py</code>. Come nei passaggi precedenti, lo eseguiremo dal Terminale. Apri un Terminale in VS Code (Terminal -&gt; New Terminal) nella barra dei menu in alto, assicurati che l&#39;ambiente conda <code>pysnowpark</code> sia attivo, quindi esegui i seguenti comandi (che presuppongono che nel Terminale sia aperta la directory root del tuo repository):</p>
+<pre><code language="language-bash" class="language-bash">cd steps/05_fahrenheit_to_celsius_udf
+pip install -r requirements.txt
+python app.py 35
+</code></pre>
+<p>Nota che questa volta eseguiamo anche pip install per assicurarci che vengano installati i pacchetti dipendenti. Quando la funzione sarà stata eseguita con successo, potremo distribuirla tramite CI/CD!</p>
+<h2 is-upgraded>Configurare il fork del progetto GitHub</h2>
+<p>Perché il flusso di lavoro GitHub Actions sia in grado di connettersi al tuo account Snowflake devi memorizzare le tue credenziali Snowflake in GitHub. In GitHub, i segreti Actions consentono di memorizzare in modo sicuro valori o variabili che verranno utilizzati nelle pipeline CI/CD. In questo passaggio creeremo segreti per ciascuno dei parametri utilizzati da SnowCLI.</p>
+<p>Dal repository, fai clic sulla scheda <code>Settings</code> nella parte superiore della pagina. Dalla pagina Settings, fai clic su <code>Secrets and variables</code> e poi sulla scheda <code>Actions</code> nella barra di navigazione sulla sinistra. Dovrebbero essere selezionati i segreti <code>Actions</code>. Per ogni segreto elencato sotto, fai clic su <code>New repository secret</code> in alto a destra e inserisci il nome elencato sotto insieme al valore appropriato.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Nome del segreto</p>
+</td><td colspan="1" rowspan="1"><p>Valore del segreto</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_ACCOUNT</p>
+</td><td colspan="1" rowspan="1"><p>il tuo account</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_USER</p>
+</td><td colspan="1" rowspan="1"><p>il tuo nome utente</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_PWD</p>
+</td><td colspan="1" rowspan="1"><p>la tua password</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_ROLE</p>
+</td><td colspan="1" rowspan="1"><p>HOL_ROLE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_WAREHOUSE</p>
+</td><td colspan="1" rowspan="1"><p>HOL_WH</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWSQL_DATABASE</p>
+</td><td colspan="1" rowspan="1"><p>HOL_DB</p>
+</td></tr>
+</table>
+<aside class="special"><p><strong>Suggerimento</strong>: per maggiori informazioni su come strutturare il nome dell&#39;account in SNOWSQL_ACCOUNT, vedi la discussione del nome dell&#39;account nella <a href="https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation" target="_blank">Guida all&#39;installazione del connettore Snowflake per Python</a>.</p>
+</aside>
+<p>Dopo avere aggiunto tutti i segreti, la pagina dovrebbe essere simile alla seguente:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e73a0db76e9a8d36.png"></p>
+<aside class="special"><p><strong>Suggerimento</strong>: per gestire in modo ancora migliore i segreti, puoi utilizzare gli <a href="https://docs.github.com/en/actions/reference/environments" target="_blank">ambienti GitHub Actions</a>, che ti consentono di raggruppare i segreti e definire regole di protezione per ciascuno dei tuoi ambienti.</p>
+</aside>
+<h2 is-upgraded>Inviare le modifiche al fork del repository</h2>
+<p>Ora che abbiamo eseguito e testato le modifiche e le nostre credenziali Snowflake sono memorizzate in GitHub, è il momento di fare il commit delle modifiche nel repository locale e poi inviarle al tuo fork del repository. È certamente possibile farlo dalla riga di comando, ma in questo passaggio utilizzeremo VS Code per facilitare l&#39;operazione.</p>
+<p>Per iniziare, apri l&#39;estensione &#34;Source Control&#34; nella barra di navigazione a sinistra; dovrebbero comparire due file con modifiche. Fai clic sul segno <code>+</code> (più) a destra del nome di ogni file per includere le modifiche nel commit. Quindi inserisci un messaggio nella casella &#34;Message&#34; e fai clic sul pulsante blu <code>Commit</code> per eseguire il commit delle modifiche a livello locale. Prima di premere il pulsante, dovresti vedere quanto segue:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/d7162d064a13eec4.png"></p>
+<p>A questo punto le modifiche sono salvate solo a livello locale e non sono state inviate al tuo fork del repository in GitHub. Per inviare i commit a GitHub, fai clic sul pulsante blu <code>Sync Changes</code>. Prima di premere il pulsante, dovresti vedere quanto segue:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/37fe1faef57932c6.png"></p>
+<h2 is-upgraded>Visualizzare il flusso di lavoro GitHub Actions</h2>
+<p>Questo repository è già configurato con una semplice pipeline CI/CD GitHub Actions. Puoi esaminare il codice del flusso di lavoro aprendo il file <code>.github/workflows/build_and_deploy.yaml</code> in VS Code.</p>
+<p>Il flusso di lavoro è stato avviato non appena hai inviato le modifiche al tuo fork del repository GitHub. Per vedere i risultati, torna alla home page del tuo repository GitHub e segui questa procedura:</p>
+<ul>
+<li>Dal repository, fai clic sulla scheda <code>Actions</code> nella parte superiore centrale della pagina.</li>
+<li>Nella barra di navigazione a sinistra, fai clic sul nome del flusso di lavoro <code>Deploy Snowpark Apps</code></li>
+<li>Fai clic sul nome dell&#39;esecuzione specifica più recente (che dovrebbe corrispondere al commento che avevi immesso)</li>
+<li>Dalla pagina riassuntiva dell&#39;esecuzione, fai clic sul processo <code>deploy</code> e poi sfoglia l&#39;output dei diversi passaggi. In particolare potrà essere utile esaminare l&#39;output del passaggio <code>Deploy Snowpark apps</code>.</li>
+</ul>
+<p class="image-container"><img style="width: 800.00px" src="img/9d1cc680295508b7.png"></p>
+<p>L&#39;output del passaggio <code>Deploy Snowpark apps</code> dovrebbe ormai esserti familiare e dovrebbe essere uguale a ciò che hai visto nel Terminale in VS Code quando hai eseguito SnowCLI nei passaggi precedenti. L&#39;unica cosa che potrebbe essere diversa è l&#39;ordine dell&#39;output, ma dovresti comunque riuscire a vedere le operazioni svolte.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pulizia" duration="2">
+        <p>Una volta completato questo quickstart, puoi eliminare gli oggetti non più necessari eseguendo lo script <code>steps/11_teardown.sql</code>. Poiché questo è uno script SQL, utilizzeremo l&#39;estensione nativa VS Code per eseguirlo. Apri semplicemente lo script <code>steps/11_teardown.sql</code> in VS Code ed eseguilo tutto utilizzando il pulsante &#34;Execute All Statements&#34; nell&#39;angolo superiore destro della finestra dell&#39;editor.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusione" duration="4">
+        <p>Abbiamo davvero fatto molta strada in questo quickstart! A questo punto hai creato una solida pipeline di data engineering utilizzando le stored procedure di Snowpark Python. La pipeline elabora i dati in modo incrementale, è orchestrata con task di Snowflake ed è distribuita tramite una pipeline CI/CD. Inoltre hai imparato come utilizzare il nuovo strumento CLI per sviluppatori e l&#39;estensione Visual Studio Code di Snowflake. Ecco una rapida sintesi grafica:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e6f9c943fe16d40e.png"></p>
+<p>Tuttavia, abbiamo visto solo una minima parte di ciò che è possibile fare con Snowpark. Ora dovresti disporre delle nozioni fondamentali e degli esempi necessari per iniziare a creare una tua pipeline di data engineering con Snowpark Python. Non ti resta che scegliere un progetto da realizzare!</p>
+<h2 is-upgraded>Cosa abbiamo visto</h2>
+<p>In questo quickstart abbiamo trattato molti argomenti, in particolare:</p>
+<ul>
+<li>Formato di tabella di Snowflake</li>
+<li>Ingestion di dati con COPY</li>
+<li>Inferenza dello schema</li>
+<li>Condivisione dei dati/Marketplace (invece di ETL)</li>
+<li>Stream per l&#39;elaborazione incrementale (CDC)</li>
+<li>Stream sulle viste</li>
+<li>UDF Python (con pacchetti di terze parti)</li>
+<li>Stored procedure di Python</li>
+<li>Snowpark DataFrame API</li>
+<li>Programmabilità di Snowpark Python</li>
+<li>Elasticità dei warehouse (scalabilità dinamica)</li>
+<li>Estensione nativa Visual Studio Code di Snowflake (public preview, integrazione Git)</li>
+<li>SnowCLI (public preview)</li>
+<li>Task (con attivazione tramite stream)</li>
+<li>Osservabilità dei task</li>
+<li>Integrazione delle GitHub Actions (CI/CD)</li>
+</ul>
+<h2 is-upgraded>Risorse correlate</h2>
+<p>Infine, ecco un breve riepilogo delle risorse correlate:</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python" target="_blank">Codice sorgente su GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark per Python - Guida allo sviluppo</a><ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html" target="_blank">Creare UDF Python</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html" target="_blank">Creare stored procedure in Snowpark (Python)</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html" target="_blank">Working with DataFrames in Snowpark Python</a></li>
+</ul>
+</li>
+<li>Strumenti correlati <ul>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">Estensione Visual Studio Code di Snowflake</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowcli" target="_blank">Strumento SnowCLI</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

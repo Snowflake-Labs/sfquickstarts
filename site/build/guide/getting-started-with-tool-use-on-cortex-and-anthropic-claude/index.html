@@ -1,0 +1,527 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Tool Use on Cortex and Anthropic Claude</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-tool-use-on-cortex-and-anthropic-claude"
+                  title="Getting Started with Tool Use on Cortex and Anthropic Claude"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll learn how to leverage Snowflake Cortex&#39;s AI capabilities to create an intelligent weather assistant with tool use functionality. This guide demonstrates how Snowflake Cortex integrates with Claude to enable external API interactions, allowing you to define tools, process tool requests, and format tool results to create a seamless conversational experience powered by Snowflake&#39;s AI infrastructure.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>An AI application in Snowflake that demonstrates Claude&#39;s tool use capabilities</li>
+<li>A weather information tool for US locations that Claude can invoke when users ask weather-related questions</li>
+<li>A system that enables Claude to access external data through API calls</li>
+<li>A conversational interface that showcases AI-to-API interaction patterns</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to define tools for Claude to use within Snowflake</li>
+<li>How to structure tool specifications with proper input schemas</li>
+<li>How to handle tool execution and pass results back to Claude</li>
+<li>How to configure Snowflake for secure external API access</li>
+<li>How to implement the complete tool use lifecycle from request to response</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>A <a href="https://www.weatherapi.com/signup.aspx" target="_blank">WeatherAPI account</a> and API key</li>
+<li>Account must have these features enabled: <ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex?_fsi=LnJgA8TM&_fsi=LnJgA8TM" target="_blank">Cortex LLM Functions</a></li>
+<li>In a supported <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability" target="_blank">Region</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <h2 is-upgraded>Set Up Required Database Objects and External Access</h2>
+<p>To prepare your Snowflake environment, you&#39;ll need to create the necessary database objects, establish roles with appropriate permissions, and configure external network access for the WeatherAPI service.</p>
+<ol type="1">
+<li>Open a new worksheet in Snowflake</li>
+<li>Create the necessary database objects, warehouse, and network rules by executing the following SQL commands from <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-tools-use-on-cortex-and-anthropic/blob/main/setup.sql" target="_blank">setup.sql</a>:</li>
+</ol>
+<p>Replace <strong>YOUR USER</strong> with your Snowflake username.</p>
+<h2 is-upgraded>Set Up API Access</h2>
+<p>For this application to work, you&#39;ll need to:</p>
+<ol type="1">
+<li>Obtain a WeatherAPI key by signing up at <a href="https://www.weatherapi.com/" target="_blank">WeatherAPI.com</a></li>
+<li>Keep your API key handy for insertion into the application code</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit App" duration="10">
+        <h2 is-upgraded>Setting Up the Streamlit App</h2>
+<p>To create and configure your Streamlit application in Snowflake:</p>
+<ol type="1">
+<li>Navigate to Streamlit in Snowflake:<ul>
+<li>Click on the <strong>Streamlit</strong> tab in the left navigation pane</li>
+<li>Click on <strong>+ Streamlit App</strong> button in the top right</li>
+</ul>
+</li>
+<li>Configure App Settings:<ul>
+<li>Enter a name for your app (e.g., &#34;Weather Assistant&#34;)</li>
+<li>Select <strong>ANTHROPIC_TOOL_USE_WH_XS</strong> as your warehouse</li>
+<li>Choose <strong>ANTHROPIC_TOOL_USE_DB</strong> as your database and <strong>TOOL_SCHEMA</strong> as your schema</li>
+</ul>
+</li>
+<li>Create the app:<ul>
+<li>In the editor, paste the complete code provided below</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Complete Application Code</h2>
+<p>You will need add a package. On the top left select <strong>Packages</strong>.</p>
+<ul>
+<li>Add <strong>requests</strong> package</li>
+</ul>
+<p>Below is the full code for the Weather Assistant application. Copy the Streamlit app from <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-tools-use-on-cortex-and-anthropic/blob/main/streamlit.py" target="_blank">streamlit.py</a></p>
+<ul>
+<li>Enable the External Access <ul>
+<li>On the top right click on three dots <ul>
+<li>App Settings <ul>
+<li>External networks <ul>
+<li>WEATHERAPI_ACCESS_INTEGRATION</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Click &#34;Run&#34; to launch your application</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding Tool Use" duration="15">
+        <p>This section explains how the weather assistant application implements Claude&#39;s tool use capabilities in Snowflake.</p>
+<h2 is-upgraded>Claude API and Tool Use Components</h2>
+<p>The Claude API in Snowflake uses several key structures for tool functionality:</p>
+<ol type="1">
+<li><strong>Tool Specification</strong>:<ul>
+<li>A JSON object that defines what the tool does and how to use it</li>
+<li>Contains a unique name, description, and JSON schema for inputs</li>
+<li>Defines required parameters and their data types</li>
+</ul>
+</li>
+<li><strong>ToolChoice</strong>:<ul>
+<li>Controls if tool use is automatic, required, or specific</li>
+<li>Our application uses &#34;auto&#34; mode with the weather tool suggested</li>
+</ul>
+</li>
+<li><strong>ToolUse</strong>:<ul>
+<li>Represents Claude&#39;s request to use a tool</li>
+<li>Contains a unique <code>tool_use_id</code> for tracking</li>
+<li>Includes structured inputs matching the tool&#39;s schema</li>
+</ul>
+</li>
+<li><strong>ToolResults</strong>:<ul>
+<li>Returns data from tool execution back to Claude</li>
+<li>Must reference the original <code>tool_use_id</code></li>
+<li>Contains the output content for Claude to incorporate</li>
+</ul>
+</li>
+<li><strong>Content Types</strong>:<ul>
+<li>TextContent: Plain text responses</li>
+<li>JSONContent: Structured data for complex information</li>
+</ul>
+</li>
+</ol>
+<p>The application demonstrates a complete end-to-end implementation with these components.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implementing the Weather Tool" duration="15">
+        <p>The heart of our tool use implementation is the <code>get_weather</code> function, which executes when Claude invokes the weather tool and communicates with the WeatherAPI service:</p>
+<pre><code language="language-python" class="language-python">def get_weather(location):
+    try:
+        apiKey = &#39;YOUR_API_KEY_HERE&#39;;
+        url = f&#39;https://api.weatherapi.com/v1/current.json?key={apiKey}&amp;q={location}&#39;;
+
+        headers = {
+            &#34;Content-Type&#34;: &#34;application/json&#34;
+        }
+        response = re.get(url, headers=headers);
+        weatherData = response.json();
+        response.raise_for_status()
+        current_weather = weatherData.get(&#39;current&#39;)
+        condition = current_weather.get(&#39;condition&#39;)
+        text = condition.get(&#39;text&#39;)
+        icon = condition.get(&#39;icon&#39;)
+        return text, icon
+        
+    except re.exceptions.HTTPError as err:
+        st.error(f&#34;HTTP error occurred: {err}&#34;)
+    except Exception as e:
+        st.error(f&#34;Error to get weather: {e}&#34;)
+    return &#34;We were not able to get the weather.&#34;, &#34;&#34;
+</code></pre>
+<p>This function:</p>
+<ol type="1">
+<li>Takes a location string (e.g., &#34;San Francisco, CA&#34;)</li>
+<li>Makes an API request to WeatherAPI</li>
+<li>Parses the response to extract weather conditions and icon URL</li>
+<li>Returns this information or an error message if something goes wrong</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Defining Tool Specification" duration="25">
+        <p>Next, we&#39;ll set up the tool specification and Claude integration through Snowflake&#39;s API. This is where we define what the weather tool does and how Claude should use it:</p>
+<pre><code language="language-python" class="language-python">def call_snowflake_claude():
+    &#34;&#34;&#34;
+    Make an API call to Snowflake&#39;s Claude integration.
+    
+    Args:
+        user_message (str): The message to send to Claude
+        location (str): The location to get weather for
+    
+    Returns:
+        The response from the API
+    &#34;&#34;&#34;
+    text = &#34;&#34;
+    tool_name = None
+    tool_use_id = None
+    tool_input = &#34;&#34;
+    tool_input_json = None
+    
+    payload = {
+        &#34;model&#34;: &#34;claude-4-sonnet&#34;,
+        &#34;messages&#34;: messages,
+        &#34;tool_choice&#34;: {
+            &#34;type&#34;: &#34;auto&#34;,
+            &#34;name&#34;: [
+                &#34;get_weather&#34;
+            ]
+        },
+        &#34;tools&#34;: [
+            {
+                &#34;tool_spec&#34;: {
+                    &#34;type&#34;: &#34;generic&#34;,
+                    &#34;name&#34;: &#34;get_weather&#34;,
+                    &#34;description&#34;: &#34;Given a location return the weather&#34;,
+                    &#34;input_schema&#34;: {
+                        &#34;type&#34;: &#34;object&#34;,
+                        &#34;properties&#34;: {
+                            &#34;location&#34;: {
+                                &#34;type&#34;: &#34;string&#34;,
+                                &#34;description&#34;: &#34;The city and state, e.g. in San Francisco, CA&#34;
+                            }
+                        },
+                        &#34;required&#34;: [
+                            &#34;location&#34;
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+
+    try:
+        resp = _snowflake.send_snow_api_request(
+            &#34;POST&#34;,  # method
+            API_ENDPOINT,  # path
+            {},  # headers
+            {},  # params
+            payload,  # body
+            None,  # request_guid
+            API_TIMEOUT,  # timeout in milliseconds,
+        )
+        # Response processing code...
+            
+        return text, tool_use_id, tool_name, tool_input_json
+            
+    except Exception as e:
+        st.error(f&#34;Error making request: {str(e)}&#34;)
+        return None
+</code></pre>
+<h2 is-upgraded>Anatomy of a Tool Specification</h2>
+<p>Let&#39;s break down the key elements of the tool definition:</p>
+<ol type="1">
+<li><strong>Model Selection</strong>:<pre><code language="language-python" class="language-python">&#34;model&#34;: &#34;claude-4-sonnet&#34;
+</code></pre>
+Specifies which Claude model to use. Claude 3.7 Sonnet provides excellent tool use capabilities.</li>
+<li><strong>Tool Choice Configuration</strong>:<pre><code language="language-python" class="language-python">&#34;tool_choice&#34;: {
+    &#34;type&#34;: &#34;auto&#34;,
+    &#34;name&#34;: [&#34;get_weather&#34;]
+}
+</code></pre>
+<ul>
+<li><code>"type": "auto"</code> - Let Claude decide when to use the tool. This is the most flexible option where Claude will determine if a query is appropriate for the tool.</li>
+<li><code>"name": ["get_weather"]</code> - Suggests the specific tool when appropriate.</li>
+</ul>
+Other options for the <code>type</code> field include:<ul>
+<li><code>"type": "required"</code> - Forces Claude to use at least one of the provided tools. Use this when you want to ensure tool use happens, regardless of Claude&#39;s judgment.</li>
+<li><code>"type": "tool"</code> - Specifies exactly which tool(s) Claude should use, requiring use of one of the tools specified in the <code>name</code> array. This gives you the most control over which tool is selected.</li>
+<li><code>"type": "none"</code> - Explicitly prevents Claude from using any tools, even if they&#39;re provided in the request.</li>
+</ul>
+These options allow fine-grained control over Claude&#39;s tool-use behavior, from completely automatic to strictly directed.</li>
+<li><strong>Tool Specification Structure</strong>:<pre><code language="language-python" class="language-python">&#34;tool_spec&#34;: {
+    &#34;type&#34;: &#34;generic&#34;,
+    &#34;name&#34;: &#34;get_weather&#34;,
+    &#34;description&#34;: &#34;Given a location return the weather&#34;,
+    &#34;input_schema&#34;: {
+        &#34;type&#34;: &#34;object&#34;,
+        &#34;properties&#34;: {
+            &#34;location&#34;: {
+                &#34;type&#34;: &#34;string&#34;,
+                &#34;description&#34;: &#34;The city and state, e.g. in San Francisco, CA&#34;
+            }
+        },
+        &#34;required&#34;: [&#34;location&#34;]
+    }
+}
+</code></pre>
+<ul>
+<li><code>"type": "generic"</code> - Standard tool interface</li>
+<li><code>"name"</code> - Unique identifier for the tool</li>
+<li><code>"description"</code> - Helps Claude understand when to use this tool</li>
+<li><code>"input_schema"</code> - Defines the expected parameters using JSON Schema</li>
+</ul>
+</li>
+<li><strong>Response Processing Logic</strong>:<pre><code language="language-python" class="language-python">for response in response_content:
+    data = response.get(&#39;data&#39;, {})
+    for choice in data.get(&#39;choices&#39;, []):
+        delta = choice.get(&#39;delta&#39;, {})
+        content_list = delta.get(&#39;content_list&#39;, [])
+        for content in content_list:
+            content_type = content.get(&#39;type&#39;)
+            if content_type == &#39;text&#39;:
+                text += content.get(&#39;text&#39;, &#39;&#39;)
+            if content_type is None:
+                if content.get(&#39;tool_use_id&#39;):
+                    tool_name = content.get(&#39;name&#39;)
+                    tool_use_id = content.get(&#39;tool_use_id&#39;)
+                tool_input += content.get(&#39;input&#39;, &#39;&#39;)
+</code></pre>
+This code parses Claude&#39;s response, handling both regular text responses and tool use requests.</li>
+</ol>
+<p>This function:</p>
+<ol type="1">
+<li>Prepares a request payload with: <ul>
+<li>Claude model specification</li>
+<li>Current conversation messages</li>
+<li>Tool specifications with input schema for the weather tool</li>
+</ul>
+</li>
+<li>Uses the <code>tool_choice</code> parameter to suggest when Claude should use the tool</li>
+<li>Sends the request to Snowflake&#39;s Claude API endpoint</li>
+<li>Processes the response to extract: <ul>
+<li>The regular text response</li>
+<li>The tool use ID for tracking tool invocations</li>
+<li>The tool name being called</li>
+<li>The structured input parameters Claude wants to send to the tool</li>
+</ul>
+</li>
+<li>Returns these elements for the tool execution phase</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Executing the Tool" duration="20">
+        <p>The most critical part of the tool use workflow is executing the tool when Claude requests it and properly formatting the results for Claude to incorporate into its response:</p>
+<pre><code language="language-python" class="language-python">if tool_name == &#39;get_weather&#39;:
+    with st.spinner(f&#39;Utilizing {tool_name} Tool..&#39;):
+        location = tool_input_json.get(&#39;location&#39;)
+        if location:
+            weather, icon = get_weather(location)
+            messages.append(
+                {
+                    &#39;role&#39;: &#39;user&#39;,
+                    &#39;content&#39; : query,
+                    &#39;content_list&#39;: [
+                        {
+                            &#39;type&#39;: &#39;tool_results&#39;,
+                            &#39;tool_results&#39; : {
+                                &#39;tool_use_id&#39; : tool_use_id,
+                                &#39;name&#39;: tool_name,
+                                &#39;content&#39; : [
+                                    {
+                                        &#39;type&#39;: &#39;text&#39;,
+                                        &#39;text&#39;: weather
+                                    }
+                                ]
+                            } 
+                        }
+                    ]
+                }
+            )
+            text, tool_use_id, tool_name, tool_input_json = call_snowflake_claude()
+            with st.chat_message(&#34;assistant&#34;):
+                st.markdown(text)
+                st.image(icon.replace(&#39;//&#39;,&#39;https://&#39;))
+                st.session_state.messages.append({&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: text})
+</code></pre>
+<h2 is-upgraded>Anatomy of the Tool Results Structure</h2>
+<p>Let&#39;s break down the key elements of returning tool results to Claude:</p>
+<ol type="1">
+<li><strong>Execution Trigger</strong>:<pre><code language="language-python" class="language-python">if tool_name == &#39;get_weather&#39;:
+</code></pre>
+Detects when Claude has requested the weather tool.</li>
+<li><strong>Parameter Extraction</strong>:<pre><code language="language-python" class="language-python">location = tool_input_json.get(&#39;location&#39;)
+</code></pre>
+Gets the structured parameter from Claude&#39;s tool use request.</li>
+<li><strong>Tool Results Format</strong>:<pre><code language="language-python" class="language-python">messages.append(
+    {
+        &#39;role&#39;: &#39;user&#39;,
+        &#39;content&#39;: query,
+        &#39;content_list&#39;: [
+            {
+                &#39;type&#39;: &#39;tool_results&#39;,
+                &#39;tool_results&#39;: {
+                    &#39;tool_use_id&#39;: tool_use_id,
+                    &#39;name&#39;: tool_name,
+                    &#39;content&#39;: [
+                        {
+                            &#39;type&#39;: &#39;text&#39;,
+                            &#39;text&#39;: weather
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+)
+</code></pre>
+This structure is critical for Claude to process tool results correctly:<ul>
+<li><code>'type': 'tool_results'</code> - Indicates this is a tool result response</li>
+<li><code>'tool_use_id': tool_use_id</code> - Must match the ID from Claude&#39;s request</li>
+<li><code>'name': tool_name</code> - Identifies which tool was executed</li>
+<li><code>'content'</code> - Array of content elements (text, JSON, etc.)</li>
+</ul>
+</li>
+<li><strong>Second API Call</strong>:<pre><code language="language-python" class="language-python">text, tool_use_id, tool_name, tool_input_json = call_snowflake_claude()
+</code></pre>
+Sends the tool results back to Claude so it can incorporate the information into its response.</li>
+<li><strong>Result Visualization</strong>:<pre><code language="language-python" class="language-python">with st.chat_message(&#34;assistant&#34;):
+    st.markdown(text)
+    st.image(icon.replace(&#39;//&#39;,&#39;https://&#39;))
+</code></pre>
+Displays both the textual response and weather icon in the Streamlit interface.</li>
+</ol>
+<p>This code demonstrates the complete tool use cycle:</p>
+<ol type="1">
+<li>Detects when Claude has requested tool use by checking the <code>tool_name</code></li>
+<li>Extracts the structured location parameter from Claude&#39;s tool use request</li>
+<li>Executes the actual tool functionality by calling the weather API</li>
+<li>Formats the results in the specific <code>tool_results</code> format Claude expects</li>
+<li>Includes the original <code>tool_use_id</code> to maintain continuity between request and response</li>
+<li>Makes a second call to Claude with the tool results so it can incorporate the information</li>
+<li>Displays Claude&#39;s final response with the weather information and visualization</li>
+</ol>
+<p>This implements the full tool use lifecycle where Claude requests information, the application fetches it, and Claude then incorporates the results into its final response.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing" duration="15">
+        <p>To ensure your application works correctly:</p>
+<p><strong>Test with simple weather queries</strong>:</p>
+<ul>
+<li>What&#39;s the weather in New York, NY? <img alt="New York Weather" src="img/f83f2adb4db05bfe.png"></li>
+<li>Is it raining in Seattle, WA? <img alt="Seattle Weather" src="img/b55d3f78d2fda1d9.png"></li>
+<li>Should I wear a jacket in Chicago, IL today? <img alt="Chicago Weather" src="img/ff36810252aa9eef.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations! You&#39;ve built a powerful weather assistant application that combines the capabilities of Snowflake Cortex and Claude Sonnet 3.5 with real-time weather data. The tool use capabilities showcase how AI can interact with external services to provide valuable information to users in a conversational manner.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to define tools for Claude to use within Snowflake</li>
+<li>How to structure tool specifications with proper input schemas</li>
+<li>How to implement the complete tool use lifecycle in Snowflake applications</li>
+<li>How to structure tool use requests and responses with correct formatting</li>
+<li>How to set up secure external API access for AI tools in Snowflake</li>
+<li>How to coordinate between Claude&#39;s requests, external API calls, and final responses</li>
+<li>How to build a multi-turn conversation flow with tool use capabilities</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview" target="_blank">External Network Access</a></li>
+</ul>
+<p>Sample Code &amp; Resources:</p>
+<ul>
+<li><a href="https://developers.snowflake.com/" target="_blank">Snowflake Developer Resources</a></li>
+<li><a href="https://quickstarts.snowflake.com/" target="_blank">Snowflake Quickstarts</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_anthropic_on_snowflake_cortex/index.html?index=..%2F..index#0" target="_blank">Getting Started with Anthropic on Snowflake Cortex</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

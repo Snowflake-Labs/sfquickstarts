@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "automated-query-performance-insights-with-streamlit",
+  "duration": 38,
+  "title": "Build Interactive Query Performance App in Snowflake Notebooks",
+  "summary": "Build an interactive Streamlit app within Snowflake Notebooks to analyze query performance and identify optimization opportunities. This guide demonstrates how to create visualizations and insights for query execution times.",
+  "source": "automated-query-performance-insights-with-streamlit/automated-query-performance-insights-with-streamlit.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "streamlit",
+    "notebooks",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "dataanalysis",
+    "python",
+    "queryperformance",
+    "snowflake",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "automated-query-performance-insights-with-streamlit"
+}

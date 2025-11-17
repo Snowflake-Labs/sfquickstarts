@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "machine_learning_with_snowpark_python",
+  "duration": 105,
+  "title": "Machine Learning with Snowpark Python",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "machine_learning_with_snowpark_python/machine_learning_with_snowpark_python.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "machine_learning_with_snowpark_python"
+}

@@ -1,0 +1,514 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_ja"
+                  title="Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="概要" duration="2">
+        <p class="image-container"><img src="img/82e3f493a86ab504.png"></p>
+<p>Snowflakeは、MLモデルをストアドプロシージャ、ユーザー定義関数（UDF）、ユーザー定義テーブル関数（UDTF）としてデプロイできるようにする便利な機能を通じて、機械学習モデルのデータアプリケーションへの統合を簡素化しました。さらに、Snowflakeは、デプロイされたMLモデルへのクエリを容易にするRESTful APIであるSQL APIを提供し、アプリケーションとMLモデルのシームレスな統合を可能にします。</p>
+<p>このチュートリアルでは、架空のキッチンカー会社であるTasty Bytesとキッチンカーの運転手が、データアプリケーション内でMLモデルにより直接提供されるロケーション推奨を確認できるアプリケーションを作成します。このロケーション推奨MLモデルは、PythonユーザーがSnowflakeプラットフォームを簡単に活用できるように、Snowparkを使用してSnowflake内に構築されています。このモデルは、Snowflakeマーケットプレイスの過去の販売データとSafegraphの気象データを使用して、モデルにより多くの情報を提供します。このチュートリアルでは、MLモデルをキッチンカーの運転手用のアプリにデプロイし、統合するプロセスについて説明します。</p>
+<h2 is-upgraded>前提条件</h2>
+<ul>
+<li>Snowflakeでユーザー、データベース、ウェアハウスを作成するために必要な権限</li>
+<li>コンピュータにソフトウェアをインストールして実行できること</li>
+<li>gitの基本的な使用経験</li>
+<li>SQLの中級知識</li>
+<li>SnowflakeでSQLを実行するためのアクセス権</li>
+</ul>
+<h2 is-upgraded>学習する内容</h2>
+<ul>
+<li><strong>Snowflakeマーケット</strong>プレイスからサードパーティデータにアクセスする方法</li>
+<li>ストアドプロシージャを使用して<strong>Snowflakeでモデルをトレーニングする</strong>方法</li>
+<li>モデル推論のためにユーザー定義関数に<strong>Snowflakeでモデルを展開する</strong>方法</li>
+<li>データアプリに<strong>MLモデルを統合する</strong>方法</li>
+</ul>
+<h2 is-upgraded>必要なもの</h2>
+<ul>
+<li><a href="https://github.com/" target="_blank">GitHub</a>のアカウント</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a>のインストール、またはお好みのIDE</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a>のインストール</li>
+</ul>
+<h2 is-upgraded>構築するもの</h2>
+<ul>
+<li>Snowparkを使ったMLモデルを基盤とするデータアプリケーション</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflakeでのデータの設定" duration="3">
+        <p>Snowflakeウェブインターフェイスである<a href="https://docs.snowflake.com/ja/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>を使用して、次のことを行います。</p>
+<ul>
+<li>SnowflakeマーケットプレイスからSafeGraphロケーションデータにアクセスする</li>
+<li>Snowflakeオブジェクト（ウェアハウス、データベース、スキーマ）を作成する</li>
+<li>S3からシフト売上データを取り込む</li>
+<li>シフト売上とSafeGraphロケーションデータを結合する</li>
+</ul>
+<p>Tasty Bytesは世界中の都市でキッチンカーを運行しており、各キッチンカーは1日に2つの異なる販売ロケーションを選択できます。これらのロケーションはSafeGraphの関心ポイントにマッピングされています。SafeGraphマーケットプレイスデータの緯度と経度をシフト売上データに結合し、モデルトレーニングで特徴量として使用します。</p>
+<h2 is-upgraded>ステップ1 - SnowflakeマーケットプレイスからSafeGraph POIデータを取得する</h2>
+<ul>
+<li>Snowflakeアカウントにログインします。</li>
+<li>以下の手順とビデオに従って、SnowflakeアカウントからSafeGraphマーケットプレイスのリスティングにアクセスします。<ul>
+<li>ホームアイコンをクリック</li>
+<li>マーケットプレイスをクリック</li>
+<li>frostbyteを検索</li>
+<li>「SafeGraph: frostbyte」をクリック</li>
+<li>「Get（取得）」をクリック</li>
+<li>データベースの名称をFROSTBYTE_WEATHERSOURCE（すべて大文字）に変更</li>
+<li>追加ロールへの付与 -&gt; [PUBLIC（公開）]</li>
+</ul>
+</li>
+</ul>
+<p><img src="img/991d128c82488de9.gif"> &gt; SafeGraphは、世界中のあらゆる場所に関するデータを提供するグローバルな地理空間データ会社です。Esri、Tripadvisor、Mapbox、Syscoなどの顧客は、SafeGraphのデータを使用して、自社の顧客をより正確に把握し、新しい製品を生み出し、より的確な経営判断を行っています。 </p>
+<h2 is-upgraded>ステップ2 - オブジェクトの作成、データのロード、データの結合を行う</h2>
+<p>ワークシートに移動し、右上の「+」をクリックして新しいワークシートを作成し、「SQLワークシート」を選択します。</p>
+<p>ワークシートに以下のSQLを貼り付けて実行します。このSQLは、Snowflakeオブジェクト（ウェアハウス、データベース、スキーマ）を作成し、S3から未加工の注文データを取り込み、それをダウンストリームで使用するためにモデリングするためのものです。</p>
+<pre><code language="language-sql" class="language-sql">-- use our accountadmin role
+USE ROLE accountadmin;
+
+-- create a development database for data science work
+CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_ml_app;
+
+-- create raw, harmonized, and analytics schemas
+-- raw zone for data ingestion
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_ml_app.raw;
+-- harmonized zone for data processing
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_ml_app.harmonized;
+-- analytics zone for development
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_ml_app.analytics;
+
+-- create csv file format
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_ml_app.raw.csv_ff 
+type = &#39;csv&#39;;
+
+-- create an external stage pointing to S3
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes_ml_app.raw.s3load
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39;
+url = &#39;s3://sfquickstarts/frostbyte_tastybytes/&#39;
+file_format = frostbyte_tasty_bytes_ml_app.raw.csv_ff;
+
+-- define shift sales table
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_ml_app.raw.shift_sales(
+	location_id NUMBER(19,0),
+	city VARCHAR(16777216),
+	date DATE,
+	shift_sales FLOAT,
+	shift VARCHAR(2),
+	month NUMBER(2,0),
+	day_of_week NUMBER(2,0),
+	city_population NUMBER(38,0)
+);
+
+-- create and use a compute warehouse
+CREATE OR REPLACE WAREHOUSE tasty_ml_app_wh AUTO_SUSPEND = 60;
+USE WAREHOUSE tasty_ml_app_wh;
+
+-- ingest from S3 into the shift sales table
+COPY INTO frostbyte_tasty_bytes_ml_app.raw.shift_sales
+FROM @frostbyte_tasty_bytes_ml_app.raw.s3load/analytics/shift_sales/;
+
+-- join in SafeGraph data
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_ml_app.harmonized.shift_sales
+  AS
+SELECT
+    a.location_id,
+    a.city,
+    a.date,
+    a.shift_sales,
+    a.shift,
+    a.month,
+    a.day_of_week,
+    a.city_population,
+    b.latitude,
+    b.longitude,
+    b.location_name,
+    b.street_address
+FROM frostbyte_tasty_bytes_ml_app.raw.shift_sales a
+JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b
+ON a.location_id = b.location_id;
+
+-- promote the harmonized table to the analytics layer for data science development
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v
+  AS
+SELECT * FROM frostbyte_tasty_bytes_ml_app.harmonized.shift_sales;
+
+-- view shift sales data
+SELECT * FROM frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="アプリケーションのユーザーを作成する" duration="5">
+        <p>堅牢なセキュリティ対策を確保するには、個人アカウントとは別に、アプリケーション専用のユーザーアカウントを設定することが不可欠です。この新しいアカウントは、Snowflakeのクエリに使用されます。セキュリティに関するベストプラクティスに従い、このアカウントではキーペア認証を採用し、アクセスをSnowflake環境内に制限します。</p>
+<h2 is-upgraded>ステップ1：認証用の公開キーと非公開キーの生成</h2>
+<p>以下のコマンドを実行して、非公開キーと公開キーを作成します。これらのキーは、Snowflakeでユーザーを認証するために必要となります。</p>
+<pre><code language="language-Shell" class="language-Shell">$ cd ~/.ssh
+$ openssl genrsa -out snowflake_app_key 4096
+$ openssl rsa -in snowflake_app_key -pubout -out snowflake_app_key.pub
+</code></pre>
+<h2 is-upgraded>ステップ2：Snowflakeでユーザーとロールを作成し、この新しいロールにデータアクセスを許可する</h2>
+<p>以下のSQLステートメントを実行してユーザーアカウントを作成し、アプリケーションに必要なデータへのアクセス権を付与します。</p>
+<pre><code language="language-SQL" class="language-SQL">-- use our securityadmin role
+USE ROLE securityadmin;
+
+-- create our tasty_bytes_data_ml_app_demo role
+CREATE ROLE tasty_bytes_data_ml_app_demo;
+
+-- use our accountadmin role
+USE ROLE accountadmin;
+
+-- grant privileges to our tasty_bytes_data_app_demo role
+GRANT USAGE ON WAREHOUSE tasty_ml_app_wh TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_ml_app TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.raw TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.raw TO ROLE tasty_bytes_data_ml_app_demo;
+
+-- use our useradmin role
+USE ROLE useradmin;
+
+-- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE. It should be a single line string.
+CREATE USER data_ml_app_demo
+RSA_PUBLIC_KEY=&#39;&lt;INSERT_RSA_PUBLIC_KEY_HERE&gt;&#39; 
+DEFAULT_ROLE=tasty_bytes_data_ml_app_demo 
+DEFAULT_WAREHOUSE=tasty_ml_app_wh 
+MUST_CHANGE_PASSWORD=FALSE;
+
+-- use our securityadmin role
+USE ROLE securityadmin;
+GRANT ROLE tasty_bytes_data_ml_app_demo TO USER data_ml_app_demo;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SnowflakeにおけるMLモデルのトレーニングと展開" duration="10">
+        <h2 is-upgraded>概要</h2>
+<p>Tasty Bytesは、5年間で前年比25%の売上成長を達成することを目指しています。この目標をサポートし、キッチンカーフリート全体で1日の収益を最大化するため、データサイエンスチームは、所定のシフトで最も高い売上が期待できるロケーションにキッチンカーを誘導するMLモデルを構築する必要があります。</p>
+<p>ワークシートに移動し、右上の「+」をクリックして新しいワークシートを作成し、「SQLワークシート」を選択します。</p>
+<p>ワークシートに以下のSQLを貼り付けて実行し、ロケーション推奨モデルをトレーニングしてデプロイします。</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+USE DATABASE frostbyte_tasty_bytes_ml_app;
+USE SCHEMA analytics;
+USE WAREHOUSE tasty_ml_app_wh;
+
+CREATE STAGE IF NOT EXISTS app_stage;
+
+-- Create stored proc for shift table
+CREATE OR REPLACE PROCEDURE build_shift_feature_table()
+    RETURNS string
+    LANGUAGE python
+    RUNTIME_VERSION = &#39;3.8&#39;
+    PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+    HANDLER = &#39;create_table&#39;
+AS
+$$
+def create_table(session):
+    import snowflake.snowpark.functions as F
+    import snowflake.snowpark.types as T
+    from snowflake.snowpark import Window
+    
+    # Create DataFrame
+    snowpark_df = session.table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v&#34;)
+    
+    # Create rolling average
+    window_by_location_all_days = (
+    Window.partition_by(&#34;location_id&#34;, &#34;shift&#34;)
+    .order_by(&#34;date&#34;)
+    .rows_between(Window.UNBOUNDED_PRECEDING, Window.CURRENT_ROW - 1))
+    
+    snowpark_df = snowpark_df.with_column(
+    &#34;avg_location_shift_sales&#34;, 
+    F.avg(&#34;shift_sales&#34;).over(window_by_location_all_days))
+    
+    # Impute
+    snowpark_df = snowpark_df.fillna(value=0, subset=[&#34;avg_location_shift_sales&#34;])
+    
+    # Encode
+    snowpark_df = snowpark_df.with_column(&#34;shift&#34;, F.iff(F.col(&#34;shift&#34;) == &#34;AM&#34;, 1, 0))
+    
+    # Get date
+    date_tomorrow = snowpark_df.filter(F.col(&#34;shift_sales&#34;).is_null()).select(F.min(&#34;date&#34;)).collect()[0][0]
+    
+    # Filter
+    feature_df = snowpark_df.filter(F.col(&#34;date&#34;) == date_tomorrow).drop(F.col(&#34;shift_sales&#34;))
+    
+    # Get Location Detail
+    location_df = session.table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v&#34;).select(&#34;location_id&#34;, &#34;location_name&#34;, &#34;street_address&#34;)
+    
+    # Join
+    feature_df = feature_df.join(location_df,
+                    feature_df.location_id == location_df.location_id,
+                    &#34;left&#34;) \
+                    .drop(location_df.location_id) \
+                    .drop(location_df.location_name) \
+                    .drop(location_df.street_address) \
+                    .rename(feature_df.location_id, &#34;location_id&#34;) \
+                    .rename(feature_df.location_name, &#34;location_name&#34;) \
+                    .rename(feature_df.street_address, &#34;street_address&#34;)
+    
+    # Save table
+    feature_df.write.mode(&#34;overwrite&#34;).save_as_table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_features&#34;)
+    
+    return &#34;SUCCESS&#34;
+$$;
+
+-- Call sproc to create feature table
+Call build_shift_feature_table();
+
+-- Set permissions
+GRANT ALL PRIVILEGES ON TABLE frostbyte_tasty_bytes_ml_app.analytics.shift_features to tasty_bytes_data_ml_app_demo;
+
+-- Create training stored procedure
+CREATE OR REPLACE PROCEDURE SPROC_TRAIN_LINREG()
+    RETURNS STRING
+    LANGUAGE PYTHON
+    RUNTIME_VERSION = &#39;3.8&#39;
+    PACKAGES = (&#39;snowflake-snowpark-python&#39;,&#39;scikit-learn&#39;,&#39;joblib&#39;)
+    HANDLER = &#39;train_model&#39;
+AS
+$$
+def train_model(session):
+    import snowflake.snowpark.functions as F
+    import snowflake.snowpark.types as T
+    from snowflake.snowpark import Window
+    
+    # Create DataFrame
+    snowpark_df = session.table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v&#34;)
+    
+    # Create rolling average
+    window_by_location_all_days = (
+    Window.partition_by(&#34;location_id&#34;, &#34;shift&#34;)
+    .order_by(&#34;date&#34;)
+    .rows_between(Window.UNBOUNDED_PRECEDING, Window.CURRENT_ROW - 1))
+    
+    snowpark_df = snowpark_df.with_column(
+    &#34;avg_location_shift_sales&#34;, 
+    F.avg(&#34;shift_sales&#34;).over(window_by_location_all_days))
+    
+    # Impute
+    snowpark_df = snowpark_df.fillna(value=0, subset=[&#34;avg_location_shift_sales&#34;])
+    
+    # Encode
+    snowpark_df = snowpark_df.with_column(&#34;shift&#34;, F.iff(F.col(&#34;shift&#34;) == &#34;AM&#34;, 1, 0))
+    
+    # Get date
+    date_tomorrow = snowpark_df.filter(F.col(&#34;shift_sales&#34;).is_null()).select(F.min(&#34;date&#34;)).collect()[0][0]
+    
+    # Filter to historical
+    historical_snowpark_df = snowpark_df.filter(F.col(&#34;shift_sales&#34;).is_not_null())
+    
+    # Drop
+    historical_snowpark_df = historical_snowpark_df.drop(&#34;location_id&#34;, &#34;city&#34;, &#34;date&#34;)
+    
+    # Split
+    train_snowpark_df, test_snowpark_df = historical_snowpark_df.randomSplit([0.8, 0.2])
+    
+    # Import packages
+    from sklearn.linear_model import LinearRegression
+    from joblib import dump
+    
+    feature_cols = [&#34;MONTH&#34;, &#34;DAY_OF_WEEK&#34;, &#34;LATITUDE&#34;, &#34;LONGITUDE&#34;, &#34;CITY_POPULATION&#34;, &#34;AVG_LOCATION_SHIFT_SALES&#34;, &#34;SHIFT&#34;]
+    target_col = &#34;SHIFT_SALES&#34;
+
+    # Get training data
+    df = train_snowpark_df.to_pandas()
+
+    # Set inputs X and outputs y
+    X = df[feature_cols]
+    y = df[target_col]
+
+    # Train model
+    model = LinearRegression().fit(X, y)
+
+    # Save model
+    model_name = &#34;linreg_location_sales_model.sav&#34;
+    dump(model, &#34;/tmp/&#34; + model_name)
+    session.file.put(
+        &#34;/tmp/&#34; + model_name,
+        &#34;@APP_STAGE&#34;,
+        auto_compress=False,
+        overwrite=True
+    )
+
+    return &#34;SUCCESS&#34;
+$$;
+
+-- Train model
+Call sproc_train_linreg();
+
+-- Deploy the model as a UDF
+CREATE OR REPLACE 
+  FUNCTION udf_predict_location_sales_prod(arg1 FLOAT,arg2 FLOAT,
+                                                  arg3 FLOAT,arg4 FLOAT,
+                                                  arg5 FLOAT,arg6 FLOAT,
+                                                  arg7 FLOAT)
+    RETURNS FLOAT
+    LANGUAGE PYTHON 
+    RUNTIME_VERSION=3.8
+    IMPORTS=(&#39;@APP_STAGE/linreg_location_sales_model.sav&#39;)
+    PACKAGES=(&#39;scikit-learn&#39;,&#39;joblib&#39;,&#39;cloudpickle==2.0.0&#39;,&#39;pandas&#39;, &#39;cachetools&#39;)
+    HANDLER=&#39;predict&#39;
+    as
+$$
+import pandas
+import cachetools
+from _snowflake import vectorized
+
+@cachetools.cached(cache={})
+def load_model(filename):
+    import joblib
+    import sys
+    import os
+    
+    import_dir = sys._xoptions.get(&#34;snowflake_import_directory&#34;)
+    if import_dir:
+        with open(os.path.join(import_dir, filename), &#39;rb&#39;) as file:
+            m = joblib.load(file)
+            return m
+
+@vectorized(input=pandas.DataFrame)
+def predict(X: pandas.DataFrame) -&gt; pandas.Series:
+    # Load the model
+    model = load_model(&#34;linreg_location_sales_model.sav&#34;)
+
+    # Get predictions
+    predictions = model.predict(X)
+
+    # Return rounded predictions
+    return predictions.round(2)
+$$;
+
+-- Set permissions
+GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLOAT, FLOAT,FLOAT,FLOAT,FLOAT) to tasty_bytes_data_ml_app_demo;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SQL APIを使ったMLモデルからのデータ取得とデータアプリケーションへの統合" duration="1">
+        <p>皆さんが実行するアプリケーションはReact Nativeで記述されます。</p>
+<h2 is-upgraded>ステップ1：ソースコードを取得する</h2>
+<ol type="1">
+<li><code>git clone https://github.com/sf-gh-sjasti/IntegrationTastyBytesMLModelInDataApp.git reactNativeMLApp</code>を使用してレポジトリをクローンします。</li>
+<li>フォルダ<code>cd reactNativeMLApp</code>に移動します。</li>
+<li><code>npm install</code>を実行して依存関係をインストールします。</li>
+</ol>
+<h2 is-upgraded>ステップ2：アプリケーションを設定する</h2>
+<ol type="1">
+<li>VS Codeまたは起この意のIDEで<code>reactNativeMLApp</code>フォルダを開きます。</li>
+<li><code>.env</code>ファイルを開き、非公開キーで<code>PRIVATE_KEY</code>の値を更新します。ヘッダー（<code>-----BEGIN RSA PRIVATE KEY-----</code>）とフッター（<code>-----END RSA PRIVATE KEY-----</code>）を含め、<code>~/.ssh/snowflake_app_key</code>から非公開キー全体をコピー＆ペーストします。</li>
+<li>米国西部に所在している場合は、<code>SNOWFLAKE_ACCOUNT_IDENTIFIER</code>を自分のSnowflakeアカウントに更新してください。（あるいは）米国西部以外の場所に所在している場合は、<code>SNOWFLAKE_ACCOUNT_IDENTIFIER</code>を「.」に更新してください。Snowflakeからsnowflake_accountの値を取得するには、Snowsightで<code>SELECT CURRENT_ACCOUNT()</code>を実行してください。Snowflakeからリージョン値を取得するには、Snowsightで<code>SELECT CURRENT_REGION()</code>を実行してください。SNOWFLAKE_ACCOUNT_IDENTIFIERとSNOWFLAKE_ACCOUNTは米国西部では同じとなります。</li>
+<li><code>SNOWFLAKE_ACCOUNT</code>を自分のSnowflakeアカウントに更新します。</li>
+<li><code>PUBLIC_KEY_FINGERPRINT</code>を自分のユーザー公開キーのフィンガープリントに更新します。公開キーのフィンガープリントを取得するには、SnowsightでSQL、<code>DESCRIBE USER data_app_demo</code> を実行し、RSA_PUBLIC_KEY_FPプロパティ値を取得します。</li>
+</ol>
+<h2 is-upgraded>ステップ3：ソースコードをレビューする</h2>
+<p>ここでは、SQL APIを使用し、Snowflakeでキーペア認証を使用して認証を行います。JWTトークンの生成方法については、<code>Tokens.js</code>を参照してください。<code>Locations.js</code>には、「ロケーション」画面をレンダリングするためのソースコードがあります。このファイルには、SQL APIを使用してUDFをクエリする方法と必要なヘッダーに関する情報も記載されています。</p>
+<h2 is-upgraded>ステップ4：アプリケーションをテストする</h2>
+<ol type="1">
+<li><code>npx expo start --clear</code>を実行し、<code>w</code>キーを押してWebブラウザでアプリを実行します。</li>
+<li>この操作により、Webブラウザでアプリが起動します。</li>
+<li>起動すると、「キュー内の注文」画面が表示されます。</li>
+</ol>
+<p><img src="img/5fada758b997368b.png"> ## クリーンアップ </p>
+<p>Snowsightワークシートに移動し、右上の「+」をクリックして新しいワークシートを作成し、「SQLワークシート」を選択します。次のSQLをワークシートに貼り付けて実行し、クイックスタートで作成したSnowflakeオブジェクトを削除します。</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+DROP DATABASE frostbyte_tasty_bytes_ml_app;
+DROP WAREHOUSE tasty_ml_app_wh;
+
+USE ROLE securityadmin;
+DROP USER data_ml_app_demo;
+DROP ROLE tasty_bytes_data_ml_app_demo;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめ" duration="1">
+        <h2 is-upgraded>まとめ</h2>
+<p>**お疲れ様でした。**Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合クイックスタートが無事完了しました。</p>
+<p>これにより、次のことを学習しました。</p>
+<ul>
+<li><strong>Snowflakeマーケットプレイス</strong>からサードパーティデータを取得する</li>
+<li>ストアドプロシージャを使用してSnowflakeでMLモデルのトレーニングする</li>
+<li>モデル推論を実行するためにMLモデルをSnowflakeにUDFとしてデプロイする</li>
+<li>MLモデルをデータアプリに統合する</li>
+</ul>
+<h2 is-upgraded>次のステップ</h2>
+<p>ロケーション推奨MLモデルの詳細については、<a href="https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science" target="_blank">Tasty Bytes - データサイエンスのためのSnowpark入門</a>クイックスタートを参照してください。</p>
+<p>引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なTasty Bytes - クイックスタートをご覧ください。</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja" target="_blank">Powered by Tasty Bytes - クイックスタート目次</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

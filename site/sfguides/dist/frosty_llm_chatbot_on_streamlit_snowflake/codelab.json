@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "frosty_llm_chatbot_on_streamlit_snowflake",
+  "duration": 46,
+  "title": "Frosty: Build an LLM Chatbot in Streamlit on your Snowflake Data",
+  "authors": "Joshua Carroll, Richard Meng, Caroline Frasca",
+  "summary": "This guide provides the instructions for writing an LLM chatbot in Streamlit on your Snowflake data.",
+  "source": "frosty_llm_chatbot_on_streamlit_snowflake/frosty_llm_chatbot_on_streamlit_snowflake.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "app-development"
+  ],
+  "tags": [
+    "llms",
+    "openai",
+    "snowparkpython",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "frosty_llm_chatbot_on_streamlit_snowflake"
+}

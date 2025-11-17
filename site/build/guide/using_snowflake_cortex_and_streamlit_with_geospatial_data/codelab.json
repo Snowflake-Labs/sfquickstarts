@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "using_snowflake_cortex_and_streamlit_with_geospatial_data",
+  "duration": 105,
+  "title": "Using Snowflake Cortex And Streamlit With Geospatial Data",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "using_snowflake_cortex_and_streamlit_with_geospatial_data/using_snowflake_cortex_and_streamlit_with_geospatial_data.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-sharing",
+    "cortex"
+  ],
+  "tags": [
+    "advancedanalytics",
+    "dataengineering",
+    "geospatial",
+    "unitedkingdom",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "using_snowflake_cortex_and_streamlit_with_geospatial_data"
+}

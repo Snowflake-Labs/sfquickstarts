@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_generative_ai_snowflake_external_functions",
+  "duration": 60,
+  "title": "Getting Started with Generative AI in Snowflake and Streamlit",
+  "summary": "Getting Started with Generative AI in Snowflake and Streamlit",
+  "source": "getting_started_with_generative_ai_snowflake_external_functions/getting_started_with_generative_ai_snowflake_external_functions.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "getting_started_with_generative_ai_snowflake_external_functions"
+}

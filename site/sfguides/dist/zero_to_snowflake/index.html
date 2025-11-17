@@ -1,0 +1,1704 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Zero to Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="zero_to_snowflake"
+                  title="Zero to Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img src="img/bda3bb39f8066778.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and harness Cortex Search for intelligent text discovery, and utilize Cortex Analyst for conversational business intelligence. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.</p>
+<p>We&#39;ll apply these concepts using a sample dataset from our fictitious food truck, Tasty Bytes, to improve and streamline their data operations. We&#39;ll explore this dataset through several workload-specific scenarios, demonstrating the benefits Snowflake provides to businesses.</p>
+<h2 is-upgraded>Who is Tasty Bytes?</h2>
+<p class="image-container"><img src="img/a51f501137dea3c5.png"></p>
+<p>Our mission is to provide unique, high-quality food options in a convenient and cost-effective manner, emphasizing the use of fresh ingredients from local vendors. Their vision is to become the largest food truck network in the world with a zero carbon footprint.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Supported Snowflake <a href="https://docs.snowflake.com/en/user-guide/setup?_fsi=6tNBra0z&_fsi=6tNBra0z#browser-requirements" target="_blank">Browser</a></li>
+<li>An Enterprise or Business Critical Snowflake Account</li>
+<li>If you do not have a Snowflake Account, please <a href="https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=6tNBra0z&_fsi=6tNBra0z" target="_blank">sign up for a Free 30 Day Trial Account</a>. When signing up, please make sure to select  Enterprise edition. You are welcome to choose any <a href="https://docs.snowflake.com/en/user-guide/intro-regions?_fsi=6tNBra0z&_fsi=6tNBra0z" target="_blank">Snowflake Cloud/Region</a>.</li>
+<li>After registering, you will receive an email with an activation link and your Snowflake Account URL.</li>
+<li><strong>For Snowflake Cortex AI Features:</strong> This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account&#39;s primary region, you will need to enable cross-region inference. <strong>To enable this, an </strong><strong><code>ACCOUNTADMIN</code></strong><strong> role must execute the following SQL command in a Snowflake worksheet:</strong></li>
+</ul>
+<pre><code language="language-sql" class="language-sql">ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = &#39;AWS_US&#39;;
+</code></pre>
+<ul>
+<li>Simply copy and paste the line above into a SQL worksheet and run it while logged in with the <code>ACCOUNTADMIN</code> role.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li><strong>Vignette 1: Getting Started with Snowflake:</strong> The fundamentals of Snowflake warehouses, caching, cloning, and Time Travel.</li>
+<li><strong>Vignette 2: Simple Data Pipelines:</strong> How to ingest and transform semi-structured data using Dynamic Tables.</li>
+<li><strong>Vignette 3: Snowflake Cortex AI:</strong> How to leverage Snowflake&#39;s comprehensive AI capabilities for experimentation, scalable analysis, AI-assisted development, and conversational business intelligence.</li>
+<li><strong>Vignette 4: Governance with Horizon:</strong> How to protect your data with roles, classification, masking, and row-access policies.</li>
+<li><strong>Vignette 5: Apps &amp; Collaboration:</strong> How to leverage the Snowflake Marketplace to enrich your internal data with third-party datasets.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A comprehensive understanding of the core Snowflake platform.</li>
+<li>Configured Virtual Warehouses.</li>
+<li>An automated ELT pipeline with Dynamic Tables.</li>
+<li>A complete intelligence customer analytics platform leveraging Snowflake AI.</li>
+<li>A robust data governance framework with roles and policies.</li>
+<li>Enriched analytical views combining first- and third-party data.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="3">
+        <h2 is-upgraded><strong>Overview</strong></h2>
+<p>In this Quickstart, we will use Snowflake Workspaces to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL worksheet for the setup and each vignette. This will keep our code organized and easy to manage.</p>
+<p>Let&#39;s walk through how to create your first worksheet, add the necessary setup code, and run it.</p>
+<h2 is-upgraded><strong>Step 1 - Create Your Setup Worksheet</strong></h2>
+<p>First, we need a place to put our setup script.</p>
+<ol type="1">
+<li><strong>Navigate to Workspaces:</strong> In the left-hand navigation menu of the Snowflake UI, click on <strong>Projects</strong> » <strong>Workspaces</strong>. This is the central hub for all your worksheets.</li>
+<li><strong>Create a New Worksheet:</strong> Find and click the <strong>+ Add New</strong> button in the top-left corner of the Workspaces area, then select <strong>SQL File</strong>. This will generate a new, blank worksheet.</li>
+<li><strong>Rename the Worksheet:</strong> Your new worksheet will have a name based on the timestamp it was created. Give it a descriptive name like <strong>Zero To Snowflake - Setup</strong>.</li>
+</ol>
+<h2 is-upgraded><strong>Step 2 - Add and Run the Setup Script</strong></h2>
+<p>Now that you have your worksheet, it&#39;s time to add the setup SQL and execute it.</p>
+<ol type="1">
+<li><strong>Copy the SQL Code:</strong> Click the link for the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql" target="_blank"><strong>setup file</strong></a> and copy it to your clipboard.</li>
+<li><strong>Paste into your Worksheet:</strong> Return to your Zero To Snowflake Setup worksheet in Snowflake and paste the entire script into the editor.</li>
+<li><strong>Run the Script:</strong> To execute all the commands in the worksheet sequentially, click the <strong>&#34;Run All&#34;</strong> button located at the top-left of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.</li>
+</ol>
+<p class="image-container"><img src="img/f55bd257bf3aedf.gif"></p>
+<h2 is-upgraded><strong>Looking Ahead</strong></h2>
+<p>The process you just completed for creating a new worksheet is the exact same workflow you will use for every subsequent vignette in this course.</p>
+<p>For each new vignette, you will:</p>
+<ol type="1">
+<li>Create a <strong>new</strong> worksheet.</li>
+<li>Give it a descriptive name (e.g., Vignette 1 - Getting Started with Snowflake).</li>
+<li>Copy and paste the SQL script for that specific vignette.</li>
+<li>Each SQL file has all of the necessary instructions and commands to follow along.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get Started with Snowflake" duration="1">
+        <p class="image-container"><img src="img/321cb65473f4da80.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Within this Vignette, we will learn about core Snowflake concepts by exploring Virtual Warehouses, using the query results cache, performing basic data transformations, leveraging data recovery with Time Travel, and monitoring our account with Resource Monitors and Budgets.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create, configure, and scale a Virtual Warehouse.</li>
+<li>How to leverage the Query Result Cache.</li>
+<li>How to use Zero-Copy Cloning for development.</li>
+<li>How to transform and clean data.</li>
+<li>How to instantly recover a dropped table using UNDROP.</li>
+<li>How to create and apply a Resource Monitor.</li>
+<li>How to create a Budget to monitor costs.</li>
+<li>How to use Universal Search to find objects and information.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A Snowflake Virtual Warehouse</li>
+<li>A development copy of a table using Zero-Copy Clone</li>
+<li>A Resource Monitor</li>
+<li>A Budget</li>
+</ul>
+<h2 is-upgraded>Get the SQL and paste it into your Worksheet.</h2>
+<p><strong>Copy and paste the SQL from this </strong><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql" target="_blank"><strong>file</strong></a><strong> in a new Worksheet to follow along in Snowflake. Note that once you&#39;ve reached the end of the Worksheet you can skip to Step 10 - Simple Data Pipeline</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Virtual Warehouses and Settings" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>Virtual Warehouses are the dynamic, scalable, and cost-effective computing power that lets you perform analysis on your Snowflake data. Their purpose is to handle all your data processing needs without you having to worry about the underlying technical details.</p>
+<h2 is-upgraded>Step 1 - Setting Context</h2>
+<p>First, lets set our session context. To run the queries, highlight the three queries at the top of your worksheet and click the &#34;► Run&#34; button.</p>
+<pre><code language="language-sql" class="language-sql">ALTER SESSION SET query_tag = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;,&#34;name&#34;:&#34;tb_zts,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:1},&#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;tastybytes&#34;, &#34;vignette&#34;: &#34;getting_started_with_snowflake&#34;}}&#39;;
+
+USE DATABASE tb_101;
+USE ROLE accountadmin;
+</code></pre>
+<h2 is-upgraded>Step 2 - Creating a Warehouse</h2>
+<p>Let&#39;s create our first warehouse! This command creates a new X-Small warehouse that will initially be suspended.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE my_wh
+    COMMENT = &#39;My TastyBytes warehouse&#39;
+    WAREHOUSE_TYPE = &#39;standard&#39;
+    WAREHOUSE_SIZE = &#39;xsmall&#39;
+    MIN_CLUSTER_COUNT = 1
+    MAX_CLUSTER_COUNT = 2
+    SCALING_POLICY = &#39;standard&#39;
+    AUTO_SUSPEND = 60
+    INITIALLY_SUSPENDED = true
+    AUTO_RESUME = false;
+</code></pre>
+<p><strong>Virtual Warehouses</strong>: A virtual warehouse, often referred to simply as a &#34;warehouse&#34;, is a cluster of compute resources in Snowflake. Warehouses are required for queries, DML operations, and data loading. For more information, see the <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">Warehouse Overview</a>.</p>
+<h2 is-upgraded>Step 3 - Using and Resuming a Warehouse</h2>
+<p>Now that we have a warehouse, we must set it as the active warehouse for our session. Execute the next statement.</p>
+<pre><code language="language-sql" class="language-sql">USE WAREHOUSE my_wh;
+</code></pre>
+<p>If you try to run the query below, it will fail, because the warehouse is suspended and does not have <code>AUTO_RESUME</code> enabled.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM raw_pos.truck_details;
+</code></pre>
+<p>Let&#39;s resume it and set it to auto-resume in the future.</p>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE my_wh RESUME;
+ALTER WAREHOUSE my_wh SET AUTO_RESUME = TRUE;
+</code></pre>
+<p>Now, try the query again. It should execute successfully.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM raw_pos.truck_details;
+</code></pre>
+<h2 is-upgraded>Step 4 - Scaling a Warehouse</h2>
+<p>Warehouses in Snowflake are designed for elasticity. We can scale our warehouse up on the fly to handle a more intensive workload. Let&#39;s scale our warehouse to an X-Large.</p>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE my_wh SET warehouse_size = &#39;XLarge&#39;;
+</code></pre>
+<p>With our larger warehouse, let&#39;s run a query to calculate total sales per truck brand.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    o.truck_brand_name,
+    COUNT(DISTINCT o.order_id) AS order_count,
+    SUM(o.price) AS total_sales
+FROM analytics.orders_v o
+GROUP BY o.truck_brand_name
+ORDER BY total_sales DESC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Result Cache" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>This is a great place to demonstrate another powerful feature in Snowflake: the Query Result Cache. When you first ran the ‘sales per truck&#39; query, it likely took several seconds. If you run the exact same query again, the result will be nearly instantaneous. This is because the query results were cached in Snowflake&#39;s Query Result Cache.</p>
+<h2 is-upgraded>Step 1 - Re-running a Query</h2>
+<p>Run the same ‘sales per truck&#39; query from the previous step. Note the execution time in the query details pane. It should be much faster.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    o.truck_brand_name,
+    COUNT(DISTINCT o.order_id) AS order_count,
+    SUM(o.price) AS total_sales
+FROM analytics.orders_v o
+GROUP BY o.truck_brand_name
+ORDER BY total_sales DESC;
+</code></pre>
+<p class="image-container"><img src="img/56338dd39155f5f1.png"></p>
+<p><strong>Query Result Cache</strong>: Results are retained for any query for 24 hours. Hitting the result cache requires almost no compute resources, making it ideal for frequently run reports or dashboards. The cache resides in the Cloud Services Layer, making it globally accessible to all users and warehouses in the account. For more information, please visit the <a href="https://docs.snowflake.com/en/user-guide/querying-persisted-results" target="_blank">documentation on using persisted query results</a>.</p>
+<h2 is-upgraded>Step 2 - Scaling Down</h2>
+<p>We will now be working with smaller datasets, so we can scale our warehouse back down to an X-Small to conserve credits.</p>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE my_wh SET warehouse_size = &#39;XSmall&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Basic Transformation Techniques" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will see some basic transformation techniques to clean our data and use Zero-Copy Cloning to create development environments. Our goal is to analyze the manufacturers of our food trucks, but this data is currently nested inside a <code>VARIANT</code> column.</p>
+<h2 is-upgraded>Step 1 - Creating a Development Table with Zero-Copy Clone</h2>
+<p>First, let&#39;s take a look at the <code>truck_build</code> column.</p>
+<pre><code language="language-sql" class="language-sql">SELECT truck_build FROM raw_pos.truck_details;
+</code></pre>
+<p>This table contains data about the make, model and year of each truck, but it is nested, or embedded in a special data type called a VARIANT. We can perform operations on this column to extract these values, but first we&#39;ll create a development copy of the table.</p>
+<p>Let&#39;s create a development copy of our <code>truck_details</code> table. Snowflake&#39;s Zero-Copy Cloning lets us create an identical, fully independent copy of the table instantly, without using additional storage.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE raw_pos.truck_dev CLONE raw_pos.truck_details;
+</code></pre>
+<p><a href="https://docs.snowflake.com/en/user-guide/object-clone" target="_blank"><strong>Zero-Copy Cloning</strong></a>: Cloning creates a copy of a database object without duplicating the storage. Changes made to either the original or the clone are stored as new micro-partitions, leaving the other object untouched.</p>
+<h2 is-upgraded>Step 2 - Adding New Columns and Transforming Data</h2>
+<p>Now that we have a safe development table, let&#39;s add columns for <code>year</code>, <code>make</code>, and <code>model</code>. Then, we will extract the data from the <code>truck_build</code> <code>VARIANT</code> column and populate our new columns.</p>
+<pre><code language="language-sql" class="language-sql">-- Add new columns
+ALTER TABLE raw_pos.truck_dev ADD COLUMN IF NOT EXISTS year NUMBER;
+ALTER TABLE raw_pos.truck_dev ADD COLUMN IF NOT EXISTS make VARCHAR(255);
+ALTER TABLE raw_pos.truck_dev ADD COLUMN IF NOT EXISTS model VARCHAR(255);
+
+-- Extract and update data
+UPDATE raw_pos.truck_dev
+SET 
+    year = truck_build:year::NUMBER,
+    make = truck_build:make::VARCHAR,
+    model = truck_build:model::VARCHAR;
+</code></pre>
+<h2 is-upgraded>Step 3 - Cleaning the Data</h2>
+<p>Let&#39;s run a query to see the distribution of truck makes.</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    make,
+    COUNT(*) AS count
+FROM raw_pos.truck_dev
+GROUP BY make
+ORDER BY make ASC;
+</code></pre>
+<p>Did you notice anything odd about the results from the last query? We can see a data quality issue: ‘Ford&#39; and ‘Ford_&#39; are being treated as separate manufacturers. Let&#39;s easily fix this with a simple <code>UPDATE</code> statement.</p>
+<pre><code language="language-sql" class="language-sql">UPDATE raw_pos.truck_dev
+    SET make = &#39;Ford&#39;
+    WHERE make = &#39;Ford_&#39;;
+</code></pre>
+<p>Here we&#39;re saying we want to set the row&#39;s make value to <code>Ford</code> wherever it is <code>Ford_</code>. This will ensure none of the Ford makes have the underscore, giving us a unified make count.</p>
+<h2 is-upgraded>Step 4 - Promoting to Production with SWAP</h2>
+<p>Our development table is now cleaned and correctly formatted. We can instantly promote it to be the new production table using the <code>SWAP WITH</code> command. This atomically swaps the two tables.</p>
+<pre><code language="language-sql" class="language-sql">ALTER TABLE raw_pos.truck_details SWAP WITH raw_pos.truck_dev;
+</code></pre>
+<h2 is-upgraded>Step 5 - Cleanup</h2>
+<p>Now that the swap is complete, we can drop the unnecessary <code>truck_build</code> column from our new production table. We also need to drop the old production table, which is now named <code>truck_dev</code>. But for the sake of the next lesson, we will &#34;accidentally&#34; drop the main table.</p>
+<pre><code language="language-sql" class="language-sql">ALTER TABLE raw_pos.truck_details DROP COLUMN truck_build;
+
+-- Accidentally drop the production table!
+DROP TABLE raw_pos.truck_details;
+</code></pre>
+<h2 is-upgraded>Step 6 - Data Recovery with UNDROP</h2>
+<p>Oh no! We accidentally dropped the production <code>truck_details</code> table. Luckily, Snowflake&#39;s Time Travel feature allows us to recover it instantly. The <code>UNDROP</code> command restores dropped objects.</p>
+<h2 is-upgraded>Step 7 - Verify the Drop</h2>
+<p>If you run a <code>DESCRIBE</code> command on the table, you will get an error stating it does not exist.</p>
+<pre><code language="language-sql" class="language-sql">DESCRIBE TABLE raw_pos.truck_details;
+</code></pre>
+<h2 is-upgraded>Step 8 - Restore the Table with UNDROP</h2>
+<p>Let&#39;s restore the <code>truck_details</code> table to the exact state it was in before being dropped.</p>
+<pre><code language="language-sql" class="language-sql">UNDROP TABLE raw_pos.truck_details;
+</code></pre>
+<p><a href="https://docs.snowflake.com/en/user-guide/data-time-travel" target="_blank"><strong>Time Travel &amp; UNDROP</strong></a>: Snowflake Time Travel enables accessing historical data at any point within a defined period. This allows for restoring data that has been modified or deleted. <code>UNDROP</code> is a feature of Time Travel that makes recovery from accidental drops trivial.</p>
+<h2 is-upgraded>Step 9 - Verify Restoration and Clean Up</h2>
+<p>Verify the table was successfully restored by selecting from it. Then, we can safely drop the actual development table, <code>truck_dev</code>.</p>
+<pre><code language="language-sql" class="language-sql">-- Verify the table was restored
+SELECT * from raw_pos.truck_details;
+
+-- Now drop the real truck_dev table
+DROP TABLE raw_pos.truck_dev;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Resource Monitors" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>Monitoring compute usage is critical. Snowflake provides Resource Monitors to track warehouse credit usage. You can define credit quotas and trigger actions (like notifications or suspension) when thresholds are reached.</p>
+<h2 is-upgraded>Step 1 - Creating a Resource Monitor</h2>
+<p>Let&#39;s create a resource monitor for <code>my_wh</code>. This monitor has a monthly quota of 100 credits and will send notifications at 75% and suspend the warehouse at 90% and 100% of the quota. First, ensure your role is <code>accountadmin</code>.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+CREATE OR REPLACE RESOURCE MONITOR my_resource_monitor
+    WITH CREDIT_QUOTA = 100
+    FREQUENCY = MONTHLY
+    START_TIMESTAMP = IMMEDIATELY
+    TRIGGERS ON 75 PERCENT DO NOTIFY
+             ON 90 PERCENT DO SUSPEND
+             ON 100 PERCENT DO SUSPEND_IMMEDIATE;
+</code></pre>
+<h2 is-upgraded>Step 2 - Applying the Resource Monitor</h2>
+<p>With the monitor created, apply it to <code>my_wh</code>.</p>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE my_wh 
+    SET RESOURCE_MONITOR = my_resource_monitor;
+</code></pre>
+<p>For more information on what each configuration handles, please visit the documentation for <a href="https://docs.snowflake.com/en/user-guide/resource-monitors" target="_blank">Working with Resource Monitors</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Budget" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>While Resource Monitors track warehouse usage, Budgets provide a more flexible approach to managing all Snowflake costs. Budgets can track spend on any Snowflake object and notify users when a dollar amount threshold is reached.</p>
+<h2 is-upgraded>Step 1 - Creating a Budget via SQL</h2>
+<p>Let&#39;s first create the budget object in SQL.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE SNOWFLAKE.CORE.BUDGET my_budget()
+    COMMENT = &#39;My Tasty Bytes Budget&#39;;
+</code></pre>
+<h2 is-upgraded>Step 2 - Budget Page in Snowsight</h2>
+<p>Let&#39;s take a look at the Budget Page on Snowsight.</p>
+<p>Navigate to <strong>Admin</strong> » <strong>Cost Management</strong> » <strong>Budgets</strong>.</p>
+<p class="image-container"><img src="img/a9ddc7836ed4e33.png"></p>
+<p><strong>Key:</strong></p>
+<ol type="1">
+<li>Warehouse Context</li>
+<li>Cost Management Navigation</li>
+<li>Time Period Filter</li>
+<li>Key Metrics Summary</li>
+<li>Spend and Forecast Trend Chart</li>
+<li>Budget Details</li>
+</ol>
+<h2 is-upgraded>Step 3 - Configuring the Budget in Snowsight</h2>
+<p>Configuring a budget is done through the Snowsight UI.</p>
+<ol type="1">
+<li>Make sure your account role is set to <code>ACCOUNTADMIN</code>. You can change this in the bottom left corner.</li>
+<li>Click on the <strong>MY_BUDGET</strong> budget we created.</li>
+<li>Click <strong>Budget Details</strong> to open the Budget details panel, then click <strong>Edit</strong> in the Budget Details panel on the right.</li>
+<li>Set the <strong>Spending Limit</strong> to <code>100</code>.</li>
+<li>Enter a verified notification email address.</li>
+<li>Click <strong>+ Tags &amp; Resources</strong> and add the <strong>TB_101.ANALYTICS</strong> schema and the <strong>TB_DE_WH</strong> warehouse to be monitored.</li>
+<li>Click <strong>Save Changes</strong>. <img src="img/8322962bb1fcb3d7.png"></li>
+</ol>
+<p>For a detailed guide on Budgets, please see the <a href="https://docs.snowflake.com/en/user-guide/budgets" target="_blank">Snowflake Budgets Documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Universal Search" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>Universal Search allows you to easily find any object in your account, plus explore data products in the Marketplace, relevant Snowflake Documentation, and Community Knowledge Base articles.</p>
+<h2 is-upgraded>Step 1 - Searching for an Object</h2>
+<p>Let&#39;s try it now.</p>
+<ol type="1">
+<li>Click <strong>Search</strong> in the Navigation Menu on the left.</li>
+<li>Enter <code>truck</code> into the search bar.</li>
+<li>Observe the results. You will see categories of objects on your account, such as tables and views, as well as relevant documentation.</li>
+</ol>
+<p class="image-container"><img src="img/2f3ed2f2dccefd3.png"></p>
+<h2 is-upgraded>Step 2 - Using Natural Language Search</h2>
+<p>You can also use natural language. For example, search for: <code>Which truck franchise has the most loyal customer base?</code> Universal search will return relevant tables and views, even highlighting columns that might help answer your question, providing an excellent starting point for analysis.</p>
+<p class="image-container"><img src="img/5a827763f8a59ce6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Simple Data Pipeline" duration="1">
+        <p class="image-container"><img src="img/d7b5a7fe322e801f.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Within this vignette, we will learn how to build a simple, automated data pipeline in Snowflake. We will start by ingesting raw, semi-structured data from an external stage, and then use the power of Snowflake&#39;s Dynamic Tables to transform and enrich that data, creating a pipeline that automatically stays up-to-date as new data arrives.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to ingest data from an external S3 stage.</li>
+<li>How to query and transform semi-structured VARIANT data.</li>
+<li>How to use the FLATTEN function to parse arrays.</li>
+<li>How to create and chain Dynamic Tables.</li>
+<li>How an ELT pipeline automatically processes new data.</li>
+<li>How to visualize a pipeline using the Directed Acyclic Graph (DAG).</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>An external Stage for data ingestion.</li>
+<li>A staging table for raw data.</li>
+<li>A multi-step data pipeline using three chained Dynamic Tables.</li>
+</ul>
+<h2 is-upgraded>Get the SQL and paste it into your Worksheet.</h2>
+<p><strong>Copy and paste the SQL from this </strong><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql" target="_blank"><strong>file</strong></a><strong> in a new Worksheet to follow along in Snowflake. Note that once you&#39;ve reached the end of the Worksheet you can skip to Step 16 - Snowflake Cortex AI.</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="External Stage Ingestion" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>Our raw menu data currently sits in an Amazon S3 bucket as CSV files. To begin our pipeline, we first need to ingest this data into Snowflake. We will do this by creating a Stage to point to the S3 bucket and then using the <code>COPY</code> command to load the data into a staging table.</p>
+<h2 is-upgraded>Step 1 - Set Context</h2>
+<p>First, let&#39;s set our session context to use the correct database, role, and warehouse. Execute the first few queries in your worksheet.</p>
+<pre><code language="language-sql" class="language-sql">ALTER SESSION SET query_tag = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;,&#34;name&#34;:&#34;tb_zts&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:1},&#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;tastybytes&#34;, &#34;vignette&#34;: &#34;data_pipeline&#34;}}&#39;;
+
+USE DATABASE tb_101;
+USE ROLE tb_data_engineer;
+USE WAREHOUSE tb_de_wh;
+</code></pre>
+<h2 is-upgraded>Step 2 - Create Stage and Staging Table</h2>
+<p>A Stage is a Snowflake object that specifies an external location where data files are stored. We&#39;ll create a stage that points to our public S3 bucket. Then, we&#39;ll create the table that will hold this raw data.</p>
+<pre><code language="language-sql" class="language-sql">-- Create the menu stage
+CREATE OR REPLACE STAGE raw_pos.menu_stage
+COMMENT = &#39;Stage for menu data&#39;
+URL = &#39;s3://sfquickstarts/frostbyte_tastybytes/raw_pos/menu/&#39;
+FILE_FORMAT = public.csv_ff;
+
+CREATE OR REPLACE TABLE raw_pos.menu_staging
+(
+    menu_id NUMBER(19,0),
+    menu_type_id NUMBER(38,0),
+    menu_type VARCHAR(16777216),
+    truck_brand_name VARCHAR(16777216),
+    menu_item_id NUMBER(38,0),
+    menu_item_name VARCHAR(16777216),
+    item_category VARCHAR(16777216),
+    item_subcategory VARCHAR(16777216),
+    cost_of_goods_usd NUMBER(38,4),
+    sale_price_usd NUMBER(38,4),
+    menu_item_health_metrics_obj VARIANT
+);
+</code></pre>
+<h2 is-upgraded>Step 3 - Copy Data into Staging Table</h2>
+<p>With the stage and table in place, let&#39;s load the data from the stage into our <code>menu_staging</code> table using the <code>COPY INTO</code> command.</p>
+<pre><code language="language-sql" class="language-sql">COPY INTO raw_pos.menu_staging
+FROM @raw_pos.menu_stage;
+</code></pre>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table" target="_blank"><strong>COPY INTO TABLE</strong></a>: This powerful command loads data from a staged file into a Snowflake table. It is the primary method for bulk data ingestion.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Semi-Structured Data" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>Snowflake excels at handling semi-structured data like JSON using its native <code>VARIANT</code> data type. One of the columns we ingested, <code>menu_item_health_metrics_obj</code>, contains JSON. Let&#39;s explore how to query it.</p>
+<h2 is-upgraded>Step 1 - Querying VARIANT Data</h2>
+<p>Let&#39;s look at the raw JSON. Notice it contains nested objects and arrays.</p>
+<pre><code language="language-sql" class="language-sql">SELECT menu_item_health_metrics_obj FROM raw_pos.menu_staging;
+</code></pre>
+<p>We can use special syntax to navigate the JSON structure. The colon (<code>:</code>) accesses keys by name, and square brackets (<code>[]</code>) access array elements by index. We can also cast results to explicit data types using the <code>CAST</code> function or the double-colon shorthand (<code>::</code>).</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    menu_item_name,
+    CAST(menu_item_health_metrics_obj:menu_item_id AS INTEGER) AS menu_item_id, -- Casting using &#39;AS&#39;
+    menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients::ARRAY AS ingredients -- Casting using double colon (::) syntax
+FROM raw_pos.menu_staging;
+</code></pre>
+<h2 is-upgraded>Step 2 - Parsing Arrays with FLATTEN</h2>
+<p>The <code>FLATTEN</code> function is a powerful tool for un-nesting arrays. It produces a new row for each element in an array. Let&#39;s use it to create a list of every ingredient for every menu item.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    i.value::STRING AS ingredient_name,
+    m.menu_item_health_metrics_obj:menu_item_id::INTEGER AS menu_item_id
+FROM
+    raw_pos.menu_staging m,
+    LATERAL FLATTEN(INPUT =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients::ARRAY) i;
+</code></pre>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/sql-reference/data-types-semistructured" target="_blank"><strong>Semi-Structured Data Types</strong></a>: Snowflake&#39;s VARIANT, OBJECT, and ARRAY types allow you to store and query semi-structured data directly, without needing to define a rigid schema upfront.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dynamic Tables" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>Our franchises are constantly adding new menu items. We need a way to process this new data automatically. For this, we can use Dynamic Tables, a powerful tool designed to simplify data transformation pipelines by declaratively defining the result of a query and letting Snowflake handle the refreshes.</p>
+<h2 is-upgraded>Step 1 - Creating the First Dynamic Table</h2>
+<p>We&#39;ll start by creating a dynamic table that extracts all unique ingredients from our staging table. We set a <code>LAG</code> of ‘1 minute&#39;, which tells Snowflake the maximum amount of time this table&#39;s data can be behind the source data.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DYNAMIC TABLE harmonized.ingredient
+    LAG = &#39;1 minute&#39;
+    WAREHOUSE = &#39;TB_DE_WH&#39;
+AS
+    SELECT
+    ingredient_name,
+    menu_ids
+FROM (
+    SELECT DISTINCT
+        i.value::STRING AS ingredient_name, 
+        ARRAY_AGG(m.menu_item_id) AS menu_ids
+    FROM
+        raw_pos.menu_staging m,
+        LATERAL FLATTEN(INPUT =&gt; menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients::ARRAY) i
+    GROUP BY i.value::STRING
+);
+</code></pre>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank"><strong>Dynamic Tables</strong></a>: Dynamic Tables automatically refresh as their underlying source data changes, simplifying ELT pipelines and ensuring data freshness without manual intervention or complex scheduling.</p>
+</aside>
+<h2 is-upgraded>Step 2 - Testing the Automatic Refresh</h2>
+<p>Let&#39;s see the automation in action. One of our trucks has added a Banh Mi sandwich, which contains new ingredients for French Baguette and Pickled Daikon. Let&#39;s insert this new menu item into our staging table.</p>
+<pre><code language="language-sql" class="language-sql">INSERT INTO raw_pos.menu_staging 
+SELECT 
+    10101, 15, &#39;Sandwiches&#39;, &#39;Better Off Bread&#39;, 157, &#39;Banh Mi&#39;, &#39;Main&#39;, &#39;Cold Option&#39;, 9.0, 12.0,
+    PARSE_JSON(&#39;{&#34;menu_item_health_metrics&#34;: [{&#34;ingredients&#34;: [&#34;French Baguette&#34;,&#34;Mayonnaise&#34;,&#34;Pickled Daikon&#34;,&#34;Cucumber&#34;,&#34;Pork Belly&#34;],&#34;is_dairy_free_flag&#34;: &#34;N&#34;,&#34;is_gluten_free_flag&#34;: &#34;N&#34;,&#34;is_healthy_flag&#34;: &#34;Y&#34;,&#34;is_nut_free_flag&#34;: &#34;Y&#34;}],&#34;menu_item_id&#34;: 157}&#39;);
+</code></pre>
+<p>Now, query the <code>harmonized.ingredient</code> table. Within a minute, you should see the new ingredients appear automatically.</p>
+<pre><code language="language-sql" class="language-sql">-- You may need to wait up to 1 minute and re-run this query
+SELECT * FROM harmonized.ingredient 
+WHERE ingredient_name IN (&#39;French Baguette&#39;, &#39;Pickled Daikon&#39;);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Out the Pipeline" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>Now we can build a multi-step pipeline by creating more dynamic tables that read from other dynamic tables. This creates a chain, or a Directed Acyclic Graph (DAG), where updates automatically flow from the source to the final output.</p>
+<h2 is-upgraded>Step 1 - Creating a Lookup Table</h2>
+<p>Let&#39;s create a lookup table that maps ingredients to the menu items they are used in. This dynamic table reads from our <code>harmonized.ingredient</code> dynamic table.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DYNAMIC TABLE harmonized.ingredient_to_menu_lookup
+    LAG = &#39;1 minute&#39;
+    WAREHOUSE = &#39;TB_DE_WH&#39;   
+AS
+SELECT
+    i.ingredient_name,
+    m.menu_item_health_metrics_obj:menu_item_id::INTEGER AS menu_item_id
+FROM
+    raw_pos.menu_staging m,
+    LATERAL FLATTEN(INPUT =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients) f
+JOIN harmonized.ingredient i ON f.value::STRING = i.ingredient_name;
+</code></pre>
+<h2 is-upgraded>Step 2 - Adding Transactional Data</h2>
+<p>Let&#39;s simulate an order of two Banh Mi sandwiches by inserting records into our order tables.</p>
+<pre><code language="language-sql" class="language-sql">INSERT INTO raw_pos.order_header
+SELECT 
+    459520441, 15, 1030, 101565, null, 200322900,
+    TO_TIMESTAMP_NTZ(&#39;08:00:00&#39;, &#39;hh:mi:ss&#39;),
+    TO_TIMESTAMP_NTZ(&#39;14:00:00&#39;, &#39;hh:mi:ss&#39;),
+    null, TO_TIMESTAMP_NTZ(&#39;2022-01-27 08:21:08.000&#39;),
+    null, &#39;USD&#39;, 14.00, null, null, 14.00;
+    
+INSERT INTO raw_pos.order_detail
+SELECT
+    904745311, 459520441, 157, null, 0, 2, 14.00, 28.00, null;
+</code></pre>
+<h2 is-upgraded>Step 3 - Creating the Final Pipeline Table</h2>
+<p>Finally, let&#39;s create our final dynamic table. This one joins our order data with our ingredient lookup tables to create a summary of monthly ingredient usage per truck. This table depends on the other dynamic tables, completing our pipeline.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DYNAMIC TABLE harmonized.ingredient_usage_by_truck 
+    LAG = &#39;2 minute&#39;
+    WAREHOUSE = &#39;TB_DE_WH&#39;  
+    AS 
+    SELECT
+        oh.truck_id,
+        EXTRACT(YEAR FROM oh.order_ts) AS order_year,
+        MONTH(oh.order_ts) AS order_month,
+        i.ingredient_name,
+        SUM(od.quantity) AS total_ingredients_used
+    FROM
+        raw_pos.order_detail od
+        JOIN raw_pos.order_header oh ON od.order_id = oh.order_id
+        JOIN harmonized.ingredient_to_menu_lookup iml ON od.menu_item_id = iml.menu_item_id
+        JOIN harmonized.ingredient i ON iml.ingredient_name = i.ingredient_name
+        JOIN raw_pos.location l ON l.location_id = oh.location_id
+    WHERE l.country = &#39;United States&#39;
+    GROUP BY
+        oh.truck_id,
+        order_year,
+        order_month,
+        i.ingredient_name
+    ORDER BY
+        oh.truck_id,
+        total_ingredients_used DESC;
+</code></pre>
+<h2 is-upgraded>Step 4 - Querying the Final Output</h2>
+<p>Now, let&#39;s query the final table in our pipeline. After a few minutes for the refreshes to complete, you will see the ingredient usage for two Banh Mis from the order we inserted in a previous step. The entire pipeline updated automatically.</p>
+<pre><code language="language-sql" class="language-sql">-- You may need to wait up to 2 minutes and re-run this query
+SELECT
+    truck_id,
+    ingredient_name,
+    SUM(total_ingredients_used) AS total_ingredients_used
+FROM
+    harmonized.ingredient_usage_by_truck
+WHERE
+    order_month = 1
+    AND truck_id = 15
+GROUP BY truck_id, ingredient_name
+ORDER BY total_ingredients_used DESC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize the Pipeline" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>Finally, let&#39;s visualize our pipeline&#39;s Directed Acyclic Graph, or DAG. The DAG shows how our data flows through the tables, and it can be used to monitor the health and lag of our pipeline.</p>
+<h2 is-upgraded>Step 1 - Accessing the Graph View</h2>
+<p>To access the DAG in Snowsight:</p>
+<ol type="1">
+<li>Navigate to <strong>Data</strong> » <strong>Database</strong>.</li>
+<li>In the database object explorer, expand your database <strong>TB_101</strong> and the schema <strong>HARMONIZED</strong>.</li>
+<li>Click on <strong>Dynamic Tables</strong>.</li>
+<li>Select any of the dynamic tables you created (e.g., <code>INGREDIENT_USAGE_BY_TRUCK</code>).</li>
+<li>Click on the <strong>Graph</strong> tab in the main window.</li>
+</ol>
+<p>You will now see a visualization of your pipeline, showing how the base tables flow into your dynamic tables.</p>
+<p class="image-container"><img src="img/dd5bf55a64c0d1ac.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Cortex AI" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>Welcome to the Zero to Snowflake Hands-on Lab focused on Snowflake Cortex AI!</p>
+<p>Within this lab, we will explore Snowflake&#39;s complete AI platform through a progressive journey from experimentation into unified business intelligence. We&#39;ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis,  Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.</p>
+<ul>
+<li>For more detail on Snowflake Cortex AI please visit the <a href="https://docs.snowflake.com/en/guides-overview-ai-features" target="_blank">Snowflake AI and ML Overview documentation</a>.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to Experiment with AI Using AI Cortex Playground for model testing and prompt optimization.</li>
+<li>How to Scale AI Analysis with Cortex AI Functions for production-scale customer review processing.</li>
+<li>How to enable semantic discovery with Cortex Search for intelligent text and review finding.</li>
+<li>How to create conversational analytics with Cortex Analyst for natural language business intelligence.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>Through this journey, you&#39;ll construct a complete intelligence customer analytics platform:</p>
+<p><strong>Phase 1: AI Foundation</strong></p>
+<ul>
+<li>AI Experimentation Environment using Cortex Playground for model testing and optimization.</li>
+<li>Production-scale Review Analysis pipeline using AISQL Functions for systematic customer feedback processing.</li>
+</ul>
+<p><strong>Phase 2: Intelligent Development &amp; Discovery</strong></p>
+<ul>
+<li>Semantic Search Engine using Cortex Search for instant customer feedback discovery and operational intelligence.</li>
+</ul>
+<p><strong>Phase 3: Conversational Intelligence</strong></p>
+<ul>
+<li>Natural Language Business Analytics Interface using Cortex Analyst for conversational data exploration.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex Playground" duration="4">
+        <p class="image-container"><img src="img/889126dc71487631.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>As a data analyst at Tasty Bytes, you need to rapidly explore customer feedback using AI models to identify service improvement opportunities. Traditionally, AI experimentation is complex and time-consuming. <strong>Snowflake Cortex Playground</strong> solves this by offering a quick, secure environment directly within Snowflake&#39;s UI to experiment with diverse AI models, compare their performance on real business data, and export successful approaches as production-ready SQL. This lab guides you through using Cortex Playground for rapid prototyping and seamless integration of AI into your data workflows.</p>
+<h2 is-upgraded>Step 1 - Connect Data &amp; Filter</h2>
+<p>Let&#39;s begin by connecting directly to customer review data within Cortex Playground. This keeps your data secure within Snowflake while allowing you to analyze feedback using AI models.</p>
+<p><strong>Navigation steps:</strong></p>
+<ol type="1">
+<li>Navigate to <strong>AI &amp; ML → Studio → Cortex Playground</strong>.</li>
+<li>Select <strong>Role: TB_DEV</strong> and <strong>Warehouse: TB_DEV_WH</strong>.</li>
+<li>Click &#34;<strong>+Connect your data</strong>&#34; in the prompt box.</li>
+<li>Select data source: <ul>
+<li><strong>Database: TB_101</strong></li>
+<li><strong>Schema: HARMONIZED</strong></li>
+<li><strong>Table: TRUCK_REVIEWS_V</strong></li>
+</ul>
+</li>
+<li>Click <strong>Let&#39;s go</strong></li>
+<li>Select text column: <strong>REVIEW</strong></li>
+<li>Select filter column: <strong>TRUCK_BRAND_NAME</strong></li>
+<li>Click <strong>Done</strong>.</li>
+<li>In the system prompt box, apply a filter using the <strong>TRUCK_BRAND_NAME</strong> dropdown. There are multiple reviews available for each truck brand. For instance, you can select &#34;<strong>Better Of Bread</strong>&#34; to narrow down the reviews. If &#34;<strong>Better Of Bread</strong>&#34; isn&#39;t available, please choose any other truck brand from the dropdown and proceed with one of its reviews.</li>
+</ol>
+<p class="image-container"><img src="img/fd0bbbd82aab694.gif"></p>
+<p><strong>What you&#39;ve accomplished:</strong> You now have direct access to customer review data within the AI interface. The filter allows you to focus your analysis on specific truck brands, making your experiment more targeted and relevant.</p>
+<h2 is-upgraded>Step 2 - Compare AI Models for Insights</h2>
+<p>Now, let&#39;s analyze customer reviews to extract specific operational insights and compare how different AI models perform on this business task.</p>
+<p><strong>Setup Model Comparison:</strong></p>
+<ol type="1">
+<li>Click &#34;<strong>Compare</strong>&#34; to enable side-by-side model comparison.</li>
+<li>Set the left panel to &#34;<strong>claude-3-5-sonnet</strong>&#34; and the right panel to &#34;<strong>snowflake-llama-3.3-70b</strong>&#34;.</li>
+</ol>
+<p><strong>Note:</strong> Snowflake Cortex provides access to leading AI models from multiple providers, including Anthropic, OpenAI, Meta, and others, giving you choice and flexibility without vendor lock-in.</p>
+<p><strong>Enter this strategic prompt:</strong></p>
+<p><code>Analyze this customer review across multiple dimensions: sentiment score with confidence level, key theme extraction, competitive positioning insights, operational impact assessment, and priority ranking for management action</code></p>
+<p class="image-container"><img src="img/4721eccfab5e5338.png"></p>
+<p><strong>Key Insight:</strong> Notice the distinct strengths: Claude provides structured, executive-ready analysis with clear confidence. In contrast, Snowflake&#39;s Llama model, optimized specifically for robust business intelligence, delivers comprehensive operational intelligence enriched with strategic context and detailed competitive analysis. This highlights the power of leveraging multiple AI providers, empowering you to choose the ideal approach for your specific business needs.</p>
+<p>With our optimal model identified, we now need to fine-tune its behavior for different business scenarios. The same model can produce vastly different results depending on its settings—let&#39;s optimize this for our specific analytical requirements.</p>
+<h2 is-upgraded>Step 3 - Fine-Tune Model Behavior</h2>
+<p>We want to observe how adjusting parameters, especially &#34;<strong>temperature</strong>,&#34; affects the AI model&#39;s responses. Does it lead to more consistent or more creative answers?</p>
+<p><strong>How to Set Up This Temperature Test:</strong></p>
+<ol type="1">
+<li>First, make sure both panels are set to &#34;<strong>claude-3-5-sonnet</strong>.&#34; We&#39;re comparing the same model, just with different settings.</li>
+<li>Next, click &#34;<strong>Change Settings</strong>&#34; right next to where it says &#34;<strong>Compare</strong>.&#34;</li>
+<li>Now, let&#39;s adjust those parameters for each side: <ul>
+<li><strong>Left Panel:</strong><ul>
+<li>Set <strong>Temperature</strong> to <strong>0.1</strong>. This will generally make the model give you really consistent, predictable answers.</li>
+<li>Set <strong>Max-tokens</strong> to <strong>200</strong>. This just keeps the responses from getting too long.</li>
+</ul>
+</li>
+<li><strong>Right Panel:</strong><ul>
+<li>Set <strong>Temperature</strong> to <strong>0.8</strong>. This should make the model&#39;s answers a bit more creative and varied.</li>
+<li>Set <strong>top_p</strong> to <strong>0.8</strong>. This is another setting that helps encourage a wider range of words in the response.</li>
+<li>Set <strong>Max-tokens</strong> to <strong>200</strong>. Again, keeping the length in check.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Finally, use the exact same strategic prompt you used in Step 2.</li>
+</ol>
+<p>Give that a try and see how the responses differ! It&#39;s pretty cool to see how these small tweaks can change the AI&#39;s &#34;personality.&#34;</p>
+<p class="image-container"><img src="img/7e71e4040cfa0010.gif"><img src="img/992389abecb5c0d0.png"></p>
+<p><strong>Observe the Impact:</strong></p>
+<p>Notice how adjusting the temperature parameter fundamentally changes the analytical output, even with the same AI model and data.</p>
+<ul>
+<li><strong>Temperature 0.1:</strong> Produces deterministic, focused output. Ideal for structured, consistent analysis and standardized reporting.</li>
+<li><strong>Temperature 0.8:</strong> Results in diverse, varied output. Perfect for generating explanatory insights or exploring less obvious connections.</li>
+</ul>
+<p>While temperature influences token choice, <strong>top_p</strong> (set to 0.8 on the right) restricts possible tokens. <strong>max_tokens</strong> simply sets the maximum response length; be mindful small values can truncate results. This gives you precise control over AI creativity versus consistency, letting you match the AI&#39;s behavior to your analytical objectives.</p>
+<p>Now that we&#39;ve mastered model selection and parameter optimization, let&#39;s examine the technology foundation that makes this experimentation possible. Understanding this will help us transition from playground testing to production deployment.</p>
+<h2 is-upgraded>Step 4 - Understanding the Underlying Technology</h2>
+<p>In this section, let&#39;s explore the core technology that takes your AI insights from the playground to production.</p>
+<h3 is-upgraded>The Foundation: SQL at Its Core</h3>
+<p>Every AI insight you generate in Cortex Playground isn&#39;t just magic; it&#39;s backed by SQL. Click &#34;<strong>View Code</strong>&#34; after any model response, and you&#39;ll see the exact SQL query, complete with your specified settings like temperature. This isn&#39;t just for show—this code is ready for action! You can run it directly in a Snowflake worksheet, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It&#39;s also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.</p>
+<p class="image-container"><img src="img/fcfab11604632bfd.png"></p>
+<h3 is-upgraded>The SNOWFLAKE.CORTEX.COMPLETE Function</h3>
+<p>Behind every prompt you&#39;ve run, the <strong>SNOWFLAKE.CORTEX.COMPLETE</strong> function is hard at work. This is Snowflake Cortex&#39;s powerful function providing direct access to industry-leading large language models for text completion. The Cortex Playground simply offers an intuitive interface to test and compare these models before you embed them directly into your SQL. (Heads up: this will evolve to AI_COMPLETE in future releases.)</p>
+<p>This seamless integration means your AI experimentation directly translates into production-ready workflows within Snowflake.</p>
+<h2 is-upgraded>Conclusion</h2>
+<p>The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you&#39;ve refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like <strong>SENTIMENT()</strong>, <strong>CLASSIFY()</strong>, <strong>EXTRACT_ANSWER()</strong>, and <strong>AI_SUMMARIZE_AGG()</strong>. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="AISQL Functions" duration="5">
+        <p class="image-container"><img src="img/d939a661664465c7.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>You&#39;ve experimented with AI models in Cortex Playground to analyze individual customer reviews. Now, it&#39;s time to scale! This Quickstart shows you how to use <strong>AI SQL Functions</strong> to process thousands of reviews, turning experimental insights into production-ready intelligence. You&#39;ll learn to:</p>
+<ol type="1">
+<li><strong>USE SENTIMENT()</strong> to score and label truck customer reviews.</li>
+<li><strong>Use AI_CLASSIFY()</strong> to categorize reviews by themes.</li>
+<li><strong>Use EXTRACT_ANSWER()</strong> to pull specific complaints or praise.</li>
+<li><strong>Use AI_SUMMARIZE_AGG()</strong> to generate quick summaries per truck brand.</li>
+</ol>
+<h2 is-upgraded>Get the SQL and paste it into your Worksheet.</h2>
+<p>Copy and paste the SQL from this <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql" target="_blank">file</a> in a new Worksheet or Workspaces to follow along in Snowflake.</p>
+<p><strong>Note: Once you&#39;ve reached the end of the Worksheet, you can skip to Step 19 - Cortex Search.</strong></p>
+<h2 is-upgraded>Step 1 - Setting Context</h2>
+<p>First, let&#39;s set our session context. We will assume the role of a TastyBytes data analyst with the intention of leveraging AISQL functions to gain insights from customer reviews.</p>
+<pre><code language="language-sql" class="language-sql">ALTER SESSION SET query_tag = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;,&#34;name&#34;:&#34;tb_zts&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:1},&#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;tastybytes&#34;, &#34;vignette&#34;: &#34;aisql_functions&#34;}}&#39;;
+
+USE ROLE tb_analyst;
+USE DATABASE tb_101;
+USE WAREHOUSE tb_de_wh;
+</code></pre>
+<h2 is-upgraded>Step 2 - Sentiment Analysis at Scale</h2>
+<p>Analyze customer sentiment across all food truck brands to identify which trucks are performing best and create fleet-wide customer satisfaction metrics. In Cortex Playground, we analyzed individual reviews manually. Now we&#39;ll use the <code>SENTIMENT()</code> function to automatically score customer reviews from -1 (negative) to +1 (positive), following Snowflake&#39;s official sentiment ranges.</p>
+<p><strong>Business Question:</strong> &#34;How do customers feel about each of our truck brands overall?&#34;</p>
+<p>Please execute this query to analyze customer sentiment across our food truck network and categorize feedback.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    truck_brand_name,
+    COUNT(*) AS total_reviews,
+    AVG(CASE WHEN sentiment &gt;= 0.5 THEN sentiment END) AS avg_positive_score,
+    AVG(CASE WHEN sentiment BETWEEN -0.5 AND 0.5 THEN sentiment END) AS avg_neutral_score,
+    AVG(CASE WHEN sentiment &lt;= -0.5 THEN sentiment END) AS avg_negative_score
+FROM (
+    SELECT
+        truck_brand_name,
+        SNOWFLAKE.CORTEX.SENTIMENT (review) AS sentiment
+    FROM harmonized.truck_reviews_v
+    WHERE
+        language ILIKE &#39;%en%&#39;
+        AND review IS NOT NULL
+    LIMIT 10000
+)
+GROUP BY
+    truck_brand_name
+ORDER BY total_reviews DESC;
+</code></pre>
+<p class="image-container"><img src="img/7fc9a2b409ae164.png"></p>
+<p><strong>Key Insight</strong>: Notice how we transitioned from analyzing reviews one at a time in Cortex Playground to systematically processing thousands. The <code>SENTIMENT()</code> function automatically scored every review and categorized them into Positive, Negative, and Neutral - giving us instant fleet-wide customer satisfaction metrics.</p>
+<p><strong>Sentiment Score Ranges</strong>:</p>
+<ul>
+<li>Positive: 0.5 to 1</li>
+<li>Neutral: -0.5 to 0.5</li>
+<li>Negative: -0.5 to -1</li>
+</ul>
+<h2 is-upgraded>Step 3 - Categorize Customer Feedback</h2>
+<p>Now, let&#39;s categorize all reviews to understand what aspects of our service customers are talking about most. We&#39;ll use the <code>AI_CLASSIFY()</code> function, which automatically categorizes reviews into user-defined categories based on AI understanding, rather than simple keyword matching. In this step, we will categorize customer feedback into business-relevant operational areas and analyze their distribution patterns.</p>
+<p><strong>Business Question:</strong> &#34;What are customers primarily commenting on - food quality, service, or delivery experience?&#34;</p>
+<p>Execute the Classification Query:</p>
+<pre><code language="language-sql" class="language-sql">WITH classified_reviews AS (
+  SELECT
+    truck_brand_name,
+    AI_CLASSIFY(
+      review,
+      [&#39;Food Quality&#39;, &#39;Pricing&#39;, &#39;Service Experience&#39;, &#39;Staff Behavior&#39;]
+    ):labels[0] AS feedback_category
+  FROM
+    harmonized.truck_reviews_v
+  WHERE
+    language ILIKE &#39;%en%&#39;
+    AND review IS NOT NULL
+    AND LENGTH(review) &gt; 30
+  LIMIT
+    10000
+)
+SELECT
+  truck_brand_name,
+  feedback_category,
+  COUNT(*) AS number_of_reviews
+FROM
+  classified_reviews
+GROUP BY
+  truck_brand_name,
+  feedback_category
+ORDER BY
+  truck_brand_name,
+  number_of_reviews DESC;
+</code></pre>
+<p class="image-container"><img src="img/f5f10485dba599e4.png"></p>
+<p><strong>Key Insight</strong>: Observe how <code>AI_CLASSIFY()</code> automatically categorized thousands of reviews into business-relevant themes such as Food Quality, Service Experience, and more. We can instantly see that Food Quality is the most discussed topic across our truck brands, providing the operations team with clear, actionable insight into customer priorities.</p>
+<h2 is-upgraded>Step 4 - Extract Specific Insights</h2>
+<p>Next, to gain precise answers from unstructured text, we&#39;ll utilize the <code>EXTRACT_ANSWER()</code> function. This powerful function enables us to ask specific business questions about customer feedback and receive direct answers. In this step, our goal is to identify precise operational issues mentioned in customer reviews, highlighting specific problems that require immediate attention.</p>
+<p><strong>Business question:</strong> &#34;What specific improvement or complaint is mentioned in this review?&#34;</p>
+<p>Let&#39;s execute the next query:</p>
+<pre><code language="language-sql" class="language-sql">  SELECT
+    truck_brand_name,
+    primary_city,
+    LEFT(review, 100) || &#39;...&#39; AS review_preview,
+    SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
+        review,
+        &#39;What specific improvement or complaint is mentioned in this review?&#39;
+    ) AS specific_feedback
+FROM
+    harmonized.truck_reviews_v
+WHERE
+    language = &#39;en&#39;
+    AND review IS NOT NULL
+    AND LENGTH(review) &gt; 50
+ORDER BY truck_brand_name, primary_city ASC
+LIMIT 10000;
+</code></pre>
+<p class="image-container"><img src="img/95a592ab2821472d.png"></p>
+<p><strong>Key Insight</strong>: Notice how <code>EXTRACT_ANSWER()</code> distills specific, actionable insights from long customer reviews. Rather than manual review, this function automatically identifies concrete feedback like &#34;friendly staff was saving grace&#34; and &#34;hot dogs are cooked to perfection.&#34; The result is a transformation of dense text into specific, quotable feedback that the operations team can leverage instantly.</p>
+<h2 is-upgraded>Step 5 - Generate Executive Summaries</h2>
+<p>Finally, to create concise summaries of customer feedback, we&#39;ll use the <code>AI_SUMMARIZE_AGG()</code> function. This powerful function generates short, coherent summaries from lengthy unstructured text. In this step, our goal is to distill the essence of customer reviews for each truck brand into digestible summaries, providing quick overviews of overall sentiment and key points.</p>
+<p><strong>Business Question:</strong> &#34;What are the key themes and overall sentiment for each truck brand?&#34;</p>
+<p>Execute the Summarization Query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  truck_brand_name,
+  AI_SUMMARIZE_AGG (review) AS review_summary
+FROM
+  (
+    SELECT
+      truck_brand_name,
+      review
+    FROM
+      harmonized.truck_reviews_v
+    LIMIT
+      100
+  )
+GROUP BY
+  truck_brand_name;
+</code></pre>
+<p class="image-container"><img src="img/f1e2665fe9657f7f.png"></p>
+<p><strong>Key Insight</strong>: The <code>AI_SUMMARIZE_AGG()</code> function condenses lengthy reviews into clear, brand-level summaries. These summaries highlight recurring themes and sentiment trends, providing decision-makers with quick overviews of each food truck&#39;s performance and enabling faster understanding of customer perception without reading individual reviews.</p>
+<h2 is-upgraded>Conclusion</h2>
+<p>We&#39;ve successfully demonstrated the transformative power of AI SQL functions, shifting customer feedback analysis from individual review processing to systemic, production-scale intelligence. Our journey through these four core functions clearly illustrates how each serves a distinct analytical purpose, transforming raw customer voices into comprehensive business intelligence—systematic, scalable, and immediately actionable. What once required individual review analysis now processes thousands of reviews in seconds, providing both the emotional context and specific details crucial for data-driven operational improvements.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex Search" duration="6">
+        <p class="image-container"><img src="img/52ecf8589b9dc9e2.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>While AI-powered tools excel at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.</p>
+<p><strong>Snowflake Cortex Search</strong> solves this by providing low-latency, high-quality &#34;fuzzy&#34; search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent re-ranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.</p>
+<h2 is-upgraded>Step 1 - Access Cortex Search</h2>
+<ol type="1">
+<li>Open Snowsight and navigate to the AI &amp; ML Studio, then select <strong>Cortex Search</strong>.</li>
+<li>Click <strong>Create</strong> to begin setup.</li>
+</ol>
+<p>This opens the search service configuration interface, where you&#39;ll define how Snowflake indexes and interprets your text data.</p>
+<p class="image-container"><img src="img/95970606569ba0dc.png"></p>
+<h2 is-upgraded>Step 2 - Configure the Search Service</h2>
+<p>In the initial configuration screen, enter:</p>
+<ul>
+<li><strong>Role</strong>: <code>TB_DEV</code></li>
+<li><strong>Warehouse</strong>: <code>TB_DEV_WH</code></li>
+<li><strong>Database</strong>: <code>TB_101</code></li>
+<li><strong>Schema</strong>: <code>HARMONIZED</code></li>
+<li><strong>Name</strong>: <code>customer_feedback_intelligence</code></li>
+</ul>
+<p>Click <strong>Next: Select data</strong>.</p>
+<p class="image-container"><img src="img/56c3ff2266c927de.png"></p>
+<h2 is-upgraded>Step 3 - Connect to Review Data</h2>
+<p>This wizard will guide you through several configuration screens:</p>
+<ul>
+<li><strong>Select data</strong>: Choose <code>TRUCK_REVIEWS_V</code></li>
+<li><strong>Select search column</strong>: Choose <code>REVIEW</code> (the text column to search)</li>
+<li><strong>Select attributes</strong>: Choose columns for filtering (<code>TRUCK_BRAND_NAME</code>, <code>PRIMARY_CITY</code>, <code>REVIEW_ID</code>)</li>
+<li><strong>Select columns</strong>: choose other columns to include in the result like <code>DATE</code>, <code>LANGUAGE</code>, etc.</li>
+<li><strong>Configure indexing</strong>: Accept the default</li>
+</ul>
+<p class="image-container"><img src="img/9b3705adf3341cc.gif"></p>
+<p><strong>Note</strong>: Creating the search service includes building the index, so the initial setup may take a little longer. If the creation process is taking an extended period, you can seamlessly continue the lab by using a pre-configured search service:</p>
+<ol type="1">
+<li>From the left-hand menu in Snowsight, navigate to <strong>AI &amp; ML</strong>, then click on <strong>Cortex Search</strong>.</li>
+<li>In the Cortex Search view, locate the dropdown filter (as highlighted in the image below, showing <code>TB_101 / HARMONIZED</code>). Select or ensure this filter is set to <code>TB_101 / HARMONIZED</code>.</li>
+<li>In the list of &#34;Search services&#34; that appears, click on the pre-built service named <strong><code>TASTY_BYTES_REVIEW_SEARCH</code></strong>.</li>
+<li>Once inside the service&#39;s details page, click on <strong>Playground</strong> in the top right corner to begin using the search service for the lab.</li>
+</ol>
+<ul>
+<li><strong>Once any search service is active (either your new one or the pre-configured one), queries will run with low latency and scale seamlessly.</strong></li>
+</ul>
+<p class="image-container"><img src="img/b34a5f95b8a55f30.png"></p>
+<p>Behind this simple UI, Cortex Search is performing a complex task. It analyzes the text in your &#34;REVIEW&#34; column, using an AI model to generate semantic embeddings, which are numerical representations of the text&#39;s meaning. These embeddings are then indexed, allowing for high-speed conceptual searches later on. In just a few clicks, you have taught Snowflake to understand the intent behind your reviews.</p>
+<h2 is-upgraded>Step 4 - Run Semantic Query</h2>
+<p>When the service shows as &#34;Active&#34;, click on <strong>Playground</strong> and enter the natural language prompt in the search bar:</p>
+<p><strong>Prompt - 1: </strong><code>Customers getting sick</code></p>
+<p class="image-container"><img src="img/4d1c375fd5010cf3.png"></p>
+<p><strong>Key Insight</strong>: Notice Cortex Search isn&#39;t just finding customers - it&#39;s finding CONDITIONS that could MAKE customers sick. That is the difference between reactive keyword search and proactive semantic understanding.</p>
+<p>Now try another query:</p>
+<p><strong>Prompt - 2: </strong><code>Angry customers</code></p>
+<p class="image-container"><img src="img/5a8f92001b5f771a.png"></p>
+<p><strong>Key Insight</strong>: These customers are about to churn, but they never said &#34;I&#39;m angry.&#34; They expressed frustration in their own words. Cortex Search understands the emotion behind the language, helping you identify and save at-risk customers before they leave.</p>
+<h2 is-upgraded>Conclusion</h2>
+<p>Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.</p>
+<p><strong>In the next module</strong> - Cortex Analyst - you&#39;ll use natural language to query structured data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex Analyst" duration="10">
+        <p class="image-container"><img src="img/574b8f5347c045cf.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>A business analyst at Tasty Bytes needs to enable self-service analytics, allowing the business team to ask complex questions in natural language and get instant insights without relying on data analysts to write SQL. While previous AI tools helped with finding reviews and complex query generation, the demand now is for <strong>conversational analytics</strong> that directly transforms structured business data into immediate insights.</p>
+<p><strong>Cortex Analyst</strong> empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.</p>
+<h2 is-upgraded>Step 1 -  Design Semantic Model</h2>
+<p>Let&#39;s begin by navigating to Cortex Analyst in Snowsight and configuring our semantic model foundations.</p>
+<ol type="1">
+<li>Navigate to <strong>Cortex Analyst</strong> under <strong>AI &amp; ML Studio</strong> in Snowsight.</li>
+</ol>
+<p class="image-container"><img src="img/63f64ded4ffb227e.png"></p>
+<ol type="1" start="2">
+<li><strong>Set Role and Warehouse:</strong><ul>
+<li>Change role to <code>TB_ADMIN</code>.</li>
+<li>Set Warehouse to <code>TB_CORTEX_WH</code>.</li>
+<li>Click <strong>Create new model</strong>.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img src="img/24b8373d8a27e5de.png"></p>
+<ol type="1" start="3">
+<li>On the <strong>Getting Started</strong> page:<ul>
+<li>Choose <strong>Semantic View</strong>.</li>
+<li><strong>Location to store</strong> dropdown: Select <strong>DATABASE: TB_101</strong> and <strong>SCHEMA: SEMANTIC_LAYER</strong>.</li>
+<li><strong>Name</strong>: <code>tasty_bytes_business_analytics</code>.</li>
+<li><strong>Description</strong>: (Strongly recommended for clarity and AI understanding. Use: Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying)</li>
+<li>Click <strong>Next: Select tables</strong> to proceed.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img src="img/caa5dd8e78e4ef40.png"></p>
+<h2 is-upgraded>Step 2 - Select &amp; Configure Columns</h2>
+<p>In the <strong>Select tables</strong> step, let&#39;s choose our pre-built analytics views.</p>
+<ol type="1">
+<li><strong>Select core business Tables:</strong><ul>
+<li><strong>DATABASE</strong>: <code>TB_101</code></li>
+<li><strong>SCHEMA</strong>: <code>SEMANTIC_LAYER</code></li>
+<li><strong>TABLE</strong>: <code>Customer_Loyalty_Metrics_v</code> and <code>Orders_v</code></li>
+<li>Click <strong>Next: Select columns</strong> to proceed.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img src="img/8c566eef4e92d718.png"></p>
+<ol type="1" start="2">
+<li><strong>Configure Column Selection:</strong><ul>
+<li>On the <strong>Select columns</strong> page, ensure both selected tables are active.</li>
+<li>Click <strong>Create and Save</strong></li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img src="img/4958c732ec1f104c.png"></p>
+<h2 is-upgraded>Step 3 -  Add Table Synonyms</h2>
+<p>Now let&#39;s add table synonyms for better natural language understanding:</p>
+<ul>
+<li>For <strong>customer_loyalty_metrics_v</strong> table, please copy &amp; paste: <code>Customers, customer_data, loyalty, customer_metrics, customer_info</code></li>
+<li>For <strong>orders_v</strong> table, please copy &amp; paste: <code>Orders, transactions, sales, purchases, order_data</code></li>
+</ul>
+<p class="image-container"><img src="img/ff9fec9ab478e1bc.gif"></p>
+<h2 is-upgraded>Step 4 - Configure Table Relationships</h2>
+<p>After creating the semantic model, let&#39;s establish the relationship between our logical tables and add business-friendly synonyms.</p>
+<p>Let&#39;s configure our table relationship by creating:</p>
+<ul>
+<li><strong>Relationship name</strong>: <code>orders_to_customer_loyalty_metrics</code></li>
+<li><strong>Join type</strong>: <code>Left outer</code></li>
+<li><strong>Relation type</strong>: <code>many-to-one</code></li>
+<li><strong>Left table</strong>: <code>ORDERS_V</code></li>
+<li><strong>Right table</strong>: <code>CUSTOMER_LOYALTY_METRICS_V</code></li>
+<li><strong>Join columns</strong>: <code>CUSTOMER_ID = CUSTOMER_ID</code></li>
+</ul>
+<p class="image-container"><img src="img/3b9737c39ffae2e0.png"></p>
+<p><strong>Upon completion</strong>, simply use the <strong>Save</strong> option at the top of the UI. This will finalize your semantic view, making your semantic model ready for sophisticated natural language queries.</p>
+<p>To access the <strong>Cortex Analyst chat interface</strong> in fullscreen mode, you would:</p>
+<ol type="1">
+<li>Click the <strong>three-dot menu (ellipsis)</strong> next to the &#34;Share&#34; button at the top right.</li>
+<li>From the dropdown menu, select <strong>&#34;Enter fullscreen mode.&#34;</strong></li>
+</ol>
+<p class="image-container"><img src="img/f2bd3eab66cfe0f5.png"></p>
+<h2 is-upgraded>Step 5 - Execute Customer Segmentation Intelligence</h2>
+<p>With our semantic model and relationship active, let&#39;s demonstrate sophisticated natural language analysis by running our first complex business query.</p>
+<p>Navigate to <strong>Cortex Analyst chat interface</strong>.</p>
+<p>Let&#39;s execute our customer segmentation analysis:</p>
+<p><strong>Prompt 1: </strong><code>Tell me, which customer groups, broken down by marital status and gender, are spending the most per customer? I'd like to see this across our different cities and regions. Also, can we compare their long-term spending habits to identify our most valuable customer demographics for focused marketing efforts?</code></p>
+<p class="image-container"><img src="img/57f0ce5d8ce11b93.png"></p>
+<p><strong>Key Insight</strong>: Instantly delivers comprehensive intelligence by combining multi-table joins, demographic segmentation, geographic insights, and lifetime value analysis - insights that would require 40+ lines of SQL and hours of analyst effort.</p>
+<h2 is-upgraded>Step 6 - Generate Advanced Business Intelligence</h2>
+<p>Having seen basic segmentation, let&#39;s now demonstrate enterprise-grade SQL that showcases the full power of conversational business intelligence.</p>
+<p>Let&#39;s execute our multi-layered customer analysis:</p>
+<p><strong>Prompt 2: </strong><code>I want to understand our customer base better. Can you group customers by how much they've spent with us over time, then show me their ordering patterns differ between top spenders and lower spenders? Also compare how our franchise locations perform versus company-owned stores for each customer group</code></p>
+<p class="image-container"><img src="img/c114762322073ad7.png"></p>
+<p><strong>Key Insight</strong>: Notice how Cortex Analyst seamlessly bridges the gap between a business user&#39;s simple, natural language question and the sophisticated, multi-faceted SQL query required to answer it. It automatically constructs the complex logic, including CTEs, window functions, and detailed aggregations, that would typically demand a skilled data analyst.</p>
+<h2 is-upgraded>Conclusion</h2>
+<p>Through these rigorous steps, we&#39;ve forged a robust Cortex Analyst semantic model. This isn&#39;t just an improvement; it&#39;s a transformative tool designed to liberate users across various industries from the constraints of SQL, enabling them to surface profound business intelligence through intuitive natural language queries. Our multi-layered analyses, while showcased through the Tasty Bytes use case, powerfully illustrate how this model drastically cuts down on the time and effort traditionally needed for deep insights, thereby democratizing access to data and fueling a culture of informed, agile decision-making on a broad scale.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Governance with Horizon" duration="1">
+        <p class="image-container"><img src="img/99a547f845607274.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Within this vignette, we will explore some of the powerful governance features within Snowflake Horizon. We will begin with a look at Role-Based Access Control (RBAC), before diving into features like automated data classification, tag-based masking policies for column-level security, row-access policies, data quality monitoring, and finally, account-wide security monitoring with the Trust Center.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>The fundamentals of Role-Based Access Control (RBAC) in Snowflake.</li>
+<li>How to automatically classify and tag sensitive data.</li>
+<li>How to implement column-level security with Dynamic Data Masking.</li>
+<li>How to implement row-level security with Row Access Policies.</li>
+<li>How to monitor data quality with Data Metric Functions.</li>
+<li>How to monitor account security with the Trust Center.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A custom, privileged role.</li>
+<li>A data classification profile for auto-tagging PII.</li>
+<li>Tag-based masking policies for string and date columns.</li>
+<li>A row access policy to restrict data visibility by country.</li>
+<li>A custom Data Metric Function to check data integrity.</li>
+</ul>
+<h2 is-upgraded>Get the SQL and paste it into your Worksheet.</h2>
+<p><strong>Copy and paste the SQL from this </strong><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql" target="_blank"><strong>file</strong></a><strong> in a new Worksheet to follow along in Snowflake.</strong></p>
+<p><strong>Note that once you&#39;ve reached the end of the Worksheet you can skip to Step 28 - Apps &amp; Collaboration.</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Roles and Access Control" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>Snowflake&#39;s security model is built on a framework of Role-based Access Control (RBAC) and Discretionary Access Control (DAC). Access privileges are assigned to roles, which are then assigned to users. This creates a powerful and flexible hierarchy for securing objects.</p>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview" target="_blank"><strong>Access Control Overview</strong></a>: To learn more about the key concepts of access control in Snowflake, including securable objects, roles, privileges, and users.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Set Context and View Existing Roles</h2>
+<p>First, let&#39;s set our context for this exercise and view the roles that already exist in the account.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE useradmin;
+USE DATABASE tb_101;
+USE WAREHOUSE tb_dev_wh;
+
+SHOW ROLES;
+</code></pre>
+<h2 is-upgraded>Step 2 - Create a Custom Role</h2>
+<p>We will now create a custom <code>tb_data_steward</code> role. This role will be responsible for managing and protecting our customer data.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE ROLE tb_data_steward
+    COMMENT = &#39;Custom Role&#39;;
+</code></pre>
+<p>The typical hierarchy of system and custom roles might look something like this:</p>
+<pre><code>                                +---------------+
+                                | ACCOUNTADMIN  |
+                                +---------------+
+                                  ^    ^     ^
+                                  |    |     |
+                    +-------------+-+  |    ++-------------+
+                    | SECURITYADMIN |  |    |   SYSADMIN   |&lt;------------+
+                    +---------------+  |    +--------------+             |
+                            ^          |     ^        ^                  |
+                            |          |     |        |                  |
+                    +-------+-------+  |     |  +-----+-------+  +-------+-----+
+                    |   USERADMIN   |  |     |  | CUSTOM ROLE |  | CUSTOM ROLE |
+                    +---------------+  |     |  +-------------+  +-------------+
+                            ^          |     |      ^              ^      ^
+                            |          |     |      |              |      |
+                            |          |     |      |              |    +-+-----------+
+                            |          |     |      |              |    | CUSTOM ROLE |
+                            |          |     |      |              |    +-------------+
+                            |          |     |      |              |           ^
+                            |          |     |      |              |           |
+                            +----------+-----+---+--+--------------+-----------+
+                                                 |
+                                            +----+-----+
+                                            |  PUBLIC  |
+                                            +----------+
+</code></pre>
+<p>Snowflake System Defined Role Definitions:</p>
+<ul>
+<li><strong>ORGADMIN</strong>: Role that manages operations at the organization level.</li>
+<li><strong>ACCOUNTADMIN</strong>: This is the top-level role in the system and should be granted only to a limited/controlled number of users in your account.</li>
+<li><strong>SECURITYADMIN</strong>: Role that can manage any object grant globally, as well as create, monitor, and manage users and roles.</li>
+<li><strong>USERADMIN</strong>: Role that is dedicated to user and role management only.</li>
+<li><strong>SYSADMIN</strong>: Role that has privileges to create warehouses and databases in an account.</li>
+<li><strong>PUBLIC</strong>: PUBLIC is a pseudo-role automatically granted to all users and roles. It can own securable objects, and anything it owns becomes available to every other user and role in the account.</li>
+</ul>
+<h2 is-upgraded>Step 3 - Grant Privileges to the Custom Role</h2>
+<p>We can&#39;t do much with our role without granting privileges to it. Let&#39;s switch to the <code>securityadmin</code> role to grant our new <code>tb_data_steward</code> role the necessary permissions to use a warehouse and access our database schemas and tables.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE securityadmin;
+
+-- Grant warehouse usage
+GRANT OPERATE, USAGE ON WAREHOUSE tb_dev_wh TO ROLE tb_data_steward;
+
+-- Grant database and schema usage
+GRANT USAGE ON DATABASE tb_101 TO ROLE tb_data_steward;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE tb_101 TO ROLE tb_data_steward;
+
+-- Grant table-level privileges
+GRANT SELECT ON ALL TABLES IN SCHEMA raw_customer TO ROLE tb_data_steward;
+GRANT ALL ON SCHEMA governance TO ROLE tb_data_steward;
+GRANT ALL ON ALL TABLES IN SCHEMA governance TO ROLE tb_data_steward;
+</code></pre>
+<h2 is-upgraded>Step 4 - Grant and Use the New Role</h2>
+<p>Finally, we grant the new role to our own user. Then we can switch to the <code>tb_data_steward</code> role and run a query to see what data we can access.</p>
+<pre><code language="language-sql" class="language-sql">-- Grant role to your user
+SET my_user = CURRENT_USER();
+GRANT ROLE tb_data_steward TO USER IDENTIFIER($my_user);
+
+-- Switch to the new role
+USE ROLE tb_data_steward;
+
+-- Run a test query
+SELECT TOP 100 * FROM raw_customer.customer_loyalty;
+</code></pre>
+<p>Looking at the query results, it&#39;s clear this table contains a lot of Personally Identifiable Information (PII). In the next sections, we&#39;ll learn how to protect it.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Classification and Auto Tagging" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>A key first step in data governance is identifying and classifying sensitive data. Snowflake Horizon&#39;s auto-tagging capability can automatically discover sensitive information by monitoring columns in your schemas. We can then use these tags to apply security policies.</p>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/classify-auto" target="_blank"><strong>Automatic Classification</strong></a>: Learn how Snowflake can automatically classify sensitive data based on a schedule, simplifying governance at scale.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Create PII Tag and Grant Privileges</h2>
+<p>Using the <code>accountadmin</code> role, we&#39;ll create a <code>pii</code> tag in our <code>governance</code> schema. We will also grant the necessary privileges to our <code>tb_data_steward</code> role to perform classification.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+CREATE OR REPLACE TAG governance.pii;
+GRANT APPLY TAG ON ACCOUNT TO ROLE tb_data_steward;
+
+GRANT EXECUTE AUTO CLASSIFICATION ON SCHEMA raw_customer TO ROLE tb_data_steward;
+GRANT DATABASE ROLE SNOWFLAKE.CLASSIFICATION_ADMIN TO ROLE tb_data_steward;
+GRANT CREATE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE ON SCHEMA governance TO ROLE tb_data_steward;
+</code></pre>
+<h2 is-upgraded>Step 2 - Create a Classification Profile</h2>
+<p>Now, as the <code>tb_data_steward</code>, we&#39;ll create a classification profile. This profile defines how auto-tagging will behave.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE tb_data_steward;
+
+CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
+  governance.tb_classification_profile(
+    {
+      &#39;minimum_object_age_for_classification_days&#39;: 0,
+      &#39;maximum_classification_validity_days&#39;: 30,
+      &#39;auto_tag&#39;: true
+    });
+</code></pre>
+<h2 is-upgraded>Step 3 - Map Semantic Categories to the PII Tag</h2>
+<p>Next, we&#39;ll define a mapping that tells the classification profile to apply our <code>governance.pii</code> tag to any column whose <code>SEMANTIC_CATEGORY</code> matches common PII types like <code>NAME</code>, <code>PHONE_NUMBER</code>, <code>EMAIL</code>, etc.</p>
+<pre><code language="language-sql" class="language-sql">CALL governance.tb_classification_profile!SET_TAG_MAP(
+  {&#39;column_tag_map&#39;:[
+    {
+      &#39;tag_name&#39;:&#39;tb_101.governance.pii&#39;,
+      &#39;tag_value&#39;:&#39;pii&#39;,
+      &#39;semantic_categories&#39;:[&#39;NAME&#39;, &#39;PHONE_NUMBER&#39;, &#39;POSTAL_CODE&#39;, &#39;DATE_OF_BIRTH&#39;, &#39;CITY&#39;, &#39;EMAIL&#39;]
+    }]});
+</code></pre>
+<h2 is-upgraded>Step 4 - Run Classification and View Results</h2>
+<p>Let&#39;s manually trigger the classification process on our <code>customer_loyalty</code> table. Then, we can query the <code>INFORMATION_SCHEMA</code> to see the tags that were automatically applied.</p>
+<pre><code language="language-sql" class="language-sql">-- Trigger classification
+CALL SYSTEM$CLASSIFY(&#39;tb_101.raw_customer.customer_loyalty&#39;, &#39;tb_101.governance.tb_classification_profile&#39;);
+
+-- View applied tags
+SELECT 
+    column_name,
+    tag_database,
+    tag_schema,
+    tag_name,
+    tag_value,
+    apply_method
+FROM TABLE(INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS(&#39;raw_customer.customer_loyalty&#39;, &#39;table&#39;));
+</code></pre>
+<p>Notice that columns identified as PII now have our custom <code>governance.pii</code> tag applied.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Masking Policies" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>Now that our sensitive columns are tagged, we can use Dynamic Data Masking to protect them. A masking policy is a schema-level object that determines whether a user sees the original data or a masked version at query time. We can apply these policies directly to our <code>pii</code> tag.</p>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/security-column-intro" target="_blank"><strong>Column-level Security</strong></a>: Column-level Security includes Dynamic Data Masking and External Tokenization to protect sensitive data.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Create Masking Policies</h2>
+<p>We&#39;ll create two policies: one to mask string data and one to mask date data. The logic is simple: if the user&#39;s role is not privileged (i.e., not <code>ACCOUNTADMIN</code> or <code>TB_ADMIN</code>), return a masked value. Otherwise, return the original value.</p>
+<pre><code language="language-sql" class="language-sql">-- Create the masking policy for sensitive string data
+CREATE OR REPLACE MASKING POLICY governance.mask_string_pii AS (original_value STRING)
+RETURNS STRING -&gt;
+  CASE WHEN
+    CURRENT_ROLE() NOT IN (&#39;ACCOUNTADMIN&#39;, &#39;TB_ADMIN&#39;)
+    THEN &#39;****MASKED****&#39;
+    ELSE original_value
+  END;
+
+-- Now create the masking policy for sensitive DATE data
+CREATE OR REPLACE MASKING POLICY governance.mask_date_pii AS (original_value DATE)
+RETURNS DATE -&gt;
+  CASE WHEN
+    CURRENT_ROLE() NOT IN (&#39;ACCOUNTADMIN&#39;, &#39;TB_ADMIN&#39;)
+    THEN DATE_TRUNC(&#39;year&#39;, original_value)
+    ELSE original_value
+  END;
+</code></pre>
+<h2 is-upgraded>Step 2 - Apply Masking Policies to the Tag</h2>
+<p>The power of tag-based governance comes from applying the policy once to the tag. This action automatically protects all columns that have that tag, now and in the future.</p>
+<pre><code language="language-sql" class="language-sql">ALTER TAG governance.pii SET
+    MASKING POLICY governance.mask_string_pii,
+    MASKING POLICY governance.mask_date_pii;
+</code></pre>
+<h2 is-upgraded>Step 3 - Test the Policies</h2>
+<p>Let&#39;s test our work. First, switch to the unprivileged <code>public</code> role and query the table. The PII columns should be masked.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE public;
+SELECT TOP 100 * FROM raw_customer.customer_loyalty;
+</code></pre>
+<p>Now, switch to a privileged role, <code>tb_admin</code>. The data should now be fully visible.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE tb_admin;
+SELECT TOP 100 * FROM raw_customer.customer_loyalty;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Row Access Policies" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>In addition to masking columns, Snowflake allows you to filter which rows are visible to a user with Row Access Policies. The policy evaluates each row against rules you define, often based on the user&#39;s role or other session attributes.</p>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/security-row-intro" target="_blank"><strong>Row-level Security</strong></a>: Row Access Policies determine which rows are visible in a query result, enabling fine-grained access control.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Create a Policy Mapping Table</h2>
+<p>A common pattern for row access policies is to use a mapping table that defines which roles can see which data. We&#39;ll create a table that maps roles to the <code>country</code> values they are permitted to see.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE tb_data_steward;
+
+CREATE OR REPLACE TABLE governance.row_policy_map
+    (role STRING, country_permission STRING);
+
+-- Map the tb_data_engineer role to only see &#39;United States&#39; data
+INSERT INTO governance.row_policy_map
+    VALUES(&#39;tb_data_engineer&#39;, &#39;United States&#39;);
+</code></pre>
+<h2 is-upgraded>Step 2 - Create the Row Access Policy</h2>
+<p>Now we create the policy itself. This policy returns <code>TRUE</code> (allowing the row to be seen) if the user&#39;s role is an admin role OR if the user&#39;s role exists in our mapping table and matches the <code>country</code> value of the current row.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE ROW ACCESS POLICY governance.customer_loyalty_policy
+    AS (country STRING) RETURNS BOOLEAN -&gt;
+        CURRENT_ROLE() IN (&#39;ACCOUNTADMIN&#39;, &#39;SYSADMIN&#39;) 
+        OR EXISTS 
+            (
+            SELECT 1 FROM governance.row_policy_map rp
+            WHERE
+                UPPER(rp.role) = CURRENT_ROLE()
+                AND rp.country_permission = country
+            );
+</code></pre>
+<h2 is-upgraded>Step 3 - Apply and Test the Policy</h2>
+<p>Apply the policy to the <code>country</code> column of our <code>customer_loyalty</code> table. Then, switch to the <code>tb_data_engineer</code> role and query the table.</p>
+<pre><code language="language-sql" class="language-sql">-- Apply the policy
+ALTER TABLE raw_customer.customer_loyalty
+    ADD ROW ACCESS POLICY governance.customer_loyalty_policy ON (country);
+
+-- Switch role to test the policy
+USE ROLE tb_data_engineer;
+
+-- Query the table
+SELECT TOP 100 * FROM raw_customer.customer_loyalty;
+</code></pre>
+<p>The result set should now only contain rows where the <code>country</code> is ‘United States&#39;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Metric Functions" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>Data governance isn&#39;t just about security; it&#39;s also about trust and reliability. Snowflake helps maintain data integrity with Data Metric Functions (DMFs). You can use system-defined DMFs or create your own to run automated quality checks on your tables.</p>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/data-quality-intro" target="_blank"><strong>Data Quality Monitoring</strong></a>: Learn how to ensure data consistency and reliability using built-in and custom Data Metric Functions.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Use System DMFs</h2>
+<p>Let&#39;s use a few of Snowflake&#39;s built-in DMFs to check the quality of our <code>order_header</code> table.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE tb_data_steward;
+
+-- This will return the percentage of null customer IDs.
+SELECT SNOWFLAKE.CORE.NULL_PERCENT(SELECT customer_id FROM raw_pos.order_header);
+
+-- We can use DUPLICATE_COUNT to check for duplicate order IDs.
+SELECT SNOWFLAKE.CORE.DUPLICATE_COUNT(SELECT order_id FROM raw_pos.order_header); 
+
+-- Average order total amount for all orders.
+SELECT SNOWFLAKE.CORE.AVG(SELECT order_total FROM raw_pos.order_header);
+</code></pre>
+<h2 is-upgraded>Step 2 - Create a Custom DMF</h2>
+<p>We can also create custom DMFs for our specific business logic. Let&#39;s create one that checks for orders where the <code>order_total</code> does not equal <code>unit_price * quantity</code>.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATA METRIC FUNCTION governance.invalid_order_total_count(
+    order_prices_t table(
+        order_total NUMBER,
+        unit_price NUMBER,
+        quantity INTEGER
+    )
+)
+RETURNS NUMBER
+AS
+&#39;SELECT COUNT(*)
+ FROM order_prices_t
+ WHERE order_total != unit_price * quantity&#39;;
+</code></pre>
+<h2 is-upgraded>Step 3 - Test and Schedule the DMF</h2>
+<p>Let&#39;s insert a bad record to test our DMF. Then, we&#39;ll call the function to see if it catches the error. The record we will be inserting is ordering 2 items with a unit price of $5, and a total price of $5 instead of the correct total $10.</p>
+<pre><code language="language-sql" class="language-sql">-- Insert a record with an incorrect total price
+INSERT INTO raw_pos.order_detail
+SELECT 904745311, 459520442, 52, null, 0, 2, 5.0, 5.0, null;
+
+-- Call the custom DMF on the order detail table.
+SELECT governance.invalid_order_total_count(
+    SELECT price, unit_price, quantity FROM raw_pos.order_detail
+) AS num_orders_with_incorrect_price;
+</code></pre>
+<p>To automate this check, we can associate the DMF with the table and set a schedule to have it run automatically whenever the data changes, then add it to the <code>order_detail</code> table.</p>
+<pre><code language="language-sql" class="language-sql">ALTER TABLE raw_pos.order_detail
+    SET DATA_METRIC_SCHEDULE = &#39;TRIGGER_ON_CHANGES&#39;;
+
+ALTER TABLE raw_pos.order_detail
+    ADD DATA METRIC FUNCTION governance.invalid_order_total_count
+    ON (price, unit_price, quantity);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Trust Center" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>The Trust Center provides a centralized dashboard for monitoring security risks across your entire Snowflake account. It uses scheduled scanners to check for issues like missing Multi-Factor Authentication (MFA), over-privileged roles, or inactive users, and then provides recommended actions.</p>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/trust-center/overview" target="_blank"><strong>Trust Center Overview</strong></a>: The Trust Center enables automatic checks to evaluate and monitor security risks on your account.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Grant Privileges and Navigate to the Trust Center</h2>
+<p>First, an <code>ACCOUNTADMIN</code> needs to grant the <code>TRUST_CENTER_ADMIN</code> application role to a user or role. We&#39;ll grant it to our <code>tb_admin</code> role.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+GRANT APPLICATION ROLE SNOWFLAKE.TRUST_CENTER_ADMIN TO ROLE tb_admin;
+USE ROLE tb_admin; 
+</code></pre>
+<p>Now, navigate to the Trust Center in the Snowsight UI:</p>
+<ol type="1">
+<li>Click the <strong>Monitoring</strong> tab in the left navigation bar.</li>
+<li>Click on <strong>Trust Center</strong>.</li>
+</ol>
+<h2 is-upgraded>Step 2 - Enable Scanner Packages</h2>
+<p>By default, most scanner packages are disabled. Let&#39;s enable them to get a comprehensive view of our account&#39;s security posture.</p>
+<ol type="1">
+<li>In the Trust Center, click the <strong>Scanner Packages</strong> tab.</li>
+<li>Click on <strong>CIS Benchmarks</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/3b2384396798a06.png"></p>
+<ol type="1" start="3">
+<li>Click the <strong>Enable Package</strong> button.</li>
+</ol>
+<p class="image-container"><img src="img/b793a2eb8e990a2a.png"></p>
+<ol type="1" start="4">
+<li>In the modal, set the <strong>Frequency</strong> to <code>Monthly</code> and click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/233db750a0ac9657.png"></p>
+<ol type="1" start="5">
+<li>Repeat this process for the <strong>Threat Intelligence</strong> scanner package.</li>
+</ol>
+<h2 is-upgraded>Step 3 - Review Findings</h2>
+<p>After the scanners have had a moment to run, navigate back to the <strong>Findings</strong> tab.</p>
+<ul>
+<li>You will see a dashboard summarizing violations by severity.</li>
+<li>The list below details each violation, its severity, and the scanner that found it.</li>
+<li>Clicking on any violation will open a details pane with a summary and recommended remediation steps.</li>
+<li>You can filter the list by severity, status, or scanner package to focus on the most critical issues.</li>
+</ul>
+<p class="image-container"><img src="img/e1dd6f417f5abf4c.png"></p>
+<p>This powerful tool gives you a continuous, actionable overview of your Snowflake account&#39;s security health.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Apps &amp; Collaboration" duration="1">
+        <p class="image-container"><img src="img/bb90ffcef7604f2e.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>In this vignette, we will explore how Snowflake facilitates seamless data collaboration through the Snowflake Marketplace. We will see how easy it is to acquire live, ready-to-query third-party datasets and immediately join them with our own internal data to unlock new insights—all without the need for traditional ETL pipelines.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to discover and acquire data from the Snowflake Marketplace.</li>
+<li>How to instantly query live, shared data.</li>
+<li>How to join Marketplace data with your own account data to create enriched views.</li>
+<li>How to leverage third-party Point-of-Interest (POI) data for deeper analysis.</li>
+<li>How to use Common Table Expressions (CTEs) to structure complex queries.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>Enriched analytical Views that combine internal sales data with external weather and POI data.</li>
+</ul>
+<h2 is-upgraded>Get the SQL and paste it into your Worksheet.</h2>
+<p><strong>Copy and paste the SQL from this </strong><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-5.sql" target="_blank"><strong>file</strong></a><strong> in a new Worksheet to follow along in Snowflake.</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Acquire Data from Snowflake Marketplace" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>One of our analysts wants to see how weather impacts food truck sales. To do this, they&#39;ll use the Snowflake Marketplace to get live weather data from Weather Source, which can then be joined directly with our own sales data. The Marketplace allows us to access live, ready-to-query data from third-party providers without any data duplication or ETL.</p>
+<aside class="special"><p><a href="https://docs.snowflake.com/en/user-guide/data-sharing-intro" target="_blank"><strong>Introduction to the Snowflake Marketplace</strong></a>: The Marketplace provides a centralized hub to discover and access a wide variety of third-party data, applications, and AI products.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Set Initial Context</h2>
+<p>First, let&#39;s set our context to use the <code>accountadmin</code> role, which is required to acquire data from the Marketplace.</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE tb_101;
+USE ROLE accountadmin;
+USE WAREHOUSE tb_de_wh;
+</code></pre>
+<h2 is-upgraded>Step 2 - Acquire Weather Source Data</h2>
+<p>Follow these steps in the Snowsight UI to get the Weather Source data:</p>
+<ol type="1">
+<li>Make sure you are using the <code>ACCOUNTADMIN</code> role.</li>
+<li>Navigate to <strong>Data Products</strong> » <strong>Marketplace</strong> from the left-hand navigation menu.</li>
+<li>In the search bar, enter: <code>Weather Source frostbyte</code>. <img src="img/9ecfae0aeefcdac1.png"></li>
+<li>Click on the <strong>Weather Source LLC: frostbyte</strong> listing. <img src="img/1cb25226d66cf526.png"></li>
+<li>Click the <strong>Get</strong> button.</li>
+<li>Click to expand the Options, then change the <strong>Database name</strong> to <code>ZTS_WEATHERSOURCE</code>.</li>
+<li>Grant access to the <strong>PUBLIC</strong> role.</li>
+<li>Click <strong>Get</strong>.</li>
+</ol>
+<p>This process makes the Weather Source data instantly available in our account as a new database, ready to be queried.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Integrate Account Data with Shared Data" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>With the Weather Source data now in our account, our analyst can immediately begin joining it with our existing Tasty Bytes data. There&#39;s no need to wait for an ETL job to run.</p>
+<h2 is-upgraded>Step 1 - Explore the Shared Data</h2>
+<p>Let&#39;s switch to the <code>tb_analyst</code> role and begin exploring the new weather data. We&#39;ll start by getting a list of all distinct US cities available in the share, along with some average weather metrics.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE tb_analyst;
+
+SELECT 
+    DISTINCT city_name,
+    AVG(max_wind_speed_100m_mph) AS avg_wind_speed_mph,
+    AVG(avg_temperature_air_2m_f) AS avg_temp_f,
+    AVG(tot_precipitation_in) AS avg_precipitation_in,
+    MAX(tot_snowfall_in) AS max_snowfall_in
+FROM zts_weathersource.onpoint_id.history_day
+WHERE country = &#39;US&#39;
+GROUP BY city_name;
+</code></pre>
+<h2 is-upgraded>Step 2 - Create an Enriched View</h2>
+<p>Now, let&#39;s create a view that joins our raw <code>country</code> data with the historical daily weather data from the Weather Source share. This gives us a unified view of weather metrics for the cities where Tasty Bytes operates.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW harmonized.daily_weather_v
+COMMENT = &#39;Weather Source Daily History filtered to Tasty Bytes supported Cities&#39;
+    AS
+SELECT
+    hd.*,
+    TO_VARCHAR(hd.date_valid_std, &#39;YYYY-MM&#39;) AS yyyy_mm,
+    pc.city_name AS city,
+    c.country AS country_desc
+FROM zts_weathersource.onpoint_id.history_day hd
+JOIN zts_weathersource.onpoint_id.postal_codes pc
+    ON pc.postal_code = hd.postal_code
+    AND pc.country = hd.country
+JOIN raw_pos.country c
+    ON c.iso_country = hd.country
+    AND c.city = hd.city_name;
+</code></pre>
+<h2 is-upgraded>Step 3 - Analyze and Visualize Enriched Data</h2>
+<p>Using our new view, the analyst can query for the average daily temperature in Hamburg, Germany for February 2022. Run the query below, then we&#39;ll visualize this as a line chart directly in Snowsight.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    dw.country_desc,
+    dw.city_name,
+    dw.date_valid_std,
+    AVG(dw.avg_temperature_air_2m_f) AS average_temp_f
+FROM harmonized.daily_weather_v dw
+WHERE dw.country_desc = &#39;Germany&#39;
+    AND dw.city_name = &#39;Hamburg&#39;
+    AND YEAR(date_valid_std) = 2022
+    AND MONTH(date_valid_std) = 2
+GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
+ORDER BY dw.date_valid_std DESC;
+</code></pre>
+<ol type="1">
+<li>Run the query above.</li>
+<li>In the <strong>Results</strong> pane, click <strong>Chart</strong>.</li>
+<li>Set the <strong>Chart Type</strong> to <code>Line</code>.</li>
+<li>Set the <strong>X-Axis</strong> to <code>DATE_VALID_STD</code>.</li>
+<li>Set the <strong>Y-Axis</strong> to <code>AVERAGE_TEMP_F</code>.</li>
+</ol>
+<p class="image-container"><img src="img/6de053edd9fb0ec1.png"></p>
+<h2 is-upgraded>Step 4 - Create a Sales and Weather View</h2>
+<p>Let&#39;s take it a step further and combine our <code>orders_v</code> view with our new <code>daily_weather_v</code> to see how sales correlate with weather conditions.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW analytics.daily_sales_by_weather_v
+COMMENT = &#39;Daily Weather Metrics and Orders Data&#39;
+AS
+WITH daily_orders_aggregated AS (
+    SELECT DATE(o.order_ts) AS order_date, o.primary_city, o.country,
+        o.menu_item_name, SUM(o.price) AS total_sales
+    FROM harmonized.orders_v o
+    GROUP BY ALL
+)
+SELECT
+    dw.date_valid_std AS date, dw.city_name, dw.country_desc,
+    ZEROIFNULL(doa.total_sales) AS daily_sales, doa.menu_item_name,
+    ROUND(dw.avg_temperature_air_2m_f, 2) AS avg_temp_fahrenheit,
+    ROUND(dw.tot_precipitation_in, 2) AS avg_precipitation_inches,
+    ROUND(dw.tot_snowdepth_in, 2) AS avg_snowdepth_inches,
+    dw.max_wind_speed_100m_mph AS max_wind_speed_mph
+FROM harmonized.daily_weather_v dw
+LEFT JOIN daily_orders_aggregated doa
+    ON dw.date_valid_std = doa.order_date
+    AND dw.city_name = doa.primary_city
+    AND dw.country_desc = doa.country
+ORDER BY date ASC;
+</code></pre>
+<h2 is-upgraded>Step 5 - Answer a Business Question</h2>
+<p>Our analyst can now answer complex business questions, such as: &#34;How does significant precipitation impact our sales figures in the Seattle market?&#34;</p>
+<pre><code language="language-sql" class="language-sql">SELECT * EXCLUDE (city_name, country_desc, avg_snowdepth_inches, max_wind_speed_mph)
+FROM analytics.daily_sales_by_weather_v
+WHERE 
+    country_desc = &#39;United States&#39;
+    AND city_name = &#39;Seattle&#39;
+    AND avg_precipitation_inches &gt;= 1.0
+ORDER BY date ASC;
+</code></pre>
+<p>Let&#39;s also visualize the results again in Snowsight, but as a bar chart this time.</p>
+<ol type="1">
+<li>Run the query above.</li>
+<li>In the <strong>Results</strong> pane, click <strong>Chart</strong>.</li>
+<li>Set the <strong>Chart Type</strong> to <code>Bar</code>.</li>
+<li>Set the <strong>X-Axis</strong> to <code>MENU_ITEM_NAME</code>.</li>
+<li>Set the <strong>Y-Axis</strong> to <code>DAILY_SALES</code>.</li>
+</ol>
+<p class="image-container"><img src="img/76242f88a7e9e3d5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explore Point-of-Interest Data" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>Our analyst now wants more insight into the specific locations of our food trucks. We can get Point-of-Interest (POI) data from Safegraph, another provider on the Snowflake Marketplace, to enrich our analysis even further.</p>
+<h2 is-upgraded>Step 1 - Acquire Safegraph POI Data</h2>
+<p>Follow the same procedure as before to acquire the Safegraph data from the Marketplace.</p>
+<ol type="1">
+<li>Ensure you are using the <code>ACCOUNTADMIN</code> role.</li>
+<li>Navigate to <strong>Data Products</strong> » <strong>Marketplace</strong>.</li>
+<li>In the search bar, enter: <code>safegraph frostbyte</code>.</li>
+<li>Select the <strong>Safegraph: frostbyte</strong> listing and click <strong>Get</strong>.</li>
+<li>Click to expand the Options, then set the <strong>Database name</strong> to <code>ZTS_SAFEGRAPH</code>.</li>
+<li>Grant access to the <strong>PUBLIC</strong> role.</li>
+<li>Click <strong>Get</strong>.</li>
+</ol>
+<h2 is-upgraded>Step 2 - Create a POI View</h2>
+<p>Let&#39;s create a view that joins our internal <code>location</code> data with the Safegraph POI data.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW harmonized.tastybytes_poi_v
+AS 
+SELECT 
+    l.location_id, sg.postal_code, sg.country, sg.city, sg.iso_country_code,
+    sg.location_name, sg.top_category, sg.category_tags,
+    sg.includes_parking_lot, sg.open_hours
+FROM raw_pos.location l
+JOIN zts_safegraph.public.frostbyte_tb_safegraph_s sg 
+    ON l.location_id = sg.location_id
+    AND l.iso_country_code = sg.iso_country_code;
+</code></pre>
+<h2 is-upgraded>Step 3 - Combine POI and Weather Data</h2>
+<p>Now we can combine all three datasets: our internal data, the weather data, and the POI data. Let&#39;s find our top 3 windiest truck locations in the US in 2022.</p>
+<pre><code language="language-sql" class="language-sql">SELECT TOP 3
+    p.location_id, p.city, p.postal_code,
+    AVG(hd.max_wind_speed_100m_mph) AS average_wind_speed
+FROM harmonized.tastybytes_poi_v AS p
+JOIN zts_weathersource.onpoint_id.history_day AS hd
+    ON p.postal_code = hd.postal_code
+WHERE
+    p.country = &#39;United States&#39;
+    AND YEAR(hd.date_valid_std) = 2022
+GROUP BY p.location_id, p.city, p.postal_code
+ORDER BY average_wind_speed DESC;
+</code></pre>
+<h2 is-upgraded>Step 4 - Analyze Brand Resilience to Weather</h2>
+<p>Finally, let&#39;s conduct a more complex analysis to determine brand resilience. We&#39;ll use a Common Table Expression (CTE) to first find the windiest locations, and then compare sales on &#34;calm&#34; vs. &#34;windy&#34; days for each truck brand at those locations. This can help inform operational decisions, like offering &#34;Windy Day&#34; promotions for brands that are less resilient.</p>
+<pre><code language="language-sql" class="language-sql">WITH TopWindiestLocations AS (
+    SELECT TOP 3
+        p.location_id
+    FROM harmonized.tastybytes_poi_v AS p
+    JOIN zts_weathersource.onpoint_id.history_day AS hd ON p.postal_code = hd.postal_code
+    WHERE p.country = &#39;United States&#39; AND YEAR(hd.date_valid_std) = 2022
+    GROUP BY p.location_id, p.city, p.postal_code
+    ORDER BY AVG(hd.max_wind_speed_100m_mph) DESC
+)
+SELECT
+    o.truck_brand_name,
+    ROUND(AVG(CASE WHEN hd.max_wind_speed_100m_mph &lt;= 20 THEN o.order_total END), 2) AS avg_sales_calm_days,
+    ZEROIFNULL(ROUND(AVG(CASE WHEN hd.max_wind_speed_100m_mph &gt; 20 THEN o.order_total END), 2)) AS avg_sales_windy_days
+FROM analytics.orders_v AS o
+JOIN zts_weathersource.onpoint_id.history_day AS hd
+    ON o.primary_city = hd.city_name AND DATE(o.order_ts) = hd.date_valid_std
+WHERE o.location_id IN (SELECT location_id FROM TopWindiestLocations)
+GROUP BY o.truck_brand_name
+ORDER BY o.truck_brand_name;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introduction to Streamlit in Snowflake" duration="3">
+        <p class="image-container"><img src="img/c9dfbfe0771565a.png"></p>
+<p>Streamlit is an open-source Python library designed for easily creating and sharing web applications for machine learning and data science. It allows for the rapid development and deployment of data-driven apps.</p>
+<p>Streamlit in Snowflake empowers developers to securely build, deploy, and share applications directly within Snowflake. This integration allows you to build apps that process and utilize data stored in Snowflake without the need of moving the data or application code to an external system.</p>
+<h2 is-upgraded>Step 1 - Create Streamlit App</h2>
+<p><strong>Let&#39;s create our first Streamlit app, an app that will display and chart sales data for each menu item in Japan for February 2022.</strong></p>
+<ol type="1">
+<li>First, navigate to <strong>Projects</strong> » <strong>Streamlit</strong>, then click on the blue ‘+ Streamlit App&#39; button in the top right to create a new app.</li>
+<li>Enter these values in the ‘Create Streamlit App&#39; pop-up:<ul>
+<li>App title: Menu Item Sales</li>
+<li>App location: <ul>
+<li>Database: tb_101</li>
+<li>Schema: Analytics</li>
+</ul>
+</li>
+<li>App warehouse: tb_dev_wh</li>
+</ul>
+</li>
+<li>Now click ‘Create&#39;. When the app first loads, you&#39;ll see a sample app on the right pane and the app&#39;s code in the editor pane to the left.</li>
+<li>Select all of the code and remove it.</li>
+<li><strong>Next copy + paste this </strong><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/streamlit/streamlit_app.py" target="_blank"><strong>code</strong></a><strong> in the blank editor window, then click ‘Run&#39; in the top right.</strong></li>
+</ol>
+<p class="image-container"><img src="img/d55c9af14841e755.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>Congratulations! You have successfully completed the entire Tasty Bytes - Zero to Snowflake journey.</p>
+<p>You have now built and configured warehouses, cloned and transformed data, recovered a dropped table with Time Travel, and built an automated data pipeline for semi-structured data. You&#39;ve also unlocked insights using AI by generating analysis with simple AISQL functions and accelerating your workflow with Snowflake Copilot. Furthermore, you have implemented a robust governance framework with roles and policies and seamlessly enriched your own data with live datasets from the Snowflake Marketplace.</p>
+<p>If you would like to re-run this Quickstart, please run the complete <code>RESET</code> script located at the bottom of your worksheet.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li><strong>Warehousing and Performance:</strong> How to create, manage, and scale virtual warehouses, and leverage Snowflake&#39;s results cache.</li>
+<li><strong>Data Transformation:</strong> How to use Zero-Copy Cloning for safe development, transform data, and instantly recover from errors using Time Travel and <code>UNDROP</code>.</li>
+<li><strong>Data Pipelines:</strong> How to ingest data from external stages, process semi-structured <code>VARIANT</code> data, and build automated ELT pipelines with Dynamic Tables.</li>
+<li><strong>Snowflake Cortex AI</strong> How to leverage Snowflake Cortex AI to build a customer analytics platform.</li>
+<li><strong>Data Governance:</strong> How to implement a security framework using Role-Based Access Control, automated PII classification, tag-based Data Masking, and Row Access Policies.</li>
+<li><strong>Data Collaboration:</strong> How to discover and acquire live, third-party datasets from the Snowflake Marketplace and seamlessly join them with your own data to generate new insights.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">Virtual Warehouses &amp; Settings</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/resource-monitors" target="_blank">Resource Monitors</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/budgets" target="_blank">Budgets</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-universal-search" target="_blank">Universal Search</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table" target="_blank">Ingestion from External Stage</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/data-types-semistructured" target="_blank">Semi-Structured Data</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">Dynamic Tables</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview" target="_blank">Roles &amp; Access Control</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/classify-auto" target="_blank">Tag-Based Classification</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-column-intro" target="_blank">Column Level Security with Masking Policies</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-row-intro" target="_blank">Row Level Security with Row Access Policies</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-quality-intro" target="_blank">Data Metric Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/trust-center/overview" target="_blank">Trust Center</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-sharing-intro" target="_blank">Data Sharing</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-playground" target="_blank">Snowflake Cortex Playground</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql" target="_blank">AI SQL Functions in Snowflake Cortex</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Snowflake Cortex Search Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Snowflake Cortex Analyst</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-cortex-aisql",
+  "duration": 30,
+  "title": "Getting Started with Cortex AISQL",
+  "summary": "This guide outlines the process for getting started with Cortex AISQL.",
+  "source": "getting-started-with-cortex-aisql/getting-started-with-cortex-aisql.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-science-\u0026-ml",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "getting-started-with-cortex-aisql"
+}

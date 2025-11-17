@@ -1,22 +1,21 @@
 author: Kala Govindarajan
 id: getting-started-with-ml-observability-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: ML Ops is defined as the core function of ML engineering focused on optimizing the process of deploying, maintaining, and monitoring models in production. Snowflake ML Observability allows to monitor models deployed in production via Snowflake Model Registry to track the quality of the model across multiple dimensions such as performance and drift along with volume. With this ML Ops-driven approach for customer churn monitoring, enterprises can ensure that ML models add real value, minimize the risk of performance decay, and make informed, data-driven decisions that drive customer retention. 
-categories: Getting-Started, Observability 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with ML Observability in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Snowflake ML provides organizations with an integrated set of capabilities for end-to-end ML development and operations in a single platform on top of governed data. 
 For many large enterprises, extracting tangible value from Machine Learning (ML) initiatives remains a significant challenge. Despite substantial investments, the journey from developing models to realizing their benefits often encounters numerous roadblocks. MLOps is a core function of ML engineering and focuses on streamlining the process of taking machine learning models to production, and then maintaining and monitoring them effectively. Unlike traditional software, machine learning models can change their behavior over time due to various factors, including input drift, outdated assumptions from model training, issues in data pipelines, and standard challenges like hardware/software environments and traffic. These factors can lead to a decline in model performance and unexpected behavior which needs to be monitored very closely. 
 
 
-<img src="assets/image.png"/>
+![assets/image.png](assets/image.png)
 
 In this Quickstart guide we will be exploring ML Observability in Snowflake that enables one to detect model behavior changes over time due to input drift, stale training assumptions, and data pipeline issues, as well as the usual factors, including changes to the underlying hardware and software and the fluid nature of traffic. ML Observability allows you to track the quality of production models that has been deployed via the Snowflake Model Registry across multiple dimensions, such as performance, drift, and volume. 
 
@@ -50,7 +49,6 @@ For demonstration purposes, let's consider a multinational financial services fi
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
@@ -94,7 +92,7 @@ Even a well-trained model may degrade over time due to data drift—shifts in da
 
 To track this, we create a Model Monitor in Snowflake
 
-<img src="assets/workflow.png"/>
+![assets/workflow.png](assets/workflow.png)
 
 - Create a model monitor using the CREATE MODEL MONITOR command wither using the python class or the SQL command. The model monitor must be created in the same schema as the model version that needs to be monitored. 
   
@@ -149,13 +147,13 @@ In the Monitors section of the details page, a list of model monitors can be fou
 
 #### Metrics Monitoring
 
-<img src="assets/actualsvsprediction.png"/>
+![assets/actualsvsprediction.png](assets/actualsvsprediction.png)
 
 Prediction Count - Count of non-null values for prediction column.
 
 Actual Count - Count of non-null values for label column.
 
-<img src="assets/metrics.png"/>
+![assets/metrics.png](assets/metrics.png)
 
 Precision - ratio of true positive predictions to the total predicted positives, indicating the accuracy of positive predictions.
 
@@ -167,7 +165,7 @@ The F1 Score - the harmonic mean of precision and recall, providing a balance be
 
 Difference of mean - compares the average values between two datasets.
 
-<img src="assets/settings.png"/>
+![assets/settings.png](assets/settings.png)
 
 There are other metrics that can be tracked as per the model type. 
 
@@ -206,7 +204,6 @@ These metrics combined with the alert function helps maintain model reliability,
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 In this guide, we explored how financial firms can build end-to-end, production-ready customer churn prediction models using Snowflake ML. With Snowflake's new features supporting MLOps, organizations can now monitor, optimize, and manage models at scale in production. This approach ensures models are deployed in a controlled, reliable manner and continue to evolve, delivering sustained value over time. Ultimately, Snowflake empowers organizations to move confidently from development to production, unlocking the full potential of their machine learning models and driving impactful, large-scale results.
 
@@ -221,6 +218,10 @@ In this guide, we explored how financial firms can build end-to-end, production-
 
 - #### [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 - #### [Snowpark Model Observability](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-observability)
-- #### [Getting Started with Snowflake ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- #### [Getting Started with Snowflake ML](/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+- [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ml-observability-in-snowflake/tree/main/notebook)
+- [Download Reference Architecture](https://drive.google.com/file/d/1DSXlhZQlfI8DYiE-HYKcLK5wyaFYSqIb/view?usp=sharing)
+- [Watch the Demo](https://youtu.be/VS7_yvt498Y?list=TLGGF-5YkcMeUncyNDA5MjAyNQ)
+- 
 
 

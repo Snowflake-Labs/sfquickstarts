@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "building-geospatial-mult-layer-apps-with-snowflake-and-streamlit",
+  "duration": 102,
+  "title": "Building Geospatial Multi-Layer Apps with Snowflake and Streamlit",
+  "summary": "In this hands-on lab, you’ll learn how to analyze and transform geospatial data in Snowflake, progressing from visualizing points on a map to building a multi-layer streamlit app.",
+  "source": "building-geospatial-multi-layer-apps-with-snowflake-and-streamlit/building-geospatial-multi-layer-apps-with-snowflake-and-streamlit.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-sharing",
+    "streamlit"
+  ],
+  "tags": [
+    "advancedanalytics",
+    "dataengineering",
+    "geospatial",
+    "ordnancesurvey",
+    "unitedkingdom",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "building-geospatial-mult-layer-apps-with-snowflake-and-streamlit"
+}

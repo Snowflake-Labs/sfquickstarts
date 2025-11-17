@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data-products-data-mesh-dbt-cloud",
+  "duration": 55,
+  "title": "Build Data Products and a Data Mesh with dbt platform",
+  "authors": "Sean McIntyre, Doug Guthrie",
+  "summary": "Build Data Products and a Data Mesh with dbt platform",
+  "source": "data_products_data_mesh_dbt/data_products_data_mesh_dbt.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "datamesh",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data-products-data-mesh-dbt-cloud"
+}

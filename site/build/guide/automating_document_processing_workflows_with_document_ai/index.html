@@ -1,0 +1,586 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Automating Document Processing Workflows With Document AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="automating_document_processing_workflows_with_document_ai"
+                  title="Automating Document Processing Workflows With Document AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Through this quickstart guide, you will explore Document AI. You will set up your Snowflake environment, use Document AI to create a model to extract values from documents, create a document extraction pipline using the model and use streamlit to build a application to verify the extracted values.</p>
+<h2 is-upgraded>What is Document AI</h2>
+<p>Document AI is a Snowflake machine learning feature that uses a large language model (LLM) to extract data from documents. With Document AI, you can prepare pipelines for continuous processing of new documents of a specific type, such as invoice or finance statement documents.</p>
+<p>Document AI uses a model that provides both zero-shot extraction and fine-tuning. Zero-shot means that the foundation model is trained on a large volume of various documents, so the model broadly understands the type of document being processed. In this way, it can locate and extract information specific to this document type, even if the model has never seen the document before.</p>
+<p>Additionally, you can create your own customized, fine-tuned Document AI model to improve your results by training the model on the documents specific to your use case.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to create a Document AI model</li>
+<li>how use a published Document AI model to build a data pipeline</li>
+<li>how to build a Streamlit application for verifying documents</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed <aside class="special"><p>Clone or download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai" target="_blank">git repo</a></p>
+</aside>
+</li>
+<li>A Snowflake account. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with a role that has the ability to create role, database, schema, tables, stages and assign permissions. If not, you will need to register for a free trial or use a different role.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will use documents from the <a href="https://doi.org/10.5281/zenodo.4595826" target="_blank">Contract Understanding Atticus Dataset (CUAD) v1.</a> in order to extract values and verifying that clauses exists in co-branding agreements. The QuickStart <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai" target="_blank">git repo</a> includes the documents we are going to use.</p>
+<aside class="special"><p><strong>Citation<br></strong> The Atticus Project. (2021). Contract Understanding Atticus Dataset (CUAD) v1. https://doi.org/10.5281/zenodo.4595826</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup the Snowflake enviroment" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)</p>
+<h2 is-upgraded>Clone the git repository</h2>
+<p>The very first step is to clone the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai" target="_blank">GitHub repository</a>. This repository contains all the code you will need to successfully complete this QuickStart Guide.</p>
+<p>Using HTTPS:</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai.git
+</code></pre>
+<p>OR, using SSH:</p>
+<pre><code language="language-shell" class="language-shell">git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-document-ai.git
+</code></pre>
+<h2 is-upgraded>Creating Objects</h2>
+<p>Run the following SQL commands, those can also be found in the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai/blob/main/setup.sql" target="_blank">setup.sql</a> file, in a SQL worksheet to create the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-warehouse" target="_blank">warehouse</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database" target="_blank">database</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-schema" target="_blank">schema</a> and <a href="https://docs.snowflake.com/en/sql-reference/sql/create-role" target="_blank">role</a>.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+
+-- CREATE A DOC AI ROLE TO BE USED FOR THE QUICKSTART
+CREATE ROLE doc_ai_qs_role;
+GRANT DATABASE ROLE SNOWFLAKE.DOCUMENT_INTELLIGENCE_CREATOR TO ROLE doc_ai_qs_role;
+
+GRANT ROLE doc_ai_qs_role TO USER &lt;YOUR USER&gt;;
+
+-- CREATE A WAREHOUSE TO BE USED
+CREATE WAREHOUSE doc_ai_qs_wh;
+
+-- GIVE THE doc_ai_qs_role ROLE ACCESS TO THE WAREHOUSE
+GRANT USAGE, OPERATE, MODIFY ON WAREHOUSE doc_ai_qs_wh TO ROLE doc_ai_qs_role;
+
+-- CREATE DATABASE AND SCHEMA TO BE USED, GIVE THE doc_ai_qs_role ACCESS
+CREATE DATABASE doc_ai_qs_db;
+GRANT CREATE SCHEMA, MODIFY, USAGE ON DATABASE doc_ai_qs_db TO ROLE doc_ai_qs_role;
+
+-- CHANGE TO THE QUICKSTART ROLE
+USE ROLE doc_ai_qs_role;
+
+-- CREATE A SCHEMA FOR THE DOCUEMNT AI MODEL, STAGE etc
+CREATE SCHEMA doc_ai_qs_db.doc_ai_schema;
+
+-- EXPLICIT GRANT USAGE AND snowflake.ml.document_intelligence on the  SCHEMA
+GRANT USAGE ON SCHEMA doc_ai_qs_db.doc_ai_schema to role doc_ai_qs_role;
+GRANT CREATE snowflake.ml.document_intelligence on schema doc_ai_qs_db.doc_ai_schema to role doc_ai_qs_role;
+
+-- CREATE A STAGE FOR STORING DOCUMENTS
+CREATE STAGE doc_ai_qs_db.doc_ai_schema.doc_ai_stage
+  DIRECTORY = (enable = true)
+  ENCRYPTION = (type = &#39;snowflake_sse&#39;);
+
+-- SCHEMA FOR THE STREAMLIT APP
+CREATE SCHEMA doc_ai_qs_db.streamlit_schema;
+
+-- TABLE FOR THE STREAMLIT APP
+CREATE OR REPLACE TABLE doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS_VERIFIED
+(
+    file_name string
+    , snowflake_file_url string
+    , verification_date TIMESTAMP
+    , verification_user string
+);
+
+</code></pre>
+<p>We are now ready to start.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build a Document AI model" duration="20">
+        <h2 is-upgraded>Overview</h2>
+<p>In This step we will create a Document AI model by uploading documents and sepcify the questions needed to extarct values. Once done we will publish the models so it can be use for extracting values from documents.</p>
+<h2 is-upgraded>Step 1: Create a Document AI build</h2>
+<p>In Snowsight make sure you have changed the role to DOC_AI_QS_ROLE, you can see the active role in under your users name in the bottom left corner.<br><img alt="Active Role" src="img/4cbc34957fa2c816.png"></p>
+<ol type="1">
+<li>Navigate to Document AI by clicking on <strong>AI &amp; ML</strong> and then <strong>Document AI</strong></li>
+<li>Select the doc_ai_qs_wh warehouse<br><img alt="Select WH" src="img/42ecdb74918e6043.png"></li>
+<li>Click on <strong>+ Build</strong> and set the name, database and schema as below. <ul>
+<li>Build name: DOC_AI_QS_CO_BRANDING</li>
+<li>Locations: <ul>
+<li>DOC_AI_QS_DB</li>
+<li>DOC_AI_SCHEMA<br><img alt="New Build" src="img/b419f092199ab430.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Click on <strong>Create</strong></li>
+</ol>
+<h2 is-upgraded>Step 2: Upload documents</h2>
+<p>In this step we wil upload example documents that we will use to ask value extraction questions against, so we can verify that the questionswork.</p>
+<aside class="special"><p> &gt; &gt;The recommendation is to use at least 20 documents, but in this qucikstart we will only use 5 to speed up the review step.</p>
+</aside>
+<ol type="1">
+<li>Click on <strong>Upload documents</strong> to start the process of uploading documents<br><img alt="Upload Documents Start" src="img/fae05aab89cfd412.png"></li>
+<li>Add the documents in the <strong>training_documents</strong> folder and click <strong>Upload<br></strong><img alt="Upload Dialog" src="img/a114020e705f2294.png"></li>
+<li>Click on <strong>+ Value</strong> to open the page for define the questions for extracting values<br><img alt="Upload Dialog" src="img/a7d2a4ed22fe5280.png"></li>
+</ol>
+<h2 is-upgraded>Step 3: Specify values</h2>
+<p>In this step we will define the questions for extracting values and the name of the key the value will be added to.</p>
+<ol type="1">
+<li>Click on <strong>Add Value</strong> and enter <strong>effective_date</strong> as the <strong>Vale Name</strong> and  <strong>What is the effective date of the agreement?</strong> as the question. <img alt="First Value" src="img/5294c0bbb45836f.png"></li>
+<li>By clicking on the <strong>Locate Answer</strong> button (target looking icon), we can see where in teh document Document AI has found the answer. <img alt="First Value" src="img/c05e75b394783331.png"><br><img alt="First Value" src="img/4d7b20f07c00bb25.png"></li>
+<li>Add the rest of the the value names and questions from the table below</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p>VALUE NAME</p>
+</td><td colspan="1" rowspan="1"><p>QUESTION</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>parties</p>
+</td><td colspan="1" rowspan="1"><p>Who are the parties involved in the agreement?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>duration</p>
+</td><td colspan="1" rowspan="1"><p>What is the duration of the agreement?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>notice_period</p>
+</td><td colspan="1" rowspan="1"><p>What is the notice period for termination?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>indemnification_clause</p>
+</td><td colspan="1" rowspan="1"><p>Is there an indemnification clause?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>renewal_options</p>
+</td><td colspan="1" rowspan="1"><p>Are there any renewal options or conditions mentioned?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>force_majeure</p>
+</td><td colspan="1" rowspan="1"><p>Is there a force majeure clause?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>payment_terms</p>
+</td><td colspan="1" rowspan="1"><p>What are the payment terms, including amounts, timing, and conditions?</p>
+</td></tr>
+</table>
+<ol type="1" start="4">
+<li>Once all values are defined click on <strong>Accept and review next</strong></li>
+<li>If a value is missing or for example it is a <strong>No</strong> for a value, you can verify if it is correct by searching for the term in the document<br><img alt="Search Icon" src="img/79da183559d7442.png"><br><img alt="Search term" src="img/c190eadbfb609a1b.png"></li>
+</ol>
+<aside class="special"><p> &gt; &gt;For some of the questions multiple answers might be correct.</p>
+</aside>
+<ol type="1" start="6">
+<li>Step through all documents and verify the values and for the document <strong>EdietsComInc_20001030_10QSB_EX-10.4_2606646_EX-10.4_Co-Branding Agreement.pdf</strong> the <strong>payment_terms</strong> is not correct since it is a schedule, so it should be cleared which is done by clicking on <strong>...</strong> next to the value and choose <strong>Clear answer<br></strong><img alt="More Options" src="img/eddfee0abf2dfc94.png"><br><img alt="Cleared Answer" src="img/4db4847004ab3aac.png"></li>
+<li>Once done with all documents click <strong>Accept and close</strong> and then click on <strong>Build Details<br></strong><img alt="Go to Build Details" src="img/27d5cff3623c11f3.png"></li>
+<li>Click on <strong>Publish version<br></strong><img alt="Publish Version" src="img/33b004d5673d1b26.png"></li>
+<li>Click on <strong>Publish</strong> in the dialog<br><img alt="Publish Dialog" src="img/f0994510126bd583.png"></li>
+</ol>
+<p>We are now ready to create a document processing pipeline.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a document processing pipeline" duration="15">
+        <h2 is-upgraded>Overview</h2>
+<p>In this step we will use our previously published model to extract values from new documents. This step might be done by a data engineer or someone responsible for setting up piplines.</p>
+<h2 is-upgraded>Step 1: Get the model instructions</h2>
+<p>First we need to get the SQL for calling the model.</p>
+<ol type="1">
+<li>In the <strong>Extracting Query</strong> section, make a note of the fully qualified name of the build, in this example <strong>DOC_AI_QS_DB.DOC_AI_SCHEMA.DOC_AI_QS_CO_BRANDING!PREDICT</strong>, and the version, in this case <strong>1</strong>. <img alt="See Instructions" src="img/4d5ed6e8914344c6.png"></li>
+</ol>
+<h2 is-upgraded>Step 2: Upload documents to a stage</h2>
+<p>Second step is to add the documnets we want to extract values from to a Snowflake stage, created in the Setup the Snowflake enviroment step.</p>
+<ol type="1">
+<li>Navigate to the stage by going to <strong>Data -&gt; Databases -&gt; DOC_AI_QS_DB -&gt; DOC_AI_SCHEMA -&gt; Stages -&gt; DOC_AI_STAGE</strong><img alt="Go to stage" src="img/a161e89881825fda.png"></li>
+<li>Click on <strong>+ Files</strong> and add all documents in the <strong>extraction_documents</strong> folder to the dialog and click <strong>Upload<br></strong><img alt="Go to stage" src="img/9636c9319ca60840.png"></li>
+</ol>
+<h2 is-upgraded>Step 3: Exectue the extraction SQL</h2>
+<p>Third step is to use the published model to extract values from our documents, all SQLs can also be found in the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai/blob/main/extraction.sql" target="_blank">extraction.sql</a> file.</p>
+<ol type="1">
+<li>Create a new SQL Worksheet</li>
+<li>Check that we have files in the stage by executing the following SQL</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE doc_ai_qs_role;
+USE WAREHOUSE doc_ai_qs_wh;
+USE DATABASE doc_ai_qs_db;
+USE SCHEMA doc_ai_schema;
+
+LS @doc_ai_stage;
+</code></pre>
+<p><img alt="List stage" src="img/1a8d6daa3c313321.png"><br> 3. Add the following SQL, this will create a table, <strong>CO_BRANDING_AGREEMENTS</strong>, that will contain the extracted values and the scores of the extractions. Execture the SQL, this wil take a couple of minutes.</p>
+<pre><code language="language-SQL" class="language-SQL">-- Create a table with all values and scores
+CREATE OR REPLACE TABLE doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS
+AS
+WITH 
+-- First part gets the result from applying the model on the pdf documents as a JSON with additional metadata
+temp as(
+    SELECT 
+        Relative_path as file_name
+        , size as file_size
+        , last_modified
+        , file_url as snowflake_file_url
+        -- VERIFY THAT BELOW IS USING THE SAME NAME AND NUMER AS THE MODEL INSTRUCTIONS YOU COPIED IN THE PREVIOUS STEP!
+        ,  DOC_AI_QS_DB.DOC_AI_SCHEMA.DOC_AI_QS_CO_BRANDING!PREDICT(get_presigned_url(&#39;@doc_ai_stage&#39;, RELATIVE_PATH ), 1) as json
+    from directory(@doc_ai_stage)
+)
+-- Second part extract the values and the scores from the JSON into columns
+SELECT
+file_name
+, file_size
+, last_modified
+, snowflake_file_url
+, json:__documentMetadata.ocrScore::FLOAT AS ocrScore
+, json:parties::ARRAY as parties_array
+, ARRAY_SIZE(parties_array) AS identified_parties
+, json:effective_date[0]:score::FLOAT AS effective_date_score
+, json:effective_date[0]:value::STRING AS effective_date_value
+, json:duration[0]:score::FLOAT AS agreement_duration_score
+, json:duration[0]:value::STRING AS agreement_duration_value
+, json:notice_period[0]:score::FLOAT AS notice_period_score
+, json:notice_period[0]:value::STRING AS notice_period_value
+, json:payment_terms[0]:score::FLOAT AS payment_terms_score
+, json:payment_terms[0]:value::STRING AS payment_terms_value
+, json:force_majeure[0]:score::FLOAT AS have_force_majeure_score
+, json:force_majeure[0]:value::STRING AS have_force_majeure_value
+, json:indemnification_clause[0]:score::FLOAT AS have_indemnification_clause_score
+, json:indemnification_clause[0]:value::STRING AS have_indemnification_clause_value
+, json:renewal_options[0]:score::FLOAT AS have_renewal_options_score
+, json:renewal_options[0]:value::STRING AS have_renewal_options_value
+FROM temp;
+</code></pre>
+<ol type="1" start="4">
+<li>Check that there is a result by running the following SQL</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">select * from doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS;
+</code></pre>
+<p class="image-container"><img alt="List stage" src="img/d4ac30b514976bd6.png"></p>
+<p>We have now applied our model on all our documents and stored the extraced values in a table, if we wanted to run this every time we ad a new document to the stage we can use <a href="https://docs.snowflake.com/en/user-guide/streams-intro" target="_blank">streams</a> and <a href="https://docs.snowflake.com/en/user-guide/tasks-intro" target="_blank">tasks</a>.</p>
+<p>Next step is to create the Streamlit application for verifying the extracted values.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Streamlit application" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>In this step we will create a Streamlit application in Snowflake to be used for verifying the extracted values.</p>
+<h2 is-upgraded>Step 1: Create a Streamlit application</h2>
+<p>The Python code for this step can also be found <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai/blob/main/streamlit_app.py" target="_blank">streamlit_app.py</a> file.</p>
+<ol type="1">
+<li>Navigate to Streamlit by click on the <strong>projects</strong> icon to the left and choose <strong>Streamlit<br></strong><img alt="Streamlit navigation" src="img/98bc9f681865aa2b.png"></li>
+<li>Make sure you are using the <strong>doc_ai_qs_role</strong> role<br><img alt="Streamlit role" src="img/9ca362de0202e691.png"></li>
+<li>Click on <strong>+ Streamlit App<br></strong><img alt="Streamlit page" src="img/3437b35a7ec549db.png"></li>
+<li>Give it a title and choose the <strong>DOCK_AI_QS_DB</strong> and <strong>STREAMLIT_SCHEMA</strong> for <strong>App location</strong> and <strong>DOC_AI_WH</strong> as <strong>App warehouse</strong> and click <strong>Create<br></strong><img alt="Streamlit create dialog" src="img/31097ba043df5946.png"></li>
+<li>Replace the code in the left pane with the code below</li>
+</ol>
+<pre><code language="language-python" class="language-python"># Import python packages
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark import functions as snow_funcs
+
+import pypdfium2 as pdfium
+from datetime import datetime
+
+st.set_page_config(layout=&#34;wide&#34;)
+
+# Write directly to the app
+st.title(&#34;Co-Branding Agreement Verification :ledger:&#34;)
+st.write(
+    &#34;&#34;&#34;A example Streamlit Application that enables users to verify values that is missing or have a extraction score below a threshold.
+    &#34;&#34;&#34;
+)
+
+# Get the current credentials
+session = get_active_session()
+
+#
+#  Parameters
+# 
+doc_ai_context = &#34;doc_ai_qs_db.doc_ai_schema&#34;
+doc_ai_source_table = &#34;CO_BRANDING_AGREEMENTS&#34;
+doc_ai_source_verify_table = &#34;CO_BRANDING_AGREEMENTS_VERIFIED&#34;
+doc_ai_doc_stage = &#34;doc_ai_stage&#34;
+
+# Dict that has the name of the columns that needs to be verified, it has the column name of the column 
+# with value and column with the score
+value_dict = {
+    &#34;EFFECTIVE_DATE&#34;: {
+        &#34;VAL_COL&#34;: &#34;EFFECTIVE_DATE_VALUE&#34;,
+        &#34;SCORE_COL&#34;: &#34;EFFECTIVE_DATE_SCORE&#34;
+    },
+    &#34;AGREEMENT_DURATION&#34;: {
+        &#34;VAL_COL&#34;: &#34;AGREEMENT_DURATION_VALUE&#34;,
+        &#34;SCORE_COL&#34;: &#34;AGREEMENT_DURATION_SCORE&#34;
+    },
+    &#34;NOTICE_PERIOD&#34;: {
+        &#34;VAL_COL&#34;: &#34;NOTICE_PERIOD_VALUE&#34;,
+        &#34;SCORE_COL&#34;: &#34;NOTICE_PERIOD_SCORE&#34;
+    },
+    &#34;PAYMENT_TERMS&#34;: {
+        &#34;VAL_COL&#34;: &#34;PAYMENT_TERMS_VALUE&#34;,
+        &#34;SCORE_COL&#34;: &#34;PAYMENT_TERMS_SCORE&#34;
+    },
+    &#34;HAVE_FORCE_MAJEURE&#34;: {
+        &#34;VAL_COL&#34;: &#34;HAVE_FORCE_MAJEURE_VALUE&#34;,
+        &#34;SCORE_COL&#34;: &#34;HAVE_FORCE_MAJEURE_SCORE&#34;
+    },
+    &#34;HAVE_INDEMNIFICATION_CLAUSE&#34;: {
+        &#34;VAL_COL&#34;: &#34;HAVE_INDEMNIFICATION_CLAUSE_VALUE&#34;,
+        &#34;SCORE_COL&#34;: &#34;HAVE_INDEMNIFICATION_CLAUSE_SCORE&#34;
+    },
+    &#34;HAVE_RENEWAL_OPTIONS&#34;: {
+        &#34;VAL_COL&#34;: &#34;HAVE_RENEWAL_OPTIONS_VALUE&#34;,
+        &#34;SCORE_COL&#34;: &#34;HAVE_RENEWAL_OPTIONS_SCORE&#34;
+    }
+}
+
+# The minimum score needed to not be verified
+threshold_score = 0.5
+
+# HELPER FUNCTIONS
+# Function to generate filter to only get the rows that are missing values or have a score below the threashold
+def generate_filter(col_dict:dict,  score_val:float): #score_cols:list, score_val:float, val_cols:list):
+    
+    filter_exp = &#39;&#39;
+
+    # For each column
+    for col in col_dict:
+        # Create the filter on score threashold or missing value
+        if len(filter_exp) &gt; 0:
+                filter_exp += &#39; OR &#39;
+        filter_exp += f&#39;(({col_dict[col][&#34;SCORE_COL&#34;]} &lt;= {score_val} ) OR ({col_dict[col][&#34;VAL_COL&#34;]} IS NULL))&#39;
+
+    if len(filter_exp) &gt; 0:
+       filter_exp = f&#39;({filter_exp}) AND &#39; 
+    
+    # Filter out documents already verified
+    filter_exp  += &#39;verification_date is null&#39;
+    return filter_exp
+
+# Generates a column list for counting the number of documents that is missing values or a score less that the threashold
+# by each column
+def count_missing_select(col_dict:dict, score_val:float):
+    select_list = []
+
+    for col in col_dict:
+        col_exp = (snow_funcs.sum(
+                          snow_funcs.iff(
+                                    (
+                                        (snow_funcs.col(col_dict[col][&#34;VAL_COL&#34;]).is_null())
+                                        | 
+                                        (snow_funcs.col(col_dict[col][&#34;SCORE_COL&#34;]) &lt;= score_val)
+                                    ), 1,0
+                              )
+                      ).as_(col)
+                )
+        select_list.append(col_exp)
+        
+    return select_list
+
+# Function to display a pdf page
+def display_pdf_page():
+    pdf = st.session_state[&#39;pdf_doc&#39;]
+    page = pdf[st.session_state[&#39;pdf_page&#39;]]
+            
+    bitmap = page.render(
+                    scale = 8, 
+                    rotation = 0,
+            )
+    pil_image = bitmap.to_pil()
+    st.image(pil_image)
+
+# Function to move to the next PDF page
+def next_pdf_page():
+    if st.session_state.pdf_page + 1 &gt;= len(st.session_state[&#39;pdf_doc&#39;]):
+        st.session_state.pdf_page = 0
+    else:
+        st.session_state.pdf_page += 1
+
+# Function to move to the previous PDF page
+def previous_pdf_page():
+    if st.session_state.pdf_page &gt; 0:
+        st.session_state.pdf_page -= 1
+
+# Function to get the name of all documents that need verification
+def get_documents(doc_df):
+    
+    lst_docs = [dbRow[0] for dbRow in doc_df.collect()]
+    # Add a default None value
+    lst_docs.insert(0, None)
+    return lst_docs
+
+# MAIN
+
+# Get the table with all documents with extracted values
+df_agreements = session.table(f&#34;{doc_ai_context}.{doc_ai_source_table}&#34;)
+
+# Get the documents we already gave verified
+df_validated_docs = session.table(f&#34;{doc_ai_context}.{doc_ai_source_verify_table}&#34;)
+
+# Join
+df_all_docs = df_agreements.join(df_validated_docs,on=&#39;file_name&#39;, how=&#39;left&#39;, lsuffix = &#39;_L&#39;, rsuffix = &#39;_R&#39;)
+
+# Filter out all document that has missing values of score below the threasholds
+validate_filter = generate_filter(value_dict, threshold_score)
+df_validate_docs = df_all_docs.filter(validate_filter)
+col1, col2 = st.columns(2)
+col1.metric(label=&#34;Total Documents&#34;, value=df_agreements.count())
+col2.metric(label=&#34;Documents Needing Validation&#34;, value=df_validate_docs.count())
+
+# Get the number of documents by value that needs verifying
+select_list = count_missing_select(value_dict, threshold_score)
+df_verify_counts = df_validate_docs.select(select_list)
+verify_cols = df_verify_counts.columns
+
+st.subheader(&#34;Number of documents needing validation by extraction value&#34;)
+st.bar_chart(data=df_verify_counts.unpivot(&#34;needs_verify&#34;, &#34;check_col&#34;, verify_cols), x=&#34;CHECK_COL&#34;, y=&#34;NEEDS_VERIFY&#34;)
+
+# Verification section
+st.subheader(&#34;Documents to review&#34;)
+with st.container():
+    # Get the name of the documents that needs verifying and add them to a listbox
+    lst_documents = get_documents(df_validate_docs)
+    sel_doc = st.selectbox(&#34;Document&#34;, lst_documents)
+
+    # If we havse selected a document
+    if sel_doc:        
+        # Display the extracted values
+        df_doc = df_validate_docs.filter(snow_funcs.col(&#34;FILE_NAME&#34;) == sel_doc)
+        col_val, col_doc = st.columns(2)
+        with col_val:
+            with st.form(&#34;doc_form&#34;):
+                approve_checkboxes = 0
+                for col in value_dict:
+                    st.markdown(f&#34;**{col}**:&#34;)
+                    col_vals = df_doc[[value_dict[col][&#34;SCORE_COL&#34;], value_dict[col][&#34;VAL_COL&#34;]]].collect()[0]
+                    # If we are missing a value
+                    if not col_vals[1]:
+                        st.markdown(f&#34;:red[**Value missing!**]&#34;)
+                        st.checkbox(&#34;Approved&#34;, key=f&#34;check_{approve_checkboxes}&#34;)
+                        approve_checkboxes += 1
+                    else:
+                        # If the extraction is less that the threashold
+                        if col_vals[0] &lt;= threshold_score:
+                            st.markdown(f&#34;:red[{col_vals[1]}]&#34;)
+                            st.markdown(f&#34;:red[**The value score, {col_vals[0]}, is below threshold score!**]&#34;)
+                            st.checkbox(&#34;Approved&#34;, key=f&#34;check_{approve_checkboxes}&#34;)
+                            approve_checkboxes += 1
+                        else:
+                            st.write(col_vals[1])
+                save = st.form_submit_button()
+                if save:
+                     with st.spinner(&#34;Saving document approval...&#34;):
+                        for i in range(approve_checkboxes):
+                            if not st.session_state[f&#34;check_{i}&#34;]:
+                                st.error(&#34;Need to apporve all checks before saving&#34;)
+                                st.stop()
+                        # Create a SQL to save that the document is verified
+                        insert_sql = f&#34;INSERT INTO {doc_ai_context}.{doc_ai_source_verify_table} (file_name, verification_date) VALUES (&#39;{sel_doc}&#39;, &#39;{datetime.now().isoformat()}&#39;)&#34;
+                        _ = session.sql(insert_sql).collect()
+                        st.success(&#34;✅ Success!&#34;)
+                        # Rerun is used to force the application to run from the begining so we can not verify the same document twice
+                        st.rerun()
+            # Display of PDF section
+            with col_doc:
+                if &#39;pdf_page&#39; not in st.session_state:
+                    st.session_state[&#39;pdf_page&#39;] = 0
+    
+                if &#39;pdf_url&#39; not in st.session_state:
+                    st.session_state[&#39;pdf_url&#39;] = sel_doc
+                
+                if &#39;pdf_doc&#39; not in st.session_state or st.session_state[&#39;pdf_url&#39;] != sel_doc:
+                    pdf_stream = session.file.get_stream(f&#34;@{doc_ai_context}.{doc_ai_doc_stage}/{sel_doc}&#34;)
+                    pdf = pdfium.PdfDocument(pdf_stream)
+                    st.session_state[&#39;pdf_doc&#39;] = pdf
+                    st.session_state[&#39;pdf_url&#39;] = sel_doc
+                    st.session_state[&#39;pdf_page&#39;] = 0
+                
+                nav_col1, nav_col2, nav_col3 = st.columns(3)
+                with nav_col1:
+                    if st.button(&#34;⏮️ Previous&#34;, on_click=previous_pdf_page):
+                        pass    
+                with nav_col2:
+                    st.write(f&#34;page {st.session_state[&#39;pdf_page&#39;] +1} of {len(st.session_state[&#39;pdf_doc&#39;])} pages&#34;)
+                with nav_col3:
+                    if st.button(&#34;Next ⏭️&#34;, on_click=next_pdf_page):
+                        pass
+                        
+                display_pdf_page()
+
+</code></pre>
+<p><img alt="Streamlit code" src="img/b1fa2e0baada6e00.png"><br> 5. Open the <strong>Packages</strong> menu<br><img alt="Streamlit package menu" src="img/5f02799c7bb428e1.png"><br> 6. Enter <strong>pypdfium2</strong> in <strong>Find Packages</strong>, and select the first result<br><img alt="Streamlit package search" src="img/279decb338d68dbb.png"><br> 7. Verify that <strong>pypdfium2</strong> is now in the list of <strong>Installed Packages<br></strong><img alt="Streamlit installed packages" src="img/e28741b44e621d23.png"><br> 8. Click <strong>Run</strong> to see the result of the code, in order to hide the code you can click on the <strong>Close editor</strong> icon in the left bottom.<br><img alt="Streamlit close editor" src="img/3cc1b4f8ee0453fb.png"></p>
+<p>You can now start verifying documents.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Document AI and how easy it is to use for extracting values from your document.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create a Document AI model to extract values from documents</li>
+<li>How to create a document extraction pipline</li>
+<li>How to create a Streamlit application in Snowflake to verify extracted values</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index#0" target="_blank">Extracting Insights from Unstructured Data with Document AI QuickStart</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview" target="_blank">Document AI Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

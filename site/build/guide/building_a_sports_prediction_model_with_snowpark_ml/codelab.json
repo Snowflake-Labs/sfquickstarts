@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "building_a_sports_prediction_model_with_snowpark_ml",
+  "duration": 75,
+  "title": "Predicting Sporting Outcomes with Snowpark ML",
+  "summary": "Building a Sports Prediction Model with Snowpark ML",
+  "source": "building_a_sports_prediction_model_with_snowpark_ml/building_a_sports_prediction_model_with_snowpark_ml.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "building_a_sports_prediction_model_with_snowpark_ml"
+}

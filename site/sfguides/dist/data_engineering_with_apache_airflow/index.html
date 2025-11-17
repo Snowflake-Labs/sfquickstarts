@@ -1,0 +1,600 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data Engineering with Apache Airflow, Snowflake, Snowpark, dbt &amp; Cosmos</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_with_apache_airflow"
+                  title="Data Engineering with Apache Airflow, Snowflake, Snowpark, dbt &amp; Cosmos"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p class="image-container"><img alt="architecture" src="img/910e5bbd35f22796.png"></p>
+<p>Numerous business are looking at modern data strategy built on platforms that could support agility, growth and operational efficiency. Snowflake is Data Cloud, a future proof solution that can simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance.</p>
+<p>Apache Airflow is an open-source workflow management platform that can be used to author and manage data pipelines. Airflow uses workflows made of directed acyclic graphs (DAGs) of tasks. The <a href="https://docs.astronomer.io/astro/cli/overview" target="_blank">Astro CLI</a> is a command line interface for Airflow developed by Astronomer. It&#39;s the easiest way to get started with running Apache Airflow locally</p>
+<p><a href="https://www.getdbt.com/" target="_blank">dbt</a> is a modern data engineering framework maintained by <a href="https://www.getdbt.com/" target="_blank">dbt Labs</a> that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. <a href="https://docs.getdbt.com/dbt-cli/cli-overview" target="_blank">dbt CLI</a> is the command line interface for running dbt projects. The CLI is free to use and open source.</p>
+<p><a href="https://astronomer.github.io/astronomer-cosmos/index.html" target="_blank">cosmos</a> is an Open-Source project that enables you to run your dbt Core projects as Apache Airflow DAGs and Task Groups with a few lines of code.</p>
+<p>Snowflake&#39;s <a href="https://www.snowflake.com/en/data-cloud/snowpark/" target="_blank">Snowpark</a> is a developer experience feature introduced by Snowflake to allow data engineers, data scientists, and developers to write code in familiar programming languages, such as Python, and execute it directly within the Snowflake Data Cloud. Snowpark provides a set of native libraries that make it easier to build complex data transformations, UDFs (User-Defined Functions), and data pipelines without having to rely heavily on SQL. This not only makes it more approachable for those who aren&#39;t SQL experts but also enables leveraging the full power and scalability of Snowflake&#39;s platform.</p>
+<p>In this virtual hands-on lab, you will follow a step-by-step guide to using Airflow with dbt to create scheduled data transformation jobs. Then, you&#39;ll learn how you can make use of this data within Snowpark for further analysis via Python and Pandas transformations.</p>
+<p>Let&#39;s get started.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>This guide assumes you have a basic working knowledge of Python, SQL and dbt</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to use an opensource tool like Airflow to create a data scheduler</li>
+<li>how do we write a DAG and upload it onto Airflow</li>
+<li>how to build scalable pipelines using dbt, Airflow and Snowflake</li>
+<li>How to use Snowpark to interact with your Snowflake data using Python</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ol type="1">
+<li>Snowflake</li>
+<li><strong>A Snowflake Account.</strong></li>
+<li><strong>A Snowflake User created with appropriate permissions.</strong> This user will need permission to create objects in the DEMO_DB database.</li>
+<li><strong>Snowpark Enabled</strong></li>
+<li>GitHub</li>
+<li><strong>A GitHub Account.</strong> If you don&#39;t already have a GitHub account you can create one for free. Visit the <a href="https://github.com/join" target="_blank">Join GitHub</a> page to get started.</li>
+<li>Integrated Development Environment (IDE)</li>
+<li><strong>Your favorite IDE with Git integration.</strong> If you don&#39;t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>.</li>
+<li>Docker Desktop</li>
+<li><strong>Docker Desktop on your laptop.</strong>  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the <a href="https://docs.docker.com/desktop/" target="_blank">Docker setup instructions</a>.</li>
+<li>OpenAI API key</li>
+<li><strong>Optional Step to Enable Chatbot Functionality</strong></li>
+<li>Astro CLI</li>
+<li><strong>The Astro CLI Installed.</strong> We will be using the Astro CLI to create our Airflow environments. Please install the Astro CLI on your desired OS by following the <a href="https://docs.astronomer.io/astro/cli/install-cli" target="_blank">Astro CLI setup instructions</a></li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A simple working Airflow pipeline with dbt and Snowflake</li>
+<li>A slightly more complex Airflow pipeline that incorporates Snowpark to analyze your data with Python</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up of environment" duration="2">
+        <p>First, let us create a folder by running the command below</p>
+<pre><code>mkdir dbt_airflow &amp;&amp; cd dbt_airflow
+</code></pre>
+<p>Next, we will use the Astro CLI to create a new Astro project by running the following command. An Astro project contains the set of files necessary to run Airflow, including dedicated folders for your DAG files, plugins, and dependencies.</p>
+<pre><code language="language-bash" class="language-bash">astro dev init
+</code></pre>
+<p>Now, navigate into the DAG&#39;s folder that the Astro CLI created, and create a new folder called dbt by running the following command.</p>
+<pre><code language="language-bash" class="language-bash">mkdir dbt &amp;&amp; cd dbt
+</code></pre>
+<p>Next, run the following command to install dbt and create all the necessary folders for your project. It will prompt you for a name for your project, enter ‘cosmosproject&#39;.</p>
+<pre><code language="language-bash" class="language-bash">dbt init
+</code></pre>
+<p>Your tree repository should look like this</p>
+<p class="image-container"><img alt="Folderstructure" src="img/d070cb8ba8fe6dfc.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up our dbt Project" duration="6">
+        <p>Now that we have gotten our repo up, it is time to configure and set up our dbt project.</p>
+<p>Before we begin, let&#39;s take some time to understand what we are going to do for our dbt project.</p>
+<p>As can be seen in the diagram below, we have 3 csv files <code>bookings_1</code>, <code>bookings_2</code> and <code>customers</code> . We are going to seed these csv files into Snowflake as tables. This will be detailed later.</p>
+<p>Following this, we are going to use dbt to merge <code>bookings_1</code> and <code>bookings_2</code> tables into <code>combined_bookings</code>. Then, we are going to join the <code>combined_bookings</code> and <code>customer</code> table on customer_id to form the <code>prepped_data</code> table.</p>
+<p>Finally, we are going to perform our analysis and transformation on the <code>prepped_data</code> by creating 2 views.</p>
+<ol type="1">
+<li><code>hotel_count_by_day.sql</code>: This will create a hotel_count_by_day view in the ANALYSIS schema in which we will count the number of hotel bookings by day.</li>
+<li><code>thirty_day_avg_cost.sql</code>: This will create a thirty_day_avg_cost view in the ANALYSIS schema in which we will do a average cost of booking for the last 30 days.</li>
+</ol>
+<p class="image-container"><img alt="dbt_structure" src="img/d36a140ee3fb4128.png"></p>
+<p>First, let&#39;s go to the Snowflake console and run the script below after replacing the  field with your password of choice. What this does is create a dbt_user and a dbt_dev_role and after which we set up a database for dbt_user.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE SECURITYADMIN;
+
+CREATE OR REPLACE ROLE dbt_DEV_ROLE COMMENT=&#39;dbt_DEV_ROLE&#39;;
+GRANT ROLE dbt_DEV_ROLE TO ROLE SYSADMIN;
+
+CREATE OR REPLACE USER dbt_USER PASSWORD=&#39;&lt;PASSWORD&gt;&#39;
+	DEFAULT_ROLE=dbt_DEV_ROLE
+	DEFAULT_WAREHOUSE=dbt_WH
+	COMMENT=&#39;dbt User&#39;;
+    
+GRANT ROLE dbt_DEV_ROLE TO USER dbt_USER;
+
+-- Grant privileges to role
+USE ROLE ACCOUNTADMIN;
+
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE dbt_DEV_ROLE;
+
+/*---------------------------------------------------------------------------
+Next we will create a virtual warehouse that will be used
+---------------------------------------------------------------------------*/
+USE ROLE SYSADMIN;
+
+--Create Warehouse for dbt work
+CREATE OR REPLACE WAREHOUSE dbt_DEV_WH
+  WITH WAREHOUSE_SIZE = &#39;XSMALL&#39;
+  AUTO_SUSPEND = 120
+  AUTO_RESUME = true
+  INITIALLY_SUSPENDED = TRUE;
+
+GRANT ALL ON WAREHOUSE dbt_DEV_WH TO ROLE dbt_DEV_ROLE;
+
+</code></pre>
+<p>Let&#39;s login with the <code>dbt_user</code> and create the database <code>DEMO_dbt</code> by running the command</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE DEMO_dbt
+
+</code></pre>
+<p>Then, in the new <code>Demo_dbt</code> database, copy and paste the following sql statements to create our <code>bookings_1</code>, <code>bookings_2</code> and <code>customers</code>  tables within Snowflake</p>
+<pre><code language="language-sql" class="language-sql">CREATE TABLE bookings_1 (
+    id INTEGER,
+    booking_reference INTEGER,
+    hotel STRING,
+    booking_date DATE,
+    cost INTEGER
+);
+CREATE TABLE bookings_2 (
+    id INTEGER,
+    booking_reference INTEGER,
+    hotel STRING,
+    booking_date DATE,
+    cost INTEGER
+);
+CREATE TABLE customers (
+    id INTEGER,
+    first_name STRING,
+    last_name STRING,
+    birthdate DATE,
+    membership_no INTEGER
+);
+
+</code></pre>
+<p>After you&#39;re done, you should have a folder structure that looks like the below:</p>
+<p class="image-container"><img alt="airflow" src="img/4d7ba239f2c8ee2b.png"></p>
+<p>Now, let&#39;s go back to our project <code>cosmosproject</code> &gt; <code>dbt</code>that we set up previously.</p>
+<p>We will set up a couple configurations for the respective files below. Please note for the <code>dbt_project.yml</code> you just need to replace the models section</p>
+<p>packages.yml (Create in <code>cosmosproject</code> folder if not already present)</p>
+<pre><code language="language-yml" class="language-yml">packages:
+  - package: dbt-labs/dbt_utils
+    version: [&#34;&gt;=1.0.0&#34;, &#34;&lt;2.0.0&#34;]
+</code></pre>
+<p>dbt_project.yml</p>
+<pre><code language="language-yml" class="language-yml">models:
+  my_new_project:
+      # Applies to all files under models/example/
+      transform:
+          schema: transform
+          materialized: view
+      analysis:
+          schema: analysis
+          materialized: view
+</code></pre>
+<p>Next, we will install the <code>dbt-labs/dbt_utils</code> that we had placed inside <code>packages.yml</code>. This can be done by running the command <code>dbt deps</code> from the <code>cosmosproject</code> folder.</p>
+<p>We will now create a file called <code>custom_demo_macros.sql</code> under the <code>macros</code> folder and input the below sql</p>
+<pre><code language="language-sql" class="language-sql">{% macro generate_schema_name(custom_schema_name, node) -%}
+    {%- set default_schema = target.schema -%}
+    {%- if custom_schema_name is none -%}
+        &#123;&#123; default_schema }}
+    {%- else -%}
+        &#123;&#123; custom_schema_name | trim }}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro set_query_tag() -%}
+  {% set new_query_tag = model.name %} {# always use model name #}
+  {% if new_query_tag %}
+    {% set original_query_tag = get_current_query_tag() %}
+    &#123;&#123; log(&#34;Setting query_tag to &#39;&#34; ~ new_query_tag ~ &#34;&#39;. Will reset to &#39;&#34; ~ original_query_tag ~ &#34;&#39; after materialization.&#34;) }}
+    {% do run_query(&#34;alter session set query_tag = &#39;{}&#39;&#34;.format(new_query_tag)) %}
+    &#123;&#123; return(original_query_tag)}}
+  {% endif %}
+  &#123;&#123; return(none)}}
+{% endmacro %}
+</code></pre>
+<p>Now we are done setting up our dbt environment. Your file structure should look like the below screenshot:</p>
+<p class="image-container"><img alt="airflow" src="img/7816db0b35b7bd69.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating our CSV data files in dbt" duration="10">
+        <p>In this section, we will be prepping our sample csv data files alongside the associated sql models.</p>
+<p>To start, let us first create 3 excel files under the folder <code>data</code> inside the dbt folder.</p>
+<p>bookings_1.csv</p>
+<pre><code language="language-csv" class="language-csv">id,booking_reference,hotel,booking_date,cost
+1,232323231,Pan Pacific,2021-03-19,100
+1,232323232,Fullerton,2021-03-20,200
+1,232323233,Fullerton,2021-04-20,300
+1,232323234,Jackson Square,2021-03-21,400
+1,232323235,Mayflower,2021-06-20,500
+1,232323236,Suncity,2021-03-19,600
+1,232323237,Fullerton,2021-08-20,700
+</code></pre>
+<p>bookings_2.csv</p>
+<pre><code language="language-csv" class="language-csv">id,booking_reference,hotel,booking_date,cost
+2,332323231,Fullerton,2021-03-19,100
+2,332323232,Jackson Square,2021-03-20,300
+2,332323233,Suncity,2021-03-20,300
+2,332323234,Jackson Square,2021-03-21,300
+2,332323235,Fullerton,2021-06-20,300
+2,332323236,Suncity,2021-03-19,300
+2,332323237,Berkly,2021-05-20,200
+</code></pre>
+<p>customers.csv</p>
+<pre><code language="language-csv" class="language-csv">id,first_name,last_name,birthdate,membership_no
+1,jim,jone,1989-03-19,12334
+2,adrian,lee,1990-03-10,12323
+</code></pre>
+<p>Our folder structure should be like as below</p>
+<p class="image-container"><img alt="airflow" src="img/bc601bb6767d64e2.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating our dbt models in models folder" duration="2">
+        <p>Create 2 folders <code>analysis</code> and <code>transform</code> in the models folder. Please follow the sections below for analysis and transform respectively.</p>
+<h2 is-upgraded>dbt models for transform folder</h2>
+<p>Inside the <code>transform</code> folder, we will have 3 SQL files</p>
+<ol type="1">
+<li><code>combined_bookings.sql</code>: This will combine the 2 bookings CSV files we had above and create the  <code>COMBINED_BOOKINGS</code> view in the <code>TRANSFORM</code> schema.</li>
+</ol>
+<p>combined_bookings.sql</p>
+<pre><code language="language-sql" class="language-sql">&#123;&#123; dbt_utils.union_relations(
+    relations=[ref(&#39;bookings_1&#39;), ref(&#39;bookings_2&#39;)]
+) }}
+</code></pre>
+<ol type="1" start="2">
+<li><code>customer.sql</code>: This will create a <code>CUSTOMER</code> view in the <code>TRANSFORM</code> schema.</li>
+</ol>
+<p>customer.sql</p>
+<pre><code language="language-sql" class="language-sql">SELECT ID 
+    , FIRST_NAME
+    , LAST_NAME
+    , birthdate
+FROM &#123;&#123; ref(&#39;customers&#39;) }}
+</code></pre>
+<ol type="1" start="3">
+<li><code>prepped_data.sql</code>: This will create a <code>PREPPED_DATA</code> view in the <code>TRANSFORM</code> schema in which it will perform an inner join on the <code>CUSTOMER</code> and <code>COMBINED_BOOKINGS</code> views from the steps above.</li>
+</ol>
+<p>prepped_data.sql</p>
+<pre><code language="language-sql" class="language-sql">SELECT A.ID 
+    , FIRST_NAME
+    , LAST_NAME
+    , birthdate
+    , BOOKING_REFERENCE
+    , HOTEL
+    , BOOKING_DATE
+    , COST
+FROM &#123;&#123;ref(&#39;customer&#39;)}}  A
+JOIN &#123;&#123;ref(&#39;combined_bookings&#39;)}} B
+on A.ID = B.ID
+</code></pre>
+<h2 is-upgraded>dbt models for analysis folder</h2>
+<p>Now let&#39;s move on to the <code>analysis</code> folder. Change to the <code>analysis</code> folder and create these 2 SQL files</p>
+<ol type="1">
+<li><code>hotel_count_by_day.sql</code>: This will create a hotel_count_by_day view in the <code>ANALYSIS</code> schema in which we will count the number of hotel bookings by day.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT
+  BOOKING_DATE,
+  HOTEL,
+  COUNT(ID) as count_bookings
+FROM &#123;&#123; ref(&#39;prepped_data&#39;) }}
+GROUP BY
+  BOOKING_DATE,
+  HOTEL
+</code></pre>
+<ol type="1" start="2">
+<li><code>thirty_day_avg_cost.sql</code>: This will create a thirty_day_avg_cost view in the <code>ANALYSIS</code> schema in which we will do a average cost of booking for the last 30 days.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT
+  BOOKING_DATE,
+  HOTEL,
+  COST,
+  AVG(COST) OVER (
+    ORDER BY BOOKING_DATE ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+  ) as &#34;30_DAY_AVG_COST&#34;,
+  COST -   AVG(COST) OVER (
+    ORDER BY BOOKING_DATE ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+  ) as &#34;DIFF_BTW_ACTUAL_AVG&#34;
+FROM &#123;&#123; ref(&#39;prepped_data&#39;) }}
+</code></pre>
+<p>Your file structure should look like the below screenshot. We have now finished our dbt models and can proceed to working on using Airflow to manage them.</p>
+<p class="image-container"><img alt="airflow" src="img/c50fe4445f3c7a09.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparing our Airflow Environment" duration="5">
+        <p>Now going back to your Airflow directory, open up the requirements.txt file that the Astro CLI created. Copy and paste the following text block to install the <a href="https://astronomer.github.io/astronomer-cosmos/index.html" target="_blank">Cosmos</a> and Snowflake libraries for Airflow. Cosmos will be used to turn each dbt model into a task/task group complete with retries, alerting, etc.</p>
+<pre><code>astronomer-cosmos
+apache-airflow-providers-snowflake
+</code></pre>
+<p>Next, open up the Dockerfile in your Airflow folder and copy and paste the following code block to overwrite your existing Dockerfile. These changes will create a virtual environment for dbt along with the adapter to connect to Snowflake. It&#39;s recommended to use a virtual environment because dbt and Airflow can have conflicting dependencies.</p>
+<pre><code># syntax=quay.io/astronomer/airflow-extensions:latest
+
+FROM quay.io/astronomer/astro-runtime:9.1.0-python-3.9-base
+
+RUN python -m venv dbt_venv &amp;&amp; source dbt_venv/bin/activate &amp;&amp; pip install --no-cache-dir dbt-snowflake &amp;&amp; deactivate
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building Our dbt DAG" duration="5">
+        <p>Now that our Airflow environment is set up, lets create our DAG! Instead of using the conventional DAG definition methods, we&#39;ll be using Cosmos&#39; dbtDAG class to create a DAG based on our dbt models. This allows us to turn our dbt projects into Apache Airflow DAGs and Task Groups with a few lines of code. To do so, create a new file in the <code>dags</code> folder called <code>my_cosmos_dag.py</code> and copy and paste the following code block into the file.</p>
+<pre><code language="language-python" class="language-python">from datetime import datetime
+import os
+from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
+from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from pathlib import Path
+
+dbt_project_path = Path(&#34;/usr/local/airflow/dags/dbt/cosmosproject&#34;)
+
+profile_config = ProfileConfig(profile_name=&#34;default&#34;,
+                               target_name=&#34;dev&#34;,
+                               profile_mapping=SnowflakeUserPasswordProfileMapping(conn_id=&#34;snowflake_default&#34;, 
+                                                    profile_args={
+                                                        &#34;database&#34;: &#34;demo_dbt&#34;,
+                                                        &#34;schema&#34;: &#34;public&#34;
+                                                        },
+                                                    ))
+
+
+dbt_snowflake_dag = DbtDag(project_config=ProjectConfig(dbt_project_path,),
+                    operator_args={&#34;install_deps&#34;: True},
+                    profile_config=profile_config,
+                    execution_config=ExecutionConfig(dbt_executable_path=f&#34;{os.environ[&#39;AIRFLOW_HOME&#39;]}/dbt_venv/bin/dbt&#34;,),
+                    schedule_interval=&#34;@daily&#34;,
+                    start_date=datetime(2023, 9, 10),
+                    catchup=False,
+                    dag_id=&#34;dbt_snowflake_dag&#34;,)
+
+</code></pre>
+<p>First, we import the various Cosmos libraries</p>
+<p>• DbtDag: This is a class that allows you to create an Apache Airflow Directed Acyclic Graph (DAG) for a dbt (Data Build Tool) project. The DAG will execute the dbt project according to the specified configuration.</p>
+<p>• ProjectConfig: This class is used to specify the configuration for the dbt project that the DbtDag will execute by pointing it to the path tfor your dbt project.</p>
+<p>• ProfileConfig: This class is used to specify the configuration for the database profile that dbt will use when executing the project. This includes the profile name, target name, and any necessary mapping to Airflow connections.</p>
+<p>• ExecutionConfig: This class is used to specify any additional configuration for executing the dbt project. We&#39;ll be pointing it to the virtual environment we created at <code>{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt</code> in our <code>Dockerfile</code> to execute in.</p>
+<p>• PostgresUserPasswordProfileMapping and SnowflakeUserPasswordProfileMapping: These classes are used to map Airflow connections to dbt profiles for PostgreSQL and Snowflake databases, respectively. This allows you to manage your database credentials in Airflow and use them in dbt.</p>
+<p>After the imports, a ProfileConfig object is created, which is used to define the configuration for the Snowflake connection. The SnowflakeUserPasswordProfileMapping class is used to map the Snowflake connection in Airflow to a dbt profile. The DbtDag object is then created. This object represents an Airflow DAG that will execute a dbt project. It takes several parameters:</p>
+<p><code>project_config</code> specifies the path to the dbt project we created at <code>/usr/local/airflow/dags/dbt/cosmosprojectoperator_args</code> is used to pass arguments to the dbt operator. Here, it&#39;s specifying that dependencies should be installed. <code>profile_config</code> is the profile configuration defined earlier, which will be used to execute the dbt models in Snowflake. <code>execution_config</code> specifies the path to our virtual environment to executue our dbt code in. <code>schedule_interval</code>, <code>start_date</code>, <code>catchup</code>, and <code>dag_id</code> are standard Airflow DAG parameters. You can use any of the standard Airflow DAG parameters in a dbtDAG as well.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Starting Airflow Environment &amp; Adding Connections" duration="5">
+        <p>Within your Airflow <code>dbt_airflow</code> directory, enter the below command to start your Airflow environment</p>
+<pre><code language="language-bash" class="language-bash">astro dev start
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running our docker-compose file for Airflow" duration="5">
+        <h2 is-upgraded>Running our cosmos_dag!</h2>
+<p>We will now run our DAG <code>cosmos_dag</code> to see our dbt models in action! If you click the big blue play button on the top left of the screen, you&#39;ll see your tasks start to run your dbt transformations within your Snowflake database. If everything goes smoothly, your Snowflake environment should look like the following screenshot:</p>
+<p class="image-container"><img alt="airflow" src="img/9915408a6a0493b7.png"></p>
+<p>Our <code>Transform</code> and <code>Analysis</code> views have been created successfully! Open them to see the results of our analysis, and check out the other tables to see how data was transformed using dbt.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Incorporating Snowpark" duration="0">
+        <p>Now that we&#39;ve gotten our dbt DAG set up, lets extend it by adding Snowpark for some data analysis with Python. To do this, we&#39;ll need to change some existing files and add new requirements to our local airflow environment. While we do this, lets stop our Airflow environment by running the following command so we can restart it later with our changes incorporated.</p>
+<pre><code language="language-bash" class="language-bash">astro dev stop
+</code></pre>
+<p>First, go to your <code>packages.txt</code> file in your root directory and add <code>build-essential</code> to it, then save. The build-essential package in Linux systems is a reference for all the packages needed to compile a Debian package. We&#39;ll be using it to create a Python 3.8 Virtual Environment to run our Snowpark code in, since Snowpark uses Python 3.8, and Airflow only supports Python versions 3.9 and above.</p>
+<p>Next, we&#39;ll need to import the Snowpark provider to create our Snowpark task. While in development the provider package is not yet in pypi. For this demo, download the <code>astro_provider_snowflake-0.0.0-py3-none-any.whl</code> file from the this <a href="https://github.com/astronomer/airflow-snowpark-demo/tree/main/include" target="_blank">link</a>. Then, copy the downloaded file into your include directory in your <code>DBT_Airflow</code> folder. In the future, this will be a part of the base Snowflake provider, but in the meantime you can use this .whl file in any other projects that require it.</p>
+<p>After that, we&#39;ll need to add the .whl file to our <code>requirements.txt</code>. Copy and paste the following line into your <code>requirements.txt</code> file to do so.</p>
+<pre><code>/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl
+</code></pre>
+<p>Finally, we&#39;ll need to create a <code>requirements-snowpark.txt</code> to install some necessary packages into the Python VirtualEnv we&#39;ll be creating. To do so, create a file called <code>requirements-snowpark.txt</code> in your root Airflow directory and copy and paste the following code block into it:</p>
+<pre><code>psycopg2-binary
+snowflake_snowpark_python[pandas]==1.5.1
+virtualenv
+/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl
+</code></pre>
+<p>These packages will allow us to interact with Snowpark through the virtual environment we&#39;re creating.</p>
+<p>Now that we&#39;ve got our Snowpark provider present, we&#39;ll need to edit our Dockerfile to install it, and spin up the Snowpark Python VirtualEnv. Copy and paste the following code block into your Dockerfile to add the necessary commands.</p>
+<pre><code># syntax=quay.io/astronomer/airflow-extensions:latest
+
+FROM quay.io/astronomer/astro-runtime:9.1.0-python-3.9-base
+
+COPY include/astro_provider_snowflake-0.0.0-py3-none-any.whl /tmp
+
+# Create the virtual environment
+PYENV 3.8 snowpark requirements-snowpark.txt
+
+# Install packages into the virtual environment
+COPY requirements-snowpark.txt /tmp
+RUN python3.8 -m pip install -r /tmp/requirements-snowpark.txt
+
+
+RUN python -m venv dbt_venv &amp;&amp; source dbt_venv/bin/activate &amp;&amp; pip install --no-cache-dir dbt-snowflake &amp;&amp; pip install --no-cache-dir dbt-postgres &amp;&amp; deactivate
+</code></pre>
+<p>The first line tells Docker to use the Astronomer provided BuildKit that enables us to create virtual environments with the PYENV command. Then we COPY in the <code>.whl</code> file and use it to create a Python 3.8 VirtualEnv called snowpark.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a DAG with Cosmos and Snowpark" duration="0">
+        <p>In order to use Cosmos and Snowpark together, we&#39;ll need to use Cosmos&#39;s <code>dbtTaskGroup</code> with a normal Airflow DAG instead of a <code>dbtDAG</code>. The definition for this is almost identical to the <code>dbtDAG</code> approach, and allows us to add additional tasks up or downstream of our dbt workflows. Instead of editing our existing DAG, create a new file called <code>cosmosandsnowflake.py</code> in your DAG&#39;s folder, and copy the following code into it:</p>
+<pre><code language="language-python" class="language-python">from airflow.operators.dummy_operator import DummyOperator
+from astro import sql as aql
+from astro.files import File
+from astro.sql.table import Table
+from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
+from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from astronomer.providers.snowflake.utils.snowpark_helpers import SnowparkTable
+from pathlib import Path
+
+dbt_project_path = Path(&#34;/usr/local/airflow/dags/dbt/cosmosproject&#34;)
+snowflake_objects = {&#39;demo_database&#39;: &#39;DEMO&#39;,
+                     &#39;demo_schema&#39;: &#39;DEMO&#39;,
+                     &#39;demo_warehouse&#39;: &#39;COMPUTE_WH&#39;,
+                     &#39;demo_xcom_stage&#39;: &#39;XCOM_STAGE&#39;,
+                     &#39;demo_xcom_table&#39;: &#39;XCOM_TABLE&#39;,
+                     &#39;demo_snowpark_wh&#39;: &#39;SNOWPARK_WH&#39;
+}
+_SNOWFLAKE_CONN_ID = &#34;snowflake_default&#34;
+
+profile_config = ProfileConfig(
+    profile_name=&#34;default&#34;,
+    target_name=&#34;dev&#34;,
+    profile_mapping=SnowflakeUserPasswordProfileMapping(
+        conn_id=&#34;snowflake_default&#34;,
+        profile_args={
+          &#34;database&#34;: &#34;demo_dbt&#34;,
+            &#34;schema&#34;: &#34;public&#34;
+        },
+    )
+)
+
+@dag(default_args={
+         &#34;snowflake_conn_id&#34;: _SNOWFLAKE_CONN_ID,
+         &#34;temp_data_output&#34;: &#34;table&#34;,
+         &#34;temp_data_db&#34;: snowflake_objects[&#39;demo_database&#39;],
+         &#34;temp_data_schema&#34;: snowflake_objects[&#39;demo_schema&#39;],
+         &#34;temp_data_overwrite&#34;: True,
+         &#34;database&#34;: snowflake_objects[&#39;demo_database&#39;],
+         &#34;schema&#34;: snowflake_objects[&#39;demo_schema&#39;]
+         },
+    schedule_interval=&#34;@daily&#34;,
+    start_date=datetime(2023, 9, 10),
+    catchup=False,
+    dag_id=&#34;dbt_snowpark&#34;,
+)
+def dbt_snowpark_dag():
+    transform_data = DbtTaskGroup(
+        group_id=&#34;transform_data&#34;,
+        project_config=ProjectConfig(dbt_project_path),
+        profile_config=profile_config,
+        execution_config=ExecutionConfig(dbt_executable_path=f&#34;{os.environ[&#39;AIRFLOW_HOME&#39;]}/dbt_venv/bin/dbt&#34;),
+        operator_args={&#34;install_deps&#34;: True},
+    )
+
+    intermediate = DummyOperator(task_id=&#39;intermediate&#39;)
+
+    @task.snowpark_virtualenv(python_version=&#39;3.8&#39;, requirements=[&#39;snowflake-ml-python==1.0.9&#39;])
+    def findbesthotel(snowflake_objects:dict): 
+        
+        df = snowpark_session.sql(&#34;&#34;&#34;
+            SELECT *
+            FROM DEMO_DBT.PUBLIC.THIRTY_DAY_AVG_COST
+        &#34;&#34;&#34;).to_pandas()
+        highest_cost_hotel = df[df[&#39;COST&#39;] == df[&#39;COST&#39;].max()][&#39;HOTEL&#39;]
+
+        highest_cost_hotel_str = str(highest_cost_hotel)
+        print(highest_cost_hotel)
+
+        return highest_cost_hotel_str
+    
+
+    besthotel = findbesthotel(snowflake_objects)
+    transform_data &gt;&gt; intermediate &gt;&gt; besthotel
+
+dbt_snowpark_dag = dbt_snowpark_dag()
+</code></pre>
+<p>This DAG adds a new Snowpark task called <code>findbesthotel</code>, which means it is executed in a virtual environment with Snowpark and other specified dependencies installed. In this case, we installed the <code>snowflake-ml-python==1.0.9</code> package to install pandas and other popular data science packages for data analysis. The <code>findbesthotel</code> task connects to a Snowflake database and fetches data from the <code>THIRTY_DAY_AVG_COST</code> table in the <code>PUBLIC</code> schema of the <code>DEMO_DBT</code> database. It then converts this data into a pandas DataFrame and finds the hotel with the highest cost. The name of this hotel is converted to a string, printed, and then returned by the task. All of our dbt transformation set up stays almost identical, aside from changing from using dbtDAG to dbtTaskGroup.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running our new DAG" duration="0">
+        <p>Now that we&#39;ve add Snowpark to our environment and written our DAG, it&#39;s time to restart our Airflow environment and run it! Restart your Airflow environment with the following terminal command</p>
+<pre><code language="language-bash" class="language-bash">astro dev start
+</code></pre>
+<p>Login to the Airflow UI the same way as before, and you should see a new dag called <code>dbt_snowpark</code>. Since we already set up our Snowflake connection before, we can just run this new DAG immediately by clicking its blue play button. Then, click on the DAG and open up its graph view to watch it run. It should look like the example below:</p>
+<p class="image-container"><img alt="snowparkdag" src="img/3362b5903b19ecba.png"></p>
+<p>After the DAG has finished running, select the <code>findbesthotel</code> and open its log file. If all has gone well, you&#39;ll see the most expensive hotel to stay at printed out for your convenience!</p>
+<p class="image-container"><img alt="airflow" src="img/e43998578d9d8ac.png"></p>
+<h2 is-upgraded>View Streamlit Dashboard</h2>
+<p>We can now view our analyzed data on a <a href="https://streamlit.io/" target="_blank">Streamlit</a> dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.</p>
+<pre><code language="language-bash" class="language-bash">astro dev bash -w
+</code></pre>
+<p>Then, run the following command to start a streamlit application.</p>
+<pre><code language="language-bash" class="language-bash">cd include/streamlit/src
+python -m streamlit run ./streamlit_app.py
+</code></pre>
+<p>After you&#39;ve done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you&#39;d like to enable the ability to ask questions about your data, you&#39;ll need to add an OpenAI API key in the .env file and restart your Airflow environment.</p>
+<h2 is-upgraded>View Streamlit Dashboard</h2>
+<p>We can now view our analyzed data on a <a href="https://streamlit.io/" target="_blank">Streamlit</a> dashboard. To do this, go to terminal and enter the following bash command to connect into the Airflow webserver container.</p>
+<pre><code language="language-bash" class="language-bash">astro dev bash -w
+</code></pre>
+<p>Then, run the following command to start a streamlit application.</p>
+<pre><code language="language-bash" class="language-bash">cd include/streamlit/src
+python -m streamlit run ./streamlit_app.py
+</code></pre>
+<p>After you&#39;ve done so, you can view your data dashboard by navigating to http://localhost:8501/ in your browser! If you&#39;d like to enable the ability to ask questions about your data, you&#39;ll need to add an OpenAI API key in the .env file and restart your Airflow environment.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You have created your first Apache Airflow DAG with dbt, Cosmos, Snowflake, and Snowpark! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab.</p>
+<h2 is-upgraded>Additional Resources:</h2>
+<ul>
+<li>Join our <a href="https://www.getdbt.com/community/" target="_blank">dbt community Slack</a> which contains more than 18,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.</li>
+<li>Quick tutorial on how to write a simple <a href="https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html" target="_blank">Airflow DAG</a></li>
+<li>Documentation on how to use Cosmos to render dbt workflows in Airflow <a href="https://astronomer.github.io/astronomer-cosmos/index.html" target="_blank">Cosmos</a></li>
+</ul>
+<h2 is-upgraded>What we&#39;ve covered:</h2>
+<ul>
+<li>How to set up Airflow, dbt &amp; Snowflake</li>
+<li>How to create a dbt DAG using Cosmos to run dbt models using Airflow</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

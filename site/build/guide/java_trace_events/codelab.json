@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "java_trace_events",
+  "duration": 30,
+  "title": "Using trace events in Java",
+  "summary": "An example of emitting trace events from Java, and analyzing them",
+  "source": "java_trace_events/java_trace_events.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "observability"
+  ],
+  "tags": [
+    "gettingstarted",
+    "java",
+    "telemetry",
+    "traceevents",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "java_trace_events"
+}

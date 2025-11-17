@@ -1,0 +1,563 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake Dynamic Tables</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_dynamic_tables"
+                  title="Getting Started with Snowflake Dynamic Tables"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Dynamic tables are new declarative way of defining your data pipeline in Snowflake. It&#39;s a new kind of Snowflake table which is defined as a query to continuously and automatically materialize the result of that query as a table. Dynamic Tables can join and aggregate across <strong>multiple source objects</strong> and <strong>incrementally update</strong> results as sources change.</p>
+<p>Dynamic Tables can also be chained together to create a DAG for more complex data pipelines.</p>
+<p class="image-container"><img alt="DT overview" src="img/b268e50e6bedab07.jpg"></p>
+<p>Dynamic Tables are the building blocks for continuous data pipelines. They are the easiest way to build data transformation pipelines in snowflake across batch and streaming use cases.</p>
+<p>In this quickstart we will build a change data capture (CDC) pipeline, cumulative sum using Python UDTF data validation using Dynamic tables. We will also look at some of the built in features around <a href="https://docs.snowflake.com/user-guide/dynamic-tables-about" target="_blank">Dynamic tables</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Use of the <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial environment</a> or your own Snowflake environment</li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Familiarity with JSON semi-structured data</li>
+<li>Basic Python programming (To use Snowpark. Not a requirement for Dynamic tables)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create a declarative data pipeline DAG using Dynamic tables</li>
+<li>How to pause and resume the data pipeline</li>
+<li>How to monitor and manage Dynamic tables for continuous data pipeline</li>
+<li>How to automate the data validation process using Dynamic tables</li>
+<li>How to setup data quality check alerts</li>
+<li>How to use Snowpark UDTF in a Dynamic Table data pipeline</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://trial.snowflake.com" target="_blank">Snowflake</a> Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A continuous data pipeline using Dynamic tables</li>
+<li>Manage and monitor Dynamic tables</li>
+<li>Data validation automation and alerts</li>
+<li>A Python user defined table function and use it in Dynamic tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sample data setup" duration="4">
+        <h2 is-upgraded>Problem Statement</h2>
+<p>Let&#39;s assume that you are a data engineer at an online retail company, where a wide array of products is sold. In this role, we collect customer purchase and product sales data, initially storing it in a raw data table. Our primary tasks involve creating a continuous data pipeline for generating sales reports and validate the data for an alert system to notify the team of potential low inventory levels for specific products.</p>
+<h2 is-upgraded>Data Pipeline Architecture</h2>
+<p class="image-container"><img alt="program architecture" src="img/111ec5ef6577ff82.jpg"></p>
+<h2 is-upgraded>Sample data</h2>
+<p>You can either <a href="https://github.com/sfc-gh-pjain/sfguides/tree/DT_QS_Kafka/site/sfguides/src/getting_started_with_dynamic_tables/kafka_docker_setup" target="_blank">follow these instructions to setup a local Kafka docker environment</a></p>
+<p>OR</p>
+<p>We will use the Python &#34;Faker&#34; library to generate some test data required for this project. You don&#39;t need to learn python to use Dynamic Tables, it&#39;s only used to generate sample datasets. In order to run this python code we will build and use <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs" target="_blank">Python UDTF</a></p>
+<p>We are going to build our lab in a database called <strong>&#34;demo&#34;</strong> and schema name <strong>&#34;dt_demo&#34;</strong>. Feel free to use any database if &#34;demo&#34; database is already in use or you don&#39;t have access to it.</p>
+<p>Go to your Snowflake account and open a worksheet and write or paste this code and rename it to &#34;01_setup_sample_data&#34;</p>
+<pre><code>CREATE DATABASE IF NOT EXISTS DEMO;
+CREATE SCHEMA IF NOT EXISTS DEMO.DT_DEMO;
+USE SCHEMA DEMO.DT_DEMO;
+
+CREATE WAREHOUSE XSMALL_WH 
+WAREHOUSE_TYPE = STANDARD
+  WAREHOUSE_SIZE = XSMALL
+  AUTO_SUSPEND = 300
+  AUTO_RESUME = TRUE;
+
+</code></pre>
+<p>Once the database is created, we will create 3 UDTF to generate our source data. First table is <strong>CUST_INFO</strong> and insert 1000 customers into it using this new Python UDTF.</p>
+<pre><code>create or replace function gen_cust_info(num_records number)
+returns table (custid number(10), cname varchar(100), spendlimit number(10,2))
+language python
+runtime_version=3.10
+handler=&#39;CustTab&#39;
+packages = (&#39;Faker&#39;)
+as $$
+from faker import Faker
+import random
+
+fake = Faker()
+# Generate a list of customers  
+
+class CustTab:
+    # Generate multiple customer records
+    def process(self, num_records):
+        customer_id = 1000 # Starting customer ID                 
+        for _ in range(num_records):
+            custid = customer_id + 1
+            cname = fake.name()
+            spendlimit = round(random.uniform(1000, 10000),2)
+            customer_id += 1
+            yield (custid,cname,spendlimit)
+
+$$;
+
+create or replace table cust_info as select * from table(gen_cust_info(1000)) order by 1;
+
+</code></pre>
+<p>Next table is <strong>PROD_STOCK_INV</strong> and insert 100 products inventory into it using this new Python UDTF.</p>
+<pre><code>create or replace function gen_prod_inv(num_records number)
+returns table (pid number(10), pname varchar(100), stock number(10,2), stockdate date)
+language python
+runtime_version=3.10
+handler=&#39;ProdTab&#39;
+packages = (&#39;Faker&#39;)
+as $$
+from faker import Faker
+import random
+from datetime import datetime, timedelta
+fake = Faker()
+
+class ProdTab:
+    # Generate multiple product records
+    def process(self, num_records):
+        product_id = 100 # Starting customer ID                 
+        for _ in range(num_records):
+            pid = product_id + 1
+            pname = fake.catch_phrase()
+            stock = round(random.uniform(500, 1000),0)
+            # Get the current date
+            current_date = datetime.now()
+            
+            # Calculate the maximum date (3 months from now)
+            min_date = current_date - timedelta(days=90)
+            
+            # Generate a random date within the date range
+            stockdate = fake.date_between_dates(min_date,current_date)
+
+            product_id += 1
+            yield (pid,pname,stock,stockdate)
+
+$$;
+
+create or replace table prod_stock_inv as select * from table(gen_prod_inv(100)) order by 1;
+</code></pre>
+<p>Next table is <strong>SALESDATA</strong> to store raw product sales by customer and purchase date</p>
+<pre><code>create or replace function gen_cust_purchase(num_records number,ndays number)
+returns table (custid number(10), purchase variant)
+language python
+runtime_version=3.10
+handler=&#39;genCustPurchase&#39;
+packages = (&#39;Faker&#39;)
+as $$
+from faker import Faker
+import random
+from datetime import datetime, timedelta
+
+fake = Faker()
+
+class genCustPurchase:
+    # Generate multiple customer purchase records
+    def process(self, num_records,ndays):       
+        for _ in range(num_records):
+            c_id = fake.random_int(min=1001, max=1999)
+            
+            #print(c_id)
+            customer_purchase = {
+                &#39;custid&#39;: c_id,
+                &#39;purchased&#39;: []
+            }
+            # Get the current date
+            current_date = datetime.now()
+            
+            # Calculate the maximum date (days from now)
+            min_date = current_date - timedelta(days=ndays)
+            
+            # Generate a random date within the date range
+            pdate = fake.date_between_dates(min_date,current_date)
+            
+            purchase = {
+                &#39;prodid&#39;: fake.random_int(min=101, max=199),
+                &#39;quantity&#39;: fake.random_int(min=1, max=5),
+                &#39;purchase_amount&#39;: round(random.uniform(10, 1000),2),
+                &#39;purchase_date&#39;: pdate
+            }
+            customer_purchase[&#39;purchased&#39;].append(purchase)
+            
+            #customer_purchases.append(customer_purchase)
+            yield (c_id,purchase)
+
+$$;
+
+-- Create table and insert records 
+create or replace table salesdata as select * from table(gen_cust_purchase(10000,10));
+</code></pre>
+<p>This completes our sample data stored in raw base tables. In real world, you will load this data into Snowflake either using COPY COMMAND, connectors, Snowpipe or <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview" target="_blank">Snowpipe Streaming</a></p>
+<p>Check if there is data in all 3 raw tables -</p>
+<pre><code>-- customer information table, each customer has spending limits
+select * from cust_info limit 10;
+
+-- product stock table, each product has stock level from fulfilment day
+
+select * from prod_stock_inv limit 10;
+
+-- sales data for products purchsaed online by various customers
+select * from salesdata limit 10;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build data pipeline using Dynamic Tables" duration="7">
+        <p>With Dynamic Tables, customers provide a query and Snowflake automatically materializes the results of that query.</p>
+<p>That means, instead of creating a separate target table and writing code to transform source data and update the data in that table, you can define the target table as a Dynamic Table, specifying the query that performs the transformation and just forget about the scheduling and orchestration.</p>
+<p>The user specifies a minimum acceptable freshness in the result (target lag), and Snowflake automatically tries to meet that target, further enhancing the flexibility and control data engineers can have over their pipelines without the normally associated complexity.</p>
+<p class="image-container"><img alt="how DT works?" src="img/6ec72077ce221d8e.jpg"></p>
+<p>Ok great! let&#39;s create our first Dynamic Table. Open a new worksheet in Snowflake and rename it to <strong>&#34;02_Dynamic_tables_pipeline&#34;</strong>. For this we will extract the sales information from the <strong>salesdata</strong> table and join it with <strong>customer information</strong> to build the <strong>customer_sales_data_history</strong>, note that we are extracting raw json data(schema on read) and transforming it into meaningful columns and data type</p>
+<pre><code>USE SCHEMA DEMO.DT_DEMO;
+
+CREATE OR REPLACE DYNAMIC TABLE customer_sales_data_history
+    LAG=&#39;DOWNSTREAM&#39;
+    WAREHOUSE=XSMALL_WH
+AS
+select 
+    s.custid as customer_id,
+    c.cname as customer_name,
+    s.purchase:&#34;prodid&#34;::number(5) as product_id,
+    s.purchase:&#34;purchase_amount&#34;::number(10) as saleprice,
+    s.purchase:&#34;quantity&#34;::number(5) as quantity,
+    s.purchase:&#34;purchase_date&#34;::date as salesdate
+from
+    cust_info c inner join salesdata s on c.custid = s.custid
+;
+
+</code></pre>
+<p>Looking good, we will see what <strong>DOWNSTREAM</strong> means here in just a minute. let&#39;s run some quick sanity checks.</p>
+<pre><code>-- quick sanity check
+select * from customer_sales_data_history limit 10;
+select count(*) from customer_sales_data_history;
+
+</code></pre>
+<p>Now, let&#39;s combine these results with the product table and create a SCD TYPE 2 transformation using window the function &#34;LEAD&#34;, it gives us the subsequent rows in the same result set to build a TYPE 2 transformation.</p>
+<pre><code>CREATE OR REPLACE DYNAMIC TABLE salesreport
+    LAG = &#39;1 MINUTE&#39;
+    WAREHOUSE=XSMALL_WH
+AS
+    Select
+        t1.customer_id,
+        t1.customer_name, 
+        t1.product_id,
+        p.pname as product_name,
+        t1.saleprice,
+        t1.quantity,
+        (t1.saleprice/t1.quantity) as unitsalesprice,
+        t1.salesdate as CreationTime,
+        customer_id || &#39;-&#39; || t1.product_id  || &#39;-&#39; || t1.salesdate AS CUSTOMER_SK,
+        LEAD(CreationTime) OVER (PARTITION BY t1.customer_id ORDER BY CreationTime ASC) AS END_TIME
+    from 
+        customer_sales_data_history t1 inner join prod_stock_inv p 
+        on t1.product_id = p.pid
+       
+;
+
+</code></pre>
+<p><strong>salesreport</strong> table should refresh automatically. Let&#39;s check the results.</p>
+<pre><code>select * from salesreport limit 10;
+select count(*) from salesreport;
+
+</code></pre>
+<h2 is-upgraded>Test</h2>
+<p>Let&#39;s test this DAG by adding some raw data in the base tables.</p>
+<pre><code>-- Add new records
+insert into salesdata select * from table(gen_cust_purchase(10000,2));
+
+-- Check raw base table
+select count(*) from salesdata;
+
+-- Check Dynamic Tables after a minute
+select count(*) from customer_sales_data_history;
+select count(*) from salesreport;
+
+</code></pre>
+<p>You can check the Dynamic table graph and refresh history from the Snowsight. We will learn more about this dashboard later in its own section</p>
+<p class="image-container"><img alt="DT After Test" src="img/da92204144f84f55.jpg"></p>
+<p>That&#39;s it, we created a DAG using Dynamic Tables. It runs whenever there is data in the raw base tables and infers the lag based on the downstream dynamic tables lag using the LAG parameter as &#34;DOWNSTREAM&#34;. In this example the CUSTOMER_SALES_DATA_HISTORY table will refresh based on the lag of its downstream table (&#34;1 Minute&#34;) and data in the raw table (SALESDATA).</p>
+<p>Dynamic tables lag or target lag can defined in terms of time or dependency <a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#understanding-target-lag" target="_blank">referred from other dynamic tables</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use case: Using Snowpark UDTF in Dynamic table" duration="0">
+        <p>It&#39;s a common practice to use programming languages like Python in Data Engineering for constructing data pipelines. If you&#39;re migrating an existing data pipeline based on Python, Java, or Scala to Snowflake, Snowpark can be a valuable tool. Snowpark supports the creation of Python-based transformations through user-defined functions.</p>
+<p>In below example, we&#39;ll demonstrate how to build a cumulative total of customer account balances each month and leverage this information to identify any instances of customers exceeding their set limits in the CUST_INFO table. Let&#39;s create a new SQL worksheet and rename it to <strong>&#34;03_Dynamic_Table_With_UDTF&#34;</strong></p>
+<pre><code>USE SCHEMA DEMO.DT_DEMO;
+
+CREATE OR REPLACE FUNCTION sum_table (INPUT_NUMBER number)
+  returns TABLE (running_total number)
+  language python
+  runtime_version = &#39;3.10&#39;
+  handler = &#39;gen_sum_table&#39;
+as
+$$
+
+# Define handler class
+class gen_sum_table :
+
+  ## Define __init__ method ro initilize the variable
+  def __init__(self) :    
+    self._running_sum = 0
+  
+  ## Define process method
+  def process(self, input_number: float) :
+    # Increment running sum with data from the input row
+    new_total = self._running_sum + input_number
+    self._running_sum = new_total
+
+    yield(new_total,)
+  
+$$
+;
+
+</code></pre>
+<p>This function computes the cumulative total and can be seamlessly incorporated into any SQL code or applied to any table as a table function. It&#39;s flexibile and allows us to feed any data partition, making it highly adaptable to any &#34;cumulative total&#34; use case. Let&#39;s partition this total by Customer and Month using dynamic table. This way it becomes highly modular and SQL independent.</p>
+<pre><code>CREATE OR REPLACE DYNAMIC TABLE cumulative_purchase
+    LAG = &#39;1 MINUTE&#39;
+    WAREHOUSE=XSMALL_WH
+AS
+    select 
+        month(creationtime) monthNum,
+        year(creationtime) yearNum,
+        customer_id, 
+        saleprice,
+        running_total 
+    from 
+        salesreport,
+        table(sum_table(saleprice) over (partition by creationtime,customer_id order by creationtime, customer_id))
+       
+;
+
+</code></pre>
+<p>Results,</p>
+<pre><code>select * from  cumulative_purchase limit 10;
+
+</code></pre>
+<p>Similar results can be achieved using complex SQL queries, but it becomes more versatile and modular when implemented as a Python User-Defined Function (UDF).</p>
+<p class="image-container"><img alt="cumulative sum" src="img/ddc2e9cc8c2859c8.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use case: Data validation using Dynamic table" duration="0">
+        <p>The DAG that we created above will build our data pipeline but there are many use cases of DT, like creating data validation checks or data quality etc. In our data set, we want to know if a product is running low on inventory, let&#39;s say less than 10%. Let&#39;s do this in a new SQL worksheet, rename it to <strong>&#34;04_Dynamic_Table_For_Data_Validation&#34;</strong></p>
+<pre><code>USE SCHEMA DEMO.DT_DEMO;
+
+CREATE OR REPLACE DYNAMIC TABLE PROD_INV_ALERT
+    LAG = &#39;1 MINUTE&#39;
+    WAREHOUSE=XSMALL_WH
+AS
+    SELECT 
+        S.PRODUCT_ID, 
+        S.PRODUCT_NAME,CREATIONTIME AS LATEST_SALES_DATE,
+        STOCK AS BEGINING_STOCK,
+        SUM(S.QUANTITY) OVER (PARTITION BY S.PRODUCT_ID ORDER BY CREATIONTIME) TOTALUNITSOLD, 
+        (STOCK - TOTALUNITSOLD) AS UNITSLEFT,
+        ROUND(((STOCK-TOTALUNITSOLD)/STOCK) *100,2) PERCENT_UNITLEFT,
+        CURRENT_TIMESTAMP() AS ROWCREATIONTIME
+    FROM SALESREPORT S JOIN PROD_STOCK_INV ON PRODUCT_ID = PID
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY PRODUCT_ID ORDER BY CREATIONTIME DESC) = 1
+;
+
+</code></pre>
+<p>Now let&#39;s check if there are any products that has low inventory</p>
+<pre><code>-- check products with low inventory and alert
+select * from prod_inv_alert where percent_unitleft &lt; 10;
+
+</code></pre>
+<p><a href="https://docs.snowflake.com/en/user-guide/alerts" target="_blank">Snowflake Alerts</a> are now in Preview. This can help you send email alerts to your product procurement and inventory team to restock the required product. Remember to update the email address and warehouse in the below code.</p>
+<pre><code>CREATE NOTIFICATION INTEGRATION IF NOT EXISTS
+    notification_emailer
+    TYPE=EMAIL
+    ENABLED=TRUE
+    ALLOWED_RECIPIENTS=(&#39;first.last@company.com&#39;)
+    COMMENT = &#39;email integration to update on low product inventory levels&#39;
+;
+
+CREATE OR REPLACE ALERT alert_low_inv
+  WAREHOUSE = XSMALL_WH
+  SCHEDULE = &#39;30 MINUTE&#39;
+  IF (EXISTS (
+      SELECT *
+      FROM prod_inv_alert
+      WHERE percent_unitleft &lt; 10 and ROWCREATIONTIME &gt; SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME()
+  ))
+  THEN CALL SYSTEM$SEND_EMAIL(
+                &#39;notification_emailer&#39;, -- notification integration to use
+                &#39;first.last@company.com&#39;, -- Email
+                &#39;Email Alert: Low Inventory of products&#39;, -- Subject
+                &#39;Inventory running low for certain products. Please check the inventory report in Snowflake table prod_inv_alert&#39; -- Body of email
+);
+
+-- Alerts are pause by default, so let&#39;s resume it first
+ALTER ALERT alert_low_inv RESUME;
+
+-- Add new records
+insert into salesdata select * from table(gen_cust_purchase(10000,2));
+
+
+</code></pre>
+<p class="image-container"><img alt="show alerts" src="img/5a18f47f3e33503c.jpg"></p>
+<p>These alerts will only run if there is new data in the dynamic table (low inventory products). So, its super easy to manage and maintain alerts in Snowflake on live data.</p>
+<p>You can monitor, resume or pause alerts.</p>
+<pre><code>-- Monitor alerts in detail
+SHOW ALERTS;
+
+SELECT *
+FROM
+  TABLE(INFORMATION_SCHEMA.ALERT_HISTORY(
+    SCHEDULED_TIME_RANGE_START
+      =&gt;dateadd(&#39;hour&#39;,-1,current_timestamp())))
+WHERE
+    NAME = &#39;ALERT_LOW_INV&#39;
+ORDER BY SCHEDULED_TIME DESC;
+
+-- Suspend Alerts 
+-- Important step to suspend alert and stop consuming the warehouse credit
+ALTER ALERT alert_low_inv SUSPEND;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitor Dynamic Tables: Cost, DAG and Dashboard" duration="4">
+        <h2 is-upgraded>Monitor DAG and dashboard</h2>
+<p>Snowflake makes it easier to monitor your data pipeline.</p>
+<p>You can also monitor Dynamic Tables using the DYNAMIC_TABLE_REFRESH_HISTORY() function in INFORMATION_SCHEMA. This is sample SQL for dynamic tables in our data pipeline</p>
+<pre><code>SELECT * 
+FROM 
+    TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY())
+WHERE 
+    NAME IN (&#39;SALESREPORT&#39;,&#39;CUSTOMER_SALES_DATA_HISTORY&#39;,&#39;PROD_INV_ALERT&#39;,&#39;CUMULATIVE_PURCHASE&#39;)
+    -- AND REFRESH_ACTION != &#39;NO_DATA&#39;
+ORDER BY 
+    DATA_TIMESTAMP DESC, REFRESH_END_TIME DESC LIMIT 10;
+    
+</code></pre>
+<p>You can use Snowsight GUI to visualize and monitor the directed acyclic graph (DAG) of your pipeline. Go to <strong>Data &gt; Databases &gt; DEMO &gt; DT_DEMO &gt; Dynamic Tables</strong></p>
+<p>From Snowsight you can monitor Dynamic Table DAG, refresh history, preview data, refresh mode, columns and table ddl etc</p>
+<p class="image-container"><img alt="dahsboard alerts" src="img/4dd38555da4371c6.jpeg"><img alt="dahsboard alerts" src="img/da92204144f84f55.jpg"></p>
+<p>You can also monitor any issues with the refresh using the two table functions in information schema -</p>
+<p><a href="https://docs.snowflake.com/en/sql-reference/functions/dynamic_table_refresh_history" target="_blank">DYNAMIC_TABLE_REFRESH_HISTORY</a></p>
+<p><a href="https://docs.snowflake.com/en/sql-reference/functions/dynamic_table_graph_history" target="_blank">DYNAMIC_TABLE_GRAPH_HISTORY</a></p>
+<p><strong>Few tips for monitoring Dynamic Tables -</strong></p>
+<ul>
+<li>You should monitor Dynamic Tables for a few runs and verify if the refresh cycles are as desired (full or incremental).</li>
+<li>Consider that any changes to the base tables DDL will most certainly impact the performance or refresh cycles of the Dynamic tables just like any other data pipeline.</li>
+<li>In some cases DT defaults to full refresh like if you have masking policy on base tables, lateral flatten of nested structure or some other non deterministic functions like UDTF. These will be addressed in the future.</li>
+</ul>
+<h2 is-upgraded>SUSPEND and RESUME Dynamic Tables</h2>
+<p>Dynamic tables can be suspended or resumed on demand. Snowflake automatically suspends it after 5 consecutive failures to prevent any credit consumption. If you suspend a Dynamic table upstream, it will automatically suspend its child or downstream Dynamic Tables in the DAG.</p>
+<pre><code>-- Resume the data pipeline
+alter dynamic table customer_sales_data_history RESUME;
+alter dynamic table salesreport RESUME;
+alter dynamic table prod_inv_alert RESUME;
+
+-- Suspend the data pipeline
+alter dynamic table customer_sales_data_history SUSPEND;
+alter dynamic table salesreport SUSPEND;
+alter dynamic table prod_inv_alert SUSPEND;
+
+</code></pre>
+<h2 is-upgraded>Cost</h2>
+<p>Dynamic tables incur cost in three ways: <a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-cost" target="_blank">details here</a></p>
+<ul>
+<li><strong>Storage</strong>: DT materializes the results and saves it just like a normal Snowflake tables</li>
+<li><strong>Cloud service compute</strong>: You will only incur this if daily cloud service cost is over 10% of your bill (very very rare)</li>
+<li><strong>Warehouse compute cost</strong>: this is associated with the warehouse you use with Dynamic Table. This is only used if there is data to be processed upstream from base tables</li>
+</ul>
+<p>Dynamic tables require a virtual warehouse to perform updates. Snowflake recommends testing dynamic tables using dedicated warehouses in order to understand related costs.Dynamic tables cost is driven by frequency of data refreshes in base tables and target LAG.</p>
+<p>REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run the Show Dynamic table command or check dynamic table dashboard to determine your DT refresh mode. Check <a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries" target="_blank">this page</a> for more details.</p>
+<p>Dynamic tables support <strong>Time Travel, Replication, Data Governance, Masking, Tagging</strong> etc. just like a standard Snowflake table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>Dynamic Tables are a new kind of Snowflake table which is defined as a query and continually and automatically maintains the result of that query as a table. It&#39;s extremely flexible and we want you to start thinking of Dynamic tables as the easiest and default way of creating data pipelines. Some top use cases of DTs are -</p>
+<ul>
+<li>Merging CDC data continuously into target tables with low latency</li>
+<li>Slowly Changing Dimensions</li>
+<li>Continuous data aggregation &amp; summarization from multiple sources</li>
+<li>Filtering data by ID in raw tables into separate tables and sharing to clients</li>
+<li>Dimensional modeling, medallion architecture, multi layer data engineering and transformations</li>
+<li>Data quality validation and monitoring</li>
+<li>Aggregation, Joins, grouping of data on reference data sets using the newly arrived data</li>
+<li>Joins on multiple table and flattening of nested data</li>
+<li>Modularize code using functions and abstract away common logic out of SQL</li>
+</ul>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Creating and managing Dynamic tables</li>
+<li>Using Snowpark UDTF in a Dynamic table</li>
+<li>Creating data validation rule using Dynamic tables</li>
+<li>Alerting on those rules</li>
+<li>Monitoring Dynamic table using dashboard and SQL</li>
+</ul>
+<h2 is-upgraded>Cleaup after Demo/HOL is complete for any cost/credits loss prevention</h2>
+<pre><code>DROP SCHEMA DEMO.DT_DEMO;
+
+-- if you wish to drop the entire database
+DROP DATABASE DEMO;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

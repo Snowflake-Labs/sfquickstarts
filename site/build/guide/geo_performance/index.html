@@ -1,0 +1,471 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Performance Optimization Techniques for Geospatial queries</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="geo_performance"
+                  title="Performance Optimization Techniques for Geospatial queries"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>This Quickstart guide contains key tips for optimal performance when using Snowflake Geospatial Feature. The guide is broken up into multiple labs, each covering a separate technique that can improve performance and/or efficiency while running geo workloads in Snowflake.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Understanding of <a href="https://docs.snowflake.com/en/sql-reference/data-types-geospatial" target="_blank">Geospatial Data Types</a> in Snowflake</li>
+<li>Understanding of <a href="https://docs.snowflake.com/en/sql-reference/functions-geospatial" target="_blank">Geospatial Functions</a></li>
+<li>Recommended: Complete <a href="https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0" target="_blank">Geospatial Analysis using Geometry Data Type</a> quickstart</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this quickstart, you will learn how to improve performance of queries when using Geospatial data types and functions in Snowflake. These choices will be compared with others to show performance improvements. Each concept is broken up into a separate lab:</p>
+<ul>
+<li>Lab 1: Benefits of storing spatial data as geospatial data types</li>
+<li>Lab 2: Improving geospatial joins</li>
+<li>Lab 3: Search optimization for lookup queries</li>
+<li>Lab 4: H3 for approximate calculations</li>
+<li>Lab 5: H3 for speeding up queries with joins</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Sign-up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Trial</a>  OR have access to an existing Snowflake account with the <code>ACCOUNTADMIN</code> role or the <code>IMPORT SHARE</code> privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup your Account" duration="10">
+        <p>If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your <a href="https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name" target="_blank">account name</a> and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.</p>
+<p>Click <code>Sign-in</code> and you will be prompted for your user name and password.</p>
+<aside class="special"><p> If this is not the first time you are logging into the Snowflake UI, you should see a &#34;Select an account to sign into&#34; prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).</p>
+</aside>
+<h2 is-upgraded>Increase Your Account Permission</h2>
+<p>The Snowflake web interface has a lot to offer, but for now, switch your current role from the default <code>SYSADMIN</code> to <code>ACCOUNTADMIN</code>. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.</p>
+<aside class="special"><p> If you don&#39;t have the <code>ACCOUNTADMIN</code> role, switch to a role with <code>IMPORT SHARE</code> privileges instead.</p>
+</aside>
+<p class="image-container"><img style="width: 500.00px" src="img/b9575209bfee61ca.png"></p>
+<h2 is-upgraded>Create a Virtual Warehouse</h2>
+<p>You will need to create a Virtual Warehouse to run queries.</p>
+<ul>
+<li>Navigate to the <code>Admin > Warehouses</code> screen using the menu on the left side of the window</li>
+<li>Click the big blue <code>+ Warehouse</code> button in the upper right of the window</li>
+<li>Create an Large Warehouse as shown in the screen below</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/1e9fb04bc904a0d2.png"></p>
+<p>Be sure to change the <code>Suspend After (min)</code> field to 5 min to avoid wasting compute credits.</p>
+<h2 is-upgraded>Create a Virtual Warehouse</h2>
+<p>Navigate to the query editor by clicking on <code>Worksheets</code> on the top left navigation bar and choose your warehouse.</p>
+<ul>
+<li>Click the + Worksheet button in the upper right of your browser window. This will open a new window.</li>
+<li>In the new Window, make sure <code>ACCOUNTADMIN</code> and <code>MY_WH</code> (or whatever your warehouse is named) are selected in the upper right of your browser window.</li>
+</ul>
+<p class="image-container"><img style="width: 700.00px" src="img/7eda34377730e47b.png"></p>
+<p>Create a new database and schema where you will store datasets in the <code>GEOGRAPHY</code> data type. Copy &amp; paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue &#34;Play&#34; button in the upper right of your browser window, or press <code>CTRL+Enter</code> or <code>CMD+Enter</code> (Windows or Mac) to run the query.</p>
+<pre><code>CREATE DATABASE geolab;
+// Set the working database schema
+CREATE OR REPLACE SCHEMA geolab.performance;
+USE geolab.performance;
+USE WAREHOUSE my_wh;
+ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT=&#39;WKT&#39;;
+ALTER SESSION SET USE_CACHED_RESULT = FALSE;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Acquire Data" duration="10">
+        <p>The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake&#39;s geospatial functionality.</p>
+<h2 is-upgraded>Get data from Marketplace</h2>
+<p>The best place to acquire this data is the Snowflake Marketplace!</p>
+<ul>
+<li>Navigate to the <code>Marketplace</code> screen using the menu on the left side of the window</li>
+<li>Search for <code>OpenCelliD</code> in the search bar</li>
+<li>Find and click the <code>OpenCelliD - Open Database of Cell Towers</code> tile</li>
+</ul>
+<p class="image-container"><img style="width: 700.00px" src="img/733037ef599ccab.png"></p>
+<ul>
+<li>Once in the listing, click the big blue <code>Get</code> button</li>
+</ul>
+<aside class="warning"><p> On the <code>Get</code> screen, you may be prompted to complete your <code>user profile</code> if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue <code>Save</code> button. You will be returned to the <code>Get</code> screen.</p>
+</aside>
+<p class="image-container"><img style="width: 500.00px" src="img/266bfe4f1f5ba1a3.png"></p>
+<ul>
+<li>On the <code>Get Data</code> screen, change the name of the database from the default to <code>OPENCELLID</code>, as this name is shorter, and all future instructions will assume this name for the database.</li>
+</ul>
+<p class="image-container"><img style="width: 500.00px" src="img/86244de138cc244e.png"></p>
+<p>Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace.</p>
+<h2 is-upgraded>Get data from an external source</h2>
+<p>Another way to acquire data is to use an external S3 storage. Let&#39;s use the NYC Taxi dataset and download the road segments. It is stored in the CSV format in the public S3 bucket. To import this data, create an external stage using the following SQL command:</p>
+<pre><code>CREATE OR REPLACE STAGE geolab.performance.geostage
+  URL = &#39;s3://sfquickstarts/geospatial_performance/&#39;;
+
+</code></pre>
+<p>Now you will create a new table using the file from that stage. Run the following queries to create a new file format and a new table using the dataset stored in the Stage:</p>
+<pre><code>// Create file format
+CREATE OR REPLACE FILE FORMAT geocsv TYPE = csv PARSE_HEADER=True
+FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39; FIELD_DELIMITER = &#39;;&#39; compression=&#39;gzip&#39;;
+
+CREATE OR REPLACE TABLE geolab.performance.ny_taxi_rides (pickup_location GEOGRAPHY, dropoff_location GEOGRAPHY);
+COPY INTO geolab.performance.ny_taxi_rides
+FROM @geostage/ny_rides/
+FILE_FORMAT = (FORMAT_NAME = geocsv)
+match_by_column_name = case_insensitive;
+
+</code></pre>
+<p>Two other datasets that you will use contain boundaries of dissemination areas in Canada and dataset with trips information. Run the following queries to create corresponding tables:</p>
+<pre><code>CREATE OR REPLACE TABLE geolab.performance.canada_dissemination_areas (dauid integer, geog GEOGRAPHY);
+COPY INTO geolab.performance.canada_dissemination_areas
+from @geostage/canada_areas/
+FILE_FORMAT = (FORMAT_NAME = geocsv)
+MATCH_BY_COLUMN_NAME = case_insensitive;
+
+CREATE OR REPLACE TABLE geolab.performance.canada_trips (trip_id integer, gps_points array);
+COPY INTO geolab.performance.canada_trips
+from @geostage/canada_trips/
+FILE_FORMAT = (FORMAT_NAME = geocsv)
+MATCH_BY_COLUMN_NAME = case_insensitive;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 1: Storing geospatial data types" duration="5">
+        <p>Geospatial types are designed for quick and efficient spatial operations and GEOGRAPHY is the ideal choice when your coordinates are in latitude and longitude.</p>
+<p>Each time you store a new spatial object, we check it for compliance with the OGC standards. This validation process is one reason why using a GEOGRAPHY column can be faster than generating GEOGRAPHY objects on the fly, as Snowflake does not need to re-validate it every time it&#39;s used. If you use the <code>allowInvalid=True</code> parameter while creating spatial column, Snowflake will save objects even if they don&#39;t meet OGC standards. However, this approach still speeds up spatial calculations because Snowflake can quickly determine whether each object is valid. Keep in mind that the results of spatial operations on invalid objects may differ from those on valid ones.</p>
+<p>GEOGRAPHY data is stored in a binary format and optimised for fast read operations. We store an additional shape index for each object to speed up spatial operations. Moreover, if you activate Search Optimisation (see Lab 3), Snowflake creates additional partition-based indices, enhancing performance even more.</p>
+<p>Let&#39;s explore the OpenCellID dataset, which contains the locations of over 40 million cell towers. The image below illustrates the locations of these towers.</p>
+<p class="image-container"><img src="img/2968fced31c96380.png"></p>
+<p>Now you will look inside of the table. Run the following query:</p>
+<pre><code>SELECT radio, mcc, cell, lon::float, lat::float, cell_range 
+FROM opencellid.public.raw_cell_towers limit 10;
+
+</code></pre>
+<p>It contains latitude and longitude as separate fields. Let&#39;s create a new table that extends the existing one with an additional column that stores the locations of cell towers as GEOGRAPHY type.</p>
+<pre><code>CREATE OR REPLACE TABLE geolab.performance.raw_cell_towers AS
+SELECT *, st_point(lon, lat) AS geog
+FROM opencellid.public.raw_cell_towers;
+
+</code></pre>
+<p>Now, you will count cell towers within 5 km from Royal Observatory Greenwich, which is closely linked to the history of longitude measurement. First, let&#39;s count them using latitude and longitude as separate fields</p>
+<pre><code>SELECT COUNT(1) 
+FROM geolab.performance.raw_cell_towers
+WHERE ST_DWITHIN(st_point(lon, lat), ST_POINT(0, 51.47684),  5000);
+
+</code></pre>
+<p>There are 18 074 cell towers, and the query is completed in 9 seconds.</p>
+<p>Let&#39;s do the same calculation, but this time, you will use GEOGRAPHY type:</p>
+<pre><code>SELECT COUNT(1) 
+FROM geolab.performance.raw_cell_towers
+WHERE st_dwithin(geog, ST_POINT(0, 51.47684),  5000);
+
+</code></pre>
+<p>This query was completed in 2.5 seconds, which is more than three times faster than before. This is a simple example; the more complex your query, the greater the performance gains you can achieve by using the GEOGRAPHY type.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 2: Geospatial Joins" duration="10">
+        <p>Another advantage of using materialized geospatial types is that you can use fast and efficient geospatial joins. Whenever you join two datasets using geo predicate, such as <a href="https://docs.snowflake.com/en/sql-reference/functions/st_contains" target="_blank">ST_CONTAINS</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/st_within" target="_blank">ST_WITHIN</a>, etc., Snowflake under the hood builds a spatial grid for both datasets and then compares the content of cells. If both objects are within some cell, then the actual geo predicate executes. Snowflake decides on the size of the cells in the grid based on the size of the objects that take part in a join.</p>
+<p>Imagine that you are working for a telecommunication company and are interested in the density of cell towers per statistical population unit. To model this example, we will use the previously created OpenCellID table and calculate the number of cell towers per <a href="https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/da-ad/def-eng.htm" target="_blank">Dissemination Areas</a> in Canada. A dissemination area is a small geographic unit used in Canada for disseminating census data, typically containing 400 to 700 persons. The analogy to Canada&#39;s dissemination area in the US would be a Census Block Group, or Statistical Area in Europe.  Run the following query:</p>
+<pre><code>SELECT t1.dauid, count(t2.lat) AS count_towers 
+FROM geolab.performance.canada_dissemination_areas t1
+INNER JOIN geolab.performance.raw_cell_towers t2 ON st_within(t2.geog, t1.geog)
+GROUP BY 1;
+
+</code></pre>
+<p>It is completed in about 40 seconds on a LARGE warehouse. Let&#39;s look inside of the dataset with shapes of dissemination areas and bucket its records based on the size of the area. If you visualize the <code>canada_dissemination_areas</code> table, you&#39;ll see that there is several extremely large polygons that correspond to areas with low population density.</p>
+<p class="image-container"><img style="width: 700.00px" src="img/b762f6039e8edec5.png"></p>
+<p>Let&#39;s bucket dissemination areas based on their size. Run the following query:</p>
+<pre><code>SELECT CASE
+       WHEN st_area(geog) &lt; 1e+8 THEN &#39;0 - 100M&#39;
+       WHEN st_area(geog) &gt;= 1e+8 AND ST_AREA(geog) &lt; 1e+9 THEN &#39;100M-1B&#39;
+       WHEN st_area(geog) &gt;= 1e+9 AND ST_AREA(geog) &lt; 1e+10 THEN &#39;1B - 10B&#39;
+       WHEN st_area(geog) &gt;= 1e+10 THEN &#39;10B and more&#39;
+       END AS area_bucket,
+       count(*) AS COUNT
+FROM geolab.performance.canada_dissemination_areas
+GROUP BY 1
+ORDER BY 2 DESC;
+
+</code></pre>
+<p>You can see that most of the boundaries are below 10 billion sq.m in size. Only 98 areas are larger than that threshold.</p>
+<p class="image-container"><img style="width: 300.00px" src="img/d2fbeaf356ccd56c.png"></p>
+<p>For some use cases, those large, not inhabitant areas don&#39;t bring much value. However, they slow down calculations since they skew a dataset. Let&#39;s run the same query with join you ran earlier, but this time, you exclude shapes larger than 10B sq.m:</p>
+<pre><code>SELECT t1.dauid, count(t2.lat) AS count_towers 
+FROM geolab.performance.canada_dissemination_areas t1
+INNER JOIN geolab.performance.raw_cell_towers t2 ON ST_WITHIN(t2.geog, t1.geog)
+WHERE ST_AREA(t1.geog) &lt; 1e+10
+GROUP BY 1;
+
+</code></pre>
+<p>The query is completed in about 12 sec. By cleaning 0.17% of the boundaries dataset you improved performance by more than 3x.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 3: Search Optimization for lookup queries" duration="20">
+        <p>In this lab, you&#39;ll step into the role of an analyst working with a dataset containing New York taxi trips. Your task is to identify all trips that occurred within a specific location. You will see how you can improve the execution time of lookup queries even on extra small warehouse when you enable Search Optimization (SO) for the geography column.</p>
+<p>For this, we will use a publicly available dataset: <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page" target="_blank">New York Taxi Trip Record Data</a>. To give you a sense of data, below is a visualization that shows the density of taxi pickups.</p>
+<p class="image-container"><img style="width: 700.00px" src="img/6099ecb1d1f12aec.png"></p>
+<p>You&#39;ll be working with a table named <code>GEOLAB.PERFORMANCE.NY_TAXI_RIDES</code>, which contains the raw dataset. Let&#39;s look into this dataset:</p>
+<pre><code>SELECT *
+FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES
+LIMIT 10; 
+
+</code></pre>
+<p>It contains pickup and drop-off locations. Let&#39;s count the number of rows:</p>
+<pre><code>SELECT count(*)
+FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES; 
+
+</code></pre>
+<p>The dataset contains around 143.5M rows. And it doesn&#39;t have Search Optimization activated. To compare query execution time with and without Search Optimization, you will create a new table with a copy of this dataset and activate Search Optimization (SO) for it. To unleash all the power of Search Optimization, in the copied table, you will create one additional column containing the H3 Index of the <code>pickup_location</code> column.</p>
+<pre><code>CREATE OR REPLACE TABLE GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO
+AS SELECT *, H3_POINT_TO_CELL(pickup_location,9) AS pickup_location_h3
+FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES; 
+
+</code></pre>
+<p>To activate SO, first, you need to enable clustering on the <code>pickup_location_h3</code> column. Because the Search Optimization service is designed for highly selective predicates, clustering geospatial objects in the table by proximity can result in better performance. And as a second step, you will enable the SO feature.</p>
+<pre><code>ALTER TABLE GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO CLUSTER BY (pickup_location_h3);
+ALTER TABLE GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO ADD SEARCH optimization ON GEO(pickup_location); 
+
+</code></pre>
+<p>To ensure that the SO is active, run the following query.</p>
+<pre><code>DESCRIBE SEARCH optimization ON GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO; 
+
+</code></pre>
+<p>To make sure that both tables, the one with SO and another one without SO, contain the same number of rows, let&#39;s look into their details (see rows, <code>search_optimization</code>, and <code>search_optimization_progress</code> columns):</p>
+<pre><code>SHOW TABLES LIKE &#39;%TAXI_RIDES%&#39;;
+
+</code></pre>
+<p>When the <code>search_optimization_progress</code> for <code>NY_TAXI_RIDES_SO</code> reaches 100, it indicates that all the internal processes required to enable Search Optimization have been completed. This process may take up to 15 minutes, but it&#39;s an important step that should be completed before you can move forward with this lab. Once you see this status, it means you&#39;re ready to proceed to the next step.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/8cc7376139a929a7.png"></p>
+<p>For the next steps you&#39;ll change the size of warehouse to XSMALL. Run the following query:</p>
+<pre><code>ALTER WAREHOUSE my_wh SET warehouse_size=XSMALL;
+
+</code></pre>
+<p>Let&#39;s locate all taxi pick-ups that occurred near the Perth Amboy Public Library in New York. You will design a highly selective request and run it first on the table without SO.</p>
+<pre><code>SELECT pickup_location AS GEOG
+FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES
+WHERE st_contains(to_geography(&#39;POLYGON((-74.14497384801507 40.596100847757526, -74.15168289095162 40.595924932475924,
+    -74.15453407913445 40.599875150092316,-74.15462896227835 40.605661948898984,
+    -74.15380787104367 40.60691785709875,-74.14553124457596 40.603458198056444,
+    -74.14273772388695 40.60332952170779,-74.14259104058145 40.60021664953396,
+    -74.14462951943278 40.60010247716039,-74.14497384801507 40.596100847757526))&#39;), pickup_location);
+
+</code></pre>
+<p>This query finished in about 40 seconds.</p>
+<aside class="special"><p> Note: if you want, you can use <a href="https://clydedacruz.github.io/openstreetmap-wkt-playground/" target="_blank">this tool</a> to visualize the search area. You can put the search polygon from the query above and click Plot Shape.</p>
+</aside>
+<p>Now you&#39;ll do the same search using the query with SO enabled:</p>
+<pre><code>SELECT pickup_location AS GEOG
+FROM GEOLAB.PERFORMANCE.NY_TAXI_RIDES_SO
+WHERE st_contains(to_geography(&#39;POLYGON((-74.14497384801507 40.596100847757526, -74.15168289095162 40.595924932475924,
+    -74.15453407913445 40.599875150092316,-74.15462896227835 40.605661948898984,
+    -74.15380787104367 40.60691785709875,-74.14553124457596 40.603458198056444,
+    -74.14273772388695 40.60332952170779,-74.14259104058145 40.60021664953396,
+    -74.14462951943278 40.60010247716039,-74.14497384801507 40.596100847757526))&#39;), pickup_location);
+
+</code></pre>
+<p>This query was finished in just 2 seconds, which is about 20 times faster compared to running it without Search Optimization (SO).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 4: H3 for approximate calculations" duration="10">
+        <p>In certain situations, users need to determine the distance between objects. For example, consider a logistics company that keeps track of where their trucks are. They do this by recording the GPS location of each truck every two minutes. To check if this location data is accurate, they might measure the distance between the most recent location they recorded and the one before that. If this distance is too large – say, more than three miles – it could indicate that the latest GPS reading was wrong. Below is a visualization displaying correct GPS records (in green) and two incorrect records (in red).</p>
+<p class="image-container"><img style="width: 500.00px" src="img/2648a5a7b8144fa9.png"></p>
+<p>In this situation, they don&#39;t need to know the exact distance, but just want to make sure it&#39;s not too far, within a certain acceptable limit. For this purpose, estimating the distance using H3 cells of a certain size is good enough. This method is not only simpler but also faster to compute.</p>
+<p class="image-container"><img style="width: 500.00px" src="img/11045e0208611975.png"></p>
+<p>Let&#39;s continue being analysts who work with the New York taxi dataset. Our job often involves preparing data for training models or analysis. An important part of this is making sure the data is of good quality. This means you need to get rid of any records where the GPS coordinates don&#39;t seem right. In this project, you&#39;re particularly focused on removing records where the taxi trips are longer than about 100 kilometers. These long trips are usually either mistakes in the data or very unusual cases that could skew our analysis or predictions.</p>
+<p>In the query below you will use the previously created table <code>GEOLAB.PERFORMANCE.NY_TAXI_RIDES</code> and extend it with two additional columns that contain indexes of H3 cells of pickup and dropoff locations:</p>
+<pre><code>CREATE OR REPLACE TABLE geolab.performance.ny_taxi_rides
+AS SELECT *, H3_POINT_TO_CELL(pickup_location, 7) as pickup_h3, 
+H3_POINT_TO_CELL(dropoff_location, 7) as dropoff_h3
+FROM geolab.performance.ny_taxi_rides;
+
+</code></pre>
+<p>Let&#39;s check how many trips have geodesic lengths of more than 100km:</p>
+<pre><code>SELECT CASE
+WHEN ST_DISTANCE(pickup_location, dropoff_location) &lt; 100000 then &#39;under 100&#39;
+WHEN ST_DISTANCE(pickup_location, dropoff_location) &gt;= 100000 then &#39;above 100&#39;
+END AS geodesic_distance_bucket,
+COUNT(*) as number_of_trips
+FROM geolab.performance.ny_taxi_rides
+GROUP BY 1;
+
+</code></pre>
+<p>This query was completed in more than 30 seconds, and you found 493 trips with geodesic distance above 100km.</p>
+<p>Let&#39;s use H3 columns to do a similar exercise. We know that the distance between centers of adjacent cells at resolution 7 is 2.4km. If you divide 100 by 2.4, you get ~41. Run the following query to find out how many trips have the distance between pickup and dropoff locations of more than 41 cells.</p>
+<pre><code>SELECT CASE
+WHEN H3_GRID_DISTANCE(pickup_h3, dropoff_h3) &lt;= 41 THEN &#39;under 100&#39;
+WHEN H3_GRID_DISTANCE(pickup_h3, dropoff_h3) &gt; 41 THEN &#39;above 100&#39;
+END as distance_h3,
+COUNT(*) as number_of_trips
+FROM geolab.performance.ny_taxi_rides
+GROUP BY 1;
+
+</code></pre>
+<p>This query returned 605 trips with the H3 distance above 41 cells, and it was completed in about 4 seconds. By improving the performance of the query by more than 7x, you got an acceptable number of false positives (compared to the size of the dataset).</p>
+<p>Similarly, you can speed up lookup queries. Below, you will find all the trips that started within 10 km of Perth Amboy Public Library in New York. First, let&#39;s use lookup with <a href="https://docs.snowflake.com/en/sql-reference/functions/st_dwithin" target="_blank">ST_DWITHIN</a> function:</p>
+<pre><code>SELECT pickup_location
+FROM geolab.performance.ny_taxi_rides
+WHERE ST_DWITHIN(ST_POINT(-74.2704837, 40.5103654), pickup_location, 10000);
+
+</code></pre>
+<p>It&#39;s completed in about 30 seconds and found 1091 trips. Now you will run the similar search, but with the help of the H3 function <a href="https://docs.snowflake.com/en/sql-reference/functions/h3_grid_disk" target="_blank">H3_GRID_DISK</a> which you&#39;ll use to get a K-Ring with the &#34;radius&#34; of four hexahons:</p>
+<pre><code>WITH kring AS
+  (SELECT value::integer as h3 
+   FROM TABLE (flatten(H3_GRID_DISK(H3_LATLNG_TO_CELL(40.5103654, -74.2704837, 7), 4))))
+SELECT t2.pickup_location
+FROM kring t1
+JOIN geolab.performance.ny_taxi_rides t2 ON t1.h3 = t2.pickup_h3;
+
+</code></pre>
+<p>It was completed in less than a second and returned 1103 records. Nice performance improvement for such a small price you paid for precision.</p>
+<p>Note that in the query above, you cast <code>value</code> as an integer since <code>H3_GRID_DISK</code> returned the array of variants. After applying flattening, you need to cast values from an array to the expected type, which, in this case, is an integer.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 5: H3 for speeding up queries with joins" duration="15">
+        <p>For this Lab you need to change the warehouse size back to LARGE as you will be running quite complex queries:</p>
+<pre><code>ALTER WAREHOUSE my_wh SET warehouse_size=LARGE;
+
+</code></pre>
+<p>When you need to join two large tables, it can be computationally expensive and time-consuming. Tessellation is a technique that can be really useful when you need to calculate statistics like averages. It allows to reduce the number of rows in a table by grouping them in chunks based on spatial criteria such as geographic location or proximity.</p>
+<p>In this lab, you will wear the hat of an analyst in a logistics company and you&#39;ll calculate the average speed of company&#39;s vehicles for each dissemination area in Canada. You will use a synthetic dataset <code>geolab.performance.canada_trips</code>, which contains 100K rows, where every row is a separate trip. Each trip is a large array of dictionaries stored in the <code>GPS_POINTS</code> column. These dictionaries store location of vehicles and other relevant data, like the vehicle&#39;s speed at that location. To help you understand what this data looks like, here&#39;s an example of what you might find in a typical <code>GPS_POINT</code> column entry:</p>
+<pre><code>[
+  {
+    &#34;direction&#34;: 1.688377678460125,
+    &#34;distance_from_last_location&#34;: 0.0489760678928559,
+    &#34;id&#34;: 1,
+    &#34;latitude&#34;: 45.37363271860237,
+    &#34;longitude&#34;: -77.36850375868114,
+    &#34;speed&#34;: 77
+  },
+... hundreds or thousands of dictionary elements
+  {
+    &#34;direction&#34;: 2.1026333439524705,
+    &#34;distance_from_last_location&#34;: 0.010691575462406473,
+    &#34;id&#34;: 2,
+    &#34;latitude&#34;: 45.37363416335536,
+    &#34;longitude&#34;: -77.36850391041858,
+    &#34;speed&#34;: 65
+  },
+]
+
+</code></pre>
+<p>You need to join this data with a dataset of Dissemination Area boundaries in Canada to calculate the average speed per dissemination area.</p>
+<p>One approach is to join all the GPS points from every trip with the borders of dissemination areas. The images below helps illustrate this concept. In the first image, each linestring represents a trip, and each point is a GPS location where the truck&#39;s speed was captured (in reality each trip could include up to several thousand points). The black shapes in the second image are the dissemination areas.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/d8ca0c3d36afe06.png"></p>
+<p>As a first step you will &#34;unpack&#34; arrays with trips information into a table that contains all GPS points. Then you&#39;ll join GPS points and boundaries by matching each GPS point to the specific dissemination area it falls within. And finally you&#39;ll group these points based on the unique ID of each dissemination area and calculate the average speed for each area. Run the following query:</p>
+<pre><code>SELECT dauid, AVG(value[&#39;speed&#39;]) AS avg_speed_per_da
+FROM geolab.performance.canada_dissemination_areas
+INNER JOIN
+    (SELECT t1.trip_id, t2.value::object as value
+     FROM geolab.performance.canada_trips t1
+     JOIN TABLE (flatten(GPS_POINTS)) t2
+    )
+ON ST_WITHIN(st_makepoint(value[&#39;longitude&#39;], value[&#39;latitude&#39;]), geog)
+GROUP BY 1;
+
+</code></pre>
+<p>It&#39;s completed in around 6 minutes and returned 9970 rows. As one of the intermediate steps in the query above, you flattened the column with trip information, which resulted in exploding the trips dataset.</p>
+<p>Now, instead of joining the full dataset with trips, which could contain billions of points after flattening, you will aggregate trip data into H3 buckets based on the GPS location. Then, you&#39;ll calculate the average speed per H3 cell, reducing the size of the trips table before joining it with the dissemination areas. In this scenario you join much smaller table with centroids of H3 cells with dissemination area boundaries. This makes the join operation much faster. The images below illustrate this approach.</p>
+<p class="image-container"><img style="width: 598.00px" src="img/c3f38d0d0fc2009c.png"></p>
+<p>Run the following query:</p>
+<pre><code>WITH speed_info AS
+  (SELECT H3_LATLNG_TO_CELL(value[&#39;latitude&#39;], value[&#39;longitude&#39;], 12)::int AS h3,
+          AVG(value[&#39;speed&#39;]) AS avg_speed_per_h3
+   FROM geolab.performance.canada_trips,
+        TABLE (FLATTEN(GPS_POINTS))
+   GROUP BY 1)
+SELECT dauid,
+       AVG(avg_speed_per_h3) AS AVG_SPEED_IN_DB
+FROM geolab.performance.canada_dissemination_areas
+INNER JOIN speed_info ON ST_INTERSECTS(H3_CELL_TO_POINT(h3), geog)
+GROUP BY 1;
+
+</code></pre>
+<p>This query completed in 40 seconds and returned 9985 rows. A different number of rows in the results of the first and second queries was caused by the fact that you did an H3-based aggregation to reduce the dataset size with trips. You can find the best balance of precision/performance for your particular use case by leveraging the size of aggregation cells. For instance, if you change the H3 resolution in the last query to 15, you will get results much closer to the first query. However, execution time will also increase.</p>
+<aside class="warning"><p> Note: If you&#39;re interested, you can also experiment by running the above queries using an XSMALL warehouse. In this case, the first query would take around 35 minutes to complete, while the second one would finish in less than 3 minutes.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="5">
+        <p>In this guide, you acquired geospatial data from different sources and explored various techniques for improving the performance of geospatial queries. You can now apply those techniques to your data and use cases.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to get better performance by using native geo data types</li>
+<li>How to improve the performance of spatial join by fixing skewed datasets</li>
+<li>How to leverage search optimization for speeding up lookup queries</li>
+<li>How to use H3 for fast spatial calculations</li>
+<li>How to use H3 to speed up aggregated statistics calculation</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html" target="_blank">Geospatial Analytics for Retail with Snowflake and CARTO</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html#0" target="_blank">Geospatial Analytics using Geometry Data Type</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

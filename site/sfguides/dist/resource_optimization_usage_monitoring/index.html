@@ -1,0 +1,809 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Resource Optimization: Usage Monitoring</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="resource_optimization_usage_monitoring"
+                  title="Resource Optimization: Usage Monitoring"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>This resource optimization guide represents one module of the four contained in the series. These guides are meant to help customers better monitor and manage their credit consumption. Helping our customers build confidence that their credits are being used efficiently is key to an ongoing successful partnership. In addition to this set of Snowflake Quickstarts for Resource Optimization, Snowflake also offers community support as well as Training and Professional Services offerings. To learn more about the paid offerings, take a look at upcoming <a href="https://www.snowflake.com/education-and-training/" target="_blank">education and training</a>.</p>
+<p>This <a href="https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/" target="_blank">blog post</a> can provide you with a better understanding of Snowflake&#39;s Resource Optimization capabilities.</p>
+<p>Contact our team at <a href="mailto:marketing@snowflake.com" target="_blank">marketing@snowflake.com</a>, we appreciate your feedback.</p>
+<h2 is-upgraded>Usage Monitoring</h2>
+<p>Usage Monitoring queries are designed to identify the warehouses, queries, tools, and users that are responsible for consuming the most credits over a specified period of time.  These queries can be used to determine which of those resources are consuming more credits than anticipated and take the necessary steps to reduce their consumption.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to analyze consumption trends and patterns</li>
+<li>how to identify consumption anomolies</li>
+<li>how to analyze partner tool consumption metrics</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>Access to view <a href="https://docs.snowflake.com/en/sql-reference/account-usage.html#enabling-account-usage-for-other-roles" target="_blank">Account Usage Data Share</a></li>
+</ul>
+<h2 is-upgraded>Related Materials</h2>
+<ul>
+<li>Resource Optimization: Setup &amp; Configuration</li>
+<li>Resource Optimization: Billing Metrics</li>
+<li>Resource Optimization: Performance</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Tiers" duration="0">
+        <p>Each query within the Resource Optimization Snowflake Quickstarts will have a tier designation just to the right of its name as &#34;(T*)&#34;.  The following tier descriptions should help to better understand those designations.</p>
+<h2 is-upgraded>Tier 1 Queries</h2>
+<p>At its core, Tier 1 queries are essential to Resource Optimization at Snowflake and should be used by each customer to help with their consumption monitoring - regardless of size, industry, location, etc.</p>
+<h2 is-upgraded>Tier 2 Queries</h2>
+<p>Tier 2 queries, while still playing a vital role in the process, offer an extra level of depth around Resource Optimization and while they may not be essential to all customers and their workloads, it can offer further explanation as to any additional areas in which over-consumption may be identified.</p>
+<h2 is-upgraded>Tier 3 Queries</h2>
+<p>Finally, Tier 3 queries are designed to be used by customers that are looking to leave no stone unturned when it comes to optimizing their consumption of Snowflake.  While these queries are still very helpful in this process, they are not as critical as the queries in Tier 1 &amp; 2.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Credit Consumption by Warehouse (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Shows the total credit consumption for each warehouse over a specific time period.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Are there specific warehouses that are consuming more credits than the others?  Should they be?  Are there specific warehouses that are consuming more credits than anticipated for that warehouse?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">// Credits used (all time = past year)
+SELECT WAREHOUSE_NAME
+      ,SUM(CREDITS_USED_COMPUTE) AS CREDITS_USED_COMPUTE_SUM
+  FROM ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+ GROUP BY 1
+ ORDER BY 2 DESC
+;
+
+// Credits used (past N days/weeks/months)
+SELECT WAREHOUSE_NAME
+      ,SUM(CREDITS_USED_COMPUTE) AS CREDITS_USED_COMPUTE_SUM
+  FROM ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+ WHERE START_TIME &gt;= DATEADD(DAY, -7, CURRENT_TIMESTAMP())  // Past 7 days
+ GROUP BY 1
+ ORDER BY 2 DESC
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/953002f317e40c63.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Average Hour-by-Hour Consumption Over the Past 7 Days (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Shows the total credit consumption on an hourly basis to help understand consumption trends (peaks, valleys) over the past 7 days.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>At which points of the day are we seeing spikes in our consumption?  Is that expected?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL (by hour, warehouse)</h3>
+<pre><code language="language-sql" class="language-sql">// Credits used by [hour, warehouse] (past 7 days)
+SELECT START_TIME
+      ,WAREHOUSE_NAME
+      ,CREDITS_USED_COMPUTE
+  FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+ WHERE START_TIME &gt;= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+   AND WAREHOUSE_ID &gt; 0  // Skip pseudo-VWs such as &#34;CLOUD_SERVICES_ONLY&#34;
+ ORDER BY 1 DESC,2
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p><img alt="alt-text-here" src="img/cc2d17b6cde34f28.png"> ####SQL (by hour)</p>
+<pre><code language="language-sql" class="language-sql">SELECT DATE_PART(&#39;HOUR&#39;, START_TIME) AS START_HOUR
+      ,WAREHOUSE_NAME
+      ,AVG(CREDITS_USED_COMPUTE) AS CREDITS_USED_COMPUTE_AVG
+  FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+ WHERE START_TIME &gt;= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+   AND WAREHOUSE_ID &gt; 0  // Skip pseudo-VWs such as &#34;CLOUD_SERVICES_ONLY&#34;
+ GROUP BY 1, 2
+ ORDER BY 1, 2
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/92ab27dd4ab62921.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Average Query Volume by Hour (Past 7 Days) (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Shows average number of queries run on an hourly basis to help better understand typical query activity.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>How many queries are being run on an hourly basis?  Is this more or less than we anticipated?  What could be causing this?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT DATE_TRUNC(&#39;HOUR&#39;, START_TIME) AS QUERY_START_HOUR
+      ,WAREHOUSE_NAME
+      ,COUNT(*) AS NUM_QUERIES
+  FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+ WHERE START_TIME &gt;= DATEADD(DAY, -7, CURRENT_TIMESTAMP())  // Past 7 days
+ GROUP BY 1, 2
+ ORDER BY 1 DESC, 2
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/1be853b46ae991e4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouse Utilization Over 7 Day Average (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>This query returns the daily average of credit consumption grouped by week and warehouse.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Use this to identify anomolies in credit consumption for warehouses across weeks from the past year.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CTE_DATE_WH AS(
+  SELECT TO_DATE(START_TIME) AS START_DATE
+        ,WAREHOUSE_NAME
+        ,SUM(CREDITS_USED) AS CREDITS_USED_DATE_WH
+    FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+   GROUP BY START_DATE
+           ,WAREHOUSE_NAME
+)
+SELECT START_DATE
+      ,WAREHOUSE_NAME
+      ,CREDITS_USED_DATE_WH
+      ,AVG(CREDITS_USED_DATE_WH) OVER (PARTITION BY WAREHOUSE_NAME ORDER BY START_DATE ROWS 7 PRECEDING) AS CREDITS_USED_7_DAY_AVG
+      ,100.0*((CREDITS_USED_DATE_WH / CREDITS_USED_7_DAY_AVG) - 1) AS PCT_OVER_TO_7_DAY_AVERAGE
+  FROM CTE_DATE_WH
+QUALIFY CREDITS_USED_DATE_WH &gt; 100  // Minimum N=100 credits
+    AND PCT_OVER_TO_7_DAY_AVERAGE &gt;= 0.5  // Minimum 50% increase over past 7 day average
+ ORDER BY PCT_OVER_TO_7_DAY_AVERAGE DESC
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/9e45a108f0bf6186.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Forecasting Usage/Billing (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>This query provides three distinct consumption metrics for each day of the contract term. (1) the contracted consumption is the dollar amount consumed if usage was flat for the entire term. (2) the actual consumption pulls from the various usage views and aggregates dollars at a day level. (3) the forecasted consumption creates a straight line regression from the actuals to project go-forward consumption.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>This data should be mapped as line graphs with a running total calculation to estimate future forecast against the contract amount.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SET CREDIT_PRICE = 4.00; --edit this number to reflect credit price
+SET TERM_LENGTH = 12; --integer value in months
+SET TERM_START_DATE = &#39;2020-01-01&#39;;
+SET TERM_AMOUNT = 100000.00; --number(10,2) value in dollars
+WITH CONTRACT_VALUES AS (
+     SELECT
+              $CREDIT_PRICE::decimal(10,2) as CREDIT_PRICE
+             ,$TERM_AMOUNT::decimal(38,0) as TOTAL_CONTRACT_VALUE
+             ,$TERM_START_DATE::timestamp as CONTRACT_START_DATE
+             ,DATEADD(day,-1,DATEADD(month,$TERM_LENGTH,$TERM_START_DATE))::timestamp as CONTRACT_END_DATE
+),
+PROJECTED_USAGE AS (
+     SELECT
+                CREDIT_PRICE
+               ,TOTAL_CONTRACT_VALUE
+               ,CONTRACT_START_DATE
+               ,CONTRACT_END_DATE
+               ,(TOTAL_CONTRACT_VALUE)
+                   /
+                   DATEDIFF(day,CONTRACT_START_DATE,CONTRACT_END_DATE)  AS DOLLARS_PER_DAY
+               , (TOTAL_CONTRACT_VALUE/CREDIT_PRICE)
+                   /
+               DATEDIFF(day,CONTRACT_START_DATE,CONTRACT_END_DATE) AS CREDITS_PER_DAY
+     FROM      CONTRACT_VALUES
+),
+ACTUAL_USAGE AS (
+ SELECT TO_DATE(START_TIME) AS CONSUMPTION_DATE
+   ,SUM(DOLLARS_USED) as ACTUAL_DOLLARS_USED
+ FROM (
+   --COMPUTE FROM WAREHOUSES
+   SELECT
+            &#39;WH Compute&#39; as WAREHOUSE_GROUP_NAME
+           ,WMH.WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,WMH.START_TIME
+           ,WMH.END_TIME
+           ,WMH.CREDITS_USED
+           ,$CREDIT_PRICE
+           ,($CREDIT_PRICE*WMH.CREDITS_USED) AS DOLLARS_USED
+           ,&#39;ACTUAL COMPUTE&#39; AS MEASURE_TYPE                  
+   from    SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY WMH
+   UNION ALL
+   --COMPUTE FROM SNOWPIPE
+   SELECT
+            &#39;Snowpipe&#39; AS WAREHOUSE_GROUP_NAME
+           ,PUH.PIPE_NAME AS WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,PUH.START_TIME
+           ,PUH.END_TIME
+           ,PUH.CREDITS_USED
+           ,$CREDIT_PRICE
+           ,($CREDIT_PRICE*PUH.CREDITS_USED) AS DOLLARS_USED
+           ,&#39;ACTUAL COMPUTE&#39; AS MEASURE_TYPE
+   from    SNOWFLAKE.ACCOUNT_USAGE.PIPE_USAGE_HISTORY PUH
+   UNION ALL
+   --COMPUTE FROM CLUSTERING
+   SELECT
+            &#39;Auto Clustering&#39; AS WAREHOUSE_GROUP_NAME
+           ,DATABASE_NAME || &#39;.&#39; || SCHEMA_NAME || &#39;.&#39; || TABLE_NAME AS WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,ACH.START_TIME
+           ,ACH.END_TIME
+           ,ACH.CREDITS_USED
+           ,$CREDIT_PRICE
+           ,($CREDIT_PRICE*ACH.CREDITS_USED) AS DOLLARS_USED
+           ,&#39;ACTUAL COMPUTE&#39; AS MEASURE_TYPE
+   from    SNOWFLAKE.ACCOUNT_USAGE.AUTOMATIC_CLUSTERING_HISTORY ACH
+   UNION ALL
+   --COMPUTE FROM MATERIALIZED VIEWS
+   SELECT
+            &#39;Materialized Views&#39; AS WAREHOUSE_GROUP_NAME
+           ,DATABASE_NAME || &#39;.&#39; || SCHEMA_NAME || &#39;.&#39; || TABLE_NAME AS WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,MVH.START_TIME
+           ,MVH.END_TIME
+           ,MVH.CREDITS_USED
+           ,$CREDIT_PRICE
+           ,($CREDIT_PRICE*MVH.CREDITS_USED) AS DOLLARS_USED
+           ,&#39;ACTUAL COMPUTE&#39; AS MEASURE_TYPE
+   from    SNOWFLAKE.ACCOUNT_USAGE.MATERIALIZED_VIEW_REFRESH_HISTORY MVH
+   UNION ALL
+   --COMPUTE FROM SEARCH OPTIMIZATION
+   SELECT
+            &#39;Search Optimization&#39; AS WAREHOUSE_GROUP_NAME
+           ,DATABASE_NAME || &#39;.&#39; || SCHEMA_NAME || &#39;.&#39; || TABLE_NAME AS WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,SOH.START_TIME
+           ,SOH.END_TIME
+           ,SOH.CREDITS_USED
+           ,$CREDIT_PRICE
+           ,($CREDIT_PRICE*SOH.CREDITS_USED) AS DOLLARS_USED
+           ,&#39;ACTUAL COMPUTE&#39; AS MEASURE_TYPE
+   from    SNOWFLAKE.ACCOUNT_USAGE.SEARCH_OPTIMIZATION_HISTORY SOH
+   UNION ALL
+   --COMPUTE FROM REPLICATION
+   SELECT
+            &#39;Replication&#39; AS WAREHOUSE_GROUP_NAME
+           ,DATABASE_NAME AS WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,RUH.START_TIME
+           ,RUH.END_TIME
+           ,RUH.CREDITS_USED
+           ,$CREDIT_PRICE
+           ,($CREDIT_PRICE*RUH.CREDITS_USED) AS DOLLARS_USED
+           ,&#39;ACTUAL COMPUTE&#39; AS MEASURE_TYPE
+   from    SNOWFLAKE.ACCOUNT_USAGE.REPLICATION_USAGE_HISTORY RUH
+   UNION ALL
+
+   --STORAGE COSTS
+   SELECT
+            &#39;Storage&#39; AS WAREHOUSE_GROUP_NAME
+           ,&#39;Storage&#39; AS WAREHOUSE_NAME
+           ,NULL AS GROUP_CONTACT
+           ,NULL AS GROUP_COST_CENTER
+           ,NULL AS GROUP_COMMENT
+           ,SU.USAGE_DATE
+           ,SU.USAGE_DATE
+           ,NULL AS CREDITS_USED
+           ,$CREDIT_PRICE
+           ,((STORAGE_BYTES + STAGE_BYTES + FAILSAFE_BYTES)/(1024*1024*1024*1024)*23)/DA.DAYS_IN_MONTH AS DOLLARS_USED
+           ,&#39;ACTUAL COMPUTE&#39; AS MEASURE_TYPE
+   from    SNOWFLAKE.ACCOUNT_USAGE.STORAGE_USAGE SU
+   JOIN    (SELECT COUNT(*) AS DAYS_IN_MONTH,TO_DATE(DATE_PART(&#39;year&#39;,D_DATE)||&#39;-&#39;||DATE_PART(&#39;month&#39;,D_DATE)||&#39;-01&#39;) as DATE_MONTH FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.DATE_DIM GROUP BY TO_DATE(DATE_PART(&#39;year&#39;,D_DATE)||&#39;-&#39;||DATE_PART(&#39;month&#39;,D_DATE)||&#39;-01&#39;)) DA ON DA.DATE_MONTH = TO_DATE(DATE_PART(&#39;year&#39;,USAGE_DATE)||&#39;-&#39;||DATE_PART(&#39;month&#39;,USAGE_DATE)||&#39;-01&#39;)
+) A
+ group by 1
+),
+FORECASTED_USAGE_SLOPE_INTERCEPT as (
+ SELECT
+          REGR_SLOPE(AU.ACTUAL_DOLLARS_USED,DATEDIFF(day,CONTRACT_START_DATE,AU.CONSUMPTION_DATE)) as SLOPE
+          ,REGR_INTERCEPT(AU.ACTUAL_DOLLARS_USED,DATEDIFF(day,CONTRACT_START_DATE,AU.CONSUMPTION_DATE)) as INTERCEPT
+ FROM        PROJECTED_USAGE PU
+ JOIN        SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.DATE_DIM DA ON DA.D_DATE BETWEEN PU.CONTRACT_START_DATE AND PU.CONTRACT_END_DATE
+ LEFT JOIN   ACTUAL_USAGE AU ON AU.CONSUMPTION_DATE = TO_DATE(DA.D_DATE)
+)
+SELECT
+        DA.D_DATE::date as CONSUMPTION_DATE
+       ,PU.DOLLARS_PER_DAY AS CONTRACTED_DOLLARS_USED
+       ,AU.ACTUAL_DOLLARS_USED
+       --the below is the mx+b equation to get the forecasted linear slope
+       ,DATEDIFF(day,CONTRACT_START_DATE,DA.D_DATE)*FU.SLOPE + FU.INTERCEPT AS FORECASTED_DOLLARS_USED
+FROM        PROJECTED_USAGE PU
+JOIN        SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.DATE_DIM    DA ON DA.D_DATE BETWEEN PU.CONTRACT_START_DATE AND PU.CONTRACT_END_DATE
+LEFT JOIN   ACTUAL_USAGE                                    AU ON AU.CONSUMPTION_DATE = TO_DATE(DA.D_DATE)
+JOIN        FORECASTED_USAGE_SLOPE_INTERCEPT                FU ON 1 = 1
+;
+
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/55896ec120e0b961.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partner Tools Consuming Credits (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Identifies which of Snowflake&#39;s partner tools/solutions (BI, ETL, etc.) are consuming the most credits.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Are there certain partner solutions that are consuming more credits than anticipated?  What is the reasoning for this?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">--THIS IS APPROXIMATE CREDIT CONSUMPTION BY CLIENT APPLICATION
+WITH CLIENT_HOUR_EXECUTION_CTE AS (
+    SELECT  CASE
+         WHEN CLIENT_APPLICATION_ID LIKE &#39;Go %&#39; THEN &#39;Go&#39;
+         WHEN CLIENT_APPLICATION_ID LIKE &#39;Snowflake UI %&#39; THEN &#39;Snowflake UI&#39;
+         WHEN CLIENT_APPLICATION_ID LIKE &#39;SnowSQL %&#39; THEN &#39;SnowSQL&#39;
+         WHEN CLIENT_APPLICATION_ID LIKE &#39;JDBC %&#39; THEN &#39;JDBC&#39;
+         WHEN CLIENT_APPLICATION_ID LIKE &#39;PythonConnector %&#39; THEN &#39;Python&#39;
+         WHEN CLIENT_APPLICATION_ID LIKE &#39;ODBC %&#39; THEN &#39;ODBC&#39;
+         ELSE &#39;NOT YET MAPPED: &#39; || CLIENT_APPLICATION_ID
+       END AS CLIENT_APPLICATION_NAME
+    ,WAREHOUSE_NAME
+    ,DATE_TRUNC(&#39;hour&#39;,START_TIME) as START_TIME_HOUR
+    ,SUM(EXECUTION_TIME)  as CLIENT_HOUR_EXECUTION_TIME
+    FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34; QH
+    JOIN &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;SESSIONS&#34; SE ON SE.SESSION_ID = QH.SESSION_ID
+    WHERE WAREHOUSE_NAME IS NOT NULL
+    AND EXECUTION_TIME &gt; 0
+  
+ --Change the below filter if you want to look at a longer range than the last 1 month 
+    AND START_TIME &gt; DATEADD(Month,-1,CURRENT_TIMESTAMP())
+    group by 1,2,3
+    )
+, HOUR_EXECUTION_CTE AS (
+    SELECT  START_TIME_HOUR
+    ,WAREHOUSE_NAME
+    ,SUM(CLIENT_HOUR_EXECUTION_TIME) AS HOUR_EXECUTION_TIME
+    FROM CLIENT_HOUR_EXECUTION_CTE
+    group by 1,2
+)
+, APPROXIMATE_CREDITS AS (
+    SELECT 
+    A.CLIENT_APPLICATION_NAME
+    ,C.WAREHOUSE_NAME
+    ,(A.CLIENT_HOUR_EXECUTION_TIME/B.HOUR_EXECUTION_TIME)*C.CREDITS_USED AS APPROXIMATE_CREDITS_USED
+
+    FROM CLIENT_HOUR_EXECUTION_CTE A
+    JOIN HOUR_EXECUTION_CTE B  ON A.START_TIME_HOUR = B.START_TIME_HOUR and B.WAREHOUSE_NAME = A.WAREHOUSE_NAME
+    JOIN &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;WAREHOUSE_METERING_HISTORY&#34; C ON C.WAREHOUSE_NAME = A.WAREHOUSE_NAME AND C.START_TIME = A.START_TIME_HOUR
+)
+
+SELECT 
+ CLIENT_APPLICATION_NAME
+,WAREHOUSE_NAME
+,SUM(APPROXIMATE_CREDITS_USED) AS APPROXIMATE_CREDITS_USED
+FROM APPROXIMATE_CREDITS
+GROUP BY 1,2
+ORDER BY 3 DESC
+;
+
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/169b3e82e98b1405.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Credit Consumption by User (T1)" duration="0">
+        <h5 is-upgraded>Tier 1</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Identifies which users are consuming the most credits within your Snowflake environment.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Are there certain users that are consuming more credits than they should? What is the purpose behind this additional usage?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">--THIS IS APPROXIMATE CREDIT CONSUMPTION BY USER
+WITH USER_HOUR_EXECUTION_CTE AS (
+    SELECT  USER_NAME
+    ,WAREHOUSE_NAME
+    ,DATE_TRUNC(&#39;hour&#39;,START_TIME) as START_TIME_HOUR
+    ,SUM(EXECUTION_TIME)  as USER_HOUR_EXECUTION_TIME
+    FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34; 
+    WHERE WAREHOUSE_NAME IS NOT NULL
+    AND EXECUTION_TIME &gt; 0
+  
+ --Change the below filter if you want to look at a longer range than the last 1 month 
+    AND START_TIME &gt; DATEADD(Month,-1,CURRENT_TIMESTAMP())
+    group by 1,2,3
+    )
+, HOUR_EXECUTION_CTE AS (
+    SELECT  START_TIME_HOUR
+    ,WAREHOUSE_NAME
+    ,SUM(USER_HOUR_EXECUTION_TIME) AS HOUR_EXECUTION_TIME
+    FROM USER_HOUR_EXECUTION_CTE
+    group by 1,2
+)
+, APPROXIMATE_CREDITS AS (
+    SELECT 
+    A.USER_NAME
+    ,C.WAREHOUSE_NAME
+    ,(A.USER_HOUR_EXECUTION_TIME/B.HOUR_EXECUTION_TIME)*C.CREDITS_USED AS APPROXIMATE_CREDITS_USED
+
+    FROM USER_HOUR_EXECUTION_CTE A
+    JOIN HOUR_EXECUTION_CTE B  ON A.START_TIME_HOUR = B.START_TIME_HOUR and B.WAREHOUSE_NAME = A.WAREHOUSE_NAME
+    JOIN &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;WAREHOUSE_METERING_HISTORY&#34; C ON C.WAREHOUSE_NAME = A.WAREHOUSE_NAME AND C.START_TIME = A.START_TIME_HOUR
+)
+
+SELECT 
+ USER_NAME
+,WAREHOUSE_NAME
+,SUM(APPROXIMATE_CREDITS_USED) AS APPROXIMATE_CREDITS_USED
+FROM APPROXIMATE_CREDITS
+GROUP BY 1,2
+ORDER BY 3 DESC
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/ce1cac33c4409809.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Queries by # of Times Executed and Execution Time (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Are there any queries that get executed a ton?? how much execution time do they take up?</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Opportunity to materialize the result set as a table?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT 
+QUERY_TEXT
+,count(*) as number_of_queries
+,sum(TOTAL_ELAPSED_TIME)/1000 as execution_seconds
+,sum(TOTAL_ELAPSED_TIME)/(1000*60) as execution_minutes
+,sum(TOTAL_ELAPSED_TIME)/(1000*60*60) as execution_hours
+
+  from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
+  where 1=1
+  and TO_DATE(Q.START_TIME) &gt;     DATEADD(month,-1,TO_DATE(CURRENT_TIMESTAMP())) 
+ and TOTAL_ELAPSED_TIME &gt; 0 --only get queries that actually used compute
+  group by 1
+  having count(*) &gt;= 10 --configurable/minimal threshold
+  order by 2 desc
+  limit 100 --configurable upper bound threshold
+  ;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Top 50 Longest Running Queries (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Looks at the top 50 longest running queries to see if there are patterns</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Is there an opportunity to optimize with clustering or upsize the warehouse?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select
+          
+          QUERY_ID
+         --reconfigure the url if your account is not in AWS US-West
+         ,&#39;https://&#39;||CURRENT_ACCOUNT()||&#39;.snowflakecomputing.com/console#/monitoring/queries/detail?queryId=&#39;||Q.QUERY_ID as QUERY_PROFILE_URL
+         ,ROW_NUMBER() OVER(ORDER BY PARTITIONS_SCANNED DESC) as QUERY_ID_INT
+         ,QUERY_TEXT
+         ,TOTAL_ELAPSED_TIME/1000 AS QUERY_EXECUTION_TIME_SECONDS
+         ,PARTITIONS_SCANNED
+         ,PARTITIONS_TOTAL
+
+from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
+ where 1=1
+  and TO_DATE(Q.START_TIME) &gt;     DATEADD(month,-1,TO_DATE(CURRENT_TIMESTAMP())) 
+    and TOTAL_ELAPSED_TIME &gt; 0 --only get queries that actually used compute
+    and ERROR_CODE iS NULL
+    and PARTITIONS_SCANNED is not null
+   
+  order by  TOTAL_ELAPSED_TIME desc
+   
+   LIMIT 50
+   ;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Top 50 Queries that Scanned the Most Data (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Looks at the top 50 queries that scan the largest number of micro partitions</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Is there an opportunity to optimize with clustering or upsize the warehouse?</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select
+          
+          QUERY_ID
+          --reconfigure the url if your account is not in AWS US-West
+         ,&#39;https://&#39;||CURRENT_ACCOUNT()||&#39;.snowflakecomputing.com/console#/monitoring/queries/detail?queryId=&#39;||Q.QUERY_ID as QUERY_PROFILE_URL
+         ,ROW_NUMBER() OVER(ORDER BY PARTITIONS_SCANNED DESC) as QUERY_ID_INT
+         ,QUERY_TEXT
+         ,TOTAL_ELAPSED_TIME/1000 AS QUERY_EXECUTION_TIME_SECONDS
+         ,PARTITIONS_SCANNED
+         ,PARTITIONS_TOTAL
+
+from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
+ where 1=1
+  and TO_DATE(Q.START_TIME) &gt;     DATEADD(month,-1,TO_DATE(CURRENT_TIMESTAMP())) 
+    and TOTAL_ELAPSED_TIME &gt; 0 --only get queries that actually used compute
+    and ERROR_CODE iS NULL
+    and PARTITIONS_SCANNED is not null
+   
+  order by  PARTITIONS_SCANNED desc
+   
+   LIMIT 50
+   ;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Queries by Execution Buckets over the Past 7 Days (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Group the queries for a given warehouse by execution time buckets</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>This is an opportunity to identify query SLA trends and make a decision to downsize a warehouse, upsize a warehouse, or separate out some queries to another warehouse</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH BUCKETS AS (
+
+SELECT &#39;Less than 1 second&#39; as execution_time_bucket, 0 as execution_time_lower_bound, 1000 as execution_time_upper_bound
+UNION ALL
+SELECT &#39;1-5 seconds&#39; as execution_time_bucket, 1000 as execution_time_lower_bound, 5000 as execution_time_upper_bound
+UNION ALL
+SELECT &#39;5-10 seconds&#39; as execution_time_bucket, 5000 as execution_time_lower_bound, 10000 as execution_time_upper_bound
+UNION ALL
+SELECT &#39;10-20 seconds&#39; as execution_time_bucket, 10000 as execution_time_lower_bound, 20000 as execution_time_upper_bound
+UNION ALL
+SELECT &#39;20-30 seconds&#39; as execution_time_bucket, 20000 as execution_time_lower_bound, 30000 as execution_time_upper_bound
+UNION ALL
+SELECT &#39;30-60 seconds&#39; as execution_time_bucket, 30000 as execution_time_lower_bound, 60000 as execution_time_upper_bound
+UNION ALL
+SELECT &#39;1-2 minutes&#39; as execution_time_bucket, 60000 as execution_time_lower_bound, 120000 as execution_time_upper_bound
+UNION ALL
+SELECT &#39;more than 2 minutes&#39; as execution_time_bucket, 120000 as execution_time_lower_bound, NULL as execution_time_upper_bound
+)
+
+SELECT 
+ COALESCE(execution_time_bucket,&#39;more than 2 minutes&#39;)
+,count(Query_ID) as number_of_queries
+
+from SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY Q
+FULL OUTER JOIN BUCKETS B ON (Q.TOTAL_ELAPSED_TIME) &gt;= B.execution_time_lower_bound and (Q.TOTAL_ELAPSED_TIME) &lt; B.execution_time_upper_bound
+where Q.Query_ID is null
+OR (
+TO_DATE(Q.START_TIME) &gt;= DATEADD(week,-1,TO_DATE(CURRENT_TIMESTAMP())) 
+and warehouse_name = &lt;WAREHOUSE_NAME&gt;
+and TOTAL_ELAPSED_TIME &gt; 0 
+  )
+group by 1,COALESCE(b.execution_time_lower_bound,120000)
+order by COALESCE(b.execution_time_lower_bound,120000)
+  ;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/82de7dcfe4b10e2f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouses with High Cloud Services Usage (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>Shows the warehouses that are not using enough compute to cover the cloud services portion of compute, ordered by the ratio of cloud services to total compute</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>Focus on Warehouses that are using a high volume and ratio of cloud services compute. Investigate why this is the case to reduce overall cost (might be cloning, listing files in S3, partner tools setting session parameters, etc.).  The goal to reduce cloud services credit consumption is to aim for cloud services credit to be less than 10% of overall credits. ####Primary Schema: Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select 
+    WAREHOUSE_NAME
+    ,SUM(CREDITS_USED) as CREDITS_USED
+    ,SUM(CREDITS_USED_CLOUD_SERVICES) as CREDITS_USED_CLOUD_SERVICES
+    ,SUM(CREDITS_USED_CLOUD_SERVICES)/SUM(CREDITS_USED) as PERCENT_CLOUD_SERVICES
+from &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;WAREHOUSE_METERING_HISTORY&#34;
+where TO_DATE(START_TIME) &gt;= DATEADD(month,-1,CURRENT_TIMESTAMP())
+and CREDITS_USED_CLOUD_SERVICES &gt; 0
+group by 1
+order by 4 desc
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/a931bc35b1c142d1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouse Utilization (T2)" duration="0">
+        <h5 is-upgraded>Tier 2</h5>
+<h3 is-upgraded>Description:</h3>
+<p>This query is designed to give a rough idea of how busy Warehouses are compared to the credit consumption per hour. It will show the end user the number of credits consumed, the number of queries executed and the total execution time of those queries in each hour window.</p>
+<h3 is-upgraded>How to Interpret Results:</h3>
+<p>This data can be used to draw correlations between credit consumption and the #/duration of query executions. The more queries or higher query duration for the fewest number of credits may help drive more value per credit.</p>
+<h3 is-upgraded>Primary Schema:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT
+       WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+      ,WMH.CREDITS_USED
+      ,SUM(COALESCE(B.EXECUTION_TIME_SECONDS,0)) as TOTAL_EXECUTION_TIME_SECONDS
+      ,SUM(COALESCE(QUERY_COUNT,0)) AS QUERY_COUNT
+
+FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY WMH
+LEFT JOIN (
+
+      --QUERIES FULLY EXECUTED WITHIN THE HOUR
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(QH.EXECUTION_TIME,0))/(1000) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QH.QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND QH.START_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+                                                                          AND QH.END_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+      WHERE TO_DATE(WMH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+      UNION ALL
+
+      --FRONT part OF QUERIES Executed longer than 1 Hour
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(DATEDIFF(seconds,QH.START_TIME,WMH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND QH.START_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+                                                                          AND QH.END_TIME &gt; WMH.END_TIME
+      WHERE TO_DATE(WMH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+      UNION ALL
+
+      --Back part OF QUERIES Executed longer than 1 Hour
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(DATEDIFF(seconds,WMH.START_TIME,QH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND QH.END_TIME BETWEEN WMH.START_TIME AND WMH.END_TIME
+                                                                          AND QH.START_TIME &lt; WMH.START_TIME
+      WHERE TO_DATE(WMH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+      UNION ALL
+
+      --Middle part OF QUERIES Executed longer than 1 Hour
+      SELECT
+         WMH.WAREHOUSE_NAME
+        ,WMH.START_TIME
+        ,SUM(COALESCE(DATEDIFF(seconds,WMH.START_TIME,WMH.END_TIME),0)) AS EXECUTION_TIME_SECONDS
+        ,COUNT(DISTINCT QUERY_ID) AS QUERY_COUNT
+      FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY     WMH
+      JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY             QH ON QH.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME
+                                                                          AND WMH.START_TIME &gt; QH.START_TIME
+                                                                          AND WMH.END_TIME &lt; QH.END_TIME
+      WHERE TO_DATE(WMH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      AND TO_DATE(QH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+      GROUP BY
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+
+) B ON B.WAREHOUSE_NAME = WMH.WAREHOUSE_NAME AND B.START_TIME = WMH.START_TIME
+
+WHERE TO_DATE(WMH.START_TIME) &gt;= DATEADD(week,-1,CURRENT_TIMESTAMP())
+GROUP BY
+
+      WMH.WAREHOUSE_NAME
+      ,WMH.START_TIME
+      ,WMH.CREDITS_USED
+;
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<p class="image-container"><img alt="alt-text-here" src="img/d6efdf2399756c04.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

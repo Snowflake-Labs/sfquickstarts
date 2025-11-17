@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "zero_to_snowflake",
+  "duration": 90,
+  "title": "Zero to Snowflake",
+  "summary": "Zero to Snowflake",
+  "source": "zero_to_snowflake/zero_to_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured"
+  ],
+  "tags": [
+    "dataquality",
+    "datasecurity",
+    "gettingstarted",
+    "governance",
+    "horizon",
+    "masking",
+    "rbac",
+    "tastybytes",
+    "web",
+    "zerotosnowflake"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "zero_to_snowflake"
+}

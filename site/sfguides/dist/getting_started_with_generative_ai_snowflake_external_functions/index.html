@@ -1,0 +1,369 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Generative AI in Snowflake and Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_generative_ai_snowflake_external_functions"
+                  title="Getting Started with Generative AI in Snowflake and Streamlit"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>By completing this guide, you will be able to deploy different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Access and External Functions in Snowflake.</p>
+<p class="image-container"><img alt="Demo" src="img/a9c9e52a2957cc01.gif"></p>
+<p><strong>Implementation 1: Use External Access from Snowpark</strong></p>
+<p>In this implementation, we will use <a href="https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview" target="_blank">External Access</a> to securely connect to the OpenAI API from <a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark</a>, the set of libraries and runtimes in Snowflake that run non-SQL code, including Python, Java and Scala. External Access provides flexibility to reach public internet endpoints from the Snowpark sandbox without any additional infrastructure setup.</p>
+<p><strong>Implementation 2: Use AWS API Gateway</strong></p>
+<p>In this implementation, we will use AWS API Gateway as a proxy for calling OpenAI API from Snowflake and then create an external function in Snowflake that uses the AWS API Gateway to directly call and interact with OpenAI API.</p>
+<p><strong>Implementation 3: Use AWS Lambda</strong></p>
+<p>In this implementation, we will wrap the OpenAI API in a AWS Lambda function which can then be accessed via external function in Snowflake.</p>
+<p><strong>Differences and Similarities between AWS API Gateway and AWS Lambda implementations</strong></p>
+<p>Here are some key differences and similarities between the two implementations.</p>
+<ul>
+<li>Using the AWS API Gateway as a proxy (without a Lambda function) is the simplest and quickest way to call public APIs from Snowflake; not just OpenAI API as highlighted in this blog.</li>
+<li>The use of Lambda function enables the creation of an abstraction layer with the ability to embed custom logic/code. For example, you could wrap multiple APIs and use the same external function in Snowflake to call them based on a parameter passed into the Lambda function.</li>
+<li>In both cases, you can call the external function for use cases like generating SQL based on natural language, performing sentiment analysis on Tweets, or any other LLM-powered use case, directly from Snowflake. <strong>IMP NOTE</strong>: Depending on how you construct the prompts, your data could be leaving Snowflake and beyond its security and governance perimeter so please be mindful of that.</li>
+<li>The other thing to consider is <a href="https://aws.amazon.com/api-gateway/pricing/" target="_blank">Amazon API Gateway pricing</a> and <a href="https://aws.amazon.com/lambda/pricing/" target="_blank">AWS Lambda pricing</a>.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to use External Access to securely connect to the OpenAI API from Snowpark</li>
+<li>How to use AWS API Gateway as a proxy for calling OpenAI API from Snowflake</li>
+<li>How to wrap OpenAI API in a AWS Lambda function which can be accessed via external function in Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account - <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Sign-in or create a free trial account</a></li>
+<li>A OpenAI account - <a href="https://openai.com/" target="_blank">Sign-in or create an account</a><ul>
+<li><a href="https://platform.openai.com/account/api-keys" target="_blank">OpenAI API Key</a></li>
+</ul>
+</li>
+<li>AWS Account</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use External Access" duration="10">
+        <p>In this implementation, we will use External Access to securely connect to the OpenAI API from Snowpark Python.</p>
+<h2 is-upgraded>Step 1</h2>
+<p>Create a <a href="https://docs.snowflake.com/en/sql-reference/sql/create-secret" target="_blank">Secret</a> object in Snowflake to securely store your OpenAI API key.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE SECRET dash_open_ai_api
+ TYPE = GENERIC_STRING
+ SECRET_STRING = &#39;YOUR_OPENAI_API_KEY&#39;;
+</code></pre>
+<h2 is-upgraded>Step 2</h2>
+<p>Create a <a href="https://docs.snowflake.com/en/sql-reference/sql/create-network-rule" target="_blank">Network Rule</a> object in Snowflake.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE NETWORK RULE dash_apis_network_rule
+ MODE = EGRESS
+ TYPE = HOST_PORT
+ VALUE_LIST = (&#39;api.openai.com&#39;);
+</code></pre>
+<h2 is-upgraded>Step 3</h2>
+<p>Create a <a href="https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration" target="_blank">External Access Integration</a> object in Snowflake.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dash_external_access_int
+ ALLOWED_NETWORK_RULES = (dash_apis_network_rule)
+ ALLOWED_AUTHENTICATION_SECRETS = (dash_open_ai_api)
+ ENABLED = true;
+</code></pre>
+<h2 is-upgraded>Step 4</h2>
+<p>Create Snowpark Python function in Snowflake</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FUNCTION CHATGPT_4(query varchar)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.9
+HANDLER = &#39;complete_me&#39;
+EXTERNAL_ACCESS_INTEGRATIONS = (dash_external_access_int)
+SECRETS = (&#39;openai_key&#39; = dash_open_ai_api)
+PACKAGES = (&#39;openai&#39;)
+AS
+$$
+import _snowflake
+import openai
+def complete_me(QUERY):
+    openai.api_key = _snowflake.get_generic_secret_string(&#39;openai_key&#39;)
+    messages = [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: QUERY}]
+    model=&#34;gpt-4&#34;
+    response = openai.ChatCompletion.create(model=model,messages=messages,temperature=0,)    
+    return response.choices[0].message[&#34;content&#34;]
+$$;
+</code></pre>
+<h2 is-upgraded><strong>Call Function in Snowflake</strong></h2>
+<p>Assuming you have completed all the prerequites, calling the function is as simple as follow:</p>
+<h3 is-upgraded><strong>Example 1</strong></h3>
+<pre><code language="language-sql" class="language-sql">SELECT CHATGPT_4(&#39;Describe Snowflake external access to a non-technical user&#39;) as chatgpt_4_response;
+</code></pre>
+<p><strong><em>Sample response: </em></strong></p>
+<p><em>&#34;Snowflake external access is like a secure door that allows specific, approved outside sources to access and interact with your Snowflake data. This could be other software applications or services that need to use the data stored in Snowflake for various tasks. This access is controlled by strict security measures to ensure only authorized users or systems can access the data. It&#39;s similar to how you might use a key or passcode to unlock your front door, allowing only trusted individuals to enter your home.&#34;</em></p>
+<h3 is-upgraded><strong>Example 2</strong></h3>
+<pre><code language="language-sql" class="language-sql">SELECT CHATGPT_4(&#39;What do you think of the Data Cloud World Tour&#39;) as chatgpt_4_response;
+</code></pre>
+<p><strong><em>Sample response: </em></strong></p>
+<p><em>As an artificial intelligence, I don&#39;t have personal opinions. However, I can tell you that the Data Cloud World Tour is generally well-regarded for providing valuable insights into the latest trends and best practices in data management, analytics, and cloud technology. It offers opportunities for networking and learning from industry experts.&#34;</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use AWS API Gateway" duration="20">
+        <h2 is-upgraded>Step 1</h2>
+<p>Download <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/openai_aws_api_gateway/AWS_API_Gateway_CFT.yml" target="_blank">CloudFormation Template (CFT)</a>.</p>
+<h2 is-upgraded>Step 2</h2>
+<p>In the YAML file, search for <strong>openAIAPIKey</strong> in the template and replace &#34;&lt;Your_OPENAI_API_KEY&gt;&#34; with your OpenAI API Key.</p>
+<h2 is-upgraded>Step 3</h2>
+<p>In your AWS Management Console, <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html" target="_blank">create a CloudFormation stack</a> using the CFT you downloaded and updated in steps 1 and 2.</p>
+<h2 is-upgraded>Step 4</h2>
+<p>Once the CloudFormation stack has been successfully created:</p>
+<ul>
+<li>Create <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration" target="_blank">API Integration</a> object in Snowflake</li>
+<li>Set up a <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration-proxy-link" target="_blank">trust relationship</a> between Snowflake and IAM (Identity and Access Management) role <strong>openAIAPIGatewayRole</strong> created using the CFT.</li>
+</ul>
+<p>For reference purposes, here&#39;s what the API Integration SQL should look like:</p>
+<pre><code language="language-sql" class="language-sql">CREATE API INTEGRATION AWS_OPENAI_INTEGRATION
+API_PROVIDER = &#39;AWS_API_GATEWAY&#39;
+API_AWS_ROLE_ARN = &#39;arn:aws:iam::xxxxxxxxxx:role/openAIAPIGatewayRole&#39;
+API_ALLOWED_PREFIXES = (&#39;https://xxxxxxxxxx.execute-api.us-west-1.amazonaws.com/main/v1/completions&#39;)
+ENABLED = true;
+</code></pre>
+<p>And here&#39;s what the Policy Document for setting up trust relationship should look like:</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+                &#34;AWS&#34;: &#34;arn:aws:sts::xxxxxxxxxx:assumed-role/openAIAPIGatewayRole/snowflake&#34;
+            },
+            &#34;Action&#34;: &#34;execute-api:Invoke&#34;,
+            &#34;Resource&#34;: &#34;arn:aws:execute-api:us-west-1:xxxxxxxxxx:1dhzbxau2m/*&#34;
+        }
+    ]
+}
+</code></pre>
+<h2 is-upgraded>Step 5</h2>
+<p>Create <a href="https://docs.snowflake.com/en/sql-reference/external-functions-translators" target="_blank">request and response translators</a> in Snowsight for the OpenAI API as shown below.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FUNCTION OPENAI_COMPLETIONS_REQUEST_TRANSLATOR(&#34;EVENT&#34; OBJECT)
+RETURNS OBJECT
+LANGUAGE JAVASCRIPT
+AS &#39;
+return {&#34;body&#34;: {
+&#34;model&#34;: &#34;text-davinci-003&#34;,
+&#34;prompt&#34;: EVENT.body.data[0][1],
+&#34;temperature&#34;: 0,
+&#34;max_tokens&#34;: 100,
+&#34;top_p&#34;: 1,
+&#34;frequency_penalty&#34;: 0.0,
+&#34;presence_penalty&#34;: 0.0
+}
+};&#39;;
+</code></pre>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FUNCTION OPENAI_COMPLETIONS_RESPONSE_TRANSLATOR(&#34;EVENT&#34; OBJECT)
+RETURNS OBJECT
+LANGUAGE JAVASCRIPT
+AS &#39;
+let array_of_rows_to_return = [[0, EVENT.body]];
+return {&#34;body&#34;: {&#34;data&#34;: array_of_rows_to_return}};
+&#39;;
+</code></pre>
+<p>Learn more about <a href="https://platform.openai.com/docs/api-reference/completions" target="_blank">OpenAI&#39;s Completions API</a>.</p>
+<h2 is-upgraded>Step 6</h2>
+<p>The final step is to create the external function using the API integration and request/response translator objects created in previous steps.</p>
+<p>For your reference, here&#39;s what the SQL should look like for creating the external function:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE EXTERNAL FUNCTION OPENAI_EXT_FUNC(&#34;QUESTION&#34; VARCHAR(16777216))
+RETURNS VARIANT
+API_INTEGRATION = &#34;AWS_OPENAI_INTEGRATION&#34;
+MAX_BATCH_ROWS = 100
+REQUEST_TRANSLATOR = OPENAI_COMPLETIONS_REQUEST_TRANSLATOR
+RESPONSE_TRANSLATOR = OPENAI_COMPLETIONS_RESPONSE_TRANSLATOR
+AS &#39;https://xxxxxxxxxx.execute-api.us-west-1.amazonaws.com/main/v1/completions&#39;;
+</code></pre>
+<aside class="special"><p> IMPORTANT: Depending on your current user role in Snowflake, you may need to grant usage of this function to the role like so GRANT USAGE ON FUNCTION OPENAI_EXT_FUNC(VARCHAR) TO &lt;ROLE_NAME&gt;;</p>
+</aside>
+<h2 is-upgraded><strong>Call External Function in Snowflake</strong></h2>
+<p>Assuming everything has gone well so far, calling the external function to invoke OpenAI API via API Gateway is as simple as follows:</p>
+<h3 is-upgraded><strong>Example 1</strong></h3>
+<pre><code language="language-sql" class="language-sql">select OPENAI_EXT_FUNC(&#39;Classify this sentiment: OpenAI is Awesome!&#39;)::VARIANT:choices[0]:text as response;
+</code></pre>
+<p><strong><em>Sample response: </em></strong></p>
+<p><em>&#34;Positive&#34;</em></p>
+<h3 is-upgraded><strong>Example 2</strong></h3>
+<pre><code language="language-sql" class="language-sql">select OPENAI_EXT_FUNC(&#39;Create a SQL statement to find all users who live in California and have over 1000 credits&#39;)::VARIANT:choices[0]:text as response;
+</code></pre>
+<p><strong><em>Sample response: </em></strong></p>
+<p><em>&#34;SELECT * FROM users WHERE state = ‘California&#39; AND credits &gt; 1000;&#34;</em></p>
+<h3 is-upgraded><strong>Example 3</strong></h3>
+<pre><code language="language-sql" class="language-sql">select OPENAI_EXT_FUNC(&#39;### Snowflake SQL tables, with their properties:### CAMPAIGN_SPEND table CAMPAIGN VARCHAR(60),CHANNEL VARCHAR(60),DATE DATE,TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0) ### A query to the data so we can see total cost per year/month per channel&#39;)::VARIANT:choices[0]:text as response;
+</code></pre>
+<p><strong><em>Sample response: </em></strong></p>
+<p><em>&#34;SELECT YEAR(DATE) AS YEAR, MONTH(DATE) AS MONTH, CHANNEL, SUM(TOTAL_COST) AS TOTAL_COST FROM CAMPAIGN_SPEND GROUP BY YEAR(DATE), MONTH(DATE),CHANNEL ORDER BY YEAR, MONTH, CHANNEL;&#34;</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use AWS Lambda" duration="20">
+        <p>For this implementation, you can leverage some of the existing objects you may have already created in the first implementation (AWS API Gateway), but assuming you want to keep the two implementations and environments separate, here are the steps that will get you up and running.</p>
+<p>First I&#39;d recommend that you set up the environment to create and test a simple external function using Lambda on AWS. For that, follow these very detailed instructions.</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-planning.html" target="_blank">Planning an External Function for AWS</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-ui" target="_blank">Creating an External Function for AWS Using the AWS Management Console</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-call.html" target="_blank">Calling an External Function for AWS</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-troubleshooting.html" target="_blank">Troubleshooting External Functions for AWS</a></li>
+</ul>
+<p>After you have successfully created and tested your external function with Lambda on AWS as per the instructions outlined above, follow steps below to wrap OpenAI API in your AWS Lambda function.</p>
+<aside class="warning"><p> NOTE: This implementation uses the latest <strong>gpt4</strong> model along with the new <a href="https://platform.openai.com/docs/guides/gpt/chat-completions-api" target="_blank">Chat Completions API</a>.</p>
+</aside>
+<h2 is-upgraded>Step 1</h2>
+<p>Clone <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/tree/main" target="_blank">GitHub repo</a>.</p>
+<h2 is-upgraded>Step 2</h2>
+<ul>
+<li>On your local machine where you have cloned the repo, browse to the folder <strong>openai_llm_lambda_function_wrapper</strong>. This folder contains OpenAI Python Library installed via pip and the custom Lambda function code that wraps OpenAI API.</li>
+<li>Then create a .zip of the contents of <strong>openai_llm_lambda_function_wrapper</strong> folder on your local machine.</li>
+</ul>
+<aside class="special"><p> IMPORTANT: Make sure you create the .zip of the contents and not at the root level.</p>
+</aside>
+<h2 is-upgraded>Step 3</h2>
+<p>Browse to your Lambda Function in AWS Management Console and upload the .zip file as shown below.</p>
+<p class="image-container"><img alt="Img1" src="img/7af564906c65a52d.png"></p>
+<h2 is-upgraded>Step 4</h2>
+<p>Click on <strong>Configuration</strong> &gt; <strong>Environment variables</strong> and add a new <strong>Key</strong> called <strong><em>open_ai_key</em></strong> and add your OpenAI API Key as <strong>Value</strong> as shown below.</p>
+<p class="image-container"><img alt="Img1" src="img/32b613bcbe7619fe.png"></p>
+<p>This <strong><em>open_ai_key</em></strong> environment variable is referenced in the Lambda function as shown below.</p>
+<p class="image-container"><img alt="Img1" src="img/7017d9276b9f2c0c.png"></p>
+<h2 is-upgraded><strong>Call External Function in Snowflake</strong></h2>
+<p>Let&#39;s first create a sample table and insert some example prompts.</p>
+<pre><code language="language-sql" class="language-sql">CREATE or REPLACE TABLE llm_prompts (
+prompt variant
+);
+
+INSERT INTO llm_prompts
+select parse_json(column1) as prompt
+from values
+(&#39;{&#34;prompt&#34;:&#34;Create a SQL statement to find all users who live in California and have over 1000 credits&#34;}&#39;),
+(&#39;{&#34;prompt&#34;: &#34;### Snowflake SQL tables, with their properties:### CAMPAIGN_SPEND table CAMPAIGN VARCHAR(60),CHANNEL VARCHAR(60),DATE DATE,TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0) ### A query to the data so we can see total cost per year/month per channel&#34;}&#39;);
+</code></pre>
+<aside class="special"><p> IMPORTANT: In the following SQL statement examples, replace <strong>llm_external_function</strong> with the name of the function that you created in <a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-ext-function" target="_blank">Create the External Function for AWS in Snowflake</a> step.</p>
+</aside>
+<h3 is-upgraded><strong>Example 1</strong></h3>
+<p>Execute the following SQL statement to call the external function for each prompt in the above table.</p>
+<pre><code language="language-sql" class="language-sql">SELECT prompt,llm_external_function(prompt:prompt) as llm_query 
+from llm_prompts;
+</code></pre>
+<p>If all goes well, you should see output similar to the one shown below:</p>
+<p class="image-container"><img alt="Img1" src="img/a5bf6fa1b4ec79e8.png"></p>
+<h3 is-upgraded><strong>Example 2</strong></h3>
+<p>Now let&#39;s assume you have a Snowflake table named CAMPAIGN_SPEND with the following columns:</p>
+<pre><code language="language-sql" class="language-sql">CAMPAIGN VARCHAR(60)
+CHANNEL VARCHAR(60)
+DATE DATE
+TOTAL_CLICKS NUMBER(38,0)
+TOTAL_COST NUMBER(38,0)
+ADS_SERVED NUMBER(38,0)
+</code></pre>
+<p>In that case, you can provide a verbose prompt like so:</p>
+<pre><code language="language-\"###" class="language-\"###">### CAMPAIGN_SPEND table CAMPAIGN VARCHAR(60),CHANNEL VARCHAR(60),DATE DATE,
+TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0) 
+### A query to the data so we can see total cost per year/month per channel&#34;
+</code></pre>
+<p><strong><em>Sample response: </em></strong></p>
+<p><em>&#34;Sure, here&#39;s a simple query that will provide total spend per year, per month, and per channel: SELECT CHANNEL, EXTRACT (YEAR FROM DATE) as YEAR, EXTRACT (MONTH FROM DATE) as MONTH, SUM(TOTAL_COST) as TOTAL_SPEND FROM CAMPAIGN_SPEND GROUP BY CHANNEL, YEAR, MONTH ORDER BY YEAR, MONTH, CHANNEL; This query performs a simple aggregation operation on the CAMPAIGN_SPEND table, grouping the data by the channel and the year and month of the DATE attribute. The SUM function computes the total cost for each such group, and ORDER BY clause orders the output by Year, Month, and Channel. Make sure to replace CAMPAIGN_SPEND with the actual table name you are using.&#34;</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit Application" duration="5">
+        <p>If you have Streamlit in Snowflake (currently in Preview) enabled, then follow these steps to create and run the Streamlit application in Snowsight.</p>
+<p><strong>Step 1.</strong> Click on <strong>Streamlit</strong> on the left navigation menu</p>
+<p><strong>Step 2.</strong> Click on <strong>+ Streamlit App</strong> on the top right</p>
+<p><strong>Step 3.</strong> Enter <strong>App name</strong></p>
+<p><strong>Step 4.</strong> Select <strong>Warehouse</strong> (X-Small) and <strong>App location</strong> (Database and Schema) where you&#39;d like to create the Streamlit applicaton</p>
+<p><strong>Step 5.</strong> Click on <strong>Create</strong></p>
+<ul>
+<li>At this point, you will be provided code for an example Streamlit application</li>
+</ul>
+<p><strong>Step 6.</strong> Replace sample application code displayed in the code editor on the left with the code provided in <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-generative-ai-snowflake-external-functions-streamlit/blob/main/streamlit_sis.py" target="_blank">streamlit.py</a></p>
+<p><strong>Step 7.</strong> Click on <strong>Run</strong> on the top right</p>
+<p><strong>Step 8.</strong> Select one of the options from the sidebar <strong>Sentiment Analysis</strong>, <strong>Share Knowledge</strong>, or <strong>Text-to-SQL</strong> and enter your prompt on the right to get a response.</p>
+<p>If all goes well, you should see the app in Snowsight as shown below with sample prompts and responses.</p>
+<p class="image-container"><img alt="Img1" src="img/3189d840b0f92df6.png"></p>
+<p class="image-container"><img alt="Img1" src="img/ca9e6fff7da0b8b2.png"></p>
+<p class="image-container"><img alt="Img1" src="img/93ac78123f5e1d71.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations! You&#39;ve successfully deployed different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Access and External Functions in Snowflake.</p>
+<p>We would love your feedback on this QuickStart Guide! Please submit your feedback using this <a href="https://docs.google.com/forms/d/e/1FAIpQLScZHo42elucqHYG4SVobJ6qMbpxhbM8GWDK3QgOC-QNcb2XMA/viewform" target="_blank">Feedback Form</a>.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use External Access to securely connect to the OpenAI API from Snowpark</li>
+<li>How to use AWS API Gateway as a proxy for calling OpenAI API from Snowflake</li>
+<li>How to wrap OpenAI API in a AWS Lambda function which can be accessed via external function in Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://developers.snowflake.com/demos/generative-ai-llm-snowflake/" target="_blank">Demo on Snowflake Demo Hub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview" target="_blank">External Access in Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/external-functions" target="_blank">External Functions in Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-api-integration" target="_blank">API Integration in Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/external-functions-translators" target="_blank">Request and Response Translators in Snowflake</a></li>
+<li><a href="https://platform.openai.com/docs/api-reference/completions" target="_blank">OpenAI&#39;s Completions API</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

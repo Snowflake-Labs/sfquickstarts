@@ -1,0 +1,276 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization"
+                  title="Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img src="img/c1127b54bbdca30e.png"></p>
+<p>In the gaming industry, Player data is often fragmented across multiple sources, including event streams, purchase histories, and platform-specific behaviors. This disjointed data makes it challenging for gaming companies and key personas such as marketing and product to gain a holistic understanding of individual players and overall game performance. In this demo we will create a &#34;Player 360&#34; dashboard, which integrates and visualizes diverse player data sources into a single, dynamic &#34;Player Card.&#34; This card will offer insights into player activity &amp; interactions (behavior, buying habits, etc), and this preliminary use case will potentially show the highest risk for churn players. Similarly, we will create a &#34;Game 360&#34; dashboard which integrates games-level insights across the playerbase, focusing on key KPIs, metrics, and overall user behavior.</p>
+<p>By aggregating these data streams in a unified system and leveraging Snowflake features such as Snowpark ML, Snowflake Notebooks, and Streamlit in Snowflake, companies can more effectively understand player/customer journeys, tailor in-game experiences, and optimize monetization strategies.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to work with Snowflake features such as <a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-intro" target="_blank">Dynamic Tables</a>  that integrate well with streaming data</li>
+<li>How to use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> and <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python</a> for data engineering and ML</li>
+<li>How to train a model using <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling" target="_blank">Snowpark ML Modeling</a></li>
+<li>How to further enhance ML capabilities with Snowflake Notebooks using <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Container Runtime</a> (public preview).</li>
+<li>How to log and reference models using <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a></li>
+<li>How to use <a href="https://docs.streamlit.io/" target="_blank">Streamlit</a> in Snowflake (SiS) to build a frontend client-facing application</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A non-trial Snowflake <a href="https://signup.snowflake.com/" target="_blank">Snowflake</a>  account in a supported AWS commercial region.</li>
+<li>A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the EXTERNAL ACCESS INTEGRATION).</li>
+<li>Git installed.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A fullstack data analytics platform for a fictional gaming company <strong>Snowforge Interactive</strong> and their flagship game <strong>Frosthammer</strong></li>
+<li>End-to-End ML Pipeline that incorporates the latest ML features such as Snowflake Model Registry and Snowflake Containerized Notebooks</li>
+</ul>
+<p><strong>Architecture Diagram:</strong></p>
+<p class="image-container"><img src="img/cb8d03b7d1ca8a9c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p><strong>Step 1</strong>. - Copy the the setup script and run it in Snowsight SQL Worksheet. This is the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/setup.sql" target="_blank">setup script</a>.</p>
+<p><strong>Step 2</strong>. - Copy the the code below and run it in Snowsight SQL Worksheet. This is the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/raw_build.sql" target="_blank">build script</a> that populates the database with the RAW data.</p>
+<p><strong>Step 3</strong>. - Copy the the code in the build script and run it in Snowsight SQL Worksheet. This is the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/analytic_build.sql" target="_blank">build script</a> that populates the analytics schema.</p>
+<p><strong>Step 4</strong> - Upload Notebook and Streamlit files</p>
+<ul>
+<li><strong>Upload required </strong><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/tree/main/notebooks" target="_blank"><strong>notebook</strong></a><strong> files</strong> to the correct stages within the <code>PLAYER_360.ANALYTIC</code> schema Click ‘+ Files&#39; in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. <strong>Make sure your the files match the following</strong>:<ul>
+<li><em>Notebook 1:</em> Upload <code>0_start_here.ipynb</code> notebook file and <code>environment.yml</code> file  to the <code>@PLAYER_360.ANALYTIC.notebook_static_churn_prediction</code> stage <img src="img/689a34f477702bf9.png"></li>
+<li><em>Notebook 2:</em> Upload only the <code>1_Rolling_Churn_Prediction_Model.ipynb</code> notebook file (excluding environment.yml) to <code>@PLAYER_360.ANALYTIC.notebook_rolling_churn_prediction</code> stage <img src="img/7fceafe25a55c399.png"><br><br></li>
+</ul>
+</li>
+<li><strong>Upload required  </strong><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/tree/main/streamlit" target="_blank"><strong>streamlit</strong></a><strong> files</strong> to the correct stages within the <code>PLAYER_360.APP</code> schema Click ‘+ Files&#39; in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. <strong>Make sure your the files match the following</strong>:<ul>
+<li><em>Streamlit Files:</em> Upload the following files (<code>PLAYER_360.py, GAME_360.py, environment.yml</code>) in streamlit folder to the <code>@PLAYER_360.APP.streamlit_player36</code> stage. Note that the images subfolder does not need to be uploaded <img src="img/17ee97530db7c2f5.png"><br><br></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Static Churn Prediction Notebook" duration="10">
+        <p><strong>Step 1:</strong> Run following <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/0_notebook_setup.sql" target="_blank">0_notebook_setup.sql</a> script as a sql worksheet in snowsight</p>
+<pre><code language="language-sql" class="language-sql">use role SYSADMIN;
+CREATE OR REPLACE NOTEBOOK PLAYER_360.ANALYTIC.PLAYER_360_static_churn_prediction
+FROM &#39;@PLAYER_360.ANALYTIC.notebook_static_churn_prediction&#39;
+MAIN_FILE = &#39;0_start_here.ipynb&#39;
+QUERY_WAREHOUSE = &#39;PLAYER_360_DATA_APP_WH&#39;;
+</code></pre>
+<p><strong>Step 2:</strong> The notebook has now been created in your Snowflake account! All packages and Python setup has already been completed.</p>
+<p>To access it, navigate to Snowsight, select the <code>SYSADMIN</code> role, and click the Project, click the Notebooks tab. Open <strong>PLAYER_360_static_churn_prediction</strong> notebook and run each of the cells.</p>
+<p class="image-container"><img src="img/f98f5ddeccfd30ae.png"></p>
+<p>Within this notebook, you&#39;ll visualize player segments and analyze key churn features, perform feature engineering using the Snowflake Preprocessing Pipelines, and using the model registry to manage and log your ML Model.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Rolling Churn Prediction Notebook" duration="20">
+        <p><strong>Step 1:</strong> Run the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/1_notebook_setup.sql" target="_blank">1_notebook_setup.sql</a> script as a sql worksheet in snowsight. This sets up compute pools and external access integration and programmatically creates Snowflake Container Notebook for notebook 2.</p>
+<pre><code language="language-sql" class="language-sql">ALTER SESSION SET query_tag = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;Player_360&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;sql&#34;}}&#39;;
+USE ROLE accountadmin;
+USE DATABASE PLAYER_360;
+USE SCHEMA ANALYTIC;
+
+-- Create and grant access to compute pools
+CREATE COMPUTE POOL IF NOT EXISTS PLAYER_360_cpu_xs_5_nodes
+  MIN_NODES = 1
+  MAX_NODES = 5
+  INSTANCE_FAMILY = CPU_X64_XS;
+
+CREATE COMPUTE POOL IF NOT EXISTS PLAYER_360_gpu_s_5_nodes
+  MIN_NODES = 1
+  MAX_NODES = 5
+  INSTANCE_FAMILY = GPU_NV_S;
+
+GRANT USAGE ON COMPUTE POOL PLAYER_360_cpu_xs_5_nodes TO ROLE SYSADMIN;
+GRANT USAGE ON COMPUTE POOL PLAYER_360_gpu_s_5_nodes TO ROLE SYSADMIN;
+
+-- Create and grant access to EAIs
+-- Substep #1: create network rules (these are schema-level objects; end users do not need direct access to the network rules)
+
+create or replace network rule PLAYER_360_allow_all_rule
+  TYPE = &#39;HOST_PORT&#39;
+  MODE= &#39;EGRESS&#39;
+  VALUE_LIST = (&#39;0.0.0.0:443&#39;,&#39;0.0.0.0:80&#39;);
+
+-- Substep #2: create external access integration (these are account-level objects; end users need access to this to access the public internet with endpoints defined in network rules)
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION PLAYER_360_allow_all_integration
+  ALLOWED_NETWORK_RULES = (PLAYER_360_allow_all_rule)
+  ENABLED = true;
+
+CREATE OR REPLACE NETWORK RULE PLAYER_360_pypi_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = (&#39;pypi.org&#39;, &#39;pypi.python.org&#39;, &#39;pythonhosted.org&#39;,  &#39;files.pythonhosted.org&#39;);
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION PLAYER_360_pypi_access_integration
+  ALLOWED_NETWORK_RULES = (PLAYER_360_pypi_network_rule)
+  ENABLED = true;
+
+GRANT ALL PRIVILEGES ON INTEGRATION PLAYER_360_allow_all_integration TO ROLE SYSADMIN;
+GRANT ALL PRIVILEGES ON INTEGRATION PLAYER_360_pypi_access_integration TO ROLE SYSADMIN;
+
+
+USE ROLE SYSADMIN;
+USE WAREHOUSE PLAYER_360_DATA_APP_WH;
+USE DATABASE PLAYER_360;
+USE SCHEMA ANALYTIC;
+
+CREATE OR REPLACE NOTEBOOK PLAYER_360.ANALYTIC.PLAYER_360_rolling_churn_prediction
+FROM &#39;@PLAYER_360.ANALYTIC.notebook_rolling_churn_prediction&#39;
+MAIN_FILE = &#39;1_Rolling_Churn_Prediction_Model.ipynb&#39;
+QUERY_WAREHOUSE = &#39;PLAYER_360_DATA_APP_WH&#39;
+COMPUTE_POOL=&#39;PLAYER_360_gpu_s_5_nodes&#39;
+RUNTIME_NAME=&#39;SYSTEM$GPU_RUNTIME&#39;;
+ALTER NOTEBOOK PLAYER_360_rolling_churn_prediction ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK PLAYER_360_rolling_churn_prediction set external_access_integrations = (&#34;PLAYER_360_pypi_access_integration&#34;, 
+                                                                                                            &#34;PLAYER_360_allow_all_integration&#34;);
+</code></pre>
+<p><strong>Step 2:</strong> The notebook has now been created in your Snowflake account! All the setup has been completed including for the compute pools, External Acces Integration, and container runtimes!</p>
+<p>To access it, navigate to Snowsight, select the <code>SYSADMIN</code> role, and click the Project, click the Notebooks tab. Open <strong>PLAYER_360_rolling_churn_prediction</strong> notebook and run each of the cells.</p>
+<p class="image-container"><img src="img/df3444f9ba8a7a04.png"></p>
+<p>This notebook creates a ML Model that can handle inference on incoming near-real time streaming data, representing the use case of predicting churn based off a customer&#39;s recent behavior as opposed to overall behavior. Within this notebook, you&#39;ll explore how to use Snowflake Notebooks using Container Runtime, perform even more data and feature engineering, and utilize the Model Registry.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit" duration="20">
+        <p><strong>Step 1:</strong> Run following streamlit_setup.sql script</p>
+<pre><code language="language-sql" class="language-sql">use role SYSADMIN;
+CREATE OR REPLACE STREAMLIT PLAYER_360.APP.PLAYER_360_streamlit
+ROOT_LOCATION = &#39;@PLAYER_360.APP.streamlit_player360&#39;
+MAIN_FILE = &#39;PLAYER_360.py&#39;
+QUERY_WAREHOUSE = &#39;PLAYER_360_DATA_APP_WH&#39;
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;,&#34;name&#34;:&#34;player_360&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0},&#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;streamlit&#34;}}&#39;;
+</code></pre>
+<p><strong>Step 2:</strong> The notebook has now been created in your Snowflake account! All the setup has been completed for the package imports and the streamlit is ready to go! To access it, navigate to Snowsight, select the <code>SYSADMIN</code> role, and click the Project, click the Streamlit tab. Open <strong>PLAYER_360_streamlit</strong> app and explore the different features!</p>
+<p><strong>2a)</strong> Explore Player 360 page <img src="img/493134aaef99b55.png"></p>
+<p><em>Recommended Actions:</em></p>
+<ul>
+<li>Navigate to Player Card for Player 1001 to analyze user behavior.</li>
+<li>Explore sections: <code>Points, Sessions, Purchases</code></li>
+<li>Filter by Date Range to assess behavior over time for Player 1001.</li>
+<li>Go to Churn likelihood to explore the SHAP model for predicted Churn within the next 7 days based on recent behavior for Player 1001.</li>
+<li>Compare Player 11672 against Player 1005 in terms of: <ul>
+<li>User behavior before churn.</li>
+<li>Predicted likelihood of churn.</li>
+<li>Model explanations for churn prediction.</li>
+</ul>
+</li>
+</ul>
+<p><strong>2b)</strong> Explore Game 360 page <img src="img/5961e0c45901a926.png"></p>
+<p><em>Recommended Actions:</em></p>
+<ul>
+<li>Review KPIs for the overall game performance dataset.</li>
+<li>In <code>Static Demographics</code> section, perform Exploratory Data Analysis (EDA) for key demographics (Location, Gender, Age, Rank) and display population segment breakdown.<ul>
+<li>Analyze churn rates across different demographic segments.</li>
+<li>Assess correlations between different variables using the Correlation Matrix.</li>
+<li>Investigate the distribution of churned vs non-churned users based on average metrics, noting that churned users are more centralized.</li>
+<li>Identify that churned users tend to spend a significant amount (make many purchases) before churning.</li>
+</ul>
+</li>
+<li>In <code>Static Game Metrics</code>, zoom into specific time periods for deeper analysis of key KPIs.<ul>
+<li>Filter by time period (e.g., January 1, 2023) to investigate dips in all metrics and recognize this as an inflection point for cohort LTV (Lifetime Value).</li>
+</ul>
+</li>
+<li>In the sidebar, apply filters to isolate player segment behavior:<ul>
+<li>Poland</li>
+<li>Casual Player Type</li>
+</ul>
+</li>
+<li>Filter by time range to analyze the metrics of this player segment at various intervals before they churned.</li>
+<li>Transition to <code>Dynamic Demographics</code> and compare the correlation matrix, noting significant differences (e.g., red flags in correlations).</li>
+<li>In <code>Dynamic Churnlikelihood</code> Extract the demographic features most relevant for predicting churn.</li>
+<li>In the <code>Filtered Dataframe</code> Sort the data and export the filtered dataset.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>This demo has showcased how Snowflake enables the creation of unified &#34;Player 360&#34; and &#34;Game 360&#34; dashboards by aggregating diverse player and game data streams into a single, actionable view. Through the use of Snowpark ML, Snowflake Notebooks, and Streamlit, we&#39;ve demonstrated how companies can leverage these integrated tools to gain deeper insights into player behavior, churn risk, and overall game performance. By consolidating data sources and applying advanced analytics, gaming companies can optimize player engagement and refine monetization strategies, all within a governed and scalable environment.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create a fullstack data analytics platform for a fictional gaming company <strong>Snowforge Interactive</strong> and their flagship game <strong>Frosthammer</strong></li>
+<li>How to build a End-to-End ML Pipeline that incorporates the latest ML features such as Snowflake Model Registry and Snowflake Containerized Notebooks</li>
+<li>How to use Streamlit in Snowflake to construct a front-facing client application</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling" target="_blank">Snowpark ML Modeling</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Container Runtime</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Snowflake Model Registry</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-intro" target="_blank">Dynamic Tables</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

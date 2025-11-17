@@ -1,0 +1,170 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building ML Models In Minutes With Hex And Snowflake ML Functions</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="building_ml_models_in_minutes_with_hex_and_snowflake_ml_functions"
+                  title="Building ML Models In Minutes With Hex And Snowflake ML Functions"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, we will be utilizing population data gathered by the US Census Bureau. This dataset will be used to forecast population growth of various countries. For the forecasting model we will use is the Snowflake ML Forecast function.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with basic Python and SQL</li>
+<li>Familiarity with data science notebooks</li>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the <code>ACCOUNTADMIN</code> role, which is required for this lab).</li>
+</ul>
+<p>Head over to the <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> sign-up page and register for a free account. Once you&#39;ve registered, you&#39;ll get an email that will bring you to Snowflake so that you can sign in.</p>
+<h3 is-upgraded>Connecting Snowflake with Hex</h3>
+<p>If you have an existing Hex account, login in to your account and continue to the <code>Getting Started With Hex</code> section.</p>
+<p>Otherwise, once you&#39;ve logged into your Snowflake account, simply navigate to the <code>Data Products</code> tab on the left and click <code>Partner connect</code>. In the search bar at the top, type in <code>Hex</code>, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, select the <code>Connect</code> button in the lower right corner. After this, you&#39;ll see a new screen confirming that your account has been created and from here you can click <code>Activate</code>.</p>
+<h3 is-upgraded>Creating a workspace</h3>
+<p>Once activated, you&#39;ll be brought over to Hex and will be prompted to create/name your new workspace. After you&#39;ve named your workspace, you&#39;ll be brought to the <a href="https://learn.hex.tech/docs/getting-started/intro-to-projects#projects-home" target="_blank">projects</a> page.</p>
+<p class="image-container"><img src="img/f8f4292e155d9c3b.png"></p>
+<h3 is-upgraded>Workflow roadblocks</h3>
+<p>The following issues may occur if you have an existing Hex account and you&#39;re not an Admin in that org.</p>
+<p><strong>Unauthorized error</strong></p>
+<p>If you have an existing Hex account that was created with a password and username, you may run into an &#34;Unauthorized&#34; error when activating your workspace in Partner Connect. If this is your experience, head over to <a href="https://hex.tech" target="_blank">hex.tech</a> and login with your password and username.</p>
+<p><strong>Plan upgrade</strong></p>
+<p>If you are an existing Hex user currently on a Community plan, you may encounter an issue that will prevent you from using Partner Connect. If you&#39;re unclear on what Hex plan you are on, feel free to reach out to <a href="mailto:support@hex.tech" target="_blank">support@hex.tech</a>. If you are the Admin of your organization, you can see your plan under Manage plan on the Settings page. To extend a trial, email <a href="mailto:support@hex.tech" target="_blank">support@hex.tech</a> with the subject &#34;VHOL trial extension.&#34;</p>
+<p><strong>Role privileges</strong></p>
+<p>If you do not have an Editor role or higher, you won&#39;t be able to create data connections in your workspace. To upgrade your role, contact your workspace Admin. You can find out who this is by navigating to Settings -&gt; Users &amp; groups within your Hex workspace.</p>
+<p><em>If you&#39;re still encountering issues, or encounter any issues other than the ones listed above, please contact our support team </em><a href="mailto:support@hex.tech" target="_blank"><em>support@hex.tech</em></a><em> with the subject &#34;VHOL&#34; for priority support.</em></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to perform model training using Snowflake ML functions</li>
+<li>How to handle model training for multi-series datasets</li>
+<li>How to call the model for inference</li>
+<li>How to create charts in Hex and finally a Hex App</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>In this quickstart, you will create a few machine learning models using Snowflake ML functions. In the end we will use our results and data exploration to create a final Hex app.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with Hex" duration="5">
+        <p>Now we can move back over to Hex and get started on our project. The first thing you&#39;ll need to do is transfer the Hex project into your new Hex org.</p>
+<p><a href="https://app.hex.tech/hex-public/hex/dbac0486-1d27-4a10-9db8-7eb73a7ce4e4/draft/logic?utm_source=quickstart" target="_blank"><paper-button class="colored" raised>Get Hex project</paper-button></a></p>
+<ul>
+<li>Select Get a copy.</li>
+<li>Select your new or existing Hex org.</li>
+</ul>
+<p>Now that you&#39;ve got your project, you will find yourself in the <a href="https://learn.hex.tech/docs/develop-logic/logic-view-overview" target="_blank">Logic view</a> of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you&#39;ll see a control panel that will allow you to do things like upload files, import data connections, or search your project. Before we dive into the code, we&#39;ll need to import our Snowflake connection to our project. You can follow along with the video, <a href="https://www.loom.com/share/d949de0c7c6e49f3b286af07d70cd96b?sid=99eeb02b-8b64-4c64-93c4-910110358c2b" target="_blank">Creating a Snowflake Database Connection and Transferring Data</a>, describing how to create/edit your Snowflake connection and write data into your Snowflake database from Hex (which will be described in the Hex project).</p>
+<p>We can import our Snowflake data connection by heading over to the <code>Data sources</code> tab represented by a database icon with a lightning bolt. At the bottom of this section, you&#39;ll see a portion that says available workspace connections and you should see one that says Snowflake if you created the Hex account via Partner Connect.</p>
+<p class="image-container"><img src="img/c50263f87d45efee.png"></p>
+<p>If you had an existing Hex org and did not create one via Partner Connect please follow <a href="https://learn.hex.tech/docs/connect-to-data/data-connections/data-connections-introduction" target="_blank">Hex documentation</a> and reference <a href="https://www.loom.com/share/d949de0c7c6e49f3b286af07d70cd96b?sid=99eeb02b-8b64-4c64-93c4-910110358c2b" target="_blank">Creating a Snowflake Database Connection and Transferring Data</a> as needed.</p>
+<h2 is-upgraded>Common Problems</h2>
+<p>If coming from Partner Connect or creating a new database connection, ensure that your database connection has both the Snowpark and Writeback toggle enabled. Navigate to the Settings window and select the desired Snowflake database connection.</p>
+<p class="image-container"><img src="img/29fd60000b1c6a7.png"></p>
+<p>Enable the Snowpark and Writeback toggles.</p>
+<p class="image-container"><img src="img/570ccb3932397808.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Hex Project" duration="45">
+        <p>The rest of the lab can entirely be followed step-by-step from the Hex project. Any subsequent steps and explanation will be found in the Hex project itself.</p>
+<p>Key sections of the Hex project include:</p>
+<ul>
+<li>Data Exploration</li>
+<li>Single Series Modeling</li>
+<li>Mutli-Series Modeling</li>
+<li>Hex App Creation</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sharing our results" duration="3">
+        <p>Now that we&#39;ve completed going through our project, we can share this project with others! To do this:</p>
+<ul>
+<li>Head over to the app builder</li>
+<li>A pre-built layout has been designed but feel free to customize and add any additional elements</li>
+<li>To customize add, remove, and arrange cells. Check out the <a href="https://learn.hex.tech/docs/build-apps/app-builder" target="_blank">Hex docs</a> for more info.</li>
+<li>Publish the app with the <a href="https://learn.hex.tech/docs/share-insights/apps/publish-and-share-apps" target="_blank">Publish button</a></li>
+<li>Lastly, hit the share button next to publish, and select <code>Publish to web</code>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations on making it to the end of this Lab! You&#39;ve successfully trained an forecast model to predict the country population using only SQL. At the end, you created a Hex app highlight your analysis that can be easily shared with others.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use the Snowflake ML Forecast Function</li>
+<li>How to handle multi-series datasets</li>
+<li>How to call the model to perform inference and recieve population growth projections</li>
+<li>How to chart those predictions and other useful information with Hex&#39;s native visual cells</li>
+<li>How to create and share a Hex app</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://app.hex.tech/hex-public/hex/dbac0486-1d27-4a10-9db8-7eb73a7ce4e4/draft/logic?utm_source=quickstart" target="_blank">Final Project</a></li>
+<li><a href="https://medium.com/snowflake/building-ml-models-in-minutes-with-hex-and-snowflake-cortex-434e94486365" target="_blank">Building ML Models In Minutes With Hex and Snowflake ML Functions</a></li>
+<li><a href="https://www.youtube.com/watch?v=Sj64VEyfwww" target="_blank">Machine Learning Made Easy With SNowflake ML Functions And Hex</a></li>
+<li><a href="https://docs.snowflake.com/en/guides-overview-ml-functions" target="_blank">Snowflake ML Functions Documentation</a></li>
+<li><a href="https://learn.hex.tech/" target="_blank">Hex Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Knowledge Extensions on Snowflake Marketplace</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="get-started-snowflake-cortex-knowledge-extensions"
+                  title="Getting Started with Cortex Knowledge Extensions on Snowflake Marketplace"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>In this Quickstart, you&#39;ll build a chatbot that allows you to chat with the data shared in a Snowflake Cortex Knowledge Extension.</p>
+<p>Snowflake Cortex Knowledge Extensions allow teams to integrate up-to-date, licensed third-party information, such as news, research, and specialized publications, directly into their AI systems. This integration respects publishers&#39; intellectual property while enabling access to relevant and current knowledge.</p>
+<p>We&#39;ll build the chatbot using a few key Snowflake features:</p>
+<ul>
+<li>Snowflake Marketplace</li>
+<li>Snowflake Cortex Knowledge Extensions</li>
+<li>Snowflake Cortex AI</li>
+<li>Streamlit in Snowflake</li>
+</ul>
+<p>Here&#39;s how we&#39;ll use each feature:</p>
+<p><strong>Snowflake Marketplace</strong></p>
+<p>We&#39;ll obtain the Cortex Knowledge Extension from Snowflake Marketplace and load it into a Snowflake account.</p>
+<p><strong>Snowflake Cortex Knowledge Extension</strong></p>
+<p>We&#39;ll load the Snowflake Cortex Knowledge Extension into our account after locating it in the Snowflake Marketplace. This extension will have the relevant data that can be used with our chatbot.</p>
+<p><strong>Snowflake Cortex AI</strong></p>
+<p>We&#39;ll use Snowflake Cortex AI&#39;s <strong>COMPLETE</strong> to generate and return responses in the chatbot. We&#39;ll use it in combination with a prompt we provide, and an LLM hosted natively in Snowflake.</p>
+<p><strong>Streamlit in Snowflake</strong></p>
+<p>We&#39;ll build the application&#39;s front-end using Streamlit in Snowflake.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Some basic familiarity with SQL</li>
+<li>Some basic familiarity with Retrieval Augmented Generation (&#34;RAG&#34;)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Using Snowflake Marketplace for agentic products, like Cortex Knowledge Extensions</li>
+<li>How to understand and use a Cortex Knowledge Extension</li>
+<li>How to use <strong>COMPLETE</strong> in Snowflake Cortex AI</li>
+<li>How to build an application using Streamlit in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free Snowflake trial account</li>
+<li>The companion GitHub repo that contains the code to complete this lab: <a href="https://github.com/Snowflake-Labs/sfguide-get-started-snowflake-cortex-knowledge-extensions/" target="_blank">sfguide-get-started-snowflake-cortex-knowledge-extensions</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A chatbot that uses a Cortex Knowledge Extension</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex Knowledge Extensions" duration="2">
+        <p>Cortex Knowledge Extensions (CKEs) allow publishers to bring their documents (e.g. news articles, market research reports, books, articles, etc.) to customers in their generative AI applications (e.g. chat interfaces, agentic platforms, etc.).</p>
+<p>CKEs are shared Cortex Search Services on the Snowflake Marketplace that integrate with Cortex generative AI applications following the <a href="https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html#0" target="_blank">retrieval augmented generation (RAG) pattern</a>.</p>
+<p>Here is how it works:</p>
+<ul>
+<li>A <strong>Provider</strong> uploads their text documents into a Table in the Provider account and indexes that data with a Cortex Search Service. This Cortex Search Service is then shared onto the Snowflake Marketplace and is known as a Cortex Knowledge Extension (CKE).</li>
+<li>A <strong>Consumer</strong> builds a generative AI application such as a chatbot using Cortex LLM functions or the Cortex Agent API with the Cortex Knowledge Extension, which all work together leveraging retrieval augmented generation (RAG).</li>
+</ul>
+<p class="image-container"><img alt="CKE Overview" src="img/13cd585bf55faeb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open a Snowflake Trial Account" duration="5">
+        <p>To complete this lab, you&#39;ll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:</p>
+<ol type="1">
+<li>Navigate to <a href="https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake" target="_blank">https://signup.snowflake.com/</a></li>
+<li>Start the account creation by completing the first page of the form on the page.</li>
+<li>On the next section of the form,  set the Snowflake edition to &#34;Enterprise (Most popular&#34;).</li>
+<li>Select &#34;AWS - Amazon Web Services&#34; as the cloud provider.</li>
+<li>Select &#34;US West (Oregon)&#34; as the region.</li>
+<li>Complete the rest of the form and click &#34;Get started&#34;.</li>
+</ol>
+<p>If you choose a different cloud provider, or select a different region within AWS, you will not be able to complete the Quickstart.</p>
+<p class="image-container"><img alt="trial" src="img/49d34d39ae54b676.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Chatbot Architecture" duration="2">
+        <p>In a Cortex Knowledge Extension, a provider securely shares chunked data, along with other important data attributes - like the source of the data, as an example - which can be used in RAG chatbots. Although a consumer can use the data in the extension, the data is fully secure and remains proprietary to the publisher.</p>
+<p>Here&#39;s how the chatbot will function:</p>
+<ul>
+<li>The chatbot will use Retrieval Augmented Generation (&#34;RAG&#34;) to generate and return responses in the app</li>
+<li>The chatbot will retrieve relevant knowledge from the chunked data in the Cortex Knowledge Extensions</li>
+<li>This retrieved knowledge will be used with Snowflake Cortex AI <strong>COMPLETE</strong>, where a prompt and an LLM will generate an intelligible, user-facing response, which will be returned within the app</li>
+</ul>
+<p>We&#39;re going to build a chatbot that allows you to ask questions of the official Snowflake documentation in natural language. This is possible because Snowflake has published an official Cortex Knowledge Extension that includes chunked data (technical documentation) which is usable in a RAG chatbot. The extension is available on Snowflake Marketplace, so let&#39;s start by loading it into our account.</p>
+<p>Let&#39;s dive in!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex Knowledge Extension From Snowflake Marketplace" duration="5">
+        <p>Let&#39;s start by &#34;loading&#34; the relevant Cortex Knowledge Extension into our account. It turns out that &#34;loading&#34; is really the wrong word here.</p>
+<p>We&#39;re using Snowflake&#39;s unique agentic product sharing capability in Snowflake Marketplace. Because of this, we don&#39;t actually need to copy any data to our Snowflake account with any logic. Instead, we can directly access the extension shared by a trusted provider in Snowflake Marketplace. Let&#39;s start.</p>
+<ol type="1">
+<li>Log into your Snowflake account.</li>
+<li>Click on &#34;Data Products&#34;.</li>
+<li>Click on &#34;Marketplace&#34;.</li>
+<li>In the search bar, search for &#34;cortex knowledge extension snowflake documentation&#34;.</li>
+<li>The first result should be &#34;Cortex Knowledge Extension: Snowflake Documentation&#34; by Snowflake. Click on the listing. You&#39;ll notice it&#39;s Free.</li>
+<li>On the right, click &#34;Get&#34;.</li>
+<li>In the ensuing modal, click &#34;Get&#34; once more. Do <strong>NOT</strong> rename the extension.</li>
+</ol>
+<p class="image-container"><img alt="extension" src="img/17ab31f547865daa.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explore the extension" duration="1">
+        <p>Let&#39;s explore the extension to understand how it works.</p>
+<ol type="1">
+<li>Start by setting your context in a new SQL worksheet. Run the following in a worksheet:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+USE SCHEMA shared;
+USE WAREHOUSE compute_wh;
+</code></pre>
+<ol type="1" start="2">
+<li>Next, let&#39;s show the Cortex Search Services in the account. Run:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">DESCRIBE CORTEX SEARCH SERVICE cke_snowflake_docs_service;
+</code></pre>
+<p>You should see some metadata on the <strong>CKE_SNOWFLAKE_DOCS_SERVICE</strong> service in the account. Important to note is the search column, named <code>CHUNK</code>, and the additional attribute columns <code>DOCUMENT_TITLE</code>, <code>SOURCE_URL</code>.</p>
+<p>The <code>CHUNK</code> column represents the chunked knowledge that can be used in our RAG chatbot, and the attribute columns allow us to build references to the source knowledge. For example, we can use them to cite the docs page that the end-user can use to confirm the correctness of the answer.</p>
+<ol type="1" start="3">
+<li>Query the service using SQL. Run the next line:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select 
+    snowflake.cortex.search_preview(
+        &#39;.shared.cke_snowflake_docs_service&#39;, 
+        &#39;{ &#34;query&#34;: &#34;What is a table in Snowflake?&#34;, &#34;columns&#34;: [&#34;chunk&#34;,&#34;document_title&#34;, &#34;source_url&#34;] }&#39;);
+</code></pre>
+<p>In the console, you&#39;ll see a JSON object returned with relevant data corresponding to the attribute columns, and the relevant chunk of data containing the knowledge that can answer the question posed to the extension. Great job! Now let&#39;s build the app.</p>
+<p class="image-container"><img alt="results" src="img/804139fc72819491.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Streamlit in Snowflake app" duration="8">
+        <p>Let&#39;s now build the chatbot using Streamlit in Snowflake.</p>
+<ol type="1">
+<li>Let&#39;s start by creating a database and schema to store the app. In a SQL worksheet, run the following:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+USE WAREHOUSE compute_wh;
+
+CREATE OR REPLACE DATABASE chatbot_db;
+CREATE OR REPLACE SCHEMA chatbot_schema;
+</code></pre>
+<ol type="1" start="2">
+<li>Navigate to &#34;Streamlit&#34;, in the &#34;Projects&#34; section of your account.</li>
+<li>Create a new Streamlit app. Name the app &#34;CHAT_WITH_SNOWFLAKE_DOCS&#34;. For the app location, select &#34;CHATBOT_DB&#34; and &#34;CHATBOT_SCHEMA&#34;. Use &#34;COMPUTE_WH&#34; as the app warehouse. Click &#34;Create&#34;.</li>
+<li>Let the app start up. Once it&#39;s ready, click &#34;Edit&#34; to expand the code editor (if not already expanded). Delete all of the code in the editor.</li>
+<li><a href="https://github.com/Snowflake-Labs/get-started-snowflake-cortex-knowledge-extensions/blob/main/snowflake_docs_cke.py" target="_blank">Copy the code in this file and paste it into the editor.</a></li>
+<li>Using the &#34;Packages&#34; picker above the code editor, type in &#34;snowflake&#34;. Click on it to add it to the app environment.</li>
+<li>Click &#34;Run&#34; at the top to run the code.</li>
+</ol>
+<p>The application should run and be ready for you to enter a question. Try it out by asking the following questions:</p>
+<ul>
+<li><strong>What is a view in Snowflake?</strong> - You should receive a response with a link to a relevant page in the docs.</li>
+<li><strong>What is MongoDB?</strong> - The app should show you that it is unable to answer this question because the source knowledge has no content on this topic.</li>
+</ul>
+<p class="image-container"><img alt="app" src="img/3f85db1a9a842f9b.png"></p>
+<p>On the left, you can configure more options for the app, like:</p>
+<ul>
+<li>LLM to use when augmenting the response</li>
+<li>Number of context chunks</li>
+<li>Number of messages to use in chat history</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations! You&#39;ve built a RAG chatbot that uses a Cortex Knowledge Extension.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>You built a RAG chatbot that allows you to chat with the Snowflake Documentation in natural language. You were able to do this by using a Cortex Knowledge Extension, which contained the relevant knowledge (data) to be able to answer questions about the Snowflake docs. You also used Snowflake Cortex AI&#39;s <strong>COMPLETE</strong> function and Streamlit in Snowflake.</p>
+<h2 is-upgraded>Resources</h2>
+<p>For more resources, check out the following:</p>
+<p><strong>Additional Cortex Knowledge Extensions</strong></p>
+<ul>
+<li><a href="https://app.snowflake.com/marketplace/listing/GZTDZL3G6G/packt-publishing-limited-codesolver?originTab=provider&providerName=Packt%20Publishing%20Limited&profileGlobalName=GZTDZL3G6C" target="_blank">Packt</a></li>
+<li><a href="https://developers.snowflake.com" target="_blank">Snowflake Developer Hub</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Documentation on Cortex Search Services</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

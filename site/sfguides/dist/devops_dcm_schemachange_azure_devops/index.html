@@ -1,0 +1,378 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>DevOps: Database Change Management with schemachange and Azure DevOps</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="devops_dcm_schemachange_azure_devops"
+                  title="DevOps: Database Change Management with schemachange and Azure DevOps"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img style="width: 600.00px" src="img/25a29fee1b47194a.png"></p>
+<p>This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with Azure DevOps. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and Azure DevOps.</p>
+<p>DevOps is concerned with automating the development, release and maintenance of software applications. As such, DevOps is very broad and covers the entire Software Development Life Cycle (SDLC). The landscape of software tools used to manage the entire SDLC is complex since there are many different required capabilities/tools, including:</p>
+<ul>
+<li>Requirements management</li>
+<li>Project management (Waterfall, Agile/Scrum)</li>
+<li>Source code management (Version Control)</li>
+<li>Build management (CI/CD)</li>
+<li>Test management (CI/CD)</li>
+<li>Release management (CI/CD)</li>
+</ul>
+<p>This guide will focus primarily on automated release management for Snowflake by leveraging the Azure Pipelines service from Azure DevOps. Additionally, in order to manage the database objects/changes in Snowflake I will use the schemachange Database Change Management (DCM) tool.</p>
+<p>Let&#39;s begin with a brief overview of Azure DevOps and schemachange.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>This guide assumes that you have a basic working knowledge of Git repositories.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>A brief history and overview of Azure DevOps</li>
+<li>A brief history and overview of schemachange</li>
+<li>How database change management tools like schemachange work</li>
+<li>How a simple release pipeline works</li>
+<li>How to create CI/CD pipelines in Azure DevOps</li>
+<li>Ideas for more advanced CI/CD pipelines with stages</li>
+<li>How to get started with branching strategies</li>
+<li>How to get started with testing strategies</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ol type="1">
+<li>Snowflake</li>
+<li><strong>A Snowflake Account.</strong></li>
+<li><strong>A Snowflake Database named DEMO_DB.</strong></li>
+<li><strong>A Snowflake User created with appropriate permissions.</strong> This user will need permission to create objects in the DEMO_DB database.</li>
+<li>Azure DevOps</li>
+<li><strong>An Azure DevOps Services Account.</strong> If you don&#39;t already have an Azure DevOps Services account you can create a Basic Plan for free. Click on the <code>Start free</code> button on <a href="https://azure.microsoft.com/en-us/services/devops/" target="_blank">the Azure DevOps Overview page</a>.</li>
+<li><strong>An Azure DevOps Organization.</strong> If you don&#39;t already have an Organization created, log in to <a href="https://dev.azure.com/" target="_blank">Azure DevOps</a> and click on the <code>New organization</code> link in the left navigation bar.</li>
+<li><strong>An Azure DevOps Project.</strong> If you don&#39;t already have a Project created, log in to <a href="https://dev.azure.com/" target="_blank">Azure DevOps</a>, make sure the correct Organization is selected in the left navigation bar, and click on the <code>+ New project</code> button near the top right of the window. Keep the default setting for a Private project with Git version control.</li>
+<li><strong>An Azure DevOps Git Repository.</strong> A Git repository should have automatically been created in your Project when the Project was created (and by default has the same name as the Project). If you don&#39;t have one, or would like to create a new one, open the Project, click on <code>Repos</code> in the left navigation bar, click on the drop down arrow next to the current repository name in the top navigation bar breadcrumbs and click on <code>+ New repository</code>.</li>
+<li>Integrated Development Environment (IDE)</li>
+<li><strong>Your favorite IDE with Git integration.</strong> If you don&#39;t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>.</li>
+<li><strong>Your project repository cloned to your computer.</strong> For connection details about the Git repository in your project, open the Project and click on the <code>Repos</code> icon in the left navigation bar. If your repository is empty you will see the options for cloning to your computer. If your repository has files in it already you will see a <code>Clone</code> button near the top right of the window which will give you the options.</li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A simple, working release pipeline for Snowflake in Azure DevOps</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Azure DevOps Overview" duration="2">
+        <p class="image-container"><img style="width: 300.00px" src="img/e75944c89f2041b6.png"></p>
+<p>&#34;Azure DevOps provides developer services for support teams to plan work, collaborate on code development, and build and deploy applications. Developers can work in the cloud using Azure DevOps Services or on-premises using Azure DevOps Server.&#34; (from Microsoft&#39;s <a href="https://docs.microsoft.com/en-us/azure/devops/user-guide/what-is-azure-devops?view=azure-devops" target="_blank">What is Azure DevOps?</a>)</p>
+<h2 is-upgraded>Azure DevOps Services</h2>
+<p>Azure DevOps provides a complete, end-to-end set of software development tools to manage the SDLC. In particular Azure DevOps provides the following services (from Microsoft&#39;s <a href="https://docs.microsoft.com/en-us/azure/devops/user-guide/what-is-azure-devops?view=azure-devops" target="_blank">What is Azure DevOps?</a>):</p>
+<ul>
+<li><strong>Azure Repos</strong> provides Git repositories or Team Foundation Version Control (TFVC) for source control of your code</li>
+<li><strong>Azure Pipelines</strong> provides build and release services to support continuous integration and delivery of your apps</li>
+<li><strong>Azure Boards</strong> delivers a suite of Agile tools to support planning and tracking work, code defects, and issues using Kanban and Scrum methods</li>
+<li><strong>Azure Test</strong> Plans provides several tools to test your apps, including manual/exploratory testing and continuous testing</li>
+<li><strong>Azure Artifacts</strong> allows teams to share packages such as Maven, npm, NuGet and more from public and private sources and integrate package sharing into your CI/CD pipelines</li>
+</ul>
+<h2 is-upgraded>Azure DevOps History</h2>
+<p>If you&#39;ve worked with Microsoft products for a while you will know that over time product names evolve. The first version of what is today called Azure DevOps was released on March 17, 2006 as a component of the Visual Studio 2005 Team System under the name Team Foundation Server (TFS). Over the years it has been known by various names including Team Foundation Server (TFS), Visual Studio Online (VSO), Visual Studio Team Services (VSTS), and Azure DevOps. For fun, here is the history of product names from <a href="https://en.wikipedia.org/wiki/Azure_DevOps_Server#History" target="_blank">Wikipedia&#39;s Azure DevOps Server page</a>:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Product name</p>
+</td><td colspan="1" rowspan="1"><p>Form</p>
+</td><td colspan="1" rowspan="1"><p>Release year</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Visual Studio 2005 Team System</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2006</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Visual Studio Team System 2008</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2008</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Team Foundation Server 2010</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2010</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Team Foundation Service Preview</p>
+</td><td colspan="1" rowspan="1"><p>Cloud</p>
+</td><td colspan="1" rowspan="1"><p>2012</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Team Foundation Server 2012</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2012</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Visual Studio Online</p>
+</td><td colspan="1" rowspan="1"><p>Cloud</p>
+</td><td colspan="1" rowspan="1"><p>2013</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Team Foundation Server 2013</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2013</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Team Foundation Server 2015</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2015</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Visual Studio Team Services</p>
+</td><td colspan="1" rowspan="1"><p>Cloud</p>
+</td><td colspan="1" rowspan="1"><p>2015</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Team Foundation Server 2017</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2017</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Team Foundation Server 2018</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2017</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Azure DevOps Services</p>
+</td><td colspan="1" rowspan="1"><p>Cloud</p>
+</td><td colspan="1" rowspan="1"><p>2018</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Azure DevOps Server 2019</p>
+</td><td colspan="1" rowspan="1"><p>On-premises</p>
+</td><td colspan="1" rowspan="1"><p>2019</p>
+</td></tr>
+</table>
+<p>This guide will be focused on the Azure Pipelines service.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="schemachange Overview" duration="2">
+        <p class="image-container"><img style="width: 300.00px" src="img/6682199f36619ddc.png"></p>
+<p>Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It&#39;s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you&#39;re interested in more details, please see my blog post <a href="https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/" target="_blank">Embracing Agile Software Delivery and DevOps with Snowflake</a>.</p>
+<p>schemachange is a lightweight Python-based tool to manage all your Snowflake objects. It follows an imperative-style approach to database change management (DCM) and was inspired by <a href="https://flywaydb.org/" target="_blank">the Flyway database migration tool</a>. When schemachange is combined with a version control tool and a CI/CD tool, database changes can be approved and deployed through a pipeline using modern software delivery practices.</p>
+<p>For more information about schemachange please see <a href="https://github.com/Snowflake-Labs/schemachange" target="_blank">the schemachange project page</a>.</p>
+<aside class="warning"><p><strong>Note</strong> - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your First Database Migration" duration="4">
+        <p>Open up your cloned repository in your favorite IDE and create a folder named <code>migrations</code>. In that new folder create a script named <code>V1.1.1__initial_objects.sql</code> (make sure there are two underscores after the version number) with the following contents:</p>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA DEMO;
+CREATE TABLE HELLO_WORLD
+(
+   FIRST_NAME VARCHAR
+  ,LAST_NAME VARCHAR
+);
+</code></pre>
+<p>Then commit the new script and push the changes to your Azure DevOps repository. Assuming you started from an empty repository, initialized with only a README.md file, your repository should look like this:</p>
+<p class="image-container"><img alt="Azure DevOps repository after first change script" src="img/f72fca44c580bff9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Library Variable Group" duration="5">
+        <p>Libraries in the Azure Pipelines service are used to securely store variables and files which will be used in your CI/CD pipelines. In this step we will create a variable group to store all the parameters used by schemachange.</p>
+<p>In the left navigation bar, click on <code>Pipelines</code> and then <code>Library</code>. On the Library page, the Variable groups tab should be selected. Click on the <code>+ Variable group</code> button. Name your variable group <code>demo-variables</code> and add the following variables to the group (adjusting the values as appropriate):</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Variable name</p>
+</td><td colspan="1" rowspan="1"><p>Variable value</p>
+</td><td colspan="1" rowspan="1"><p>Secret?</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>PROJECT_FOLDER</p>
+</td><td colspan="1" rowspan="1"><p>$(System.DefaultWorkingDirectory)</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SF_ACCOUNT</p>
+</td><td colspan="1" rowspan="1"><p>xy12345.east-us-2.azure</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SF_USERNAME</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_USER</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SF_PASSWORD</p>
+</td><td colspan="1" rowspan="1"><p>*****</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SF_ROLE</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_ROLE</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SF_WAREHOUSE</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_WH</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SF_DATABASE</p>
+</td><td colspan="1" rowspan="1"><p>DEMO_DB</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+</table>
+<aside class="special"><p><strong>Tip</strong> - For more details on how to structure the account name in SF_ACCOUNT, see the account name discussion in <a href="https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation" target="_blank">the Snowflake Python Connector install guide</a>.</p>
+</aside>
+<p>When you&#39;re finished adding all the variables, don&#39;t forget to click the <code>Save</code> icon below the name of the variable group. Your variable group should look like this:</p>
+<p class="image-container"><img alt="Azure DevOps variable group" src="img/2ca395543489630b.png"></p>
+<aside class="special"><p><strong>Tip</strong> - For an even better solution to managing your secrets, you can leverage Azure Key Vault. See <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml#link-secrets-from-an-azure-key-vault" target="_blank">Link secrets from an Azure key vault</a> for the details.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and Run a Deployment Pipeline" duration="6">
+        <p>Pipelines in the Azure Pipelines service represent any automated pipeline, which includes both build and release pipelines. In this step we will create a deployment pipeline which will run schemachange and deploy changes to our Snowflake database.</p>
+<ul>
+<li>In the left navigation bar, click on <code>Pipelines</code> and then <code>Pipelines</code>.</li>
+<li>Click on the <code>Create Pipeline</code> button (or <code>New pipeline</code> in the upper right if you already have another pipeline defined).</li>
+<li>On the first <code>Where is your code?</code> screen click on <code>Azure Repos Git</code>, then select your repository on the next screen.</li>
+<li>On the <code>Configure your pipeline</code> page select <code>Starter pipeline</code>.</li>
+<li>And on the final <code>Review your pipeline YAML page</code> copy and paste the following YAML pipeline definition (overwriting the sample pipeline code):</li>
+</ul>
+<pre><code language="language-yaml" class="language-yaml"># Deploy database changes using schemachange
+# https://github.com/Snowflake-Labs/schemachange
+# (see https://aka.ms/yaml for the YAML schema reference)
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - /migrations
+pool:
+  vmImage: &#39;ubuntu-latest&#39;
+variables:
+- group: demo-variables
+steps:
+- task: UsePythonVersion@0
+  displayName: &#39;Use Python 3.8.x&#39;
+  inputs:
+    versionSpec: &#39;3.8.x&#39;
+- task: Bash@3
+  inputs:
+    targetType: &#39;inline&#39;
+    script: |
+      echo &#39;Starting bash task&#39;
+      echo &#34;PROJECT_FOLDER $(PROJECT_FOLDER)&#34;
+      python --version
+      echo &#39;Step 1: Installing schemachange&#39;
+      pip install schemachange --upgrade
+      echo &#39;Step 2: Running schemachange&#39;
+      schemachange -f $(PROJECT_FOLDER)/migrations -a $(SF_ACCOUNT) -u $(SF_USERNAME) -r $(SF_ROLE) -w $(SF_WAREHOUSE) -d $(SF_DATABASE) -c $(SF_DATABASE).SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+  env:
+    SNOWFLAKE_PASSWORD: $(SF_PASSWORD)
+</code></pre>
+<p>Finally, click on the <code>Save and run</code> near the top right of the window (and on the <code>Save and run</code> button in the pop up window).</p>
+<p>On the pipeline run overview page click on the <code>Job</code> job to see the output of each step in the pipeline. In particular, look through the <code>Bash</code> step logs to see the output from schemachange.</p>
+<p>A few things to point out from the YAML pipeline definition:</p>
+<ul>
+<li>The YAML pipeline definition is saved as a file in your repository. The default name is <code>azure-pipelines.yml</code> but that can (and should) be changed when you have multiple pipelines.</li>
+<li>The trigger definition configures the pipeline to automatically run when a change is committed anywhere in the <code>migrations</code> folder on the <code>main</code> branch of the repository. So any change committed outside of that folder or in a different branch will not automatically trigger the pipeline to run.</li>
+<li>Please note that if you are re-using an existing Azure DevOps Account and Organization your new Project Repository might retain the old <code>master</code> branch naming. If so, please update the YAML above (see the <code>trigger</code> section).</li>
+<li>We&#39;re using the default Microsoft-hosted Linux agent pool to execute the pipeline.</li>
+<li>The <code>env</code> section of the Bash task allows us to set environment variables which will be available to the Bash script. In particular, this allows us to securely pass secret values (like the Snowflake password) to applications/scripts running in the pipeline like schemachange.</li>
+</ul>
+<aside class="warning"><p><strong>Note</strong> - Under Pipelines in the left navigation bar you will see both <code>Pipelines</code> and <code>Releases</code>. In earlier versions of the service build and release pipelines were separate and were created graphically using a UI. While these <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops" target="_blank">classic release pipelines</a> can still be used, Azure DevOps is moving to a single pipeline definition using YAML.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Confirm Changes Deployed to Snowflake" duration="4">
+        <p>Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.</p>
+<h2 is-upgraded>Database Objects</h2>
+<p>You should now see a few new objects in your <code>DEMO_DB</code> database:</p>
+<ul>
+<li>A new schema <code>DEMO</code> and table <code>HELLO_WORLD</code> (created by the first migration script from step 4)</li>
+<li>A new schema <code>SCHEMACHANGE</code> and table <code>CHAGE_HISTORY</code> (created by schemachange to track deployed changes)</li>
+</ul>
+<p>Take a look at the contents of the <code>CHANGE_HISTORY</code> table to see where/how schemachange keeps track of state. See the <a href="https://github.com/Snowflake-Labs/schemachange" target="_blank">schemachange README</a> for more details.</p>
+<h2 is-upgraded>Query History</h2>
+<p>From your Snowflake account click on the <code>History</code> tab at the top of the window. From there review the queries that were executed by schemachange. In particular, look at the <code>Query Tag</code> column to see which queries were issued by schemachange. It even tracks which migration script was responsible for which queries.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your Second Database Migration" duration="2">
+        <p>Open up your cloned repository in your favorite IDE and create a script named <code>V1.1.2__updated_objects.sql</code> (make sure there are two underscores after the version number) in the same <code>migrations</code> folder with the following contents:</p>
+<pre><code language="language-sql" class="language-sql">USE SCHEMA DEMO;
+ALTER TABLE HELLO_WORLD ADD COLUMN AGE NUMBER;
+</code></pre>
+<p>Then commit the new script and push the changes to your Azure DevOps repository. Because of the continuous integration trigger we created in the YAML definition, your pipeline should have automatically started a new run. Open up the pipeline, click on the newest run, then click on the <code>Job</code> job to see the output.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="4">
+        <p>So now that you&#39;ve got your first Snowflake CI/CD pipeline set up, what&#39;s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.</p>
+<h3 is-upgraded>Pipeline Stages</h3>
+<p>In the real-world you will have multiple stages in your build and release pipelines. A simple, helpful way to think about stages in a deployment pipeline is to think about them as environments, such as dev, test, and prod. Your Azure Pipelines YAML definition file can be extended to include a stage for each of your environments. For more details around how to define stages, please refer to <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&tabs=yaml" target="_blank">Azure DevOp&#39;s Add stages, dependencies, &amp; conditions page</a>.</p>
+<h3 is-upgraded>Branching Strategy</h3>
+<p>Branching strategies can be complex, but there are a few popular ones out there that can help get you started. To begin with I would recommend keeping it simple with <a href="https://guides.github.com/introduction/flow/" target="_blank">GitHub flow</a> (and see also <a href="http://scottchacon.com/2011/08/31/github-flow.html" target="_blank">an explanation of GitHub flow by Scott Chacon in 2011</a>). Another simple framework to consider is <a href="https://about.gitlab.com/blog/2014/09/29/gitlab-flow/" target="_blank">GitLab flow</a>.</p>
+<h3 is-upgraded>Testing Strategy</h3>
+<p>Testing is an important part of any software development process, and is absolutely critical when it comes to automated software delivery. But testing for databases and data pipelines is complicated and there are many approaches, frameworks, and tools out there. In my opinion, the simplest way to get started testing data pipelines is with <a href="https://www.getdbt.com/" target="_blank">dbt</a> and the <a href="https://docs.getdbt.com/docs/building-a-dbt-project/tests/" target="_blank">dbt Test features</a>. Another popular Python-based testing tool to consider is <a href="https://greatexpectations.io/" target="_blank">Great Expectations</a>.</p>
+<p>With that you should now have a working CI/CD pipeline in Azure DevOps and some helpful ideas for next steps on your DevOps journey with Snowflake. Good luck!</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>A brief history and overview of Azure DevOps</li>
+<li>A brief history and overview of schemachange</li>
+<li>How database change management tools like schemachange work</li>
+<li>How a simple release pipeline works</li>
+<li>How to create CI/CD pipelines in Azure DevOps</li>
+<li>Ideas for more advanced CI/CD pipelines with stages</li>
+<li>How to get started with branching strategies</li>
+<li>How to get started with testing strategies</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/schemachange" target="_blank">schemachange</a></li>
+<li><a href="https://azure.microsoft.com/en-us/services/devops/" target="_blank">Azure DevOps</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "doc-ai-pipeline-automation",
+  "duration": 34,
+  "title": "Document AI Pipeline Automation",
+  "summary": "Automate document processing using Snowflake Document AI",
+  "source": "doc-ai-pipeline-automation/doc-ai-pipeline-automation.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "document-ai",
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "doc-ai-pipeline-automation"
+}

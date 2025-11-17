@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "modern_data_stack_with_fivetran_snowflake_salesforce",
+  "duration": 38,
+  "title": "Fivetran - Automate Salesforce Insights: Source, Target, Transformations, Dashboard...NO CODE",
+  "summary": "Lab to demonstrate the ease of use to ingest data from Salesforce to Snowflake through Fivetran with insights dashboard from dbt models.",
+  "source": "modern_data_stack_with_fivetran_snowflake_salesforce/modern_data_stack_with_fivetran_snowflake_salesforce.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "marketing"
+  ],
+  "tags": [
+    "analytics",
+    "dataengineering",
+    "dbt",
+    "fivetran",
+    "gettingstarted",
+    "salesforce",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "modern_data_stack_with_fivetran_snowflake_salesforce"
+}

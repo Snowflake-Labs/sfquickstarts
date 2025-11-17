@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_snowpark_101_for_data_science_fr",
+  "duration": 41,
+  "title": "Tasty Bytes – Snowpark 101 pour la Data Science",
+  "summary": "Tasty Bytes – Snowpark 101 pour la Data Science",
+  "source": "tasty_bytes_snowpark_101_for_data_science_fr/tasty_bytes_snowpark_101_for_data_science_fr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "fr",
+    "gettingstarted",
+    "machinelearning",
+    "premierspas",
+    "snowpark",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_snowpark_101_for_data_science_fr"
+}

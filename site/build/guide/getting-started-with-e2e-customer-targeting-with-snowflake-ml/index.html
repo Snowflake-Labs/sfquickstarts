@@ -1,0 +1,655 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with End-to-End Customer Targeting Using Snowflake ML</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-e2e-customer-targeting-with-snowflake-ml"
+                  title="Getting Started with End-to-End Customer Targeting Using Snowflake ML"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Companies use machine learning for targeted customer campaigns to improve engagement and conversions. The intent of this notebook is to demonstrate how you can implement propensity-based targeting directly in Snowflake, where your data resides. This approach eliminates the need for data movement and ensures faster, more efficient turnarounds.</p>
+<p>In this guide, we will walk through the end-to-end machine learning workflow within Snowflake, covering key stages such as feature engineering, managing a feature store, model training, and model registry. We will also cover inferencing using the trained models and demonstrate how to integrate these steps within a Snowflake Notebook. By leveraging Snowpark for scalable data processing, the Feature Store for centralized feature management, and the Model Registry for model deployment and version control, all data and processes remain within Snowflake, ensuring faster and more efficient workflows.</p>
+<p>Learn about Snowflake ML <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview" target="_blank">here</a></p>
+<p>You can get more information <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/README.md" target="_blank">here</a></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to <a href="https://signup.snowflake.com/" target="_blank">snowflake account</a> with ACCOUNTADMIN role</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li><strong>How to Generate Synthetic Data</strong>: Create realistic, structured datasets using Snowpark with numeric, categorical, and time-based features.</li>
+<li><strong>How to Build a Feature Store</strong>: Define entities, register feature views, and manage versioned features in Snowflake.</li>
+<li><strong>How to do Feature Reduction</strong>: Slice datasets and apply correlation/variance thresholding for dimensionality reduction.</li>
+<li><strong>How to do Model Training and Tuning</strong>: Use Snowflake ML to train XGBoost, Random Forest, etc., and optimize with Grid Search.</li>
+<li><strong>How to Register and Deploy Models</strong>: Log models with versioning and run scalable in-database predictions from feature views.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Build a Feature Store: Create and manage feature entries for model training within Snowflake.</li>
+<li>Train Classification Models: Use techniques like XGBoost, Random Forest, and Grid Search for model training and hyperparameter tuning.</li>
+<li>Deploy &amp; Predict: Log, register models in Snowflake ML, and run predictions directly using feature views.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p><strong>Step 1.</strong> To set up the environment, download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/Setup.sql" target="_blank">sqlsetup.sql</a> script from GitHub and execute all the statements in a <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">Snowflake worksheet</a>.</p>
+<p>The script includes the following SQL operations</p>
+<pre><code>USE ROLE ACCOUNTADMIN;
+--create database
+create database if  not exists ML_MODELS;
+--create schema
+create schema   if  not exists  ML_MODELS.DS;
+create schema if not exists ML_MODELS.FEATURE_STORE;
+create schema if not exists ML_MODELS.ML_REGISTRY;
+
+--warehouse 
+create warehouse if not exists  DS_W WAREHOUSE_SIZE = MEDIUM;
+--snowpark optimized warehouse
+CREATE OR REPLACE WAREHOUSE SNOWPARK_OPT_WH  WITH
+  WAREHOUSE_SIZE = &#39;MEDIUM&#39;
+  WAREHOUSE_TYPE = &#39;SNOWPARK-OPTIMIZED&#39;;
+
+-- snowflake internal stage
+create stage if not exists ML_MODELS.DS.MODEL_OBJECT   ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+
+--create role 
+CREATE ROLE if not exists FR_SCIENTIST;
+--access to role 
+grant usage on database ML_MODELS to role FR_SCIENTIST;
+grant role FR_SCIENTIST to current_users();
+grant all on schema ML_MODELS.DS to role FR_SCIENTIST;
+grant all on schema ML_MODELS.FEATURE_STORE to role FR_SCIENTIST;
+grant all on schema ML_MODELS.ML_REGISTRY to role FR_SCIENTIST;
+grant usage on warehouse ML_FS_WH to role FR_SCIENTIST;
+grant read on stage  ML_MODELS.DS.MODEL_STAGE  to role FR_SCIENTIST;
+grant write on stage  ML_MODELS.DS.MODEL_STAGE  to role FR_SCIENTIST;
+
+</code></pre>
+<p><strong>Step 2.</strong> Download the all the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/tree/main" target="_blank">ipynb files</a> from the git repository to your local machine</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate Realistic Synthetic Data" duration="5">
+        <p>We will generate a synthetic dataset consisting of 100,000 rows and 508 columns, including member_id, a binary target variable, and a mix of numerical and categorical features. Using Scikit-Learn&#39;s make_classification, we will create 150 base features, then augment the dataset with 200 low-variance features, 150 highly correlated features, 5 categorical columns, and introduce missing values in selected fields.</p>
+<p>To reproduce this in your environment, import the notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/DATA_CREATOR.ipynb" target="_blank">DATA_CREATOR.ipynb</a>, run all cells, and ensure you are using the FR_SCIENTIST role in Snowflake.</p>
+<p>Snippet to generate the Pandas Dataframe</p>
+<pre><code>import numpy as np
+import pandas as pd
+from sklearn.datasets import make_classification
+
+# Parameters
+n_samples = 100000
+base_features = 150
+low_variance_features = 200
+correlated_features = 150
+total_numeric_features = base_features + low_variance_features + correlated_features
+
+# Step 1: Generate base numerical features and target
+X, y = make_classification(
+    n_samples=n_samples,
+    n_features=base_features,
+    n_informative=60,
+    n_redundant=60,
+    n_repeated=0,
+    n_classes=2,
+    random_state=42,
+    shuffle=False
+)
+
+# Create DataFrame for base features
+df = pd.DataFrame(X, columns=[f&#39;FEATURE_{i}&#39; for i in range(base_features)])
+df[&#39;TARGET&#39;] = y
+
+# Step 2: Add 200 Low-Variance Features
+for i in range(1, low_variance_features + 1):
+    if i == 1:
+        df[f&#39;FEATURE_LOW_VAR_{i}&#39;] = 1  # Constant column
+    else:
+        df[f&#39;FEATURE_LOW_VAR_{i}&#39;] = np.random.choice([0, 1], size=n_samples, p=[0.98, 0.02])
+
+# Step 3: Add 150 Highly Correlated Features
+for i in range(1, correlated_features + 1):
+    source_feature = f&#39;FEATURE_{(i - 1) % base_features}&#39;  # Cycle through base features
+    df[f&#39;FEATURE_CORR_{i}&#39;] = df[source_feature] * 0.95 + np.random.normal(0, 0.01, n_samples)
+
+# Step 4: Add 5 Specific Categorical Columns with realistic values
+df[&#39;CAT_1&#39;] = np.random.choice([&#39;Male&#39;, &#39;Female&#39;], size=n_samples)
+df[&#39;CAT_2&#39;] = np.random.choice([&#39;online&#39;, &#39;retail&#39;], size=n_samples)
+df[&#39;CAT_3&#39;] = np.random.choice([&#39;tier_1&#39;, &#39;tier_2&#39;, &#39;tier_3&#39;], size=n_samples)
+df[&#39;CAT_4&#39;] = np.random.choice([&#39;credit&#39;, &#39;debit&#39;], size=n_samples)
+df[&#39;CAT_5&#39;] = np.random.choice([&#39;single&#39;, &#39;family&#39;], size=n_samples)
+
+# Step 5: Add Missing Values
+def add_missing_values(df, cols, fraction=0.05):
+    for col in cols:
+        missing_indices = df.sample(frac=fraction, random_state=42).index
+        df.loc[missing_indices, col] = np.nan
+    return df
+
+# Introduce missing values in numeric and categorical columns
+numeric_missing = [&#39;FEATURE_0&#39;, &#39;FEATURE_10&#39;, &#39;FEATURE_50&#39;, &#39;FEATURE_LOW_VAR_2&#39;, &#39;FEATURE_CORR_1&#39;]
+categorical_missing = [&#39;CAT_1&#39;, &#39;CAT_3&#39;, &#39;CAT_5&#39;]
+
+df = add_missing_values(df, numeric_missing)
+df = add_missing_values(df, categorical_missing)
+
+# Step 6: Add MEMBER_ID Column
+df[&#39;MEMBER_ID&#39;] = [f&#39;member_{i}&#39; for i in range(len(df))]
+
+# Step 7: Add REF_MMYY Column with random assignment of &#39;042025&#39; or &#39;052025&#39;
+df[&#39;REF_MMYY&#39;] = np.random.choice([&#39;042025&#39;, &#39;052025&#39;], size=n_samples)
+
+# Final shape check
+print(f&#34;Final Data Shape: {df.shape}&#34;)  # Should be (100000, ~507)
+
+# Optional: Preview the data
+# print(df.head())
+
+)
+
+</code></pre>
+<p>Next, we split the full dataset into five DataFrames, evenly distributing the 508 features across them. Each DataFrame includes key columns like member_id and ref_mmyy, and is saved as a Snowflake table to serve as an input source for building the Feature Store.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Store Creation in Snowflake" duration="0">
+        <p>The <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Snowflake Feature Store</a> enables data scientists and ML engineers to create, manage, and reuse machine learning features entirely within Snowflake. It simplifies the end-to-end workflow by keeping features close to the data. In this example, we&#39;ll demonstrate how to define entities and create feature views directly from existing Snowflake tables, making your features accessible for both training and inference tasks.</p>
+<p>To complete this step, download the notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/01_FeatureStore_Creation.ipynb" target="_blank">01_FeatureStore_Creation.ipynb</a> and import it into your Snowflake environment. Once imported, run all cells to execute the setup.</p>
+<p>Let&#39;s now walk through the key steps covered in the notebook.</p>
+<ul>
+<li><strong>Create or Connect to Feature Store</strong></li>
+</ul>
+<p>This code registers a new feature store or connects to an existing one in your Snowflake environment.<br><strong>Note</strong>: Ensure the feature store schema (<code>fs_schema</code>) is created beforehand to organize all objects under the correct schema.</p>
+<pre><code># Create/Reference Snowflake Feature Store for Training (Development) Environment
+try: 
+    fs = FeatureStore(
+        session=session,        
+        database=working_database, 
+        name=fs_schema,
+        default_warehouse=warehouse
+    )
+except:
+    # need privs to create fs if not exists
+    fs = FeatureStore(
+        session=session,        
+        database=working_database, 
+        name=fs_schema, 
+        default_warehouse=warehouse,
+        creation_mode=CreationMode.CREATE_IF_NOT_EXIST
+    )
+## define the primary or join keys 
+join_keys = [&#34;MEMBER_ID&#34;, &#34;REF_MMYY&#34;]
+</code></pre>
+<ul>
+<li><strong>Register the Feature Views</strong></li>
+</ul>
+<p>This snippet shows how to define entities, which are used to register feature views in the Feature Store.</p>
+<pre><code>def register_feature(fs, entity_nm, fv_version, feature_df, join_keys):
+    &#34;&#34;&#34;
+    Registers an entity and a feature view in the feature store if they do not already exist.
+
+    Parameters:
+        fs (FeatureStore): Feature store client instance
+        entity_nm (str): Name of the entity
+        fv_version (str): Version of the feature view
+        feature_df (DataFrame):  DataFrame containing feature data
+        join_keys (list): List of join keys for the entity
+
+    Returns:
+        FeatureView: The registered or retrieved FeatureView instance
+    &#34;&#34;&#34;
+
+    fv_name = f&#34;FV_FEATURE_{entity_nm}&#34;
+
+    # Check if entity exists
+    entity_names_json = fs.list_entities().select(F.to_json(F.array_agg(&#34;NAME&#34;, True))).collect()[0][0]
+    existing_entities = json.loads(entity_names_json)
+
+    if entity_nm not in existing_entities:
+        entity_instance = Entity(name=entity_nm, join_keys=join_keys, desc=f&#34;Primary Keys for {entity_nm}&#34;)
+        fs.register_entity(entity_instance)
+    else:
+        entity_instance = fs.get_entity(entity_nm)
+
+    # Try to get the FeatureView; register it if it doesn&#39;t exist
+    try:
+        fv_feature_instance = fs.get_feature_view(fv_name, fv_version)
+    except:
+        fv_feature_instance = FeatureView(
+            name=fv_name,
+            entities=[entity_instance],
+            feature_df=feature_df
+        )
+        fs.register_feature_view(fv_feature_instance, version=fv_version, block=True)
+
+    return fv_feature_instance
+</code></pre>
+<ul>
+<li><strong>Snowflake Dataset Creation</strong></li>
+</ul>
+<p>To proceed with feature engineering and dimensionality reduction, we first prepare our dataset.<br><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/dataset" target="_blank">Datasets</a> are new Snowflake schema-level objects specifically designed for machine learning workflows.<br> Snowflake Datasets hold collections of data organized into versions.</p>
+<pre><code>#retrieve the entity views
+
+fv_feature_ent1_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_1&#34;, &#34;V_1&#34;)
+fv_feature_ent2_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_2&#34;, &#34;V_1&#34;)
+fv_feature_ent3_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_3&#34;, &#34;V_1&#34;)
+fv_feature_ent4_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_4&#34;, &#34;V_1&#34;)
+
+
+fv_list = [fv_feature_ent1_instance, 
+           fv_feature_ent2_instance, 
+           fv_feature_ent3_instance,
+           fv_feature_ent4_instance] 
+
+ds_cols = []
+slice_list = []
+for fv in fv_list:
+    fv_cols = list(fv._feature_desc)
+    slice_cols = [col for col in fv_cols if col not in ds_cols]
+    #fv = fv.slice(slice_cols)
+    slice_list.append(fv.slice(slice_cols))
+    ds_cols += fv_cols
+
+ ## create DS   
+dataset = fs.generate_dataset(
+    name=f&#34;{working_database}.{working_schema}.POC_DATASET&#34;,
+    spine_df=universe_sdf,
+    features = slice_list,
+    version=&#34;V_1&#34;,
+    output_type=&#34;table&#34;,
+    spine_label_cols=[&#34;TARGET&#34;],
+    desc=&#34;training dataset for ml poc&#34;
+) 
+</code></pre>
+<ul>
+<li><strong>Check the Dataset Table</strong></li>
+</ul>
+<p>You can check the contents of the dataset table <strong>POC_DATASET</strong> using the query below:</p>
+<pre><code>select * from POC_DATASET;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Reduction" duration="0">
+        <p>In this step, we preprocess the dataset by performing feature reduction, removing redundant or irrelevant features before model training. For feature reduction, we will employ techniques such as Variance Threshold and Correlation Analysis. There are numerous other dimensionality reduction techniques available, which you can explore further <a href="https://en.wikipedia.org/wiki/Dimensionality_reduction" target="_blank">here</a></p>
+<h2 is-upgraded><strong>Why to do Feature Reduction ?</strong></h2>
+<p>Feature reduction simplifies models, reduces overfitting, and improves computational efficiency.</p>
+<p>To complete this step, import the notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/02_Feature_Reduction.ipynb" target="_blank">02_Feature_Reduction.ipynb</a> into your Snowflake environment. Once imported, run all cells to execute the setup.</p>
+<h2 is-upgraded><strong>Variance Threshold:</strong></h2>
+<p>Removes features with low variance that offer little predictive value, such as those with near-constant values across samples. Here&#39;s a code snippet from the notebook</p>
+<pre><code>from snowflake.snowpark import DataFrame
+#from snowflake.snowpark.functions import var_pop
+
+## get all columns with stringType= type
+excluded = [&#39;MEMBER_ID&#39;, &#39;TARGET&#39;,&#39;REF_MMYYYY&#39;,&#39;CAT_1&#39;,&#39;CAT_2&#39;,&#39;CAT_3&#39;,&#39;CAT_4&#39;,&#39;CAT_5&#39;]
+num_cols = [col for col in sdf.columns if col not in excluded]
+
+session.use_warehouse(&#39;SNOWPARK_OPT_W&#39;)
+print(f&#39;number of features before the variance threshold {len(num_cols)}&#39;)
+
+# get the
+variance_df = sdf.select([F.var_pop(F.col(c)).alias(c) for c in num_cols])
+
+variance_df = variance_df.to_pandas()
+cols_below_threshold  = variance_df.columns[(variance_df  &lt; 0.1).all()]
+print( f&#34; total cols having variance threshold less than 0.1  is {len(cols_below_threshold)}&#34;)
+
+sdf=sdf.drop(*cols_below_threshold )
+
+print(f&#39;number of features after applying the variance threshold  {len(cols_below_threshold)}&#39;)
+
+</code></pre>
+<h2 is-upgraded><strong>Correlation Analysis:</strong></h2>
+<p>Identifies and removes highly correlated features (e.g., correlation &gt; 0.8), which provide redundant information and may lead to instability. Here&#39;s a code snippet from the notebook</p>
+<pre><code>from snowflake.ml.modeling.metrics.correlation import correlation
+
+
+def snf_correlation_thresholder(df, features, corr_threshold: float):
+    assert 0 &lt; corr_threshold &lt;= 1, &#34;Correlation threshold must be in range (0, 1].&#34;
+    
+    corr_features = set()
+    corr_matrix = correlation(df=sdf)
+
+    # Compute pairwise correlations directly in Snowpark
+    for i in range(len(features)):
+        for j in range(i + 1, len(features)):
+            if (abs(corr_matrix.iloc[i][j])) &gt;=  corr_threshold:
+            #col1, col2 = features[i], features[j]
+            #corr_value = df.select(corr(col(col1), col(col2)).alias(&#39;corr&#39;)).collect()[0][&#39;CORR&#39;]
+            
+           # if corr_value is not None and abs(corr_value) &gt;= corr_threshold:
+                # Mark the second feature for removal to avoid keeping highly correlated pairs
+                #corr_features.add(col2)
+                corr_features.add(features[j])
+    
+    # Drop correlated features if any
+    if corr_features:
+        df = df.drop(*corr_features)
+        
+    return df
+</code></pre>
+<p>Finally, we reduce the total number of columns in the dataset from 508 to 150. This refined dataset now serves as the input for the next step: model training.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Training" duration="0">
+        <p>In this step, we will train the model using Snowflake ML, beginning by creating a preprocessing pipeline that will convert categorical variables into numerical format through one-hot encoding and apply Min-Max scaling to standardize numerical features.</p>
+<p>After preprocessing, we will experiment with several modeling techniques, including XGBoost and Random Forest. Model tuning will be conducted using GridSearch, and all training will be executed within Snowflake ML.</p>
+<p>To complete this step, import the notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/03_Model_Training.ipynb" target="_blank">03_Model_Training.ipynb</a> into your Snowflake environment. Once imported, run all cells to execute the setup.</p>
+<h2 is-upgraded><strong>Preprocessor Pipeline</strong></h2>
+<p>Here&#39;s the code snippet for the preprocessing pipeline.<br> The pipeline saves the model as a <code>.joblib</code> file in a Snowflake stage for reusability.</p>
+<pre><code>from snowflake.ml.modeling.pipeline import Pipeline 
+from snowflake.ml.modeling.preprocessing import MinMaxScaler , OneHotEncoder
+
+preprocessing_pipeline = Pipeline(
+    steps=[
+        
+        (&#34;OHE&#34;,
+         OneHotEncoder(input_cols=cat_cols,
+                       output_cols=cat_cols,
+                       drop_input_cols=True,
+                       drop=&#34;first&#34;,
+                       handle_unknown=&#34;ignore&#34;,)
+         ),
+        (&#34;MMS&#34;,MinMaxScaler(clip=True, 
+                            input_cols=num_cols,
+                            output_cols=num_cols,))
+    ]
+
+)
+
+joblib.dump(preprocessing_pipeline, &#39;preprocessing_pipeline.joblib&#39;)
+#upload
+session.file.put(&#39;preprocessing_pipeline.joblib&#39;,
+                 stage,auto_compress=False)
+</code></pre>
+<h2 is-upgraded><strong>XGBoost Classifier in Snowflake ML</strong></h2>
+<p>Snippet for training an XGBoost Classifier using Snowflake ML:</p>
+<pre><code>from snowflake.ml.modeling.xgboost import XGBClassifier
+XGB_Classifier= XGBClassifier(
+    input_cols=FEATURE_COLS ,
+    label_cols=label_col,
+    output_cols=OUTPUT_COLUMNS
+)
+# Train
+XGB_Classifier.fit(train_df)
+
+#  evaluation 
+predict_on_training_data = XGB_Classifier.predict(train_df)
+
+training_accuracy = accuracy_score(df=predict_on_training_data, 
+                                   y_true_col_names=[&#34;TARGET&#34;],
+                                   y_pred_col_names=[&#34;PREDICTED_TARGET&#34;])
+
+
+result = XGB_Classifier.predict(test_df)
+</code></pre>
+<h2 is-upgraded><strong>Random Forest Classifier in Snowflake ML</strong></h2>
+<p>Snippet for training a Random Forest Classifier using Snowflake ML:</p>
+<pre><code>from snowflake.ml.modeling.ensemble import RandomForestClassifier
+
+FEATURE_COLS = get_features(train_df, label_col)
+OUTPUT_COLUMNS=&#34;PREDICTED_TARGET&#34;
+label_col=&#39;TARGET&#39;
+
+
+RandomForest= RandomForestClassifier(
+    input_cols=FEATURE_COLS ,
+    label_cols=label_col,
+    output_cols=OUTPUT_COLUMNS
+)
+# Train
+RandomForest.fit(train_df)
+</code></pre>
+<h2 is-upgraded><strong>Model Evaluation</strong></h2>
+<p>Run predictions on the training dataset using the trained Random Forest model:</p>
+<pre><code>predict_on_training_data = RandomForest.predict(train_df)
+
+</code></pre>
+<h2 is-upgraded><strong>Grid Search in Snowflake ML</strong></h2>
+<p>Snippet for performing Grid Search hyperparameter tuning using Snowflake ML:</p>
+<pre><code>## parameter grid 
+FEATURE_COLS = get_features(train_df, label_col)
+OUTPUT_COLUMNS=&#34;PREDICTED_TARGET&#34;
+label_col=&#39;TARGET&#39;
+
+
+
+parameters = {
+        &#34;n_estimators&#34;: [100, 300, 500],
+        &#34;learning_rate&#34;: [0.1, 0.3, 0.5],
+        &#34;max_depth&#34;: list(range(3, 5, 1)),
+        &#34;min_child_weight&#34;: list(range(3, 5, 1)),
+    }
+    
+n_folds = 5
+
+estimator = XGBClassifier()
+
+GridSearch_clf = GridSearchCV(estimator= estimator,
+                   param_grid=parameters ,
+                   cv = n_folds,
+                   input_cols=FEATURE_COLS ,
+                   label_cols=label_col,
+                   output_cols=OUTPUT_COLUMNS
+                   )
+GridSearch_clf.fit(train_df)
+
+result = GridSearch_clf.predict(test_df )
+print(GridSearch_clf.to_sklearn().best_estimator_)
+</code></pre>
+<p>** Model Metrics ** Snippet showing how to get the model metrics natively using Snowflake ML</p>
+<pre><code># snowpark ML metrics
+from snowflake.ml.modeling.metrics import accuracy_score,f1_score,precision_score,roc_auc_score,roc_curve,recall_score
+
+metrics = {
+&#34;accuracy&#34;:accuracy_score(df=result ,
+                          y_true_col_names=&#34;TARGET&#34;, 
+                          y_pred_col_names=&#34;PREDICTED_TARGET&#34;),
+
+&#34;precision&#34;:precision_score(df=result,
+                            y_true_col_names=&#34;TARGET&#34;, 
+                            y_pred_col_names=&#34;PREDICTED_TARGET&#34;),
+
+
+&#34;recall&#34;: recall_score(df=result, 
+                       y_true_col_names=&#34;TARGET&#34;,
+                       y_pred_col_names=&#34;PREDICTED_TARGET&#34;),
+
+
+
+&#34;f1_score&#34;:f1_score(df=result,
+                   y_true_col_names=&#34;TARGET&#34;,
+                   y_pred_col_names=&#34;PREDICTED_TARGET&#34;),
+&#34;confusion_matrix&#34;:confusion_matrix(df=result, 
+                                    y_true_col_name=&#34;TARGET&#34;,
+                                    y_pred_col_name=&#34;PREDICTED_TARGET&#34;).tolist()
+}
+
+</code></pre>
+<p><strong>Loging Model into Model registry</strong> Snippet to register a model in Snowflake ML</p>
+<pre><code># Get sample input data to pass into the registry logging function
+X = train_df.select(FEATURE_COLS).limit(100)
+db = working_database 
+schema =model_registry_schema 
+
+# Create a registry and log the model
+reg = Registry(session=session, database_name=db, schema_name=schema)
+
+
+model_name = &#34;ML_XGBOOST_MODEL&#34;
+version_name = &#34;v1&#34;
+
+# Let&#39;s first log the very first model we trained
+mv = reg.log_model(
+    model_name=model_name,
+    version_name=version_name,
+    model= XGB_Classifier,
+    metrics=metrics ,
+    sample_input_data=X, # to provide the feature schema
+)
+
+
+# Add a description
+mv.comment = &#34;&#34;&#34;This is the first iteration of our ml poc  model. 
+It is used for demo purposes and it is simple xgboost model.&#34;&#34;&#34;
+
+
+# Let&#39;s confirm they were added
+reg.get_model(model_name).show_versions()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Inferencing and Scheduling" duration="0">
+        <p>In this section, you&#39;ll learn how to perform batch inferencing using Snowflake ML by:</p>
+<ul>
+<li>Leveraging features stored in the Feature Store</li>
+<li>Loading the model signature from the Snowflake Model Registry</li>
+<li>Running predictions at scale within Snowflake</li>
+</ul>
+<p>This approach enables efficient generation of model predictions for large datasets, all within the Snowflake platform. Additionally, the notebook can be <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-schedule" target="_blank">scheduled</a> to run at regular intervals, facilitating fully automated and production-grade batch scoring workflows.</p>
+<p>To proceed, please import the notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/04_Batch_Inferencing.ipynb" target="_blank">04_Batch_Inferencing.ipynb</a> and run all the cells. Let&#39;s now dive into the code details.</p>
+<h2 is-upgraded>1. Retrieve Features from the Feature Store</h2>
+<p>Retrieve features from the Feature Store using the model signature of the selected model from the Model Registry.</p>
+<p>Below is the code snippet from the notebook:</p>
+<pre><code>fv_feature_ent1_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_1&#34;, &#34;V_1&#34;)
+fv_feature_ent2_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_2&#34;, &#34;V_1&#34;)
+fv_feature_ent3_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_3&#34;, &#34;V_1&#34;)
+fv_feature_ent4_instance  = fs.get_feature_view(&#34;FV_FEATURE_ENT_4&#34;, &#34;V_1&#34;)
+
+
+fv_list = [fv_feature_ent1_instance, 
+           fv_feature_ent2_instance, 
+           fv_feature_ent3_instance,
+           fv_feature_ent4_instance] 
+
+
+universe_tbl = &#39;.&#39;.join([input_database, input_schema, &#39;DEMO_TARGETS_TBL&#39;])
+universe_sdf            = session.table(universe_tbl).filter(F.col(&#34;REF_MMYY&#34;) == ref_mmyyyy)
+
+
+#get the input signature from the desired model from the model registr
+
+reg = Registry(session, database_name = working_database,schema_name = model_registry_schema)
+reg.show_models()
+mv = reg.get_model(model_name).version(&#34;v1&#34;)
+# the input signature of model
+input_signature = mv.show_functions()[0].get(&#34;signature&#34;).inputs
+input_cols = [c.name for c in input_signature]
+</code></pre>
+<h2 is-upgraded>2 Create Dataset for Inference</h2>
+<p>Snippet of code to generate the dataset used for inference:</p>
+<pre><code>dataset = fs.generate_dataset(
+    name=f&#34;{working_database}.{working_schema}.INFERENCE_DATASET&#34;,
+    spine_df=universe_sdf,
+    features = slice_list,
+    version=dataset_version,
+    #output_type=&#34;table&#34;,
+    spine_label_cols=[&#34;TARGET&#34;],
+    desc=&#34;training dataset for ml demo&#34;
+)    
+</code></pre>
+<h2 is-upgraded>3. Run Preprocessing</h2>
+<p>Snippet of code to run preprocessing on unseen or inference data:</p>
+<pre><code>session.file.get(f&#39;{stage}/preprocessing_pipeline.joblib&#39;, &#39;/tmp&#39;)
+PIPELINE_FILE = &#39;/tmp/preprocessing_pipeline.joblib&#39;
+
+preprocessing_pipeline = joblib.load(PIPELINE_FILE)
+
+df=preprocessing_pipeline.fit(df).transform(df)
+</code></pre>
+<h2 is-upgraded>3. Run Prediction</h2>
+<p>Snippet of code to run prediction on an unseen or prediction dataset:</p>
+<pre><code>prediction_result = mv.run(df, function_name =&#34;PREDICT&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully built an end-to-end customer targeting model in a Snowflake Notebook and logged the trained model to the Snowflake ML Registry, making it ready for inference and future use.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to generate realistic synthetic data in Snowpark and save it as Snowflake tables.</li>
+<li>How to define entities and register feature views in the Feature Store.</li>
+<li>How to perform feature engineering and feature reduction.</li>
+<li>How to train and tune models within Snowflake ML.</li>
+<li>How to log and register models in the Snowflake ML registry.</li>
+<li>How to run predictions on new data using the registered model within Snowflake.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/tree/main" target="_blank">GitHub Repo</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types" target="_blank">Snowflake Logging Custom Models</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Category:Classification_algorithms" target="_blank">classification Model</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

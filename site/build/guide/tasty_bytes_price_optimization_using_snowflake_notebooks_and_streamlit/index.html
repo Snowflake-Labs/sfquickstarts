@@ -1,0 +1,398 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Price Optimization Using Snowflake Notebooks and Streamlit in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_price_optimization_using_snowflake_notebooks_and_streamlit"
+                  title="Price Optimization Using Snowflake Notebooks and Streamlit in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img src="img/f521694767c49edc.png"></p>
+<p>Tasty Bytes, a fictitious company, is one of the largest food truck networks in the world with localized menu options spread across 15 food truck brands globally. Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. Price optimization enables Tasty Bytes to achieve this goal by determining the right prices for their menu items to maximize profitability while maintaining customer satisfaction.</p>
+<p>In this Quickstart, we will train &amp; deploy an ML model which leverages historical menu-item sale data to understand how menu-item demand changes with varying price. By utilizing this trained model, we would recommend the optimal day of week prices for all menu-items for the upcoming month to our food-truck brands. Afterward, we will showcase an application that can be built and deployed to allow business users to submit data into Snowflake and interact directly with an ML model.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<p>You will build a Streamlit in Snowflake (SiS) application that will show the recommended price per item per day-of-week and the profit lift over the current price. We will allow users to change prices and see the impact on demand and profit.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>We will implement price optimization for their diversified food-truck brands to inform their pricing and promotions by utilizing <strong>Snowflake Notebooks</strong> and <strong>Streamlit</strong> to:</p>
+<ul>
+<li>Train &amp; deploy an ML model to understand how menu-item demand changes with varying price</li>
+<li>Create a user-friendly application to use deployed ML-model to inform pricing strategies</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Supported Snowflake <a href="https://docs.snowflake.com/en/user-guide/setup#browser-requirements" target="_blank">Browser</a></li>
+<li>A Snowflake Account <ul>
+<li>If you do not have a Snowflake Account, please <a href="https://signup.snowflake.com/" target="_blank"><strong>sign up for a Free 30 Day Trial Account</strong></a>. When signing up, please make sure to select <strong>Enterprise</strong> edition. You can choose any AWS or Azure <a href="https://docs.snowflake.com/en/user-guide/intro-regions" target="_blank">Snowflake Region</a>.</li>
+<li>After registering, you will receive an email with an activation link and your Snowflake Account URL</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Data in Snowflake" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface to:</p>
+<ul>
+<li>Create Snowflake objects (warehouse, database, schema, raw tables)</li>
+<li>Ingest data from S3 to raw tables</li>
+</ul>
+<h3 is-upgraded>Creating Objects, Loading Data, and Joining Data</h3>
+<ul>
+<li>Navigate to Worksheets, click <code>+</code> in the top-right corner to create a new Worksheet, and choose <code>SQL Worksheet</code><img src="img/12c3c58ed85de2a0.png"></li>
+<li>Copy and paste the <a href="https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/scripts/sql/tb_po_setup.sql" target="_blank">tb_po_setup.sql</a> setup script to create the Snowflake objects (warehouse, database, schema, raw tables), and ingest the data from S3 and click <code>Run All</code> at the top of the Worksheet</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Machine Learning With Snowpark" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>At Tasty Bytes, brand managers are responsible for setting their food-truck brand&#39;s menu item prices for the upcoming month. By default, price for the upcoming month is set to the current price. As Tasty Byte Data Scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company&#39;s profits.</p>
+<ul>
+<li>You are tasked as Tasty Bytes Data Scientist to perform the following: <ul>
+<li><strong>Data Exploration</strong><ul>
+<li>Connect to Snowflake</li>
+<li>Snowpark DataFrame API</li>
+</ul>
+</li>
+<li><strong>Feature Engineering</strong><ul>
+<li>Window &amp; Aggregate functions</li>
+<li>Imputation and train/test split</li>
+</ul>
+</li>
+<li><strong>Model Training &amp; Deployment</strong><ul>
+<li>Train Snowpark ML model</li>
+<li>Register model on Model Registry</li>
+</ul>
+</li>
+<li><strong>Model Utilization</strong><ul>
+<li>Stored procedure to utilize deployed model</li>
+<li>Elastic scalability</li>
+<li>Data Driven Insights</li>
+</ul>
+</li>
+<li><strong>Describe Current Pricing Process</strong><ul>
+<li>Import an Excel spreadsheet and inference the demand model</li>
+<li>Calculate profit lift from new prices</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Setting Up Snowflake Notebook</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to create a Snowflake Notebook by importing the notebook</p>
+<ul>
+<li>Navigate to Notebooks in <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> by clicking on <code>Projects</code> <code>-></code> <code>Notebook</code></li>
+<li>Switch Role to <code>TB_PO_DATA_SCIENTIST</code></li>
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/notebooks/0_start_here.ipynb" target="_blank">0_start_here.ipynb</a> Notebook</li>
+<li>Using the <code>Import .ipynb file</code>, import the downloaded notebook</li>
+</ul>
+<p class="image-container"><img src="img/3f7e4e9716227c15.png"></p>
+<ul>
+<li>Select the <code>TB_PO_PROD</code> database and <code>ANALYTICS</code> schema for the Notebook Location and <code>TB_PO_DS_WH</code> for the Notebook warehouse and click <code>Create</code></li>
+</ul>
+<p class="image-container"><img src="img/ae85bf580b365ede.png"></p>
+<ul>
+<li>Open the Notebook once created and add the following packages by using the <code>Packages</code> button on the top right and search for the packages with their respective versions: <ul>
+<li><code>ipywidgets</code> version <code>Latest</code></li>
+<li><code>matplotlib</code> version <code>3.7.2</code></li>
+<li><code>numpy</code> version <code>1.24.3</code></li>
+<li><code>openpyxl</code> version <code>Latest</code></li>
+<li><code>scikit-learn</code> version <code>1.2.2</code></li>
+<li><code>seaborn</code> version <code>Latest</code></li>
+<li><code>shap</code> version <code>Latest</code></li>
+<li><code>seaborn</code> version <code>Latest</code></li>
+<li><code>snowflake-ml-python</code> version <code>1.4.0</code></li>
+<li><code>xgboost</code> version <code>1.7.3</code></li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/2a5459fb3c3de988.png"></p>
+<ul>
+<li>At the top of the page, click <code>Start</code> to start the Notebook session and run the cells by clicking <code>Run All</code></li>
+</ul>
+<p class="image-container"><img src="img/c480ca99febf54bf.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit in Snowflake" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>At Tasty Bytes, brand managers are responsible for setting their food-truck brand&#39;s menu item prices for the upcoming month. By default, price for the upcoming month is set to the current price. As Tasty Bytes Data Scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company&#39;s profits. We will build a Streamlit in Snowflake (SiS) application that will show the recommended price per item per day-of-week and the profit lift over the current price. We will allow users to change prices and see the impact on demand and profit. Finalized prices will be saved back to Snowflake. The app will be secure and low-maintenance as it will be deployed through Snowflake.</p>
+<h2 is-upgraded>Purpose</h2>
+<p><strong>The purpose of this final step is to showcase how easily an application can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.</strong> We will build a Streamlit App on the fly in Snowflake to support Tasty Bytes&#39; brand managers in deciding monthly pricing.</p>
+<ul>
+<li><strong>Build an Application to Set Pricing and Interact with Recommendations</strong><ul>
+<li>View and edit pricing data</li>
+<li>Show impact of price changes</li>
+<li>Write changes back to Snowflake</li>
+</ul>
+</li>
+<li><strong>Application Deployment</strong><ul>
+<li>Share the application in Snowflake with the brand managers</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/49c90eb09c01a033.gif"></p>
+<h3 is-upgraded>Create Streamlit Application</h3>
+<ul>
+<li>Within Snowsight, Click on the <code>Streamlit</code> tab</li>
+<li>Switch Role to <code>TB_PO_DATA_SCIENTIST</code></li>
+<li>Click on <code>+Streamlit App</code> to create a new Streamlit application</li>
+<li>Name the Streamlit application &#34;Monthly Pricing App&#34;</li>
+<li>Select the <code>TB_PO_PROD</code> database and <code>ANALYTICS</code> schema for the Streamlit application location and <code>TB_PO_APP_WH</code> for the warehouse and click <code>Create</code></li>
+</ul>
+<p class="image-container"><img src="img/aecbe122b16b6d86.png"></p>
+<ul>
+<li>This will create a sample Streamlit Application</li>
+<li>Click on Packages in the top left corner and search for <code>snowflake-ml-python</code> and add version <code>1.4.0</code></li>
+</ul>
+<p class="image-container"><img src="img/d1ea3a5b30db54bf.png"></p>
+<ul>
+<li>Replace the sample code with the Python code below</li>
+<li>Click <code>Run</code> to run the &#34;Application Monthly Pricing App&#34; Streamlit Application</li>
+<li>This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.</li>
+</ul>
+<pre><code># Import python packages
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+import snowflake.snowpark.functions as F
+from snowflake.ml.registry.registry import Registry
+import snowflake.snowpark.types as T
+
+# Write directly to the app
+st.title(&#34;Monthly Pricing App :truck:&#34;)
+st.write(
+    &#34;&#34;&#34;Navigate to a food truck brand and menu item. Set the day-of-week 
+    pricing for the upcoming month. Click **&#34;Update Prices&#34;** to 
+    submit finalized pricing.
+    &#34;&#34;&#34;
+)
+
+# Get the current credentials
+session = get_active_session()
+
+# Get data and add a comment for columns
+df = session.table(&#34;pricing&#34;).with_column(&#34;comment&#34;, F.lit(&#34;&#34;))
+
+# Dynamic filters
+brand = st.selectbox(&#34;Brand:&#34;, df.select(&#34;brand&#34;).distinct())
+item = st.selectbox(
+    &#34;Item:&#34;, df.filter(F.col(&#34;brand&#34;) == brand).select(&#34;item&#34;).distinct()
+)
+
+# Provide instructions for updating pricing and using recommendations
+st.write(
+    &#34;&#34;&#34;
+    View price recommendations and profit lift over current month pricing.
+    Adjust **NEW_PRICE** to see the impact on demand and profit.
+    &#34;&#34;&#34;
+)
+
+# Display and get updated prices from the data editor object
+set_prices = session.create_dataframe(
+    st.data_editor(
+        df.filter((F.col(&#34;brand&#34;) == brand) &amp; (F.col(&#34;item&#34;) == item))
+    )
+)
+
+# Add a subheader
+st.subheader(&#34;Forecasted Item Demand Based on Price&#34;)
+
+# Define model input features
+feature_cols = [
+    &#34;price&#34;,
+    &#34;price_change&#34;,
+    &#34;base_price&#34;,
+    &#34;price_hist_dow&#34;,
+    &#34;price_year_dow&#34;,
+    &#34;price_month_dow&#34;,
+    &#34;price_change_hist_dow&#34;,
+    &#34;price_change_year_dow&#34;,
+    &#34;price_change_month_dow&#34;,
+    &#34;price_hist_roll&#34;,
+    &#34;price_year_roll&#34;,
+    &#34;price_month_roll&#34;,
+    &#34;price_change_hist_roll&#34;,
+    &#34;price_change_year_roll&#34;,
+    &#34;price_change_month_roll&#34;,
+]
+
+# Get demand estimation
+df_demand = set_prices.join(
+    session.table(&#34;pricing_detail&#34;), [&#34;brand&#34;, &#34;item&#34;, &#34;day_of_week&#34;]
+).withColumn(&#34;price&#34;,F.col(&#34;new_price&#34;)).withColumn(&#34;price_change&#34;,F.col(&#34;PRICE&#34;)- F.col(&#34;base_price&#34;))
+
+# Get demand estimator model from registry
+reg = Registry(session=session)
+demand_estimator = reg.get_model(&#34;DEMAND_ESTIMATION_MODEL&#34;).default
+
+for col in feature_cols :
+        df_demand = df_demand.withColumn(col+&#34;_NEW&#34;,F.col(col).cast(T.DoubleType())).drop(col).rename(col+&#34;_NEW&#34;,col)
+
+df_demand = demand_estimator.run(df_demand, function_name=&#34;predict&#34;)\
+    .select(
+    &#34;day_of_week&#34;,
+    &#34;current_price_demand&#34;,
+    &#34;new_price&#34;,
+    &#34;item_cost&#34;,
+    &#34;average_basket_profit&#34;,
+    &#34;current_price_profit&#34;,
+    F.col(&#34;demand_estimation&#34;).alias(&#34;new_price_demand&#34;))
+
+# Demand lift
+demand_lift = df_demand.select(
+    F.round(
+        (
+            (F.sum(&#34;new_price_demand&#34;) - F.sum(&#34;current_price_demand&#34;))
+            / F.sum(&#34;current_price_demand&#34;)
+        )
+        * 100,
+        1,
+    )
+).collect()[0][0]
+
+# Profit lift
+profit_lift = (
+    df_demand.with_column(
+        &#34;new_price_profit&#34;,
+        F.col(&#34;new_price_demand&#34;)
+        * (F.col(&#34;new_price&#34;) - F.col(&#34;item_cost&#34;) + F.col(&#34;average_basket_profit&#34;)),
+    )
+    .select(
+        F.round(
+            (
+                (F.sum(&#34;new_price_profit&#34;) - F.sum(&#34;current_price_profit&#34;))
+                / F.sum(&#34;current_price_profit&#34;)
+            )
+            * 100,
+            1,
+        )
+    )
+    .collect()[0][0]
+)
+
+# Show KPIs
+col1, col2 = st.columns(2)
+col1.metric(&#34;Total Weekly Demand Lift (%)&#34;, demand_lift)
+col2.metric(&#34;Total Weekly Profit Lift (%)&#34;, profit_lift)
+
+# Plot demand
+st.line_chart(
+    df_demand.with_column(&#34;current_price_demand&#34;, F.col(&#34;current_price_demand&#34;) * 0.97),
+    x=&#34;DAY_OF_WEEK&#34;,
+    y=[&#34;NEW_PRICE_DEMAND&#34;, &#34;CURRENT_PRICE_DEMAND&#34;],
+)
+
+# Button to submit pricing
+if st.button(&#34;Update Prices&#34;):
+    set_prices.with_column(&#34;timestamp&#34;, F.current_timestamp()).write.mode(
+        &#34;append&#34;
+    ).save_as_table(&#34;pricing_final&#34;)
+
+# Expander to view submitted pricing
+with st.expander(&#34;View Submitted Prices&#34;):
+    st.table(session.table(&#34;pricing_final&#34;).order_by(F.col(&#34;timestamp&#34;).desc()))
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="1">
+        <h2 is-upgraded>Remove Snowflake Objects</h2>
+<ul>
+<li>Navigate to Worksheets, click <code>+</code> in the top-right corner to create a new Worksheet, and choose <code>SQL Worksheet</code></li>
+<li>Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart</li>
+</ul>
+<pre><code>USE ROLE securityadmin;
+DROP ROLE IF EXISTS tb_po_data_scientist;
+USE ROLE accountadmin;
+DROP DATABASE IF EXISTS tb_po_prod;
+DROP WAREHOUSE IF EXISTS tb_po_ds_wh;
+DROP WAREHOUSE IF EXISTS tb_po_app_wh;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p><strong>Congrats!</strong> You&#39;ve successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes&#39;, profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>With the completion of this Quickstart, you have now delved into:</p>
+<ul>
+<li>Data Exploration</li>
+<li>Feature Engineering</li>
+<li>Model Training &amp; Deployment</li>
+<li>Model Utilization</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark API</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

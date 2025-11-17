@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "processing_hl7_v2_messages_with_snowflake",
+  "duration": 57,
+  "title": "Getting Started - Processing HL7 V2 Messages with Snowflake",
+  "summary": "This is a guide to get familiarised with how to ingest and process HL7 V2.x messages using Snowflake Data Programmability features.",
+  "source": "processing_hl7_v2_messages_with_snowflake/processing_hl7_v2_messages_with_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "architecture-patterns",
+    "solution-examples"
+  ],
+  "tags": [
+    "dataengineering",
+    "datalake",
+    "datascience",
+    "fhir",
+    "gettingstarted",
+    "health\u0026lifesciences",
+    "hl7",
+    "unstructureddata",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "processing_hl7_v2_messages_with_snowflake"
+}

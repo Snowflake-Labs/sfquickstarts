@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "a_comprehensive_guide_to_ingesting_data_into_snowflake",
+  "duration": 66,
+  "title": "A Comprehensive Guide: Ingesting Data into Snowflake",
+  "authors": "Brad Culberson",
+  "summary": "Learn how to ingest data into Snowflake with Python Connector, Streaming SDK, Snowpipe, and Kafka",
+  "source": "a_comprehensive_guide_to_ingesting_data_into_snowflake/a_comprehensive_guide_to_ingesting_data_into_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "dataengineering",
+    "de:ingestion",
+    "de-connectors"
+  ],
+  "tags": [
+    "dataengineering",
+    "de-connectors",
+    "de:ingestion",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "a_comprehensive_guide_to_ingesting_data_into_snowflake"
+}

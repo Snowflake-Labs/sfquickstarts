@@ -1,0 +1,604 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Customer Facing Applications Using Sigma and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_customer_facing_applications_using_sigma_and_snowflake"
+                  title="Build Customer Facing Applications Using Sigma and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This lab introduces you to the user interface and embedding capabilities of Sigma Workbooks. This lab does not get into complex data analysis use cases for Sigma, but is designed to showcase the type of capabilities available in an application development use case with Sigma.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>This lab is designed for semi-technical users who will be aiding in the planning or implementation of Sigma. No SQL or technical data skills are required for this lab.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to ingest data into Snowflake &amp; connect to Sigma</li>
+<li>How to leverage Sigma functions for data prep</li>
+<li>How to build a workbook and visualizations</li>
+<li>How to embed a workbook into your application</li>
+<li>How end users of the application can explore data and generate new insights in a self-serve fashion with Sigma</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a Snowflake trial account on AWS or a Snowflake instance on AWS in which you have Account Admin permissions.</li>
+<li>Download Portal Template: <a href="https://partnershiptesting.s3.us-west-2.amazonaws.com/app_embed_RAW+.zip" target="_blank">App_embed.zip</a></li>
+<li>Download and Install <a href="https://nodejs.org/" target="_blank">Node.js</a></li>
+<li>Download SQL Script: <a href="https://partnershiptesting.s3.us-west-2.amazonaws.com/Sigma_VHOL.sql" target="_blank">Sigma_VHOL.sql</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>In this lab you will build a sales performance portal that live queries against data in Snowflake and provides unique drill down and exploration capabilities to the end users through embedding Sigma.</li>
+</ul>
+<p class="image-container"><img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake" duration="5">
+        <h2 is-upgraded>Prepare Your Snowflake Lab Environment</h2>
+<ol type="1">
+<li>If not done yet, register for a Snowflake free 30-day trial at <a href="https://trial.snowflake.com" target="_blank">https://trial.snowflake.com</a></li>
+</ol>
+<ul>
+<li>You will have different Snowflake editions (Standard, Enterprise, e.g.), cloud providers (GCP, AWS, or Azure), and regions (Us Central, Europe West, e.g.) available to you. For this lab, please select AWS as your cloud provider and at minimum enterprise edition.</li>
+<li>After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy future access.</li>
+</ul>
+<ol type="1" start="2">
+<li>Click <a href="https://partnershiptesting.s3.us-west-2.amazonaws.com/Sigma_VHOL.sql" target="_blank">here</a> and download the &#34;sigma_vhol.sql&#34; file to your local machine. This file contains pre-written SQL commands which will be used later in the lab.</li>
+</ol>
+<h2 is-upgraded>The Snowflake User Interface</h2>
+<h2 is-upgraded>Logging into the Snowflake User Interface (UI)</h2>
+<ol type="1">
+<li>Open a browser window and enter the URL of your Snowflake 30-day trial environment. You should see the login screen below. Enter your unique credentials to log in.</li>
+</ol>
+<p class="image-container"><img alt="login" src="img/20c83dd5416cf1e9.png"></p>
+<h2 is-upgraded>Navigating the Snowflake Snowsight UI</h2>
+<ol type="1">
+<li>From the Worksheets tab, click the &#34;+ Worksheet&#34; button in the top right to open a new worksheet.</li>
+</ol>
+<ul>
+<li>In the left pane you will see the database objects browser, which enables users to explore all databases, schemas, tables, and views accessible by the role selected for a worksheet.</li>
+<li>The bottom pane shows results of queries and operations.</li>
+</ul>
+<p class="image-container"><img alt="image2" src="img/623a83d69a3766ea.png"></p>
+<ol type="1" start="2">
+<li>At the top left of the page click on the downward facing arrow next to the worksheet name, and select &#34;Import SQL from File&#34;. Browse to the &#34;sigma_vhol.sql&#34; file you downloaded in the prior module. Click &#34;Open&#34;.</li>
+</ol>
+<ul>
+<li>All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. <strong>Do not run any of the SQL commands yet. </strong></li>
+</ul>
+<p class="image-container"><img alt="imgae3" src="img/3896857c5490d64e.png"></p>
+<p class="image-container"><img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provisioning Sigma" duration="0">
+        <h2 is-upgraded>Provisioning Sigma via Snowflake Partner Connect</h2>
+<ol type="1">
+<li>On the left hand side of the Snowflake UI, navigate to Admin, then select partner connect. Click the icon for Sigma.</li>
+</ol>
+<p class="image-container"><img alt="partnerconnect" src="img/e8b930ff3bf4cb54.png"></p>
+<ol type="1" start="2">
+<li>You will see a dialog box that will show the objects that will be created in your Snowflake account by Sigma. We will be using the PC_SIGMA_WH warehouse, PC_SIGMA_DB database, and the PC_SIGMA_ROLE for this lab, which are automatically created for you as part of the launch.</li>
+</ol>
+<p class="image-container"><img alt="connecting" src="img/d474c5d2d8a804c5.png"></p>
+<ol type="1" start="3">
+<li>Click &#34;Connect&#34; then &#34;Activate&#34;, which will open a new tab. You will be prompted to choose a name for the new Sigma Organization that will be created for you. Once you have chosen a name, click continue. You do not need to worry about the IP whitelisting screen, and can click &#34;Get Started&#34;. This will open Sigma in a new tab.  <strong>Please keep this tab open, as we will return to it later in the lab. </strong></li>
+</ol>
+<p class="image-container"><img alt="sigmaorg" src="img/73a054b4e7b3e06e.png"></p>
+<p class="image-container"><img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparing and Loading Data into Snowflake" duration="5">
+        <p><strong>The Lab Story</strong></p>
+<p>This Snowflake and Sigma lab will be done as part of a theoretical real world story to help you better understand why we are performing the steps in this lab, and the order they appear.</p>
+<p>Throughout the lab, we will be working with some common sales data from our fictitious physical retail company &#34;Plugs Electronics&#34;. This data includes order and SKU numbers, product names, prices, store names and regions, as well as customer data. Some of this data is structured and some is JSON (semi-structured).</p>
+<p>We will use this data to create a retailer portal where brands who sell their products at Plugs retail locations can log in to see their sales performance across different metrics.</p>
+<h2 is-upgraded>Create a Database and Table</h2>
+<ol type="1">
+<li>Go back to the Snowflake UI and click on the worksheets tab. Per the prior steps, ensure the SQL text from the &#34;Sigma_vhol.sql&#34; file has been loaded into the worksheet.</li>
+</ol>
+<p class="image-container"><img alt="dbandtable" src="img/1e4e557dfa5db044.png"></p>
+<ul>
+<li>As you can see from the SQL we loaded into our worksheet, a worksheet can have more than one command in it. SQL commands are delimited by semicolons. In order to run a single command, click anywhere on the line / command you would like to execute, then click the &#34;Run&#34; or &#34;Play&#34; button.</li>
+<li><strong>In this lab, never check the &#34;All Queries&#34; box at the top of the worksheet</strong>. We want to run SQL queries one at a time, in a specific order.</li>
+</ul>
+<ol type="1" start="2">
+<li><strong> USE ROLE ACCOUNTADMIN; </strong> This will set the context of the worksheet to use the role of ACCOUNTADMIN when we run the commands. This role holds the highest level of permission in a given Snowflake account, and can create new objects, grant permissions to other roles, and more.</li>
+<li><strong> USE WAREHOUSE PC_SIGMA_WH; </strong> Sets the PC_SIGMA_WH to be used for commands run in the worksheet. As you can see by the (XS) to the right of the warehouse name, an extra small warehouse is being used for this lab. An XS translates to a single node cluster for our virtual warehouse. <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview.html" target="_blank">Here is a link to Snowflake&#39;s docs covering warehouses in detail.</a></li>
+<li><strong> USE DATABASE PC_SIGMA_DB; </strong> This command tells Snowflake to operate off the PC_SIGMA_DB database, which was created when your Sigma trial was spun up.</li>
+<li><strong>CREATE SCHEMA IF NOT EXISTS EMBEDDED_LAB;</strong> This creates a new schema in our PC_SIGMA_DB database.</li>
+<li><strong>USE SCHEMA EMBEDDED_LAB; </strong>This sets the context of the worksheet to use our newly created schema.</li>
+<li><strong>CREATE STAGE IF NOT EXISTS SIGMA_LAB_STAGE URL = ‘s3://sigma-embedded-lab-demo/LabData/&#39;; </strong>This creates an external stage in Snowflake that points to an S3 bucket that has the data files we would like to use for the lab.</li>
+<li><strong>LS @SIGMA_LAB_STAGE; </strong>This command lists all of the files in the stage we just created.</li>
+</ol>
+<h2 is-upgraded>Loading Data into Snowflake</h2>
+<p>The data we will be using is demo data for a fictitious retailer called Plugs Electronics. This data has been exported and pre-staged for you in an AWS S3 bucket in the US-East (Northern Virginia) region. The data is in a CSV format, and includes transaction data like order numbers, product names and prices, as well as customer information. This data set is just under 4 million rows.</p>
+<ol type="1">
+<li><strong> </strong><strong>CREATE FILE FORMAT IF NOT EXISTS SIGMA_CSV<br> TYPE = CSV<br> COMPRESSION = GZIP<br> FIELD_OPTIONALLY_ENCLOSED_BY = ‘0x27&#39;<br> NULL_IF= ‘null&#39; ;</strong></li>
+<li><strong>CREATE TABLE IF NOT EXISTS TRANSACTIONS<br> (ORDER_NUMBER INTEGER,<br> PURCHASE_DATE TIMESTAMP,<br> TRANSACTION_TYPE STRING,<br> PURCHASE_METHOD STRING,<br> SALES_QUANTITY INTEGER,<br> SALE_AMOUNT INTEGER,<br> ITEM_PRICE INTEGER,<br> WHOLESALE_COST INTEGER,<br> PRODUCT_KEY INTEGER,<br> PRODUCT_NAME STRING,<br> PRODUCT_TYPE STRING,<br> PRODUCT_FAMILY STRING,<br> PRODUCT_BRAND STRING,<br> STORE_KEY INTEGER,<br> STORE_NAME STRING,<br> STORE_CITY STRING,<br> STORE_STATE STRING,<br> STORE_ZIP STRING,<br> STORE_REGION STRING,<br> ORDER_CHANNEL STRING,<br> CUST_KEY INTEGER,<br> CUST_SINCE TIMESTAMP,<br> CUST_JSON VARIANT<br> );</strong></li>
+</ol>
+<p>We have data files in our stage as shown in the previous list (ls) command. These files have certain formats that need to be defined in Snowflake in order for the data to be properly loaded. In this case, we are creating a file format named SIGMA_CSV that is specifying that the data in the files is delimited by commas, has been compressed, and how null values can be determined. We additionally created a table to hold the data we are about to load. More information regarding file formats can be found <a href="https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html" target="_blank">here</a>.</p>
+<ol type="1" start="3">
+<li><strong>COPY INTO TRANSACTIONS FROM @SIGMA_LAB_STAGE FILE_FORMAT = SIGMA_CSV;</strong></li>
+</ol>
+<ul>
+<li>This copies the data from our S3 bucket and loads it into our Transactions table. A SELECT COUNT(*) from the table will show we loaded 3.9 million rows into the table.</li>
+</ul>
+<ol type="1" start="4">
+<li><strong>GRANT USAGE ON DATABASE PC_SIGMA_DB TO ROLE PC_SIGMA_ROLE; </strong></li>
+</ol>
+<ul>
+<li>Snowflake access rights are based upon <a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview.html" target="_blank">role based access control (RBAC)</a>. This command allows the PC_SIGMA_ROLE to use the PC_SIGMA_DB database.</li>
+</ul>
+<ol type="1" start="5">
+<li><strong> GRANT USAGE ON SCHEMA PC_SIGMA_DB.EMBEDDED_LAB TO ROLE PC_SIGMA_ROLE; </strong></li>
+</ol>
+<ul>
+<li>This allows the PC_SIGMA_ROLE to use the schema we created earlier in the lab.</li>
+</ul>
+<ol type="1" start="6">
+<li><strong>GRANT SELECT ON ALL TABLES IN SCHEMA PC_SIGMA_DB.EMBEDDED_LAB TO ROLE PC_SIGMA_ROLE;</strong></li>
+</ol>
+<ul>
+<li>This allows our PC_SIGMA_ROLE to query against the transactions table we created.</li>
+</ul>
+<ol type="1" start="7">
+<li><strong>USE ROLE PC_SIGMA_ROLE; </strong></li>
+</ol>
+<ul>
+<li>We completed granting access to the data we ingested to the PC_SIGMA ROLE. This command will now allow the user to start reporting on the data from Sigma using this role.</li>
+</ul>
+<ol type="1" start="8">
+<li><strong>SELECT * FROM TRANSACTIONS LIMIT 1000;</strong></li>
+</ol>
+<ul>
+<li>A SELECT * against the transactions table should complete successfully and show the data we have loaded. If not, please go back and re-run the prior steps of this module using the SYSADMIN role to ensure permissions were granted to the new role appropriately.</li>
+</ul>
+<p class="image-container"><img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building Your Sigma Workbook" duration="10">
+        <h2 is-upgraded>Connecting Your Workbook to the Dataset</h2>
+<ol type="1">
+<li>Navigate to the Sigma tab that was previously opened through partner connect. Select the top left Paper Crane logo to navigate back to the Sigma homepage if you are not there already.</li>
+<li>Let&#39;s create a new Workbook and connect it to the data we just ingested into Snowflake. Click on the &#34;<strong>+ Create New</strong>&#34; button at the top left of the page and select &#34;Create New Workbook&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build" src="img/f1de6b628e6b0cb7.png"></p>
+<ol type="1" start="3">
+<li>We are now inside a Sigma Workbook. Sigma workbooks are a collaborative canvas for data driven decision makers. Each workbook can have one or more pages, and each page has its own canvas. Each canvas supports one or more visual elements (e.g. charts, tables, controls, images, etc).</li>
+<li>We&#39;ll first add a new data source to our workbook. Click the &#34;+&#34; icon on the left hand side in the Elements sidebar, then select the &#34;Table&#34; option. For source, select &#34;Tables and Datasets&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build2" src="img/f26fa9ad8ca8ba37.png"><img alt="build3" src="img/852fb7ad494726d5.png"></p>
+<ol type="1" start="5">
+<li>On the resulting page, navigate to &#34;Connections&#34;, expand the drop down, and click into &#34;Snowflake PC_SIGMA_WH&#34;. Select &#34;PC_SIGMA_DB&#34;, then navigate to the EMBEDDED_LAB schema and select the &#34;TRANSACTIONS&#34; table. You will notice Sigma automatically populates a preview of the table. Click &#34;Select&#34; to begin our data modeling.</li>
+</ol>
+<p class="image-container"><img alt="build4" src="img/1dc5d4bc9e57a9f5.png"></p>
+<h2 is-upgraded>Workbook Analysis</h2>
+<p>In this segment we will begin to clean up the data set for our customer portal. We will create calculations, parse JSON, and build visualizations with the ultimate goal of creating and embedding a dashboard for our brand managers to get a sense of how their products are performing in Plugs Electronic&#39;s stores.</p>
+<ol type="1">
+<li>First, let&#39;s save our workbook as ‘Customer Portal Workbook&#39; by clicking &#34;Save As&#34; at the top of the page. We will then rename our workbook page to &#34;Data&#34; by clicking the down arrow next to &#34;Page 1&#34; in the bottom left of the UI.</li>
+</ol>
+<p class="image-container"><img alt="build5" src="img/fac374c41dde0a0d.png"></p>
+<ul>
+<li>All workbooks are considered purely exploratory until you as their creator actively save the first version. This means you have one central location to start both your ad-hoc analysis and reporting. Once you begin exploring your data, you can choose to leave the unsaved workbook behind, or you can save it and continue to build it out as a report.</li>
+</ul>
+<ol type="1" start="2">
+<li>Let&#39;s start by formatting our currency columns. Select the columns for Sale Amount, Item Price, and Wholesale Cost, then click the &#34;$&#34; icon by the formula bar. You will see that these columns are now formatted as currency.</li>
+</ol>
+<p class="image-container"><img alt="build6" src="img/1324e9711b0e5299.png"></p>
+<ol type="1" start="3">
+<li>Double click on the Sale Amount column name and rename this column to Revenue.</li>
+</ol>
+<p class="image-container"><img alt="build7" src="img/569e97674b576d73.png"></p>
+<ol type="1" start="4">
+<li>Click the drop down to the right of Purchase Date and select &#34;Truncate Date - Day&#34;. This will now display the purchase timestamps as the date only. Rename the column to Purchase Date, by double clicking the column name and typing &#34;Purchase Date&#34;. Repeat this process for the Cust Since column.</li>
+</ol>
+<p class="image-container"><img alt="build8" src="img/551e89a2b41f03a1.png"></p>
+<ol type="1" start="5">
+<li>On the far right side of the table you will see the CUST_JSON column. This column holds JSON data around the customers who made these purchases. Click on the arrow to the right of the column name, and choose &#34;extract columns&#34;. This will bring up a window where Sigma has already identified the fields within the JSON object. Select Age Group and Cust_Gender, then click confirm. You will notice that Sigma intuitively parses this data out of the JSON object and adds it to the table as columns.</li>
+</ol>
+<p class="image-container"><img alt="build9" src="img/e756d19323fcac28.png"></p>
+<ol type="1" start="6">
+<li>To prevent end users from extracting more sensitive customer information, click the arrow next to the Cust_JSON column and select &#34;Hide Column&#34; from the drop down.</li>
+</ol>
+<p class="image-container"><img alt="build10" src="img/b3dd708c1ab7a560.png"></p>
+<ol type="1" start="7">
+<li>Finally, click the Revenue column once more. For reporting purposes, we are going to remove the decimals so that our total Revenue metrics in the report are more aligned with the industry standard. With the column selected, click the decrease decimal places button in the top tool bar twice to turn this into a whole number.</li>
+</ol>
+<p class="image-container"><img alt="build39" src="img/3a46e6d18fbe24d2.png"></p>
+<ul>
+<li>Every action we take in Sigma produces machine-generated SQL, optimized for Snowflake, that runs live against the warehouse. This ensures that the data is secure and up to date at all times. You can see the queries we are generating by clicking the dropdown next to the refresh button on the top right and selecting &#34;Query History&#34;.</li>
+</ul>
+<p class="image-container"><img alt="build11" src="img/9a2a1b892bd12df8.png"></p>
+<ul>
+<li>If we navigate back to our Snowflake environment, we can see the queries being pushed down in our Snowflake query history view as well. <img alt="Footer" src="img/3f828d18e7bfdead.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating Visualizations &amp; Filters" duration="15">
+        <h2 is-upgraded>Creating Visualizations</h2>
+<p>It is often easier to spot trends, outliers, or insights which lead to further questions when viewing data in a visualization. Sigma makes it easy to create visualizations of your data while also enabling you to dig into the data that makes up the visualization.</p>
+<ol type="1">
+<li>Start the creation of a visualization by clicking on the Transaction table that we just built, then clicking the &#34;Create Child Element&#34; icon on the top right corner. Select &#34;Visualization&#34; to start creating a new chart.</li>
+</ol>
+<p class="image-container"><img alt="build12" src="img/2ffa40b09bce85b6.png"></p>
+<ol type="1" start="2">
+<li>You will see a new visualization element has been created under our table. In the left-hand bar you will see a dropdown that lists all of the visualizations that Sigma currently supports. Select the bar chart.</li>
+<li>On the X-Axis click the plus icon and add our &#34;Store Region&#34; column. Notice that Sigma allows you to search for the column you would like to add. We can also drag values onto the axis instead of using the add button. Find &#34;Revenue&#34; in the list of columns and drag it to the Y-axis. The value will automatically aggregate and become &#34;Sum of Revenue&#34;. Double click the header on the bar chart and name it Revenue by Store Region.</li>
+</ol>
+<p class="image-container"><img alt="build13" src="img/3cf8872e28cb89fa.png"><img alt="build14" src="img/392dca5ed9e70825.png"></p>
+<ol type="1" start="4">
+<li>Click the ‘kebab&#39; (3 dots) on the top right hand side of the element. From the drop down, select ‘move to new page&#39;. This will create a new page in our workbook to hold our visualizations. Rename this new page &#34;Customer Portal&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build38" src="img/a6b2cd8dcd814651.png"></p>
+<ol type="1" start="5">
+<li>Now let&#39;s look at our sales over time to get an understanding of how we are trending. Another way to create a new chart is by selecting the plus icon on the top of the left hand panel next to our ‘Page Overview&#39; title. Click on this icon to get a list of elements that we can add to our canvas, and choose ‘Viz&#39;.</li>
+</ol>
+<p class="image-container"><img alt="build16" src="img/7ba88072c578d532.png"></p>
+<ol type="1" start="6">
+<li>After selecting the ‘Viz&#39; icon, you will be prompted to select a source to use for the new visualization. You can see tabs for selecting:</li>
+</ol>
+<ul>
+<li><strong> In Use </strong> : sources that are currently being used by other elements in the workbook.</li>
+<li><strong> New </strong>: a new source that could be a table, dataset, SQL, or uploaded CSV.</li>
+<li><strong> Page Elements </strong> : any data elements already in the workbook, such as the bar chart or table we created.<br>  </li>
+</ul>
+<p>   From the &#34;In Use&#34; tab, select the Workbook Element &#34;Transactions&#34;. </p>
+<p class="image-container"><img alt="build17" src="img/f934a76f0e0bc012.png"></p>
+<ol type="1" start="7">
+<li>Click on the visualization drop down and select &#34;Line&#34;. Next, drag the &#34;Purchase Date&#34; column to the X-Axis. (Optionally add it using the + icon next to the x-axis)</li>
+</ol>
+<p class="image-container"><img alt="build18" src="img/c9f227093ad1d8dc.png"></p>
+<ol type="1" start="8">
+<li>We previously truncated our purchase date timestamp to the day of date, but can change this aggregation level for the visualization. Using the dropdown next to the field name, select a new aggregation level under the &#34;Truncate Date&#34; submenu. Let&#39;s change the aggregation level to be &#34;Month&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build19" src="img/d44c412864b577a5.png"></p>
+<ol type="1" start="9">
+<li>Next we can place our &#34;Revenue&#34; column on the Y-Axis to see our revenue over time. Again, Sigma has automatically summed the revenue to the monthly level.</li>
+</ol>
+<p class="image-container"><img alt="build20" src="img/3c7d45cea99718bb.png"></p>
+<ol type="1" start="10">
+<li>We now have a line graph with revenue by month. Let&#39;s add some more detail by breaking the series out by customer age group. To do this add &#34;AGE_GROUP&#34; to the color grouping section in the left sidebar.</li>
+</ol>
+<p class="image-container"><img alt="build41" src="img/660a2bccddc3cd2d.png"></p>
+<ol type="1" start="11">
+<li>You will notice a sharp drop off on the right side of the chart where our data end. Right click on the right most data point, and select &#34;exclude 2022-04&#34;. Once this is done, rename the visualization to &#34;Revenue by Month &amp; Age Group&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build40" src="img/1206dae4e3131f2f.png"><img alt="build21" src="img/54728ed267c54578.png"></p>
+<ol type="1" start="12">
+<li>Let&#39;s create one more visualization around our revenue generated. Again, select the &#34;+&#34; icon on the top left of the screen and select &#34;Viz&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build22" src="img/aecd1fc98851da98.png"><img alt="build23" src="img/7ba88072c578d532.png"></p>
+<ol type="1" start="13">
+<li>For the data source, go to the In Use tab and select the Workbook Element &#34;Transactions&#34;. For the visualization type, select &#34;Single Value&#34; from the drop down list.</li>
+</ol>
+<p class="image-container"><img alt="build24" src="img/41f67b99329416a1.png"></p>
+<ol type="1" start="14">
+<li>Next drag Revenue to the value. This will automatically sum the revenue across all transactions. Rename this visualization to Total Revenue by double clicking Sum of Revenue on the left hand side and typing Total Revenue.</li>
+</ol>
+<p class="image-container"><img alt="build25" src="img/b41a7cb766b4c3c8.png"></p>
+<ol type="1" start="15">
+<li>Finally, we want to share some transaction level data with our end users. From our transactions table on the data page, click &#34;Create child element - table&#34;. This creates a new table from our Transactions table. Let&#39;s sort this table by purchase date descending, so that our most recent transactions are shown first. Finally, move this element to our Customer Portal page.</li>
+</ol>
+<p class="image-container"><img alt="build26" src="img/fa9aee549a9b9b88.png"></p>
+<ol type="1" start="16">
+<li>Drag and drop the visualizations on the Customer Portal page so that the Total Revenue element is at the top, the line chart and bar graph are side by side below it, and the transactions table is at the bottom.</li>
+</ol>
+<p class="image-container"><img alt="build27" src="img/bf42ca058868df8e.png"></p>
+<h2 is-upgraded>Create Filters</h2>
+<p>Let&#39;s add a filter to this data. We will do this by adding a control element to our canvas. Controls enable interactions with the charts such as filtering them for specific values. When clicking the ‘+&#39; icon in the upper left hand pane, we will see options for control elements:</p>
+<ul>
+<li><strong> Number Range</strong>: Creates a range of values you wish to look at</li>
+<li><strong> List Values</strong>: Creates a list of values for users to choose from</li>
+<li><strong> Text Box</strong>: Allows users to input free form text</li>
+<li><strong> Switch</strong>: Allows users to filter on Boolean (true/false) values</li>
+<li><strong> Drill Down</strong>: Allows you to specify specific drill paths</li>
+<li><strong> Date </strong>: Allows users to filter for a specific date or date range</li>
+</ul>
+<ol type="1">
+<li>Click the &#34;+&#34; icon on the upper left hand pane, then select &#34;Date&#34;. This will add a Date control element to the canvas.</li>
+</ol>
+<p class="image-container"><img alt="build28" src="img/d1b049e0f280d5e8.png"></p>
+<ol type="1" start="2">
+<li>After adding the &#34;Date&#34; control to our Customer Portal page, let&#39;s drag it to the top of the page and update the control_id to say &#34;Date-Range&#34; and update the control label to say &#34;Select a Date Range&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build29" src="img/e49eaf977fb39a.png"></p>
+<ol type="1" start="3">
+<li>Next we need to tell the control which elements we want it applied to. Clicking on the filter control, we have some options in the left hand pane. Select &#34;Targets&#34;, then choose &#34;Add Target&#34;. Select the 3 visualizations we previously created- Revenue by Store Region, Revenue by Month &amp; Customer Age, and Total Revenue.</li>
+</ol>
+<p class="image-container"><img alt="build30" src="img/8e0478d9bf0d290c.png"></p>
+<ol type="1" start="4">
+<li>On the data page, right click on the drop down next to the column &#34;Product Brand&#34; and select the &#34;Filter&#34; option from the menu. A new filter will be added to the table.</li>
+</ol>
+<p class="image-container"><img alt="build31" src="img/d21b98c2568b680a.png"><img alt="build32" src="img/e1e24f8e85841c10.png"></p>
+<ol type="1" start="5">
+<li>Click on the kebab menu to the right of the &#34;Product Brand&#34; filter and select &#34;Convert to Page Control&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build33" src="img/57f95ad80d32a82.png"></p>
+<p>The filter will be added as a page control to the canvas. This product brand filter is additionally what we will pass into our embed URL to only serve up data related to the brand we are exploring. Since this filter started out with a target, there is no need to add one.</p>
+<h2 is-upgraded>Finishing up the Canvas</h2>
+<p>In Sigma, you can add a variety of UI elements to your workbook to customize the look and feel. In this section, we will work with text elements to create a dynamic text element as the header for our workbook. When you click the ‘+&#39; in the top left, you will see a variety of elements available to you such as:</p>
+<ul>
+<li><strong> Image</strong>: Upload images or links to URLs to show an image on the canvas</li>
+<li><strong> Button</strong>: Use buttons to navigate to other workbooks, websites, or download the workbook as a PDF</li>
+<li><strong>Embed</strong>: Embed other websites or applications into your workbook</li>
+<li><strong>Spacer</strong>: Use to add space between elements on the canvas</li>
+<li><strong>Divider</strong>: Use to create hard divisions between sections of the canvas</li>
+</ul>
+<ol type="1">
+<li>To start, navigate to your Customer Portal page, and click &#34;add element&#34;. Under UI elements, select &#34;Text&#34;.<img alt="build34" src="img/fb39285306735031.png"></li>
+<li>We are going to create a dynamic text element as the header for our page. In the text bar type ‘=&#39;. This will start the input of a formula. In the formula bar type <strong>If(CountDistinct([TRANSACTIONS/Product Brand]) &gt;1, &#34;All Brands&#34;, [TRANSACTIONS/Product Brand])</strong>. Hit Enter. You should now see a circle stating &#34;All Brands&#34;. To the right of this, type &#34;Sales Performance&#34;.</li>
+</ol>
+<p class="image-container"><img alt="build42" src="img/e6e74da32d59f9f3.png"></p>
+<ol type="1" start="3">
+<li>Click your new dynamic text element to open the formatting bar at the top. Select &#34;Large Heading&#34; for the element size, and drag your text element to the top of the page. Finally, click the formatting option to center the element. This dynamic title will adjust based on the user we log into our portal as, and the brand we are exploring.</li>
+</ol>
+<p class="image-container"><img alt="build43" src="img/3da3866640f8eb61.png"></p>
+<ol type="1" start="4">
+<li>On the bottom left, click the down arrow next to your ‘Data&#39; page and select &#34;Hide&#34;. This will hide the page with the underlying data set from your end users.</li>
+</ol>
+<p class="image-container"><img alt="build36" src="img/e5770985c63bca3b.png"></p>
+<ol type="1" start="5">
+<li>Click Publish to save these changes. <img alt="Footer" src="img/3f828d18e7bfdead.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Embedding the Sigma Workbook into an Application" duration="10">
+        <h2 is-upgraded>Building the Application / Portal</h2>
+<p>We are now going to begin building our portal where we can embed our workbook. This will be a Sales Performance dashboard where the Plugs Electronics family of brands can log in to see how their products are performing in our store.</p>
+<ol type="1">
+<li>First we will need to install Node.js. Node is going to allow us to set up a local server, as well as the front end portal, and securely embed our dashboards with row level security so that brands are not seeing each other&#39;s data. Download and install Node.js by going here: <a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></li>
+</ol>
+<ul>
+<li>Note, there are many programming languages and libraries you can use to code a client and server side application, this just happens to be the one we will be using today.</li>
+</ul>
+<p class="image-container"><img alt="embed1" src="img/8702ced9e9e8e0a1.png"></p>
+<ol type="1" start="2">
+<li>Once downloaded, double click on the download and go through the installation steps. This should only take a minute.</li>
+</ol>
+<p class="image-container"><img alt="embed2" src="img/3df4dbdf84f69191.png"></p>
+<ol type="1" start="3">
+<li>Now open the app_embed folder that was provided to you. This holds the shell for the portal we will be building today.</li>
+</ol>
+<p class="image-container"><img alt="embed3" src="img/bafcf82a9c32f45e.png"></p>
+<ol type="1" start="4">
+<li>First, open the two files index.html and server.js in your favorite text editor.</li>
+</ol>
+<p class="image-container"><img alt="embed4" src="img/8cff32f2db686b06.png"></p>
+<ol type="1" start="5">
+<li>If we look first at the index. html file, we can see it is just a basic HTML page that calls an API to the backend server. js file. When the server is running, you will be able to access the page by going to the URL <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> in your browser. This is also where you would define the client-facing website if you wanted to customize the look and feel of the portal.</li>
+</ol>
+<p class="image-container"><img alt="embed5" src="img/24b8b42cf7000e0.png"></p>
+<ol type="1" start="6">
+<li>If we move over to the server.js file, we can start to see what is expected.  Sigma requires a variety of parameters to be set when requesting a dashboard. These parameters not only ensure security, but also allow for flexible interaction with filters and parameters within the dashboard.</li>
+</ol>
+<ul>
+<li><strong> &lt;dashboard_embed_path&gt; </strong>is the Embed Path that is generated on the dashboard you wish to embed.</li>
+<li><strong>&lt;random_nonce_value&gt;</strong> is a  random unique string (less than 255 characters). Sigma uses this to prevent application embed URLs from being shared and reused.</li>
+<li><strong> &lt;allow_export_boolean&gt; </strong>(optional) is a boolean (true/false) parameter that controls whether the viewer of the dashboard will be able to download data from the dashboard visualizations. If this parameter is not specified, the URL will default to false and viewers will not be able to download data.</li>
+<li><strong>&lt;session_length&gt;</strong> is the number of seconds after <strong>&lt;unix_timestamp&gt;</strong> that the URL will remain valid. After the specified number of seconds, the Application Embed will no longer display new values.</li>
+<li><strong>&lt;unix_timestamp&gt;</strong> is the current time as a UNIX timestamp. Sigma uses this in combination with the <strong>&lt;session_length&gt; </strong>to determine if your link has expired. The URL is valid after the <strong>&lt;unix_timestamp&gt;</strong> and before the <strong>&lt;session_length&gt;</strong> expiration.</li>
+<li><strong>&lt;control_id&gt;</strong> and <strong>&lt;control_value&gt;</strong> are the ID and value of a dashboard control you&#39;d wish to pass through to the dashboard. You may pass multiple control IDs and values. This will allow you to customize what your viewers see. Note: All controls must exist on the dashboard. This is to ensure changes to a dashboard do not cause data to be visible unintentionally.</li>
+<li><strong>&lt; mode &gt;</strong> Determines the end users permissions. For this lab, it will be set to <strong>mode = explore</strong> to allow end users to take advantage of Sigma&#39;s exploratory capabilities.</li>
+</ul>
+<p>We need to install a couple of libraries in order to get this working: <strong>express</strong> and <strong>uuid</strong>. These libraries are used to construct a unique signature for your embed URLs when combined with a secret key provided by Sigma. This makes it so that no one is able to ever modify and request the dashboard other than the server.</p>
+<p class="image-container"><img alt="embed6" src="img/f30fd817475a3e02.png"></p>
+<ol type="1" start="7">
+<li>Go back to the Finder, right-click on the app_embed folder, and select &#34;New Terminal at Folder&#34;.</li>
+</ol>
+<p class="image-container"><img alt="embed7" src="img/c578cbfc66e06ec.png"></p>
+<ol type="1" start="8">
+<li>Now we can install the needed libraries by issuing the following command:<strong> npm install express uuid</strong>.</li>
+</ol>
+<p class="image-container"><img alt="embed8" src="img/80e01fddca50a9ac.png"></p>
+<p>There are two key edits we need to make in order for the server to use our workbook, the Secret Key and the Embed URL of our workbook. We will obtain both of these pieces of information next.</p>
+<h2 is-upgraded>Generating an Application Embedding Secret in Sigma</h2>
+<ol type="1">
+<li>If we go back to Sigma, we can generate our secret key that is needed for application embedding. You can do this by clicking on your user icon on the top right of the screen and selecting &#34;Administration&#34;.</li>
+</ol>
+<p class="image-container"><img alt="embed10" src="img/49682be00c8a0597.png"></p>
+<ol type="1" start="2">
+<li>On the account screen there is an Embedding section with a subheading labeled &#34;Application Embedding&#34;. Click on the &#34;Add&#34; button to generate the key.</li>
+</ol>
+<p class="image-container"><img alt="embed11" src="img/9340799b51a96ef.png"></p>
+<ol type="1" start="3">
+<li>You will now get your secret key that can be used for all embedded workbooks. Please make sure to save this key in a secure place. If you lose it, you will have to re-generate a new key.</li>
+</ol>
+<p class="image-container"><img alt="embed12" src="img/7dff871aba660950.png"></p>
+<ol type="1" start="4">
+<li>Copy this key and place it in the server.js file where it says &#34;YOUR_SECRET_KEY_HERE&#34;.</li>
+</ol>
+<p class="image-container"><img alt="embed13" src="img/846244efe82d6ed1.png"></p>
+<h2 is-upgraded>Generating an Embed URL for your Workbook</h2>
+<ol type="1">
+<li>Now, if we go back to your Sigma workbook by clicking on the back button in the top left, we can retrieve the embed URL.</li>
+</ol>
+<p class="image-container"><img alt="embed14" src="img/5899e458a58d0d12.png"></p>
+<ol type="1" start="2">
+<li>Find the drop-down icon next to the dashboard name in the top header bar and select &#34;Embedding&#34;.</li>
+</ol>
+<p class="image-container"><img alt="embed15" src="img/e2d633bdab07149d.png"></p>
+<ol type="1" start="3">
+<li>Next, click on the tab labeled &#34;Application(0)&#34; and use the dropdown to generate an embed path for the entire workbook.</li>
+</ol>
+<p class="image-container"><img alt="embed16" src="img/1eb4f8fa22475c6a.png"></p>
+<ol type="1" start="4">
+<li>Now it has generated the embed path for your dashboard. Select COPY to copy this URL, then paste it into the server.js file where it says &#34;YOUR WORKBOOK PATH HERE&#34;.</li>
+</ol>
+<p class="image-container"><img alt="embed18" src="img/dcc75de42bfe462.png"></p>
+<ol type="1" start="5">
+<li>Save your server.js file.</li>
+<li>Once complete, we are ready to start our server. Back in your terminal, you can run the following command to start the server: <strong>node server.js</strong></li>
+</ol>
+<p class="image-container"><img alt="embed19" src="img/f989d2542b0282c1.png"></p>
+<ol type="1" start="7">
+<li>Now that the server is running, we can visit our portal by going to <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> in our browser.</li>
+<li>You will notice that your workbook shows All Brands Sales Performance as we have not added any row level security yet. We will see changes in this title following the next section.</li>
+</ol>
+<p class="image-container"><img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Row Level Security" duration="5">
+        <ol type="1">
+<li>Now we might want to put some row level security on this dashboard, so that brands can only see data related to the sale of their own products. Navigate back to your data page in your Sigma workbook.</li>
+<li>On the data page, find the page control we created previously for Product-Brand. When we select it the left panel will show its properties. Find the Control ID and copy the value. It should be a value similar to &#34;Product-Brand&#34;.</li>
+</ol>
+<p class="image-container"><img alt="rls1" src="img/77a373ae56294162.png"></p>
+<ol type="1" start="3">
+<li>Click Publish to save the changes.</li>
+</ol>
+<p class="image-container"><img alt="rls2" src="img/65d09d16f0e4d335.png"></p>
+<ol type="1" start="4">
+<li>Navigate to your server.js file and un-comment the field that contains the control_id by deleting the &#34;//&#34; before searchParams at the beginning of the line. Here is where we can place the control_id from our workbook and pass a value to set that control. Today, we will hardcode a value, but these can always be set in a more dynamic fashion based on user properties. For more information on more dynamic security for embedding, please see the Sigma docs <a href="https://help.sigmacomputing.com/hc/en-us/articles/6797945342483-User-Backed-Embedding-" target="_blank">here</a>. Update control-id to ‘Product-Brand&#39; (or whatever the control ID was labeled in your workbook) and the controlValue to ‘Samsung&#39; as shown in the photos below.</li>
+</ol>
+<p>Before the changes in step 1 your file looks like this:</p>
+<p class="image-container"><img alt="rls6" src="img/56930aa9b62c36ed.png"></p>
+<p>After changes it should look like this:</p>
+<p class="image-container"><img alt="rls3" src="img/acd4744f8b63d1e0.png"></p>
+<ol type="1" start="5">
+<li>Save your server.js file and navigate back to your terminal. Here we need to stop the server by pressing <strong>Control + C</strong>. This will exit the running server process. We can then start it again with our new configuration by running the command <strong>Node server.js</strong>.</li>
+</ol>
+<p class="image-container"><img alt="rls4" src="img/2e46734c329cf70f.png"></p>
+<ol type="1" start="6">
+<li>Now if you go back to your browser and reload the web page, you should notice that we only see data for Samsung now. You will additionally notice that the dynamic text we created for the header now reads &#34;Samsung Sales Performance&#34; rather than &#34;All Brands Sales Performance&#34;.</li>
+</ol>
+<p class="image-container"><img alt="rls5" src="img/fad5eb02a01cae56.png"></p>
+<p>For more details on how to set up dynamic row-level security in Sigma, refer <a href="https://help.sigmacomputing.com/hc/en-us/articles/6709896696979-User-Attributes" target="_blank">here</a>. <img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploring the Embed" duration="0">
+        <ol type="1">
+<li>Looking at the customer portal, click maximize element in the top right of the Revenue by Store Region bar chart.</li>
+</ol>
+<p class="image-container"><img alt="Explore1" src="img/bc342070e0392697.png"></p>
+<ol type="1" start="2">
+<li>Lets get some additional insights from this dashboard. Drag Product Type to the color category.</li>
+</ol>
+<p class="image-container"><img alt="Explore2" src="img/7a653f92572813ed.png"></p>
+<ol type="1" start="3">
+<li>Collapse the bar chart by clicking minimize element in the same place you clicked to expland it.</li>
+<li>Next, scroll down to the Transactions table and click Maximize element.</li>
+<li>Scroll right to the store region column. Click the drop down arrow and select &#34;Group Column&#34;. Then, scroll to the Order Channel column, and again select &#34;Group Column&#34;. We can now see that our data has been aggregated at two levels, first the store region, then the order channel.</li>
+</ol>
+<p class="image-container"><img alt="Explore3" src="img/dda06fad454964a.png"></p>
+<ol type="1" start="6">
+<li>Click the drop down next to Order Channel and select &#34;Add new column&#34;.</li>
+<li>In the formula bar, type <strong>CountDistinct([Order Number])</strong>. Rename this column Number of Orders.</li>
+<li>Again, click the drop down next to Order Channel and select &#34;Add Column&#34;. This time, type <strong>Sum([Revenue])</strong> in the formula bar. What we can now see is Revenue generated for a specific region by the Order Channel the purchase was made from.</li>
+<li>With the Sum of Revenue column selected, click the paintbrush to the right of the table icon in the left hand tool pane.</li>
+</ol>
+<p class="image-container"><img alt="explore4" src="img/af31bb66785d7936.png"></p>
+<ol type="1" start="10">
+<li>Select &#34;Conditional Formatting&#34;, then click &#34;Data Bars&#34;.</li>
+</ol>
+<p class="image-container"><img alt="explore5" src="img/7540a903eb580706.png"></p>
+<ol type="1" start="11">
+<li>Click the minus to the left of Order Channel to collapse the view at the aggregate level. You should now see revenue generated by different order channels across regions. Based on this view, we can tell that the South region has the largest amount of revenue tied to in store purchases (Brick &amp; Mortar order channel) and that we might want to focus our in store marketing efforts here.</li>
+</ol>
+<p class="image-container"><img alt="explore6" src="img/75383ec067068b1c.png"></p>
+<ol type="1" start="12">
+<li>Minimize the element using the arrows in the top right to collapse this new visualization back into the larger page.</li>
+</ol>
+<p class="image-container"><img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Helpful Resources" duration="5">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Thank you for your participation in this hands-on lab. To learn more about how real businesses are leveraging Snowflake &amp; Sigma for embedded use cases, check out our webinar here : <a href="https://www.snowflake.com/build/agenda/?agendaPath=session/1031449" target="_blank">How iPipeline Leverages Snowflake and Sigma</a></p>
+<h2 is-upgraded>What We Have Covered</h2>
+<ul>
+<li>Creating objects in Snowflake and ingesting data</li>
+<li>Connecting Sigma to Snowflake</li>
+<li>Creating workbooks, visualizations, and filters</li>
+<li>Embedding Sigma workbooks into an application</li>
+<li>Adding row level security to an embed</li>
+<li>Exploring an embedded Sigma workbook</li>
+</ul>
+<h2 is-upgraded>Helpful Resources</h2>
+<ul>
+<li>General Sigma Embedding Docs: <a href="https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics" target="_blank">https://help.sigmacomputing.com/hc/en-us/categories/1500001787282-Embedded-Analytics</a></li>
+<li>User Backed Embedding Docs: <a href="https://help.sigmacomputing.com/hc/en-us/articles/6797945342483-User-Backed-Embedding-" target="_blank">https://help.sigmacomputing.com/hc/en-us/articles/6797945342483-User-Backed-Embedding-</a></li>
+<li>Sigma Blog: <a href="https://www.sigmacomputing.com/blog" target="_blank">https://www.sigmacomputing.com/blog</a></li>
+<li>Resources and Case Studies: <a href="https://www.sigmacomputing.com/resources" target="_blank">https://www.sigmacomputing.com/resources</a></li>
+<li>Help Center including Documentation: <a href="https://help.sigmacomputing.com/hc/en-us" target="_blank">https://help.sigmacomputing.com/hc/en-us</a></li>
+</ul>
+<p class="image-container"><img alt="Footer" src="img/3f828d18e7bfdead.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

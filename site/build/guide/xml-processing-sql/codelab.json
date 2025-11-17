@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "xml-processing-sql",
+  "duration": 25,
+  "title": "Modernize XML Processing for Financial Services with SQL XML Functions",
+  "summary": "Snowflake guide on how to process XML with SQL",
+  "source": "xml-processing-sql/xml-processing-sql.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "financialservices",
+    "gettingstarted",
+    "notebook",
+    "regulatory",
+    "sql",
+    "web",
+    "xml"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "xml-processing-sql"
+}

@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "s3_access_log_ingestion",
+  "duration": 27,
+  "title": "AWS S3 Access Logs Ingestion",
+  "summary": "This quickstart is a guide to ingesting and processing S3 Access Logs into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for data loss prevention and incident response.",
+  "source": "s3_access_logs_ingestion/s3_access_logs_ingestion.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cybersecurity",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "cybersecurity",
+    "datalossprotection",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "s3_access_log_ingestion"
+}

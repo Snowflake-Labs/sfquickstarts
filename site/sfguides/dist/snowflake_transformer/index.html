@@ -1,0 +1,242 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Dive Into Slowly Changing Dimensions with Snowpark and StreamSets</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowflake_transformer"
+                  title="A Dive Into Slowly Changing Dimensions with Snowpark and StreamSets"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>StreamSets Transformer for Snowflake is a hosted service embedded within the StreamSets DataOps Platform that uses the Snowpark Client Libraries to generate SnowSQL queries that are executed in Snowflake. Build your pipelines in the StreamSets canvas and when you execute that pipeline, StreamSets generates a DAG. StreamSets then uses the DAG and the Snowpark Client Libraries to generate SnowSQL. That SnowSQL is sent over to Snowflake to be executed in the Warehouse of your choice.</p>
+<p class="image-container"><img alt="How_Does_It_Work" src="img/6489533aff1aaee7.png"></p>
+<p>Transformer for Snowflake accelerates the development of data pipelines by providing features that go beyond a drag and drop interface to construct the equivalent of basic SQL. Snowpark enables StreamSets to construct the SnowSQL queries at the pipeline runtime, allowing pipeline definitions to be more flexible than SnowSQL queries written by hand. StreamSets also provides processors that combine the logic for common use cases into a single element on your canvas.</p>
+<p>Let&#39;s explore how to get started using Transformer for Snowflake and some of the features that will accelerate pipeline development.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to <a href="https://cloud.login.streamsets.com/login" target="_blank">StreamSets DataOps Platform account</a></li>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account and a schema that your user has CREATE TABLE privileges on</li>
+<li>SQL Script located <a href="https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/SCD_Snowpark.sql" target="_blank">here</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this guide, you will learn how to build pipelines using Transformer for Snowflake that are executed directly in your Snowflake Data Cloud, including:</p>
+<ul>
+<li>How to build and preview pipelines</li>
+<li>How to use the Slowly Changing Dimension Processor</li>
+<li>How to apply transformations to multiple columns at one time</li>
+<li>How to create and execute a job</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A pipeline in StreamSets using Snowpark to process a Slowly Changing Dimension. You can import the final product to compare against <a href="https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/Snowpark_Snowflake_Transformer.zip" target="_blank">here</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure your Snowflake Credentials and Connection Defaults" duration="2">
+        <p>If you have not used Transformer for Snowflake before, after signing up for the platform, you will need to add your Snowflake Credentials to your user. You can find these settings under the User Icon &gt; My Account</p>
+<p class="image-container"><img alt="My_Account" src="img/3d992a3a94f21230.png"></p>
+<p>Under My Account, select the <strong>Snowflake Settings</strong> tab. You must enter Snowflake credentials. There are two options for authentication: Username/Password or Key Pair Authentication. You can find instructions for setting up Key Pair authentication with Snowflake <a href="https://docs.snowflake.com/en/user-guide/jdbc-configure.html#label-jdbc-using-key-pair-authentication" target="_blank">here</a>. You will want to use a key pair that is <strong>not</strong> encrypted</p>
+<p>You also have the option to set pipeline defaults, which is highly recommended. This will prevent you from having to enter your Account URL, Warehouse, Database, Schema, and/or Role for every pipeline. When these values are populated, new Transformer for Snowflake pipelines are created with parameters for those settings pre-populated with the values provided here. These settings can be overwritten directly in any pipeline.</p>
+<p>Your Snowflake account URL will change depending on the area where you&#39;re located. Make sure you copy paste it up until the &#34;.com&#34;.</p>
+<p class="image-container"><img alt="Snowflake_Settings" src="img/95b4a861db6a3640.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a New Pipeline" duration="2">
+        <p>Once your credentials are saved, you are ready to build your first pipeline. Using the tabs on the left hand menu, select Build &gt; Pipelines. Use the ➕ icon to create a new pipeline.</p>
+<p class="image-container"><img alt="Build_Pipeline" src="img/ae76785d52aa9abd.png"></p>
+<p>If your DataOps platform account has no deployments set up, the following pop up will appear. Select the option to &#34;Use Transformer for Snowflake&#34;. Otherwise, the subsequent screen will appear.</p>
+<p class="image-container"><img alt="Use_Transformer" src="img/5c45db825ef0a233.png"></p>
+<p>The New Pipeline window will appear, so enter a pipeline name and if desired, a description, and make sure that the Engine Type selected is <strong>Transformer for Snowflake</strong>.</p>
+<p class="image-container"><img alt="Engine_Type" src="img/a37d24d71ed47d94.png"></p>
+<p>Add any users or groups for shared access to the pipeline, choose <strong>Save &amp; Next</strong>, and then <strong>Open in Canvas</strong>.</p>
+<p class="image-container"><img alt="Open_in_Canvas" src="img/e110ffa95d9723a2.png"></p>
+<p>If you entered Default Pipeline Parameters in the previous step, the <strong>Snowflake URL, Warehouse, Database, Schema</strong>, and/or <strong>Role</strong> fields will be populated with StreamSets Parameters, whose values can be seen on the <strong>Parameters</strong> tab.</p>
+<p class="image-container"><img alt="Parameters" src="img/29e0d9f28539fccd.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Code Snippets, Info Boxes, and Tables" duration="2">
+        <p>Every Transformer for Snowflake pipeline must have an origin and a destination. For this pipeline, select the Snowflake Table Origin from either the drop down menu at the top of the canvas or from the full menu of processors on the right.</p>
+<p>Click on the Table origin, under the General tab, and name it ‘Employees&#39;, and on the Table tab, enter the table name <strong>EMPLOYEES</strong>. This will be the Dimension table that tracks the employee data.</p>
+<p>Add a second Snowflake Table origin to the canvas. This origin will be for a feed of updated Employee data. Under the General tab, name the origin ‘Updates&#39; and on the Table tab, enter <strong>UPDATE_FEED</strong>.</p>
+<p>At this point, run the first section of SQL in the SQL Script file to create and populate the <strong>EMPLOYEES</strong> and <strong>UPDATE_FEED</strong> tables in a Snowflake Worksheet. You will need to substitute the names of your database and schema into the script if you already have your own that you want to use.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Slowly Changing Dimension" duration="2">
+        <p>Now add the <strong>Slowly Changing Dimension</strong> processor from the top menu (which only appears when the origin is selected on the canvas) or from the right side menu of all Processors. Make sure the Employees Table Origin is connected to the Slowly Changing Dimensions.</p>
+<p class="image-container"><img alt="Select_Processor" src="img/7c1b8a98a6ca5f4.png"></p>
+<p>First, connect the <strong>Employees</strong> origin to the Slowly Changing Dimension processor. Next, connect the <strong>Updates</strong> origin to the Slowly Changing Dimension process. The line connecting from Employees to the SCD processor should have a 1 where it connects to the SCD, and the line connecting the Updates origin should have a 2, as shown:</p>
+<p class="image-container"><img alt="Slowly_Changing" src="img/b4fae5c414b27c08.png"></p>
+<p>If the inputs are not numbered correctly, select the up and down arrows button from the menu that appears when the SCD processor is selected, and the order of the inputs will be swapped.</p>
+<p>In the settings for the Slowly Changing Dimension, add the following configurations:</p>
+<ul>
+<li>SCD Type: <strong>Type 2</strong></li>
+<li>Key Fields: <strong>ID</strong></li>
+<li>Specify Version Field: <strong>Checked</strong></li>
+<li>Version Field: <strong>VERSION</strong></li>
+<li>Specify Active Flag: <strong>Checked</strong></li>
+<li>Active Flag Field: <strong>ACTIVE_FLAG</strong></li>
+<li>Active Field Type: <strong>True-False</strong></li>
+<li>Specify Timestamp Fields: <strong>Checked</strong></li>
+<li>Start Timestamp Field: <strong>START_TIMESTAMP</strong></li>
+<li>End Timestamp Field: <strong>END_TIMESTAMP</strong></li>
+<li>Timestamp Expression: <strong>CURRENT_TIMESTAMP</strong> (Default Value)</li>
+<li>Behavior for New Fields: <strong>Remove from Change Data</strong></li>
+</ul>
+<p class="image-container"><img alt="Dimension" src="img/8956b73a6b9128dd.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Snowflake Table Destination" duration="2">
+        <p>The final step to complete this pipeline is to add the Table Destination.</p>
+<p>Select <strong>Snowflake Table</strong> from the &#34;Select New Destination to connect&#34; menu at the top of the canvas or the menu on the right, just be sure to select the Snowflake Table Destination, indicated by the red &#34;D&#34;.</p>
+<p class="image-container"><img alt="Dimension" src="img/3e11f08ed247c759.png"></p>
+<p>The destination can be renamed on the General tab, and on the Table tab, update the following settings:</p>
+<ul>
+<li>Table: <strong>EMPLOYEES</strong></li>
+<li>Write Mode: <strong>Propagate updates from Slowly-Changing Dimension processor</strong></li>
+<li>Create Table: <strong>Unchecked</strong></li>
+<li>Data Drift Enabled: <strong>Checked</strong></li>
+</ul>
+<p class="image-container"><img alt="Configuration" src="img/523bc816ba9f8bba.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preview Results" duration="2">
+        <p>Now that the pipeline has sources and a target, there should be no validation warnings showing, and the pipeline can be previewed.</p>
+<p>Activate the preview by selecting the eye icon in the top right of the canvas.</p>
+<p class="image-container"><img alt="preview" src="img/6af27c658b568730.png"></p>
+<p>This will cause the preview settings to appear. For this example, check the box next to &#34;Write to Destinations,&#34; which will do exactly what it says. It will perform the merge on the EMPLOYEES table. Usually, you would leave this unchecked if you just want to see what the pipeline will produce without any side effects. Now hit the Run Preview button.</p>
+<p class="image-container"><img alt="preview2" src="img/7d0d6fd89e97b7a1.png"></p>
+<p>The preview will generate the SQL that represents the pipeline and it will return the results for each processor. Since there are fewer than ten total records in the two origin tables, there is no need to adjust the default <strong>Preview Batch Record</strong> size of 10 records.</p>
+<p>Once the preview is loaded, clicking on any of the processors will show a sample of records from the input and output streams. Selecting the Slowly Changing Dimension processor should result in an output like this:</p>
+<p class="image-container"><img alt="preview3" src="img/fb778fd96e704f7c.png"></p>
+<p>There are a few things to observe.</p>
+<ul>
+<li>The input side shows the first two records that are already loaded in the EMPLOYEES table and the third record comes from the UPDATE_FEED table.</li>
+<li>There are no update records for ID 3, <strong>Ryan Howard</strong>, and that record does not appear in the output stream.</li>
+<li>The UPDATE_FEED does contain a title update for ID 2, <strong>Dwight Schrute</strong>, so the output stream has 2 corresponding records. One record that will serve as the update record to make the old record with the Title &#34;<strong>Sales Rep</strong>&#34; inactive, and a record that will be inserted as the new active record, with the title &#34;<strong>Assistant to the Regional Manager</strong>&#34;.</li>
+<li>Note that the UPDATE_FEED record on the input has an additional column <strong>CAKE_PREFERENCE</strong>, but since the Behavior for New Fields setting was set to <strong>Remove from Change Data</strong> in step 4, this column is just ignored.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add a Transformation" duration="2">
+        <p>To transform the data in the pipeline, add an <strong>Apply Functions</strong> processor between the <strong>Updates</strong> origin and the <strong>Slowly Changing Dimension</strong> processor. Click on the line connecting the two processors, and then select the <strong>Apply Functions</strong> processor from the menu that appears at the top of the screen.</p>
+<p class="image-container"><img alt="apply_functions" src="img/65998759069dbc13.png"></p>
+<p>On the Functions tab of the processor, add a simple function to make all the values upper case. This can be done simply by setting <strong>Field Expression</strong> to the regular expression .*, which will include all columns. Set the <strong>Function Type</strong> to <strong>String</strong>, and choose the <strong>UPPER</strong> function from the <strong>String Function</strong> list.</p>
+<p class="image-container"><img alt="string_function" src="img/bffbf163803f874a.png"></p>
+<p>Now preview the results, and select the Apply Functions processor to see the input and output.</p>
+<p class="image-container"><img alt="output" src="img/60a25ad8a275f09.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and Run Pipeline as a Job" duration="2">
+        <p>Before being able to run the pipeline, it needs to be published. Once the preview is closed, check the pipeline in.</p>
+<p class="image-container"><img alt="check_in" src="img/cf1d8b99904612d2.png"></p>
+<p>Enter a Commit Message and select <strong>Publish and Next</strong>.</p>
+<p class="image-container"><img alt="publish_next" src="img/251cd2a61a5787f2.png"></p>
+<p>Next, choose <strong>Save and Create New Job.</strong></p>
+<p class="image-container"><img alt="check_in_2" src="img/c918fd837795ae68.png"></p>
+<p>Update the Job name if desired, add a job description, and select <strong>Next</strong>. On the <strong>Select Pipeline</strong> option, select <strong>Next</strong>, and select <strong>Save &amp; Next</strong> for the next two options.</p>
+<p>At this point, <strong>Start &amp; Monitor</strong> job</p>
+<p class="image-container"><img alt="start_and_monitor" src="img/abd7d6a2422ac2e7.png"></p>
+<p>The Job page will now appear, and the job status can be seen at the top of the canvas and in the window below the canvas.</p>
+<p class="image-container"><img alt="job_status" src="img/e9d8023177a9fc86.png"></p>
+<p>Select the <strong>History</strong> tab on the left menu to see more details about the job run:</p>
+<p class="image-container"><img alt="history" src="img/b0f37f59065fb07d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Check Results in Snowflake" duration="2">
+        <p>Run the query <strong>SELECT * FROM DEMO.HCM.EMPLOYEES</strong>; to see the updated results in the <strong>EMPLOYEES</strong> table. Here it can be seen that the record with the updated title and upper case names and title was added as a second version of the record, and the previous record was expired.</p>
+<p class="image-container"><img alt="snowflake" src="img/7b3835a4289b0d62.png"></p>
+<p>While in Snowflake, check out the Query History to see the Merge record that the StreamSets job created.</p>
+<p class="image-container"><img alt="snowflake2" src="img/8aa333435554bb26.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>Congratulations on completing this lab!</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to process a Slowly Changing Dimension using Snowpark in the StreamSets DataOps Platform</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li>Get up and running with StreamSets in minutes - free. <a href="https://cloud.login.streamsets.com/signup" target="_blank">Start Now</a>.</li>
+<li>Join our conversation at the <a href="https://community.streamsets.com/" target="_blank">StreamSets Community</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Secure Your Organization with Security Analytics Using Snowflake and Sigma</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="secure_your_organization_with_security_analytics_using_snowflake_and_sigma"
+                  title="Secure Your Organization with Security Analytics Using Snowflake and Sigma"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>By centralizing your security data across point products in the Snowflake security data lake, security leaders can have a holistic view of their organization&#39;s security posture through customizable dashboards on Sigma.</p>
+<p>While there are a variety of security metrics that Snowflake and Sigma supports, in this hands-on lab, we will cover how you can leverage Snowflake and Sigma to monitor the security posture of your Snowflake data environment.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>For this lab you will need a Sigma free trial, which you can access here: <a href="sigmacomputing.com/free-trial-hol" target="_blank">sigmacomputing.com/free-trial-hol</a>. <strong>The password is sigma</strong>. For detailed instructions on getting set up, see section 1, Connecting to Sigma.</li>
+<li>It is recommended you have access to a Snowflake environment, but is not required to complete this lab</li>
+</ul>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to connect Sigma to Snowflake</li>
+<li>How to visualize Snowflake security logs with Sigma&#39;s pre-built dashboards</li>
+<li>How to leverage your Snowflake logs to explore for common security threats</li>
+<li>How to customize the workbook for your specific needs</li>
+<li>How to set up alerting for continuous monitoring of your Snowflake instance</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>This lab will walk you through the process of connecting to a Sigma template, exploring security data, customizing the template for more interactivity, and connecting the template to your Snowflake environment&#39;s data (optional).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting started" duration="10">
+        <h2 is-upgraded>Connecting to Sigma</h2>
+<p>2.1 Navigate to <a href="sigmacomputing.com/free-trial-hol" target="_blank">sigmacomputing.com/free-trial-hol</a></p>
+<p>2.2 Enter &#34;sigma&#34; for the password in all lowercase.</p>
+<p>2.3 Fill out the form to access a free trial, including your name, email, company, title, and phone number. Then click &#34;Start Trial&#34;</p>
+<p class="image-container"><img alt="image1" src="img/9211dedd16893294.png"></p>
+<p>2.4 You will get an email from Sigma asking you to verify your email to get started. Click &#34;Verify Email Address&#34;.</p>
+<p class="image-container"><img alt="image2" src="img/9898c3b0cb63b22f.png"></p>
+<p>2.5 You will be prompted to create a URL for your Sigma instance. We recommend you name it something you will remember easily. Then click &#34;Continue&#34;.</p>
+<p class="image-container"><img alt="image3" src="img/d65fb3f29dff8c77.png"></p>
+<p>2.6 Finally, create a password. Then click &#34;Create&#34;.</p>
+<p class="image-container"><img alt="image4" src="img/1bcc112225b7d75e.png"></p>
+<p>2.7 Close the pop up by clicking &#34;Go to Home Page&#34;</p>
+<p class="image-container"><img alt="image5" src="img/2cd3438313fcd570.png"></p>
+<p>2.8 Click &#34;Hide&#34; to hide the trial guide on the left hand side.</p>
+<p class="image-container"><img alt="image6" src="img/c524b182aea78b29.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploring the Template" duration="0">
+        <p>3.1 From the Sigma home page click &#34;Templates&#34; on the lefthand side.</p>
+<p class="image-container"><img alt="image7" src="img/b26ec519a96c7933.png"></p>
+<p>Here you will see the pre-built templates that live in every Sigma instance. Many of these templates can be connected to your Snowflake instance in a couple of clicks, and give insights into things like billing and performance monitoring.</p>
+<p>3.2 Click on &#34;External&#34; at the top then select the &#34;Snowflake Security Monitoring&#34; Template.</p>
+<p class="image-container"><img alt="image8" src="img/dc809c328b2a6bbf.png"></p>
+<p>3.3 Click &#34;Dismiss&#34; on the &#34;Use your data&#34; pop up. To begin this lab, we will work with the sample data pre-loaded in the template.</p>
+<p class="image-container"><img alt="image9" src="img/460fd846c3bdd60e.png"></p>
+<p>3.4 Click &#34;Save As&#34; in the top right corner.</p>
+<p class="image-container"><img alt="image10" src="img/6b18ff34a41ff9c5.png"></p>
+<p>3.5 Give your new workbook a name like &#34;Snowflake Security Exploration&#34; then click &#34;Save&#34; on the bottom right.</p>
+<p class="image-container"><img alt="image11" src="img/cf9e8399eff549cf.png"></p>
+<p>3.6 Once again, click &#34;Dismiss&#34; on the &#34;Use your data&#34; pop up</p>
+<p class="image-container"><img alt="image12" src="img/feb4aecdd1b3b1de.png"></p>
+<p>3.7 Let&#39;s take a minute to review the metrics available in the security template right out of the box. The first page you will see covers Authentication, and displays information around how your users are logging into Snowflake, as well as reasons they may be failing to log in to Snowflake.</p>
+<p class="image-container"><img alt="image13" src="img/94a185d55c6484c4.png"></p>
+<p>The second page of this template covers Privileged Access. This page is designed to help you monitor the Account Admin role in Snowflake. In Snowflake, Account Admin is the highest level of permissions so maintaining awareness of who has access to this role is key to maintaining your Snowflake security posture. On this page you will see grants of the AccountAdmin role, as well as who performed the grant in case there is need to follow up. You can additionally see if your Account Admins are using MFA to help secure access to your Snowflake instance.</p>
+<p class="image-container"><img alt="image14" src="img/cf09b26d1e9b4743.png"></p>
+<p>The next page of the template is called Identity Management. This page is designed to help you understand the status of your Snowflake users&#39; accounts. On this page you will find information like stale users who haven&#39;t logged into Snowflake in quite some time, as well as a list of users who have not changed their passwords, and the amount of time it has been.</p>
+<p class="image-container"><img alt="image15" src="img/d2f3bb95e88d80cb.png"></p>
+<p>The fourth page is title Configuration Management, and shows you changes made to privileged objects, as well as any network policy changes that have been made, the policy that was changed, and who made the policy change.</p>
+<p class="image-container"><img alt="image16" src="img/34496dd77abcbe49.png"></p>
+<p>The final page, titled Least Privileged Access, shows you the number of roles users have assigned to them, as well as the roles they are granted and which role they were granted by. We will add additional metrics to this page during this lab.</p>
+<p class="image-container"><img alt="image211" src="img/1ee3b8310c8e5a20.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Customizing the Template" duration="0">
+        <p>4.1 Using the buttons at the top of the workbook, navigate to the page title &#34;Least Priviledged Access&#34;.</p>
+<p class="image-container"><img alt="image301" src="img/8d5df13c6db7a5fe.png"></p>
+<p>4.2 Click the &#34;+&#34; in the top left corner to add a new element to the workbook.</p>
+<p class="image-container"><img alt="image302" src="img/2eb34379cb1e3a26.png"></p>
+<p>4.3 Select &#34;Table&#34; as the new element to add</p>
+<p class="image-container"><img alt="image303" src="img/a34c75898436d52b.png"></p>
+<p>4.4 In Sigma, new elements can be added via direct warehouse connection, data uploads, joins, and more. For this element, click &#34;New&#34; then select &#34;Write SQL&#34; to input the exact sql query for the data we want returned.</p>
+<p class="image-container"><img alt="image304" src="img/ef9742f9310c246.png"></p>
+<p>4.5 Copy and paste the following code into the SQL editor. Then Click &#34;Run&#34;. Once your results are returned click &#34;Save&#34;.</p>
+<pre><code>with role_hier as (
+    --Extract all Roles
+    select
+        grantee_name,
+        name
+    from
+        applications.snowflake_account_usage.grants_to_roles
+    where
+        granted_on = &#39;ROLE&#39;
+        and privilege = &#39;USAGE&#39;
+        and deleted_on is null
+    union all
+        --Adding in dummy records for &#34;root&#34; roles
+    select
+        &#39;root&#39;,
+        r.name
+    from
+        applications.snowflake_account_usage.roles r
+    where
+        deleted_on is null
+        and not exists (
+            select
+                1
+            from
+                applications.snowflake_account_usage.grants_to_roles gtr
+            where
+                gtr.granted_on = &#39;ROLE&#39;
+                and gtr.privilege = &#39;USAGE&#39;
+                and gtr.name = r.name
+                and deleted_on is null
+        )
+) --CONNECT BY to create the polyarchy and SYS_CONNECT_BY_PATH to flatten it
+,
+role_path_pre as(
+    select
+        name,
+        level,
+        sys_connect_by_path(name, &#39; -&gt; &#39;) as path
+    from
+        role_hier connect by grantee_name = prior name start with grantee_name = &#39;root&#39;
+    order by
+        path
+) --Removing leading delimiter separately since there is some issue with how it interacted with sys_connect_by_path
+,
+role_path as (
+    select
+        name,
+        level,
+        substr(path, len(&#39; -&gt; &#39;)) as path
+    from
+        role_path_pre
+) --Joining in privileges from GRANT_TO_ROLES
+,
+role_path_privs as (
+    select
+        path,
+        rp.name as role_name,
+        privs.privilege,
+        granted_on,
+        privs.name as priv_name,
+        &#39;Role &#39; || path || &#39; has &#39; || privilege || &#39; on &#39; || granted_on || &#39; &#39; || privs.name as Description
+    from
+        role_path rp
+        left join applications.snowflake_account_usage.grants_to_roles privs on rp.name = privs.grantee_name
+        and privs.granted_on != &#39;ROLE&#39;
+        and deleted_on is null
+    order by
+        path
+) --Aggregate total number of priv&#39;s per role, including hierarchy
+,
+role_path_privs_agg as (
+    select
+        trim(split(path, &#39; -&gt; &#39;) [0]) role,
+        count(*) num_of_privs
+    from
+        role_path_privs
+    group by
+        trim(split(path, &#39; -&gt; &#39;) [0])
+    order by
+        count(*) desc
+) --Most Dangerous Man - final query
+select
+    grantee_name as user,
+    count(a.role) num_of_roles,
+    sum(num_of_privs) num_of_privs
+from
+    applications.snowflake_account_usage.grants_to_users u
+    join role_path_privs_agg a on a.role = u.role
+where
+    u.deleted_on is null
+group by
+    user
+order by
+    num_of_privs desc;
+</code></pre>
+<p class="image-container"><img alt="image305" src="img/c79fe7f57284932e.png"></p>
+<p>4.6 The SQL we ran took a look at our users, their associated roles, and the priviledges granted to these roles. It then aggregated this data at the User level so that we can see who has the most access to objects across our Snowflake instance. Click on the header for your new workbook element titled &#34;Custom SQL&#34;. Rename this object &#34;Most Dangerous Person&#34;.</p>
+<p class="image-container"><img alt="image306" src="img/297430b4a0b48f92.png"></p>
+<p>4.7 Now that we have a sense of who has the most privileges on our Snowflake instance, let&#39;s take a look at which roles have the most privileges granted to them.</p>
+<p>Following the same process, click the &#34;+&#34; in the top left to add a new element, then select &#34;Table&#34;.</p>
+<p class="image-container"><img alt="image307" src="img/98817bb114b3edec.png"></p>
+<p>4.8 Select the &#34;New&#34; tab, then select &#34;Write SQL&#34;</p>
+<p class="image-container"><img alt="image308" src="img/9b6d414ba297757f.png"></p>
+<p>4.9 Input the following code into the SQL editor, then press &#34;run&#34;. Once your results populate, click &#34;Save&#34;.</p>
+<pre><code>--Role Hierarchy
+with role_hier as (
+    --Extract all Roles
+    select
+        grantee_name,
+        name
+    from
+        applications.snowflake_account_usage.grants_to_roles
+    where
+        granted_on = &#39;ROLE&#39;
+        and privilege = &#39;USAGE&#39;
+        and deleted_on is null
+    union all
+        --Adding in dummy records for &#34;root&#34; roles
+    select
+        &#39;root&#39;,
+        r.name
+    from
+        applications.snowflake_account_usage.roles r
+    where
+        deleted_on is null
+        and not exists (
+            select
+                1
+            from
+                applications.snowflake_account_usage.grants_to_roles gtr
+            where
+                gtr.granted_on = &#39;ROLE&#39;
+                and gtr.privilege = &#39;USAGE&#39;
+                and gtr.name = r.name
+                and deleted_on is null
+        )
+) --CONNECT BY to create the polyarchy and SYS_CONNECT_BY_PATH to flatten it
+,
+role_path_pre as(
+    select
+        name,
+        level,
+        sys_connect_by_path(name, &#39; -&gt; &#39;) as path
+    from
+        role_hier connect by grantee_name = prior name start with grantee_name = &#39;root&#39;
+    order by
+        path
+) --Removing leading delimiter separately since there is some issue with how it interacted with sys_connect_by_path
+,
+role_path as (
+    select
+        name,
+        level,
+        substr(path, len(&#39; -&gt; &#39;)) as path
+    from
+        role_path_pre
+) --Joining in privileges from GRANT_TO_ROLES
+,
+role_path_privs as (
+    select
+        path,
+        rp.name as role_name,
+        privs.privilege,
+        granted_on,
+        privs.name as priv_name,
+        &#39;Role &#39; || path || &#39; has &#39; || privilege || &#39; on &#39; || granted_on || &#39; &#39; || privs.name as Description
+    from
+        role_path rp
+        left join APPLICATIONS.SNOWFLAKE_ACCOUNT_USAGE.GRANTS_TO_ROLES privs on rp.name = privs.grantee_name
+        and privs.granted_on != &#39;ROLE&#39;
+        and deleted_on is null
+    order by
+        path
+) --Aggregate total number of priv&#39;s per role, including hierarchy
+,
+role_path_privs_agg as (
+    select
+        trim(split(path, &#39; -&gt; &#39;) [0]) role,
+        count(*) num_of_privs
+    from
+        role_path_privs
+    group by
+        trim(split(path, &#39; -&gt; &#39;) [0])
+    order by
+        count(*) desc
+) 
+select * from role_path_privs_agg order by num_of_privs desc;
+</code></pre>
+<p class="image-container"><img alt="image309" src="img/86204647b9a3255b.png"></p>
+<p>4.10 The SQL we entered to create the new element audited the roles in our Snowflake environment, privileges granted to those roles, and roles granted to each role. It then calculated which role has the most privileges in the account. Double click the title of your new element and name it &#34;Most Bloated Role&#34;.</p>
+<p class="image-container"><img alt="image310" src="img/9339dbddd529f89e.png"></p>
+<p>4.11 Drag this new element up so that it sits next to your Most Dangerous Person element.</p>
+<p class="image-container"><img alt="image311" src="img/6c4b72322495a118.png"></p>
+<p>4.12 Now that we have added new metrics into our workbook, let&#39;s take a look at another way this template can be leveraged to keep us up to date on our security posture. Using the buttons at the top of the workbook, navigate to &#34;Identity Management&#34;.</p>
+<p class="image-container"><img alt="image312" src="img/a6e238ce91c50aa7.png"></p>
+<p>4.13 On the Identity Management page you will notice a tile titled &#34;Users by Oldest Password&#34;. This tile shows us each user in our Snowflake instance and how long it has been since they changed their Snowflake password in days. Snowflake admins can set <a href="https://docs.snowflake.com/en/sql-reference/sql/create-password-policy" target="_blank">Snowflake password policies</a> on their Snowflake account to require users to change their passwords at a set frequency, however Snowflake&#39;s default behavior does not require users to change their passwords.</p>
+<p>For the purpose of this lab, assume we want our users to change their Snowflake password every 180 days. We are going to create an alert that will send us a report of all users with passwords older than 180 days.</p>
+<p>4.14. Select the arrow next to your workbook title in the top of the screen, then select &#34;Schedule Exports&#34; from the dropdown menu.</p>
+<p class="image-container"><img alt="image313" src="img/338454d94532addd.png"></p>
+<p>4.15 Click &#34;Add Schedule&#34;</p>
+<p class="image-container"><img alt="image314" src="img/4182b1260c9bdcc8.png"></p>
+<p>4.16 Give your schedule a name. In the &#34;To&#34; field input YOUR EMAIL ADDRESS. You may then give the email a subject and body if you so choose.</p>
+<p class="image-container"><img alt="image315" src="img/da262a5d7c87921c.png"></p>
+<p>4.17 Using the drop down next to attachment, find the &#34;Identity Management&#34; page and the &#34;Users by Oldest Password&#34; element.</p>
+<p class="image-container"><img alt="image316" src="img/9a3fee67a24c822d.png"></p>
+<p>4.18 Using the dropdown next to Timezone, select YOUR time zone. For Occurance, set a time in the next 10mins so that you will see the alert in your inbox before the lab is complete.</p>
+<p class="image-container"><img alt="image317" src="img/f1936b5d89554717.png"></p>
+<p>4.19 Next to &#34;Send&#34; select &#34;If a condition is met&#34;. For &#34;in data element&#34; use the drop down to find the Users by Oldest Passwords element on the Identity Management page. Then under check if, set it so that &#34;any value&#34; in column &#34;Days Since Password Changed&#34; is &#34;Greater than or equal to&#34; value &#34;180&#34;.</p>
+<p class="image-container"><img alt="image318" src="img/dd596dc3254b1d0e.png"></p>
+<p>4.20 Click &#34;Test Condition&#34;. Once your data validation check returns &#34;Data that meets condition exists&#34; click &#34;Create Schedule&#34;.</p>
+<p class="image-container"><img alt="image319" src="img/535403682a71f6a6.png"></p>
+<p>4.21 You should now see the export you created with an &#34;Active&#34; status. Click the &#34;X&#34; in the top right corner to exit this window.</p>
+<p class="image-container"><img alt="image320" src="img/dbaab4a1cb6ce6a9.png"></p>
+<p>4.22 Now that we have alerts set up to let us know about old passwords, lets take a look at our &#34;Stale Users&#34; element. This element shows us all users in our Snowflake environment, and how many days it has been since they last logged in. Users who have not logged in are referred to as &#34;stale users&#34;, and may reflect users who are no longer with the company or no longer need access to Snowflake. We want to follow best practices by removing these users from our instance, so lets set up a way to triage these users in Sigma.</p>
+<p>4.23 Click on the Stale Users element, then hover over the top right corner. Click the center icon for &#34;Add a child element&#34; then select &#34;Linked input table&#34; from the dropdown.</p>
+<p class="image-container"><img alt="image321" src="img/4f7069d81e2882b9.png"></p>
+<p>4.24 Using the drop down next to number 1, select &#34;Name&#34;. Under number 2, check the box next to &#34;Days Since Last Login&#34;. Then click &#34;Create Input Table&#34;.</p>
+<p class="image-container"><img alt="image322" src="img/84f3fb80ddcf2258.png"></p>
+<p>4.25 Rename your new element &#34;Stale User Triage&#34; by double clicking the header.</p>
+<p class="image-container"><img alt="image323" src="img/1a030537a132bc92.png"></p>
+<p>4.26 Click the drop down next to the &#34;Text&#34; column and select &#34;Data Validation&#34;.</p>
+<p class="image-container"><img alt="image324" src="img/e39740ce56737491.png"></p>
+<p>4.27 In the new pop up, enter the values &#34;Investigating&#34;, &#34;No Status&#34;, Stale User - Please Delete&#34;, and &#34;Confirmed Snowflake Access Still Needed&#34; by typing the value then hitting enter. Then click &#34;Save&#34;.</p>
+<p class="image-container"><img alt="image325" src="img/a1bbd09ddf5f15f4.png"></p>
+<p>4.28 Double click the column title &#34;Text&#34; and rename it &#34;Triage Status&#34;.</p>
+<p class="image-container"><img alt="image326" src="img/9f7f263d1f3b02de.png"></p>
+<p>4.29 Click the arrow next to the &#34;Triage Status&#34; column. From the drop down, select &#34;Add New Column - Last Updated By&#34;.</p>
+<p class="image-container"><img alt="image327" src="img/a243e7a7366316ab.png"></p>
+<p>4.30 Click the drop down next to the new &#34;Last Updated By&#34; column and select &#34;Add New Column - Last Updated At&#34;.</p>
+<p class="image-container"><img alt="image328" src="img/2086736cb6fa26bd.png"></p>
+<p>4.31 Click the right side of the element and drag to expand it so that the full table is visible in the element.</p>
+<p class="image-container"><img alt="image329" src="img/fd50d63e223e4e98.png"></p>
+<p>4.32 Now that we have our triage table created, we can use the drop down to select an investigation status for each user. Once we have done so, we will see the Last Updated By and Last Updated At columns populate. This will enable other members of our team to see the progress of investigating these stale users, when they were last updated, and who made the updates.</p>
+<p>Use the dropdown to update a couple of rows to see this change.</p>
+<p class="image-container"><img alt="image330" src="img/a457470cc48e03cf.png"></p>
+<p>4.34 Now that we have set an alert and created a triage system, navigate back to the &#34;Least Privileged Access&#34; page by clicking the &#34;Least Priviledged Access&#34; button at the top of the page.</p>
+<p class="image-container"><img alt="image331" src="img/52c206c591df5569.png"></p>
+<p>4.35 The top element shows us roles granted to each user in our snowflake instance, as well as who granted each role. Please note, this element only captures roles explicitly granted, and not those inhereted through the granting of another role.</p>
+<p>Next to the &#34;Role&#34; column, click the drop down arrow and then select &#34;Filter&#34;.</p>
+<p class="image-container"><img alt="image332" src="img/7dfcb58608db874f.png"></p>
+<p>4.36 Select &#34;ACCOUNTADMIN&#34; from the drop down list. You will see the table filter to only show those users with the ACCOUNTADMIN role granted to them.</p>
+<p class="image-container"><img alt="image333" src="img/c3dcfb502e00fc26.png"></p>
+<p>4.37 Click the &#34;X&#34; on the Filters &amp; Controls box to close the window.</p>
+<p class="image-container"><img alt="image334" src="img/8d4d0b1ab6db8377.png"></p>
+<p>4.38 For the purposes of this lab, let&#39;s assume our organization has decided that only individuals within the IT group should have ACCOUNTADMIN access to the Snowflake environment. We now have a list of users with ACCOUNTADMIN access, but will need to know the department they belong to in the company in order to explore if the users with this priviledge now should maintain it.</p>
+<p>The data for our users departments doesn&#39;t live in our Snowflake environmennt, but we can use a blank input table to bring it in. In the top left corner click the &#34;+&#34; icon, then select &#34;Empty&#34; under Input Tables.</p>
+<p class="image-container"><img alt="image335" src="img/ca7a3a408ac144da.png"></p>
+<p>4.39 Sigma will now prompt you to select a Snowflake connection for the empty input table to leverage. This is because data created or edited in Input tables will be written back to the Snowflake environment. Make sure your connection says &#34;Sigma Sample Database&#34;, then click &#34;Create&#34;.</p>
+<p class="image-container"><img alt="image336" src="img/8de5e0e25b9bdd0c.png"></p>
+<p>4.40 Double click the title for the New Input Table and rename it &#34;User Department Mappings&#34;.</p>
+<p class="image-container"><img alt="image337" src="img/a64cd18a4d09a807.png"><img alt="image338" src="img/15b2e7f2073a8a90.png"></p>
+<p>4.41 <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT_E_Up4H_unPCkf2nGuFfz9LrNaB6zX4g3a9fQArQdkKru8LR8EGbl-9F9IVpAh7QOU3et8L0y8yO_/pubhtml" target="_blank">Click here</a> to open a spreadsheet that contains our department mapping data. You should see a spreadsheet with two columns, one for user name and one for department.</p>
+<p class="image-container"><img alt="image339" src="img/3ae091b731a3cbf0.png"></p>
+<p>4.42 Select all values in the spreadsheet with the exception of the header rows, and copy them.</p>
+<p class="image-container"><img alt="image340" src="img/ec4bdf88e168b895.png"></p>
+<p>4.43 Returning to our Sigma window, right-click in cell 1 of our User Department Mappings empty input table, and select &#34;Paste&#34;.</p>
+<p class="image-container"><img alt="image341" src="img/5d0650c665f4d4a2.png"></p>
+<p>4.44 You should now see the spreadsheet values in your Sigma input table. Click the &#34;Text&#34; title on the far left column and rename it &#34;Username&#34;. Click the &#34;Text(1)&#34; title on the second column and rename it &#34;Department&#34;.</p>
+<p class="image-container"><img alt="image342" src="img/420e26e686e77c49.png"></p>
+<p>4.45 Scroll back up to our Number of Roles by User element that we filtered to only show our Account Admins. Click the dropdown next to the &#34;Role&#34; column and select &#34;Add a New Column Via Lookup&#34;.</p>
+<p class="image-container"><img alt="image343" src="img/86c09633c4d98ce.png"></p>
+<p>4.46 Under column to add - &#34;Select Element&#34;, use the drop down to select the User Department Mappings table from the Least Privileged Access page.</p>
+<p class="image-container"><img alt="image344" src="img/cf65b487a3a7e96f.png"></p>
+<p>4.47 Select &#34;Department&#34; from the Column to Add drop down. Set the two elements to map on USER NAME = Username. When you see &#34;Keys with Matches 100%&#34; click &#34;Done&#34;.</p>
+<p class="image-container"><img alt="image345" src="img/810365a314eef822.png"></p>
+<p>4.48 You can now see each users department in the top table, helping us easily identify users outside of IT who have ACCOUNTADMIN permissions on our Snowflake environment in violation of organization policy. You could easily replicate the steps we used to create a triage for Stale Users to triage these users with Accountadmin.</p>
+<p class="image-container"><img alt="image346" src="img/fc171030b08d623b.png"></p>
+<p>4.49 Click &#34;Publish&#34; in the top right corner to save the work we have done in this lab.</p>
+<p class="image-container"><img alt="image347" src="img/c51dbd0b73653267.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connecting the Template to Your Data" duration="0">
+        <p>5.1 Click the papercrane in the top left of your workbook to return to the Sigma home page.</p>
+<p class="image-container"><img alt="image401" src="img/3c46f144a98b377e.png"></p>
+<p>5.2 Click on your initals in the top right corner. Then select &#34;Administration&#34; from the drop down.</p>
+<p class="image-container"><img alt="image402" src="img/6e526c7c261a3ee.png"></p>
+<p>5.3 Select &#34;Connections&#34; from the left-hand menu.</p>
+<p class="image-container"><img alt="image403" src="img/f493221005296c93.png"></p>
+<p>5.4 Click &#34;Create Connection&#34;</p>
+<p class="image-container"><img alt="image404" src="img/ae8b1fbdb212741e.png"></p>
+<p>5.5 Give your connection a name that will help you identify the Snowflake instance. Then click on the Snowflake icon next to type.</p>
+<p class="image-container"><img alt="image405" src="img/c2bee2c9051af1eb.png"></p>
+<p>5.6 Under Connection Credentials, enter the information for YOUR Snowflake instance.</p>
+<ul>
+<li>Account will be your Snowflake Account Locator.</li>
+<li>For Warehouse enter the name of a Snowflake Warehouse in YOUR environment that YOU have access to.</li>
+<li>For User enter YOUR Snowflake Username.</li>
+<li>For Password enter your SNOWFLAKE password.</li>
+<li>For Role, enter a role that you are granted within your Snowflake environment.</li>
+</ul>
+<p class="image-container"><img alt="image406" src="img/30d4b36059a81bf2.png"></p>
+<p>5.7 Once you have entered your connection credentials, click &#34;Create&#34; in the top right corner.</p>
+<p class="image-container"><img alt="image407" src="img/b44ba746a185b535.png"></p>
+<p>5.8 You will now see the details of the connection you made from Sigma to your Snowflake environment.</p>
+<p>5.9 Click the papercrane icon in the top left corner to return to the Sigma homepage.</p>
+<p class="image-container"><img alt="image408" src="img/3a3492131dfa640d.png"></p>
+<p>5.10 Select &#34;Templates&#34; once again from the far left menu.</p>
+<p class="image-container"><img alt="image409" src="img/84fea83863229c58.png"></p>
+<p>5.11 Click the &#34;External&#34; tab at the top, then select &#34;Snowflake Security Monitoring&#34;.</p>
+<p class="image-container"><img alt="image410" src="img/a1ec350b55cc6a21.png"></p>
+<p>5.12 This time, select &#34;Swap Now&#34; on the Use Your Data popup.</p>
+<p class="image-container"><img alt="image411" src="img/7163c09cf5882dd.png"></p>
+<p>5.13 Sigma will intuitively try to map the data from the template to data in your own Snowflake environment, in this case, the log data in the Account_Usage schema in the Snowflake database within every Snowflake instance.</p>
+<p>Ensure the &#34;Matching Connection&#34; field displays the connection you created to your own Snowflake account. Click &#34;Swap Now&#34;.</p>
+<p class="image-container"><img alt="image412" src="img/cf37c92e7488a082.png"></p>
+<p>5.14 You will now see the workbook elements reload, and the data update to reflect the activity in YOUR snowflake instance rather than the sample data we explored earlier in the lab.</p>
+<p class="image-container"><img alt="image413" src="img/717ad9f41adb0c83.png"></p>
+<p>5.15 Click &#34;Save As&#34; in the top right, and give this workbook a name. Then click &#34;Save&#34;.</p>
+<p class="image-container"><img alt="image414" src="img/cd3d34f681700245.png"></p>
+<p>5.16 You may click &#34;Dismiss&#34; on the Use Your Data popup after you have saved the version.</p>
+<p>You now have a version of the workbook reading from your own data that you can use to explore the existing security metrics, add new metrics as we did throughout the lab, create a triage scenario, and more.</p>
+<p class="image-container"><img alt="image415" src="img/874fc688321da660.png"></p>
+<p>5.17 Prior to closing down, check your email inbox to see the alert set up in section 3 for Users with Old Passwords.</p>
+<p class="image-container"><img alt="image416" src="img/ed4bb66cfd207a4f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>We hope this lab has helped you understand how data within your Snowflake environment can be leveraged in Sigma for security insights. By working with Sigma templates, you are able to instantly gain insights into your Snowflake security posture. You can additionally customize these insights, add new metrics, and more to make the workbook shine for your use case.</p>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://help.sigmacomputing.com/hc/en-us/categories/360002521713-Get-Started" target="_blank">Sigma Documentation</a></li>
+<li><a href="docs.snowflake.com" target="_blank">Snowflake Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

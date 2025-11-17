@@ -1,0 +1,304 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Query Cost Monitoring Tool with Snowflake and Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="query-cost-monitoring"
+                  title="Build a Query Cost Monitoring Tool with Snowflake and Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Managing compute costs is crucial for optimizing database performance and budgeting effectively. In this tutorial, you&#39;ll build a Query Cost Monitoring tool that breaks down compute costs by individual queries using Snowflake&#39;s account usage data. This tool will help your team identify high-cost operations and gain valuable insights through interactive visualizations.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Retrieve and merge query cost data from Snowflake</li>
+<li>Convert SQL data to a Pandas DataFrame for analysis</li>
+<li>Implement interactive filtering with Streamlit widgets</li>
+<li>Create insightful visualizations using Altair</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You&#39;ll create an interactive dashboard that displays compute costs per query, allowing users to filter data based on time duration, variables like warehouse name or user, and metrics such as query count or total credits used. The dashboard includes heatmaps, stacked bar charts, and bubble plots for comprehensive data exploration.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic knowledge of SQL and Python</li>
+<li>Familiarity with Pandas and Streamlit</li>
+<li>Internet connection to access GitHub and documentation resources</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Query_Cost_Monitoring/Query_Cost_Monitoring.ipynb" target="_blank">query_cost_monitoring.ipynb</a> to download the Notebook from GitHub.</p>
+<p>Ensure that your notebook environment has access to the necessary Python libraries. Notebooks come pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Retrieve Query Cost Data" duration="10">
+        <h2 is-upgraded>Write the SQL Query</h2>
+<p>To gain insights into query costs, we&#39;ll write a SQL query to retrieve the <code>credits_used</code> data from the <code>snowflake.account_usage.metering_history</code> table and merge it with associated user, database, schema, and warehouse information from the <code>snowflake.account_usage.query_history</code> table.</p>
+<p>Note that the following SQL cell name is <code>sql_data</code>, which we&#39;ll use shortly for the data app.</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  query_history.query_id,
+  query_history.query_text,
+  query_history.start_time,
+  query_history.end_time,
+  query_history.user_name,
+  query_history.database_name,
+  query_history.schema_name,
+  query_history.warehouse_name,
+  query_history.warehouse_size,
+  metering_history.credits_used,
+  execution_time/1000 as execution_time_s
+FROM
+  snowflake.account_usage.query_history
+  JOIN snowflake.account_usage.metering_history ON query_history.start_time &gt;= metering_history.start_time
+  AND query_history.end_time &lt;= metering_history.end_time
+WHERE
+  query_history.start_time &gt;= DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+ORDER BY
+  query_history.query_id;
+</code></pre>
+<p>This query merges the <code>query_history</code> with <code>metering_history</code> to obtain detailed information about each query, including the credits used and execution time over the past week.</p>
+<p>The returned output looks like the following:</p>
+<p class="image-container"><img alt="image" src="img/dbe798800cf646ac.PNG"></p>
+<h2 is-upgraded>Convert Table to a DataFrame</h2>
+<p>Next, we&#39;ll convert the retrieved SQL table to a Pandas DataFrame for easier manipulation and analysis.</p>
+<pre><code language="language-python" class="language-python">sql_data.to_pandas()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create App &amp; Data Preparation" duration="10">
+        <p>Here, we&#39;ll create an interactive slider using Streamlit to dynamically select the number of days to analyze.</p>
+<p>This input will trigger the filtering of the DataFrame. Additionally, we&#39;ll reshape the data by calculating the frequency count by hour and selected variable, preparing it for visualization.</p>
+<p>Finally, we&#39;ll make use of expandable boxes to display the DataFrames.</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+import streamlit as st
+import altair as alt
+
+# Get data
+df = py_dataframe.copy()
+
+# Create date filter slider
+st.subheader(&#34;Select time duration&#34;)
+
+col = st.columns(3)
+
+with col[0]:
+    days = st.slider(&#39;Select number of days to analyze&#39;, 
+                     min_value=1, 
+                     max_value=7, 
+                     value=7, 
+                     step=1)
+with col[1]:
+    var = st.selectbox(&#34;Select a variable&#34;, [&#39;WAREHOUSE_NAME&#39;, &#39;USER_NAME&#39;, &#39;WAREHOUSE_SIZE&#39;])
+with col[2]:
+    metric = st.selectbox(&#34;Select a metric&#34;, [&#34;COUNT&#34;, &#34;TOTAL_CREDITS_USED&#34;])
+
+# Filter data according to day duration
+df[&#39;START_TIME&#39;] = pd.to_datetime(df[&#39;START_TIME&#39;])
+latest_date = df[&#39;START_TIME&#39;].max()
+cutoff_date = latest_date - pd.Timedelta(days=days)
+filtered_df = df[df[&#39;START_TIME&#39;] &gt; cutoff_date].copy()
+    
+# Prepare data for heatmap
+filtered_df[&#39;HOUR_OF_DAY&#39;] = filtered_df[&#39;START_TIME&#39;].dt.hour
+filtered_df[&#39;HOUR_DISPLAY&#39;] = filtered_df[&#39;HOUR_OF_DAY&#39;].apply(lambda x: f&#34;{x:02d}:00&#34;)
+    
+# Calculate frequency count and sum of credits by hour and query
+agg_df = (filtered_df.groupby([&#39;QUERY_ID&#39;, &#39;HOUR_DISPLAY&#39;, var])
+          .agg(
+              COUNT=(&#39;QUERY_ID&#39;, &#39;size&#39;),
+              TOTAL_CREDITS_USED=(&#39;CREDITS_USED&#39;, &#39;sum&#39;)
+          )
+          .reset_index()
+)
+
+st.warning(f&#34;Analyzing {var} data for the last {days} days!&#34;)
+
+# Initialize the button state in session state
+if &#39;expanded_btn&#39; not in st.session_state:
+    st.session_state.expanded_btn = False
+
+# Callback function to toggle the state
+def toggle_expand():
+    st.session_state.expanded_btn = not st.session_state.expanded_btn
+
+# Create button with callback
+st.button(
+    &#39;⊕ Expand DataFrames&#39; if not st.session_state.expanded_btn else &#39;⊖ Collapse DataFrames&#39;,
+    on_click=toggle_expand,
+    type=&#39;secondary&#39; if st.session_state.expanded_btn else &#39;primary&#39;
+)
+
+# State conditional
+if st.session_state.expanded_btn:
+    expand_value = True
+else:
+    expand_value = False
+
+with st.expander(&#34;See Filtered DataFrame&#34;, expanded=expand_value):
+    st.dataframe(filtered_df.head(100))
+with st.expander(&#34;See Heatmap DataFrame&#34;, expanded=expand_value):
+    st.dataframe(agg_df)
+</code></pre>
+<p>The above code snippet, yields the following data app:</p>
+<p class="image-container"><img alt="image" src="img/bab857bec3ec96c8.PNG"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Data Visualizations" duration="15">
+        <p>Here, we&#39;ll generate a heatmap using Altair to visualize query activity by hour and the selected variable. Additional visualizations include a stacked bar chart and a bubble plot to provide multiple perspectives on the data.</p>
+<h2 is-upgraded>Heatmap</h2>
+<p>First, let&#39;s start with creating the heatmap:</p>
+<pre><code language="language-python" class="language-python">## Heatmap
+heatmap = alt.Chart(agg_df).mark_rect(stroke=&#39;black&#39;, strokeWidth=1).encode(
+    x=&#39;HOUR_DISPLAY:O&#39;,
+    y=alt.Y(f&#39;{var}:N&#39;, 
+            title=&#39;&#39;,
+            axis=alt.Axis(
+                labels=True,
+                labelLimit=250,
+                tickMinStep=1,
+                labelOverlap=False,
+                labelPadding=10
+            )),
+    color=f&#39;{metric}:Q&#39;,
+    tooltip=[&#39;HOUR_DISPLAY&#39;, var, metric]
+).properties(
+    title=f&#39;Query Activity Heatmap by Hour and {var}&#39;
+)
+
+st.altair_chart(heatmap, use_container_width=True)
+</code></pre>
+<p>The generated heatmap is shown below:</p>
+<p class="image-container"><img alt="image" src="img/534ee6480ec8dd5c.PNG"></p>
+<h2 is-upgraded>Stacked Bar Chart</h2>
+<p>Next, on to creating the stacked bar chart:</p>
+<pre><code language="language-python" class="language-python">## Stacked bar chart with time series
+bar_time = alt.Chart(agg_df).mark_bar().encode(
+    x=&#39;HOUR_DISPLAY:O&#39;,
+    y=f&#39;{metric}:Q&#39;,
+    color=alt.Color(f&#39;{var}:N&#39;, legend=alt.Legend(orient=&#39;bottom&#39;)),
+    tooltip=[&#39;HOUR_DISPLAY&#39;, var, metric]
+).properties(
+    title=f&#39;Query Activity by Hour and {var}&#39;,
+    height=400
+)
+
+st.altair_chart(bar_time, use_container_width=True)
+</code></pre>
+<p>The generated stacked bar chart is shown below:</p>
+<p class="image-container"><img alt="image" src="img/add39861cead6d87.PNG"></p>
+<h2 is-upgraded>Bubble plot</h2>
+<p>Finally, we&#39;ll create the bubble plot and sizes are representing the metric magnitude:</p>
+<pre><code language="language-python" class="language-python">## Bubble plot with size representing the metric
+bubble = alt.Chart(agg_df).mark_circle().encode(
+    x=&#39;HOUR_DISPLAY:O&#39;,
+    y=alt.Y(f&#39;{var}:N&#39;, title=&#39;&#39;),
+    size=alt.Size(f&#39;{metric}:Q&#39;, legend=alt.Legend(title=&#39;Query Count&#39;)),
+    color=alt.Color(f&#39;{var}:N&#39;, legend=None),
+    tooltip=[&#39;HOUR_DISPLAY&#39;, var, metric]
+).properties(
+    title=f&#39;Query Distribution by Hour and {var}&#39;,
+    height=550
+)
+
+st.altair_chart(bubble, use_container_width=True)
+</code></pre>
+<p>The generated bubble plot is shown below:</p>
+<p class="image-container"><img alt="image" src="img/1a370c5cd4753bd4.PNG"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built a Query Cost Monitoring tool that allows you to analyze and visualize compute costs by individual queries. This dashboard empowers your team to identify high-cost operations and optimize database performance effectively.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Retrieved and merged query cost data from Snowflake&#39;s account usage views</li>
+<li>Converted SQL data into a Pandas DataFrame for analysis</li>
+<li>Implemented interactive filtering using Streamlit widgets</li>
+<li>Created heatmaps, stacked bar charts, and bubble plots with Altair for data visualization</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p><strong>Articles:</strong></p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage" target="_blank">Snowflake Account Usage Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-use-with-snowflake" target="_blank">Snowflake Notebooks Guide</a></li>
+</ul>
+<p><strong>Documentation:</strong></p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+</ul>
+<p><strong>Additional Reading:</strong></p>
+<ul>
+<li><a href="https://altair-viz.github.io/user_guide/data.html" target="_blank">Altair User Guide</a></li>
+</ul>
+<p>Happy coding!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

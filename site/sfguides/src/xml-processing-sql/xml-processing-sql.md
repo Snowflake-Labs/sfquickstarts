@@ -1,17 +1,16 @@
 author: Constantin Stanca
 id: xml-processing-sql
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform
+language: en
 summary: Snowflake guide on how to process XML with SQL
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Notebook, SQL, XML, Financial Services, Regulatory
 
 # Modernize XML Processing for Financial Services with SQL XML Functions
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 This quickstart guides users from financial services through processing XML data using Snowflake's SQL XML functions, specifically focusing on XML validation, parsing, element retrieval, and generation. It uses a trial XML dataset from the Snowflake Marketplace, "CMBS Schedule AL - XML", to demonstrate these techniques through SQL commands and Snowflake Notebooks. Users learn to leverage SQL XML functions like [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml) to transform XML data for applications such as asset valuation, risk analysis, and regulatory reporting within the Snowflake environment.
 
@@ -34,7 +33,6 @@ This quickstart guides users from financial services through processing XML data
 
 <!-- ------------------------ -->
 ## Architecture
-Duration: 3
 
 This solution harnesses the power of Snowflake SQL XML functions to validate, parse, extract and render financial data in XML format.
 
@@ -43,7 +41,6 @@ This solution harnesses the power of Snowflake SQL XML functions to validate, pa
 [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) serve as our interactive workspace. Through the skillful application of advanced SQL XML functions like [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml), we demonstrate how to validate, parse, extract, transform and output XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.
 
 ## Setup
-Duration: 8
 
 ### Data
 We are using free trial XML data from Snowflake Marketplace: "CMBS Schedule AL - XML". 
@@ -100,7 +97,6 @@ or, one at the time, by selecting each statement and clicking on the "Run" butto
 
 <!-- ------------------------ -->
 ## SQL XML Processing
-Duration: 10
 
 You will learn how to create a notebook and to leverage powerful SQL XML functions such as [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml) to process XML data to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting, using "CMBS Schedule AL - XML" trial data from Snowflake Marketplace.
 
@@ -217,7 +213,6 @@ You can run cells, one by one, using "run this cell only" for each cell.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 3
 
 You did it! You have successfully completed the "Modernize XML Processing for Financial Services with SQL XML Functions"  quickstart  with notebooks and SQL XML functions.
 
