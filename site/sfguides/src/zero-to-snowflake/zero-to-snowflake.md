@@ -1170,29 +1170,41 @@ This opens the search service configuration interface, where you’ll define how
 
 ### Step 2 - Configure the Search Service
 
-In the initial configuration screen, enter:
+In the **New service** configuration screen:
 
-* **Role**: `TB_DEV`
-* **Warehouse**: `TB_DEV_WH`
-* **Database**: `TB_101`
-* **Schema**: `HARMONIZED`
-* **Name**: `customer_feedback_intelligence`
-
-Click **Next: Select data**.
-
+1. Select **Database** and **Schema**:
+   * Choose **TB_101** from the Databases dropdown
+   * Choose **HARMONIZED** from the Schemas dropdown
+2. Enter the **Service name**: `customer_feedback_intelligence`
+3. Click the **Next** button at the bottom right to proceed.
 
 ![assets/vignette-3/cortex-search-new-service.png](assets/vignette-3/cortex-search-new-service.png)
 
 
 ### Step 3 - Connect to Review Data
 
-This wizard will guide you through several configuration screens:
+The wizard will now guide you through several configuration screens. Follow these steps:
 
-* **Select data**: Choose `TRUCK_REVIEWS_V`
-* **Select search column**: Choose `REVIEW` (the text column to search)
-* **Select attributes**: Choose columns for filtering (`TRUCK_BRAND_NAME`, `PRIMARY_CITY`, `REVIEW_ID`)
-* **Select columns**: choose other columns to include in the result like `DATE`, `LANGUAGE`, etc.
-* **Configure indexing**: Accept the default
+1. **Select data screen:**
+   * From the Views dropdown, select `TRUCK_REVIEWS_V`
+   * Click **Next**
+
+2. **Select search column screen:**
+   * Choose `REVIEW` (this is the text column that will be semantically searched)
+   * Click **Next**
+
+3. **Select attributes screen:**
+   * Select columns for filtering results: `TRUCK_BRAND_NAME`, `PRIMARY_CITY`, `REVIEW_ID`
+   * Click **Next**
+
+4. **Select columns screen:**
+   * Choose other columns to include in search results such as `DATE`, `LANGUAGE`, etc.
+   * Click **Next**
+
+5. **Configure indexing screen:**
+   * **Warehouse**: Select `COMPUTE_WH` from the dropdown
+   * Accept the other default settings
+   * Click **Create** to build the search service
 
 ![assets/vignette-3/cortex-search-walkthrough.gif](assets/vignette-3/cortex-search-walkthrough.gif)
 
