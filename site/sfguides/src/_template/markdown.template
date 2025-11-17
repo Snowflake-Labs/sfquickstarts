@@ -1,13 +1,12 @@
 author: AUTHOR_NAME
 id: SFGUIDE-NAME
-language: 
+language: en
 summary: This is a sample Snowflake Template
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-status: Hidden 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
-author:  Kanwal Komail (github: kanwalzs)
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
