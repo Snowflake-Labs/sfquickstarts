@@ -148,6 +148,10 @@ The database schema models a complete supply chain network with:
 * Shipment records with tracking information
 * Weather forecast data for plant locations
 
+Here's the complete Entity Relationship Diagram (ERD) showing all tables and their relationships:
+
+![Supply Chain ERD](assets/supply_chain_assistant_erd.png)
+
 <!-- ------------------------ -->
 
 ## Upload Documents and Semantic Models
