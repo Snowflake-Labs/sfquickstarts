@@ -405,6 +405,8 @@ jobs:
           fi
 
       - name: Call Workato staging webhook
+        id: call_webhook
+        continue-on-error: true
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 4
         env:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
@@ -419,19 +421,122 @@ jobs:
             --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
             '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
           echo "$payload" | jq .
-          echo "Triggering webhook..."
-          response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2) || {
-            exit_code=$?
-            echo "❌ Webhook call failed with exit code: $exit_code"
-            exit $exit_code
-          }
-          http_code=$(echo "$response" | tail -n1)
-          response_body=$(echo "$response" | sed '$d')
-          echo "HTTP Status Code: $http_code"
-          echo "Response body:"
-          echo "$response_body" | jq . 2>/dev/null || echo "$response_body"
-          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-            echo "✅ Webhook call succeeded. Please wait a few minutes for the staging environment to produce a preview URL."
-          else
-            echo "⚠️ Webhook returned non-2xx status code: $http_code"
-          fi
+          
+          # Retry configuration
+          max_retries=3
+          retry_count=0
+          base_delay=10
+          error_message=""
+          
+          while [ $retry_count -le $max_retries ]; do
+            if [ $retry_count -gt 0 ]; then
+              echo "Retry attempt $retry_count of $max_retries..."
+            else
+              echo "Triggering webhook..."
+            fi
+            
+            response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2) || {
+              exit_code=$?
+              error_message="Connection failed with curl exit code: $exit_code"
+              echo "❌ Webhook call failed with exit code: $exit_code"
+              
+              if [ $retry_count -lt $max_retries ]; then
+                retry_count=$((retry_count + 1))
+                delay=$((base_delay * retry_count))
+                echo "⏳ Waiting ${delay}s before retry..."
+                sleep $delay
+                continue
+              else
+                echo "❌ Max retries reached. Giving up."
+                echo "error_message=$error_message" >> $GITHUB_OUTPUT
+                exit $exit_code
+              fi
+            }
+            
+            http_code=$(echo "$response" | tail -n1)
+            response_body=$(echo "$response" | sed '$d')
+            echo "HTTP Status Code: $http_code"
+            echo "Response body:"
+            echo "$response_body" | jq . 2>/dev/null || echo "$response_body"
+            
+            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+              echo "✅ Webhook call succeeded. Please wait a few minutes for the staging environment to produce a preview URL."
+              break
+            else
+              # Check if it's a rate limit error
+              if echo "$response_body" | grep -q "Rate limit reached"; then
+                error_message="Rate limit error - HTTP $http_code: $response_body"
+                echo "⚠️ Rate limit error detected: $http_code"
+                
+                if [ $retry_count -lt $max_retries ]; then
+                  retry_count=$((retry_count + 1))
+                  delay=$((base_delay * retry_count))
+                  echo "⏳ Waiting ${delay}s before retry..."
+                  sleep $delay
+                  continue
+                else
+                  echo "❌ Max retries reached. Rate limit still in effect."
+                  echo "error_message=$error_message" >> $GITHUB_OUTPUT
+                  echo "http_code=$http_code" >> $GITHUB_OUTPUT
+                  echo "response_body=$response_body" >> $GITHUB_OUTPUT
+                  exit 1
+                fi
+              elif [ $retry_count -lt $max_retries ]; then
+                # Other non-2xx error - retry
+                error_message="HTTP $http_code: $response_body"
+                echo "⚠️ Webhook returned non-2xx status code: $http_code"
+                retry_count=$((retry_count + 1))
+                delay=$((base_delay * retry_count))
+                echo "⏳ Waiting ${delay}s before retry..."
+                sleep $delay
+                continue
+              else
+                echo "❌ Max retries reached. Last status code: $http_code"
+                error_message="HTTP $http_code: $response_body"
+                echo "error_message=$error_message" >> $GITHUB_OUTPUT
+                echo "http_code=$http_code" >> $GITHUB_OUTPUT
+                echo "response_body=$response_body" >> $GITHUB_OUTPUT
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Comment PR on webhook failure
+        if: steps.call_webhook.outcome == 'failure'
+        uses: actions/github-script@v7
+        env:
+          ERROR_MESSAGE: ${{ steps.call_webhook.outputs.error_message }}
+          HTTP_CODE: ${{ steps.call_webhook.outputs.http_code }}
+          RESPONSE_BODY: ${{ steps.call_webhook.outputs.response_body }}
+        with:
+          script: |
+            const errorMessage = process.env.ERROR_MESSAGE || 'No error details available';
+            const httpCode = process.env.HTTP_CODE || 'N/A';
+            const responseBody = process.env.RESPONSE_BODY || 'No response body';
+            
+            // Build error details section
+            let errorDetails = '### Error Details\n\n';
+            if (httpCode !== 'N/A') {
+              errorDetails += `**HTTP Status Code**: ${httpCode}\n\n`;
+            }
+            errorDetails += `**Error**: ${errorMessage}\n\n`;
+            if (responseBody !== 'No response body') {
+              errorDetails += `**Response**:\n\`\`\`\n${responseBody}\n\`\`\`\n\n`;
+            }
+            
+            const body = `## ⚠️ Staging Webhook Failed
+            
+            The webhook call to the staging environment failed after multiple retry attempts.
+            
+            ${errorDetails}
+          
+            ### Next Steps
+            - If the issue is due to rate limiting, wait a few minutes and try re-running the workflow 
+            - If the issue persists, contact the devrel team for assistance
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
