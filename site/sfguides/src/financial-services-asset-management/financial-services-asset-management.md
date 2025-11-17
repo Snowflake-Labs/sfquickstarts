@@ -41,7 +41,9 @@ This is powered by four SQL Worksheets and a Python Function:
 ### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/) (a free trial on Standard Edition will suffice)
 
-<!-- ------------------------ -->
+
+
+
 ## Setup
 
 ### Mount a Free Data Share
@@ -103,7 +105,9 @@ use warehouse finservam_devops_wh;
 
 ![Figure 6](assets/figure6.jpg)
 
-<!-- ------------------------ -->
+
+
+
 ## Data Quality and Preparation
 
 ### Create the “Finserv 20 Data Quality” Worksheet
@@ -189,7 +193,8 @@ select fake_py('zh_CN','name',null)::varchar as FAKE_NAME from table(generator(r
 
 Run the entire worksheet to create the necessary tables and functions.
 
-<!-- ------------------------ -->
+
+
 ## Generate Dataset
 
 ### Create the Trades Worksheet
@@ -347,7 +352,8 @@ $$;
 
 Run the entire worksheet. Note that generating 3 billion trades will take approximately 5 minutes with an XXLarge warehouse.
 
-<!-- ------------------------ -->
+
+
 ## DevOps in Production
 
 ### Create the DevOps Worksheet
