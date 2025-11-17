@@ -159,11 +159,11 @@ Because we're connected to Cortex Agents, we can ask questions about both unstru
 
 Unstructured data:
 
-![cortex agents mcp unstructured](assets/mcp_cortex_agents_unstructured.gif)
+![cortex agents mcp unstructured](https://github.com/Snowflake-Labs/sfquickstarts/blob/979cae86e37f12ed86b2c398c39d385a85a61466/site/sfguides/src/mcp-server-for-cortex-agents/large_images/mcp_cortex_agents_structured.gif)
 
 Structured data:
 
-![cortex agents mcp unstructured](assets/mcp_cortex_agents_structured.gif)
+![cortex agents mcp unstructured](https://github.com/Snowflake-Labs/sfquickstarts/blob/979cae86e37f12ed86b2c398c39d385a85a61466/site/sfguides/src/mcp-server-for-cortex-agents/large_images/mcp_cortex_agents_structured.gif)
 
 What’s happening under the hood
 When you ask a question:
