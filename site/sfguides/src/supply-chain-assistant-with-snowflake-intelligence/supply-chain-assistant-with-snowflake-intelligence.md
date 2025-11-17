@@ -7,8 +7,6 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-tags: Snowflake Intelligence, Cortex Analyst, Cortex Search, Cortex AI, Supply Chain, RAG, Semantic Models
-
 # Supply Chain Assistant for Inventory Optimization with Snowflake Intelligence
 
 <!-- ------------------------ -->
@@ -158,7 +156,7 @@ Within the first step, all objects have been created in `SUPPLY_CHAIN_ASSISTANT_
 
 ### Upload PDF Documents
 
-1. Navigate to **Database Explorer** from the left side menu under **Horizon Catalog**
+1. Navigate to **Database Explorer** from the left side menu under **Catalog**
 2. Navigate to the `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES` database/schema
 3. Click on **Stages** to view available stages
 4. Select the **SUPPLY_CHAIN_ASSISTANT_PDF_STAGE** stage
@@ -423,14 +421,9 @@ We are building for three core user archetypes involved in supply chain operatio
 
 When Maria discovers the Miami plant is critically low on rare earth materials, she asks, *"For plants with low inventory of a raw material, compare the cost of replenishing from a supplier vs transferring from another plant with excess inventory."* The agent compares transfer from Austin (71% savings) vs. purchasing from a supplier, so she can make the most cost-effective decision.
 
-<div style="display: flex; align-items: center; gap: 20px;">
-<div style="flex: 1;">
-Before finalizing the transfer, Maria asks, <em>"What type of weather events might impact this transfer?"</em> The agent automatically checks the Weather Forecast tool and warns: <strong>"A major hurricane is forecasted; transport may be impossible,"</strong> so she doesn't make a costly logistical mistake.
-</div>
-<div style="flex: 0 0 40%;">
-   <img src="assets/hurricane.png" alt="Hurricane Impact on Supply Chain" style="width: 100%;" />
-</div>
-</div>
+![Hurricane Warning](assets/hurricane.png)
+
+Before finalizing the transfer, Maria asks, *"What type of weather events might impact this transfer?"* The agent automatically checks the Weather Forecast tool and warns: **"A major hurricane is forecasted; transport may be impossible,"** so she doesn't make a costly logistical mistake.
 
 **As Victor (The Executive)**, I want to receive a clear summary when Maria asks the agent to *"Draft an executive summary email with this analysis, our options, and a recommendation."* The agent generates an HTML-formatted email with Executive Summary, Financial Comparison, Key Risks, and Final Recommendation, so I can make an informed decision and reply "Approved" in minutes.
 
