@@ -59,9 +59,9 @@ For advanced users
   3. Navigate to the directory `cd sfquickstarts/site/src`
   4. Create a new branch `git checkout -b <your-branch-name>` (make sure you are working on a new branch and not on `master`!) 
      If you need to synchronize your branch with your repo: `git push --set-upstream origin <your-branch-name>`
-  6. Copy the template folder and rename it appropriately: (e.g. `cp _markdown-template my-quickstart-name-here` in your terminal).
+  6. Copy the template folder and rename it appropriately to create a new Guide: (e.g. `cp _markdown-template my-quickstart-name-here` in your terminal).
      or
-     Edit the existing files in the directory
+     Browse to the Guide you wish to edit, click the directory and edit the existing files in the directory
   7. Start authoring in markdown format.  Note this [Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_markdown-template/markdown-template).
   8. Make sure you select the appropriate content type, industries, language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/). You will not be able to merge your changes without this step!
 
@@ -93,10 +93,7 @@ For advanced users
 
 > NOTE: If you see any issues or any inconsistencies as outlined above, you may not be able to submit the PR before you resolve those items.
 
-Here are two QS Guides you can take a look as references:
-
-* **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
-* **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+Here is a Guides you can reference:
 * **Simple Hands-on Guide:** [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 
 Thank you for helping us maintain a high quality bar and consistency across all Snowflake Developer Guides!
