@@ -6,6 +6,7 @@ summary: How to model subway disruptions using dijsktra in Neo4j Graph Analytics
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+language: en
 
 # Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics 
 

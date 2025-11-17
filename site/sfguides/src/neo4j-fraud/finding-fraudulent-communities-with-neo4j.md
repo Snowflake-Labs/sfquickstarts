@@ -6,6 +6,7 @@ summary: How to find communities affected by fraud using louvain in Neo4j Graph 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+language: en
 
 # Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics
 <!-- ------------------------ -->

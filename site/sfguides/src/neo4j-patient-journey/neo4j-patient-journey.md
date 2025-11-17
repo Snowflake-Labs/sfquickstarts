@@ -6,7 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
-
+language: en
 # Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics
 
 ## Overview
