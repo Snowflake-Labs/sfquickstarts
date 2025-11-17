@@ -165,7 +165,9 @@ CREATE SECRET airflow_redis_pwd
     ;
 ```
 
-<!-- ------------------------ -->
+
+
+
 ## SnowGIT and External Access Integration
 
 
@@ -304,7 +306,11 @@ SHOW IMAGES IN IMAGE REPOSITORY airflow_repository;
 ##
 ![Image Repository](assets/images.png)
 ##
-<!-- ------------------------ -->
+
+
+
+
+
 ## Create Service Specification files
 
 
