@@ -1,9 +1,10 @@
 author: Tim Buchhorn
 id: sfguide-getting-started-with-fgac-for-cortex-search
+language: en
 summary: This guide walks you thorough creating an internal chatbot application that controls access to unstructured documents based on role
-categories: Getting-Started
+categories: snowflake-site:taxonomy/product/ai
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Applications, Cortex, Data Engineering
 
