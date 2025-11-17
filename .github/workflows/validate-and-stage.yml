@@ -191,6 +191,13 @@ jobs:
           
           while IFS= read -r file; do
             [ -z "$file" ] && continue
+            
+            # Skip files in folders starting with _ (e.g., _archived)
+            if [[ "$file" =~ ^site/sfguides/src/_ ]]; then
+              echo "Skipping $file (in excluded directory)"
+              continue
+            fi
+            
             file_path="pr/$file"
             
             if [ -f "$file_path" ]; then
