@@ -82,7 +82,7 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
 - **id**: sample-separated-by-hyphens-not-underscores 
   - Make sure to match the id here with the name of the file, all one word.
 - **language**: pick from list 
-  - Pick the appropriate language from the lsit provided.  
+  - Pick the appropriate language from the list provided.  
 - **categories**: Pick from the list
   - Select from the complete list of content type categories, categories 1, 2 and 3 and/or industries categories provided.  Please DO NOT create new categories.
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
