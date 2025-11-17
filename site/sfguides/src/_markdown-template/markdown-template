@@ -63,7 +63,6 @@ The metadata contains all the information required for listing and publishing yo
   - select from the complete list of categories prrovided in [the Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/).  Please DO NOT create new categories.
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
   `Published` - implies the guide is active<br>
-  `Hidden` - this status will no longer be used.  Preview links are generated during the PR submission process and can be used for internal review.<br>
   `Archived` - implies the sfguide is out of date and deprecated and no longer available.
 - **authors**: Author Full Name (+ author GitHub account)
   - Indicate the author(s) of this specific sfguide.  Including the GitHub Account login helps us notify you of any changes requested in the future.
