@@ -248,32 +248,48 @@ GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
 
 Duration: 5
 
-At this point, you may want to visualize your graph to get a better understanding of how everything fits together. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
+At this point, you may want to visuze your graph to get a better understanding of how everything fits together. We can do this in two easy steps. First we are going to create a simplified view that we will use to build our visualization:
 
 ```sql
-CALL Neo4j_Graph_Analytics.experimental.visualize(
-{
-    'nodeTables': ['M_DEMO.PUBLIC.NODES_VW'],
-    'relationshipTables': {
-      'M_DEMO.PUBLIC.RELS_VW': {
-        'sourceTable': 'M_DEMO.PUBLIC.NODES_VW',
-        'targetTable': 'M_DEMO.PUBLIC.NODES_VW'
-      }
-    }
-  },
-  {}
-);
+CREATE OR REPLACE VIEW plant_viz (nodeId, machine_type) AS
+select machine_id as nodeId, machine_type
+from nodes;
 ```
 
-We can access the output of the previous cell by referencing its cell name, in this case `viz`. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the `viz` output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+Next, in a python cell, we are going to create our actual visualization. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables. We also will also add in some code to specify the color and caption for our nodes.
 
 ```sql
+from neo4j_viz.snowflake import from_snowflake
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+viz_graph = from_snowflake(
+    session,
+{
+    'nodeTables': ['M_DEMO.PUBLIC.plant_viz'],
+    'relationshipTables': {
+      'M_DEMO.PUBLIC.RELS_VW': {
+        'sourceTable': 'M_DEMO.PUBLIC.plant_viz',
+        'targetTable': 'M_DEMO.PUBLIC.plant_viz'
+      }
+    }
+  }
+)
+
+# specifying which column should be associated with colors. 
+viz_graph.color_nodes(property='MACHINE_TYPE', override=True)  
+
+# specifying which column should be associated with captions
+for node in viz_graph.nodes:
+    node.caption = str(node.properties["MACHINE_TYPE"])
+    
+# now we render
+html_object = viz_graph.render()
+
 import streamlit.components.v1 as components
 
-components.html(
-    cell8.to_pandas().loc[0]["VISUALIZE"],
-    height=600
-)
+components.html(html_object.data, height=600)
 ```
 ![image](assets/viz.png)
 
