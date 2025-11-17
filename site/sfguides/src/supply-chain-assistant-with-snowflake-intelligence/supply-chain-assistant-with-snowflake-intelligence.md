@@ -21,7 +21,7 @@ This quickstart demonstrates how to build an intelligent supply chain assistant 
 
 ### The Problem
 
-![Alt text](assets/problem.png)
+![The Problem](assets/problem.png)
 
 Supply chain operations managers face daily challenges managing raw material inventory across manufacturing facilities:
 
@@ -32,7 +32,7 @@ Supply chain operations managers face daily challenges managing raw material inv
 
 ### The Solution
 
-![Alt text](assets/solution.png)
+![The Solution](assets/solution.png)
 
 This solution leverages Snowflake Intelligence and Cortex AI capabilities to create an intelligent assistant that:
 
@@ -90,6 +90,10 @@ Snowflake Cortex provides fully managed Generative AI capabilities that run secu
 
 ![Alt Text](assets/building_the_semantic_layer.png)
 
+The semantic model definitions you create are automatically translated into SQL code that powers the natural language queries. For example, defining business concepts like "Low Inventory" and "Excess Inventory" in the semantic model results in precise SQL WHERE clauses:
+
+![Semantic View Code](assets/semantic_view_code.png)
+
 **Cortex Search** - Provides easy-to-use semantic search over unstructured data. It handles document chunking, embedding generation, and retrieval, making it simple to implement RAG (Retrieval Augmented Generation) patterns.
 
 **Cortex Agents** - Orchestrates multiple AI capabilities (like Analyst and Search) to intelligently route user queries to the appropriate service and synthesize responses.
@@ -107,6 +111,10 @@ Snowflake Intelligence is a unified experience for building and deploying AI age
 * **Conversational Interface**: Interact with your agent through a chat interface within Snowsight
 * **Enterprise Ready**: Built on Snowflake's security and governance foundation
 
+Here's what Snowflake Intelligence looks like in action for supply chain operations. Users can ask natural language questions about their data, and the agent automatically generates SQL queries, executes them, and returns results:
+
+![Snowflake Intelligence on Supply Chain](assets/si_on_supply_chain.png)
+
 Learn more about [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence).
 
 <!-- ------------------------ -->
@@ -114,6 +122,10 @@ Learn more about [Snowflake Intelligence](https://docs.snowflake.com/en/user-gui
 ## Setup Database and Load Data
 
 In this step, you'll create the complete supply chain database infrastructure with all necessary tables, stages, and sample data.
+
+The database will model a multi-tier supply chain network with suppliers, manufacturing plants, and customers. The demo considers key operational factors including inventory levels, demand, safety stock, lead times with variability, and costs. The intelligent assistant will help answer critical questions like "When do I order more material vs. transfer from another facility?"
+
+![Supply Chain Network Demo](assets/supply_chain_network_demo.png)
 
 1. Navigate to **Projects > Workspaces** to create a new private workspace in Snowsight
 2. Add a new SQL file to your workspace
@@ -238,7 +250,7 @@ ALTER WAREHOUSE SUPPLY_CHAIN_ASSISTANT_WH SET WAREHOUSE_SIZE = 'SMALL';
    * **Source Table to be Indexed:** `PARSED_PDFS`
    * **Search Column:** Select `PAGE_CONTENT`
    * **Attributes**: Click **Next**
-   * **Select Columns**: Click **Next**
+   * **Select Columns**: Select `TITLE`
    * **Target Lag:** `1 hour`
    * **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 4. Click **Create Search Service**
@@ -253,10 +265,17 @@ Now that you have your semantic models and search service created, you can combi
 
 ### Create the Agent
 
+> Ensure you are using SUPPLY_CHAIN_ASSISTANT_ROLE in Snowsight
+
 1. Click on **Agents** within the **AI & ML** section on the left-hand navigation bar in Snowsight
 2. Click **Create Agent** button
-3. Name it **Supply_Chain_Agent**
-4. Once created, navigate to **Tools** tab
+3. * **Database** `SNOWFLAKE_INTELLIEGENCE`
+4. * **Schema** `AGENTS`
+5. **Agent object name** **Supply_Chain_Agent**
+6. **Display name** Supply Chain Agent
+7. Once created, navigate to **Tools** tab
+
+![Create Agent](assets/create_agent.png)
 
 ### Add First Cortex Analyst Tool - Supply Chain Data
 
@@ -282,9 +301,11 @@ Now that you have your semantic models and search service created, you can combi
    * **Stage** `SEMANTIC_MODELS_STAGE`
    * Select `WEATHER_FORECAST.yaml`
    * **Name:** `WEATHER_FORECAST`
-   * **Description:** *"Tool for analyzing supply chain data."*
+   * **Description:** *"Tool for analyzing weather data."*
    * **Warehouse:** Select **Custom** radio button then choose `SUPPLY_CHAIN_ASSISTANT_WH`
 3. Click **Save**
+
+![Add Analyst Tool](assets/add_analyst_tool.png)
 
 ### Add Cortex Search Tool
 
@@ -298,6 +319,8 @@ Now that you have your semantic models and search service created, you can combi
    * **ID Column:** `PAGE_URL`
    * **Title Column:** `TITLE`
 3. Click **Save**
+
+![Add Search Tool](assets/add_cortex_search_tool.png)
 
 ### Add Custom Tools
 
@@ -345,6 +368,8 @@ For each of the following custom tools, click **+ Add** next to **Custom Tool**,
 * **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 * **Description:** *"Send emails to recipients with HTML formatted content."*
 
+![Add Custom Tool](assets/add_custom_tool.png)
+
 ### Save and Access Your Agent
 
 1. Click **Save** to save your agent configuration
@@ -353,6 +378,7 @@ For each of the following custom tools, click **+ Add** next to **Custom Tool**,
 4. Select your **Supply_Chain_Agent** from the dropdown
 5. Start asking questions!
 
+![Agent Overview](assets/agent_tools.png)
 <!-- ------------------------ -->
 
 ## User Personas
@@ -397,11 +423,20 @@ We are building for three core user archetypes involved in supply chain operatio
 
 When Maria discovers the Miami plant is critically low on rare earth materials, she asks, *"For plants with low inventory of a raw material, compare the cost of replenishing from a supplier vs transferring from another plant with excess inventory."* The agent compares transfer from Austin (71% savings) vs. purchasing from a supplier, so she can make the most cost-effective decision.
 
-Before finalizing the transfer, Maria asks, *"What type of weather events might impact this transfer?"* The agent automatically checks the Weather Forecast tool and warns: **"A major hurricane is forecasted; transport may be impossible,"** so she doesn't make a costly logistical mistake.
+<div style="display: flex; align-items: center; gap: 20px;">
+<div style="flex: 1;">
+Before finalizing the transfer, Maria asks, <em>"What type of weather events might impact this transfer?"</em> The agent automatically checks the Weather Forecast tool and warns: <strong>"A major hurricane is forecasted; transport may be impossible,"</strong> so she doesn't make a costly logistical mistake.
+</div>
+<div style="flex: 0 0 40%;">
+   <img src="assets/hurricane.png" alt="Hurricane Impact on Supply Chain" style="width: 100%;" />
+</div>
+</div>
 
 **As Victor (The Executive)**, I want to receive a clear summary when Maria asks the agent to *"Draft an executive summary email with this analysis, our options, and a recommendation."* The agent generates an HTML-formatted email with Executive Summary, Financial Comparison, Key Risks, and Final Recommendation, so I can make an informed decision and reply "Approved" in minutes.
 
 **As Leo (The Data Steward)**, I previously defined business logic like "critical low inventory" in the semantic model YAML file and added verified queries for cost comparisons, so the agent understands our business rules and Maria can trust the answers.
+
+![Low Inventory Definitions](assets/definitions_used.png)
 
 <!-- ------------------------ -->
 
@@ -409,7 +444,7 @@ Before finalizing the transfer, Maria asks, *"What type of weather events might 
 
 Now it's your turn to experience the Supply Chain Assistant! Follow Maria's journey by asking these questions in order, or explore on your own. Notice how the agent automatically determines which tool to use based on your question!
 
-<!-- ![Alt text](assets/Agent.gif) -->
+![Alt text](assets/agent_screenshot.png)
 
 ### Following Maria's Scenario
 
@@ -421,6 +456,9 @@ Ask these questions in sequence to replicate the scenario above:
 4. *"What type of weather events might impact this transfer?"*
 5. *"Draft an executive summary email with this analysis, our options, and a recommendation."*
 
+> aside negative
+> **Note:** Sending emails requires proper email integration and verified email addresses. The WEB_SEARCH and WEB_SCRAPE tools require external integration access, which is not available on trial accounts.
+
 ### Additional Questions to Explore
 
 Try these variations to explore different capabilities:
@@ -430,9 +468,6 @@ Try these variations to explore different capabilities:
 * "What are the lead times for our primary suppliers?"
 * "Search our documentation for transfer policies." (uses Cortex Search)
 * "What orders are scheduled for the aerospace business line?"
-
-> aside negative
-> **Note:** Sending emails requires proper email integration and verified email addresses. The WEB_SEARCH and WEB_SCRAPE tools require external integration access, which is not available on trial accounts.
 
 <!-- ------------------------ -->
 
@@ -465,7 +500,13 @@ Your Supply Chain Assistant now includes:
 
 ### Next Steps and Extensions
 
-You can extend this solution further by:
+#### Scaling to Multi-Agent Architecture
+
+As your organization's needs grow, you can evolve from a single agent with multiple tools to a multi-agent architecture where a primary orchestrator agent coordinates with specialized domain agents. This architecture enables better scalability, domain expertise, and independent development of agents for different business functions:
+
+![Multi-Agent Architecture](assets/multi_agent_architecture.png)
+
+#### You can extend this solution further by:
 
 * **Adding More Semantic Models**: Create additional semantic models for other business domains (finance, HR, sales, etc.)
 * **Integrating Additional Data Sources**: Connect to external APIs or databases
