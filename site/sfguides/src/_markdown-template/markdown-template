@@ -4,7 +4,7 @@ language:
 summary: This is a sample Snowflake Template
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: <links to your repo>
 open in snowflake: <links to the product>
