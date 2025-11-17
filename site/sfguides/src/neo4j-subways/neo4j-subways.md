@@ -313,8 +313,8 @@ select * from mta.public.filtered_station_captions
 | 186    | 5        | 5 Av - M                      |
 | 24     | 6        | Times Sq-42 St - M            |
 
-## Visualize Your Graph (Experimental)
-
+## Visualize Your Graph 
+Duration: 5
 At this point, you may want to visualize your graph to get a better understanding of how everything fits together. It would be nice to have our new station path represented visually. We already have everything we need for the nodes from our last step, but we also need to create a relationship table, which we do below:
 
 ```sql
@@ -328,36 +328,41 @@ WITH ordered_nodes AS (
 SELECT *
 FROM ordered_nodes
 WHERE targetnodeid IS NOT NULL;
+
+select * from mta.public.relationships_view 
 ```
-
-We use our `filtered_station_captions` table as our nodes. Notice how we have a column named `caption` in that table with our station names? That naming is on purpose. Graph Analytics automatically picks up on that name and uses it to generate captions for each node.
-
-From here, our syntax will look very familiar to what we have had before when running algorithms.
-
-```
-CALL Neo4j_Graph_Analytics.experimental.visualize(
-{
-    'nodeTables': ['mta.public.filtered_station_captions'],
-    'relationshipTables': {
-      'mta.public.relationships_view': {
-        'sourceTable': 'mta.public.filtered_station_captions',
-        'targetTable': 'mta.public.filtered_station_captions'
-      }
-    }
-  },
-  {}
-);
-```
-
-We can access the output of the previous cell by referencing its cell name, in this case viz. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the viz output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+We use our `filtered_station_viz` table as our nodes. From here, our syntax will look very familiar to what we have had before when running algorithms. We also need to specify what captions belong to each node in a for loop.
 
 ```python
+from neo4j_viz.snowflake import from_snowflake
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+viz_graph = from_snowflake(
+    session,
+{
+    'nodeTables': ['mta.public.filtered_station_viz'],
+    'relationshipTables': {
+      'mta.public.relationships_view': {
+        'sourceTable': 'mta.public.filtered_station_viz',
+        'targetTable': 'mta.public.filtered_station_viz'
+      }
+    }
+  }
+)
+ 
+
+# specifying which column should be associated with captions
+for node in viz_graph.nodes:
+    node.caption = str(node.properties["STATION_NAME"])
+    
+# now we render
+html_object = viz_graph.render()
+
 import streamlit.components.v1 as components
 
-components.html(
-    viz.to_pandas().loc[0]["VISUALIZE"],
-    height=600
-)
+components.html(html_object.data, height=600)
 ```
 
 ![image](assets/viz.png)
