@@ -151,8 +151,8 @@ jobs:
           fi
 
           # Get all changed files (not just markdown) for file size checking
-          # Only include files that will be checked out (site/sfguides/src/)
-          all_changed_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/"))' | sort -u)
+          # Only include files that will be checked out (site/sfguides/src/), excluding folders starting with _
+          all_changed_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)' | sort -u)
           if [ -z "$all_changed_files" ]; then 
             all_changed_files_json='[]'
           else
