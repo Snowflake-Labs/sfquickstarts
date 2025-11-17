@@ -8,7 +8,9 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
 # Build Agentic Application with Anthropic In Snowflake
-<!-- ------------------------ -->
+
+
+
 
 ## Overview
 
@@ -37,7 +39,9 @@ A Data Agent that can intelligently respond to questions by reasoning over both 
 
 * A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](/en/developers/guides/build-agentic-application-in-snowflake/).
 
-<!-- ------------------------ -->
+
+
+
 ## Snowflake Trial Account
 
 To complete this lab, you'll need to create a Snowflake account.
@@ -57,7 +61,9 @@ To complete this lab, you'll need to create a Snowflake account.
 ![trial](assets/trial.png)
 
 ## Setup 
-<!-- ------------------------ -->
+
+
+
 
 
 * Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai).
@@ -104,7 +110,8 @@ Stored Procedure:
 > NOTE: Switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 ## Create Tools
-<!-- ------------------------ -->
+
+
 
 
 We will use Snowflake Notebook to setup the Cortex Analyst and Cortex Search tools that will be used by the data agent in Snowflake Intelligence.
@@ -162,7 +169,8 @@ Notice that Cortex Analyst is now able to provide the right answer because of th
 
 
 ## Snowflake Intelligence
-<!-- ------------------------ -->
+
+
 
 Now that we have the tools ready, we can create a Data Agent for Snowflake Intelligence.
 
