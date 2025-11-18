@@ -98,7 +98,7 @@ Watch a demo [here](https://www.youtube.com/watch?v=yd9LXsvTSTU)
   6. Copy the template folder and rename it appropriately to create a new Guide: (e.g. `cp _markdown-template my-quickstart-name-here` in your terminal).
      or Browse to the Guide you wish to edit, click the directory and edit the existing files in the directory
  
-  7. Start authoring in markdown format using the template housed under site -> sfguides/src -> _template -> markdown.template.
+  7. Start authoring in markdown format using the template housed under site -> sfguides/src -> _markdown-template -> markdown-template.
   
   8. Make sure you select the appropriate content type, industries, language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags). You will not be able to merge your changes without this step!
 
@@ -118,3 +118,10 @@ Guides are not in the scope of Snowflake Global Support. Please do not file supp
 However, pull requests are welcome! If you encounter an issue in a Guide (outdated copy or data, typos, broken links, etc.), please submit a pull request and contribute to keeping our Guides up to date and awesome. 
 
 Thank you for helping us maintain a high quality bar and consistency across all Snowflake Developer Guides!
+
+
+## Resources:
+
+- [How to Fork a Repo](https://youtu.be/ePRJHFXU6n4)
+- [How to Edit a Guide](https://youtu.be/yd9LXsvTSTU)
+- **Basic Guide with hands-on Instructions:** [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
