@@ -178,7 +178,7 @@ Great! Now it’s time to set up dbt platform.
 
 ### Configuring the dbt_project.yml 
 
-1. To get started with development for our project, we’ll need to create a new git branch for our work. Clicking on the green `create branch` button in the upper left hand corner of the screen will bring up a window to name your branch. We’ll call our branch `snowflake_workshop`. After entering in the name click `Submit`. 
+1. To get started with development for our project, we’ll need to create a new git branch for our work. Clicking on the `create branch` button in the upper left hand corner of the screen will bring up a window to name your branch. We’ll call our branch `snowflake_workshop`. After entering in the name click `Submit`. 
 
 2. The first piece of development we’ll do on the project is to update the `dbt_project.yml` file. This is the file that dbt looks for to recognize that the file directory we’re working in is a dbt project. 
 
@@ -193,8 +193,8 @@ config-version: 2
 
 profile: 'default'
 
-source-paths: ["models"]
-analysis-paths: ["analysis"]
+model-paths: ["models"]
+analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
@@ -203,16 +203,16 @@ snapshot-paths: ["snapshots"]
 target-path: "target"  
 clean-targets:         
     - "target"
-    - "dbt_modules"
+    - "dbt_packages"
 
 models:
   snowflake_workshop:
     staging:
-      materialized: view
-      snowflake_warehouse: pc_dbt_wh
+      +materialized: view
+      +snowflake_warehouse: pc_dbt_wh
     marts:
-      materialized: table
-      snowflake_warehouse: pc_dbt_wh_large
+      +materialized: table
+      +snowflake_warehouse: pc_dbt_wh_large
 ```
 <br>
     The key configurations to point out in the file with relation to the work that we’re going to do are in the models section. Here we are defining configurations at the folder level that we want applied to all of the models within that folder. Specifically we are demonstrating:
