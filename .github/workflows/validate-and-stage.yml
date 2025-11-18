@@ -498,7 +498,7 @@ jobs:
                   const errors = Array.isArray(data.errors) ? data.errors : [];
                   if (errors.length) {
                     const lines = errors.map(err => `- **${err.folder}** (${err.files.length} files):\n${err.files.map(f => `  - \`${f}\``).join('\n')}`);
-                    sections.push(`### 📄 Multiple Markdown Files Detected\n\n${data.message || 'Each quickstart folder should contain only one markdown file.'}\n\n${lines.join('\n\n')}`);
+                    sections.push(`### 📄 Multiple Markdown Files Detected\n\n${data.message || 'Each quickstart folder should contain only one markdown file in the root. Did you mean to add this additional .md file to the /assets folder?.'}\n\n${lines.join('\n\n')}`);
                   }
                 }
               } catch {}
