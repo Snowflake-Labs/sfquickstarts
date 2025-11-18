@@ -96,11 +96,11 @@ jobs:
           repo=${{ github.repository }}
           files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
           
-          md_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | select(endswith(".md"))' | sort -u)
+          md_files=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | select(endswith(".md"))' | sort -u)
           if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
 
           # Build quickstart names and languages like the legacy workflow
-          quickstart_names=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
+          quickstart_names=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
           if [ -z "$quickstart_names" ]; then
             quickstart_names_json='[]'
             quickstart_folders_json='[]'
@@ -151,8 +151,8 @@ jobs:
           fi
 
           # Get all changed files (not just markdown) for file size checking
-          # Only include files that will be checked out (site/sfguides/src/), excluding folders starting with _
-          all_changed_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not)' | sort -u)
+          # Only include files that will be checked out (site/sfguides/src/), excluding folders starting with _ and removed files
+          all_changed_files=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not)' | sort -u)
           if [ -z "$all_changed_files" ]; then 
             all_changed_files_json='[]'
           else
