@@ -183,7 +183,6 @@ jobs:
       - name: Determine changed files in quickstarts (from PR)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
-        continue-on-error: true
         run: |
           # Read the list of downloaded files from previous step
           downloaded_files=$(cat downloaded_files.txt)
@@ -198,79 +197,49 @@ jobs:
             all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           fi
 
-          # Extract quickstart names from markdown files
-          quickstart_names=$(echo "$md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
-          
-          if [ -z "$quickstart_names" ]; then
-            quickstart_names_json='[]'
-            quickstart_name=''
+          # Prepare markdown files for validation
+          if [ -z "$md_files" ]; then
             markdown_json='[]'
             md_file_count=0
+            quickstart_names_json='[]'
+            quickstart_name=''
           else
-            objs='[]'
-            selected_md_files=()
-            multiple_files_errors='[]'
+            # Build markdown_json with all downloaded markdown files
+            markdown_json=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
+            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
             
-            # For each quickstart, validate that only one markdown file exists in the entire folder
+            # Extract quickstart names and languages for webhook
+            quickstart_names=$(echo "$md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+            objs='[]'
+            
             while IFS= read -r name; do
               [ -z "$name" ] && continue
               
-              # Get ALL markdown files in this quickstart folder (from downloaded PR branch)
-              # This includes both modified and unmodified files in the PR branch
-              folder_md_files=$(find "pr/site/sfguides/src/$name" -maxdepth 1 -type f -name "*.md" 2>/dev/null | sed 's|^pr/||' || echo "")
-              file_count=$(echo "$folder_md_files" | grep -c '^' || echo 0)
-              
-              # Check if more than one markdown file exists
-              if [ "$file_count" -gt 1 ]; then
-                # Convert files to JSON array
-                files_array=$(echo "$folder_md_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
-                multiple_files_errors=$(echo "$multiple_files_errors" | jq -c --arg folder "$name" --argjson files "$files_array" '. + [{folder:$folder, files:$files}]')
-                continue
+              lang=""
+              # Prefer a markdown file that matches the folder name
+              candidate="site/sfguides/src/$name/$name.md"
+              if echo "$md_files" | grep -q "^$candidate$"; then
+                md_file="$candidate"
+              else
+                # Fallback: use the first markdown file in this quickstart
+                md_file=$(echo "$md_files" | grep "^site/sfguides/src/$name/" | head -n1)
               fi
               
-              # Single file found - use it
-              lang=""
-              md_file="$folder_md_files"
-              
-              # Add to selected files list for validation
-              if [ -n "$md_file" ]; then
-                selected_md_files+=("$md_file")
-                
-                # Extract language from the markdown file
-                if [ -f "pr/$md_file" ]; then
-                  lang=$(sed -n '1,50p' "pr/$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
-                  # Only process if language field was found
-                  if [ -n "$lang" ]; then
-                    lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-                    if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                    if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                  fi
+              # Extract language from the markdown file
+              if [ -n "$md_file" ] && [ -f "pr/$md_file" ]; then
+                lang=$(sed -n '1,50p' "pr/$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+                if [ -n "$lang" ]; then
+                  lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                  if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                  if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
                 fi
               fi
               
               objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
             done <<< "$quickstart_names"
-            
-            # Check if any folders have multiple markdown files
-            error_count=$(echo "$multiple_files_errors" | jq 'length')
-            if [ "$error_count" -ne 0 ]; then
-              echo "❌ Error: Multiple markdown files found in the following folders:" >&2
-              echo "$multiple_files_errors" | jq -r '.[] | "  - \(.folder): \(.files | length) files - \(.files | join(", "))"' >&2
-              jq -n --argjson errors "$multiple_files_errors" --arg msg "Multiple markdown files found. Each quickstart folder should contain only one markdown file." '{type:"multiple_markdown_files", message:$msg, errors:$errors}' > multiple-md-error.json
-              exit 1
-            fi
 
             quickstart_names_json="$objs"
             quickstart_name=$(echo "$quickstart_names" | head -n1)
-            
-            # Build markdown_json with selected files
-            if [ ${#selected_md_files[@]} -eq 0 ]; then
-              markdown_json='[]'
-              md_file_count=0
-            else
-              markdown_json=$(printf '%s\n' "${selected_md_files[@]}" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
-              md_file_count=${#selected_md_files[@]}
-            fi
           fi
 
           # Print debug information
@@ -287,6 +256,51 @@ jobs:
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
           echo "md_file_count=$md_file_count" >> $GITHUB_OUTPUT
+
+      - name: Validate single markdown file per folder
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate_single_markdown
+        continue-on-error: true
+        run: |
+          # Extract quickstart folders that have markdown changes
+          downloaded_files=$(cat downloaded_files.txt)
+          md_files=$(echo "$downloaded_files" | grep '\.md$' || true)
+          
+          if [ -z "$md_files" ]; then
+            echo "No markdown files to validate"
+            exit 0
+          fi
+          
+          quickstart_folders=$(echo "$md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          multiple_files_errors='[]'
+          
+          # For each folder with markdown changes, check if multiple markdown files exist
+          while IFS= read -r folder; do
+            [ -z "$folder" ] && continue
+            
+            # Get ALL markdown files in this quickstart folder
+            folder_md_files=$(find "pr/site/sfguides/src/$folder" -maxdepth 1 -type f -name "*.md" 2>/dev/null | sed 's|^pr/||' || echo "")
+            file_count=$(echo "$folder_md_files" | grep -c '^' || echo 0)
+            
+            # Check if more than one markdown file exists
+            if [ "$file_count" -gt 1 ]; then
+              # Convert files to JSON array
+              files_array=$(echo "$folder_md_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+              multiple_files_errors=$(echo "$multiple_files_errors" | jq -c --arg folder "$folder" --argjson files "$files_array" '. + [{folder:$folder, files:$files}]')
+            fi
+          done <<< "$quickstart_folders"
+          
+          # Check if any folders have multiple markdown files
+          error_count=$(echo "$multiple_files_errors" | jq 'length')
+          if [ "$error_count" -ne 0 ]; then
+            echo "❌ Error: Multiple markdown files found in the following folders:" >&2
+            echo "$multiple_files_errors" | jq -r '.[] | "  - \(.folder): \(.files | length) files - \(.files | join(", "))"' >&2
+            jq -n --argjson errors "$multiple_files_errors" --arg msg "Multiple markdown files found. Each quickstart folder should contain only one markdown file." '{type:"multiple_markdown_files", message:$msg, errors:$errors}' > multiple-md-error.json
+            exit 1
+          else
+            echo "✅ Single markdown file validation passed"
+            exit 0
+          fi
 
       - name: Check for large files
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -458,7 +472,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.detect.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         uses: actions/github-script@v7
         env:
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
@@ -581,7 +595,7 @@ jobs:
         run: |
           # Check if any validation step failed
           all_passed=true
-          if [ "${{ steps.detect.outcome }}" == "failure" ] || \
+          if [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
              [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
              [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
