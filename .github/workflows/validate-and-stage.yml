@@ -414,7 +414,7 @@ jobs:
       - name: Call Workato staging webhook
         id: call_webhook
         continue-on-error: true
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 4
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 7
         env:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
         run: |
