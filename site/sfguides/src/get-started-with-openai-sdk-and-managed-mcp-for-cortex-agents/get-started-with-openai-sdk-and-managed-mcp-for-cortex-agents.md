@@ -74,8 +74,6 @@ Extract the zip file to your preferred location.
 - ✅ Create semantic view for Cortex Analyst
 - ✅ Setup role with permissions
 
-```
-
 <!-- ------------------------ -->
 ## Create Cortex Agent via UI
 
