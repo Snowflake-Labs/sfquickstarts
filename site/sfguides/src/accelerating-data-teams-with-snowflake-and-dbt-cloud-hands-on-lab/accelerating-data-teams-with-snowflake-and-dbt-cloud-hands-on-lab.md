@@ -921,7 +921,7 @@ Similar to our model runs, the compiled code that is passed to Snowflake for eac
 
 Let’s switch gears to take a look at the documentation that we created. The command to tell dbt to create our docs is `dbt docs generate`. Run that command and when it completes click on the book icon in the upper left hand corner of the IDE above the version control pane to launch your documentation. 
 
-![Docs Ready](assets/dbt_Cloud_dbt_docs_ready.png)
+![Docs Ready](assets/dbt_platform_dbt_docs_ready.png)
 
 The documentation site will launch in a new tab. After that loads enter `fct_orders` into the top search bar and click on the top result to take you the documentation for that model. 
 
