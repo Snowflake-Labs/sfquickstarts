@@ -61,11 +61,11 @@ Once your account is created you’ll receive an email confirmation. Within that
 
 For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
 
-The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `Worksheets` tab click the blue `Worksheet` button in the upper right hand corner of the page to create a new worksheet. 
+The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `New Project` botton click the `SQL File` button to create a query. 
 
-![Snowflake Create Worksheet](assets/Snowflake_create_worksheet.png)
+![Snowflake Create SQL file](assets/Snowflake_create_SQL_file.png)
 
-Once there, click `Databases` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
+Once there, at the bottom left corner you will see `Database Explore` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
 
 
 ![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
