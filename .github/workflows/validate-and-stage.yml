@@ -262,6 +262,9 @@ jobs:
         id: validate_single_markdown
         continue-on-error: true
         run: |
+          # Define error message once
+          ERROR_MESSAGE="Each quickstart folder should contain only one markdown file in the root. Did you mean to add this additional .md file to the /assets folder?"
+          
           # Extract quickstart folders that have markdown changes
           downloaded_files=$(cat downloaded_files.txt)
           md_files=$(echo "$downloaded_files" | grep '\.md$' || true)
@@ -295,7 +298,7 @@ jobs:
           if [ "$error_count" -ne 0 ]; then
             echo "❌ Error: Multiple markdown files found in the following folders:" >&2
             echo "$multiple_files_errors" | jq -r '.[] | "  - \(.folder): \(.files | length) files - \(.files | join(", "))"' >&2
-            jq -n --argjson errors "$multiple_files_errors" --arg msg "Multiple markdown files found. Each quickstart folder should contain only one markdown file." '{type:"multiple_markdown_files", message:$msg, errors:$errors}' > multiple-md-error.json
+            jq -n --argjson errors "$multiple_files_errors" --arg msg "$ERROR_MESSAGE" '{type:"multiple_markdown_files", message:$msg, errors:$errors}' > multiple-md-error.json
             exit 1
           else
             echo "✅ Single markdown file validation passed"
@@ -498,7 +501,7 @@ jobs:
                   const errors = Array.isArray(data.errors) ? data.errors : [];
                   if (errors.length) {
                     const lines = errors.map(err => `- **${err.folder}** (${err.files.length} files):\n${err.files.map(f => `  - \`${f}\``).join('\n')}`);
-                    sections.push(`### 📄 Multiple Markdown Files Detected\n\n${data.message || 'Each quickstart folder should contain only one markdown file in the root. Did you mean to add this additional .md file to the /assets folder?.'}\n\n${lines.join('\n\n')}`);
+                    sections.push(`### 📄 Multiple Markdown Files Detected\n\n${data.message}\n\n${lines.join('\n\n')}`);
                   }
                 }
               } catch {}
