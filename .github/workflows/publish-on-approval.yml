@@ -21,23 +21,19 @@ jobs:
 
       - name: Determine changed quickstart folders
         id: detect
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          # Get changed files from the push
-          # For push events, compare the before and after commits
-          before_commit="${{ github.event.before }}"
+          # Get changed files from the push using GitHub API (excluding deleted files)
+          repo="${{ github.repository }}"
           after_commit="${{ github.sha }}"
           
-          # Handle first push to branch (no before commit)
-          if [ "$before_commit" = "0000000000000000000000000000000000000000" ]; then
-            # First push - check HEAD against previous commit
-            changed_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
-          else
-            changed_files=$(git diff --name-only "$before_commit" "$after_commit")
-          fi
+          # Fetch commit details from GitHub API to get file changes with status
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/commits/$after_commit")
           
-          # Filter to quickstart folders under site/sfguides/src whose names do not start with an underscore
-          # Also exclude any files inside directories starting with underscore
-          quickstart_names=$(echo "$changed_files" | grep '^site/sfguides/src/' | grep -v '/_' | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          # Extract quickstart names from changed files, excluding deleted files, folders starting with underscore
+          # Only trigger on markdown files (.md) or files inside assets folders
+          quickstart_names=$(echo "$files_json" | jq -r '.files[]? | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | select(test("\\.md$|/assets/")) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
           
           has_relevant_changes=false
           if [ -z "$quickstart_names" ]; then

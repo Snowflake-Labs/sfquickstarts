@@ -100,7 +100,8 @@ jobs:
           if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
 
           # Build quickstart names and languages like the legacy workflow
-          quickstart_names=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
+          # Only trigger on markdown files (.md) or files inside assets folders
+          quickstart_names=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | select(test("\\.md$|/assets/")) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
           if [ -z "$quickstart_names" ]; then
             quickstart_names_json='[]'
             quickstart_folders_json='[]'
