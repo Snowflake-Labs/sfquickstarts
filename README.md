@@ -111,6 +111,8 @@ Watch a demo [here](https://www.youtube.com/watch?v=yd9LXsvTSTU)
 
 - Search the current Quickstarts repository to confirm you are not duplicating content that is already created (consolidate your content where possible)
 
+- **Ctrl+Click** (Windows/Linux) or **Cmd+Click** (macOS) to open links in a new tab.  This is useful when following along instructions in a guide.
+
 ## Reporting issues in Guides
 
 Guides are not in the scope of Snowflake Global Support. Please do not file support cases for issues or errata in a Guide. 
