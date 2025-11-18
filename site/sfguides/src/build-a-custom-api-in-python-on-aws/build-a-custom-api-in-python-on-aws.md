@@ -1,7 +1,7 @@
 author: Brad Culberson
 id: build-a-custom-api-in-python-on-aws
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
-language: en
+categories: snowlake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: 
 summary: A guide to building and running a custom API (in Python) Powered by Snowflake and AWS
 environments: web
 status: Published 
@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview 
 
-Many builders want to share some of the data stored in Snowflake over an http API. Modern mobile and web applications often want to retrieve that data through http APIs. This tutorial will go through how to build, deploy, and host a custom API Powered by Snowflake.
+Many builders want to share some of the data stored in Snowflake over an http API. Modern mobile and web applications often want to retrieve that data through http APIs. This tutorial will go through how to build, deploy, and host a custom API Powered by Snowflake.hell
 
 This API consists of reporting endpoints from data stored in Snowflake. [Serverless Framework](https://www.serverless.com/) was used to build and deploy the application for simplicity of operation and ease of scaling.
 
