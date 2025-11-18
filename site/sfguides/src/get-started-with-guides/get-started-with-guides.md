@@ -10,9 +10,11 @@ author:  Snowflake DevRel Team
 
 ## Components of a Guide
 
+The following sections explain the various headings of a guide that are required to keep the look and feel consistent.
+
 ### Overview 
 
-Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src#:~:text=_imports-,_markdown,-%2Dtemplate) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).
 
@@ -257,7 +259,9 @@ CODE:
 
 
 #### Images
-![](assets/puppy.jpg "Puppy")
+
+![](assets/puppy.jpg "Cute Puppy")
+
 
 Please DO NOT use HTML code for adding images. 
 Use this markdown format for images: 
@@ -484,7 +488,7 @@ Congratulations!  You should now be able to create, format and submit a guide.
 - [Learn the GitHub Flow](https://guides.github.com/introduction/flow/)
 - [Learn How to Fork a project on GitHub](https://guides.github.com/activities/forking/)
 - Video on [How to Fork a Repo](https://youtu.be/ePRJHFXU6n4)
-- [Markdown template that can be used](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src#:~:text=_markdown%2D-,template,-_shared_assets).
+- [Markdown template that can be used](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template).
 - Video on [How to Edit a Guide](https://youtu.be/yd9LXsvTSTU)
 
 ### EXAMPLES:
