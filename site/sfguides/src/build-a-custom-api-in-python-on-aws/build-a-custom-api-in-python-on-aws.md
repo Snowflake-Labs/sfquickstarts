@@ -82,7 +82,7 @@ If you would also like to see how to build endpoints using the Snowflake SQL API
 
 The config.py file is setup to configure the application from environment variables. These environment variables will be set for the lambda in AWS by the Serverless Framework automatically.
 
-Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to name your service by replacing <NAME_OF_YOUR_SERVICE> and update your Snowflake account in both places that have <ACCOUNT> (SNOWFLAKE_ACCOUNT and SNOWFLAKE_PRIVATE_KEY). This Snowflake account must be the same one used for the [Building a Data Application](/en/developers/guides/data-app/) guide as we will be using the same database and user. If you haven't completed the first 4 steps of that guide, do so before continuing.
+Copy the `serverless-template.yml` to `serverless.yml`. Update the `serverless.yml` to name your service by replacing `<NAME_OF_YOUR_SERVICE>` and update your Snowflake account in both places that have <ACCOUNT> (SNOWFLAKE_ACCOUNT and SNOWFLAKE_PRIVATE_KEY). This Snowflake account must be the same one used for the [Building a Data Application](/en/developers/guides/data-app/) guide as we will be using the same database and user. If you haven't completed the first 4 steps of that guide, do so before continuing.
 
 Modify the region in the serverless.yml (line 17) to the same region as your credentials.
 
