@@ -1,16 +1,15 @@
 author: Jason Summer
 id: orchestrate-llm-evaluations-with-evalanche
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Orchestrate LLM Evaluations in Snowflake with Evalanche 
-categories: data-science-&-ai 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: LLM, AI, Cortex AI
 
 # Orchestrate LLM Evaluations in Snowflake with Evalanche
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 By completing this guide, you will have deployed the Evalanche application in a Snowflake account and conducted your first LLM use case evaluation.
 
@@ -49,7 +48,6 @@ Data Sources provide the values to Metrics’ required inputs. Data Sources can 
 
 <!-- ------------------------ -->
 ## Deploying Evalanche to Streamlit
-Duration: 2
 
 1. Copy the entire contents of file [`git_setup.sql`](https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-evalanche/setup/git_setup.sql).
 
@@ -62,13 +60,12 @@ The logic running will:
 - Create a database, schema, stage, and several tables
 - Create an [API Integration and Git Repository](https://docs.snowflake.com/en/developer-guide/git/git-overview) in Snowflake for the source code in Snowflake-Labs Github
 - Copy the source code from the Github repo to Snowflake stage
-- Create the [Streamlit in Snowflake application](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/)
+- Create the [Streamlit in Snowflake application](/en/data-cloud/overview/streamlit-in-snowflake/)
 
 Once competed, Evalanche will be accessible in your Snowflake account under the Streamlit section. 
 
 <!-- ------------------------ -->
 ## Create Sample Data
-Duration: 1
 
 Next, we will create hypothetical data for our first Evaluation. Within Snowsight, select the + tab to create a new SQL Worksheet. 
 
@@ -113,7 +110,6 @@ SELECT * FROM GENAI_UTILITIES.EVALUATION.SAMPLE_TABLE;
 
 <!-- ------------------------ -->
 ## Open Evalanche and Select Metrics
-Duration: 1
 
 Navigate to the Evalanche app by selecting **Projects** > **Streamlit** > **Evalanche: GenAI Evaluation Application**. For a quick overview of the application, select the Help button.
 
@@ -129,7 +125,6 @@ Click Continue.
 
 <!-- ------------------------ -->
 ## Select and Configure Data Source
-Duration: 2
 
 A Data Source should have at least the required input(s) for the select Metric(s). A Data Source can be a single table, 2 tables (if expected and generated results are separate), and/or custom SQL if the data are not readily available as singular tables.
 
@@ -145,7 +140,6 @@ Click Run.
 
 <!-- ------------------------ -->
 ## View Evaluation Results
-Duration: 2
 
 ![Evaluation Results](assets/results.png)
 
@@ -170,7 +164,6 @@ Click Rerun. The score should improve. Click Save.
 
 <!-- ------------------------ -->
 ## Save Results and Evaluation
-Duration: 2
 
 Evaluation results can be saved to Snowflake table(s) for subsequent analysis if desired. Click Record Results and provide a Snowflake database, schema, and table name. 
 
@@ -188,7 +181,6 @@ Return to the homepage by clicking home in the left-side panel. Click the saved 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You've successfully deployed Evalanche and created your first saved Evaluation using out of the box Metrics. For ongoing evaluations or experimentation, we encourage using Automated Evaluations. 
 
@@ -204,3 +196,5 @@ Have an LLM use case that would benefit from a novel Metric? Check out [Creating
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/emerging-solutions-toolbox/tree/main/framework-evalanche)
 - [Medium Article](https://medium.com/snowflake/lookout-its-an-evalanche-cac23f983970)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/11/evalanche-snowflake-reference-architecture.pdf)
+- [Watch the Demo](https://youtu.be/lanCEOJ-914?list=TLGGEb1eaMM_q78yNDA5MjAyNQ)

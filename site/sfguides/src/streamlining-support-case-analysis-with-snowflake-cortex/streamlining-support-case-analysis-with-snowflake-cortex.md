@@ -1,22 +1,21 @@
 author: Kala Govindarajan
 id: streamlining-support-case-analysis-with-snowflake-cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: A streamlined approach using advanced data processing and AI-driven summarization to help analyze support tickets leading to faster resolution times and better insights into common customer issues. By integrating Snowflake Cortex AI features, product managers and support teams can automate the analysis and summarization of support tickets seamlessly.
-categories: Getting-Started, Cortex, Data-Science-&-Ai, Streamlit, App-Development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Cortex, Data Science & Ai, Streamlit, App Development
 
 # Streamlining Support Case Analysis with Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Support case analysis is a critical task for any product-driven company. Understanding customer issues, their frequency, and patterns can significantly enhance product development and customer satisfaction. With the rise of data engineering and AI, platforms like Snowflake with AI-powered language models are game-changers in automating and enhancing this process. In this guide, we will explore how to leverage these technologies to dissect, analyze, and summarize product support cases effectively.
 
 By completing this QuickStart guide, you will deploy a Streamlit application that leverages Snowflake Cortex AI features like LLM Inference and Cortex Search for summarization, search and analysis, alongside the LangChain framework to chain together interoperable components for large language models (LLMs).By leveraging Snowflake Cortex, this solution not only processes but also meaningfully summarizes support tickets, aiding in more agile issue resolution and strategic planning.
 
-<img src="assets/architecture.png"/>
+![assets/architecture.png](assets/architecture.png)
 
 ### What is Cortex Search
 Cortex Search provides low-latency, high-quality fuzzy search capabilities for Snowflake data, enabling a range of advanced search experiences, including Retrieval-Augmented Generation (RAG) applications that leverage Large Language Models (LLMs).
@@ -47,7 +46,6 @@ With Cortex Search, one can quickly set up a hybrid (vector and keyword) search 
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
@@ -107,7 +105,6 @@ reduce_template = PromptTemplate.from_template("""
 <!-- ------------------------ -->
 ## Streamlit Application 
 
-Duration: 2
 
 The app is built on open source Streamlit and can be hosted in one's own platform. The app allows the user carries the end to end processing that was carried in the Notebook with fine tuned granular control by the end user.
 
@@ -117,7 +114,7 @@ Here is the [Streamlit source code](https://github.com/Snowflake-Labs/sfguide-an
 
 In the Support Case Summary page one can view support case summaries using Cortex LLMs. It retrieve the Summary tables created for different categories and lists them in a dropdown. The app displays the most recent record’s summary from the selected table and includes an expandable section to show each step of intermediate analysis.
 
-<img src="assets/Supportcasesummary.png"/>
+![assets/Supportcasesummary.png](assets/Supportcasesummary.png)
 
 ### Support Cases Chatbot
 
@@ -136,7 +133,7 @@ Sidebar Configurations: Allows users to select which Cortex search service, togg
 This enables efficient question-answering on support cases with context-based responses.
 
 
-<img src="assets/SupportcasesChatbot.png"/>
+![assets/SupportcasesChatbot.png](assets/SupportcasesChatbot.png)
 
 ### Process Cases
 
@@ -149,12 +146,11 @@ This Streamlit page processes and summarizes Snowflake support cases to identify
 3. Processing and Cost Estimate: On the click of the button, the processing begins and a new cortex search service is created for the filtered data. A progress bar shows completion status. Afterward, it provides token usage, processing time, and cost estimates.
 
 
-<img src="assets/processcases.png"/>
+![assets/processcases.png](assets/processcases.png)
 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Conclusion
 
@@ -178,3 +174,8 @@ and how to efficiently chunk text for input into the LLM.
   
 - #### [Snowpark Cortex Search Tutorials](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/overview-tutorials)
 
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-analyzing-support-cases-using-snowflake-cortex)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2025/streamlining-support-case-analysis-with-snowflake-cortex.pdf)
+- [Read Medium Blog](https://medium.com/snowflake/streamline-your-support-tickets-with-snowflakes-ai-powered-ticket-automation-agent-d148527ecd84)
+- [Watch the Demo](https://youtu.be/Orvlo9q3iBo?list=TLGGvAiUj-zrj0gyNDA5MjAyNQ)
+  

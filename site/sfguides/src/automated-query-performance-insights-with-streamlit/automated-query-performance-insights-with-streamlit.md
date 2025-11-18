@@ -1,17 +1,16 @@
 author: Chanin Nantasenamat
 id: automated-query-performance-insights-with-streamlit
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Build an interactive Streamlit app within Snowflake Notebooks to analyze query performance and identify optimization opportunities. This guide demonstrates how to create visualizations and insights for query execution times.
-categories: streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Streamlit, Snowflake, Python, Data Analysis, Query Performance
 
 # Build Interactive Query Performance App in Snowflake Notebooks
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 10
 
 Learn how to create an interactive Streamlit application within Snowflake Notebooks that helps analyze query performance. This tool will enable you to identify long-running queries and generate insights for optimization, potentially saving both time and computational resources.
 
@@ -37,7 +36,6 @@ Here are features that we'll implement in the app:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 3
 
 Firstly, to follow along with this quickstart, you can click on [Build_an_Interactive_Query_Performance_App_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Query_Performance_Insights_using_Streamlit/Build_an_Interactive_Query_Performance_App_with_Streamlit.ipynb) to download the Notebook from GitHub.
 
@@ -53,7 +51,6 @@ Select a warehouse that will be used for analysis. Here in this tutorial, I'll b
 
 <!-- ------------------------ -->
 ## Create the Base Query
-Duration: 5
 
 ### Write the Performance Query
 First, we'll create the SQL query to retrieve query performance data:
@@ -80,7 +77,6 @@ LIMIT 50;
 
 <!-- ------------------------ -->
 ## Build the Streamlit Interface
-Duration: 15
 
 ### Create Interactive Widgets
 Firstly, we'll import the necessary libraries and implement the user interface widgets:
@@ -183,7 +179,6 @@ Putting all of these code snippets together, we can build out the interactive qu
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an interactive query performance analysis application using Streamlit within Snowflake Notebooks. This tool will help you identify optimization opportunities in your SQL queries through interactive data exploration.
 

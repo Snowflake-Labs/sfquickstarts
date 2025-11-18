@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: role-based-access-auditing
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Build a utility notebook to audit and report on user roles and privileges in Snowflake Notebooks.
-categories: getting-started, cybersecurity, audit, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Streamlit, Python, Data Visualization, Security Audit, Role-Based Access Control
 
 # Build Role-Based Access Audit Dashboards in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Learn how to create interactive dashboards for auditing user roles and privileges in Snowflake using Streamlit. This guide walks you through building a utility notebook that helps to ensure adherence to security policies through visual analysis of user roles and privilege assignments.
 
@@ -36,7 +35,6 @@ Here are some common features for these two dashboards:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Firstly, to follow along with this quickstart, you can click on [Role_Based_Access_Auditing_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Role_Based_Access_Auditing_with_Streamlit/Role_Based_Access_Auditing_with_Streamlit.ipynb) to download the Notebook from GitHub. 
 
@@ -52,7 +50,6 @@ import streamlit as st
 
 <!-- ------------------------ -->
 ## Implement User Role Analysis
-Duration: 15
 
 ### Query User Data
 In this first use case, let's retrieve user details and role assignments using the following SQL query:
@@ -79,7 +76,7 @@ ORDER BY
 
 This returns the following output:
 
-![image](assets/img01.PNG)
+![image](assets/img01.png)
 
 Next, we'll convert the above SQL query output to a Pandas DataFrame (we'll also name this Python cell `df_user_role`, which we'll make a reference to shortly).
 
@@ -208,11 +205,10 @@ with st.expander("View DataFrame"):
 
 This code snippet generates the following Streamlit powered dashboard. Note how we can filter the data by adjusting the `st.selectbox()` drop-down widgets, which in turn is used to generate the displayed heatmap:
 
-![image](assets/img02.PNG)
+![image](assets/img02.png)
 
 <!-- ------------------------ -->
 ## Implement Role Grant Analysis
-Duration: 15
 
 ### Analyze Role Grants
 
@@ -230,7 +226,7 @@ FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES
 WHERE deleted_on IS NULL;
 ```
 
-![image](assets/img03.PNG)
+![image](assets/img03.png)
 
 Next, we'll convert the data to a Pandas Dataframe assigned to `df_role_grants`, which is also the cell name:.
 
@@ -333,11 +329,10 @@ st.altair_chart(top_N_chart, use_container_width=True)
 
 This should generate the following Streamlit app:
 
-![image](assets/img04.PNG)
+![image](assets/img04.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built interactive role-based access audit dashboards using Snowflake and Streamlit. These tools enable you to visually analyze user roles and privileges, helping maintain robust security policies in your Snowflake environment.
 

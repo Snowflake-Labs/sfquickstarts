@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: warehouse-utilization
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Learn how to create an interactive heatmap visualization of Snowflake warehouse utilization patterns in Snowflake Notebooks and Streamlit.
-categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Python, Streamlit, Data Visualization, Cost Optimization
 
 # Build Warehouse Utilization App in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Learn how to create an interactive visualization tool that helps you analyze (and optimize) your Snowflake warehouse usage patterns. Using Snowflake Notebooks with Streamlit, you'll build a heatmap dashboard that reveals peak usage hours and potential cost optimization opportunities.
 
@@ -29,7 +28,6 @@ An interactive dashboard featuring a heatmap visualization of warehouse usage pa
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 Firstly, to follow along with this quickstart, you can click on [Warehouse_Utilization_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Warehouse_Utilization_with_Streamlit/Warehouse_Utilization_with_Streamlit.ipynb) to download the Notebook from GitHub. 
 
@@ -37,7 +35,6 @@ Notebooks comes pre-installed with common Python libraries for data science and 
 
 <!-- ------------------------ -->
 ## Retrieve Warehouse Data
-Duration: 8
 
 ### Write the Query
 First, we'll query the warehouse utilization data available from `SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_LOAD_HISTORY`:
@@ -73,7 +70,6 @@ Note: The above Python cell is named `py_dataframe`.
 
 <!-- ------------------------ -->
 ## Create an Interactive Interface
-Duration: 8
 
 ### Build the Slider Widget
 Let's create an interactive slider using Streamlit. This would allow users to select the number of days to analyze, which would filter the DataFrame. 
@@ -113,7 +109,6 @@ The interactive interface that we've created using Streamlit is shown below alon
 
 <!-- ------------------------ -->
 ## Visualize Usage Patterns
-Duration: 8
 
 ### Create the Heatmap
 Finally, we're creating a heatmap using Altair. 
@@ -166,7 +161,6 @@ Here's the heatmap displaying the warehouse usage patterns:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an interactive warehouse utilization app that helps to identify usage patterns and optimization opportunities. This tool will help you make data-driven decisions about warehouse sizing and scheduling.
 

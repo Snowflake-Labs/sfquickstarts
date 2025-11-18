@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: partitioned-ml-model
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: This is a sample Snowflake Guide
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with Partitioned Models in Snowflake Model Registry
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Many datasets can be easily partitioned into multiple independent subsets. For example, a dataset containing sales data for a chain of stores can be partitioned by store number. A separate model can then be trained for each partition. Training and inference operations on the partitions can be parallelized, reducing the wall-clock time for these operations. Furthermore, since individual stores likely differ somewhat in how their features affect their sales, this approach can actually lead to more accurate inference at the store level.
 
@@ -32,7 +31,6 @@ In this quickstart, you will use the [Snowflake Model Registry](https://docs.sno
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -89,7 +87,6 @@ FROM @PARTITIONED_DATABASE.PUBLIC.S3LOAD;
 ```
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 30
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-partitioned-models-snowflake-model-registry/blob/main/notebooks/0_start_here.ipynb)
 - Change role to PARTITIONED_LAB_USER
@@ -109,7 +106,6 @@ Duration: 30
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Partitioning datasets can significantly optimize the training and inference process. In this quickstart, we saw how you could partition traffic data by store, allowing for individual models to be trained on each subset. This not only speeds up operations through parallelization but also enhances model accuracy by tailoring predictions to specific store characteristics.
 
