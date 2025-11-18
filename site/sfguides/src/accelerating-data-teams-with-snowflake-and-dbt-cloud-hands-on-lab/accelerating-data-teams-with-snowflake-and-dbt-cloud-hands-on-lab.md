@@ -2,12 +2,12 @@ authors: Bobby Birstock, Amy Chen
 id: accelerating-data-teams-with-snowflake-and-dbt-cloud-hands-on-lab
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
 language: en
-summary: Build a dbt project and data pipeline with dbt Cloud and Snowflake
+summary: Build a dbt project and data pipeline with dbt platform and Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab
+# Accelerating Data Teams with Snowflake and dbt platform Hands On Lab
 <!-- ------------------------ -->
 ## Overview 
 
@@ -25,7 +25,7 @@ Let's get started.
 
 * A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account with ACCOUNTADMIN access
 
-* A [dbt Cloud](https://www.getdbt.com/signup/) account
+* A [dbt platform](https://www.getdbt.com/signup/) account
 
 ### What You'll Learn
 
@@ -91,13 +91,13 @@ select *
 ```
 
 You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
-Great! Now it’s time to set up dbt Cloud.
+Great! Now it’s time to set up dbt platform.
 
 <!-- ------------------------ -->
-## Launching dbt Cloud via Partner Connect
+## Launching dbt platform via Partner Connect
 
 
-1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
+1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt platform account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
 2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which located within the `Admin` section. <br>
 
@@ -109,7 +109,7 @@ Great! Now it’s time to set up dbt Cloud.
 
     ![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
 
-4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
+4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.
 
     ![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
 
@@ -117,20 +117,20 @@ Great! Now it’s time to set up dbt Cloud.
 
     ![Activate Partner Connect](assets/Snowflake_activate_partner_connect.png)
 
-6. You should be redirected to a dbt Cloud registration page. Fill out the form and make sure to save the password somewhere for login in the future.
+6. You should be redirected to a dbt platform registration page. Fill out the form and make sure to save the password somewhere for login in the future.
 
-    ![dbt Cloud Registration](assets/dbt_Cloud_registration.png)
+    ![dbt platform Registration](assets/dbt_Cloud_registration.png)
 
-7. Click on `Complete Registration`. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
+7. Click on `Complete Registration`. You should now be redirected to your dbt platform account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
 
-    ![dbt Cloud Home Page](assets/dbt_Cloud_home_page.png)
+    ![dbt platform Home Page](assets/dbt_Cloud_home_page.png)
 
 8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
 
 <!-- ------------------------ -->
 ## IDE Walkthrough
 
-1. Now that our dbt Cloud account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the `Develop` button in the upper left hand corner of the screen.<br>
+1. Now that our dbt platform account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the `Develop` button in the upper left hand corner of the screen.<br>
 
     ![Develop Button](assets/dbt_Cloud_develop_button.png)
 
@@ -142,7 +142,7 @@ Great! Now it’s time to set up dbt Cloud.
 
 5. [Committing](https://www.atlassian.com/git/tutorials/saving-changes/git-commit) your work here will save it to the managed git repository that was created during the Partner Connect signup. This initial commit is the only commit that will be made directly to our `main` branch and from here on out we’ll be doing all of our work on a development branch. This allows us to keep our development work separate from our production code. 
 
-6. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, a SQL runner, and a CLI with git version control all baked into one package. This allows you to focus on editing your SQL files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The git workflow in dbt Cloud allows both git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
+6. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, a SQL runner, and a CLI with git version control all baked into one package. This allows you to focus on editing your SQL files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The git workflow in dbt platform allows both git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
 
     ![IDE Overview](assets/dbt_Cloud_IDE_overview.png)
 
@@ -945,7 +945,7 @@ Let’s commit our work for the section. Click the `Commit and push` button and 
 
 ## Deployment
 
-Before we jump into deploying our code, let’s have a quick primer on environments. Up to this point all of the work we’ve done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we’ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch allows us to separate our code from what other coworkers are building, as well as code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of git branch and Snowflake database objects form our environment. 
+Before we jump into deploying our code, let’s have a quick primer on environments. Up to this point all of the work we’ve done in the dbt platform IDE has been in our development environment, with code committed to a feature branch and the models we’ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch allows us to separate our code from what other coworkers are building, as well as code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of git branch and Snowflake database objects form our environment. 
 
 Now that we’ve completed testing and documenting our work, we’re ready to deploy our code from our development environment to our production environment and this involves two steps: 
 
@@ -969,7 +969,7 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
     Before making any changes, let’s touch on what is defined within this environment.
 
-    The Snowflake connection shows the credentials that dbt Cloud is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so.
+    The Snowflake connection shows the credentials that dbt platform is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so.
 
     The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we’ve been using as the schema for our development environment. Let’s update the schema to create a new schema specifically for our production environment. 
 
@@ -1003,7 +1003,7 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
     One of the tests from our example models failed! That was a bit unexpected, but in looking at all of the logs again we can see that the models we created were built successfully in Snowflake and the tests for those models passed. At this point, we can move forward and fix the failing example test another day. 
 
-    While this process is great for your scheduling and running your dbt jobs, we recognize that transformation jobs don’t live in a silo for many data teams. It’s not uncommon for a data team to have a data process occurring outside of dbt that has to happen prior to a dbt job running, or for there to be a data process that needs to be triggered after a dbt job finishes. In these sorts of cases, we recommend using our [API](https://docs.getdbt.com/dbt-cloud/api-v2) with a third party orchestration tool to orchestrate and manage these situations. There are also a number of blog posts and articles, including this [one](https://docs.getdbt.com/blog/dbt-airflow-spiritual-alignment), to help you think about the best way to manage this alongside dbt Cloud.
+    While this process is great for your scheduling and running your dbt jobs, we recognize that transformation jobs don’t live in a silo for many data teams. It’s not uncommon for a data team to have a data process occurring outside of dbt that has to happen prior to a dbt job running, or for there to be a data process that needs to be triggered after a dbt job finishes. In these sorts of cases, we recommend using our [API](https://docs.getdbt.com/dbt-cloud/api-v2) with a third party orchestration tool to orchestrate and manage these situations. There are also a number of blog posts and articles, including this [one](https://docs.getdbt.com/blog/dbt-airflow-spiritual-alignment), to help you think about the best way to manage this alongside dbt platform.
 
 7. Let’s go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the `production` schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed there. <br><br>
 
@@ -1071,7 +1071,7 @@ With all of our data now live in our production environment courtesy of our prod
 
 Congratulations on completing the lab!
 
-Today you learned how to use dbt and Snowflake to build data transformation pipelines for analytics. You're now ready to apply these fundamentals to your own data. We encourage you to continue with your free trial by loading your own sample or production data, and by continuing to dive into some of the more advanced functionality of dbt Cloud and Snowflake.
+Today you learned how to use dbt and Snowflake to build data transformation pipelines for analytics. You're now ready to apply these fundamentals to your own data. We encourage you to continue with your free trial by loading your own sample or production data, and by continuing to dive into some of the more advanced functionality of dbt platform and Snowflake.
 
 ### What We've Covered
 
@@ -1091,7 +1091,7 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 
 * To continue your dbt education, check out the [dbt Learn site](https://learn.getdbt.com/).
 
-* Contact the [dbt Cloud Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt Cloud for your team or organization.
+* Contact the [dbt platform Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt platform for your team or organization.
 
 *  [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/03/Data-Transformations-with-DBT-cloud-and-Snowflake.pdf)
 *  [Read the Blog](https://medium.com/snowflake/unlocking-reliable-data-and-team-efficiency-with-dbt-cloud-a-hands-on-experience-3d26da7f1bac)
