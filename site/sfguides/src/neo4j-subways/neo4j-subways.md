@@ -1,8 +1,6 @@
 author: corydon baylor
 id: modeling-subway-disruptions-with-neo4j
-categories:
-  - snowflake-site:taxonomy/getting-started
-  - snowflake-site:taxonomy/partner-integrationslanguage: en
+categories: snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/industry/public-sector
 summary: How to model subway disruptions using dijsktra in Neo4j Graph Analytics for Snowflake
 environments: web
 status: Published

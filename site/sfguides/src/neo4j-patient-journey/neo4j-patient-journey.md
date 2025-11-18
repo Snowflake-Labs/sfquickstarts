@@ -1,9 +1,7 @@
 author: corydon baylor
 id: finding-similar-patients
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
-categories:
-  - snowflake-site:taxonomy/getting-started
-  - snowflake-site:taxonomy/partner-integrationsenvironments: web
+categories: snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
