@@ -300,32 +300,61 @@ jobs:
         id: validate_language
         continue-on-error: true
         env:
-          QUICKSTART_NAMES_JSON: ${{ steps.detect.outputs.quickstart_names_json }}
+          MARKDOWN_JSON: ${{ steps.detect.outputs.markdown_json }}
         run: |
-          # Validate languages are in allowed set
-          objs="$QUICKSTART_NAMES_JSON"
-          if [ -z "$objs" ] || [ "$objs" = "[]" ]; then
-            echo "No quickstarts to validate"
+          # Validate languages in individual markdown files
+          markdown_files="$MARKDOWN_JSON"
+          if [ -z "$markdown_files" ] || [ "$markdown_files" = "[]" ]; then
+            echo "No markdown files to validate"
             exit 0
           fi
           
-          # Filter to only include objects with invalid languages
-          invalid_objs=$(echo "$objs" | jq '[ .[]
-            | select(
-              if type=="object" and (.language|type)=="string"
-              then (.language | ascii_downcase) as $l
-              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l)) == null
-              else true
-              end
-            )
-          ]')
+          allowed_languages=("en" "es" "it" "fr" "de" "ja" "ko" "pt_br")
+          invalid_files='[]'
           
-          invalid_count=$(echo "$invalid_objs" | jq 'length')
+          # Loop through each markdown file
+          while IFS= read -r file_path; do
+            [ -z "$file_path" ] && continue
+            
+            # Extract language from file
+            lang=""
+            if [ -f "$file_path" ]; then
+              lang=$(sed -n '1,50p' "$file_path" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+              if [ -n "$lang" ]; then
+                # Trim and remove quotes
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+            fi
+            
+            # Check if language is valid
+            lang_lower=$(echo "$lang" | tr '[:upper:]' '[:lower:]')
+            is_valid=false
+            
+            if [ -n "$lang_lower" ]; then
+              for allowed in "${allowed_languages[@]}"; do
+                if [ "$lang_lower" = "$allowed" ]; then
+                  is_valid=true
+                  break
+                fi
+              done
+            fi
+            
+            # Add to invalid list if not valid
+            if [ "$is_valid" = false ]; then
+              # Remove 'pr/' prefix for display
+              display_path=$(echo "$file_path" | sed 's|^pr/||')
+              invalid_files=$(echo "$invalid_files" | jq -c --arg file "$display_path" --arg lang "$lang" '. + [{file:$file, language:$lang}]')
+            fi
+          done < <(echo "$markdown_files" | jq -r '.[]')
+          
+          invalid_count=$(echo "$invalid_files" | jq 'length')
           
           if [ "$invalid_count" -ne 0 ]; then
             echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
-            echo "$invalid_objs" | jq . >&2
-            jq -n --argjson objs "$invalid_objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
+            echo "$invalid_files" | jq . >&2
+            jq -n --argjson files "$invalid_files" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, files:$files}' > validation-error.json
             exit 1
           else
             echo "Language validation passed"
@@ -356,7 +385,7 @@ jobs:
               try {
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
                 if (v && v.type === 'language') {
-                  const items = Array.isArray(v.objects) ? v.objects.map(o => `- ${o.name}: "${o.language || ''}"`).join('\n') : '';
+                  const items = Array.isArray(v.files) ? v.files.map(f => `- \`${f.file}\`: "${f.language || ''}"`).join('\n') : '';
                   sections.push(`### 🌐 Language Validation Failed\n\n${v.message || 'Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br'}\n\n${items}`);
                 }
               } catch {}
