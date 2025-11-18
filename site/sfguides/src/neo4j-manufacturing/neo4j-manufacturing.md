@@ -244,7 +244,7 @@ GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
 ```
 
 
-## Visualize Our Graph (Experimental)
+## Visualize Our Graph
 
 Duration: 5
 
