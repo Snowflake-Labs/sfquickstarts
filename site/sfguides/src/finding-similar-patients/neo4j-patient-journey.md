@@ -1,16 +1,18 @@
 author: corydon baylor
 id: finding-similar-patients
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/analytics
-language: en
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
-environments: web
+categories:
+  - snowflake-site:taxonomy/getting-started
+  - snowflake-site:taxonomy/partner-integrationsenvironments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-
+tags: Getting Started, Data Science, Data Engineering, Twitter
+language: en
 # Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics
 
 ## Overview
 
+Duration: 2
 
 ### What Is Neo4j Graph Analytics For Snowflake? 
 
@@ -37,10 +39,11 @@ Neo4j helps organizations find hidden relationships and patterns across billions
 - How to read and write directly from and to your snowflake tables
 
 ## Load The Data
+Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze patients and different procedures that they undergo using graph analytics. 
 
-![assets/datamodel.png](assets/datamodel.png)
+<img src="assets/datamodel.png" alt="image" width="400"/>
 
 
 Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/patient_journey/data), We are going to add two new tables:
@@ -51,6 +54,7 @@ Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://
 Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load-web-ui) to load in your data.
 
 ## Set Up
+Duration: 5
 
 ### Import The Notebook
 
@@ -110,6 +114,7 @@ USE ROLE gds_user_role;
 
 ## Clean Our Data
 
+Duration: 5
 
 We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:
 
@@ -131,14 +136,14 @@ Let's take a look at the starting point for our data. We have a table for patien
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES LIMIT 10;
 ```
 
-![assets/procedures.png](assets/procedures.png)
+<img src="assets/procedures.png" alt="image" width="400"/>
 
 
 ```sql
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PATIENTS LIMIT 10;
 ```
 
-![assets/patients.png](assets/patients.png)
+<img src="assets/patients.png" alt="image" width="400"/>
 
 We are then going to clean this up into two tables that just have the `nodeids` for both patient and procedure:
 
@@ -185,19 +190,27 @@ CREATE OR REPLACE VIEW KidneyPatientProcedure_relationship_vw (sourceNodeId, tar
          JOIN PROCEDURE_NODE_MAPPING ON PROCEDURE_NODE_MAPPING.NODEID = PROCEDURES.CODE;
 ```
 
-## Visualize Your Graph (Experimental)
+## Visualize Your Graph
+At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Specifically, you may be interested in better understanding your results. Why exactly are any given two patients considered similar?
 
-At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Before we do that, we will need to create a subset of our graph to make the visualization more managable.
+Let's start by filtering down our data to two patients who are considered very similar. They have the following patient ids:
 
-Let's start by limiting the number of patients down to ten and then finding the procedures those individuals have undergone.
+- `a5814a17-303e-1d23-64d3-dd4b54170d16`
+- `87069a85-19bf-7d81-0cfe-609b3427d096`
 
 ```sql
--- this is a small subset of the patients in our dataset
-CREATE OR REPLACE VIEW KidneyPatient_viz_vw (nodeId) AS
-SELECT nodeId
-FROM KidneyPatients_vw
-ORDER BY nodeId
-LIMIT 10;
+CREATE OR REPLACE VIEW KidneyPatient_viz_vw (nodeId, title, label) AS
+SELECT 
+    k.nodeId, 
+    p.first AS title,
+    'blue' as label
+FROM KidneyPatients_vw k
+LEFT JOIN patients p
+  ON k.nodeId = p.id
+WHERE k.nodeId IN (
+  'a5814a17-303e-1d23-64d3-dd4b54170d16',
+  '87069a85-19bf-7d81-0cfe-609b3427d096'
+);
 
 -- this represents the procedures those patients underwent (and will be our relationship table
 -- for the below visualization)
@@ -210,17 +223,37 @@ JOIN KidneyPatient_viz_vw k
   ON CAST(p.PATIENT AS STRING) = CAST(k.nodeId AS STRING);
 
 -- now we look at the procedures in our example
-CREATE OR REPLACE VIEW procedures_viz_vw (nodeId) AS
-SELECT distinct targetnodeid
-FROM procedures_patients_vw
-LIMIT 10;
+CREATE OR REPLACE VIEW procedures_viz_vw (nodeId, title, label) AS
+SELECT DISTINCT
+    pp.targetnodeid AS nodeId,
+    p.reasondescription AS caption,
+    'red' as label
+FROM procedures_patients_vw pp
+LEFT JOIN procedures p 
+    ON pp.targetnodeid = p.reasoncode
+WHERE pp.targetnodeid IS NOT NULL
+  AND TRIM(pp.targetnodeid) <> '';
 ```
+Now we can use the `neo4j_viz` python package to create the actual visualization. You can learn more about how it works [here](https://neo4j.com/docs/snowflake-graph-analytics/current/visualization/), but for this example, we are just going to customize two things. First, we will use the "label" property of our nodes (which we defined in the SQL query above) to set the colors. Like so:
+```python
+viz_graph.color_nodes(property='LABEL', override=True)  
+```
+Next, we will use the "title" property to set captions. We created that column above as well:
+```python
+for node in viz_graph.nodes:
+    node.caption = str(node.properties["TITLE"])
+```
+Let's see it all in action. You will notice that we are using the same projection syntax to create our visualization
 
-Now, we are ready to visualize our graph. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
+```python
+from neo4j_viz.snowflake import from_snowflake
+from snowflake.snowpark.context import get_active_session
 
-```sql
-CALL Neo4j_Graph_Analytics.experimental.visualize(
-{
+session = get_active_session()
+
+viz_graph = from_snowflake(
+    session,
+    {
     'nodeTables': ['NEO4J_PATIENT_DB.public.KidneyPatient_viz_vw',
                    'NEO4J_PATIENT_DB.public.procedures_viz_vw'
     ],
@@ -230,26 +263,27 @@ CALL Neo4j_Graph_Analytics.experimental.visualize(
         'targetTable': 'NEO4J_PATIENT_DB.public.procedures_viz_vw'
       }
     }
-  },
-  {}
-);
-```
+    }
+)
 
-We can access the output of the previous cell by referencing its cell name, in this case `viz`. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the `viz` output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+# specifying which column should be associated with colors. 
+viz_graph.color_nodes(property='LABEL', override=True)  
 
-```python
+for node in viz_graph.nodes:
+    node.caption = str(node.properties["TITLE"])
+    
+# now we render
+html_object = viz_graph.render()
+
 import streamlit.components.v1 as components
 
-components.html(
-    viz.to_pandas().loc[0]["VISUALIZE"],
-    height=600
-)
+components.html(html_object.data, height=600)
 ```
-
   ![image](assets/graph.png)
 
 ## Find Similar Patients
 
+Duration: 10
 
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.
 
@@ -364,6 +398,7 @@ select * from neo4j_patient_db.public.patient_community
 
 ##  Conclusions And Resources
 
+Duration: 2
 
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 
