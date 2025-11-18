@@ -267,6 +267,11 @@ jobs:
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
         run: |
           node scripts/validate-profanity.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f profanity-report.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' profanity-report.json > profanity-report.tmp.json
+              mv profanity-report.tmp.json profanity-report.json
+            fi
             echo "Abusive words detected. See 'profanity-report.json' for details." >&2
             exit 1
           }
@@ -279,6 +284,11 @@ jobs:
           FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
         run: |
           node scripts/validate-categories.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f categories-error.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' categories-error.json > categories-error.tmp.json
+              mv categories-error.tmp.json categories-error.json
+            fi
             echo "Category syntax validation failed. See 'categories-error.json' for details." >&2
             exit 1
           }
@@ -291,6 +301,11 @@ jobs:
           FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
         run: |
           node scripts/validate-frontmatter.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f frontmatter-error.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' frontmatter-error.json > frontmatter-error.tmp.json
+              mv frontmatter-error.tmp.json frontmatter-error.json
+            fi
             echo "Frontmatter validation failed. See 'frontmatter-error.json' for details." >&2
             exit 1
           }
@@ -343,9 +358,7 @@ jobs:
             
             # Add to invalid list if not valid
             if [ "$is_valid" = false ]; then
-              # Remove 'pr/' prefix for display
-              display_path=$(echo "$file_path" | sed 's|^pr/||')
-              invalid_files=$(echo "$invalid_files" | jq -c --arg file "$display_path" --arg lang "$lang" '. + [{file:$file, language:$lang}]')
+              invalid_files=$(echo "$invalid_files" | jq -c --arg file "$file_path" --arg lang "$lang" '. + [{file:$file, language:$lang}]')
             fi
           done < <(echo "$markdown_files" | jq -r '.[]')
           
@@ -355,6 +368,11 @@ jobs:
             echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
             echo "$invalid_files" | jq . >&2
             jq -n --argjson files "$invalid_files" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, files:$files}' > validation-error.json
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f validation-error.json ]; then
+              jq '.files |= map(.file |= sub("^pr/"; ""))' validation-error.json > validation-error.tmp.json
+              mv validation-error.tmp.json validation-error.json
+            fi
             exit 1
           else
             echo "Language validation passed"
